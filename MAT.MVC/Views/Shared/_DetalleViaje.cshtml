@@ -1,0 +1,29 @@
+﻿@model MAT.MVC.Models.PaqueteModel
+@using MAT.Entities
+
+<h4>@Model.Paquete.Descripcion</h4>
+<h5>Destino: @Model.Destino.Nombre</h5>
+<h5>Salida: @Model.Viaje.FechaSalida - @Model.Viaje.HoraSalida hs.</h5>
+<h5>
+@if (Model.Bus != null)
+{
+    @("Coche: " + Model.Bus.NroCoche.ToString());
+}
+</h5>
+
+<u><span>Servicios Incluídos</span></u>
+<ul>
+    @foreach (Servicio servicio in Model.Servicios)
+    {
+        <li>@servicio.Descripcion</li>
+    }
+</ul>
+<u><span>Excursiones</span></u>
+<ul>
+    @foreach (Excursion excursion in Model.Excursiones)
+    {
+        <li>@excursion.Descripcion</li>
+    }
+</ul>
+
+<input type="hidden" id="hdnPaqueteDesctripcion" value="@Model.Paquete.Descripcion" />

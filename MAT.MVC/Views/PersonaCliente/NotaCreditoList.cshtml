@@ -1,0 +1,87 @@
+﻿<h2 class="title">Lista de Notas de Crédito</h2>
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+else
+{
+    <div class="custom_margin_5">
+        <table id="tblCretitoClienteList" class="mat-customtable">
+            <thead>
+                <tr>
+                    <th style="width:250px;">
+                        Cliente
+                    </th>
+                    <th>
+                        Monto
+                    </th>
+                    <th style="width:85px;"></th>
+                </tr>
+            </thead>    
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="divPopupDetalleNotaCredito" title="Movimientos">
+        <div id="divContentMovimientoNotaCredito">
+
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            registerFormatNumber();
+
+            var dataSet = @Html.Raw(ViewBag.sbDataSetJson);
+            var jTables = eval(dataSet);
+            var jt = jTables;
+
+            $("#tblCretitoClienteList").DataTable({
+                "aaData": jt,
+                "columns": [
+                { "data": "FullName",
+                  "sClass": "left"},
+                { "data": "Monto", 
+                    "mRender": function (data, type, row) {
+                        var numberFormat = formatNumberMoney(row.Monto);
+                        return numberFormat;
+                    }
+                },
+                { "data": "ClienteID",
+        	        "mRender": function (data, type, row) {
+        	            var data = "<a class=\"btn btn-small btn-inverse btn-block\" onclick='loadDivMovimientoNotaCredito(\""+ row.ClienteID +"\")' >Movimientos</a>";
+        	            return data;
+        	        }
+        	    },
+                ],
+                "bAutoWidth": false,
+                "pageLength": 25
+            });
+
+            $("#tblCretitoClienteList tr td.left").css("text-align","left");
+        });
+                     
+        function loadDivMovimientoNotaCredito(ClienteID)
+        {
+            $("#divContentMovimientoNotaCredito").html(divLoading);
+            $("#divPopupDetalleNotaCredito").dialog("open");
+            $("#divPopupDetalleNotaCredito").dialog({
+                modal: true,
+                position: { my: 'top', at: 'top', of: window },
+                width: "80%"
+            });
+            
+            $.ajax({
+                url: "/NotaCredito/partialMovimientoNotaCredito",
+                data: { ClienteID: ClienteID },
+                success: function (data) {
+                    $("#divContentMovimientoNotaCredito").html(data);
+                },
+                error: function (e) {
+                    alert("Se produjo un error. Contactese con el administrador.");
+                    console.log(e);
+                }
+            })
+        }
+    </script>
+}

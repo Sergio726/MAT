@@ -1,0 +1,72 @@
+﻿@model MAT.Entities.Viaje
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Detalle de Viaje";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Detalle - Viaje</h2>
+<div class="form">
+    
+    <div class="form-label">
+         @Html.LabelFor(model => model.PaqueteId, "Paquete")
+    </div>
+    <div class="form-field">
+        @Html.Label(Helper.ToSelectItem("Paquete",Model.PaqueteId.ToString()))
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Origen)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Origen)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.FechaSalida)
+    </div>
+    <div class="form-field">
+        @Html.LabelFor(model => model.FechaSalida, Model.FechaSalida.ToString().Substring(0,10))
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.HoraSalida)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.HoraSalida)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.PaisOrigen)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.PaisOrigen)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.PaisDestino)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.PaisDestino)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Paso)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Paso)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Medio)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Medio)
+    </div>
+    
+
+<p>
+    @Html.ActionLink("Editar", "Edit", new { id=Model.ViajeId },new { @class = "btn btn-small btn-inverse" })
+    @Html.ActionLink("< Lista de Viajes", "Index", null ,new { @class = "btn btn-small btn-inverse" })
+</p>
+</div>

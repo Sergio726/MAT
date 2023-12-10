@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "ViajesPorFecha";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        var array = ["2015-06-23", "2015-06-19", "2015-06-25"];
+        var fechas = new Array();
+        $.ajax({
+            url: "/Home/GetFechasDeViajes",
+            async: false,
+            success: function (data) {
+                fechas = data.split(',');
+                console.log(fechas);
+            }
+        });
+        $("#calendar_vendedor").datepicker({
+            dateFormat: 'dd-mm-yy',
+            onSelect: function () {
+                var date = escape($(this).datepicker().val());
+                console.log(date);
+                var url = "/Home/GetViajes?fecha=" + date;
+                $("#Viajes").load(url);
+                $("ul.viajes-lista").quickPagination({ pageSize: '4' });
+                //$(".viajes-lista li").each(function () {
+                //    console.log($(this).data("image"));
+                //    $(this).css("background-image", "url(" + $(this).data("image") + ")");
+                //});
+            },
+            beforeShowDay: function (date) {
+                console.log(fechas);
+                if ($.inArray($.datepicker.formatDate('yy-mm-dd', date), fechas) > -1) {
+                    arr = [true, "", "No disponible"];
+                }
+                else {
+                    arr = [false, '', "Disponible"];
+                }
+                return arr;
+                
+            }
+        });
+
+    });
+</script>
+<section id="Calendario">
+    <div id="calendar_vendedor"></div>
+</section>
+
+<section id="Viajes" class="Viajes-Fecha">
+</section>
+
+<script>
+    
+</script>

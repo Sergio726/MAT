@@ -1,0 +1,51 @@
+﻿@model List<MAT.MVC.Models.PasajeroMenorModel>
+
+<script type="text/ecmascript">
+    function printMenor() {
+        var ViajeID = "@ViewBag.ViajeID";
+        var url = "/Reserva/PartialVinculacionMenor?sViajeId=" + ViajeID + "&sPrint=Print";
+        var title = "Lista de Menores";
+        var id = "dviPrintListMenores";
+        window.open(url, '_blank').print();
+    }
+</script>
+
+<div>
+    <a href="javascript: printMenor();">
+        <div class="iconPrint" style="margin-left: 94%;" title="Imprimir lista de menores."></div>
+    </a>
+    
+</div>
+<div style="max-height: 428px; overflow-y: auto;">
+    <table id="tblListMenores" class="mat-customtable" style="margin-left: 0px;width: 98%">
+    <thead>
+        <tr>
+            <th></th>
+            <th style="width: 48%;">Responsable del menor</th>
+            <th style="width: 48%;">Menor a cargo</th>
+            @*<th style="width:40px;"></th>*@
+        </tr>
+
+    </thead>
+    <tbody>
+        @{int i = 0;}
+        @foreach (var item in Model)
+        {
+            i++;
+            if (item.PasajeroMenorID != 0)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@(item.ApellidoMayor + ", " + item.NombreMayor + " Doc.: " + item.DocMayor)</td>
+                    <td>@(item.ApellidoMenor + ", " + item.NomreMenor + " Doc.: " + item.DocMenor)</td>
+                    @*<td><a href="javascript:desvincularManor('@item.PasajeroMenorID');"><div title="Desvincular Menor" class="divDelete"></div></a></td>*@
+                </tr>
+            }
+                
+        }
+            
+    </tbody>
+</table>
+</div>
+
+

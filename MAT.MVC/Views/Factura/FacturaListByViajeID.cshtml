@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "FacturaListByViajeID";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Lista de Facturas - @ViewBag.PaqueteDescripcion</h2>
+<div id="divResultSearch" class="custom_margin_10">
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var divLoading = "<div class='iconLoading'></div>";
+        
+        var ViajeID = "@ViewBag.ViajeID";
+        $("#divResultSearch").html(divLoading);
+        $.ajax({
+            url: "/Factura/FacturaResultSearch",
+            data: {
+                sPersonaID: "",
+                sViajeID: ViajeID
+            },
+            success: function (data) {
+                $("#divResultSearch").html(data);
+            }
+        })
+    });
+
+</script>

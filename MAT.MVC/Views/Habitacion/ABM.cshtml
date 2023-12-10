@@ -1,0 +1,132 @@
+﻿@model MAT.MVC.Models.HabitacionStandard
+
+<script type="text/javascript">
+   
+    $(document).on('blur', '#Capacidad', function () {
+        var capacidad = $('#Capacidad').val();
+        $("#Ocupacion").attr("max", capacidad);
+
+        if (capacidad>0) {
+            $('#Capacidad').removeAttr('style');
+            $('#GuardarHabitacion').attr('disabled', false);
+            //$('#lbl_error_hora').attr('hidden', true);
+        }
+        else {
+            $('#Capacidad').attr('class', 'input-validation-error');
+            $('#GuardarHabitacion').attr('disabled', true);
+            //$('#lbl_error_hora').attr('hidden', false);
+
+        }
+    });
+
+     $(document).on('blur', '#Ocupacion', function () {
+
+         var ocupacion = $('#Ocupacion').val();
+        if (ocupacion >= '0') {
+            $('#Ocupacion').removeAttr('style');
+            $('#GuardarHabitacion').attr('disabled', false);
+            
+        }
+        else {
+            $('#Ocupacion').attr('class', 'input-validation-error');
+            $('#GuardarHabitacion').attr('disabled', true);
+           
+        }
+    });
+</script>
+
+@if (ViewBag.Error != "")
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+
+<div class ="form">
+         
+    <form id="formHabitacion">
+        <input type="hidden" name="HabitacionID" value="@Model.HabitacionID" />
+        <div class="form-label">
+            <label>Nro de Habitacion</label>
+        </div>
+        <div class="form-field">
+            <input type="number" id="NroHabitacion" name="NroHabitacion" min="0" value="@Model.NroHabitacion"/>
+        </div>
+
+        <div class="form-label">
+            <label>Nombre</label>
+        </div>
+        <div class="form-field">
+            <input type="text" id="Nombre" name="Nombre" maxlength="50" />
+             
+        </div>        
+    
+        <div class="form-label">
+            <label>Tipo</label>
+        </div>
+        <div class="form-field">
+            <select id="Tipo" name="Tipo" class="valid">
+                @foreach (MAT.MVC.Models.HabitacionTipo item in ViewBag.HabitacionTipo)
+                {
+                    <option value="@item.Id" @(item.Id == Model.Tipo ? "selected" : "") >@item.Descripcion</option>
+                }
+            </select>
+          
+        </div>
+    
+        <div class="form-label">
+            <label>Estado</label>
+        </div>
+        <div class="form-field">
+            <select id="Estado" name="Estado">
+                <option value="0" @(Model.Estado == 0 ? "selected" : "")>Libre</option>
+                <option value="1" @(Model.Estado == 1 ? "selected" : "")>Ocupado</option>
+            </select>
+        </div>
+
+        <div class="form-label">
+            <label>Capacidad</label>
+        </div>
+        <div class="form-field">
+           <input type="number" value="@Model.Capacidad" id="Capacidad" name="Capacidad" min="0" />
+        </div>
+
+    </form>  
+    
+        <p>
+            <input type="button"  value="Guardar" onclick="javascript: updateHabitacion();" class="btn btn-small btn-inverse view-all hidden-phone" />
+        </p>
+    
+
+    </div>
+<div>
+    
+</div>
+<script type="text/javascript">
+    $("input[type=number]").attr("min", 0);
+
+    function updateHabitacion() {
+        var _data = $("#formHabitacion").serializeArray();
+        $("#popup_HabitacionEdit").append(divLoading);
+
+        $.ajax({
+            url: "/Habitacion/updateHabitacion",
+            data: _data,
+            dataType: "json",
+            success: function (data) {
+
+                if (data.Mensaje == "Done.") {
+                    $("#divFullLoading").remove();
+                    $("#popup_HabitacionEdit").dialog('close');
+                    parent.getDistribucion();
+                }
+                else {
+                    if (data.Mensaje == "Error.") {
+                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        console.log(data.Error);
+                    }
+
+                }
+
+            }
+        });
+    }
+</script>

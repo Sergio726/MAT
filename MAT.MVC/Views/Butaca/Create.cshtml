@@ -1,0 +1,97 @@
+﻿@model MAT.Entities.Butaca
+@using MAT.Enums
+@using MAT.Utilities
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Crear - Butaca</h2>
+
+<div class="form">
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+   
+     
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.NroButaca)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.NroButaca)
+            @Html.ValidationMessageFor(model => model.NroButaca)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Piso)
+        </div>
+        <div class="form-field">
+            @Html.DropDownListFor(model => model.Piso, ePisoButaca.PlantaAlta.ToSelectList())
+            @Html.ValidationMessageFor(model => model.Piso)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Ubicacion)
+        </div>
+        <div class="form-field">
+            @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList())
+            @Html.ValidationMessageFor(model => model.Ubicacion)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Tipo)
+        </div>
+        <div class="form-field">
+            @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList())
+            @Html.ValidationMessageFor(model => model.Tipo)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.TransporteId, "Nro Coche")
+        </div>
+        <div class="form-field">
+            @*@Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"))*@
+            @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"))
+            @Html.ValidationMessageFor(model => model.TransporteId)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Fila)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Fila)
+            @Html.ValidationMessageFor(model => model.Fila)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Posicion)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Posicion)
+            @Html.ValidationMessageFor(model => model.Posicion)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.CodigoButaca)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.CodigoButaca)
+            @Html.ValidationMessageFor(model => model.CodigoButaca)
+        </div>
+               
+        <p class="botonera-form">
+            <input type="submit" value="Agregar" class="btn btn-small btn-inverse" />
+            @Html.ActionLink("Ir a Lista de Butacas", "Index", null, new {@class="btn btn-small btn-inverse" })
+            <a href="/Transporte/Index" class="btn btn-small btn-inverse">< Volver a Lista de Transportes</a>
+        </p>
+    
+}
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

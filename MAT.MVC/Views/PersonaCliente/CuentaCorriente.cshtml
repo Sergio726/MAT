@@ -1,0 +1,30 @@
+﻿@using MAT.Entities
+@model MAT.MVC.Models.CuentaCorrienteModel
+@{
+    ViewBag.Title = "Movimientos de Nota de Crédito";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Cliente - Movimientos de Nota de Crédito</h2>
+
+<div id="divContent">
+
+</div>
+
+<script type="text/ecmascript">
+    $(document).ready(function () {
+        $("#divContent").html("<div class='iconLoading'></div>")
+        $.ajax({
+            url: "/NotaCredito/partialMovimientoNotaCredito",
+            data: { ClienteID: "@ViewBag.ClienteID" },
+            success: function (data) {
+                $("#divContent").html(data);
+            },
+            error: function (e) {
+                alert("Se produjo un error. Contactese con el administrador.");
+                console.log(e);
+            }
+        })
+    });
+
+</script>

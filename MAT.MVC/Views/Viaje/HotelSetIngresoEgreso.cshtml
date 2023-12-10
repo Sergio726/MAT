@@ -1,0 +1,168 @@
+﻿@model MAT.MVC.Models.ViajeHotel
+@using MAT.Enums
+@using MAT.Utilities
+
+<script>
+   
+
+    function setForm() {
+
+        //*************************************Validar campos  *************************************
+        $(".date").css("background-color", "#fff");
+        $(".time").css("background-color", "#fff");
+        var iFecha = 0;
+        $.each($(".date"), function (i, l) {
+            if (!validarFecha($(this).val())) {
+                $(this).css("background-color", "#E83A61");
+                iFecha = iFecha + 1;
+            }
+            
+        });
+        if (iFecha > 0) {
+            return alert("Por favor verifique que las fechas ingresadas no esten en blanco y sean correctas dd/mm/yyyy.", "Fecha Incorrecta")
+
+        }
+
+        var iHora = 0;
+        $.each($(".time"), function (i, l) {
+            if (!validarHora($(this).val())) {
+                $(this).css("background-color", "#E83A61");
+                iHora = iHora + 1;
+            }
+
+        });
+        if (iHora > 0) {
+            return alert("Por favor verifique que las horas ingresadas no esten en blanco y sean correctas hh:mm.", "Hora Incorrecta")
+
+        }
+
+        //************************************* fin Validar campos  *************************************
+
+        var _data = $("#formData").serialize();
+        
+        $.ajax({
+            url: "/viaje/HotelIngresoEgreso_Set",
+            data: _data,
+            dataType: "json",
+            success: function (data) {
+                
+                if (data.Estado == "Done.") {
+
+                    if (data.ID > 0) {
+                        var urlReload = "/Viaje/Hoteles/" + $("#reserva-viaje-id").val();
+                        $("#setEgresoIngreso").dialog("close");
+                        alert(data.Mensaje, "Operación Exitosa");
+                        window.location.href = urlReload;
+                    }
+                    else {
+                        alert(data.Mensaje, "Error");
+                    }
+
+
+                }
+                else {
+                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+
+                }
+
+            }
+        });
+
+    };
+    
+</script>
+<input type="hidden" id="reserva-viaje-id" value="@ViewBag.ViajeID" />
+<div id="vidReservaHabitacion">
+    <form id="formData">
+        
+        <input type="hidden" value="@ViewBag.ViajeHotelID" name="ViajeHotelID" />
+    <div class="form-label">
+        @Html.Label("Fecha de Ingreso")
+    </div>
+    <div class="form-field">
+        <input type="text" id="txtFechaDesde" class="date" name="Desde" value="@(Model.Desde) " />
+    </div>
+
+    <div class="form-label">
+        @Html.Label("Hora de Ingreso")
+    </div>
+    <div class="form-field">
+        <input type="text" id="txtHoraDesde" class="time" value="@Model.HoraIngreso" name="HoraIngreso" />
+    </div>
+
+    <div class="form-label">
+        @Html.Label("Fecha de Salida")
+    </div>
+    <div class="form-field">
+        <input type="text" id="txtFechaHasta" class="date" value="@(Model.Hasta)" name="Hasta"  />
+    </div>
+
+    <div class="form-label">
+        @Html.Label("Hora de Salida")
+    </div>
+    <div class="form-field">
+        <input type="text" id="txtHoraHasta" class="time" value="@Model.HoraSalida" name="HoraSalida" />
+    </div>
+    
+    <div class="form-label">
+        @Html.Label("Comentarios")
+    </div>
+    <div class="form-field">
+        <input type="text" id="txtComentario" value="@Model.Comentario" name="Comentario" placeholder="IDA O VUELTA?, ESCRIBIR COMENTARIO" />
+    </div>
+
+    </form>
+    
+
+    <div style="float:right;margin-top:15px;margin-right: 2px">
+        <input type="button" id="btnSetIngresoEgreso" value="Aceptar" title="Guardar Cambios" class="btn btn-small btn-inverse" onclick="javascript: setForm();" />
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+        $.date = function (dateObject) {
+            var d = new Date(dateObject);
+            var day = d.getDate();
+            var month = d.getMonth() + 1;
+            var year = d.getFullYear();
+            if (day < 10) {
+                day = "0" + day;
+            }
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var date = year + "-" + month + "-" + day;
+
+            return date;
+        };
+        $.customDate = function (dateObject) {
+            var arraydate = dateObject.split('/');
+            var day = parseInt(arraydate[0]);
+            var month = parseInt(arraydate[1]);
+            var year = parseInt(arraydate[2]);
+            if (day < 10) {
+                day = "0" + day;
+            }
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var date = year + "-" + month + "-" + day;
+            return date;
+        }
+        $("#txtFechaDesde").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '-100:+2'
+        });
+        $("#txtFechaHasta").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '-100:+2'
+        });
+
+        $("input[class='time']").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+    });
+</script>
+

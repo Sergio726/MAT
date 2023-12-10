@@ -1,0 +1,30 @@
+﻿@model MAT.Entities.Planilla
+@using MAT.Utilities
+
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<link href="~/Content/mat.planillaprint.css" rel="stylesheet" />
+
+<div class="encabezado">
+    <input id="viaje-id" type="hidden" value="@Model.ViajeId" />
+    <input id="planilla-id" type="hidden" value="@Model.PlanillaId" />
+    <p>VIAJE: @Helper.GetViajeDescripcion(Model.ViajeId) </p>
+    <p>FECHA DE PLANILLA: @Model.FechaRegistro.ToShortDateString()</p>
+    <p>TOTAL PLANILLA: @String.Format("{0:C}",Model.Total)</p>    
+</div>
+
+<div class="hoteles">
+
+</div>
+
+<div class="servicios">
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var viajeid = $("#viaje-id").val();
+        var planillaid = $("#planilla-id").val();
+        $(".hoteles").load("/Admin/GridPlanillaHotelDetallePrint?viajeid=" + viajeid + "&planillaid=" + planillaid);
+        $(".servicios").load("/Admin/GridPlanillaServiciosItemPrint?planillaid=" + planillaid);
+    });
+</script>

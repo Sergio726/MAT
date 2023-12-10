@@ -1,0 +1,127 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Panel Principal <span>Acceso a los recursos mas importantes del Sistema</span></h2>
+
+<div class="innerLR">
+
+    <div class="row-fluid widget-stats-group">
+
+
+        <div class="span3">
+
+            <!-- Stats Widget -->
+            <a href="/Home/ViajesPorFecha" class="widget-stats icons-home calendarioviaje-icon">
+                <span><i></i></span>
+                <span class="txt">Viajes x Fecha</span>
+                <div class="clearfix"></div>
+                <span class="count label label-important">1</span>
+            </a>
+            <!-- // Stats Widget END -->
+
+        </div>
+        <div class="span3">
+
+            <!-- Stats Widget -->
+            <a href="/Home/TodosLosViajesIndex" class="widget-stats icons-home viaje-icon">
+                <span><i></i></span>
+                <span class="txt">Todos los Viajes</span>
+                <div class="clearfix"></div>
+                <span class="count label">2</span>
+            </a>
+            <!-- // Stats Widget END -->
+
+        </div>
+        <div class="span3">
+
+            <!-- Stats Widget -->
+            <a href="/Viaje/Index" class="widget-stats icons-home gestion-viaje-icon">
+                <span><i></i></span>
+                <span class="txt">Gestion Viajes</span>
+                <div class="clearfix"></div>
+                <span class="count label label-warning">3</span>
+            </a>
+            <!-- // Stats Widget END -->
+
+        </div>
+        <div class="span3">
+
+            <!-- Stats Widget -->
+            <a href="/Paquete/Index" class="widget-stats icons-home gestion-paquete-icon">
+                <span><i></i></span>
+                <span class="txt">Gestion de Paquetes</span>
+                <div class="clearfix"></div>
+                <span class="count label label-primary">4</span>
+            </a>
+            <!-- // Stats Widget END -->
+
+        </div>
+
+
+
+    </div>
+    <div class="separator bottom"></div>
+    <!-- // Stats Widgets END -->
+
+</div>
+
+<div class="innerLR">
+
+    <div class="row-fluid border-bottom">
+        <div class="span3">
+
+            <!-- Stats Widget -->
+            <a href="/Busqueda/Perfil" class="widget-stats icons-home busqueda-icon">
+                <span><i></i></span>
+                <span class="txt">Búsqueda de Perfiles</span>
+                <div class="clearfix"></div>
+                <span class="count label label-primary">5</span>
+            </a>
+            <!-- // Stats Widget END -->
+
+        </div>
+        @if (User.Identity.Name.ToUpper().Equals("ADMINDEV"))
+        {
+            <div class="span3">
+
+                <!-- Stats Widget -->
+                <a href="/Home/HistorialPagos" class="widget-stats icons-home historial-pagos-icon">
+                    <span><i></i></span>
+                    <span class="txt">Historial</span>
+                    <div class="clearfix"></div>
+                    <span class="count label label-primary">6</span>
+                </a>
+                <!-- // Stats Widget END -->
+
+            </div>    
+        }
+
+            <div class="span3">
+
+                <!-- Stats Widget -->
+                <a href="/Factura/Index" class="widget-stats icons-home searchFactura-icon">
+                    <span><i></i></span>
+                    <span class="txt">Busqueda de Facturas</span>
+                    <div class="clearfix"></div>
+                    <span class="count label label-primary">7</span>
+                </a>
+                <!-- // Stats Widget END -->
+
+            </div>  
+            <div class="span3">
+
+                <!-- Stats Widget -->
+                <a href="/PersonaCliente/NotaCreditoList" class="widget-stats icons-home cheque-icon">
+                    <span><i></i></span>
+                    <span class="txt">Notas de Crédito</span>
+                    <div class="clearfix"></div>
+                    <span class="count label label-primary">8</span>
+                </a>
+                <!-- // Stats Widget END -->
+
+            </div>  
+    </div>
+</div>
+<div class="separator bottom"></div>

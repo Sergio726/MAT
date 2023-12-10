@@ -1,0 +1,84 @@
+﻿@{
+    ViewBag.Title = "Distribución de Hoteles";
+}
+
+<head>
+    <title>DISTRIBUCION DE HABITACIONES</title>
+
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <link href="~/Content/hoteles.css" rel="stylesheet" />
+    <link href="~/Content/mat.esquemadistribucion.print.css" rel="stylesheet"  media="print"/>
+    <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+
+</head>
+
+
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+
+<input type="hidden" id="distribucion-viaje-id" value="@ViewData["viajeid"]" />
+<div id="divContentListHotel" class="form" style="padding-bottom:20px;">
+    <div class="form-label"><span class="title">Hoteles</span></div>
+    <div class="form-field">
+       
+        @if (ViewBag.ListHotel != null)
+        {
+            <select id="HotelPorViaje" name="HotelPorViaje">
+            @foreach (MAT.MVC.Models.HotelDropDown item in ViewBag.ListHotel)
+            {
+                <option value="@item.HotelID" fecha="@item.Fecha.ToString("dd/MM/yyyy")">@item.Nombre @item.Fecha.ToString("dd/MM/yyyy")</option>
+            }
+            </select>    
+        }
+        
+        
+        <input id="btn-print-distribucion" type="button" class="btn btn-inverse" value="Imprimir Distribución" />
+    </div>
+</div>
+
+<div id="esquema-distribucion" class="custom_padding_top_10">
+    <div class="iconLoading"></div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var idselected = $("#HotelPorViaje option:selected").val();
+        var viajeid = $("#distribucion-viaje-id").val();
+        var fecha = $("#HotelPorViaje option:selected").attr("fecha");
+        var url = "/Hotel/EsquemaDistribucion?hotelid=" + idselected + "&viajeid=" + viajeid + "&fecha=" + fecha;
+
+        setTimeout(function () {
+            loadPage(idselected, viajeid, fecha)
+        }, 1000);
+
+
+        
+    });
+    $(document).on("change", "#HotelPorViaje", function () {
+        var idselected = $("#HotelPorViaje option:selected").val();
+        var fecha = $('#HotelPorViaje option:selected').attr("fecha");
+        var viajeid = $("#distribucion-viaje-id").val();
+       
+        setTimeout(function () {
+            $("#esquema-distribucion").html("<div class=\"iconLoading\"></div>");
+            loadPage(idselected, viajeid, fecha)
+        }, 500);
+    });
+    $(document).on("click", "#btn-print-distribucion", function () {
+        window.print();
+    });
+
+    function loadPage(idselected, viajeid, fecha)
+    {
+        $.ajax({
+            url: "/Hotel/EsquemaDistribucion",
+            data: { hotelid: idselected, viajeid: viajeid, fecha: fecha },
+            dataType: "html",
+            success: function (data) {
+                $("#esquema-distribucion").html(data);
+            }
+        });
+    }
+</script>

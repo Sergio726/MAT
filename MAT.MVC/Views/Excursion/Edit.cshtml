@@ -1,0 +1,67 @@
+﻿@model MAT.Entities.Excursion
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Editar Excursión</h2>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="form">
+        
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Descripcion)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Descripcion)
+            @Html.ValidationMessageFor(model => model.Descripcion)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Costo)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Costo)
+            @Html.ValidationMessageFor(model => model.Costo)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Observaciones)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Observaciones)
+            @Html.ValidationMessageFor(model => model.Observaciones)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.ProveedorId)
+        </div>
+        <div class="form-field">
+            @if (Model.ProveedorId.HasValue)
+            {
+                @Html.DropDownListFor(model => model.ProveedorId, MAT.Utilities.Helper.ToSelectEntities("Proveedor", Model.ProveedorId.Value))
+            }
+            else
+            {
+                @Html.DropDownListFor(model => model.ProveedorId, MAT.Utilities.Helper.ToSelectEntities("Proveedor"))
+            }
+            
+            @Html.ValidationMessageFor(model => model.ProveedorId)
+        </div>
+
+        <p class="botonera-form">
+            <input type="submit" value="Guardar" class="btn btn-inverse btn-small" />
+            <a href="/Excursion/Index" class="btn btn-inverse btn-small">Lista de Excursiones</a>
+        </p>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

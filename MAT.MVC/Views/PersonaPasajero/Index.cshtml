@@ -1,0 +1,74 @@
+﻿@model IEnumerable<MAT.Entities.PersonaPasajero>
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Pasajeros</h2>
+
+<p>
+    @Html.ActionLink("+ Agregar Pasajero", "Create",null, new {@class="btn btn-small btn-inverse view-all hidden-phone" })
+</p>
+<table class="display mat-customtable">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Apellido)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TipoDocumento)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NroDocumento)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Telefono)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        
+        <th></th>
+    </tr>
+        </thead>
+    <tbody>
+@foreach (var item in Model) {
+<tr>
+    
+        <td>
+            @Html.DisplayFor(modelItem => item.Apellido)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nombre)
+        </td>
+        <td>
+            @Html.Label(((eTipoDocumento)item.TipoDocumento).ToString())
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NroDocumento)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Telefono)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        
+        <td>
+            <a href="/PersonaPasajero/Edit/@item.PersonaId"><img src="/Images/pencil.png" width="32" height="32" /></a>
+            <a href="/PersonaPasajero/Details/@item.PersonaId"><img src="/Images/notepad.png" width="32" height="32" /></a>
+        </td>
+    </tr>
+}
+        </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

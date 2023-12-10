@@ -1,0 +1,54 @@
+﻿<div class="divObservaciones">
+    <div class="row">
+        <div class="title"><h4>Observaciones Generales</h4></div>
+        <div class="element"><a href="javascript: fnPrintObservaciones();">
+                 <div class="iconPrint" style="margin-left: 94%;" title="Imprimir Obsevaciones."></div>
+            </a>
+        </div>
+        <div class=""><input type="button" onclick="javascript: fnAddObsevacion();" class="buttonAdd_29px" title="Agregar una observacion" /></div>
+        
+    </div>
+    <div class="row">
+        <div id="divObsGeneral" class ="row custom_margin_5">
+            
+        </div>
+        
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        getObservacionesGenerales();
+
+    });
+
+    function getObservacionesGenerales() {
+        var divLoading = "<div class='iconLoading'></div>";
+        $("#divObsGeneral").html(divLoading);
+        
+        $.ajax({
+            url: "/Reserva/ObservacionesGenerales",
+            data: { "sViajeId": "@ViewBag.ViajeID" },
+            dataType: "html",
+            success: function (data) {
+                $("#divObsGeneral").html(data);
+            }
+        })
+    }
+
+    function fnAddObsevacion() {
+        var url = "/Reserva/ObservacionABM?sViajeID=" + "@ViewBag.ViajeID";
+        var dialogid = "popup_Observacion";
+        var dialogtitle = "Agragar Observacion";
+        var widthsize = "min";
+        ShowFormDialog(url, dialogid, dialogtitle, widthsize)
+     
+    }
+
+    function fnPrintObservaciones() {
+        var url = "/Reserva/PrintObservaciones?sViajeId=" + "@ViewBag.ViajeID";
+        window.open(url, '_blank').print();
+    }
+</script>

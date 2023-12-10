@@ -1,0 +1,83 @@
+﻿@model MAT.MVC.Models.RegistroVendedorModel
+
+@*@{
+    ViewBag.Title = "RegistrarVendedor";
+    Layout = "~/Views/Shared/_LayoutSplash.cshtml";
+}*@
+<link href="~/Content/mat.loguin.css" rel="stylesheet" />
+
+    <div class="login-page">
+          @if (ViewBag.IsDev == "true")
+          {
+            <h1 style="text-align:center;font-weight:bold">Entorno de Prueba</h1>    
+          }
+    </div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="form">
+        <div class="form-label">Nombre de usuario</div>
+        <div class="form-field">
+            <input type="text" name="UserName" id="UserName" />
+            <span class="field-validation-valid" data-valmsg-for="UserName" data-valmsg-replace="true"></span>
+        </div>
+    
+        <div class="form-label">Contraseña</div>
+        <div class="form-field">
+            <input class="text-box single-line password" data-val="true" data-val-length="El número de caracteres de Contraseña debe ser al menos 6." data-val-length-max="100" data-val-length-min="6" data-val-required="El campo Contraseña es obligatorio." id="Password" name="Password" type="password" value="">
+            <span class="field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+        </div>
+    
+        <div class="form-label">Confirmar contraseña</div>
+        <div class="form-field">
+            <input class="text-box single-line password" data-val="true" data-val-equalto="La contraseña y la contraseña de confirmación no coinciden." data-val-equalto-other="*.Password" id="ConfirmPassword" name="ConfirmPassword" type="password" value="">
+            <span class="field-validation-valid" data-valmsg-for="ConfirmPassword" data-valmsg-replace="true"></span>
+        </div>
+    
+        <div class="form-label">Nombre</div>
+        <div class="form-field">
+            <input type="text" name="Nombre" id="Nombre" />
+            <span class="field-validation-valid" data-valmsg-for="Nombre" data-valmsg-replace="true"></span>
+        </div>
+    
+        <div class="form-label">Apellido</div>
+        <div class="form-field">
+            <input type="text" name="Apellido" id="Apellido" />
+            <span class="field-validation-valid" data-valmsg-for="Apellido" data-valmsg-replace="true"></span>
+        </div>
+    
+        <div class="form-label">DNI</div>
+        <div class="form-field">
+            <input type="text" name="NroDocumento" id="NroDocumento" />
+            <span class="field-validation-valid" data-valmsg-for="NroDocumento" data-valmsg-replace="true"></span>
+        </div>
+        <div class="form-label">Telefono</div>
+        <div class="form-field">
+            <input type="text" name="Telefono" id="Telefono" />
+            <span class="field-validation-valid" data-valmsg-for="Telefono" data-valmsg-replace="true"></span>
+        </div>
+    
+        <div class="form-label">Email</div>
+        <div class="form-field">
+            <input type="text" name="Email" id="Email" />
+            <span class="field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+        </div>
+        <p>
+            <button onclick="javascript: register();">Registrar</button>
+            @*<input type="submit" value="Registrar" class="ui-button ui-widget ui-state-default ui-corner-all" />*@
+            <p class="message"><a href="@Url.Action("Login", "Account")">Login</a></p>
+        </p>
+    </div>
+    
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/ecmascript">
+    function login() {
+        $(".login-form").submit();
+    }
+</script>

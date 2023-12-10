@@ -1,0 +1,65 @@
+﻿@model List<MAT.MVC.Models.MovimientoNotaCredito>
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>   
+    return;
+}
+@{int i = 0;
+  double dTotal = 0;}
+
+<div>
+    <table class="mat-customtable" style="width:98%;">
+        <thead>
+            <tr>
+                <th colspan="6">Movimientos Nota de Crédito</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Vendedor</th>
+                <th>Monto</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (MAT.MVC.Models.MovimientoNotaCredito item in @Model.ToList().OrderByDescending(l =>l.Fecha))
+            {
+                i += 1;
+                dTotal += item.Monto;
+                <tr>
+                    <td>@i</td>
+                    <td>@item.Descripcion</td>
+                    <td>@item.Fecha</td>
+                    <td>@item.Vendedor</td>
+                    <td>$ @item.Monto</td>
+                    <td>
+                        @if (item.NotaCreditoID != "")
+                        {
+                            <a href="javascript:showNota('@item.NotaCreditoID');" id="lnkDetalles"><img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Crédito Disponible</th>
+                <th colspan="3"></th>
+                <th colspan="2">$ @dTotal</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ui-dialog-title-divPopupDetalleNotaCredito").text("@ViewBag.Cliente")
+    });
+
+    function showNota(NotaID) {
+        var url = "/NotaCredito/partialNotaCredito?NotaID=" + NotaID;
+        ShowFormDialog(url, "popinNota", "Nota de Crédito", "min");
+    }
+</script>

@@ -1,0 +1,38 @@
+﻿@using MAT.Entities
+@using MAT.Enums
+@using MAT.Utilities
+@model List<MAT.MVC.Models.FacturaStandard>
+
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>N° Factura</th>
+            <th>Monto</th>
+            <th>Fecha Facturación</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (MAT.MVC.Models.FacturaStandard factura in Model)
+        {
+            <tr>                
+                <td>@factura.NroFactura</td>
+                <td>@factura.Monto</td>
+                <td>@factura.Fecha</td>
+                <td>@factura.EstadoDescripcion</td>
+                <td>
+                    @if (factura.Estado!=(int)eEstadoFactura.NotadeCredito)
+                    {
+                        <a href="#" data-facturaid="@factura.FacturaID" title="Ver Detalles" class="button_detail btn-detallefactura"></a>
+                    }               
+                    </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

@@ -1,0 +1,74 @@
+﻿
+@page {
+    size: legal;
+    margin-left: -0.9cm;
+    margin-right: 0;
+    margin-top: 1.9cm;
+    padding-left:0;
+    
+}
+
+BODY {
+    display: inline-block;
+    width: auto;
+    margin: 8px 0 0 0;
+    padding: 0;
+    font: 10pt Verdana, Geneva, Arial, Helvetica, sans-serif;
+    text-align: justify;
+    line-height:0.62cm;
+    
+}
+
+.tabla {
+    width: 20.5cm !important;
+    margin: 0 0 0 0;
+    display: inline-block;
+}
+
+.Encabezado {
+    visibility: hidden;
+}
+
+
+
+.col1 {
+    width: 0.9cm;
+    margin: 0 0 0 0;
+    display: inline-block;
+}
+
+.col2 {
+    width: 6cm;
+    margin: 0 0 0 0;
+    display: inline-block;
+}
+
+.col3 {
+    width: 3cm;
+    margin: 0 0 0 0;
+    display: inline-block;
+    text-align: center;
+}
+
+.col4 {
+    width: 0.9cm;
+    margin: 0;
+    display: inline-block;
+    vertical-align:top;
+    padding-left:15px;
+}
+
+.col5 {
+    width: 6cm;
+    margin: 0 0 0 0;
+    display: inline-block;
+    vertical-align:top;
+}
+
+.col6 {
+    width: 3cm;
+    margin: 0 0 0 0;
+    display: inline-block;
+    text-align: center;
+    vertical-align:top;
+}

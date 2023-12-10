@@ -1,0 +1,44 @@
+﻿@model List<MAT.MVC.Models.PasajeroMenorModel>
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<link href="~/Content/mat.tblVinculacionMenor.css" rel="stylesheet" />
+<link href="~/Content/mat.tblVinculacionMenorPrint.css" rel="stylesheet" media="print" />
+
+<title>Lista de menores con seguro de menor</title>
+
+<div class="backMAT" style="min-height: 500px;">
+    <table id="tblListMenores" cellspacing="0">
+    <thead style="text-transform: uppercase;background-color:#ddd;"  >
+        <tr>
+            <th colspan="3">
+               <span>@ViewBag.NombrePaquete</span><br />
+                <span>Salida: @ViewBag.FechaSalida - </span>
+                <span>Regreso: @ViewBag.FechaRegreso</span>
+            </th>
+        </tr>
+        <tr style="text-align: left;">
+            <th></th>
+            <th style="width: 48%;">Responsable del menor</th>
+            <th style="width: 48%;">Menor a cargo</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @{int i = 0;}
+        @foreach (var item in Model)
+        {
+            i++;
+            if (item.PasajeroMenorID != 0)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@(item.ApellidoMayor + ", " + item.NombreMayor + " Doc.: " + item.DocMayor)</td>
+                    <td>@(item.ApellidoMenor + ", " + item.NomreMenor + " Doc.: " + item.DocMenor)</td>
+                </tr>
+            }
+                
+        }
+            
+    </tbody>
+    </table>
+
+</div>

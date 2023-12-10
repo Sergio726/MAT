@@ -1,0 +1,123 @@
+﻿@model IEnumerable<MAT.Entities.Precio>
+
+@{
+    ViewBag.Title = "Precios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Precios de Butacas</h2>
+
+<p class="botonera-form">
+    <input type="button" value="+ Agregar Precio" class="btn btn-small btn-inverse" onclick="javascript: editPrecio('0');" />
+</p>
+   
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+    return;
+}
+<div class="custom_padding_10">
+    <table class="grid mat-customtable" id="tblPrecios">
+    <thead>
+    <tr>
+        
+        <th>
+           Monto
+        </th>
+        <th>
+           Vigencia
+        </th>
+        <th>
+           Descripcion
+        </th>
+        <th>
+           Descripcion para Voucher
+        </th>
+        <th>
+           Mes
+        </th>
+        <th></th>
+              
+    </tr>
+        </thead>
+    
+</table>
+
+ <div id="divTools" style="display:none;">
+    <div class="text_align_rigth">
+        <a href="javascript: editPrecio('{{PrecioID}}');"><img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
+        <a href="javascript: deletePrecio('{{PrecioID}}');" class="deleteRow"><img src="/Images/cross.png" width="32" height="32" title="Eliminar" /></a>
+
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var jResult = @Html.Raw(ViewBag.jResult);
+            var jTables = eval(jResult);
+            var jt = jTables["Table"];
+        
+            var table = $("#tblPrecios").DataTable({
+                "aaData": jt,
+                "columns": [
+                { "data": "Monto" },
+                { "data": "Vigencia" },
+                { "data": "Descripcion" },
+                { "data": "DescripcionVoucher" },
+                { "data": "Mes" },
+                { "data": "PrecioID",
+                    "mRender": function (data, type, row) {
+                        var _data = {"PrecioID": row.PrecioID};
+                        var data = $("#divTools").html().trim().render(_data);
+                        return data;
+                    }
+                },
+            
+                ],
+                "bAutoWidth": false,
+                "pageLength": 25
+            });
+
+            $('#tblPrecios a.deleteRow').on( 'click', function () {
+                $(this).parent().parent().parent('tr').addClass('removeRow');
+                table.row('.removeRow').remove().draw( false );
+                
+            });
+ 
+        //$('.deleteRow').parent().parent().parent('tr')
+            
+    });
+
+    function editPrecio(PrecioID){
+        var url = "/Precio/ABM?PrecioID=" + PrecioID;
+        var title = "Precios"; //Titulo Modificado por petición del cliente. Detalle de Factura -> Nota de Crédito
+        var id = "popupPrecios";
+        
+        ShowFormDialogCloseRefresh(url, id, title,"medium");
+    }
+
+    function deletePrecio(PrecioID) {
+        //return;
+        $.ajax({
+            url: "/Precio/Delete",
+            type: "POST",
+            data: {PrecioID: PrecioID},
+            dataType: "json",
+            success: function (data) {
+                if (data[0] == "Done.") {
+                    console.log('succesfull');
+                }
+                else {
+                    alert("Se produjo un error. Asegurece que el precio que quiere eliminar no este vinculado en algun Paquete.");
+                    console.log(data[1]);
+                }
+            },
+            error: function (e) {
+                alert("Se produjo un error. Contactese con el administrador.");
+                console.log(e);
+            }
+        })
+    }
+</script>

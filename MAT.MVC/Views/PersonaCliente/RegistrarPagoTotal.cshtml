@@ -1,0 +1,86 @@
+﻿@using MAT.MVC.Models
+@using MAT.Enums
+@using MAT.Utilities
+
+
+<div class="form-modal">
+    <div class="form-label">Forma de Pago</div>
+    <div class="form-field">
+         <select id="tipopago" name="tipopago">
+            @foreach (var item in eFormaPago.Credito.ToSelectList())
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+
+    <div id="transaccion-label" class="form-label">N° de Transacción</div>
+    <div id="transaccion-field" class="form-field">
+        <input type="text" name="TransaccionID" id="TransaccionID"  disabled="disabled"/>
+    </div>
+    <div class="form-label">
+        Monto a abonar $
+    </div>
+    <div class="form-field">
+       <input type="text" name="MontoPago" disabled="disabled" id="txtPago" value="@String.Format("{0:00.00,##}",ViewBag.Saldo)" /> 
+    </div>
+    <div class="form-label">
+        N° de Recibo
+    </div>
+    <div class="form-field">
+        <input type="text" name="Recibo" id="Recibo" />
+    </div>
+    <div class="form-label">
+        N° de Factura
+    </div>
+    <div class="form-field">
+        <input type="text" name="Factura" id="Factura" />
+    </div>
+    <p>
+        <input type="button" name="btnRegistrarPago" id="btnRegistrarPago" title="Registrar" value="Aceptar" class="btn btn-small btn-inverse" />
+    </p>
+</div>
+
+<script type="text/javascript">
+    //$(document).ready(function () {
+    //    $('.money').mask("#.##0,00", { reverse: true });
+    //});
+    $(function () {
+        $("#tipopago").change(function () {
+            varTipoPago = $(this).val();
+            if (varTipoPago == "1") {
+                $("#TransaccionID").attr("disabled", true);
+            }
+            else {
+                $("#TransaccionID").attr("disabled", false);
+            }
+        });
+
+        $("#btnRegistrarPago").click(function () {
+            var monto = $("#txtPago").val();
+            var tipopago = parseInt($("#tipopago").val());
+            var nrofactura = $("#Factura").val();
+            var nrorecibo = $("#Recibo").val();
+            var FacturaID = "@ViewBag.FacturaID";
+            var ClienteID = "@ViewBag.ClienteID";
+            var TransaccionID = $("#TransaccionID").val()
+            $.ajax({
+                url: "/PersonaCliente/RegistrarPagoTotal",
+                type: "POST",
+                data: { monto: monto, tipopago: tipopago,TransaccionID:TransaccionID, factura: nrofactura, recibo: nrorecibo, FacturaID: FacturaID, ClienteID: ClienteID },
+                success: function (data) {
+                    
+                    var result = data == "True" ? true : false;
+                    $("#PagoTotal").dialog("close");
+                    if (result) {
+                        alert("Pago recibido correctamente.");
+                        PopupDetalleFactura_Load();
+                    } else {
+                        alert("Error de Sistema. Contacte con el Administrador.");
+                    }
+                }
+            });
+        });
+    });
+
+</script>

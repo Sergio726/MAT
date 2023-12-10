@@ -1,0 +1,56 @@
+﻿@model IEnumerable<MAT.Entities.Excursion>
+@using MAT.Enums
+@using MAT.Utilities
+@using MAT.Entities
+<div class="custom_margin_top_10">
+    <table id="tblExcursiones" class="partial-grid mat-customtable">
+   <thead>
+    <tr>
+        @*<th class="hidden">
+        </th>*@
+        <th>
+            Descripcion
+        </th>
+        <th>
+            Opciones
+        </th>       
+    </tr>
+        </thead>
+   
+    </table>
+    <div id="divTools" class="hide">
+        <div class="text_align_rigth">
+            Opcional <input type="checkbox" name="IsOpcional" title="Marcar como opcional"/> 
+            <a href="#" id="btn-vincular-excursion" data-excursion="{{ExcursionID}}"><img src="/Images/link.png" width="32" height="32" title="Vincular Excursión" /></a>           
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        loadExcursiones();
+    });
+    
+    function loadExcursiones() {
+        var jResult = @Html.Raw(ViewBag.jResult);
+        var jTables = eval(jResult);
+        var jt = jTables["Table"];
+
+        var table = $("#tblExcursiones").DataTable({
+            "aaData": jt,
+            "columns": [
+        	{ "data": "Descripcion" },
+        	{ "data": "ExcursionID",
+        	    "mRender": function (data, type, row) {
+        	        var _data = { "ExcursionID": row.ExcursionID}
+        	        var data = $("#divTools").html().trim().render(_data);
+        	        return data;
+        	    }
+        	},
+            
+            ],
+            "bAutoWidth": false,
+            "pageLength": 25
+        });
+    };
+</script>

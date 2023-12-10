@@ -1,0 +1,323 @@
+﻿@model List<MAT.MVC.Models.PasajeModel>
+@using MAT.MVC.Models
+@using MAT.Enums
+
+<div id="cole1">
+    <div class="encabezado_superior">
+        PISO SUPERIOR SEMICAMA
+    </div>
+    <div>
+        <div class="grupo1">
+            @foreach (var item in Model.Where(bt => bt.Butaca.NroButaca.Value < 45 && (bt.Butaca.Posicion=="C" || bt.Butaca.Posicion=="D") ).OrderBy(bt => bt.Butaca.NroButaca))
+            {
+                <div class="asiento" id="@(item.PersonaPasajero != null ? item.PersonaPasajero.PasajeroId.ToString() : "")">
+                    <span class="spnCodB">@item.Butaca.CodigoButaca </span>
+                    
+                    @if (item.PersonaPasajero != null)
+                    {
+                        <span class="spnB">@item.PersonaPasajero.Nombre.ToUpper() @item.PersonaPasajero.Apellido.ToUpper()</span>
+                    }
+                    
+                </div>
+            }                        
+        </div>
+        <div class="pasillo">
+            <div class="tv tv1">TV</div>
+            <div class="tv tv2">TV</div>
+            <div class="tv tv3">TV</div>
+            <div class="tv tv4">TV</div>
+        </div>
+        <div class="grupo2">
+             @{
+                    var ItemPasajero3 = Model.Where(bt => bt.Butaca.NroButaca == 3).First();
+                    var ItemPasajero4 = Model.Where(bt => bt.Butaca.NroButaca == 4).First();
+              }
+            <div class="asiento_parabrisa" id="@(ItemPasajero3 != null ? ItemPasajero3.PersonaPasajero.PasajeroId.ToString() : "")">
+              <span class="spnCodB">@ItemPasajero3.Butaca.CodigoButaca</span> 
+                
+                 @if (ItemPasajero3.PersonaPasajero != null)
+                 {
+                   <span class="spnB"> @ItemPasajero3.PersonaPasajero.Nombre.ToUpper() @ItemPasajero3.PersonaPasajero.Apellido.ToUpper()</span>
+                 }
+            </div>
+            <div class="asiento_parabrisa" id="@(ItemPasajero4 != null ? ItemPasajero3.PersonaPasajero.PasajeroId.ToString() : "")">
+                <span class="spnCodB"> @ItemPasajero4.Butaca.CodigoButaca</span>
+                
+                 @if (ItemPasajero4.PersonaPasajero != null)
+                 {
+                    <span class="spnB">@ItemPasajero4.PersonaPasajero.Nombre.ToUpper() @ItemPasajero4.PersonaPasajero.Apellido.ToUpper()</span>
+                 }
+            </div>     
+            
+            <div class="asiento_largo vacio" style="padding-top:66px">
+                <span>ESCALERA</span>
+            </div>
+            <div class="asiento_largo">
+                BAR
+            </div>
+            @foreach (var item in Model.Where(bt => bt.Butaca.NroButaca > 4 && bt.Butaca.NroButaca.Value < 47 && (bt.Butaca.Posicion == "A" || bt.Butaca.Posicion == "B")).OrderBy(bt => bt.Butaca.NroButaca))
+            {
+                <div class="asiento_invertido" id="@(item.PersonaPasajero != null ? item.PersonaPasajero.PasajeroId.ToString() : "")">
+                   <span class="spnCodB">@item.Butaca.CodigoButaca</span> 
+                   
+                     @if (item.PersonaPasajero != null)
+                    {
+                    <span class="spnB">@item.PersonaPasajero.Nombre.ToUpper() @item.PersonaPasajero.Apellido.ToUpper()</span>
+                     }
+                </div>
+            }
+            
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div class="encabezado_inferior">
+        PISO INFERIOR CAMA
+    </div>
+    <div>
+        <div class="grupo1">
+            <div class="asiento vacio">
+                <span>BAR</span>
+            </div>
+            <div class="asiento vacio">
+                <span>BAÑO</span>
+            </div>
+                        @foreach (var item in Model.Where(bt => bt.Butaca.NroButaca.Value > 46 && (bt.Butaca.Posicion == "C" || bt.Butaca.Posicion == "D")).OrderBy(bt => bt.Butaca.NroButaca))
+                        {
+                <div class="asiento" id="@(item.PersonaPasajero != null ? item.PersonaPasajero.PasajeroId.ToString() : "")">
+                    <span class="spnCodB">@item.Butaca.CodigoButaca</span>
+                    
+                     @if (item.PersonaPasajero != null)
+                    {
+                   <span class="spnB">@item.PersonaPasajero.Nombre.ToUpper() @item.PersonaPasajero.Apellido.ToUpper()</span>
+                     }
+                </div>
+                        }      
+        </div>
+        <div class="pasillo">
+            <div class="tv tv5">TV</div>
+            <div class="tv tv6">TV</div>
+        </div>
+        <div class="grupo2">
+            <div class="asiento_largo vacio">
+                <span>ESCALERA</span>
+            </div>
+                        @foreach (var item in Model.Where(bt => bt.Butaca.NroButaca.Value > 46 && (bt.Butaca.Posicion == "A" || bt.Butaca.Posicion == "B")).OrderBy(bt => bt.Butaca.NroButaca))
+                        {
+                    <div class="asiento_largo" id="@(item.PersonaPasajero != null ? item.PersonaPasajero.PasajeroId.ToString() : "")">
+                      <span class="spnCodB"> @item.Butaca.CodigoButaca</span> 
+                   
+                         @if (item.PersonaPasajero != null)
+                         {
+                            @item.PersonaPasajero.Nombre.ToUpper() @item.PersonaPasajero.Apellido.ToUpper()
+                         }
+                    </div>
+                        }      
+        </div>
+    </div>
+</div>`
+
+<style>
+    body{
+      -webkit-print-color-adjust:exact;
+    }
+    
+    #cole1{
+        width: 700px;
+        margin: auto
+    }
+    
+    .grupo1, .grupo2{
+        width: 44%;
+        
+    }
+    
+    .grupo1{
+        float: left;
+    }
+    
+    .grupo2{
+        float:right
+    }
+    
+    .pasillo{
+        width: 10%;
+        display: inline-block;
+        position: relative
+    }
+    
+    .asiento{
+        width: 149px;
+        display: inline-table;
+        border: 1px solid #666;
+        /*padding-top: 20px;
+        padding-left: 1%;*/
+        height:45px;
+        margin-bottom: 3px;
+        font-size:10pt;
+        padding-left:1px;
+    }
+    .asiento_parabrisa{
+        width: 144px;
+        display: inline-table;
+        border: 1px solid #666;
+        /*padding-top: 20px;
+        padding-left: 1%;*/
+        height:45px;
+        margin-bottom: 3px;
+        font-size:10pt;
+        float:right;
+        margin-left:7px;
+        padding-left:1px;
+    }
+    .asiento_invertido{
+        border: 1px solid #666;
+        display: inline-table;
+        float: right;
+        font-size: 10pt;
+        height: 46px;
+        margin-bottom: 3px;
+        margin-left: 7px;
+        width: 144px;
+        padding-left:1px;
+    }
+    
+    .asiento_largo{
+        width: 97%;
+        display: inline-table;
+        border: 1px solid #666;
+        /*padding-top: 20px;
+        padding-left: 1%;*/
+        height:45px;
+        margin-bottom: 3px;
+        font-size:10pt;
+        float:right;
+        padding-left:1px;
+    }
+    
+    .vacio{
+        border: 1px solid transparent;
+        color: transparent
+    }
+    
+    .vacio span{
+        color: #000 !important;
+        font-weight: bold
+    }
+    .encabezado_superior, .encabezado_inferior{
+        background: red none repeat scroll 0 0;
+        color: white;
+        font-size: 10pt;
+        font-weight: bold;
+        margin: 0 0 5px;
+        padding: 5px 0;
+        text-align: center;
+        width: 100%;
+        
+    }
+    
+    .clear{
+        clear: both
+    }
+    
+    .tv{
+        width: 50%;
+        height: 20px;
+        margin: auto;
+        border: 1px solid #000;
+        text-align: center;
+        background: yellow
+    }
+    
+    .tv1{
+        position: absolute;
+        top: 0;
+        left: 20px;
+    }
+    
+    .tv2{
+        position: absolute;
+        top: 172px;
+        left: 20px;
+    }
+    
+    .tv3{
+        position: absolute;
+        top: 300px;
+        left: 20px;
+    }
+    
+    .tv4{
+        position: absolute;
+        top: 430px;
+        left: 20px;
+    }
+    
+    .tv5{
+        position: absolute;
+        top: 20px;
+        left: 20px;
+    }
+    
+    .tv6{
+        position: absolute;
+        top: 130px;
+        left: 20px;
+    }
+    .spnB {
+        font-size: 9pt;
+    }
+    .spnCodB {
+        font-weight: bold;
+        padding-right: 5px;
+    }
+    
+    div.asiento.Tutor, div.asiento_parabrisa.Tutor, div.asiento_invertido.Tutor, div.asiento_largo.Tutor  {
+        background-image: url(/Images/baby_negro.png);
+        background-position: bottom right;
+        background-repeat: no-repeat;
+        background-size: 19px auto;
+    }
+
+   
+</style>
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        var sViajeId = "@ViewBag.ViajeID";
+        $.ajax({
+            url: "/Reserva/GetListTutoresByViajeID",
+            data: { sViajeId: sViajeId},
+            dataType: "json",
+            success: function (data) {
+                var list = data.Tutores;
+                $(".asiento").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0) {
+                        $(this).addClass("Tutor");
+                    }
+                });
+                $(".asiento_parabrisa").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0) {
+                        $(this).addClass("Tutor");
+                    }
+                });
+                $(".asiento_invertido").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0) {
+                        $(this).addClass("Tutor");
+                    }
+                });
+                $(".asiento_largo").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0 ) {
+                        $(this).addClass("Tutor");
+                    }
+                });
+            }
+        });
+    });
+
+    
+</script>

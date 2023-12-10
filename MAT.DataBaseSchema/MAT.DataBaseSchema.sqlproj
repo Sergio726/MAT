@@ -1,0 +1,498 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>MAT.DataBaseSchema</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{f1b53dd3-3f5d-4d4f-87a5-b070c182ac94}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql110DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>MAT.DataBaseSchema</RootNamespace>
+    <AssemblyName>MAT.DataBaseSchema</AssemblyName>
+    <ModelCollation>3082,CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <GenerateCreateScript>True</GenerateCreateScript>
+    <DefaultCollation>Modern_Spanish_CI_AS</DefaultCollation>
+    <Containment>None</Containment>
+    <IsNestedTriggersOn>True</IsNestedTriggersOn>
+    <IsTransformNoiseWordsOn>False</IsTransformNoiseWordsOn>
+    <TwoDigitYearCutoff>2049</TwoDigitYearCutoff>
+    <NonTransactedFileStreamAccess>OFF</NonTransactedFileStreamAccess>
+    <TargetRecoveryTimePeriod>0</TargetRecoveryTimePeriod>
+    <TargetRecoveryTimeUnit>SECONDS</TargetRecoveryTimeUnit>
+    <IsChangeTrackingOn>False</IsChangeTrackingOn>
+    <IsChangeTrackingAutoCleanupOn>True</IsChangeTrackingAutoCleanupOn>
+    <ChangeTrackingRetentionPeriod>2</ChangeTrackingRetentionPeriod>
+    <ChangeTrackingRetentionUnit>Days</ChangeTrackingRetentionUnit>
+    <IsEncryptionOn>False</IsEncryptionOn>
+    <IsBrokerPriorityHonored>False</IsBrokerPriorityHonored>
+    <Trustworthy>False</Trustworthy>
+    <AutoUpdateStatisticsAsynchronously>False</AutoUpdateStatisticsAsynchronously>
+    <PageVerify>CHECKSUM</PageVerify>
+    <ServiceBrokerOption>DisableBroker</ServiceBrokerOption>
+    <DateCorrelationOptimizationOn>False</DateCorrelationOptimizationOn>
+    <Parameterization>SIMPLE</Parameterization>
+    <AllowSnapshotIsolation>False</AllowSnapshotIsolation>
+    <ReadCommittedSnapshot>False</ReadCommittedSnapshot>
+    <VardecimalStorageFormatOn>True</VardecimalStorageFormatOn>
+    <SupplementalLoggingOn>False</SupplementalLoggingOn>
+    <CompatibilityMode>110</CompatibilityMode>
+    <AnsiNullDefault>False</AnsiNullDefault>
+    <AnsiNulls>False</AnsiNulls>
+    <AnsiPadding>False</AnsiPadding>
+    <AnsiWarnings>False</AnsiWarnings>
+    <ArithAbort>False</ArithAbort>
+    <ConcatNullYieldsNull>False</ConcatNullYieldsNull>
+    <QuotedIdentifier>False</QuotedIdentifier>
+    <NumericRoundAbort>False</NumericRoundAbort>
+    <RecursiveTriggersEnabled>False</RecursiveTriggersEnabled>
+    <DatabaseChaining>False</DatabaseChaining>
+    <DatabaseState>ONLINE</DatabaseState>
+    <CloseCursorOnCommitEnabled>False</CloseCursorOnCommitEnabled>
+    <DefaultCursor>GLOBAL</DefaultCursor>
+    <AutoClose>False</AutoClose>
+    <AutoCreateStatistics>True</AutoCreateStatistics>
+    <AutoShrink>False</AutoShrink>
+    <AutoUpdateStatistics>True</AutoUpdateStatistics>
+    <TornPageDetection>False</TornPageDetection>
+    <DatabaseAccess>MULTI_USER</DatabaseAccess>
+    <Recovery>FULL</Recovery>
+    <EnableFullTextSearch>True</EnableFullTextSearch>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- VS10 without SP1 will not have VisualStudioVersion set, so do that here -->
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="Security\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Cliente.sql" />
+    <Build Include="dbo\Tables\Vendedor.sql" />
+    <Build Include="dbo\Tables\Provincia.sql" />
+    <Build Include="dbo\Tables\Departamento.sql" />
+    <Build Include="dbo\Tables\Localidad.sql" />
+    <Build Include="dbo\Tables\Butaca.sql" />
+    <Build Include="dbo\Tables\CuentaCorriente.sql" />
+    <Build Include="dbo\Tables\Factura.sql" />
+    <Build Include="dbo\Tables\Habitacion.sql" />
+    <Build Include="dbo\Tables\MovimientoCuenta.sql" />
+    <Build Include="dbo\Tables\Pago.sql" />
+    <Build Include="dbo\Tables\Paquete.sql" />
+    <Build Include="dbo\Tables\PaqueteServicio.sql" />
+    <Build Include="dbo\Tables\Pasaje.sql" />
+    <Build Include="dbo\Tables\Pasajero.sql" />
+    <Build Include="dbo\Tables\Servicio.sql" />
+    <Build Include="dbo\Tables\Transporte.sql" />
+    <Build Include="dbo\Tables\Viaje.sql" />
+    <Build Include="dbo\Tables\Hotel.sql" />
+    <Build Include="dbo\Tables\Persona.sql" />
+    <Build Include="dbo\Tables\Proveedor.sql" />
+    <Build Include="dbo\Tables\Pais.sql" />
+    <Build Include="dbo\Views\PersonaVendedor.sql" />
+    <Build Include="dbo\Views\PersonaProveedor.sql" />
+    <Build Include="dbo\Views\PersonaCliente.sql" />
+    <Build Include="dbo\Views\PersonaPasajero.sql" />
+    <Build Include="dbo\Views\Reserva.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_GetByHotelId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_GetByPasajeroId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_GetByHabitacionId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReserva_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_GetByProveedorId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_GetByTipoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByButacaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_GetByPaqueteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByFacturaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_GetByViajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByHabitacionId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByPasajeroId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByViajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByPasajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_GetByHotelId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaCliente_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaCliente_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_GetByVendedorId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaPasajero_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaPasajero_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaProveedor_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaProveedor_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaVendedor_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaVendedor_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_GetByTransporteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetByHotelId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetByProveedorId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetByTransporteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetByServicioId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByTipoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_GetByDestinoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_GetByPaqueteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetByPaqueteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetByServicioId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetByPaqueteServicioId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetByTipoPago.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoButaca_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoButaca_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoButaca_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_GetByPaisId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoButaca_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoButaca_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoButaca_GetByTipoButacaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoButaca_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetByPagoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoCliente_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoCliente_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoCliente_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_GetByClienteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoCliente_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoCliente_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoCliente_GetByDescripcion.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoCliente_GetByTipoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoCliente_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPasaje_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPasaje_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPasaje_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPasaje_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDestino_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPasaje_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDestino_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPasaje_GetByTipoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDestino_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPasaje_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDestino_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDestino_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDestino_GetByDestinoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDestino_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuentaCorriente_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuentaCorriente_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuentaCorriente_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuentaCorriente_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuentaCorriente_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPago_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuentaCorriente_GetByClienteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPago_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuentaCorriente_GetByCuentaCorrienteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPago_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuentaCorriente_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPago_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPago_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPago_GetByTipoPagoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTipoPago_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetByFacturaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_GetByPersonaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByCuentaCorrienteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByFacturaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByPagoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_GetByTransporteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByMovimientoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_GetByButacaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReserva_Get_List.sql" />
+    <Build Include="dbo\Views\DatosPaquete.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureDatosPaquete_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetByClienteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_GetByLocalidadId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetByVendedorId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetByClienteId.sql" />
+    <Build Include="dbo\Views\PasajeroViaje.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeroViaje_GetByViajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeroViaje_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeroViaje_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetByClienteId.sql" />
+    <Build Include="dbo\Tables\Voucher.sql" />
+    <Build Include="dbo\Tables\ReservaHabitacion.sql" />
+    <Build Include="dbo\Tables\Precio.sql" />
+    <Build Include="dbo\Tables\PasajeAdicional.sql" />
+    <Build Include="dbo\Tables\PaquetePrecio.sql" />
+    <Build Include="dbo\Tables\PaqueteExcursion.sql" />
+    <Build Include="dbo\Tables\PaqueteAdicional.sql" />
+    <Build Include="dbo\Tables\Nota.sql" />
+    <Build Include="dbo\Tables\Excursion.sql" />
+    <Build Include="dbo\Tables\Cuenta.sql" />
+    <Build Include="dbo\Tables\Adicional.sql" />
+    <Build Include="dbo\Views\vPersona.sql" />
+    <Build Include="dbo\Views\vLocalidad.sql" />
+    <Build Include="dbo\Views\vConsultaReservaHabitacion.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurevPersona_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurevPersona_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_GetByVoucherId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_GetByVendedorId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurevLocalidad_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurevLocalidad_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_GetByBusId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurevConsultaReservaHabitacion_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurevConsultaReservaHabitacion_Get.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetByReservaHabitacionId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetByPasajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetByHabitacionId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_GetByPrecioId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_GetByPasajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_GetByPasajeAdicionalId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_GetByAdicionalId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByVoucherId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByPrecioId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_GetByPrecioId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_GetByPaquetePrecioId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_GetByPaqueteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_GetByPaqueteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_GetByPaqueteExcursionId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_GetByExcursionId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_GetByPaqueteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_GetByPaqueteAdicionalId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_GetByAdicionalId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetByVendedorId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetByCuentaCorrienteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_GetByVendedorId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_GetByNotaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_GetByClienteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByNotaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByCuentaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_GetByProveedorId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_GetByExcursionId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_GetByCuentaId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_GetByClienteId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_GetPaged.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_GetByAdicionalId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Get_List.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Find.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Delete.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SqlSchemaCompare1.scmp" />
+  </ItemGroup>
+</Project>

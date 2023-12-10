@@ -1,0 +1,129 @@
+﻿@model MAT.Entities.Hotel
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Detalles - Hotel</h2>
+
+<div class="form">
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.HotelId)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.HotelId)
+    </div>
+        
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Nombre)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Nombre)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Direccion)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Direccion)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Cp)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Cp)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Telefono)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Telefono)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Email)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Email)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Contacto)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Contacto)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayName("Cantidad de Habitaciones")
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.CantidadHabitaciones)
+    </div>
+    
+    <div class="form-label">
+         @Html.DisplayName("Categoria")
+    </div>
+    <div class="form-field">
+        @Html.Label(((eCategoriaHotel)Model.Categoria).ToString())
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Child1)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Child1)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Child2)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Child2)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.ChildHabitacion)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.ChildHabitacion)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.CheckIn)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.CheckIn)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.CheckOut)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.CheckOut)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.GoogleMapHtml)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.GoogleMapHtml)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayName("Localidad")
+    </div>
+    <div class="form-field">
+        @Html.Label(Helper.ToSelectItem("Localidad",Model.LocalidadId.ToString()))
+    </div>
+    <p>
+        @Html.ActionLink("Editar", "Edit", new { id=Model.HotelId },new {@class = "btn btn-small btn-inverse view-all hidden-phone" })
+        @Html.ActionLink("< Volver a la lista", "Index",null ,new {@class = "btn btn-small btn-inverse view-all hidden-phone" })
+    </p>
+</div>
+    
+

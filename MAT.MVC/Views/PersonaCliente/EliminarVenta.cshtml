@@ -1,0 +1,18 @@
+﻿@model MAT.MVC.Models.EliminarVentaModel
+
+<div class="form-modal">
+
+    <p>Confirme la baja de la venta ingresando el código asignado por el administrador de sistema. Luego presione el botón Aceptar.</p> 
+    <div class="form-label">Código de Seguridad</div>
+    <div class="form-field">
+        <input type="password" name="Codigo" id="Codigo" />
+    </div>
+    <div class="hidden">
+        <input type="hidden" id="FacturaId" name="FacturaId" value="@Model.FacturaId" />
+        <input type="hidden" id="ClienteId" name="ClienteId" value="@Model.ClienteId" />
+    </div>
+
+    <p>
+        <input type="button" name="btnEliminarVenta" id="btnEliminarVenta" title="Aceptar" value="Aceptar" class="btn btn-small btn-inverse" />
+    </p>
+</div>

@@ -1,0 +1,100 @@
+﻿@model IEnumerable<MAT.Entities.PasajeroViaje>
+
+@using MAT.Utilities
+@using MAT.Enums
+@using MAT.Entities
+@using MAT.Services
+@{
+    ViewBag.Title = "Lista de Viajes";
+    int numeracion = 1;
+}
+<link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
+<link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<head>
+    <title>LISTA DE PASAJEROS</title>
+</head>
+<div id="divContent" class="Content">
+  @*  <div class="logo-voucher">
+                <img alt="" src="/Images/marco_antonio_back.jpg" width="90" /></div>*@
+    <div id="divEncabezadoViaje" class="EncabezadoViaje headMAT">
+        <div class="custom_padding_4">
+            @foreach (var item in Model)
+            {
+                ViajeService VS = new ViajeService();
+                Guid ViajeId = new Guid(item.ViajeId.ToString());
+                Viaje V = VS.GetByViajeId(ViajeId);
+
+                PaqueteService PS = new PaqueteService();
+                Paquete P = PS.GetByPaqueteId(V.PaqueteId.Value);
+
+                @Html.Label("  " + P.Descripcion.ToString());
+                <br />
+            
+                @Html.Label("SALIDA: " + V.FechaSalida.Value.ToShortDateString());
+                @Html.Label(" - REGRESO: " + V.FechaRegreso.Value.ToShortDateString());
+
+                // @Html.Label(" REGRESO: " + V.FECHA.Value.ToShortDateString());
+                break;
+            }
+          </div>
+    </div>
+    <div id="tablaPasajeros" class="backMAT">
+        <table style="width: 100%;" class="tabla">
+            <thead>
+                <tr>
+                    <td class="celda column_nro">N° <input type="checkbox" checked class="chkIsPrint" column="column_nro" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
+                    <td class="celda column_apellido_nombre">APELLIDO <input type="checkbox" checked class="chkIsPrint" column="column_apellido_nombre" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
+                    <td class="celda column_nombre">NOMBRE <input type="checkbox" checked class="chkIsPrint" column="column_apellido_nombre" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
+                    <td class="celda column_tipo_doc">TIPO Y N° DOC <input type="checkbox" checked class="chkIsPrint" column="column_tipo_doc" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
+                    <td class="celda column_fecha_nac">FECHA NAC. <input type="checkbox" checked class="chkIsPrint" column="column_fecha_nac" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
+                    <td class="celda column_telefono">TELEFONO <input type="checkbox" checked class="chkIsPrint" column="column_telefono" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
+                </tr>
+
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                { 
+                    <tr>
+                    <td class="celda column_nro">@numeracion</td>
+                    <td class="celda column_apellido_nombre">@item.Apellido.ToString().ToUpper() </td>
+                    <td class="celda column_nombre">@item.Nombre.ToString().ToUpper()</td>
+                    <td class="celda column_tipo_doc">@item.NroDocumento.ToString().Replace(".","")</td>
+                    <td class="celda column_fecha_nac">
+                        @if (item.FechaNacimiento != null)
+                        {
+                            @Html.Label(item.FechaNacimiento.Value.ToShortDateString())    
+                        }
+                    </td>
+                    <td  class="celda column_telefono">@item.Telefono.ToString()</td>
+                </tr>
+                    numeracion += 1;
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="floatPrint HideToPrint" style=" width: 80px;height: 35px;">
+        <div class="float_iconPrint" title="Imprimir Listado" onclick="javascript:printListado();"></div>
+</div>
+<script type="text/javascript">
+    function printListado() {
+        $("input[type='checkbox']").each(function () {
+            var column = $(this).attr("column");
+            if ($(this).is(":checked")) {
+                $("." + column).removeClass("HideToPrint");
+
+            }
+            else {
+                $("." + column).addClass("HideToPrint");
+            }
+        });
+
+        window.print();
+    }
+</script>

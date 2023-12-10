@@ -1,0 +1,271 @@
+﻿@using MAT.MVC.Models
+@using MAT.Enums
+@using MAT.Utilities
+@model ReservaModel
+
+<script>
+    var ViajeMonedaTipo = parent.$("#hdnViajeMonedaTipo").val()
+
+    $(document).ready(function () {
+        $('.money').mask("#.##0,00", { reverse: true });
+        
+        if (ViajeMonedaTipo != "1") {
+            $("#divMontoTotal1").hide();
+            $("#divMontoTotal2").removeClass("hide");
+            loadCotizador();
+        }
+        
+    });
+    $(function () {
+        $("#txt-busqueda-cliente").autocomplete({
+            minLength: 3,
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Reserva/QuickClienteSearch",
+                    data: { query: request.term },
+                    success: function (data) {
+                        response($.map(data,
+                                    function (item) {
+                                        return {
+                                            label: item.Nombre + " " + item.Apellido + " | DNI " + item.NroDocumento,
+                                            value: item.Nombre + " " + item.Apellido,
+                                            id: item.ClienteId
+                                        }
+                                    }));
+                    }
+                })
+
+            },
+            select: function (event, ul) {
+                $("#Cliente").val(ul.item.id);
+            }
+        });
+    });
+
+    $("input[name='comprobante']").click(function () {
+        if ($(this).val() == "Recibo") {
+            $("#txtRecibo").attr("disabled", false);
+            $("#txtnroFactura").attr("disabled", true);
+            $("#txtnroFactura").val("");
+        }
+        else {
+            $("#txtRecibo").attr("disabled", true);
+            $("#txtRecibo").val("");
+            $("#txtnroFactura").attr("disabled", false);
+        }
+    });
+
+    
+
+    function loadCotizador() {
+        $("#divContentCotizador").removeClass("hide");
+        $.ajax({
+            url: "/Herramientas/Cotizador",
+            data: { "sMode": "1" },
+            success: function (data) {
+                $("#divContentCotizador").html(data);
+            }
+        })
+    }
+
+    function changeMonedaTipo(o) {
+        var MonedaTipo = $(o).val();
+        if ($("#divContentCotizador").css("display") == "none") {
+            if (MonedaTipo != "1") {
+                loadCotizador();
+            }
+        }
+        
+    }
+  
+</script>
+<div class="custom_display_box custom_padding_top_10 custom_background_dialog">
+
+
+    <div class="custom_width_60percent fromReservaPasaje ">
+        
+        <div class="form-label"><b>Pasajes</b></div>
+        <div class="form-field"><b>@Model.Pasajes.Count</b></div>
+        <br />
+        <br />
+        <div class="form-label">
+            Cliente
+        </div>
+        <div class="form-field">
+            <input type="text" id="txt-busqueda-cliente" placeholder="Ingrese Nombre o DNI" />
+            <input type="hidden" id="Cliente" name="Cliente" />
+        </div>
+        <div class="form-label">Condición de Venta</div>
+        <div class="form-field">
+            <div class="form-radio">
+                <input type="radio" name="condicion" value="Efectivo" title="Efectivo" checked="checked" /></div>
+            <div class="label">Efectivo </div><br />
+            <div class="form-radio">
+                <input type="radio" name="condicion" value="Cuenta Corriente" title="Cuenta Corriente" /></div>
+            <div class="label">Cuenta Corriente </div>
+
+        </div>
+        <div id="efectivo">
+            <div id="label-formapago" class="form-label">Forma de Pago</div>
+            <div id="field-formapago" class="form-field">
+                @Html.DropDownListFor(m => m.Pago.TipoPago, eFormaPago.Credito.ToSelectList())
+            </div>
+
+            <div id="transaccion-label" class="form-label">N° de Transacción</div>
+            <div id="transaccion-field" class="form-field">
+                <input type="text" name="TransaccionId" id="TransaccionId" />
+            </div>
+
+            <div id="total-credito-label" class="form-label">Crédito Disponible $</div>
+            <div id="total-credito-field" class="form-field">
+                <input type="text" name="total-credito" id="total-credito" disabled />
+            </div>
+
+            <!--Moneda********-->
+            <div class="form-label">
+                Moneda
+            </div>
+            <div class="form-field">
+                <select name="MonedaTipo" id="sMonedaTipo" onchange="changeMonedaTipo(this);">
+                    @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
+                    {
+                        <option value="@item.Id" @(item.Id == 1 ? "selected" : "") >@item.Codigo</option>
+                    }
+                </select>
+            </div>
+            <div class="form-label">
+                 Monto a abonar $
+            </div>
+            <div class="form-field">
+                <input type="text" name="MontoPago" class="money" id="txtPago" />
+            </div>
+            
+       
+
+            <div class="form-label">
+               N° de Recibo<input type="radio" value="Recibo" name="comprobante" checked/>
+            </div>
+            <div class="form-field">
+                <input type="text" name="Recibo" id="txtRecibo" />
+            </div>
+            <div class="form-label">
+                N° de Factura <input type="radio" value="Factura"  name="comprobante" />
+            </div>
+            <div class="form-field">
+                <input type="text" name="nroFactura" id="txtnroFactura" disabled="disabled"/>
+            </div>
+
+            <div class="form-label">
+                <input type="checkbox" name="chkDescuento" id="chkDescuento" />
+                Descuento a aplicar $
+            </div>
+            <div class="form-field">
+                <input type="text" name="Descuento" id="txtDescuento" disabled="disabled" class="money"/>
+                <input type="text" name="detalledescuento" id="detalledescuento" disabled="disabled" placeholder="DETALLE DEL DESCUENTO"/>
+            </div>
+
+            <div class="form-label">
+                Observaciones
+            </div>
+            <div class="form-field">
+                <textarea name="Observaciones" id="Observaciones"></textarea>
+            </div>
+        </div>
+        <div class="custom_margin_left_10">
+            <p>
+                <input type="button" name="btnReservarPasaje" id="btnReservarPasaje" title="Reservar" value="Aceptar" class="btn btn-small btn-inverse" />
+                <input type="button" name="btnCancelarReserva" id="btnCancelarReserva" title="Cancelar" value="Cancelar" class="btn btn-small btn-inverse" />
+            </p>
+        </div>
+        
+    </div>
+
+    <div class="custom_width_40percent fromReservaPasaje">
+        <div id="divMontoTotal1">
+             <div class="form-label "><b>Monto Total</b></div>
+            <div class="form-field custom_font_size_18"><b>@string.Format("{0:C}", ViewBag.MontoFactura)</b></div>
+        </div>
+               
+        <div id="divMontoTotal2" class="hide">
+            <div class="custom_font_size_16 custom_margin_left_10"><b>Total @string.Format("{0:C}", ViewBag.MontoFactura) (USD)</b></div>
+        </div>
+        <input type="hidden" id="hdnMontoFactura" value="@ViewBag.MontoFactura" />
+        
+        <div id="divContentCotizador" class="hide">
+            <div class="iconLoading"></div>
+        </div>
+        @*@Html.Partial("~/Views/Herramientas/Cotizador.cshtml")*@
+        @*<div  class="custom_margin_5" >
+            <fieldset class="customborder">
+                <legend>Cotizacion USD tnoperador.tur.ar</legend>
+                
+                <!--Cotizacion por operador TN-->
+                <div class="custom_margin_bottom_10">
+                    <input type="radio" name="rCotizacion" value="TN" checked class="custom_vertical_align_bottom" onclick="javascript: checkTN();" />
+                    <span>CAMBIO 1 U$D = </span><span id="sCotizacionTN" class="custom_font_weigh_bold custom_cursor_progress">Conectando...</span>
+                    <br /><br />
+                    <a class="link custom_margin_top_10" href="http://tnoperador.tur.ar/tnoperador/historial-de-cambio/" target="_blank">(Ver Historial en TN)</a>
+                </div>
+                <div class="custom_margin_bottom_15">
+                    <input type="radio" name="rCotizacion" value="personalizado" onclick="javascript: unCheckTN();" />
+                    <span id="sCotizacionManual" class="custom_color_disabled">Cotizacion Manual</span>
+                    <input type="text" id="txtCotizacion" class="money form-field custom_width_70" disabled="disabled"/>
+                </div>
+                <div class="form-label custom_line_height_28">ARS</div>
+                <div class="form-field"><input type="text" id="MontoInt" class="money" /></div>
+                <div class="form-label">
+                    <select name="MonedaTipo" class="custom_width_65">
+                    @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
+                    {
+                        <option value="@item.Id" @(item.Id == 1 ? "selected" : "") >@item.Codigo</option>
+                    }
+                </select>
+                </div>
+                <div class="form-field"><input type="text" name="Descuento" id="MontoOut" class="money"/></div>
+                <div class="form-label"></div>
+                <div class="custom_float_right">
+                    <input type="button" onclick="" value="Calcular" class="btn btn-small btn-inverse">
+                    <input type="button" onclick="" value="Cargar Monto" data-toggle="tooltip" title="Tomar el valor el valor calculado como monto a abonar." class="btn btn-small btn-inverse">
+                </div>
+                
+
+            </fieldset>
+            <input type="hidden" id="hdnPersonID" name="PersonaID">
+            <input type="hidden" id="hdnViajeID" name="ViajeID">
+        </div>*@
+    </div>
+</div>
+<input type="hidden" name="jsonobject" id="jsonobject" value="@ViewBag.Pasajes" />
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#total-credito-label").css("display", "none");
+        $("#total-credito-field").css("display", "none");
+        var condicion = $("input[name=condicion]:checked").val();
+        if (condicion == "Efectivo") {
+            $("#efectivo").css("display", "inline-block");
+        } else {
+            $("#efectivo").hide();
+        }
+
+        var tipopago = parseInt($("select[name='Pago.TipoPago']").val());
+        //TIPOS DE PAGO CREDITO, DEBITO Y TRANSFERENCIA
+        if (tipopago == 2 || tipopago == 3 || tipopago == 4 || tipopago==5 || tipopago==6) {
+            $("#transaccion-label").css("display", "inline-block");
+            $("#transaccion-field").css("display", "inline-block");
+        }
+            //TIPO DE PAGO EN EFECTIVO
+        else if (tipopago == 1) {
+            $("#transaccion-label").hide();
+            $("#transaccion-field").hide();
+        }
+
+
+    });
+
+   
+</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

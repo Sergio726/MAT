@@ -1,0 +1,340 @@
+﻿@model MAT.MVC.Models.ViajeModel
+@using MAT.Utilities
+@using MAT.MVC.Models
+@{
+    ViewBag.Title = "Editar Viaje";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/magicsearch/jquery.magicsearch.css" rel="stylesheet" />
+<link href="~/Content/magicsearch/normalize.css" rel="stylesheet" />
+
+
+<h2 class="title">Editar - Viaje</h2>
+
+
+<form id="formViaje">
+    <input type="hidden" id="ViajeID" name="ViajeID" value="@Model.ViajeID"/>
+    <div class="form">
+
+        <div class="form-label">
+            <label>Paquete <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+     
+            <input id="DDPaqueteId" placeholder="BUSCAR PAQUETE" type="text" value="@Model.PaqueteNombre" title="ESCRIBA PARA BUSCAR UN PAQUETE" />
+            <input type="hidden" id="PaqueteId" name="PaqueteId" value="@Model.PaqueteID"/>
+        </div>
+        <div class="form-label">
+            <label>Transporte <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <select id="BusID" name="BusID">
+                @foreach (TransporteModel Transporte in TransporteMethod.GetListTransporte())
+                {
+                    <option value="@Transporte.TransporteID" @(Model.BusID == Transporte.TransporteID ? "selected" : "") >@(Transporte.NroCoche +" MATRICULA: " + Transporte.Matricula)</option>
+                }
+            </select>
+        </div>
+        <div class="form-label">
+            <label>Descripción <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input class="valtxt" type="text" id="Descripcion" name="Descripcion" value="@Model.Descripcion" />
+        </div>
+        <div class="form-label">
+            <label>Origen <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input class="valtxt" type="text" id="Origen" name="Origen" value="@Model.Origen" />
+        </div>
+
+        <div class="form-label">
+            <label>Fecha de Salida <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input class="valtxt date" type="text" id="FechaSalida" name="FechaSalida" class="date" value="@Model.FechaSalida" />
+        </div>
+
+        <div class="form-label">
+            <label>Hora de Salida <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input type="text" id="HoraSalida" name="HoraSalida" class="time" value="@Model.HoraSalida" />
+        </div>
+
+        <div class="form-label">
+            <label>Fecha de Regreso <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input class="valtxt date" type="text" id="FechaRegreso" name="FechaRegreso" class="date" value="@Model.FechaRegreso" />
+        </div>
+
+        <div class="form-label">
+            <label>Hora de Regreso <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input type="text" id="HoraRegreso" name="HoraRegreso" class="time" value="@Model.HoraRegreso"/>
+        </div>
+
+        <div class="form-label">
+            <label title="Indicar cuando minitos antes de la salida del viaje es la concentración">Tiempo de Concentración en Minutos<span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input type="number" id="TiempoConsentracion" name="TiempoConsentracion" value="@Model.TiempoConsentracion"/>
+        </div>
+
+        <div class="form-label">
+            <label>Pais de Origen <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input class="valtxt" type="text" id="PaisOrigen" name="PaisOrigen" value="@Model.PaisOrigen" />
+        </div>
+
+        <div class="form-label">
+            <label>Pais de Destino <span class="required">*</span></label>
+        </div>
+        <div class="form-field">
+            <input class="valtxt" type="text" id="PaisDestino" name="PaisDestino" value="@Model.PaisDestino" />
+        </div>
+
+        <div class="form-label">
+            <label>Paso</label>
+        </div>
+        <div class="form-field">
+            <input type="text" id="Paso" name="Paso" value="@Model.Paso" />
+        </div>
+
+        <div class="form-label">
+            <label>Medio</label>
+        </div>
+        <div class="form-field">
+            <select id="Medio" name="Medio">
+                <option value="AEREO" @(Model.Medio == "AEREO" ? "selected" : "")>AEREO</option>
+                <option value="TERRESTRE" @(Model.Medio == "TERRESTRE" ? "selected" : "")>TERRESTRE</option>
+            </select>
+        </div>
+        <div class="form-label">
+            <label>Precio Semicama</label>
+        </div>
+        <div class="form-field">
+            <input type="number" id="PrecioSemicama" name="PrecioSemicama"  value="@Model.PrecioSemicama"/>
+        </div>
+        <div class="form-label">
+            <label>Precio Cama</label>
+        </div>
+        <div class="form-field">
+            <input type="number" id="PrecioCama" name="PrecioCama" value="@Model.PrecioCama" />
+        </div>
+        <div class="form-label">
+            <label>Precio Promocional</label>
+        </div>
+        <div class="form-field">
+            <input type="number" id="PrecioPromocional" name="PrecioPromocional" value="@Model.PrecioPromocional"/>
+        </div>
+        <div class="form-label">
+            <label>Vencimiento de Promoción</label>
+        </div>
+        <div class="form-field">
+            <input type="text" class="date" id="FechaPromocion" name="FechaPromocion" value="@Model.FechaPromocion" />
+        </div>
+        <div class="form-label">
+            <label>Numero de Dias</label>
+        </div>
+        <div class="form-field">
+            <input type="number" id="nDias" name="nDias" value="@Model.nDias" />
+        </div>
+        <div class="form-label">
+            <label>Numero de Noches</label>
+        </div>
+        <div class="form-field">
+            <input type="number" id="nNoches" name="nNoches" value="@Model.nNoches" />
+        </div>
+        <div class="form-label">
+            <label>Observ. del Viaje</label>
+        </div>
+        <div class="form-field">
+            <input type="text" id="Observaciones" name="Observaciones" value="@Model.Observaciones" title="Agregar observacines. Use la coma (,) para separar los items" />
+        </div>
+        <input type="hidden" class="field-id" value="@Model.ViajeID" />
+        <p>
+            <a id="a_editar_viaje" style="display:none" href="/Viaje/Edit/?sAction=edit&sViajeID=@Model.ViajeID" class="btn btn-small btn-inverse">Editar</a>
+            <input type="button" value="Guardar" id="btn_guardar_viaje" class="btn btn-small btn-inverse" onclick="javascript: UpdateForm();" />
+            @Html.ActionLink("Volver a Lista de Viajes", "Index", null, new { @class = "btn btn-small btn-inverse" })
+        </p>
+    </div>
+
+</form>
+
+<script src="~/Scripts/jquery.magicsearch.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("input[type='text']").keypress(function () {
+            $(this).css("background-color", "#fff");
+        });
+        $("#PaqueteId").change(function () {
+            $(this).css("background-color", "#fff");
+        });
+        $(".date").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '-100:+2'
+        });
+        $("input[class='time']").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+                
+        
+        
+        if ("@Model.PaqueteID" == "") {
+            var dataSource = @Html.Raw(ViewBag.jListPaquete);
+            $('#DDPaqueteId').magicsearch({
+                dataSource: dataSource,
+                fields: ['Descripcion'],
+                id: 'PaqueteID',
+                format: '%Descripcion%',
+                dropdownBtn: true
+
+            });
+        }
+        
+
+        switch ("@ViewBag.Action") {
+            case "detail":
+                $("input[type='text']").attr("disabled", "disabled");
+                $("input[type='text']").css("background-color", "transparent");
+                $("input[type='number']").attr("disabled", "disabled");
+                $("input[type='number']").css("background-color", "transparent");
+                $("#PaqueteId").attr("disabled", "disabled");
+                $("#PaqueteId").css("background-color", "transparent");
+                $("#Medio").attr("disabled", "disabled");
+                $("#Medio").css("background-color", "transparent");
+                $("#BusID").attr("disabled", "disabled");
+                $("#BusID").css("background-color", "transparent");
+                $("input").css("border", "none")
+                $("#btn_guardar_viaje").hide();
+                $(".required").hide();
+                $("#a_editar_viaje").show();
+                break;
+
+            case "edit":
+                var dataSource = @Html.Raw(ViewBag.jListPaquete);
+                $('#DDPaqueteId').magicsearch({
+                    dataSource: dataSource,
+                    fields: ['Descripcion'],
+                    id: 'PaqueteID',
+                    format: '%Descripcion%',
+                    dropdownBtn: true
+
+                });
+                $("#DDPaqueteId").attr("data-id","@Model.PaqueteID");
+                $("#DDPaqueteId").val("@Model.PaqueteNombre");
+                $("#PaqueteId").val("@Model.PaqueteID");
+             
+                break;
+            case "new":
+                var dataSource = @Html.Raw(ViewBag.jListPaquete);
+                $('#DDPaqueteId').magicsearch({
+                    dataSource: dataSource,
+                    fields: ['Descripcion'],
+                    id: 'PaqueteID',
+                    format: '%Descripcion%',
+                    dropdownBtn: true
+
+                });
+            break;
+
+        }
+        
+    });
+
+    function valForm() {
+        
+        var bResult = true;
+        $.each($(".valtxt"), function (i, l) {
+            if ($(this).val() == "") {
+                $(this).css("background-color", "#E83A61");
+                bResult = false;
+            }
+        });
+
+        var iHora = 0;
+        $.each($(".time"), function (i, l) {
+            if (!validarHora($(this).val())) {
+                $(this).css("background-color", "#E83A61");
+                iHora = iHora + 1;
+                bResult = false;
+            }
+        });
+
+        if ($("#PrecioPromocional").val() > 0) {
+            if ($("#FechaPromocion").val() == "")
+            {
+                $("#FechaPromocion").css("background-color", "#E83A61");
+                bResult = false;
+            }
+        }
+
+        //if ($("#PaqueteId").val() == "") {
+        //    $("#PaqueteId").css("background-color", "#E83A61");
+        //    bResult = false;
+        //}
+        if ($("#DDPaqueteId").val() == "") {
+            $("#DDPaqueteId").css("background-color", "#E83A61");
+            bResult = false;
+        }
+        return bResult;
+    }
+
+    function UpdateForm()
+    {
+        if (!valForm()) {
+            return alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
+        }
+        
+        var PaqueteID = $("#DDPaqueteId").attr("data-id");
+        $("#PaqueteId").val(PaqueteID);
+        var _data = $("#formViaje").serialize();
+        
+        if ("@ViewBag.Action" == "edit") {
+            $.ajax({
+                url: "/Viaje/UpdateViaje",
+                data: _data,
+                dataType: "json",
+                success: function (data) {
+                    
+                    if (data.Mensaje === "Done.") {
+                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=@Model.ViajeID"; }, 1000);
+                }
+                else {
+                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                }
+            }
+
+            });
+        }
+
+        if ("@ViewBag.Action" == "new") {
+            $.ajax({
+                url: "/Viaje/InsertViaje",
+                data: _data,
+                dataType: "json",
+                success: function (data) {
+                    
+                    if (data.Mensaje === "Done.") {
+                        var ViajeID = data.ID;
+                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=" + ViajeID; }, 1000);
+                    }
+                    else {
+                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    }
+                }
+
+            });
+        }
+        
+    }
+  </script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

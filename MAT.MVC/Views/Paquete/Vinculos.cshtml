@@ -1,0 +1,138 @@
+﻿@model MAT.MVC.Models.PaqueteVinculos
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Vinculos</h2>
+
+<h3>Servicios</h3>
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>
+                @Html.Label("Descripción")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Servicios)
+        {        
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    <a id="btn-desvincular-servicio" href="#" data-servicio="@item.ServicioId" data-paquete="@Model.Paquete.PaqueteId" class="button_delete" title="Desvincular Servicio">
+                    </a>
+                </td>
+            </tr>       
+        }
+    </tbody>
+</table>
+<p class="botonera-form">
+    <a href="#" id="btn-agregar-servicio" data-paquete="@Model.Paquete.PaqueteId" class="btn btn-inverse btn-small">Vincular Servicio</a>
+</p>
+
+<h3>Excursiones</h3>
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>
+                Descripcion
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (MAT.MVC.Models.PaqueteExcursionCustomModel item in ViewBag.Excursiones)
+        {        
+            <tr>
+                <td>
+                    @item.Descripcion <strong>@(item.IsOpcional? "(OPCIONAL)":"" )</strong>
+                </td>
+                <td>
+                    <a id="btn-desvincular-excursion" href="#" data-paqueteexcursionid="@item.PaqueteExcursionID" title="Desvincular Excursión" class="button_delete">
+                    </a>
+                </td>
+            </tr>       
+        }
+    </tbody>
+</table>
+<p class="botonera-form">
+    <a href="#" id="btn-agregar-excursion" data-paquete="@Model.Paquete.PaqueteId" class="btn btn-inverse btn-small">Vincular Excursión</a>
+</p>
+
+<h3>Precios</h3>
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>
+                @Html.Label("Descripción")
+            </th>
+            <th>
+                @Html.Label("Monto")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Precios)
+        {        
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Monto)
+                </td>
+                <td>
+                    <a id="btn-desvincular-precio" href="#"  data-precio="@item.PrecioId" data-paquete="@Model.Paquete.PaqueteId" title="Desvincular Precio"  class="button_delete">
+                    </a>
+                </td>
+            </tr>       
+        }
+    </tbody>
+</table>
+<p class="botonera-form">
+    <a href="#" id="btn-agregar-precio" data-paquete="@Model.Paquete.PaqueteId" class="btn btn-inverse btn-small">Vincular Precio</a>
+</p>
+
+<h3>Adicionales</h3>
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>
+                @Html.Label("Descripción")
+            </th>
+            <th>
+                @Html.Label("Monto")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Adicionales)
+        {        
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Monto)
+                </td>
+                <td>
+                    <a id="btn-desvincular-adicional" href="#"  data-adicional="@item.AdicionalId" data-paquete="@Model.Paquete.PaqueteId" class="button_delete" title="Desvincular Adicional" >
+                    </a>
+                </td>
+            </tr>       
+        }
+    </tbody>
+</table>
+<p class="botonera-form">
+    <a href="#" id="btn-agregar-adicional" data-paquete="@Model.Paquete.PaqueteId" class="btn btn-inverse btn-small">Vincular Adicional</a>
+</p>

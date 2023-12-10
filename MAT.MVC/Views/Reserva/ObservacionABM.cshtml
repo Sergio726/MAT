@@ -1,0 +1,147 @@
+﻿@model MAT.MVC.Models.ObservacionViaje.ObsViaje
+
+<div class="custom_margin_left_20 custom_margin_top_5">
+    <form id="formObservaciones">
+        <div class="row">
+            <div class="column_3">
+                <div class="column">
+                    <div class="title">Fecha</div>
+                    <div class="element"> <input type="text" disabled value="@Model.Fecha"/></div>
+                    <input type="hidden" value="@Model.Fecha" name="Fecha" id="Fecha"/>
+                </div>
+                <div class="column">
+                     <div class="title">Vendedor</div>
+                     <div class="element"> <input type="text" disabled value="@Model.Vendedor" /></div>
+                    <input type="hidden" id="VendedorID" name="VendedorID" value="@Model.VendedorID" />
+                </div>
+                <div class="column">
+                     <div class="title">Categoria</div>
+                     <div class="element"> <input type="text"  id="ddCategorias" title="Categorias"  class="custom_magicsearch" value="@Model.Categoria" /></div>
+                     <input type="hidden" id="hdnCategoriasID" name="CategoriaID" />
+                     <input type="hidden" id="ViajeID" name="ViajeID" value="@Model.ViajeID" />
+                   
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="column_3">
+                <div class="column">
+                    <div class="title">Pasajeros</div>
+                    <div class="element"> <input type="text" id="ddPasajeros" title="Buscar pasajero" class="custom_magicsearch"  /></div>
+                    <input type="hidden" id="PasajerosID" name="PasajerosID" value="" />
+                </div>
+                
+            </div>
+            
+        </div>
+
+        <div class="row">
+            <input type="hidden" value="@Model.Id" name="Id" />
+            <div class="title">Observaciones</div>
+            <div class="element"> <textarea name="Detalle" class="custom_width_95percent">@Model.Detalle</textarea></div>
+        </div>
+
+        <div class="row">
+            <div class="element custom_padding_top_10"> 
+                <input type="button" title="Guardar Cambios" value="Guardar" class="btn btn-small btn-inverse" onclick="javascript: ObservacionSave();">
+            </div>
+        </div>
+
+
+    </form>
+    
+    
+
+</div>
+
+<link href="~/Content/magicsearch/jquery.magicsearch.css" rel="stylesheet" />
+<link href="~/Content/magicsearch/normalize.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.magicsearch.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        //load pasajeros
+        var dataSource = @Html.Raw(ViewBag.jDDPasajeros);
+        $('#ddPasajeros').magicsearch({
+            dataSource: dataSource,
+            fields: ['PasajeroApellido','PasajeroNombre', 'PasajeroDocumento'],
+            id: 'PasajeroID',
+            format: '%PasajeroApellido%' + ' ' +'%PasajeroNombre%',
+            dropdownBtn: true,
+            success: function(i,data){
+                var PasajeroID = data.PasajeroID;
+                $("#PasajerosID").val(PasajeroID);
+                
+            }
+
+        });
+        $("#ddPasajeros").removeClass('dropdown');
+
+        //load categorias
+        var dataSource = @Html.Raw(ViewBag.jDDCategorias);
+        $('#ddCategorias').magicsearch({
+            dataSource: dataSource,
+            fields: ['Categoria'],
+            id: 'Id',
+            format: '%Categoria%',
+            dropdownBtn: true,
+            success: function(i,data){
+
+                var CategoriasID = data.Id;
+                $("#hdnCategoriasID").val(CategoriasID);
+                
+            }
+
+        });
+        $("#ddCategorias").removeClass('dropdown');
+
+        ObservacionLoad();
+
+    });
+    
+    function ObservacionLoad(){
+        $("#ddCategorias").val("@Model.Categoria");
+        $("#hdnCategoriasID").val("@Model.CategoriaID");
+        @{string sPasajerosID = "";
+          string sPasajeros = "";
+          }
+        @if (Model.Pasajeros != null)
+	    {
+            sPasajerosID = String.Join("'",Model.Pasajeros.ToList().Select(p=>p.PasajeroID).ToList());
+            sPasajeros = String.Join("'", Model.Pasajeros.ToList().Select(p => p.Pasajero).ToList());
+            
+            
+	    }
+        $("#ddPasajeros").val("@sPasajeros");
+        $("#PasajerosID").val("@sPasajerosID");
+    };
+
+    function ObservacionSave(){
+        showLoading_div("popup_Observacion");
+
+        var _data = $("#formObservaciones").serializeArray();
+
+        $.ajax({
+            type: "post",
+            url: "/Reserva/ObservacionesGeneralesEdit",
+            dataType: "json",
+            data: _data,
+            success: function (data) {
+                if (data.Msj == "Done.") {
+                    getObservacionesGenerales();
+                    $("#popup_Observacion").dialog("close");
+                }
+                else{
+                    alert('Ocurrio un error al intentar agregar una observacion, por favor comuniquese con el administrador.')
+                    console.log(data.Msj);
+                    $("#popup_Observacion").dialog("close");
+                }
+            }
+        });
+
+    };    
+    
+
+</script>

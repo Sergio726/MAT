@@ -1,0 +1,48 @@
+﻿@model PagedList.IPagedList<MAT.Entities.Habitacion>
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Index";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    function finalizarReserva() {
+        var viajeID = $("#viaje-id").val();
+        window.location.href = "/Reserva/Index?viajeid=" + viajeID;
+    };
+
+</script>
+
+@using (Html.BeginForm())
+{
+    <p>
+        Hotel    
+        <select id="ddHotel">
+            @foreach (MAT.MVC.Models.HotelDropDown item in ViewBag.ListaHoteles)
+            {
+                <option value="@item.HotelID" fecha="@item.Fecha.ToString("dd/MM/yyyy")">@item.Nombre @item.Fecha.ToString("dd/MM/yyyy")</option>
+            }
+        </select>
+        @*@Html.DropDownList("SearchString", Helper.ToSelectEntities("HotelPorViaje", Guid.Parse(ViewData["viajeid"].ToString())), new { @class = "ui-button ui-widget ui-corner-all" })*@
+        <input id="btnFiltrarHabitacion" type="button" value="Filtrar" class="btn btn-small btn-inverse view-all hidden-phone" title="Filtrar por hotel"/>
+    </p>
+}
+
+
+<div id="gridHabitacion">
+
+</div>
+<div class="custom_margin_top_10 custom_margin_rigth_2percent custom_text_aling_right">
+    <a href="javascript: finalizarReserva();" class="btn btn-inverse btn-small">Finalizar Reserva</a>
+</div>
+<input type="hidden" id="viaje-id" value="@ViewData["viajeid"]" />
+<input type="hidden" id="hdnPasajeID" value="@ViewBag.PasajeID" />
+<script type="text/javascript">
+    $(function () {
+        var HotelID = $('#ddHotel').val();
+        var Fecha = $('#ddHotel option:selected').attr("fecha");
+        $('#gridHabitacion').load('/ReservaHabitacion/GridHotelHabitacion?HotelID=' + HotelID + "&viajeid=" + $("#viaje-id").val() + "&PasajeroID=" + "@ViewBag.PasajeroID" + "&Fecha=" + Fecha)
+        
+    });
+</script>

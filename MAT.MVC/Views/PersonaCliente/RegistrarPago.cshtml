@@ -1,0 +1,195 @@
+﻿@using MAT.MVC.Models
+@using MAT.Enums
+@using MAT.Utilities
+
+@{ 
+    var vSaldo = MAT.MVC.Models.ReservaMethod.GetSaldoFactura(ViewBag.FacturaID);
+}
+
+<input type="hidden" id="hdnSaldo" value="@vSaldo" />
+<div class="custom_display_box">
+
+    <div id="divPanel1" class="form-modal">
+        <div class="form-label">Forma de Pago</div>
+        <div class="form-field">
+            <select id="tipopago" name="tipopago">
+                @foreach (var item in  eFormaPago.Credito.ToSelectList())
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            </select>
+       
+        </div>
+
+        <div id="transaccion-label" class="form-label">N° de Transacción</div>
+        <div id="transaccion-field" class="form-field">
+            <input type="text" name="TransaccionID" id="TransaccionID"  disabled="disabled"/>
+        </div>
+   
+        <div class="form-label">
+            Monto a abonar
+        </div>
+        <div class="form-field">
+            <input type="text" name="MontoPago" class="money" id="txtPago" />
+        </div>
+        <!--Moneda********-->
+        <div class="form-label">
+            Moneda
+        </div>
+        <div class="form-field">
+            <select name="MonedaTipo" id="sMonedaTipo" onchange="changeMonedaTipo(this);">
+                @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
+                {
+                    <option value="@item.Id" @(item.Id == 1 ? "selected" : "") >@item.Codigo</option>
+                }
+            </select>
+        </div>
+        <div class="form-label">
+            N° de Recibo
+        </div>
+        <div class="form-field">
+            <input type="text" name="Recibo" id="Recibo" />
+        </div>
+       
+    </div>
+
+    <div id="divContentCotizador" class="form-modal custom_width_37percent hide">
+        <div class="iconLoading"></div>
+    </div>
+   
+    
+    
+</div>
+<div class="form-modal">
+    <input type="button" name="btnRegistrarPago" id="btnRegistrarPago" title="Registrar" value="Aceptar" class="btn btn-small btn-inverse" />
+    
+</div>
+        
+<script type="text/javascript">
+    var ViajeMonedaTipo = parent.$("#hdnViajeMonedaTipo").val()
+    $(document).ready(function () {
+        $('.money').mask("#.##0,00", { reverse: true });
+
+        //show cotizador
+        if (ViajeMonedaTipo != "1") {
+            loadCotizador();
+        }
+    });
+
+    $(function () {
+        $("#tipopago").change(function () {
+            varTipoPago = $(this).val();
+            if (varTipoPago == "1") {
+                $("#TransaccionID").attr("disabled", true);
+            }
+            else {
+                $("#TransaccionID").attr("disabled", false);
+            }
+        });
+
+        $("#btnRegistrarPago").click(function () {
+            if (ViajeMonedaTipo != "1") {
+                if ($("#hdnCotizacion").val() == "") {
+                    $("#divError").html("Debe definir la cotizacion de la moneda para el pago de este viaje.")
+                    $("#divError").show().removeClass("hide");
+                    $("#divError").fadeOut(14000);
+                    
+                    return;
+                }
+
+            }
+
+            var monto = $("#txtPago").val();
+            var tipopago = parseInt($("#tipopago").val());
+            var nrorecibo = $("#Recibo").val();
+            var FacturaID = "@ViewBag.FacturaID";
+            var ClienteID = "@ViewBag.ClienteID";
+            var Saldo = "@vSaldo";
+            var TransaccionID = $("#TransaccionID").val();
+
+            /*pago con cotizador*/
+            var MontoRecibidoMonedaTipo = $("#sMonedaTipo").val();
+            var MontoEquivalente = "";
+            var MontoEquivalenteMonedaTipo = "";
+            var MontoEquivalenteCotizacion = ""
+            var ViajeMonedaTipo = $("#hdnViajeMonedaTipo").val();
+            var MontoRecibido = monto;
+                       
+            if (parseFloat(monto.replace(/\./g, "")) > parseFloat(Saldo)) {
+                return alert("El monto ingresado no puede ser mayor al saldo de la factura. Saldo actual: $" + parseFloat(Saldo), "Atencion");
+            }
+
+            if ((ViajeMonedaTipo != "1") || (MontoRecibidoMonedaTipo != "1")) {
+
+
+                MontoEquivalenteCotizacion = $("#hdnCotizacion").val();
+
+                if (MontoRecibidoMonedaTipo == "1") {
+                    MontoEquivalenteMonedaTipo = "3"; //dolar
+                    MontoEquivalente = $("#MontoOut").val();
+
+                }
+                else {
+                    MontoEquivalenteMonedaTipo = "1"; //pesos
+                    MontoEquivalente = $("#MontoInt").val();
+                }
+
+                if (ViajeMonedaTipo != MontoRecibidoMonedaTipo) {
+                    monto = MontoEquivalente;//monto recibido, tabla pago
+                }
+            }
+
+            $.ajax({
+                url: "/PersonaCliente/RegistrarPago",
+                type: "POST",
+                data: {
+                    monto: monto,
+                    tipopago: tipopago,
+                    recibo: nrorecibo,
+                    FacturaID: FacturaID,
+                    TransaccionID: TransaccionID,
+                    ClienteID: ClienteID,
+                    MontoRecibido: MontoRecibido,
+                    MontoRecibidoMonedaTipo: MontoRecibidoMonedaTipo,
+                    MontoEquivalente: MontoEquivalente,
+                    MontoEquivalenteMonedaTipo: MontoEquivalenteMonedaTipo,
+                    MontoEquivalenteCotizacion: MontoEquivalenteCotizacion
+                },
+                success: function (data) {
+                    var result = data == "True" ? true : false;
+                    $("#RegistrarPago").dialog("close");
+                    $("#DetalleFactura").dialog("close");
+                    if (result) {
+                        alert("Pago recibido correctamente.");
+                        $("#RegistrarPago").dialog("close");
+                        PopupDetalleFactura_Load();
+                    } else {
+                        alert("Error de Sistema. Contacte con el Administrador.");
+                    }
+                }
+            });
+        });
+    });
+
+    function loadCotizador() {
+        $("#divContentCotizador").removeClass("hide");
+        $("#divPanel1").addClass("custom_width_55percent");
+        $.ajax({
+            url: "/Herramientas/Cotizador",
+            data: { "sMode": "1" },
+            success: function (data) {
+                $("#divContentCotizador").html(data);
+            }
+        })
+    }
+
+    function changeMonedaTipo(o) {
+        var MonedaTipo = $(o).val();
+        if ($("#divContentCotizador").css("display") == "none") {
+            if (MonedaTipo != "1") {
+                loadCotizador();
+            }
+        }
+    }
+
+</script>

@@ -1,0 +1,28 @@
+﻿@using MAT.MVC.Models
+@model PasajeroHistorialModel
+
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>Paquete</th>
+            <th>Fecha de Salida</th>
+            <th>Nro Butaca</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.HistorialPasajes)
+        {
+         <tr>
+            <td>
+               @item.Paquete.Paquete.Descripcion       
+            </td>
+            <td>
+                @item.Paquete.Viaje.FechaSalida
+            </td>
+            <td>
+                @item.Butaca.NroButaca
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

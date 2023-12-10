@@ -1,0 +1,81 @@
+﻿@model List<MAT.MVC.Models.ObservacionViaje.ObsViaje>
+
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
+<link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
+<head>
+    <title>OBSERVACIONES GENERALES</title>
+</head>
+
+<div id="divContent" class="Content">
+
+        <div id="divEncabezadoViaje" class="EncabezadoViaje headMAT">
+            <div class="custom_padding_4">
+                @foreach (var item in Model)
+                {
+                    @ViewBag.DetalleViaje[0]  <br />
+                    @ViewBag.DetalleViaje[1] //Descripcion del viaje 
+                    <br />
+                    DateTime dFechaSalida = Convert.ToDateTime(ViewBag.DetalleViaje[2]);
+                    DateTime dFechaRegreso = Convert.ToDateTime(ViewBag.DetalleViaje[3]);
+                    @Html.Label("SALIDA: " + dFechaSalida.ToShortDateString());
+                    @Html.Label(" - REGRESO: " + dFechaRegreso.ToShortDateString());
+
+                    // @Html.Label(" REGRESO: " + V.FECHA.Value.ToShortDateString());
+                    break;
+                }
+            </div>
+        </div>
+
+    <div class="backMAT">
+        <h2>Observaciones Generales</h2>
+
+        @{string sCategoria = "";}
+        @foreach (MAT.MVC.Models.ObservacionViaje.ObsViaje o in Model.OrderBy(l=> l.Categoria))
+        {
+           
+            <div class="custom_margin_top_15">
+            @if (sCategoria != o.Categoria)
+            {
+                { sCategoria = o.Categoria; }
+                <h4><span class="custom_label_radius">@sCategoria</span> </h4>
+            }
+            </div>
+            
+            <div class="custom_border_printObservaciones">
+                <div>
+                    <span class="custom_font_weigh_bold">Fecha de creación</span> @o.Fecha <span class="custom_font_weigh_bold">Vendedor: </span> @o.Vendedor <br />
+                    <span class="custom_font_weigh_bold">Pasajero: </span> 
+                        @if (o.Pasajeros.Count != 0)
+                        {
+                            @o.Pasajeros.First().Pasajero 
+                        }
+                        else{
+                        <span>-</span>
+                        }
+                    <br />
+                    <span class="custom_font_weigh_bold">Categoría: </span><span>@o.Categoria</span>
+
+                </div>
+            
+                <div class="custom_margin_top_15">
+                    <span class="custom_font_weigh_bold">Detalle: </span>
+                    <pre class="pre_single">
+                        @o.Detalle.TrimEnd()
+
+                    </pre>
+
+                    @if (o.Update.ToString() != "1/1/0001 00:00:00" && o.Update.ToString() != "01/01/0001 12:00:00 a.m.")
+                           {
+                                <span class="custom_font_size_11 custom_font_style_italic">Fecha de Actualización: @o.Update</span><br />
+                                <span class="custom_font_size_11 custom_font_style_italic">Actualizado por: @o.UpdateVendedor</span>
+                           }
+                    
+                </div>
+            </div>
+            
+        }
+
+    </div>
+   
+</div>

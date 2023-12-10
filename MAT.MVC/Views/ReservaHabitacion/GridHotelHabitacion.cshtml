@@ -1,0 +1,76 @@
+﻿@model List<MAT.MVC.Models.HabitacionDisponibilidad>
+
+<script type="text/javascript">
+    var divOk = "<div class='divOk' title='Habitación reservada para este pasajero.'><div>";
+    var tblGrid;
+    $(document).ready(function () {
+        
+       
+        tblGrid = $("#GridHabitacion").DataTable({
+            "searching": false,
+            "bLengthChange": false
+        })
+    })
+
+    
+
+</script>
+
+<input type="hidden" id="input-viaje-id" value="@ViewData["viajeid"]" />
+<input type="hidden" id="hdnHabitacionID" />
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+<table id="GridHabitacion" class=" mat-customtable" style="width:96%; height:80%!">
+    <thead>
+        <tr>
+            <th>
+                N° - HAB
+            </th>
+            <th>
+                Hotel
+            </th>
+            <th>
+                Tipo
+            </th>
+            <th>
+                Disponibilidad
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.NroHabitacion @item.HabitacionNombre
+                </td>
+               <td>
+                    @item.HotelNombre
+                </td>                
+                 <td>
+                    @item.HabitacionTipo
+                </td>
+                <td>
+                    @item.Disponibilidad
+                </td>
+                <td id="td-@item.HabitacionID">
+                            
+                    @if (item.Disponibilidad > 0 && ViewBag.HabitacionSelected == null)
+                    {
+                       <a class="aReserva btn btn-inverse btn-small" data-viaje="@ViewData["viajeid"]" data-habitacionid="@item.HabitacionID" id="@item.HabitacionID" fecha="@ViewBag.Fecha">Reservar</a>    
+                    }
+                    else if (item.HabitacionID == ViewBag.HabitacionSelected)
+                    {
+                        <a href="javascript:eliminarReservaHotel('@ViewBag.PasajeroID','@ViewBag.HabitacionSelected','@ViewData["viajeid"].ToString()');"><div class='divDelete' title='Eliminar reserva de habitación.' ></div></a>
+                    }                              
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

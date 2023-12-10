@@ -1,0 +1,70 @@
+﻿@model MAT.MVC.Models.PerfilModel
+
+<div class="card">
+    <div class="profile">
+        @if (Model.Persona.Sexo.Value==0) //MASCULINO
+        {
+            <img src="/Images/man.png"><div class="border"></div>
+        }
+        else if (Model.Persona.Sexo.Value == 1) //FEMENINO
+        {
+            <img src="/Images/woman.png"><div class="border"></div>
+        }
+        
+    </div>
+    <div class="name">
+        <p><a href="#">@Model.Persona.Nombre @Model.Persona.Apellido</a></p>
+    </div>
+    <div class="form-profile">
+        <div class="form-label">DNI</div>
+        <div class="form-field dni">
+            @Model.Persona.NroDocumento
+        </div>
+        <div class="form-label">CUIL</div>
+        <div class="form-field dni">
+            @ViewBag.PersonaClienteCUIL
+        </div>
+        <div class="form-label">Teléfono</div>
+        <div class="form-field telefono">
+            @Model.Persona.Telefono
+        </div>
+        <div class="form-label">Email</div>
+        <div class="form-field email">
+            @Model.Persona.Email
+        </div>
+        @if (Model.EsCliente)
+        {
+            <p class="botonera-form">
+                <a id="btn-perfil-cc" data-personaid="@Model.Persona.PersonaId" class="btn btn-small btn-inverse btn-block">Historial de Pagos</a>
+                <a id="btn-perfil-facturas" data-personaid="@Model.Persona.PersonaId" class="btn btn-small btn-inverse btn-block">Facturas</a>
+                <a id="btnMovimientoNotaCredito" data-personaid="@Model.Persona.PersonaId" class="btn btn-small btn-inverse btn-block">Movimientos Nota de Crédito</a>
+
+            </p>
+        }
+        else if (Model.EsPasajero)
+        {
+            <p class="botonera-form">
+                <a id="btn-perfil-historialviaje" data-personaid="@Model.Persona.PersonaId" class="btn btn-small btn-inverse btn-block">Historial de Viajes</a>
+            </p>
+        }
+       
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#btnMovimientoNotaCredito").click(function () {
+        $(".resumen-perfil").html("<div class='iconLoading'></div>")
+        var ClienteID = $(this).data("personaid");
+        $.ajax({
+            url: "/NotaCredito/partialMovimientoNotaCredito",
+            data: { ClienteID: ClienteID },
+            success: function (data) {
+                $(".resumen-perfil").html(data);
+            },
+            error: function (e) {
+                alert("Se produjo un error. Contactese con el administrador.");
+                console.log(e);
+            }
+        })
+    });
+</script>

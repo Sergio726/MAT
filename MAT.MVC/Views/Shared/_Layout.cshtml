@@ -1,0 +1,324 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Marco Antonio Tours</title>
+
+    <!-- Meta -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+
+    @Styles.Render("~/Content/css")
+
+    @Scripts.Render("~/bundles/modernizr")
+    @{string fecha = "22122016";}
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    @*<link href="~/Content/mat.styles.css" rel="stylesheet" />*@
+    <link href="~/Content/mat.busplugin.css?t=@fecha" rel="stylesheet" />
+    <link href="~/Content/preset.css" rel="stylesheet" />
+    <link href="~/Content/tabla.css" rel="stylesheet" />
+    <link href="~/Content/mat.perfiles.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    
+    <link href="~/Content/glyphicons.css" rel="stylesheet" />
+    <link href="~/Content/style-light.css?1415025778" rel="stylesheet" />
+    <link href="~/Content/mat.forms.css" rel="stylesheet" />
+    <link href="~/Content/mat.metroui.css" rel="stylesheet" />
+    <link href="~/Content/voucher.css?t=@fecha" rel="stylesheet" />
+    <link href="~/Scripts/jquery.timepicker/jquery.timepicker.css" rel="stylesheet" />
+    <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+
+    <script src="~/Scripts/preset.js"></script>
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+  
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
+    <script src="~/Scripts/javascript.core.js"></script>
+    <script src="~/Scripts/mat.jquery.binding.js"></script>
+    <script src="~/Scripts/mat.jquery.functions.js"></script>
+    <script src="~/Scripts/mat.jquery.initialize.js"></script>
+    <script src="~/Scripts/jquery.quick.pagination.min.js"></script>
+    <script src="~/Scripts/global.js"></script>
+    <script src="~/Scripts/mat.jquery.hashtable.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    @*<script src="~/Scripts/jquery.maskedinput.min.js"></script>*@
+    <script src="~/Scripts/jquery.mask.js"></script>
+    <script src="~/Scripts/common.js"></script>
+    <script src="~/Scripts/jquery.timepicker/jquery.timepicker.min.js"></script>
+   
+    <!--dataTable-->
+    <link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
+
+    <!--formatNumber-->
+    <script src="~/Scripts/formatNumber/numeral.min.js"></script>
+    
+</head>
+<body>
+    <section id="script_section">
+        @RenderSection("scripts", required: false)
+    </section>
+    <!-- Main Container Fluid -->
+    <div class="container-fluid fixed menu-left">
+
+        <!-- Top navbar (note: add class "navbar-hidden" to close the navbar by default) -->
+        <div class="navbar main hidden-print">
+
+            @*<a href="#" id="btn-document-help" ><img src="/Images/document_info.png" title="Manual de Usuario"/></a>*@
+
+            <!-- Wrapper -->
+            <div class="wrapper">
+
+
+                <!-- Menu Toggle Button -->
+                <ul class="topnav pull-right">
+                </ul>
+
+                <div class="clearfix"></div>
+            </div>
+            <!-- // Wrapper END -->
+
+            <!-- <span class="toggle-navbar"></span> -->
+        </div>
+        <!-- Top navbar END -->
+
+        <!-- Sidebar menu & content wrapper -->
+        <div id="wrapper">
+
+            <!-- Sidebar Menu -->
+            <div id="menu" class="hidden-phone hidden-print">
+
+                <!-- Brand -->
+                <a href="/Home/Index" class="appbrand">MAT <span>Sys</span>
+                </a>
+
+                <!-- Scrollable menu wrapper with Maximum height -->
+                <div class="slim-scroll" data-scroll-height="800px">
+
+                    <!-- Sidebar Profile -->
+                    <span class="profile">
+                        <p>
+                            @Html.Partial("_LoginPartial")
+                        </p>                        
+                    </span>
+                    <!-- // Sidebar Profile END -->
+
+                    <!-- Regular Size Menu -->
+                    <ul class="menu-0">
+
+
+                        <!-- Menu Regular Item -->
+                        <li class="glyphicons display active">
+                            <a href="/Home/Index">
+                                <i></i><span>Panel Principal</span>
+                            </a>
+                        </li>
+
+                        <!-- Components Submenu Level 1 -->
+                        <li class="hasSubmenu glyphicons cogwheels">
+                            <a data-toggle="collapse" href="#menu_components" id="btn_configuracion">
+                                <i></i><span>Configuracion</span>
+                            </a>
+                            <ul class="collapse" id="menu_components">
+                                <!-- Components Submenu Level 2 -->
+                                <li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_clientes">
+                                        <span>Clientes</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_clientes">
+                                        <li class="">
+                                            <a href="/PersonaCliente/Create">
+                                                <span>Nuevo</span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="/PersonaCliente/Index">
+                                                <span>Listado</span>
+                                            </a>
+                                        </li>
+                                    </ul>                                    
+                                </li>
+                                @*<li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_proveedores">
+                                        <span>Proveedores</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_proveedores">
+                                        <li class="">
+                                            <a href="/PersonaProveedor/Create">
+                                                <span>Nuevo</span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="/PersonaProveedor/Index">
+                                                <span>Listado</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>*@
+                                <li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_hoteles">
+                                        <span>Hoteles</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_hoteles">
+                                        <li class="">
+                                            <a href="/Hotel/ABM">
+                                                <span>Nuevo</span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="/Hotel/Index">
+                                                <span>Listado</span>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+                                <li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_transportes">
+                                        <span>Transportes</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_transportes">
+                                        <li class="">
+                                            <a href="/Transporte/Index">
+                                                <span>Listado</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_servicios">
+                                        <span>Servicios</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_servicios">
+                                        <li class="">
+                                            <a href="/Servicio/Create">
+                                                <span>Nuevo</span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="/Servicio/Index">
+                                                <span>Listado</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_excursiones">
+                                        <span>Excursiones</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_excursiones">
+                                        <li class="">
+                                            <a href="/Excursion/Create">
+                                                <span>Nuevo</span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="/Excursion/Index">
+                                                <span>Listado</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_precios">
+                                        <span>Precios de Butaca</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_precios">
+                                        @*<li class="">
+                                            <a href="/Precio/Create">
+                                                <span>Nuevo</span>
+                                            </a>
+                                        </li>*@
+                                        <li class="">
+                                            <a href="/Precio/Index">
+                                                <span title="Ver listado de precios o agregar nuevo Precio">Ver o Agregar</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_adicionales">
+                                        <span>Adicionales</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_adicionales">
+                                        <li class="">
+                                            <a href="/Adicional/Create">
+                                                <span>Nuevo</span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="/Adicional/Index">
+                                                <span>Listado</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="hasSubmenu">
+                                    <a data-toggle="collapse" href="#menu_cotivador" onclick="javascript: showCotizador();">
+                                        <span>Cotizador</span>
+                                    </a>
+                                    
+                                </li>
+
+                            </ul>
+                            <span class="count"></span>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+
+                    <div class="clearfix"></div>
+                    <div class="separator bottom"></div>
+
+                </div>
+            </div>
+            <!-- // Sidebar Menu END -->
+
+            <!-- Content -->
+            <div id="content">
+                @RenderBody()
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+        <!-- // Sidebar menu & content wrapper END -->
+
+        <div id="footer" class="hidden-print">
+        </div>
+        <!-- // Footer END -->
+
+    </div>
+    <!-- // Main Container Fluid END -->
+
+
+
+
+
+    <div id="modal-gallery" class="modal modal-gallery hide fade hidden-print" tabindex="-1">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">&times;</a>
+            <h3 class="modal-title"></h3>
+        </div>
+        <div class="modal-body">
+            <div class="modal-image"></div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-primary modal-next">Next <i class="icon-arrow-right icon-white"></i></a>
+            <a class="btn btn-info modal-prev"><i class="icon-arrow-left icon-white"></i>Previous</a>
+            <a class="btn btn-success modal-play modal-slideshow" data-slideshow="5000"><i class="icon-play icon-white"></i>Slideshow</a>
+            <a class="btn modal-download" target="_blank"><i class="icon-download"></i>Download</a>
+        </div>
+    </div>
+    <script>
+        var primaryColor = '#8ec657',
+			dangerColor = '#b55151',
+			successColor = '#609450',
+			warningColor = '#ab7a4b',
+			inverseColor = '#45484d';
+    </script>
+    <script src="/Scripts/common.js?1414014545"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+﻿@model List<MAT.MVC.Models.HotelStandard>
+@using MAT.Utilities
+@using MAT.Enums
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tblResult").DataTable();
+    });
+</script>
+<h2 class="title">Hoteles</h2>
+
+<p class="custom_margin_top_10">
+    @Html.ActionLink("+ Agregar Hotel", "ABM", null , new {@class = "btn btn-small btn-inverse view-all hidden-phone" })
+</p>
+
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+
+<div class="divDataTable">
+    <table class="mat-customtable" id="tblResult">
+    <thead>
+    <tr>
+       
+        <th style="width:84px;">
+            Nombre
+        </th>
+        <th style="width:100px;">
+            Direccion
+        </th>
+        <th style="width:100px;">
+            CP
+        </th>
+        <th style="width:100px;">
+            Localidad
+        </th>
+        <th style="width:100px;">
+            Telefono
+        </th>
+        <th style="width:100px;">
+            Email
+        </th>
+        <th style="width:100px;">
+            Contacto
+        </th>
+        
+       
+        <th></th>
+    </tr>
+</thead>
+    <tbody>
+@foreach (var item in Model) {
+    <tr>
+        
+        <td>
+            @item.Nombre
+        </td>
+        <td>
+            @item.Direccion
+        </td>
+        <td>
+            @item.CP
+        </td>
+        <td>
+            @item.Localidad
+        </td>
+        <td>
+            @item.Telefono
+        </td>
+        <td>
+            @item.Email
+        </td>
+        <td>
+            @item.Contacto
+        </td>
+               
+        <td style="width:190px;">
+            <a href="/Hotel/ABM?Id=@item.HotelID"><img src="/Images/pencil.png" width="32" height="32" title="Ver y Editar" /></a>
+            @*<a href="/Hotel/Details/@item.HotelID"><img src="/Images/notepad.png" width="32" height="32" title="Detalles"/></a>*@
+            @*<a href="/Habitacion/Create/@item.HotelID"><img src="/Images/habitacion.png" width="32" height="32" title="Habitaciones"/></a>*@
+        </td>
+    </tr>
+}
+</tbody>
+</table>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

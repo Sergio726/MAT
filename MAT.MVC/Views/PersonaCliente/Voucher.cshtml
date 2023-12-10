@@ -1,0 +1,270 @@
+﻿@model List<MAT.MVC.Models.VoucherStandard>
+@using MAT.Enums
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Marco Antonio Tours</title>
+    <!-- Meta -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+
+    <link href="~/Content/voucher.css" rel="stylesheet" />
+    <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+
+    <style type="text/css">
+        @@media print {
+            @@page :first {
+			margin-left: 1cm;
+			margin-right: 1cm;
+			margin-top: 1cm;
+            margin-bottom: 1cm;
+		    }
+        }
+    </style>
+</head>
+<body>
+    @if (Model.Count > 0)
+    {
+        foreach (MAT.MVC.Models.VoucherStandard item in Model)
+        {
+        Guid PasajeroID = new Guid(item.PasajePasajeID);
+        <div class="voucher">
+            
+            <div class="encabezado-voucher headMAT ">
+                <div class="div50 custom_padding_left_5">
+                    <p>Marco Antonio Tours Leg. N° 11.049</p>
+                    <p>Resolución N° 811</p>
+                    <p>Dean Funes N° 29 - CP 4400</p>
+                    <p>Tel. 0387 4321823 - 4218085  </p>
+                    <p>Salta - Argentina</p>
+                </div>
+
+                <div class="div50 custom_text_aling_right">
+                    <p>Voucher N° @item.VoucherNroVoucher</p>
+                </div>
+                
+            </div>
+            <div class="div100">
+                <div class="div30 custom_text_aling_left">
+                    <p><span class="custom_font_weigh_bold">FECHA DE EMISION: </span> @item.VoucherFechaEmision</p>
+                </div>
+                @if (item.ViajeMedio == "TERRESTRE")
+                    {
+                        <div class="div30 custom_text_aling_center">
+                            <p><span class="custom_font_weigh_bold">N° ASIENTO: </span>@item.ButacaNroButaca</p>
+                        </div>
+                        <div class="div30 custom_text_aling_right" style="float:right;">
+                            <p><span class="custom_font_weigh_bold">TIPO DE BUTACA: </span> @((eTipoButaca)(item.ButacaTipo))</p>
+                        </div>
+                    }
+                
+            </div>
+            <div class="cuerpo-voucher bodyMAT">
+                <div class="div100">
+                    <p><span class="custom_font_weigh_bold">SÍRVASE PROVEER AL SR/RA CLIENTE Y/O ACOMPAÑANTE: </span>@item.PersonaNombre @item.PersonaApellido D.N.I. N° @item.PersonaNroDocumento titular del presente voucher con destino a @item.DestinoNombre</p>
+                </div>
+                <div class="div100">
+                    <div class="div50">
+                        <div><span class="custom_font_weigh_bold">DOMICILIO: </span>@(item.PersonaDomicilio) - @(item.PersonaLocalidad)</div>
+                        <p><span class="custom_font_weigh_bold">EMAIL: </span>@item.PersonaEmail</p>
+                        
+                        
+                    </div>
+                    <div class="div50">
+                    
+                        <p><span class="custom_font_weigh_bold">TELÉFONO: </span> @item.PersonaTelefono </p>
+                        <p><span class="custom_font_weigh_bold">CELULAR: </span>@(item.PersonaCelular)</p>
+                    </div>
+                </div>
+               
+                <div class="div100">
+                    <div>
+                        <span class="custom_font_weigh_bold">CONCENTRACIÓN: </span>
+                        @switch (item.ViajeMedio)
+                        {
+                            case "TERRESTRE":
+                            <span>@(DateTime.ParseExact(item.ViajeHoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, item.TiempoConsentracion, 0)).ToString()) </span>
+                            <span>desde Terminal de Omnibus, plataforma 26 a la 28.</span>
+                                    break;
+                                case "AEREO": 
+                            <span>@(DateTime.ParseExact(item.ViajeHoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, 120, 0)).ToString()) </span>
+                            <span>en el Aeropuerto de Salta.</span>
+                                    break;
+                        }
+                        <br />
+                        <span class="custom_font_weigh_bold">SALIDA: </span><span>@(item.ViajeSalidaL) a hs. @item.ViajeHoraSalida</span> <br />
+                        <span class="custom_font_weigh_bold">LLEGADA: </span><span>@(item.ViajeRegresoL) a hs. @item.ViajeHoraRegreso aproximadamente</span>
+                    </div>
+                    
+                </div>
+
+                <div class="div100 custom_diplay_block">
+                    <span class="custom_font_weigh_bold">SERVICIOS: </span> <span> @item.PaqueteServicios</span><br />
+                    <span class="custom_font_weigh_bold">EXCURSIONES: </span> <span>@item.PaqueteExcusiones</span><br />
+                    @if (@item.PaqueteExcusionesOpcionales.Trim() != "")
+                    {
+                        <span class="custom_font_weigh_bold">EXCURSIONES OPCIONALES: </span> <span>@item.PaqueteExcusionesOpcionales</span><br />    
+                    }
+                    <span class="custom_font_weigh_bold">(*)</span> <span>Ingreso a cargo del pasajero</span><br />
+                     <span class="custom_font_weigh_bold">TRANSPORTE: </span> 
+                    @switch (item.ViajeMedio)
+                    {
+                        case "TERRESTRE":<span>Moderna unidad, dotado con triple circuito de video, aire acondicionado, bar, música funcional, asientos cama y  semi-cama.</span><br />
+                            break;
+                        case "AEREO": <span>Aéreo.</span><br />
+                            break;
+                    }
+                    
+                    @if (item.ViajeObservaciones.ToString() != "")
+	                {
+		                <span class="custom_font_weigh_bold">OBSERVACIONES: </span> 
+                        <span>@item.ViajeObservaciones</span>
+	                }
+                    
+                </div>
+               <div class="div100 custom_diplay_block">
+                   
+                   <fieldset>
+                       <legend>
+                           <span class="custom_font_weigh_bold">HOTELERÍA: </span>
+                       </legend>
+                       <ul style="margin-top: 0; margin-bottom: 0px;padding-left: 13px;">
+                        
+                            @if (@item.Hoteles.Count > 0)
+                           {
+                               foreach (MAT.MVC.Models.HotelStandard r in @item.Hoteles)
+                               {
+                                   <li>
+                                       <span><span class="custom_font_weigh_bold">Alojamiento:</span> @(r.Nombre ?? ""), <span class="custom_font_weigh_bold"> Tel: </span>@(r.Telefono ?? ""), <span class="custom_font_weigh_bold">Direccion: </span>@(r.Direccion ?? "") , 
+                                      @* <span class="custom_font_weigh_bold">Hab: </span> <span>@(r.NroHabitacion == "0" ? "" : "Nro. " + r.NroHabitacion) </span><span>@(r.NombreHabitacion) </span>*@
+                                      <span class="custom_font_weigh_bold">Días de estadía: </span>@(r.DiasEstadia ?? "").</span>
+                                    </li>
+                               }
+                           }
+                          
+                           
+                       </ul>
+                       
+                   </fieldset>
+               </div>
+
+                <div class="div100">
+                    <div class="div60">
+                        <span class="custom_font_weigh_bold">COORDINADOR DE VIAJE: </span>
+                        <input type="text" id="txt-coordinador" placeholder="NOMBRE DEL COORDINADOR" class="custom_width_200px" />
+                    </div>
+                    <div class="div40">
+                        <span class="custom_font_weigh_bold">TEL: </span>
+                        <input type="text" id="txt-telcoordinador" placeholder="TEL DEL COORDINADOR" class="custom_width_200px" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="backMAT">
+                <div class="pie-voucher">
+                    <p class="custom_font_weigh_bold custom_background_yellow custom_font_size_1_2em">DOCUMENTACIÓN DENTRO DEL PAIS: 1- Argentinos nativos mayores de 18 años: DNI tarjeta vigente. 2- Menores de 18 años (viajando con uno o ambos padres): DNI tarjeta vigente y libreta de familia o partida de nacimiento. 3- Menores de edad (viajando con un representante legal): DNI tarjeta vigente, más autorización de la CNRT, de uno de los padres. En caso de extravío de DNI o PASAPORTE, los gastos de alojamiento, comidas, transporte, despacho de equipaje, corren por responsabilidad del pasajero. Es responsabilidad exclusiva del pasajero la portación de la documentación correspondiente durante todo el tiempo insumido por el viaje.</p>
+                    <p>GASTOS EXTRAS: Deberá tener en cuenta gastos extras, bebidas en comedor, comidas en ruta, excursiones opcionales, tasas de turismo, aeropuertos, propinas, impuestos y/o aranceles aduaneros, migratorios, multas y otros gastos en general no especiﬁcados. </p>
+                    <p>REEMBOLSOS : El voucher es personal e intransferible, solo para el día y hora indicados en el mismo. Cuando por razones de fuerza mayor o falta de número mínimo de pasajeros, la empresa debe cancelar la excursión o viaje, el importe será íntegramente restituido. No será restituido el importe pagado por el pasajero cuando este cancelase una excursión o viaje ya completado. No se aceptara reclamo alguno por la presentación posterior a la hora de salida o a la partida del servicio Ni reembolso de importes por servicios incluidos no tomados por voluntad del pasajero.</p>
+                    <p>EXCLUSIONES DEL TOURS: Según Resolución vigente. La empresa se reserva el derecho de hacer abandonar el tours recurriendo a La fuerza pública si fuera necesario a todo pasajero que por su modo de obrar, comportarse y/o expresarse se convirtiese en un inconveniente para el buen desarrollo del tours.</p>
+                    <p>Las personas que se encuentren bajo los efectos del alcohol, drogas o de otros estupefacientes.</p>
+                    <p>Las personas que porten cualquier elemento que represente un peligro para la seguridad de los pasajeros y/o su equipaje. NO se aceptan animales en cualquier condición de transporte.</p>
+                    <p>EQUIPAJES: Equipo de mate u otro elemento de uso cotidiano para portar a bordo del micro. Medicamentos los que se encuentren bajo tratamiento médico. Sugerimos no excederse en equipajes, ropa cómoda liviana apropiada para la ocasión, calzado adecuado, malla de baño, gorra o sombrero capa de lluvia protector solar., dependiendo del destino a visitar. Un bolso de mano y una valija mediana son lo óptimo. Equipaje de Mano: debe ser apto para ser llevado sin que cause molestias a los demás u obstaculice los pasillos y/o escaleras. Identiﬁque su equipaje, incluso el de mano.</p>
+                    <p class="custom_font_weigh_bold custom_background_yellow custom_font_size_1_2em">Cuide sus pertenencias. Recuerde que la empresa no se responsabiliza por los incidentes (accidentes, lesiones, daños, pérdidas, irregularidades, retraso u otros inconvenientes), que pudieran sufrir su equipaje en responsabilidad de terceros.</p>
+                    <p>Equipaje extra y/o compras , se transportaran según la disponibilidad de la bodega y/o deberán ser despachados como encomienda en los lugares habilitados para tal ﬁn abonando el pasajero la tasa correspondiente.</p>
+                    <p>ALTERACIONES: El organizador se reserva el derecho de modiﬁcar y/o alterar horarios e itinerarios por razones de programación para su mejor desarrollo por razones de fuerza mayor sin alterar la cantidad y duración de los mismos. Cuando por razones no imputables a la empresa tales como huelgas, catástrofes naturales, etc. El organizador se reserva el derecho de cancelar el viaje o acortar la duración del mismo modiﬁcar el itinerario en función de las reservas. Decreto 2182/72 Art. 24.</p>
+                    <p class="custom_font_weigh_bold custom_background_yellow custom_font_size_1_2em">ASITENCIA MEDICA: En caso de necesidad del servicio debe informar de inmediato al coordinador. Los reintegros de medicamentos, atención médica, deben ser entregados al mismo, una vez realizada la carga de los mismo tienen una demora de entre 30 a 60 dias, gastos por enfermedades preexistentes, gastos de traslado (taxi) no son  reintegrables.</p>
+                    <div class="custom_font_weigh_bold custom_border_2px custom_padding_2 custom_font_size_16">
+                        <p>Para viajar por Argentina es necesario contar con un permiso para visitar los destinos del país por turismo y sigue vigente, se trata del Certificado Turismo.</p>
+                        <p>El trámite es indispensable para quienes se movilizan por el país, se realiza desde la web https://www.argentina.gob.ar/circular/turismo y hay que solicitarlo con 48 hs de anticipación.</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="HideToPrint custom_height_30"></div>
+         <!--INFORMACION ADICIONAL-->
+        if (ViewBag.InfoAdicional)
+        {
+            <div class="divInfoAdicional voucher custom_margin_top_10 backMAT">
+            <div class="encabezado-voucher headMAT ">
+                <div class="div50 custom_padding_left_5">
+                    <p>Marco Antonio Tours Leg. N° 11.049</p>
+                    <p>Resolución N° 811</p>
+                    <p>Dean Funes N° 29 - CP 4400</p>
+                    <p>Tel. 0387 4321823 - 4218085  </p>
+                    <p>Salta - Argentina</p>
+                </div>
+
+                <div class="div50 custom_text_aling_right">
+                    <p>Voucher N° @item.VoucherNroVoucher</p>
+                </div>
+                
+            </div>
+
+            <span class="custom_font_weigh_bold"> INFORMACION DE DOCUMENTACION </span><br />
+            <span class="custom_font_weigh_bold"> Documentación necesaria para salir del país</span>
+            <ol>
+                <li>
+                    <p align="justify"> Argentinos nativos mayores de 18 años: DNI tarjeta, pasaporte o visa vigente según requiera el país de destino. Tener en cuenta y consultar en los consulados del país que pretenda visitar respecto al requisito de VISA</p>
+                </li>
+                <li>
+                    <p align="justify"> Menores de 18 años (viajando con ambos padres): Cualquiera de los documentos mencionados en el punto 1 y libreta de familia, partida de nacimiento original o copia legalizada, con fecha de expedición no mayor a los 3 meses</p>
+                </li>
+                <li>
+                        <p align="justify"> Menores de edad (viajando con uno de los padres): mismos requisitos que el punto anterior, más permiso ante escribano público y legalizado ante el colegio de escribanos, del padre que no viaja. En caso de padre fallecido, la partida de defunción original o copia legalizada, o que figure en la libreta de familia.</p>
+                </li>
+                <li>
+                        <p align="justify"> Menores de edad (viajando solos): mismos requisitos que el punto 1, más permiso ante escribano público y legalizado ante el colegio de escribanos de ambos padres. </p>
+                </li>
+            </ol>
+            <span class="custom_font_weigh_bold">
+                <p align="justify"> “Los menores deben tener sus documentos nacionales de identidad vigentes (DNI) con las actualizaciones de los 8, 14 y 16 años según corresponda. Aquellos menores que efectúen la primera actualización de su DNI (entre los 5 y los 8 años), en la fecha en la que el menor cumpla 14 años deberán renovarlo en ese momento. Los que actualicen antes del 01/11/12 mantienen su vigencia hasta los 16 años, según corresponda.
+                    Nota: NO VALIDOS PARA VIAJAR: las “tirillas” de documentación en trámite, L.E., L.C., Cedula Federal del Mercosur y no Mercosur, Cedula Provincial, DNI verde y celeste.
+                    Toda documentación debe estar en buen estado de conservación”.</p>
+            </span><br />
+            <span class="custom_font_weigh_bold">
+                Monedas y Tipo de Cambio: 
+            </span><br />
+            <span>
+                <p align="justify"> Los pesos argentinos que lleven los pasajeros, solo los podrán utilizar  en el territorio nacional.  Los cambios de dinero se harán al entrar al país y en las ciudades donde se alojen. El coordinador podrá informar cuándo y dónde cambiar. Es necesario avisar al banco o a atención al cliente de su tarjeta de crédito que va a realizar un viaje para que le habiliten la misma para usar en el exterior del país.</p>
+            </span>
+            <br />
+            <span>
+                <p align="justify"> En caso de llevar Dolares: importante, los billetes con rostro pequeño (de todos los valores), son considerados viejos en la mayoría de los países y generalmente es difícil cambiarlos a la moneda local o si los cambian, lo hacen a un cambio desfavorable, dando menor valor al billete que si quisiéramos cambiar uno más nuevo.</p>
+
+            </span> <br />
+            <span class="custom_font_weigh_bold">Abstenerse llevar billetes de 100 dólares series B y C, no los reciben.</span>
+            <div class="custom_margin_top_10">
+                <center><img src="~/Images/BilleteDolar.png" width="60%" /></center> <br />
+            </div>
+                <span class="custom_font_weigh_bold">
+                Electricidad:
+            </span><br />
+            <span>
+                <p align="justify"> La corriente eléctrica es de 220 Voltios durante todo el recorrido. Los tipos de enchufes que encontrará en los hoteles, serán el triple (uso cotidiano en Argentina) y doble de patas redondeadas en Brasil. </p>
+
+            </span>
+            <div class="custom_margin_top_10">
+                <center><img src="~/Images/EnchufeBrasil.png" width="40%" /></center>
+            </div>
+            <span class="custom_font_weigh_bold">
+                IMPORTANTE:
+            </span><br />
+            <span>Notificar previamente a su Agente de Viajes si hay requerimiento especiales de comidas tales como <span class="custom_font_weigh_bold"> vegetarianos, veganos, celíacos o alérgicos, entre otros.</span></span>
+            
+            </div>
+        }
+        <!--END IFORMACION ADICIONAL-->
+        <div class="HideToPrint custom_height_30"></div>
+    }
+
+        
+    
+    }
+   
+</body>
+</html>

@@ -1,0 +1,367 @@
+﻿#body_section {
+    margin-left: 10%;
+}
+
+.hidden {
+    display: none;
+}
+
+.both {
+    clear: both;
+}
+
+#Calendario, #Viajes {
+    float: left;
+    display: inline-block;
+}
+
+#Calendario {
+    width: 30%;
+    margin-top: 4em;
+}
+
+#calendar_vendedor {
+    margin-left: 1em;
+}
+
+#Viajes {
+    width: 65%;
+    margin-top: 4em;
+}
+
+ul.dos-columnas {
+    columns: 2;
+    -webkit-columns: 2;
+    -moz-columns: 2;
+}
+
+ul.tres-columnas {
+    columns: 3;
+    -webkit-columns: 3;
+    -moz-columns: 3;
+}
+
+
+
+
+
+/*PAGINACION DE UL*/
+ul.simplePagerNav li {
+    display: block;
+    float: left;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-family: georgia;
+    font-size: 14px;
+}
+
+    ul.simplePagerNav li a {
+        color: #333;
+        text-decoration: none;
+    }
+
+li.currentPage {
+    background: red;
+    background: #FF9500;
+}
+
+ul.simplePagerNav li.currentPage a {
+    color: #fff;
+}
+
+table.pageme {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+    table.pageme td {
+        border-collapse: collapse;
+        border: 1px solid #ccc;
+    }
+
+footer {
+    position: absolute;
+    bottom: 3%;
+}
+
+.ui-datepicker-header {
+    height: 2em;
+}
+/*ESTILOS DE MENU Y BOTONES*/
+ul, li, div, nav {
+    padding: 0;
+    margin: 0;
+}
+
+#menu_principal {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+.menu-list {
+    background-color: #007EA8;
+    float: left;
+}
+
+#menu_principal ul {
+    list-style-type: none;
+    margin-top: 1em;
+}
+
+    #menu_principal ul li a {
+        padding: 10px 15px;
+        display: block;
+        color: #fff;
+        text-decoration: none;
+    }
+
+        #menu_principal ul li a:hover {
+            background-color: #dcdcdc;
+        }
+
+.icon-60 {
+    width: 60px;
+    height: 60px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#icon-bus {
+    background-image: url("/Images/Icons/icon-bus.png");
+}
+
+#icon-cliente {
+    background-image: url("/Images/Icons/icon-cliente.png");
+}
+
+#icon-home {
+    background-image: url("/Images/Icons/icon-home.png");
+}
+
+#icon-hotel {
+    background-image: url("/Images/Icons/icon-hotel.png");
+}
+
+#icon-pasajero {
+    background-image: url("/Images/Icons/icon-pasajero.png");
+}
+
+#icon-proveedor {
+    background-image: url("/Images/Icons/icon-proveedor.png");
+}
+
+#Opciones-Viaje {
+    position: absolute;
+    top: 22%;
+    left: 13%;
+}
+
+#lista-opciones-viaje {
+    list-style-type: none;
+    display: inline-block;
+}
+
+    #lista-opciones-viaje li {
+        float: left;
+        margin: 1em;
+    }
+
+        #lista-opciones-viaje li a {
+            padding: 30px;
+            display: block;
+            color: #000;
+            text-decoration: none;
+            /*background-color: #007ee9;*/
+            background-color: #66a3d3;
+            line-height: 14em;
+            text-align: center;
+            font-size: 1em;
+        }
+
+            #lista-opciones-viaje li a:hover {
+                /*background-color: #ccc;*/
+                background-color: #e5eff8;
+            }
+
+#icon-viaje-fecha {
+    background-image: url("/Images/Icons/icon-viaje-fecha.png");
+}
+
+#icon-viaje-todos {
+    background-image: url("/Images/Icons/icon-viaje-todos.png");
+}
+
+#icon-gestion-viaje {
+    background-image: url("/Images/Icons/icon-gestion-viaje.png");
+}
+
+#icon-gestion-paquete {
+    background-image: url("/Images/Icons/icon-gestion-paquete.png");
+}
+
+.icon-120 {
+    width: 120px;
+    height: 120px;
+    background-position: top;
+    background-repeat: no-repeat;
+}
+
+section#panel-pasajero {
+    display: inline-block;
+    width: 100%;
+}
+
+section#panel-viaje {
+    display: inline-block;
+    vertical-align: top;
+    width: 93%;
+    margin-top: 18%;
+    padding: 1em;
+    border-radius: 6px;
+    background-color: #e0e0e0;
+    text-align: left;
+}
+
+    section#panel-viaje p {
+        text-align: left !important;
+    }
+
+    section#panel-viaje ul {
+        list-style: none;
+    }
+
+section#panel-detalle {
+    display: inline-block;
+    width: 25%;
+    vertical-align: top;
+}
+
+section#panel-bus {
+    display: inline-block;
+    width: 72%;
+    margin-left: 1em;
+}
+
+#busqueda-pasajero {
+    float: left;
+    width: 100%;
+}
+
+#txt-pasajero {
+    padding: 4px 15px;
+    width: 60%;
+    float: left;
+}
+
+#btn-buscar-pasajero {
+    background-image: url("/Images/Icons/icon-search.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+    float: left;
+}
+
+#btn-nuevo-pasajero {
+    background-image: url("/Images/Icons/icon-add.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+    float: left;
+}
+
+#resultado-pasajero {
+    margin-top: 4em;
+}
+
+.editor-label {
+    width: 20%;
+    float: left;
+    text-align: right;
+    padding: 0 1em 0 0;
+}
+
+.display-label {
+    width: 20%;
+    float: left;
+    text-align: right;
+    padding: 0 1em 0 0;
+}
+
+.editor-field {
+    margin: 1em 0 0 0 !important;
+}
+
+h1 {
+    font-size: 1.2vw;
+}
+
+h2 {
+    font-size: 1vw;
+}
+
+/*Estilos para los formularios modales*/
+.form {
+    width: 60%;
+    padding: 2%;
+    background-color: #f4f9fe;
+}
+
+.form-modal {
+    width: 100%;
+    padding: 2%;
+    background-color: #f4f9fe;
+}
+
+.form-label {
+    margin: 0 1%;
+    vertical-align: top;
+    width: 40%;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.form-field {
+    margin: 0 1%;
+    width: 54%;
+    display: inline-block;
+}
+
+    .form-field input, .form-field select, .form-field textarea {
+        width: 100% !important;
+        margin: 1% 0;
+        border: solid 1px #dcdcdc;
+    }
+
+.zoomIt:hover {
+    -moz-transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    -o-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+a.ui-button {
+    padding: .4em 1em;
+    margin-top: 1em;
+}
+
+h2.title {
+    background-color: #66a3d3;
+    color: #fff;
+    padding: 1em 3em;
+    text-transform: uppercase;
+}
+
+section#login a {
+    text-decoration: none;
+}
+
+select.ui-button {
+    padding: .3em 1em;
+    margin-top: 1em;
+}
+

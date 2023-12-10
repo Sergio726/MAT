@@ -1,0 +1,75 @@
+﻿@model IEnumerable<MAT.Entities.PersonaProveedor>
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Proveedores</h2>
+
+<p>
+    @Html.ActionLink("+ Agregar Proveedor", "Create", null, new {@class="btn btn-small btn-inverse view-all hidden-phone" })
+</p>
+<table class="mat-customtable">
+    <thead>
+    <tr>
+        
+        <th>
+            @Html.DisplayNameFor(model => model.RazonSocial)
+        </th>
+        <th>
+            @Html.Label("Localidad del Proveedor")
+        </th>
+        <th>
+            @Html.Label("Telefono")
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Fax)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Web)
+        </th>
+        <th>
+            @Html.Label("Email del proveedor")
+        </th>
+        
+        <th></th>
+    </tr>
+        </thead>
+    <tbody>
+
+@foreach (var item in Model) {
+    <tr>
+       <td>
+            @Html.DisplayFor(modelItem => item.RazonSocial)
+        </td>
+        <td>
+            @Html.LabelFor(modelItem => item.ProveedorLocalidadId, Helper.ToSelectItem("Localidad", item.ProveedorLocalidadId.ToString()))
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProveedorTelefono)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Fax)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Web)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProveedorEmail)
+        </td>
+        
+        <td>
+            <a href="/PersonaProveedor/Edit/@item.PersonaId"><img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
+            <a href="/PersonaProveedor/Details/@item.PersonaId"><img src="/Images/notepad.png" width="32" height="32" title="Detalle"/></a>
+        </td>
+    </tr>
+}
+        </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

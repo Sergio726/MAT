@@ -1,0 +1,59 @@
+﻿@if (ViewBag.Error != null)
+{
+    <script type="text/javascript">
+        console.log("@ViewBag.Error");
+    </script>
+    return;
+}
+
+<table id="tblPagosViaje">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Tipo de Pago</th>
+            <th>Nro Transaccion</th>
+            <th>Monto</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th style="text-align:left;">Total</th>
+            <th colspan="3"></th>
+            <th>$ @ViewBag.TotalPagos</th>
+        </tr>
+    </tfoot>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        var dataSet = @Html.Raw(ViewBag.sbDataSetJson);
+        var jTables = eval(dataSet);
+        var jt = jTables;
+
+        $("#tblPagosViaje").DataTable({
+            "aaData": jt,
+            "columns": [
+        	{ "data": "Cliente" },
+        	{ "data": "sFechaPago" },
+            { "data": "TipoPagoDescripcion",
+                "className": "dt-center"
+            },
+        	{ "data": "TransaccionID" },
+        	{ "data": "Monto",
+        	    "mRender": function (data, type, row) {
+        	        //var _data = { "Monto": row.Monto}
+        	        var data = "<span>$ </span>" + data;
+        	        return data;
+        	    },
+        	    "className": "dt-left"
+        	}
+            ],
+            "bAutoWidth": false,
+            "pageLength": 25,
+           // "columnDefs": [
+             //{"className": "dt-center", "targets": "_all"}]
+        });
+    });
+</script>

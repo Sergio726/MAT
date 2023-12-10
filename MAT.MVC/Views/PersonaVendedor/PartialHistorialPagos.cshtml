@@ -1,0 +1,24 @@
+﻿@model IList<MAT.Entities.Pago>
+@using MAT.Enums
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>Fecha de Pago</th>
+            <th>Monto Abonado</th>
+            <th>Estado de Rendición</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FechaPago.Value.Date.ToShortDateString()</td>
+                <td>@string.Format("{0:C}",item.Monto)</td>
+                <td>@((eEstadoRendicion)(item.EstadoRendicion.Value))</td>
+                <td><a href="#" id="btn-detallepago" data-pagoid="@item.PagoId"><img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a></td>
+            </tr>    
+        }
+
+    </tbody>
+</table>

@@ -1,0 +1,36 @@
+﻿@model List<MAT.Entities.PrecioServicio>
+
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>Precio</th>
+            <th>Fecha de Registro</th>
+            <th>Activo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in @Model)
+        {
+            <tr>
+                <td>@item.Precio</td>
+                <td>@item.FechaRegistro.ToShortDateString()</td>
+                <td>@if (item.Activo)
+                    {
+                      <p>Si</p>    
+                    }
+                    else
+                    {
+                       <p>No</p>    
+                    }
+                </td>
+                <td>
+                    <a id="btn-editar-precio-servicio" class="btn-editar-precio-servicio" href="/Admin/ServiciosAdminPrecioEdit/@item.PrecioServicioId" data-id="@item.PrecioServicioId">
+                        <img src="/Images/pencil.png" width="32" height="32" title="Editar Precio" /></a>
+                    <a id="btn-eliminar-precio-servicio" class="btn-eliminar-precio-servicio" href="#" data-id="@item.PrecioServicioId">
+                        <img src="/Images/cross.png" width="32" height="32" title="Eliminar Precio" /></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,120 @@
+﻿@model MAT.MVC.Models.PrecioModel
+
+<script type="text/javascript">
+    $("input[class='date']").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        yearRange: '-100:+2'
+    });
+   
+    function savePrecio() {
+        var parameters = $("#formPrecio").serializeArray();
+
+        //insert precio
+        if (parameters[0].value == "00000000-0000-0000-0000-000000000000") {
+            $.ajax({
+                url: "/Precio/Insert",
+                type: "POST",
+                data: parameters,
+                dataType: "json",
+                success: function (data) {
+                    if (data[0] == "Done.") {
+                        $("#popupPrecios").dialog("close");
+                        PopupDetalleFactura_Load();
+
+                    }
+                    else {
+                        alert("Se produjo un error. Contactese con el administrador.");
+                        console.log(data[1]);
+                    }
+                },
+                error: function (e) {
+                    alert("Se produjo un error. Contactese con el administrador.");
+                    console.log(e);
+                }
+            })
+        }
+        else {
+            $.ajax({
+                url: "/Precio/Update",
+                type: "POST",
+                data: parameters,
+                dataType: "json",
+                success: function (data) {
+                    if (data[0] == "Done.") {
+                        $("#popupPrecios").dialog("close");
+                        PopupDetalleFactura_Load();
+
+                    }
+                    else {
+                        alert("Se produjo un error. Contactese con el administrador.");
+                        console.log(data[1]);
+                    }
+                },
+                error: function (e) {
+                    alert("Se produjo un error. Contactese con el administrador.");
+                    console.log(e);
+                }
+            })
+        }
+
+
+    };
+
+    function closePrecio() {
+        $("#popupPrecios").dialog("close");
+    }
+
+</script>
+
+    <div class="form">
+        <form id="formPrecio">
+            <input type="hidden" id="hdnPrecioID" name="PrecioID" value="@Model.PrecioID" />
+        <div class="form-label">
+            Monto
+        </div>
+        <div class="form-field">
+            <input type="number" name="Monto" value="@Model.Monto" />
+        </div>
+
+        <div class="form-label">
+            Vigencia
+        </div>
+        <div class="form-field">
+            @if (Model.Vigencia.ToShortDateString() != "1/1/0001")
+            {
+                <input type="datetime" class="date" name="Vigencia" value="@Model.Vigencia.ToShortDateString()" />
+              
+            }
+            else
+            {
+                <input type="datetime" class="date" name="Vigencia" />
+            }
+        </div>
+
+        <div class="form-label">
+            Descripcion
+        </div>
+        <div class="form-field">
+           <input type="text" name="Descripcion" value="@Model.Descripcion"/>
+        </div>
+        <div class="form-label">
+            Descripcion para Voucher
+        </div>
+        <div class="form-field">
+           <input type="text" name="DescripcionVoucher" value="@Model.DescripcionVoucher"/>
+        </div>
+        <div class="form-label">
+            Mes
+        </div>
+        <div class="form-field">
+           <input type="text" name="Mes" value="@Model.Mes" />
+        </div>
+        </form>
+        
+
+        <p class="botonera-form">
+            <input type="button" value="Guardar" onclick="javascript: savePrecio();" class="btn btn-inverse btn-small" />
+            <input type="button" value="Cancelar" onclick="javascript: closePrecio();" class="btn btn-inverse btn-small" />
+        </p>
+    </div>

@@ -1,0 +1,68 @@
+﻿@model MAT.Entities.Transporte
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class ="title">Crear - Transporte</h2>
+
+<div class="form">
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+        
+        <div class="form-label">
+            @Html.LabelFor(model => model.NroCoche)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.NroCoche)
+            @Html.ValidationMessageFor(model => model.NroCoche)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.MaxPasajeros)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.MaxPasajeros)
+            @Html.ValidationMessageFor(model => model.MaxPasajeros)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.KmRecorridos)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.KmRecorridos)
+            @Html.ValidationMessageFor(model => model.KmRecorridos)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.UltimoService)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.UltimoService)
+            @Html.ValidationMessageFor(model => model.UltimoService)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Matricula)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Matricula)
+            @Html.ValidationMessageFor(model => model.Matricula)
+        </div>
+        <p>
+            <input type="submit" value="Crear" class="btn btn-small btn-inverse" />
+            @Html.ActionLink("< Lista de Transportes", "Index", null ,new {@class ="btn btn-small btn-inverse"})
+        </p>
+  
+}
+
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

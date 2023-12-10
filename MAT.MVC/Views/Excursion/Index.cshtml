@@ -1,0 +1,53 @@
+﻿@model IEnumerable<MAT.Entities.Excursion>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Excursiones</h2>
+
+<p class="botonera-form">
+    <input type="button" value="+ Agregar Excursión" class="btn btn-small btn-inverse" onclick="location.href='@Url.Action("Create", "Excursion")    '" />
+</p>
+
+<table class="mat-customtable">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Costo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Observaciones)
+        </th>        
+        <th></th>
+    </tr>
+        </thead>
+    <tbody>
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descripcion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Costo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Observaciones)
+        </td>       
+        <td>
+             <a href="/Excursion/Edit/@item.ExcursionId">
+                        <img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
+                    @*<a href="/Excursion/Details/@item.ExcursionId">
+                        <img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a>*@
+            <a href="#" id="btn-eliminar-excursion" data-id="@item.ExcursionId">
+                        <img src="/Images/cross.png" width="32" height="32" title="Eliminar" /></a>
+        </td>
+    </tr>
+}
+</tbody>
+
+</table>

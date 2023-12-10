@@ -1,0 +1,55 @@
+﻿@model List<MAT.Entities.PlanillaServicioItem>
+@using MAT.Utilities
+
+<h3>SERVICIOS Y AGREGADOS</h3>
+@{
+    double _totalservicios = 0;
+<table class="mat-customtable servicios">
+    <thead>
+        <tr>
+            <th class="oculto">
+                Id
+            </th>
+            <th>Descripcion
+            </th>
+            <th>Precio
+            </th>
+            <th>Cantidad
+            </th>
+            <th>Subtotal
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="oculto item-id">
+                    @item.PlanillaServicioItemId
+                </td>
+                <td>
+                    @Helper.GetServicioDescripcion(item.ServicioId)
+                </td>
+                <td>
+                    @Helper.GetPrecioServicio(item.ServicioId)
+                </td>
+                <td class="cantidad">
+                    <input type="text" class="txt-cantidad cantidad-servicio-item" value="@item.Cantidad" />
+                </td>
+                <td class="subtotal">
+                    @item.Subtotal
+                </td>
+            </tr>
+            _totalservicios += item.Subtotal;
+        }
+    </tbody>
+</table>
+        <div class="form">
+        <div class="form-label">
+            TOTAL SERVICIOS
+        </div>
+        <div class="form-field">
+            <input type="text" class="text-total-servicios subtotales" value="@_totalservicios" />
+        </div>
+    </div>
+}

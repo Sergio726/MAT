@@ -1,0 +1,89 @@
+﻿@model List<MAT.MVC.Models.ViajeHotel> 
+
+@{
+    ViewBag.Title = "Hoteles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    function setEgresoIngreso(ViajeHotelID, viajeid, Fecha) {
+        var title = "Editar Entrada y Salida al Hotel";
+        var id = "setEgresoIngreso";
+        
+        var url = "/Viaje/HotelSetIngresoEgreso?ViajeHotelID=" + ViajeHotelID + "&viajeid=" + viajeid + "&Fecha=" + Fecha;
+        ShowFormDialog(url, id, title,'min');
+    }
+
+    function getDistribuciones(ViajeHotelID, Desde, Hasta) {
+
+        if (Desde == '') {
+            return alert('Por favor, primero defina el dia de Ingreso al hotel', 'Atención');
+        }
+
+        if (Hasta == '') {
+            return alert('Por favor, primero defina el dia de Ingreso al hotel', 'Atención');
+        }
+
+        var title = "Distribucion Habitaciones/Viaje";
+        var id = "popup_HotelHabitacionViaje";
+        var url = "/HotelHabitacionViaje/ABM?ViajeHotelID=" + ViajeHotelID;
+        ShowFormDialog(url, id, title, 'default');
+    }
+   
+</script>
+
+
+@if (Model.Count > 0)
+{
+   <h2 class="title">VIAJE: @Model.First().ViajeNombre</h2> 
+}
+
+<h4 class="">Lista de Hoteles</h4>
+<input type="hidden" id="viajeID" value="@ViewData["viajeid"]" />
+
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Comentario
+            </th>
+            <th>
+                Ingreso
+            </th>
+            <th>
+                Egreso
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {        
+            <tr>
+                <td>
+                    @item.Nombre
+                </td>
+                <td>@item.Comentario</td>
+                <td><span>@(item.Desde) </span><span>@item.HoraIngreso</span></td>
+                <td><span>@(item.Hasta) </span><span>@item.HoraSalida</span></td>
+                <td>
+                    <a href="javascript: getDistribuciones('@item.ViajeHotelID','@(item.Desde)','@(item.Hasta)');" class="button_habitacion" title="Distribucion de Habitaciones" >
+                    </a>
+                    <a href="javascript: setEgresoIngreso('@item.ViajeHotelID','@item.ViajeID','@item.Desde');" id="@item.ViajeHotelID" class="button_edit" title="Editar ingreso/egreso al Hotel" >
+                    </a>
+                    <a id="btn-desvincular-hotel" href="#" data-hotel="@item.HotelID" data-viaje="@item.ViajeID" class="button_delete" title="Desvincular Hotel">
+                    </a>
+                </td>
+            </tr>       
+        }
+    </tbody>
+</table>
+<div id="divHotelHabitacionViaje">
+
+</div>
+<p class="botonera-form">
+    <a href="#" id="btn-agregar-hotel" data-viaje="@ViewData["viajeid"]" class="btn btn-inverse btn-small">Vincular Hotel</a>
+</p>

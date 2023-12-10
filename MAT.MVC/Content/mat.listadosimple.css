@@ -1,0 +1,42 @@
+﻿body {
+}
+
+.Content {
+    width: 70%;
+    margin: 0 0 0 15%;
+}
+    .logo-voucher {
+        float:left;
+        width:30%;
+        margin: 5px 5px;
+    }
+
+.EncabezadoViaje {
+    /*border-left: 1px solid #000;
+    border-top: 1px solid #000;
+    border-right: 1px solid #000;
+    font-weight: bold;
+	text-align:center;
+    background-color:#ddd;*/
+
+    display: -moz-inline-stack;
+    height: 95px;
+    line-height: 20px;
+    width: 100%;
+    color:#fff;
+    background-color:#2A307D;
+}
+
+.tabla {
+    border: 1px solid #000;
+    border-collapse: collapse;
+
+}
+
+.tabla thead {
+    font-weight:bold;
+}
+.celda {
+    border: 1px solid #000;
+    padding:1px;
+}

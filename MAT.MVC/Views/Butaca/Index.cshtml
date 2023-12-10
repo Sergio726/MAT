@@ -1,0 +1,138 @@
+﻿@*@model IEnumerable<MAT.Entities.Butaca>*@
+@model PagedList.IPagedList<MAT.Entities.Butaca>
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Butacas</h2>
+
+<p>
+    @Html.ActionLink("+ Agregar Butaca", "Create", null, new { @class = "btn btn-small btn-inverse" })
+</p>
+
+
+
+@using (Html.BeginForm())
+{
+    <p>
+        Coche    
+        @Html.DropDownList("SearchString", Helper.ToSelectEntities("Transporte"), new { @class = "btn btn-small btn-inverse" })
+        @*@Html.TextBox("SearchString")*@
+        <input type="submit" value="Filtrar" class="btn btn-small btn-inverse" />
+    </p>
+}
+
+<table class="mat-customtable">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.First().NroButaca)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Piso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Ubicacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Tipo)
+            </th>
+            <th>
+                @Html.Label("Nro Coche")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Fila)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Posicion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().CodigoButaca)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.NroButaca)
+                </td>
+                <td>
+                    @Html.Label(((ePisoButaca)item.Piso).ToString())
+                </td>
+                <td>
+                    @Html.Label(((eUbicacionButaca)item.Ubicacion).ToString())
+                </td>
+                <td>
+                    @Html.Label(((eTipoButaca)item.Tipo).ToString())
+                </td>
+                <td>
+                    @Html.Label("Coche " + Helper.ToSelectItem("Transporte", item.TransporteId.ToString()))
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fila)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Posicion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CodigoButaca)
+                </td>
+
+                <td>
+                    <a href="/Butaca/Edit/@item.ButacaId">
+                        <img src="/Images/pencil.png" width="32" height="32" /></a>
+                    <a href="/Butaca/Details/@item.ButacaId">
+                        <img src="/Images/notepad.png" width="32" height="32" /></a>
+                    <a href="/Butaca/Delete/@item.ButacaId">
+                        <img src="/Images/cross.png" width="32" height="32" /></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mat-custompaging">
+    Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+    de @Model.PageCount
+
+    @if (Model.HasPreviousPage)
+    {
+        @Html.ActionLink("<<", "Index", new { page = 1, SearchString = Model.First().TransporteId }, new { @class = "btn-pager" })
+        @Html.Raw(" ");
+        @Html.ActionLink("< Atrás", "Index", new { page = Model.PageNumber - 1, SearchString = Model.First().TransporteId }, new { @class = "btn-pager" })
+    }
+    else
+    {
+        <a id="btn-pager-first" class="btn-pager"><<</a>
+        <a id="btn-pager-previous" class="btn-pager">< Atrás</a>
+    }
+
+    @if (Model.HasNextPage)
+    {
+        @Html.ActionLink("Siguiente >", "Index", new { page = Model.PageNumber + 1, SearchString = Model.First().TransporteId }, new { @class = "btn-pager" })
+        @Html.Raw(" ");
+        @Html.ActionLink(">>", "Index", new { page = Model.PageCount, SearchString = Model.First().TransporteId }, new { @class = "btn-pager" })
+    }
+    else
+    {
+        <a class="btn-pager">Siguiente ></a>
+        <a class="btn-pager">>></a>
+    }
+
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

@@ -1,0 +1,44 @@
+﻿@page {
+    size: A4;
+    margin-left: 10mm;
+    margin-right: 10mm;
+    margin-top: 11mm;
+    margin-bottom: 5mm;
+}
+
+body {
+}
+
+.Content {
+    width: 100%;
+    margin: 0 auto;
+    font-size:11px;
+}
+
+.EncabezadoViaje {
+    display: -moz-inline-stack;
+    height: 95px;
+    line-height: 20px;
+    width: 100%;
+    color:#fff;
+    background-color:#2A307D;
+}
+
+.tabla {
+    border: 1px solid #000;
+    border-collapse: collapse;
+    font-family:Arial;
+    font-size:11px;
+}
+
+.celda {
+    border: 1px solid #000;
+}
+
+.HideToPrint {
+    display:none;
+}
+
+input {
+    display:none;
+}

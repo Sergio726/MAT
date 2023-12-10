@@ -1,0 +1,63 @@
+﻿<div class="custom_padding_10">
+    <table id="tblPlantillas" class="mat-customtable">
+        <thead>
+            <tr>
+                <th>Plantila</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<div Id="divMSGDeletePlantilla" class="hide">
+    <div class="custom_padding_10">
+        <span>Al eliminar esta plantilla no podra recuperarla. Desea continuar?</span>
+    </div>
+    <div class="custom_padding_10">
+        <button type="button" onclick="javascript: deletePlantilla('##PlantillaId##');">Si. Eliminar</button>
+        <button type="button" onclick="javascript: $('#popup_divMSGDeletePlantilla').dialog('close') ">Cancelar</button>
+    </div>
+    
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        loadPlantillas(@Html.Raw(ViewBag.dtPlantilla));
+
+    });
+
+
+    function loadPlantillas(datatable)
+    {
+        var jTables = eval(datatable);
+        var jt = jTables.Table;
+
+        $("#tblPlantillas").DataTable({
+            "aaData": jt,
+            "columns": [
+            { "data": "Nombre" },
+            {
+                "data": "Id",
+                "mRender": function (data, type, row) {
+                    
+                    var data = "<a href='javascript:insertByPlantilla(" + row.Id + ");'><img src='/Images/Icons/icon-copy-128px.png' width='26' height='26' title='Cargar Plantilla'></a>";
+                    data = data + "<a href='javascript:deletePlantillaMSG(" + row.Id + ");'><img src='/Images/cross.png' width='32' height='32' title='Eliminar Plantilla'></a>";
+                    return data;
+                }
+            }
+            ],
+            "bAutoWidth": false,
+            "pageLength": 25
+        });
+    }
+
+    function deletePlantillaMSG(PlantillaId) {
+
+        var html = $("#divMSGDeletePlantilla").html();
+        html = html.replace('##PlantillaId##', PlantillaId)
+        //confirm(html);
+        
+        ShowFormDialogHTML(html, 'popup_divMSGDeletePlantilla', 'Atención', '30%');
+    }
+
+</script>

@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Inicio del Sistema</title>
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link href="~/Content/mat.styles.css" rel="stylesheet" />
+    <link href="~/Content/mat.splash.css" rel="stylesheet" />
+    <link href="~/Content/mat.busplugin.css" rel="stylesheet" />
+    <link href="~/Content/preset.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
+    <script src="~/Scripts/javascript.core.js"></script>
+    <script src="~/Scripts/mat.jquery.binding.js"></script>
+    <script src="~/Scripts/mat.jquery.functions.js"></script>
+    <script src="~/Scripts/mat.jquery.initialize.js"></script>
+    <script src="~/Scripts/jquery.quick.pagination.min.js"></script>
+    <script src="~/Scripts/global.js"></script>
+    <script src="~/Scripts/mat.jquery.hashtable.js"></script>
+</head>
+<body>
+    <section id="script_section">
+        @RenderSection("scripts", required: false)
+    </section>
+    <section id="body_section">
+        @RenderBody()
+    </section>
+</body>
+</html>

@@ -1,0 +1,82 @@
+﻿@model MAT.MVC.Models.LoginModel
+
+@*@{
+    ViewBag.Title = "Inicie Sesión";
+    Layout = "~/Views/Shared/_LayoutSplash.cshtml";
+}
+
+<section id="loginForm">
+<h2>Utilice una cuenta local para iniciar sesión.</h2>
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.UserName)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.UserName)
+            @Html.ValidationMessageFor(model => model.UserName)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Password)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Password)
+            @Html.ValidationMessageFor(model => model.Password)
+        </div>
+
+        <p>
+            <input type="submit" value="Iniciar Sesión" class="ui-button ui-widget ui-state-default ui-corner-all" />
+        </p>
+    <p>
+        @Html.ActionLink("Regístrese", "RegistrarVendedor") si no tiene ninguna cuenta.
+    </p>
+}
+    </section>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}*@
+
+<link href="~/Content/mat.loguin.css" rel="stylesheet" />
+
+    <div class="login-page">
+          @if (ViewBag.IsDev == "true")
+          {
+            <h1 style="text-align:center;font-weight:bold">Entorno de Prueba</h1>    
+          }
+      <div class="form">
+        @*<form class="register-form">
+          <input type="text" placeholder="name"/>
+          <input type="password" placeholder="password"/>
+          <input type="text" placeholder="email address"/>
+          <button>create</button>
+          <p class="message">Already registered? <a href="#">Sign In</a></p>
+        </form>*@
+    @using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+         @*<form action="/Account/Login?ReturnUrl=%2f" method="post" novalidate="novalidate" class="login-form">
+            </form>*@
+         @* <form class="login-form">*@
+          <input type="text" id="UserName" name="UserName" placeholder="Usuario"/>
+          <input type="password" id="Password" name="Password" placeholder="Contraseña"/>
+          <button onclick="javascript: login();">Entrar</button>
+          <p class="message">Aun no estas registrado? <a href="@Url.Action("RegistrarVendedor", "Account")">Regístrate ahora</a></p>
+        
+   }
+      </div>
+    </div>
+
+<script type="text/ecmascript">
+    $('.message a').click(function () {
+        $('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
+    });
+
+    function login() {
+        $(".login-form").submit();
+    }
+</script>

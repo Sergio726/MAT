@@ -1,0 +1,81 @@
+﻿/*Estilos para los formularios modales*/
+.form {
+    width: 60%;
+    padding: 2%;
+    margin: 0;
+}
+
+.form-modal {
+    width: 100%;
+    padding: 2%;
+    background:#f2f3f4  !important
+}
+
+.form-label {
+    margin: 0 1%;
+    vertical-align: top;
+    width: 40%;
+    display: inline-block;
+    font-weight: bold;
+    text-align:right;
+}
+
+.form-field {
+    margin: 0 1%;
+    width: 54%;
+    display: inline-block;
+}
+
+    .form-field input, .form-field select, .form-field textarea {
+        width: 100% !important;
+        margin: 1% 0;
+        border: solid 1px #dcdcdc;
+    }
+
+h2.title {
+    width:100%;
+    font-size: 1.4em;
+    margin: 0 !important;
+    color: #fff;
+    padding: 1.05em 1.5em;
+    line-height:0 !important;
+    text-shadow: 0 1px 0 #722c43;
+background-image: -moz-linear-gradient(top, #E83A61, #E83A61);
+background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#E83A61), to(#E83A61));
+background-image: -webkit-linear-gradient(top, #E83A61, #E83A61);
+background-image: -o-linear-gradient(top, #E83A61, #E83A61);
+background-image: linear-gradient(to bottom, #aa8cb1, #86618f);
+background-repeat: repeat-x;
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffce829b', endColorstr='#ffb94b6f', GradientType=0);
+}
+.botonera-form {
+    margin-top:1em;
+}
+
+.form-radio {
+    margin: 0 1%;
+    width: 10%;
+    display: inline-block;
+}
+fieldset.border {
+    padding: 10px;
+    border: 1px solid #e5e5e5;
+}
+
+input[type='button'] {
+    padding: 3px;
+    margin-bottom: 10px;
+    margin-left: 3px;
+}
+
+.mat-resumtable tr:hover td, tr.odd:hover td, tr:hover td label, tr.odd:hover td label {
+    background: #9C9C9C;
+    cursor: pointer;
+    color:white;
+}
+
+.mat-resumtable tr:hover td, tr.even:hover td, tr:hover td label, tr.even:hover td label {
+    background: #9C9C9C;
+    cursor: pointer;
+    color:white;
+}

@@ -1,0 +1,153 @@
+﻿@model List<MAT.MVC.Models.ObservacionViaje.ObsViaje>
+<script src="~/Scripts/dataTable/dataTables.rowGroup.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var table = $("#tblObservaciones").DataTable({
+            order: [[0, 'asc']],
+            rowGroup: {
+                dataSrc: 0
+            }
+        });
+
+        $('#tblObservaciones tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child(format(row.data())).show();
+                tr.addClass('shown');
+
+            }
+        });
+
+    });
+
+    function format(d) {
+        // `d` is the original data object for the row
+       // var divLoading = "<div class='iconLoading'></div>";
+        var content = d[5];
+        $("#tblObservaciones_divMoreDetails").html(content);
+
+        return sReturn = $("#tblObservaciones_divMoreDetails").html().trim();
+
+    }
+
+    function fnObservacionABM(Id)
+    {
+        var url = "/Reserva/ObservacionABM?sViajeID=@ViewBag.ViajeId&sId=" + Id;
+        var dialogid = "popup_Observacion";
+        var dialogtitle = "Agragar Observacion";
+        var widthsize = "min";
+        ShowFormDialog(url, dialogid, dialogtitle, widthsize)
+    }
+
+    function fnObservacionesGeneralesDelete(Id) {
+        $.ajax({
+            type: "post",
+            url: "/Reserva/ObservacionesGeneralesDelete",
+            dataType: "json",
+            data: { "Id": Id },
+            success: function (data) {
+                if (data.Result == "Done.") {
+
+                    if (data.Msj == "Done.") {
+                        getObservacionesGenerales();
+                    }
+                    else {
+                        alert(data.Msj);
+                    }
+
+                }
+                else {
+                    alert('Ocurrio un error al intentar agregar una observacion, por favor comuniquese con el administrador.')
+                    console.log(data.Msj);
+                    $("#popup_Observacion").dialog("close");
+                }
+            }
+        });
+    }
+
+</script>
+
+
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+else
+{
+    <table class="grid mat-customtable" id="tblObservaciones">
+        <thead>
+            <tr>
+                <th>
+                    Categoria
+                </th>
+                <th>
+                    Fecha
+                </th>
+                <th>
+                    Detalle
+                </th>
+                <th>
+                    Pasajeros
+                </th>
+                <th>
+                    Vendedor
+                </th>
+                <th class="hide"></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (MAT.MVC.Models.ObservacionViaje.ObsViaje item in Model)
+            {
+                <tr>
+                    <td><span class="custom_font_size_10 custom_font_weigh_bold">@item.Categoria</span></td>
+                    <td>@item.Fecha</td>
+                    <td>
+                        <pre class="pre_parrafo_single">
+                            @item.Detalle.TrimStart()
+                        </pre>
+
+                    </td>
+                   
+                    <td>
+                        @if (item.Pasajeros.Count != 0)
+                        {
+                            @item.Pasajeros.First().Pasajero
+                        }
+                    </td>
+                    <td>@item.Vendedor</td>
+                    
+                    <td class="hide"> 
+                        <div>
+                           @if (item.Update.ToString() != "1/1/0001 00:00:00" && item.Update.ToString() != "01/01/0001 12:00:00 a.m.")
+                           {
+                                <span class="custom_font_size_10 custom_font_weigh_bold">Ultima Actualizacion: </span> @item.Update <br />
+                                <span class="custom_font_size_10 custom_font_weigh_bold">Actualizado por: </span> @item.UpdateVendedor
+                           }
+                            
+                        </div>
+                        <div class="custom_diplay_flex custom_display_inline_flex">
+                            <a href="javascript: fnObservacionABM(@item.Id.ToString());" class="custom_diplay_flex"><div class="divEdit" title="Editar Observacion."></div> Editar Observacion</a>
+                            <a href="javascript: fnObservacionesGeneralesDelete(@item.Id);" class="custom_diplay_flex custom_margin_left_10"><div class="divDelete" title="Eliminar Observacion."></div> Eliminar Observacion</a>
+                        </div>
+                    </td>
+                    <td class="details-control"></td>
+                </tr>
+            }
+        </tbody>
+    
+    </table>
+
+     <div id="tblObservaciones_divMoreDetails" style="display:none;">
+           
+     </div>
+}
+

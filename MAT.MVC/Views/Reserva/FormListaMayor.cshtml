@@ -1,0 +1,73 @@
+﻿@model List<MAT.MVC.Models.PasajeroMayor>
+@using MAT.Enums
+@using MAT.Utilities
+@using MAT.Entities
+
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#grid-seleccionar-pasajero").DataTable();
+    });
+</script>
+
+<div style="float: right;padding-bottom: 5px;">
+    <div class="iconHelp" title="Muestra aquellas personas que son titulares de la compra o pago de la factura del viaje. Dichas personas pueden ser responsables de un menor."></div>
+</div>
+<table id="grid-seleccionar-pasajero" class="mat-customtable" style="width:99%;">
+    <thead>
+    <tr>
+        <th class="hidden">
+        </th>
+        <th>
+            Apellido
+        </th>
+        <th>
+            Nombre
+        </th>
+        <th>
+           Tipo Documento
+        </th>
+        <th>
+            Nro Documento
+        </th>
+        <th>
+            Telefono
+        </th>
+        <th>
+            Email
+        </th>       
+    </tr>
+        </thead>
+    <tbody>    
+@foreach (MAT.MVC.Models.PasajeroMayor item in Model)
+{
+    <tr data-id="@item.ClienteId" data-pasajeid="@item.PasajeID" data-apellido="@item.Apellido" data-nombre="@item.Nombre" onclick="addMayor(this);">
+        <td class="hidden">
+            <label name="ClienteId">@item.ClienteId </label>
+        </td>
+        <td>
+            @item.Apellido
+        </td>
+        <td>
+            @item.Nombre
+        </td>
+        <td>
+            @((eTipoDocumento)item.TipoDocumento)
+            
+        </td>
+        <td>
+            @item.NroDocumento
+        </td>
+        <td>
+            @item.Telefono
+        </td>
+        <td>
+            @item.Email
+        </td>
+    </tr>
+}
+        </tbody>
+</table>

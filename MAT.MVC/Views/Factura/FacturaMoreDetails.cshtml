@@ -1,0 +1,19 @@
+﻿@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div> 
+    return;   
+}
+
+<div class="custom_text_aling_left">
+    <span class="custom_font_weigh_bold"> Pasajeros </span>
+    <ul>
+        @foreach (var item in ViewBag.lPasajeros)
+            {
+                <li>
+                    @item
+                </li>
+            }
+       
+    </ul>        
+    
+</div>

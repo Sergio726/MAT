@@ -1,0 +1,543 @@
+﻿@model  MAT.MVC.Models.PaqueteStandard
+@using MAT.Utilities
+@using MAT.Enums
+@{
+    ViewBag.Title = "Editar Paquete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+ @{
+            string PaisID = "0";
+            string LocalidadID = "0";
+            string DepartamentoID = "0";
+            string ProvinciaID = "0";
+            string Destino = null;
+
+            if (ViewBag.InfoDestino != null)
+            {
+                PaisID = ViewBag.InfoDestino.PaisID;
+                LocalidadID = ViewBag.InfoDestino.LocalidadID.ToString();
+                DepartamentoID = ViewBag.InfoDestino.DepartamentoID.ToString();
+                ProvinciaID = ViewBag.InfoDestino.ProvinciaID.ToString();
+                Destino = ViewBag.InfoDestino.Destino;
+            }
+        }
+<h2 class="title">Paquete - Editar</h2>
+
+<div class="form">
+    <div class="form-label divUploadImage">
+        <label for="file">Imagen de Paquete</label>
+    </div>
+    <div class="form-field divUploadImage">
+        @if (!string.IsNullOrEmpty(Model.Foto))
+        {
+            <img src="@Model.Foto" alt="Foto de Paquete" />
+        
+        }
+
+        @using (Html.BeginForm("UploadFile",
+                        "Paquete",
+                        FormMethod.Post,
+                        new { enctype = "multipart/form-data" }))
+        {             
+
+            <input type="file" name="file" id="file" /><input type="submit" value="Subir Imagen" class="btn btn-small btn-inverse" />
+        }
+    </div>
+</div>
+
+<div class="form">
+    <form id="formPaquete">
+        <input type="hidden" value="@Model.PaqueteID" id="PaqueteID" name="PaqueteID" />
+        <div class="form-label">
+            <label>Nombre del Paquete <span class="required" title="Campo obligatorio">*</span></label>
+        </div>
+        <div class="form-field">
+            <input type="text" id="Descripcion" name="Descripcion" class="valtxt" value="@Model.Descripcion" />
+        </div>
+
+
+        <div class="form-label">
+            <label>Moneda</label>
+        </div>
+        <div class="form-field">
+            <select id="Moneda" name="Moneda">
+                @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
+                {
+                    <option value="@item.Id" @(Model.Moneda.ToString() == item.Id.ToString() ? "selected" : "") >@item.Descripcion.ToString().ToUpper() ( @(item.Codigo))</option>
+                }
+            </select>
+          
+        </div>
+
+        <div class="form-label">
+            <label>Iva</label>
+        </div>
+        <div class="form-field">
+            <input id="Iva" name="Iva" type="number" value="@Model.Iva" />
+        </div>
+
+        <div class="form-label">
+            <label>Alicuota</label>
+        </div>
+        <div class="form-field">
+            <input type="number" id="Alicuota" name="Alicuota" value="@Model.Alicuota" />
+        </div>
+
+        <div class="form-label">
+            <label>Temporada</label>
+        </div>
+        <div class="form-field">
+            <select id="Temporada" name="Temporada">
+                 @foreach (var item in eTemporada.Alta.ToSelectList())
+	            {
+		            <option value="@item.Value.ToString()" @(Model.Temporada.ToString() == item.Value.ToString() ? "selected" : "")>@item.Text.ToUpper()</option>
+	            }
+            </select>
+           
+        </div>
+
+        <div class="form-label">
+            <label>Cotizacion</label>
+        </div>
+        <div class="form-field">
+           <input type="number" id="Cotizacion" name="Cotizacion" value="@Model.Cotizacion"/>
+        </div>
+
+        <div class="form-label">
+            <label>Codigo</label>
+        </div>
+        <div class="form-field">
+           <input type="text" maxlength="50" id="Codigo" name="Codigo"  value="@Model.Codigo"/>
+        </div>
+         <div class="form-label">
+            <label>Destino <span class="required" title="Campo obligatorio">*</span></label>
+        </div>
+        <div class="form-field" style="width: 55.4%;">
+            <div style="display: flex;">
+                <input type="text" maxlength="50" style="width:100%;" id="txtDestino" name="txtDestino" class="valtxt" readonly  placeholder="SELECCIONAR DESTINO" value="@Destino"/>
+                <div id="divLocation">
+                    <a href="javascript:void(0);" onclick="javascript:selectDestino();" title="Click Para Seleccionar Destino">
+                      <div class="iconLocation_30" ></div>
+                    </a>
+                </div>
+            </div>
+           
+        </div>
+      
+     
+        <div class="form-label">
+            <label>Publicar en Página WEB</label>
+        </div>
+        <div class="form-field"style="float:right;width: 55.4%;">
+            <div style="width:24px;">
+                <input type="checkbox" id="chkPublicWeb" @(Model.PublicWeb ==true ? "checked" : "") />
+                <input type="hidden" id="PublicWeb" name="PublicWeb" value="@(Model.PublicWeb ==true ? "true" : "false")"/>
+
+            </div>
+        </div>
+        <div class="form-label" style="margin-top:10px;" title="Cuando un paquete esta en modo publicidad, no es necesario que se le vincule un viaje para que este aparezca en la página web.">
+            <label>Modo Pubilcidad</label>
+        </div>
+        <div class="form-field"style="float:right;width: 55.4%;margin-top:10px;" title="Cuando un paquete esta en modo publicidad, no es necesario que se le vincule un viaje para que este aparezca en la página web.">
+            <div style="width:24px;">
+                <input type="checkbox" id="chkModePublicity" @(Model.ModePublicity ==true ? "checked" : "") />
+                <input type="hidden" id="ModePublicity" name="ModePublicity" value="@(Model.ModePublicity ==true ? "true" : "false")"/>
+
+            </div>
+        </div>         
+        <div>
+            <a id="a_editar_paquete" style="display:none" href="/Paquete/Edit/?sAction=edit&sPaqueteID=@Model.PaqueteID" class="btn btn-small btn-inverse">Editar</a>
+            <input type="button" value="Guardar" id="btn_guardar_paquete" class="btn btn-small btn-inverse" onclick="javascript: UpdateForm();" />
+            @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn btn-small btn-inverse" })
+        </div>
+
+
+        <div id="divDestino" style="display:none;" title="Seleccionar Destino">
+            <div class="form-label">
+                <label>País <span class="required" title="Campo obligatorio">*</span></label>
+            </div>
+            <div class="form-field">
+                @*@Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntities("Provincia"))*@
+                <select id="ddPais" name="Pais">
+                    <option value="0">SELECCIONE UN PAÍS</option>
+                    @foreach (MAT.Entities.Pais Item in ViewBag.ListPais)
+                    {
+                        <option value="@Item.PaisId.ToString()" @(Item.Descripcion == "ARGENTINA" ? "selected" : "")>@Item.Descripcion</option>
+                    }
+                </select>
+            </div>
+            <div class="form-label">
+                <label>Provincia <span class="required" title="Campo obligatorio">*</span></label>
+            </div>
+            <div class="form-field">
+                <select id="ddProvincia" name="Provincia">
+                    <option value="0">SELECCIONE UNA PROVINCIA</option>
+                </select>
+            </div>
+            <div class="form-label">
+                <label>Departamento <span class="required" title="Campo obligatorio">*</span></label>
+            </div>
+            <div class="form-field">
+                <select id="ddDepartamento" onchange="javascript: LoadLocalidad();">
+                    <option value="0">SELECCIONE UN DEPARTAMENTO</option>
+                </select>
+            </div>
+            <div class="form-label">
+                <label>Localidad <span class="required" title="Campo obligatorio">*</span></label>
+            </div>
+            <div class="form-field">
+               <select id="ddLocalidad">
+                    <option value="0">SELECCIONE UNA LOCALIDAD</option>
+               </select>
+                
+            </div>
+            <div class="form-label custom_padding_top_4"></div>
+            <div class="form-field custom_padding_top_5">
+                <input class="btn btn-small btn-inverse view-all hidden-phone" type="button" value="Aceptar" title="Guardar Destino." onclick="javascript: setDestino();">
+            </div>
+        </div>
+        <input type="hidden" id="DestinoID" name="DestinoID" value="@Model.DestinoID" />
+  </form>  
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/ecmascript">
+    $(document).ready(function () {
+        $("input[type='text']").keypress(function () {
+            $(this).removeClass("fieldError");
+        });
+        $("#divDestino select").change(function () {
+            $(this).removeClass("fieldError");
+        });
+
+        $("#chkPublicWeb").change(function () {
+            if ($(this).is(":checked")) {
+                $("#PublicWeb").val(true);
+            }
+            else {
+                $("#PublicWeb").val(false);
+            }
+        });
+
+        $("#chkModePublicity").change(function () {
+            if ($(this).is(":checked")) {
+                $("#ModePublicity").val(true);
+            }
+            else {
+                $("#ModePublicity").val(false);
+            }
+        });
+
+        var IdPais = '61E1333A-3AE8-4D4B-8678-77125C623AF1';
+        $.ajax({
+            type: "POST",
+            url: "/Localidad/GetProvincia",
+            data: { "sIdPais": IdPais },
+            dataType: "json",
+            success: function (response) {
+
+                if (response.Result == "Done.") {
+
+                    var list = eval(response.LDepartamento);
+
+                    $('#ddProvincia option').remove();
+                    document.getElementById("ddProvincia").options[0] = new Option("SELECCIONE UNA PROVINCIA", "0");
+                    for (var i = 0; i < list.length; i++) {
+                        var sValue = list[i].ID;
+                        var sName = list[i].Nombre;
+                        document.getElementById("ddProvincia").options[document.getElementById("ddProvincia").options.length] = new Option(sName, sValue);
+
+                    }
+                    $("#ddProvincia").val("@ProvinciaID").change();;
+
+                }
+            }
+        });
+
+        
+    
+        $("#ddPais").change(function () {
+            var IdPais = $(this).val();
+            LoadProvincia(IdPais);
+            $('#ddDepartamento option').remove();
+            document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
+            $('#ddLocalidad option').remove();
+            document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
+        });
+       
+
+        $("#ddProvincia").change(function () {
+            var IdProvincia = $("#ddProvincia").val();
+            LoadDepartamento(IdProvincia);
+
+        });
+        
+        
+       
+        switch ("@ViewBag.Action") {
+            case "detail":
+                $("input[type='text']").attr("disabled", "disabled");
+                $("input[type='text']").css("background-color", "transparent");
+                $("input[type='number']").attr("disabled", "disabled");
+                $("input[type='number']").css("background-color", "transparent");
+                $("input[type='checkbox']").attr("disabled", "disabled");
+                $("input[type='checkbox']").css("background-color", "transparent");
+                $("#Moneda").attr("disabled", "disabled");
+                $("#Moneda").css("background-color", "transparent");
+                $("#Temporada").attr("disabled", "disabled");
+                $("#Temporada").css("background-color", "transparent");
+                $("input").css("border", "none")
+                $("#btn_guardar_paquete").hide();
+                $(".required").hide();
+                $("#a_editar_paquete").show();
+                $(".divUploadImage form").hide()
+                $("#divLocation").hide();
+                $("#ModePublicity").attr("disabled", "disabled");
+                break;
+            case "new":
+                $(".divUploadImage").hide()
+                break;
+
+        }
+       
+        
+    });
+
+    function LoadProvincia(IdPais)
+    {
+        if (IdPais != "" && IdPais != undefined) {
+            $.ajax({
+                type: "POST",
+                url: "/Localidad/GetProvincia",
+                data: { "sIdPais": IdPais },
+                dataType: "json",
+                success: function (response) {
+
+                    if (response.Result == "Done.") {
+
+                        var list = eval(response.LDepartamento);
+
+                        $('#ddProvincia option').remove();
+                        document.getElementById("ddProvincia").options[0] = new Option("SELECCIONE UNA PROVINCIA", "0");
+                        for (var i = 0; i < list.length; i++) {
+                            var sValue = list[i].ID;
+                            var sName = list[i].Nombre;
+                            document.getElementById("ddProvincia").options[document.getElementById("ddProvincia").options.length] = new Option(sName, sValue);
+
+                        }
+
+
+                    }
+                }
+            });
+        }
+        
+    }
+    function LoadDepartamento(IdProvincia) {
+        
+        if (parseInt(IdProvincia) > 0) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Localidad/GetDepartamento",
+                data: { "sIdProvincia": IdProvincia },
+                dataType: "json",
+                success: function (response) {
+
+                    if (response.Result == "Done.") {
+
+                        var list = eval(response.LDepartamento);
+
+                        $('#ddDepartamento option').remove();
+                        document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
+
+                        $('#ddLocalidad option').remove();
+                        document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
+                        
+                        for (var i = 0; i < list.length; i++) {
+                            var sValue = list[i].IdDepartamento;
+                            var sName = list[i].Nombre;
+                            document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(sName, sValue);
+
+                        }
+
+                        $("#ddDepartamento").val("@DepartamentoID").change();
+
+                    }
+                    else {
+                        alert(response.data);
+                    }
+
+                }
+            });
+        };
+    }
+
+    function LoadLocalidad() {
+        var IdDepartamento = $("#ddDepartamento").val();
+        if (parseInt(IdDepartamento) > 0) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Localidad/GetLocalidad",
+                data: { "sIdDepartamento": IdDepartamento },
+                dataType: "json",
+                success: function (response) {
+
+                    if (response.Result == "Done.") {
+
+                        var list = eval(response.LLocalidad);
+
+                        $('#ddLocalidad option').remove();
+                        document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
+                        for (var i = 0; i < list.length; i++) {
+                            var sValue = list[i].Id;
+                            var sName = list[i].Nombre;
+                            document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(sName, sValue);
+
+                        }
+
+                        $("#ddLocalidad").val("@LocalidadID");
+                    }
+                    else {
+                        alert(response.data);
+                    }
+
+                }
+            });
+        };
+    }
+
+    function valForm() {
+        var bResult = true;
+        $.each($(".valtxt"), function (i, l) {
+            if ($(this).val().replace(/^\s+|\s+$/g, "")  == "") {
+                $(this).addClass("fieldError");
+                bResult = false;
+            }
+        });
+
+        return bResult;
+    }
+    function UpdateForm() {
+        if (!valForm()) {
+            return alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
+        }
+
+        var _data = $("#formPaquete").serialize();
+
+        if ("@ViewBag.Action" === "edit") {
+             $.ajax({
+                 url: "/Paquete/UpdatePaquete",
+                 data: _data,
+                 dataType: "json",
+                 success: function (data) {
+                     if (data.Mensaje === "Done.") {
+                         confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                         setTimeout(function () { location.href = "/Paquete/Edit/?sAction=detail&sPaqueteID=@Model.PaqueteID"; }, 1000);
+                    }
+                    else {
+                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    }
+                }
+
+            });
+        }
+
+        if ("@ViewBag.Action" === "new") {
+            $.ajax({
+                url: "/Paquete/InsertPaquete",
+                data: _data,
+                dataType: "json",
+                success: function (data) {
+                    if (data.Mensaje === "Done.") {
+                        var PaqueteID = data.ID;
+                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        setTimeout(function () { location.href = "/Paquete/Edit/?sAction=detail&sPaqueteID=" + PaqueteID; }, 1000);
+                    }
+                    else {
+                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    }
+                }
+
+            });
+        }
+    }
+
+    function selectDestino() {
+        $("#divDestino").dialog({
+            autoOpen: false,
+            modal: true,
+            width: "45%",
+            position: { my: 'top', at: 'top', of: window },
+            closeOnEscape: true,
+            
+        });
+        $("#divDestino").dialog("open");
+    }
+
+    function LoadLocalidad() {
+        var IdDepartamento = $("#ddDepartamento").val();
+        if (parseInt(IdDepartamento) > 0) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Localidad/GetLocalidad",
+                data: { "sIdDepartamento": IdDepartamento },
+                dataType: "json",
+                success: function (response) {
+
+                    if (response.Result == "Done.") {
+
+                        var list = eval(response.LLocalidad);
+
+                        $('#ddLocalidad option').remove();
+                        document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
+                        for (var i = 0; i < list.length; i++) {
+                            var sValue = list[i].Id;
+                            var sName = list[i].Nombre;
+                            document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(sName, sValue);
+
+                        }
+
+                        $("#ddLocalidad").val("@LocalidadID");
+
+                    }
+                    else {
+                        alert(response.data);
+                    }
+
+                }
+            });
+        };
+    }
+
+    function setDestino() {
+        var b = true;
+        $.each($("#divDestino select"), function (i, l) {
+            if ($(this).val().replace(/^\s+|\s+$/g, "") == "0") {
+                //$(this).css("background-color", "#E83A61");
+                $(this).addClass("fieldError");
+                b = false;
+            }
+        });
+
+        if (!b) {
+            return alert("Los campos remarcados son obligatorios. Por favor complete la seleccón.")
+        }
+        else {
+            
+            var sPais = $("#ddPais option:selected").text();
+            var sProvincia = $("#ddProvincia option:selected").text();
+            var sDepartamento = $("#ddDepartamento option:selected").text();
+            var sLocalidad = $("#ddLocalidad option:selected").text();
+            var DestinoID = $("#ddLocalidad").val();
+            $("#txtDestino").val(sPais + ", " + sProvincia + ", " + sDepartamento + ", " + sLocalidad);
+            $("#txtDestino").removeClass("fieldError");
+            $("#divDestino").dialog("close");
+            $("#DestinoID").val(DestinoID);
+        }
+    }
+</script>

@@ -1,0 +1,142 @@
+﻿@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>   
+    return;
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var table = $("#tblPagos").DataTable({
+            "columnDefs": [
+                {
+                    "targets": [0,1,7,8,9],
+                    "orderable": false
+                },
+            ]
+        });
+
+        $('#tblPagos tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child(format($(tr).attr("id").replace('r_',''))).show();
+                tr.addClass('shown');
+
+            }
+        });
+    });
+
+    function format(d) {
+        
+        var PagoID = d;
+        var divLoading = "<div id='" + PagoID + "'  class='iconLoading'></div>";
+        $("#divPagoMoreDetails").html(divLoading);
+
+        getPagoDetalle(PagoID);
+        return sReturn = $("#divPagoMoreDetails").html().trim();
+
+    }
+
+
+    function getPagoDetalle(PagoID) {
+        
+        $.ajax({
+            url: "/Pago/GetPagoDetalleByPagoID",
+            data: { PagoID: PagoID },
+            success: function (data) {
+                
+                var _data = {
+                    "MontoRecibido": formatNumberMoney(data.MontoRecibido),
+                    "MonedaRecibida": data.MonedaRecibida.trim(),
+                    "MontoEquivalente": formatNumberMoney(data.MontoEquivalente),
+                    "MonedaEquivalente": data.MonedaEquivalente.trim(),
+                    "Cotizacion": formatNumberMoney(data.Cotizacion),
+                    "Fecha": data.Fecha
+                }
+                var _html = $("#divPagoDetalle").html().trim().render(_data);
+                $("#" + PagoID).html(_html);
+                $("#" + PagoID).removeClass("iconLoading");
+
+            }
+        });
+
+        // return  $("#divPagoMoreDetails").html().trim();
+    }
+</script>
+
+
+@model List<MAT.MVC.Models.PagoModel>
+@{int iCount = 0;
+  decimal dSum = 0;}
+<table id="tblPagos" class="mat-customtable" style="width:98%;">
+    <thead> 
+        <tr>
+            <th></th>
+            <th>Fecha</th>
+            <th>Nro de Recibo</th>
+            <th>Transacción</th>
+            <th>Medio de Pago</th>
+            <th>Vendedor</th>
+            <th>Monto</th>
+            <th>Moneda</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody >
+        @foreach (MAT.MVC.Models.PagoModel item in Model)
+        {
+            iCount += 1;
+            dSum += item.Monto;
+        <tr id="r_@item.PagoID">
+            <td>@iCount</td>
+            <td>@item.FechaPago.ToShortDateString() @item.FechaPago.ToShortTimeString()</td>
+            <td>@item.NroRecibo</td>
+            <td>@item.TransaccionID</td>
+            <td>@item.TipoPagoDescripcion</td>
+            <td>@item.Vendedor</td>
+            <td>@String.Format("{0:C}", item.Monto)</td>
+            <td title="Tipo de Moneda del Paquete">(@item.MonedaPaquete.Trim())</td>
+            <td><a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');" id="lnkCancelarPago"><div class="divDelete" title="Cancelar Pago"></div></a></td>
+            <td class="@(item.Moneda.Trim() != "ARS" || item.MonedaPaquete.Trim() !="ARS"? "details-control": "")"></td>
+        </tr>    
+        }
+        
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Total</th>
+            <th colspan="5"></th>
+            @if (Model.Count() > 0)
+            {
+                <th colspan="4">@String.Format("{0:C}", dSum) (@Model.First().MonedaPaquete.Trim())</th>    
+            }
+            else
+            {
+                <th colspan="4">@String.Format("{0:C}", 0)</th>
+            }
+            
+        </tr>
+    </tfoot>
+    
+</table>
+ <div id="divPagoMoreDetails" style="display:none;">
+   
+</div>
+
+<div id="divPagoDetalle" class="hide">
+    <div class="custom_margin_5 custom_text_aling_left">
+        <span class="custom_font_weigh_bold">Monto Recibido: </span><span>{{MontoRecibido}} ({{MonedaRecibida}})</span><br />
+        <span class="custom_font_weigh_bold">Monto Equivalente: </span><span>{{MontoEquivalente}} ({{MonedaEquivalente}})</span><br />
+        <span class="custom_font_weigh_bold">Cotización: </span><span>1 U$D = {{Cotizacion}}</span><br />
+        <span class="custom_font_weigh_bold">Fecha de Transaccion: </span><span>{{Fecha}}</span>
+    </div>
+    
+</div>

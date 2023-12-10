@@ -1,0 +1,840 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7F372704-B3FF-4A93-81E5-301BF144F42B}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MAT.MVC</RootNamespace>
+    <AssemblyName>MAT.MVC</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <NoWarn>CA1616; CS0649</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DotNetOpenAuth.AspNet">
+      <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.4.13329\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.Core">
+      <HintPath>..\packages\DotNetOpenAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth">
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OAuth.Consumer">
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Consumer.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OAuth.Consumer.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenId">
+      <HintPath>..\packages\DotNetOpenAuth.OpenId.Core.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
+      <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Caching.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=4.1.0.0, Culture=neutral, PublicKeyToken=e44a2bc38ed2c13c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=4.1.0.0, Culture=neutral, PublicKeyToken=e44a2bc38ed2c13c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging.Database, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Security, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Security.Cryptography, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\References\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Mvc.FixedDisplayModes, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.FixedDisplayModes.1.0.0\lib\net40\Microsoft.Web.Mvc.FixedDisplayModes.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Providers">
+      <HintPath>..\packages\Microsoft.AspNet.Providers.Core.1.2\lib\net40\System.Web.Providers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.3.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.3.0\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Common\MATContext.cs" />
+    <Compile Include="Controllers\Account\AccountController.cs" />
+    <Compile Include="Controllers\Adicional\AdicionalController.cs" />
+    <Compile Include="Controllers\Admin\AdminController.cs" />
+    <Compile Include="Controllers\Busqueda\BusquedaController.cs" />
+    <Compile Include="Controllers\Butaca\ButacaController.cs" />
+    <Compile Include="Controllers\Cliente\ClienteController.cs" />
+    <Compile Include="Controllers\CuentaCorriente\CuentaCorrienteController.cs" />
+    <Compile Include="Controllers\Excursion\ExcursionController.cs" />
+    <Compile Include="Controllers\External\ExternalController.cs" />
+    <Compile Include="Controllers\Factura\FacturaController.cs" />
+    <Compile Include="Controllers\Habitacion\HabitacionController.cs" />
+    <Compile Include="Controllers\Herramientas\HerramientasController.cs" />
+    <Compile Include="Controllers\Home\HomeController.cs" />
+    <Compile Include="Controllers\HotelHabitacionViaje\HotelHabitacionViajeController.cs" />
+    <Compile Include="Controllers\Hotel\HotelController.cs" />
+    <Compile Include="Controllers\Localidad\LocalidadController.cs" />
+    <Compile Include="Controllers\NotaCredito\NotaCreditoController.cs" />
+    <Compile Include="Controllers\Pago\PagoController.cs" />
+    <Compile Include="Controllers\Paquete\PaqueteController.cs" />
+    <Compile Include="Controllers\PasajeroViaje\PasajeroViajeController.cs" />
+    <Compile Include="Controllers\PersonaCliente\PersonaClienteController.cs" />
+    <Compile Include="Controllers\PersonaPasajero\PersonaPasajeroController.cs" />
+    <Compile Include="Controllers\PersonaProveedor\PersonaProveedorController.cs" />
+    <Compile Include="Controllers\Persona\PersonaController.cs" />
+    <Compile Include="Controllers\Precio\PrecioController.cs" />
+    <Compile Include="Controllers\Reserva\ReservaController.cs" />
+    <Compile Include="Controllers\RevervaHabitacion\ReservaHabitacionController.cs" />
+    <Compile Include="Controllers\Servicio\ServicioController.cs" />
+    <Compile Include="Controllers\Transporte\TransporteController.cs" />
+    <Compile Include="Controllers\Viaje\ViajeController.cs" />
+    <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\AuditModel.cs" />
+    <Compile Include="Models\ClienteModel.cs" />
+    <Compile Include="Models\CuentaCorrienteModel.cs" />
+    <Compile Include="Models\CuentaModel.cs" />
+    <Compile Include="Models\DepartamentoModel.cs" />
+    <Compile Include="Models\EliminarVentaModel.cs" />
+    <Compile Include="Models\ExcursionModel.cs" />
+    <Compile Include="Models\ExternalModel.cs" />
+    <Compile Include="Models\FacturaModel.cs" />
+    <Compile Include="Models\Habitacion.cs" />
+    <Compile Include="Models\HabitacionTipo.cs" />
+    <Compile Include="Models\HistorialModel.cs" />
+    <Compile Include="Models\HistorialPreciosModel.cs" />
+    <Compile Include="Models\HotelHabitacionViajeModel.cs" />
+    <Compile Include="Models\HotelModel.cs" />
+    <Compile Include="Models\InfopathModel.cs" />
+    <Compile Include="Models\ListaEsperaModel.cs" />
+    <Compile Include="Models\ListaFacturasModel.cs" />
+    <Compile Include="Models\MonedaModel.cs" />
+    <Compile Include="Models\NotaCreditoModel.cs" />
+    <Compile Include="Models\ObservacionViaje.cs" />
+    <Compile Include="Models\PagoModel.cs" />
+    <Compile Include="Models\PagosClientesModel.cs" />
+    <Compile Include="Models\PagosPorFechaModel.cs" />
+    <Compile Include="Models\PaqueteExcursion.cs" />
+    <Compile Include="Models\PaqueteModel.cs" />
+    <Compile Include="Models\PaqueteVinculos.cs" />
+    <Compile Include="Models\PasajeModel.cs" />
+    <Compile Include="Models\PasajeroHistorialModel.cs" />
+    <Compile Include="Models\PasajeroMenorModel.cs" />
+    <Compile Include="Models\PasajeroViajeModel.cs" />
+    <Compile Include="Models\PasajesInputModel.cs" />
+    <Compile Include="Models\PerfilModel.cs" />
+    <Compile Include="Models\PersonaClienteModel.cs" />
+    <Compile Include="Models\PlanillaHotelModel.cs" />
+    <Compile Include="Models\PlanillaHotelPrintModel.cs" />
+    <Compile Include="Models\PrecioModel.cs" />
+    <Compile Include="Models\RegistroPagoModel.cs" />
+    <Compile Include="Models\ReservaModel.cs" />
+    <Compile Include="Models\ResumenPlanillaModel.cs" />
+    <Compile Include="Models\ResumenPlanillaPrintModel.cs" />
+    <Compile Include="Models\SearchModel.cs" />
+    <Compile Include="Models\SeleccionarPasajeroModel.cs" />
+    <Compile Include="Models\ServicioModel.cs" />
+    <Compile Include="Models\TransporteModel.cs" />
+    <Compile Include="Models\ViajeModel.cs" />
+    <Compile Include="Models\VoucherModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Controllers\PersonaVendedor\PersonaVendedorController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\magicsearch\jquery.magicsearch.css" />
+    <Content Include="Content\magicsearch\jquery.magicsearch.min.css" />
+    <Content Include="Content\magicsearch\normalize.css" />
+    <Content Include="Content\mat.tblVinculacionMenorPrint.css" />
+    <Content Include="Content\glyphicons.css" />
+    <Content Include="Content\hoteles.css" />
+    <Content Include="Content\ie_fixes.css" />
+    <Content Include="Content\mat.busplugin.css" />
+    <Content Include="Content\mat.busplugin.print.css" />
+    <Content Include="Content\mat.butaca.css" />
+    <Content Include="Content\mat.cnrt.css" />
+    <Content Include="Content\mat.esquemadistribucion.print.css" />
+    <Content Include="Content\mat.forms.admin.css" />
+    <Content Include="Content\mat.listadosimple.css" />
+    <Content Include="Content\mat.forms.css" />
+    <Content Include="Content\mat.metroui.css" />
+    <Content Include="Content\mat.splash.css" />
+    <Content Include="Content\mat.styles.css" />
+    <Content Include="Content\mat.styles.custom.css" />
+    <Content Include="Content\preset.css" />
+    <Content Include="Content\style-light-admin.css" />
+    <Content Include="Content\style-light.css" />
+    <Content Include="Content\tabla.admin.css" />
+    <Content Include="Content\tabla.css" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\jquery-ui.css" />
+    <Content Include="Content\themes\base\jquery.ui.accordion.css" />
+    <Content Include="Content\themes\base\jquery.ui.all.css" />
+    <Content Include="Content\themes\base\jquery.ui.autocomplete.css" />
+    <Content Include="Content\themes\base\jquery.ui.base.css" />
+    <Content Include="Content\themes\base\jquery.ui.button.css" />
+    <Content Include="Content\themes\base\jquery.ui.core.css" />
+    <Content Include="Content\themes\base\jquery.ui.datepicker.css" />
+    <Content Include="Content\themes\base\jquery.ui.dialog.css" />
+    <Content Include="Content\themes\base\jquery.ui.progressbar.css" />
+    <Content Include="Content\themes\base\jquery.ui.resizable.css" />
+    <Content Include="Content\themes\base\jquery.ui.selectable.css" />
+    <Content Include="Content\themes\base\jquery.ui.slider.css" />
+    <Content Include="Content\themes\base\jquery.ui.tabs.css" />
+    <Content Include="Content\themes\base\jquery.ui.theme.css" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\minified\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\minified\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\minified\jquery-ui.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.accordion.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.autocomplete.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.button.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.core.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.datepicker.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.dialog.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.progressbar.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.resizable.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.selectable.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
+    <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="Content\mat.cnrt.print.css" />
+    <Content Include="Content\voucher.css" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Images\agregarHabitacion.png" />
+    <Content Include="Images\baby_blanco.png" />
+    <Content Include="Images\baby_negro.png" />
+    <Content Include="Images\BilleteDolar.png" />
+    <Content Include="Images\butaca.png" />
+    <Content Include="Images\butacaSeñaIncompleta.png" />
+    <Content Include="Images\cross.png" />
+    <Content Include="Images\cuentacorriente.png" />
+    <Content Include="Images\distribucion.png" />
+    <Content Include="Images\document_info.png" />
+    <Content Include="Images\EnchufeBrasil.png" />
+    <Content Include="Images\estados_butacas.png" />
+    <Content Include="Images\Estado\0 _.png" />
+    <Content Include="Images\Estado\1 _.png" />
+    <Content Include="Images\factura.png" />
+    <Content Include="Images\Icons\details_close.png" />
+    <Content Include="Images\Icons\details_open.png" />
+    <Content Include="Images\Icons\icon-agregar-habitacion.png" />
+    <Content Include="Images\Icons\icon-attention.png" />
+    <Content Include="Images\Icons\icon-bed.png" />
+    <Content Include="Images\Icons\icon-cheque.png" />
+    <Content Include="Images\Icons\icon-continuous.png" />
+    <Content Include="Images\Icons\icon-copy-128px.png" />
+    <Content Include="Images\Icons\icon-delete.png" />
+    <Content Include="Images\Icons\icon-detail.png" />
+    <Content Include="Images\Icons\icon-edit.png" />
+    <Content Include="Images\Icons\icon-factura.png" />
+    <Content Include="Images\Icons\icon-habitacion.png" />
+    <Content Include="Images\Icons\icon-help.png" />
+    <Content Include="Images\Icons\icon-historial-cuenta.png" />
+    <Content Include="Images\Icons\icon-history.png" />
+    <Content Include="Images\Icons\icon-link.png" />
+    <Content Include="Images\Icons\icon-loading.gif" />
+    <Content Include="Images\Icons\icon-location.png" />
+    <Content Include="Images\Icons\icon-NewLoading.gif" />
+    <Content Include="Images\Icons\icon-nota-credito.png" />
+    <Content Include="Images\Icons\icon-plus.png" />
+    <Content Include="Images\Icons\icon-reloj.png" />
+    <Content Include="Images\Icons\icon-remove.png" />
+    <Content Include="Images\Icons\icon-searchFactura.png" />
+    <Content Include="Images\Icons\icon-waitinglist.png" />
+    <Content Include="Images\Icons\icon_printer.png" />
+    <Content Include="Images\Icons\icon_printer_hover.png" />
+    <Content Include="Images\Icons\icon_printer_hover_white.png" />
+    <Content Include="Images\Icons\ok.png" />
+    <Content Include="Images\loginFondo.jpg" />
+    <Content Include="Images\marco_antonio_back2.jpg" />
+    <Content Include="Images\habitacion.png" />
+    <Content Include="Images\historialcuenta.png" />
+    <Content Include="Images\hotel.png" />
+    <Content Include="Images\Icons\icon-boton-verde.png" />
+    <Content Include="Images\Icons\icon-boton-verde2.png" />
+    <Content Include="Images\Icons\icon-boton-rojo.png" />
+    <Content Include="Images\Icons\icon-boton-rojo2.png" />
+    <Content Include="Images\Icons\icon-add.png" />
+    <Content Include="Images\Icons\icon-bus.png" />
+    <Content Include="Images\Icons\icon-cliente.png" />
+    <Content Include="Images\Icons\icon-gestion-paquete.png" />
+    <Content Include="Images\Icons\icon-gestion-viaje.png" />
+    <Content Include="Images\Icons\icon-historial-pagos.png" />
+    <Content Include="Images\Icons\icon-home.png" />
+    <Content Include="Images\Icons\icon-hotel.png" />
+    <Content Include="Images\Icons\icon-pasajero.png" />
+    <Content Include="Images\Icons\icon-proveedor.png" />
+    <Content Include="Images\Icons\icon-search-big.png" />
+    <Content Include="Images\Icons\icon-search.png" />
+    <Content Include="Images\Icons\icon-viaje-fecha.png" />
+    <Content Include="Images\Icons\icon-viaje-todos.png" />
+    <Content Include="Images\link.png" />
+    <Content Include="Images\man.png" />
+    <Content Include="Images\marco_antonio_back.jpg" />
+    <Content Include="Images\marco_antonio_back2_trans.png" />
+    <Content Include="Images\marco_antonio_back3.png" />
+    <Content Include="Images\notepad.png" />
+    <Content Include="Images\Paquetes\2040.jpg" />
+    <Content Include="Images\Paquetes\2119.jpg" />
+    <Content Include="Images\Paquetes\3284.jpg" />
+    <Content Include="Images\Paquetes\3453.jpg" />
+    <Content Include="Images\Paquetes\5105.jpg" />
+    <Content Include="Images\Paquetes\5440.jpg" />
+    <Content Include="Images\Paquetes\600.jpg" />
+    <Content Include="Images\Paquetes\avion.png" />
+    <Content Include="Images\Paquetes\public-transport.png" />
+    <Content Include="Images\pasajero.png" />
+    <Content Include="Images\pencil.png" />
+    <Content Include="Images\seat.png" />
+    <Content Include="Images\sort_asc.png" />
+    <Content Include="Images\sort_both.png" />
+    <Content Include="Images\sort_desc.png" />
+    <Content Include="Images\woman.png" />
+    <Content Include="MAT.MVC.snk" />
+    <Content Include="entlib.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\common.js" />
+    <Content Include="Scripts\dataTable\dataTables.rowGroup.min.js" />
+    <Content Include="Scripts\dataTable\jquery.dataTables.min.css" />
+    <Content Include="Scripts\dataTable\jquery.dataTables.min.js" />
+    <Content Include="Scripts\formatNumber\numeral.min.js" />
+    <Content Include="Scripts\global.js" />
+    <Content Include="Scripts\javascript.core.js" />
+    <Content Include="Content\mat.perfiles.css" />
+    <Content Include="Fonts\glyphicons-regular.eot" />
+    <Content Include="Fonts\glyphicons-regular.otf" />
+    <Content Include="Fonts\glyphicons-regular.ttf" />
+    <Content Include="Content\mat.listadosimple.print.css" />
+    <Content Include="Documents\Manual.pdf" />
+    <Content Include="Content\mat.planillaprint.css" />
+    <Content Include="Content\mat.manifiesto.print.css" />
+    <Content Include="Content\mat.tblVinculacionMenor.css" />
+    <Content Include="Content\mat.loguin.css" />
+    <None Include="Properties\PublishProfiles\MAT.Demo.pubxml" />
+    <None Include="Properties\PublishProfiles\MAT.DEV.pubxml" />
+    <None Include="Properties\PublishProfiles\MAT.MVC.pubxml" />
+    <None Include="Properties\PublishProfiles\MAT.Server.pubxml" />
+    <None Include="Scripts\jquery-1.8.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.8.2.js" />
+    <Content Include="Scripts\jquery-1.8.2.min.js" />
+    <Content Include="Scripts\jquery-2.2.3.min.js" />
+    <Content Include="Scripts\jquery.magicsearch.js" />
+    <Content Include="Scripts\jquery.mask.js" />
+    <Content Include="Scripts\jquery.timepicker\.gitignore" />
+    <Content Include="Scripts\jquery.timepicker\bower.json" />
+    <Content Include="Scripts\jquery.timepicker\jt.timepicker.jquery.json" />
+    <Content Include="Scripts\jquery.timepicker\package.json" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui-1.8.24.js" />
+    <Content Include="Scripts\jquery-ui-1.8.24.min.js" />
+    <Content Include="Scripts\jquery.maskedinput.min.js" />
+    <Content Include="Scripts\jquery.quick.pagination.min.js" />
+    <Content Include="Scripts\jquery.timepicker\GruntFile.js" />
+    <Content Include="Scripts\jquery.timepicker\jquery.timepicker.css" />
+    <Content Include="Scripts\jquery.timepicker\jquery.timepicker.min.js" />
+    <Content Include="Scripts\jquery.timepicker\lib\bootstrap-datepicker.css" />
+    <Content Include="Scripts\jquery.timepicker\lib\bootstrap-datepicker.js" />
+    <Content Include="Scripts\jquery.timepicker\lib\glyphicons-halflings.png" />
+    <Content Include="Scripts\jquery.timepicker\lib\screenshot.png" />
+    <Content Include="Scripts\jquery.timepicker\lib\site.css" />
+    <Content Include="Scripts\jquery.timepicker\lib\site.js" />
+    <Content Include="Scripts\jquery.ui.datepicker.validation.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\knockout-2.2.0.debug.js" />
+    <Content Include="Scripts\knockout-2.2.0.js" />
+    <Content Include="Scripts\mat.jquery.hashtable.js" />
+    <Content Include="Scripts\mat.jquery.binding.js" />
+    <Content Include="Scripts\mat.jquery.functions.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\preset.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Persona\Index.cshtml" />
+    <Content Include="Views\Persona\Details.cshtml" />
+    <Content Include="Views\Persona\Edit.cshtml" />
+    <Content Include="Views\Persona\Create.cshtml" />
+    <Content Include="Views\Transporte\Index.cshtml" />
+    <Content Include="Views\Transporte\Create.cshtml" />
+    <Content Include="Views\Transporte\Edit.cshtml" />
+    <Content Include="Views\Transporte\Details.cshtml" />
+    <Content Include="Views\PersonaCliente\Create.cshtml" />
+    <Content Include="Views\PersonaCliente\Edit.cshtml" />
+    <Content Include="Views\PersonaCliente\Details.cshtml" />
+    <Content Include="Views\Cliente\Index.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\Manage.cshtml" />
+    <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
+    <Content Include="Views\Account\_SetPasswordPartial.cshtml" />
+    <Content Include="Views\PersonaPasajero\Create.cshtml" />
+    <Content Include="Views\PersonaPasajero\Details.cshtml" />
+    <Content Include="Views\PersonaPasajero\Edit.cshtml" />
+    <Content Include="Views\Cliente\Create.cshtml" />
+    <Content Include="Views\Hotel\Index.cshtml" />
+    <Content Include="Views\Hotel\Create.cshtml" />
+    <Content Include="Views\Hotel\Details.cshtml" />
+    <Content Include="Views\Hotel\Edit.cshtml" />
+    <Content Include="Views\PersonaProveedor\Index.cshtml" />
+    <Content Include="Views\PersonaProveedor\Create.cshtml" />
+    <Content Include="Views\PersonaProveedor\Edit.cshtml" />
+    <Content Include="Views\PersonaProveedor\Details.cshtml" />
+    <Content Include="Views\PersonaCliente\Index.cshtml" />
+    <Content Include="Views\PersonaPasajero\Index.cshtml" />
+    <Content Include="Views\Shared\_ViajesPartial.cshtml" />
+    <Content Include="Scripts\mat.jquery.initialize.js" />
+    <Content Include="Views\Home\ViajesPorFecha.cshtml" />
+    <Content Include="Views\Home\TodosLosViajes.cshtml" />
+    <Content Include="Views\Shared\_DetalleViaje.cshtml" />
+    <Content Include="Views\Paquete\Index.cshtml" />
+    <Content Include="Views\Paquete\Edit.cshtml" />
+    <Content Include="Views\Viaje\Index.cshtml" />
+    <Content Include="Views\Viaje\Details.cshtml" />
+    <Content Include="Views\Viaje\Create.cshtml" />
+    <Content Include="Views\Viaje\Edit.cshtml" />
+    <Content Include="Views\Shared\_Search.cshtml" />
+    <Content Include="Views\Reserva\QuickSearch.cshtml" />
+    <Content Include="Views\Reserva\Index.cshtml" />
+    <Content Include="Views\Reserva\FormReserva.cshtml" />
+    <Content Include="Views\Butaca\Index.cshtml" />
+    <Content Include="Views\Butaca\Create.cshtml" />
+    <Content Include="Views\Butaca\Edit.cshtml" />
+    <Content Include="Views\Butaca\Details.cshtml" />
+    <Content Include="Views\Reserva\SeleccionarPasajero.cshtml" />
+    <Content Include="Views\Reserva\RenderGridPasajeros.cshtml" />
+    <Content Include="Views\Shared\_LayoutSplash.cshtml" />
+    <Content Include="Views\Account\RegistrarVendedor.cshtml" />
+    <Content Include="Views\PersonaCliente\CuentaCorriente.cshtml" />
+    <Content Include="Views\CuentaCorriente\DetalleComprobante.cshtml" />
+    <Content Include="Views\Habitacion\Edit.cshtml" />
+    <Content Include="Views\Habitacion\Details.cshtml" />
+    <Content Include="Views\PasajeroViaje\Index.cshtml" />
+    <Content Include="Views\PersonaCliente\Facturas.cshtml" />
+    <Content Include="Views\PersonaCliente\DetalleFactura.cshtml" />
+    <Content Include="Views\PersonaCliente\RegistrarPago.cshtml" />
+    <Content Include="Views\PasajeroViaje\Manifiesto.cshtml" />
+    <Content Include="Views\Busqueda\Perfil.cshtml" />
+    <Content Include="Views\Busqueda\Card.cshtml" />
+    <Content Include="Views\PersonaCliente\PartialCuentaCorriente.cshtml" />
+    <Content Include="Views\PersonaCliente\PartialFacturas.cshtml" />
+    <Content Include="Views\PersonaPasajero\PartialPasajerosHistorial.cshtml" />
+    <Content Include="Views\PersonaVendedor\PartialHistorialPagos.cshtml" />
+    <Content Include="Views\PasajeroViaje\CNRT.cshtml" />
+    <Content Include="Views\Viaje\PopPupViajes.cshtml" />
+    <Content Include="Views\PasajeroViaje\ListadoSimple.cshtml" />
+    <Content Include="Views\ReservaHabitacion\Index.cshtml" />
+    <Content Include="Views\PersonaCliente\RegistrarNotaCredito.cshtml" />
+    <Content Include="Views\ReservaHabitacion\GridHotelHabitacion.cshtml" />
+    <Content Include="Views\ReservaHabitacion\ReservaHabitacion.cshtml" />
+    <Content Include="Views\Servicio\Index.cshtml" />
+    <Content Include="Views\Servicio\Create.cshtml" />
+    <Content Include="Views\PersonaCliente\HistorialCuenta.cshtml" />
+    <Content Include="Views\Shared\Voucher.cshtml" />
+    <Content Include="Views\PersonaCliente\Voucher.cshtml" />
+    <Content Include="Views\PersonaCliente\RegistrarPagoTotal.cshtml" />
+    <Content Include="Views\Paquete\Vinculos.cshtml" />
+    <Content Include="Views\Paquete\Servicios.cshtml" />
+    <Content Include="Views\Paquete\RenderGridServicios.cshtml" />
+    <Content Include="Views\Paquete\RenderGridExcursiones.cshtml" />
+    <Content Include="Views\Paquete\RenderGridPrecios.cshtml" />
+    <Content Include="Views\Paquete\RenderGridAdicionales.cshtml" />
+    <Content Include="Views\PersonaCliente\_ShortDateTime.cshtml" />
+    <Content Include="Views\Paquete\Excursiones.cshtml" />
+    <Content Include="Views\Paquete\Precios.cshtml" />
+    <Content Include="Views\Paquete\Adicionales.cshtml" />
+    <Content Include="Views\Hotel\Distribucion.cshtml" />
+    <Content Include="Views\Excursion\Index.cshtml" />
+    <Content Include="Views\Excursion\Create.cshtml" />
+    <Content Include="Views\Precio\Index.cshtml" />
+    <Content Include="Views\Adicional\Index.cshtml" />
+    <Content Include="Views\Adicional\Create.cshtml" />
+    <Content Include="Views\PersonaCliente\RenderGridClientes.cshtml" />
+    <Content Include="Views\PersonaCliente\EliminarVenta.cshtml" />
+    <Content Include="Views\PasajeroViaje\CNRTHojaUno.cshtml" />
+    <Content Include="Views\Home\HistorialPagos.cshtml" />
+    <Content Include="Views\Home\RenderGridHistorialPagos.cshtml" />
+    <Content Include="Views\Viaje\Hoteles.cshtml" />
+    <Content Include="Views\Viaje\HotelesDisponibles.cshtml" />
+    <Content Include="Views\Hotel\EsquemaDistribucion.cshtml" />
+    <Content Include="Views\PersonaCliente\ElegirNuevaButaca.cshtml" />
+    <Content Include="Views\PersonaCliente\SeleccionarImportes.cshtml" />
+    <Content Include="Views\PersonaCliente\PrincipalHabitaciones.cshtml" />
+    <Content Include="Views\PersonaCliente\GridHabitaciones.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\Admin\HistorialPrecios.cshtml" />
+    <Content Include="Views\Admin\ResumenPagos.cshtml" />
+    <Content Include="Views\Admin\GridResumenPagos.cshtml" />
+    <Content Include="Views\Admin\ResumenPagosPorFecha.cshtml" />
+    <Content Include="Views\Admin\GridResumenPagosFecha.cshtml" />
+    <Content Include="Views\Admin\ServiciosAdminList.cshtml" />
+    <Content Include="Views\Admin\ServiciosAdminCreate.cshtml" />
+    <Content Include="Views\Admin\ServiciosAdminPrecioCreate.cshtml" />
+    <Content Include="Views\Admin\ServiciosAdminPrecioHistorial.cshtml" />
+    <Content Include="Views\Admin\ServiciosAdminPrecioHistorialGrid.cshtml" />
+    <Content Include="Views\Admin\ServiciosAdminPrecioEdit.cshtml" />
+    <Content Include="Views\Admin\PartialDropDownHotel.cshtml" />
+    <Content Include="Views\Admin\PlanillaServicios.cshtml" />
+    <Content Include="Views\Admin\PartialGridServiciosAdmin.cshtml" />
+    <Content Include="Views\Admin\GridPlanillaServicioItemContext.cshtml" />
+    <Content Include="Views\Admin\GridPlanillasGeneradas.cshtml" />
+    <Content Include="Views\Servicio\Edit.cshtml" />
+    <Content Include="Views\Adicional\Edit.cshtml" />
+    <Content Include="Views\Excursion\Edit.cshtml" />
+    <Content Include="Views\Home\TodosLosViajesIndex.cshtml" />
+    <Content Include="Views\Admin\ImprimirPlanilla.cshtml" />
+    <Content Include="Views\Admin\GridPlanillaHotelPrint.cshtml" />
+    <Content Include="Views\Admin\PartialGridResumenPlanillaHotelPrint.cshtml" />
+    <Content Include="Views\Admin\GridPlanillaServiciosItemPrint.cshtml" />
+    <Content Include="Views\Reserva\DistribucionCoche.cshtml" />
+    <Content Include="Views\Admin\GridPlanillaHotelDetallePrint.cshtml" />
+    <Content Include="Views\Admin\PartialGridPlanillaHotelPrint.cshtml" />
+    <Content Include="Views\Admin\ImprimirPlanillaDetalle.cshtml" />
+    <Content Include="Views\Admin\EditarPlanilla.cshtml" />
+    <Content Include="Views\Admin\GridPlanillaHotelDetalleEdit.cshtml" />
+    <Content Include="Views\Admin\GridPlanillaServiciosItemEdit.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Localidad\Create.cshtml" />
+    <Content Include="Views\Viaje\HotelSetIngresoEgreso.cshtml" />
+    <Content Include="Views\Reserva\VinculacionMenor.cshtml" />
+    <Content Include="Views\Reserva\FormListaMayor.cshtml" />
+    <Content Include="Views\Reserva\FormListaMenor.cshtml" />
+    <Content Include="Views\Reserva\PartialVinculacionMenor.cshtml" />
+    <Content Include="Views\Reserva\PrintVinculacionMenor.cshtml" />
+    <Content Include="Views\Viaje\ListViajes.cshtml" />
+    <Content Include="Views\Admin\AuditoriaFacturas.cshtml" />
+    <Content Include="Views\PersonaCliente\HistorialdePagos.cshtml" />
+    <Content Include="Views\PersonaCliente\partialHistorialdePagos.cshtml" />
+    <Content Include="Views\PersonaCliente\partialHistorialdePagosByFactura.cshtml" />
+    <Content Include="Views\NotaCredito\partialMovimientoNotaCredito.cshtml" />
+    <Content Include="Views\NotaCredito\partialNotaCredito.cshtml" />
+    <Content Include="Views\Factura\Index.cshtml" />
+    <Content Include="Views\Factura\FacturaResultSearch.cshtml" />
+    <Content Include="Views\Factura\FacturaMoreDetails.cshtml" />
+    <Content Include="Views\Factura\FacturaListByViajeID.cshtml" />
+    <Content Include="Views\PersonaCliente\PopupDetalleFactura.cshtml" />
+    <Content Include="Views\PersonaCliente\NotaCreditoList.cshtml" />
+    <Content Include="Views\PersonaCliente\VoucherGrupal.cshtml" />
+    <Content Include="Views\Herramientas\Cotizador.cshtml" />
+    <Content Include="Views\PersonaCliente\CambiarPrecioList.cshtml" />
+    <Content Include="Views\PasajeroViaje\ListadoSimpleToExport.cshtml" />
+    <Content Include="Views\Habitacion\PartialListHabitacion.cshtml" />
+    <Content Include="Views\Reserva\DetalleViaje.cshtml" />
+    <Content Include="Views\Precio\ABM.cshtml" />
+    <Content Include="Views\Habitacion\ABM.cshtml" />
+    <Content Include="Views\Hotel\ABM.cshtml" />
+    <Content Include="Views\HotelHabitacionViaje\ABM.cshtml" />
+    <Content Include="Views\HotelHabitacionViaje\GetPlantillasDistribucion.cshtml" />
+    <Content Include="Views\Reserva\Observaciones.cshtml" />
+    <Content Include="Views\Reserva\ObservacionesGenerales.cshtml" />
+    <Content Include="Views\Reserva\ObservacionesGeneralesEdit.cshtml" />
+    <Content Include="Views\Reserva\PrintObservaciones.cshtml" />
+    <Content Include="Views\Reserva\ObservacionABM.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Reserva\GetOffListPassengers.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="bin\" />
+    <Folder Include="Views\Pago\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MAT.Data.SqlClient\MAT.Data.SqlClient.csproj">
+      <Project>{8996a7b4-57d3-440b-a545-a701844b8c4a}</Project>
+      <Name>MAT.Data.SqlClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MAT.Data\MAT.Data.csproj">
+      <Project>{041c1bbe-0bfb-4d45-8125-9ab0bbc09a92}</Project>
+      <Name>MAT.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MAT.Entities\MAT.Entities.csproj">
+      <Project>{20e43088-4618-4f4a-b8ad-fc31b50d94cd}</Project>
+      <Name>MAT.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MAT.Enums\MAT.Enums.csproj">
+      <Project>{6560d8b9-7562-45c9-b40b-bea63ec6cb30}</Project>
+      <Name>MAT.Enums</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MAT.Services\MAT.Services.csproj">
+      <Project>{794327ce-dc0a-4381-89ee-4c00afb08d5a}</Project>
+      <Name>MAT.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MAT.Utilities\MAT.Utilities.csproj">
+      <Project>{c1509fb9-12ae-4060-ae47-3e3216012ecb}</Project>
+      <Name>MAT.Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>MAT.MVC.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>63133</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:64313/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

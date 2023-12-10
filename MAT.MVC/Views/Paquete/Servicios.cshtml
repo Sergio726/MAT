@@ -1,0 +1,20 @@
+﻿@model Guid
+
+<input id="guid-paquete" type="hidden" value="@Model.ToString()"
+<div id="search-servicio">
+    <div id="busqueda-servicio">
+        <input id="txt-filter-servicio" type="text" placeholder="Ingrese una Descripción" />
+    </div>
+</div>
+<div id="grid-servicios">
+</div>
+
+<p class="botonera-form">
+    <a class="btn btn-small btn-inverse" id="btn-cerrar-ventana-servicios">Cerrar</a>
+</p>
+<script type="text/javascript">
+    jQuery(function ($) {
+        $("div#grid-servicios").load("/Paquete/RenderGridServicios?id=" + $("#guid-paquete").val());
+    });
+
+</script>

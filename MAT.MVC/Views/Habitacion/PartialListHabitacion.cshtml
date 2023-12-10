@@ -1,0 +1,80 @@
+﻿
+<script type="text/javascript">
+    $(document).ready(function () {
+        var jResult = @Html.Raw(ViewBag.jResult);
+        var jTables = eval(jResult);
+        var jt = jTables["Table"];
+        
+        var table = $("#tblHabitaciones").DataTable({
+            "aaData": jt,
+            "columns": [
+        	{ "data": "nrohabitacion" },
+            { "data": "nombre" },
+            { "data": "tipo" },
+            { "data": "Hotel" },
+            { "data": "estado" },
+            { "data": "capacidad" },
+            { "data": "ocupacion" },
+            { "data": "habitacionid",
+                "mRender": function (data, type, row) {
+                    var _data = {"HabitacionID": row.habitacionid, "HotelID": row.hotelid};
+                    var data = $("#divTools").html().trim().render(_data);
+                    return data;
+                }
+            },
+            
+            ],
+            "bAutoWidth": false,
+            "pageLength": 25
+        });
+    });
+</script>
+
+
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+
+<div id="divTools" class="hide">
+    <a href="/Habitacion/Edit/{{HabitacionID}}">
+        <img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
+    <a href="/Habitacion/Details/{{HabitacionID}}">
+        <img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a>
+    <a href="/Habitacion/Delete?HotelID={{HotelID}}&HabitacionID={{HabitacionID}}">
+        <img src="/Images/cross.png" width="32" height="32" title="Eliminar" /></a>
+</div>
+
+<div>
+     <table class="mat-customtable" id="tblHabitaciones">
+    <thead>
+        <tr>
+
+            <th>
+                Nro Habitacion
+            </th>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Tipo
+            </th>
+            <th>
+                Hotel
+            </th>
+            <th>
+                Estado
+            </th>
+            <th>
+                Capacidad
+            </th>
+            <th>
+                Ocupacion
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+
+</table>
+</div>

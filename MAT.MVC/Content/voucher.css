@@ -1,0 +1,108 @@
+﻿@page {
+    size:A4;
+    margin-left: 1cm;
+    margin-right: 1cm;
+    margin-top: 1.5cm;
+    font-family:Verdana;
+}
+.voucher {
+    margin-left: 15%;
+    /* margin-bottom: 170px; */
+    width: 70%;
+    /*height: 1080px;*/
+    
+}
+.voucher p {
+   margin-top:0; 
+   margin-bottom:0;
+}
+.div100 {
+    width:100%;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    display:flex;
+}
+.div50 {
+    float: left;
+    margin-right: 10px;
+    width: 48%;
+}
+.div30 {
+    width:32%;
+    float:left;
+}
+.div60 {
+    width:65%;
+    float:left;
+}
+.div30 {
+    width:33%;
+    float:left;
+}
+
+
+.voucher .logo-voucher {
+    float:left;
+    width:30%;
+}
+
+.voucher .encabezado-voucher {
+    display: -moz-inline-stack;
+    height: 95px;
+    line-height: 18px;
+    margin-bottom: 20px;
+    width: 100%;
+    color:#fff;
+    background-color:#2A307D;
+}
+
+.voucher .cuerpo-voucher {
+    width:100%;
+    display:inline-block;
+    text-align:justify;
+    line-height:18px;
+}
+
+.voucher .pie-voucher {
+    width:100%;
+    display:inline-block;
+    font-size:0.7em;
+    font-style:italic;
+    text-align:justify;
+    margin-top: 25px;
+        
+}
+
+@media print {
+    .pie-voucher {
+        display:block;
+        /*page-break-before:always;*/
+        margin-top:0;
+    }
+    .voucher {
+        width:99%;
+        margin-top:0;
+        margin-left: 0;
+        font-size:12px;
+        page-break-before:always;
+    }
+
+    input {
+    border:none;
+    }
+
+    .divInfoAdicional {
+      width:99%;
+      margin-top:0;
+      margin-left: 0;
+      font-size:12px;
+      display:block; 
+      
+    }
+
+    .HideToPrint {
+        display:none!important;
+    }
+}
+
+

@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "HistorialdePagos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div> 
+    return;   
+}
+
+<script type="text/javascript">
+    $(function () {
+
+        $("#divContent").html(divLoading);
+        $.ajax({
+            url: "/PersonaCliente/partialHistorialdePagos",
+            data: {ClienteID: "@ViewBag.ClienteID"},
+            dataType: "html",
+            success: function (data) {
+                $("#divContent").html(data);
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+    });
+</script>
+
+<h2 class="title">Historial de Pagos (@ViewBag.oPesona.Nombre @ViewBag.oPesona.Apellido)  </h2>
+<div id="divContent">
+    <div class="iconLoading"></div>
+</div>
+<div>
+    <p style="margin-left:16px;"><a class="btn btn-small btn-inverse" href="/PersonaCliente">Lista de clientes</a></p>
+</div>

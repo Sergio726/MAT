@@ -1,0 +1,71 @@
+﻿@model IEnumerable<MAT.MVC.Models.ServicioModel>
+@using MAT.Enums
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Servicios</h2>
+
+<p class="botonera-form">
+    <input type="button" value="+ Agregar Servicio" class="btn btn-small btn-inverse" onclick="location.href='@Url.Action("Create", "Servicio")'" />
+</p>
+
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>Error al cargar página. @ViewBag.Error</span></div>   
+    return;
+}
+
+<div class="custom_padding_4">
+    <table class="mat-customtable" id="tblServices">
+        <thead>
+            <tr>
+                <th>
+                    Descripcion
+                </th>
+                <th>
+                    Precio
+                </th>
+                <th>
+                    Moneda
+                </th>            
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Descripcion
+                    </td>
+                    <td>
+                        @item.Precio
+                    </td>
+                    <td>
+                        @item.Moneda
+                    </td>                
+                    <td>
+                        <a href="/Servicio/Edit/@item.ServicioID">
+                            <img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
+                   
+                        <a href="#" id="btn-eliminar-servicio" data-id="@item.ServicioID">
+                            <img src="/Images/cross.png" width="32" height="32" title="Eliminar" /></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+
+        $("#tblServices").DataTable({
+            "pageLength": 25,
+            //"order": [[1, "desc"]]
+        });
+    });
+</script>

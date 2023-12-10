@@ -1,0 +1,52 @@
+﻿BODY {
+    width: 80%;
+    margin: 0 10% 0 10%;
+    display: inline-block;
+}
+
+.tabla {
+    outline-color: #000;
+}
+
+._col1 {
+    width: 30px;
+    margin: 0;
+    display: inline-block;
+    
+    
+}
+
+._col2 {
+    width: 260px;
+    margin: 0 0 0 2px;
+    display: inline-block;
+    
+}
+
+._col3 {
+    width: 90px;
+    margin: 0 0 0 2px;
+    display: inline-block;
+}
+
+._col4 {
+    width: 30px;
+    margin: 0;
+    display: inline-block;
+   vertical-align:top;
+}
+
+._col5 {
+    width: 260px;
+    margin: 0 0 0 1%;
+    display: inline-block;
+    vertical-align:top;
+}
+
+._col6 {
+    width: 90px;
+    margin: 0 0 0 1%;
+    display: inline-block;
+    vertical-align:top;
+   
+}

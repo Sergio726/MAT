@@ -1,0 +1,11 @@
+﻿@model IList<MAT.Entities.Viaje>
+
+<ul class="lista-viajes">
+    @foreach (MAT.Entities.Viaje viaje in Model)
+        {
+            <li class="item-viaje">
+                <p>@viaje.HoraSalida</p>
+                <p>@viaje.Medio</p>
+            </li>
+        }            
+</ul>

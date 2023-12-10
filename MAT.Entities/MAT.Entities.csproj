@@ -1,0 +1,812 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{20E43088-4618-4F4A-B8AD-FC31B50D94CD}</ProjectGuid>
+    <ProjectType>Local</ProjectType>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OutputType>Library</OutputType>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MAT.Entities</AssemblyName>
+    <AssemblyOriginatorKeyFile>MAT.Entities.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <RootNamespace>MAT.Entities</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MAT.Entities.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>CA1616,CS0649,CS3001,CS3002,CS3003,CS3009,CS3014</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>MAT.Entities.xml</DocumentationFile>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'GenerateDebug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MAT.Entities.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Caching.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <!-- Custom code folder: C:\Users\garci\Downloads\nettiersMAT\MAT.Entities\App_Code -->
+  <ItemGroup>
+    <Compile Include="App_Code\**\*.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <!-- Include any user files -->
+  <ItemGroup>
+    <Compile Include="**\*.user.*" Exclude="**\*.csproj.user;**\.svn\**">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Views\PasajeroViaje.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PasajeroViajeBase.generated.cs">
+      <DependentUpon>PasajeroViaje.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PersonaCliente.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PersonaClienteBase.generated.cs">
+      <DependentUpon>PersonaCliente.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PersonaPasajero.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PersonaPasajeroBase.generated.cs">
+      <DependentUpon>PersonaPasajero.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PersonaProveedor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PersonaProveedorBase.generated.cs">
+      <DependentUpon>PersonaProveedor.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PersonaVendedor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PersonaVendedorBase.generated.cs">
+      <DependentUpon>PersonaVendedor.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\Reserva.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\ReservaBase.generated.cs">
+      <DependentUpon>Reserva.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\VConsultaReservaHabitacion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\VConsultaReservaHabitacionBase.generated.cs">
+      <DependentUpon>VConsultaReservaHabitacion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\VLocalidad.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\VLocalidadBase.generated.cs">
+      <DependentUpon>VLocalidad.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\VPersona.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\VPersonaBase.generated.cs">
+      <DependentUpon>VPersona.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Adicional.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AdicionalBase.generated.cs">
+      <DependentUpon>Adicional.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IAdicional.cs">
+      <DependentUpon>Adicional.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuditFactura.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuditFacturaBase.generated.cs">
+      <DependentUpon>AuditFactura.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IAuditFactura.cs">
+      <DependentUpon>AuditFactura.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Butaca.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ButacaBase.generated.cs">
+      <DependentUpon>Butaca.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IButaca.cs">
+      <DependentUpon>Butaca.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ciudad.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CiudadBase.generated.cs">
+      <DependentUpon>Ciudad.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICiudad.cs">
+      <DependentUpon>Ciudad.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Cliente.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ClienteBase.generated.cs">
+      <DependentUpon>Cliente.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICliente.cs">
+      <DependentUpon>Cliente.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Cuenta.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CuentaBase.generated.cs">
+      <DependentUpon>Cuenta.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICuenta.cs">
+      <DependentUpon>Cuenta.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CuentaCorriente.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CuentaCorrienteBase.generated.cs">
+      <DependentUpon>CuentaCorriente.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICuentaCorriente.cs">
+      <DependentUpon>CuentaCorriente.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Debito.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DebitoBase.generated.cs">
+      <DependentUpon>Debito.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IDebito.cs">
+      <DependentUpon>Debito.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Departamento.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DepartamentoBase.generated.cs">
+      <DependentUpon>Departamento.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IDepartamento.cs">
+      <DependentUpon>Departamento.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EstadoPasaje.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EstadoPasajeBase.generated.cs">
+      <DependentUpon>EstadoPasaje.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IEstadoPasaje.cs">
+      <DependentUpon>EstadoPasaje.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Excursion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExcursionBase.generated.cs">
+      <DependentUpon>Excursion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IExcursion.cs">
+      <DependentUpon>Excursion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Factura.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FacturaBase.generated.cs">
+      <DependentUpon>Factura.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IFactura.cs">
+      <DependentUpon>Factura.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Habitacion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HabitacionBase.generated.cs">
+      <DependentUpon>Habitacion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IHabitacion.cs">
+      <DependentUpon>Habitacion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HabitacionTipo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HabitacionTipoBase.generated.cs">
+      <DependentUpon>HabitacionTipo.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IHabitacionTipo.cs">
+      <DependentUpon>HabitacionTipo.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Historial.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HistorialBase.generated.cs">
+      <DependentUpon>Historial.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IHistorial.cs">
+      <DependentUpon>Historial.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Hotel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HotelBase.generated.cs">
+      <DependentUpon>Hotel.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IHotel.cs">
+      <DependentUpon>Hotel.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Localidad.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LocalidadBase.generated.cs">
+      <DependentUpon>Localidad.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ILocalidad.cs">
+      <DependentUpon>Localidad.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MovimientoCuenta.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MovimientoCuentaBase.generated.cs">
+      <DependentUpon>MovimientoCuenta.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMovimientoCuenta.cs">
+      <DependentUpon>MovimientoCuenta.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Nota.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NotaBase.generated.cs">
+      <DependentUpon>Nota.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="INota.cs">
+      <DependentUpon>Nota.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pago.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PagoBase.generated.cs">
+      <DependentUpon>Pago.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPago.cs">
+      <DependentUpon>Pago.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pais.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaisBase.generated.cs">
+      <DependentUpon>Pais.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPais.cs">
+      <DependentUpon>Pais.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Paquete.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaqueteBase.generated.cs">
+      <DependentUpon>Paquete.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPaquete.cs">
+      <DependentUpon>Paquete.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaqueteAdicional.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaqueteAdicionalBase.generated.cs">
+      <DependentUpon>PaqueteAdicional.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPaqueteAdicional.cs">
+      <DependentUpon>PaqueteAdicional.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaqueteExcursion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaqueteExcursionBase.generated.cs">
+      <DependentUpon>PaqueteExcursion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPaqueteExcursion.cs">
+      <DependentUpon>PaqueteExcursion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaquetePrecio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaquetePrecioBase.generated.cs">
+      <DependentUpon>PaquetePrecio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPaquetePrecio.cs">
+      <DependentUpon>PaquetePrecio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaqueteServicio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PaqueteServicioBase.generated.cs">
+      <DependentUpon>PaqueteServicio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPaqueteServicio.cs">
+      <DependentUpon>PaqueteServicio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pasaje.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PasajeBase.generated.cs">
+      <DependentUpon>Pasaje.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPasaje.cs">
+      <DependentUpon>Pasaje.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PasajeAdicional.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PasajeAdicionalBase.generated.cs">
+      <DependentUpon>PasajeAdicional.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPasajeAdicional.cs">
+      <DependentUpon>PasajeAdicional.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pasajero.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PasajeroBase.generated.cs">
+      <DependentUpon>Pasajero.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPasajero.cs">
+      <DependentUpon>Pasajero.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PasajeroMenor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PasajeroMenorBase.generated.cs">
+      <DependentUpon>PasajeroMenor.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPasajeroMenor.cs">
+      <DependentUpon>PasajeroMenor.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Persona.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PersonaBase.generated.cs">
+      <DependentUpon>Persona.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPersona.cs">
+      <DependentUpon>Persona.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Planilla.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlanillaBase.generated.cs">
+      <DependentUpon>Planilla.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPlanilla.cs">
+      <DependentUpon>Planilla.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlanillaHabitacionItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlanillaHabitacionItemBase.generated.cs">
+      <DependentUpon>PlanillaHabitacionItem.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPlanillaHabitacionItem.cs">
+      <DependentUpon>PlanillaHabitacionItem.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlanillaServicioItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlanillaServicioItemBase.generated.cs">
+      <DependentUpon>PlanillaServicioItem.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPlanillaServicioItem.cs">
+      <DependentUpon>PlanillaServicioItem.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Precio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrecioBase.generated.cs">
+      <DependentUpon>Precio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPrecio.cs">
+      <DependentUpon>Precio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrecioHabitacion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrecioHabitacionBase.generated.cs">
+      <DependentUpon>PrecioHabitacion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPrecioHabitacion.cs">
+      <DependentUpon>PrecioHabitacion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrecioServicio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PrecioServicioBase.generated.cs">
+      <DependentUpon>PrecioServicio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPrecioServicio.cs">
+      <DependentUpon>PrecioServicio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Proveedor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProveedorBase.generated.cs">
+      <DependentUpon>Proveedor.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IProveedor.cs">
+      <DependentUpon>Proveedor.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Provincia.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProvinciaBase.generated.cs">
+      <DependentUpon>Provincia.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IProvincia.cs">
+      <DependentUpon>Provincia.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ReservaHabitacion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ReservaHabitacionBase.generated.cs">
+      <DependentUpon>ReservaHabitacion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IReservaHabitacion.cs">
+      <DependentUpon>ReservaHabitacion.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Servicio.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServicioBase.generated.cs">
+      <DependentUpon>Servicio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IServicio.cs">
+      <DependentUpon>Servicio.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transporte.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TransporteBase.generated.cs">
+      <DependentUpon>Transporte.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ITransporte.cs">
+      <DependentUpon>Transporte.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Vendedor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="VendedorBase.generated.cs">
+      <DependentUpon>Vendedor.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IVendedor.cs">
+      <DependentUpon>Vendedor.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Viaje.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViajeBase.generated.cs">
+      <DependentUpon>Viaje.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IViaje.cs">
+      <DependentUpon>Viaje.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViajeHotel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViajeHotelBase.generated.cs">
+      <DependentUpon>ViajeHotel.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IViajeHotel.cs">
+      <DependentUpon>ViajeHotel.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Voucher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="VoucherBase.generated.cs">
+      <DependentUpon>Voucher.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IVoucher.cs">
+      <DependentUpon>Voucher.cs</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IEntity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IEntityId.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IEntityKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityBaseCore.generated.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>EntityBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EntityKeyBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityKeyBaseCore.generated.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>EntityKeyBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ListBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WeakRefDictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\VList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityPropertyComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IEntityFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityFactoryBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityLocator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IEntityCacheItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EntityCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GenericTypeConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\BrokenRule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\BrokenRulesList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\CommonRules.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\ValidationRuleArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\ValidationRuleHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\ValidationRuleInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\ValidationRules.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MAT.Entities.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Code\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

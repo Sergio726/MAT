@@ -1,0 +1,104 @@
+﻿@model PagedList.IPagedList<MAT.MVC.Models.HistorialModel>
+@using MAT.Enums
+@using MAT.Utilities
+@using MAT.Entities
+<table class="grid mat-customtable">
+    <thead>
+    <tr>
+        <th class="hidden">
+        </th>
+        <th>
+            Tabla
+        </th>
+        <th>
+            Operación
+        </th>
+        <th>
+            Registro
+        </th>
+        <th>
+            Cliente
+        </th>
+        
+        <th>
+            Vendedor
+        </th>
+        
+        <th>
+            Monto
+        </th>
+        <th>
+            Observaciones
+        </th>
+        <th></th>       
+    </tr>
+        </thead>
+    <tbody>    
+@foreach (var item in Model) {
+    <tr>
+        <td class="hidden">
+            @item.Registro.HistorialId
+        </td>
+        <td>
+            @(((eTabla)item.Registro.Tabla).GetDescription())
+        </td>
+        <td>
+            @(((eOperacion)item.Registro.Operacion).GetDescription())
+        </td>
+        <td>
+            @item.Registro.FechaHoraRegistro
+        </td>
+        <td>
+            @item.Cliente.Nombre @item.Cliente.Apellido
+        </td>
+       
+        <td>
+            @item.Vendedor.Nombre @item.Vendedor.Apellido
+        </td>
+        <td>
+            @item.Registro.Monto
+        </td>
+        <td>
+            @item.Registro.Observaciones
+        </td>
+        <td>
+        </td>
+    </tr>
+}
+        </tbody>
+</table>
+<div class="mat-custompaging">
+    Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+    de @Model.PageCount
+
+    @if (Model.HasPreviousPage)
+    {
+        @Html.ActionLink("<<", "Index", new { page = 1 }, new { @class = "btn-pager" })
+        @Html.Raw(" ");
+        @Html.ActionLink("< Atrás", "Index", new { page = Model.PageNumber - 1 }, new { @class = "btn-pager" })
+    }
+    else
+    {
+        <a id="btn-pager-first" class="btn-pager"><<</a>
+        <a id="btn-pager-previous" class="btn-pager">< Atrás</a>
+    }
+
+    @if (Model.HasNextPage)
+    {
+        @Html.ActionLink("Siguiente >", "Index", new { page = Model.PageNumber + 1 }, new { @class = "btn-pager" })
+        @Html.Raw(" ");
+        @Html.ActionLink(">>", "Index", new { page = Model.PageCount }, new { @class = "btn-pager" })
+    }
+    else
+    {
+        <a class="btn-pager">Siguiente ></a>
+        <a class="btn-pager">>></a>
+    }
+
+
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

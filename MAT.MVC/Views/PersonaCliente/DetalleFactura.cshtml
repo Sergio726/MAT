@@ -1,0 +1,323 @@
+﻿@using MAT.Entities
+@using MAT.Enums
+@using MAT.Utilities
+@using MAT.MVC.Models
+
+@*@model FacturaModel*@
+@model FacturaStandard
+@{
+    Guid FacturaID = Model.FacturaID;
+    Guid ClienteID = Model.ClienteID;
+    double dTotal = 0;
+    double dTotalPagos = Model.Monto - Model.Saldo;
+    
+}
+
+<div class="form-modal">
+    @{
+        string sUSD = "";
+        if (Model.MonedaTipo != 1)
+        {
+            sUSD = "(USD)";
+        }
+     }
+    
+    <div class="form-label">Monto</div>
+    <div class="form-field">@String.Format("{0:C}", Model.Monto) <b>@sUSD</b></div>
+
+    <div class="form-label">Saldo</div>
+    <div class="form-field">@String.Format("{0:C}", Model.Saldo) <b>@sUSD</b></div>
+
+    <div class="form-label">Fecha</div>
+    <div class="form-field">@Model.Fecha</div>
+
+    <div class="form-label">Cliente</div>
+    <div class="form-field">@(Model.ClienteApellido + " " + Model.ClienteNombre)</div>
+
+    <div class="form-label">Vendedor</div>
+    <div class="form-field">@(Model.VendedorApellido + " " + Model.VendedorNombre)</div>
+
+    <div class="form-label">Paquete</div>
+    <div class="form-field">@Model.PaqueteDescripcion</div>
+
+    <div class="form-label">Observaciones</div>
+    <div class="form-field">@Model.Observaciones</div>
+
+    <table class="mat-customtable">
+        <thead>
+            <tr>
+                <th>Butaca</th>
+                <th>Pasajero</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (FacturaDetalle item in ViewBag.FacturaDetalle)
+            {
+                <tr>
+                    <td>@item.ButacaNro</td>
+                    <td>@item.PasajeroNombre @item.PasajeroApellido</td>
+                    <td>
+                        <a href="#" class="btn-editar-butaca button_edit" id="btn-editar-butaca" data-anterior="@item.ButacaID" data-pasaje="@item.PasajeID" title="Editar Butaca">
+                         </a>
+                    @if (item.HabitacionID != new Guid("00000000-0000-0000-0000-000000000000") && item.HabitacionID != null)
+                    {
+                            <a href="#" class="btn-editar-habitacion button_agregar_habitacion" id="btn-editar-habitacion" title="Agregar Habitacion" data-factura="@(Model.FacturaID.ToString() ?? "")" data-anterior="@item.HabitacionID" data-pasaje="@item.PasajeID" data-viaje="@item.ViajeID" data-pasajero="@item.PasajeroID">
+                                </a>
+                        
+                    }
+                    else
+                    {
+                         <a href="#" class="btn-editar-habitacion button_agregar_habitacion" id="btn-editar-habitacion" title="Agregar Habitacion" data-factura="@(Model.FacturaID.ToString() ?? "")" data-pasaje="@item.PasajeID" data-viaje="@item.ViajeID" data-pasajero="@item.PasajeroID">
+                               </a>
+                    }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    
+    @if (ViewBag.ListMenores.Count > 0)
+    {
+        <table id="tblListMenores" class="mat-customtable" >
+        <thead>
+            <tr>
+                <th colspan="3">Seguro Menor</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th style="width: 48%;">Responsable del menor</th>
+                <th style="width: 48%;">Menor a cargo</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @{int i = 0;}
+            @foreach (PasajeroMenorModel item in ViewBag.ListMenores)
+            {
+                i++;
+                if (item.PasajeroMenorID != 0)
+                {
+                    <tr>
+                        <td>@i</td>
+                        <td>@(item.ApellidoMayor + ", " + item.NombreMayor + " Doc.: " + item.DocMayor)</td>
+                        <td>@(item.ApellidoMenor + ", " + item.NomreMenor + " Doc.: " + item.DocMenor)</td>
+                    </tr>
+                }
+                
+            }
+            
+        </tbody>
+        </table>
+    }
+
+    <table class="mat-customtable">
+        <thead>
+            <tr>
+                <th colspan="5">Items</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th>Fecha</th>
+                <th>Detalle</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int iNro = 0;
+               
+                foreach (DBOFacturaDetalle item in ViewBag.ExtendFacturaDetalle)
+                {
+                    iNro += 1;
+                    dTotal += item.Precio;
+                    <tr>
+                        <td>
+                            @iNro
+                        </td>
+                        <td>
+                            @item.Fecha
+                        </td>
+                        <td>
+                            @item.Detalle
+                        </td>
+                        <td>
+                            @item.Cantidad
+                        </td>
+                        <td>
+                            <div class="custom_diplay_flex">
+                                <span class="custom_padding_5">@String.Format("{0:C}", item.Precio)</span> 
+                                @if (item.Detalle.Contains("PAQUETE"))
+                                {
+                                     <a href="javascript: fnCambiarPrecio('@item.Id','@Model.FacturaID');" title="Cambiar Precio"><div class="button_edit"></div></a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <th colspan="3"></th>
+                <th>@String.Format("{0:C}", dTotal)</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <p class="botonera-form">
+       @if (Model.Estado == (int)eEstadoFactura.Pagado)
+       {
+            <a href="#" id="btn-imprimirvouchers" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-inverse">Imprimir Vouchers</a>
+            <a href="#" id="btn-notacredito" data-facturaid="@FacturaID" data-clienteid="@ClienteID" data-fecha="@Model.Fecha" data-monto="@Model.Monto" class="btn btn-small btn-inverse">Nota de Crédito</a>
+            @*<a href="#" id="btn-eliminarventa" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-danger">Eliminar Venta</a>*@
+       }
+       else
+       {
+			<a href="#" id="btn-abrirregistrarpago" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-inverse">Registrar Pago Parcial</a>
+            <a href="#" id="btn-abrirpagototal" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-inverse">Pago Total de Factura</a>
+            <a href="#" id="btn-descuentoRecargo" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-inverse" onclick="javascript: $('#divDescuentoRecargo').dialog({width: 400,modal: true});">Descuento/Recargo</a>
+            <a href="#" id="btn-notacredito" data-facturaid="@FacturaID" data-clienteid="@ClienteID"  data-fecha="@Model.Fecha" data-monto="@Model.Monto"  class="btn btn-small btn-inverse">Nota de Crédito</a>
+            @*<a href="#" id="btn-eliminarventa" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-danger">Eliminar Venta</a>*@
+       }
+        <a href="javascript:pagosFactura('@FacturaID');" class="btn btn-small btn-inverse" title="Ver pagos de esta factura">Pagos</a>
+        <a href="#" id="btn-eliminarventa" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-danger">Eliminar Venta</a>
+    </p>
+</div>
+
+<div id="divSelectTipoVoucher" title="Tipo de Voucher" style="display:none;">
+    <div class="custom_line_height_25 custom_margin_left_5">
+        <a href="javascript: imprimirVoucher('@FacturaID','Grupal');" class="custom_text_color_black"><div class="divOk"><span class="custom_margin_left_35">Grupal</span></div></a>
+        <a href="javascript: imprimirVoucher('@FacturaID','Individual');" class="custom_text_color_black"><div class="divOk"><span class="custom_margin_left_35">Individual</span></div></a>
+        <input type="checkbox" id="chkInfoAdicional" /><a href="javascript:void(0);" id="aCheckInforAd" class="custom_text_color_black"> Incluir Información Adicional</a>
+    </div>
+    
+</div>
+
+<div id="Voucher_dialog-message" title="Atencion">
+  
+</div>
+
+<div id="divDescuentoRecargo" title="Descuento/Recargo" style="display:none; padding:1%;">
+   
+        <span>Monto: </span><input type="number" id="nMonto" min="0" max="100000" style="width:75%;" value="0" /><span class="required">*</span><br />
+        <span>Detalle: </span><input type="text" id="txtDetalleDR" maxlength="100" style="width:74%;" /><span class="required">*</span><br />
+        <span>Descuento </span> <input type="radio" name="rDR" value="Descuento" checked />
+        <span>Incremento </span> <input type="radio" name="rDR" value="Incremento" /><br />
+   
+    <input type="button" class="btn btn-small btn-inverse" value="Agregar" style="margin: 5%; float: right;" onclick="addDR()"/>
+</div>
+<input type="hidden" id="hdnTotalPagos" value="@dTotalPagos" />
+<input type="hidden" id="hdnViajeMonedaTipo" value="@Model.MonedaTipo"/>
+
+
+<script type="text/javascript">
+    $(function () {
+        if ($(".btn-editar-habitacion").size() != $(".btn-editar-butaca").size()) {
+            alert("Opción Imprimir Voucher no disponible. Debe reservar las habitaciones para el/los pasajero/s correspondientes.");
+            $("#btn-imprimirvouchers").hide();
+        }
+        $("#btn-abrirregistrarpago").click(function () {
+            var url = "/PersonaCliente/RegistrarPago?facturaid=" + $(this).data("facturaid") + "&clienteid=" + $(this).data("clienteid");
+            var title = "Registrar Pago";
+            var id = "RegistrarPago";
+            ShowFormDialog(url, id, title);
+        });
+
+        //pago total habilitado solo para pesos ARG
+        if ("@Model.MonedaTipo.ToString()" == "1") {
+            $("#btn-abrirpagototal").click(function () {
+                var url = "/PersonaCliente/RegistrarPagoTotal?facturaid=" + $(this).data("facturaid") + "&clienteid=" + $(this).data("clienteid");
+                var title = "Pago Total de Factura";
+                var id = "PagoTotal";
+                ShowFormDialog(url, id, title);
+            });
+        }
+        else {
+            $("#btn-abrirpagototal").attr("disabled", "disabled");
+            $("#btn-abrirpagototal").attr("title", "Solo habilitado para pago en Pesos.");
+        }
+
+        
+
+        $("#btn-eliminarventa").click(function () {
+            var url = "/PersonaCliente/EliminarVenta?facturaid=" + $(this).data("facturaid") + "&clienteid=" + $(this).data("clienteid");
+            var title = "Eliminar Venta";
+            var id = "EliminarVenta";
+            ShowFormDialog(url, id, title, "min");
+        });
+
+        $("#aCheckInforAd").click(function () {
+            if ($("#chkInfoAdicional").is(":checked")) {
+                $("#chkInfoAdicional").attr("checked", false)
+            }
+            else {
+                $("#chkInfoAdicional").attr("checked", true)
+            }
+        });
+    });
+      
+    function addDR() {
+        var FacturaID = "@FacturaID";
+        var Monto = $("#nMonto").val();
+        var Detalle = $("#txtDetalleDR").val()
+        if (Monto <= 0) {
+            return alert("Debe agregar un monto.");
+        }
+        if (Detalle.trim() == '') {
+            return alert("Debe ingresar un detalle.");
+        }
+
+        var DescuentoIncremento = $("input[name='rDR']:checked").val();
+        
+        $.ajax({
+            url: "/PersonaCliente/AddDescuentoRecargo",
+            data: {
+                sFacturaID: FacturaID,
+                sMonto: Monto,
+                sDetalle: Detalle,
+                sDescuentoIncremento: DescuentoIncremento
+            },
+            success: function (data) {
+                if (data.Estado == "Done.") {
+                    //window.location.reload(true);
+                    $('#divDescuentoRecargo').dialog('close');
+                    PopupDetalleFactura_Load();
+
+                }
+                else {
+                    alert("Se produjo un error. Contactese con el administrador.");
+                    console.log(data.Estado);
+                }
+            },
+            error: function (e) {
+                alert("Se produjo un error. Contactese con el administrador.");
+                console.log(e);
+            }
+        })
+    }
+        
+    function fnCambiarPrecio(DetalleFacturaId, FacturaId)
+    {
+        var htmlLoading = "<div class='iconLoading'></div>";
+        ShowFormDialogHTML(htmlLoading, "PopinPrecioList", "Cambiar Precio", "min");
+        $.ajax({
+            url: "/PersonaCliente/CambiarPrecioList",
+            data: {
+                DetalleFacturaId: DetalleFacturaId,
+                FacturaId: FacturaId
+            },
+            success: function (data) {
+                $("#PopinPrecioList").html(data);
+                //html, dialogid, dialogtitle, widthsize
+            },
+            error: function (e) {
+                alert("Se produjo un error. Contactese con el administrador.");
+                console.log(e);
+            }
+        })
+    }
+</script>
+

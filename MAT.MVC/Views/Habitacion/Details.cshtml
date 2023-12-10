@@ -1,0 +1,79 @@
+﻿@model MAT.MVC.Models.HabitacionStandard
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Detalles - Habitacion</h2>
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+<div class="form custom_margin_left_10 custom_margin_right_10">
+
+    <div class="form-label">
+       <label class="custom_font_weigh_bold">Habitación Id</label>
+    </div>
+    <div class="form-field">
+        @Model.HabitacionID
+    </div>
+      
+
+    <div class="form-label">
+        <label class="custom_font_weigh_bold">Nro Habitacion</label>
+    </div>
+    <div class="form-field">
+        @Model.NroHabitacion
+    </div>
+
+    <div class="form-label custom_font_weigh_bold">
+        <label class="custom_font_weigh_bold">Nombre</label>
+    </div>
+    <div class="form-field">
+        @Model.Nombre
+    </div>
+     
+    <div class="form-label">
+        <label class="custom_font_weigh_bold">Tipo</label>
+    </div>
+    <div class="form-field">
+        <label>@MAT.MVC.Models.HabitacionTipoMethod.GetAllHabitacionTipoByTipoId(Model.Tipo).Descripcion</label>
+    </div>
+
+    <div class="form-label custom_font_weigh_bold">
+        Hotel
+    </div>
+    <div class="form-field">
+        @Model.Hotel
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Estado)
+    </div>
+    <div class="form-field">
+        @Html.Label(((eEstadoHabitacion)Model.Estado).ToString ())
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Capacidad)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Capacidad)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Ocupacion)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Ocupacion)
+    </div>
+    
+    <p>
+        @Html.ActionLink("Editar", "Edit", new { id = Model.HabitacionID }, new { @class = "btn btn-small btn-inverse view-all hidden-phone" })
+        <a href="/Habitacion?searchString=@Model.HotelID" class="btn btn-small btn-inverse view-all hidden-phone">< Habitaciones</a>
+    </p>
+
+</div>
+

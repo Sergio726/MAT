@@ -1,0 +1,52 @@
+﻿@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>   
+    return;
+}
+
+@model List<MAT.MVC.Models.PagoModel>
+@{int iCount = 0;
+  decimal dSum = 0;}
+<table id="tblPagos" style="width:98%;" class="mat-customtable">
+    <thead> 
+        <tr>
+            <th></th>
+            <th>Fecha</th>
+            <th>Ciente</th>
+            <th>Nro de Recibo</th>
+            <th>Transacción</th>
+            <th>Medio de Pago</th>
+            <th>Vendedor</th>
+            <th>Monto</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody >
+        @foreach (MAT.MVC.Models.PagoModel item in Model)
+        {
+            iCount += 1;
+            dSum += item.Monto;
+        <tr>
+            <td>@iCount</td>
+            <td>@item.FechaPago.ToShortDateString() @item.FechaPago.ToShortTimeString()</td>
+            <td>@item.Cliente</td>
+            <td>@item.NroRecibo</td>
+            <td>@item.TransaccionID</td>
+            <td>@item.TipoPagoDescripcion</td>
+            <td>@item.Vendedor</td>
+            <td>@String.Format("{0:C}",item.Monto)</td>
+            <td><a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');" id="lnkCancelarPago"><div class="divDelete" title="Cancelar Pago"></div></a></td>
+        </tr>    
+        }
+        
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Total</th>
+            <th colspan="6"></th>
+            <th colspan="2">@String.Format("{0:C}", dSum)</th>
+        </tr>
+    </tfoot>
+    
+</table>
+

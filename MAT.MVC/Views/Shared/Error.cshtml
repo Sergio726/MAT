@@ -1,0 +1,22 @@
+﻿@model Exception
+@{
+    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width" />
+    <title>Error</title>
+</head>
+<body>
+    <hgroup>
+        <h1>@Model.Message</h1>
+        <h3>@Model.HelpLink</h3>
+        <h3>Contacte con su Administrador de Sistema</h3>
+    </hgroup>
+    <a href="/Home/Login">Volver al inicio</a>
+</body>
+</html>

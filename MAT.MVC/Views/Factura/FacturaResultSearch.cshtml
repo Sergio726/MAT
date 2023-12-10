@@ -1,0 +1,132 @@
+﻿@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        registerFormatNumber();
+
+        var dataSet = @Html.Raw(ViewBag.sbDataSetJson);
+        var jTables = eval(dataSet);
+        var jt = jTables;
+
+        var table = $("#tblFacturas").DataTable({
+            "aaData": jt,
+            "columns": [
+        	{ "data": "NroFactura" },
+            { "data": "ClienteFullName"},
+            { "data": "Monto", 
+            "mRender": function (data, type, row) {
+                var numberFormat = formatNumberMoney(row.Monto);
+                    return numberFormat;
+                }
+            },
+        	{ "data": "EstadoDescripcion" },
+            { "data": "PaqueteDescripcion"},
+            { "data": "ViajeDescripcion" },
+            { "data": "FacturaID",
+        	    "mRender": function (data, type, row) {
+        	        var _data = { "FacturaID": row.FacturaID}
+        	        var data = $("#divLnkFactura").html().trim().render(_data);
+        	        return data;
+        	    }
+        	},
+            {
+                "class":          "details-control",
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ""
+            }
+            ],
+            "bAutoWidth": false,
+            "pageLength": 25
+        });
+
+        $('#tblFacturas tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row( tr );
+ 
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child( format(row.data()) ).show();
+                tr.addClass('shown');
+                
+            }
+        } );
+    });
+
+    function format ( d ) {
+        // `d` is the original data object for the row
+        var FacturaID = d.FacturaID;
+        var divLoading = "<div id='"+ FacturaID + "'  class='iconLoading'></div>";
+        $("#divMoreDetails").html(divLoading);
+        
+        getPasajeros(FacturaID);
+        return sReturn = $("#divMoreDetails").html().trim();
+            
+    }
+    
+   
+    function getPasajeros(FacturaID)
+    {
+        //debugger
+        //var divLoading = "<div class='iconLoading'></div>";
+        //$("#divMoreDetails").html(divLoading);
+        $.ajax({
+            url: "/Factura/FacturaMoreDetails",
+            data: { sFacturaID: FacturaID},
+            success: function (data) {
+                $("#" + FacturaID).html(data);
+                $("#" + FacturaID).removeClass("iconLoading");
+                
+            }
+        });
+
+       // return  $("#divMoreDetails").html().trim();
+    }
+</script>
+
+<table class="grid mat-customtable" id="tblFacturas">
+    <thead>
+    <tr>
+        
+        <th style="width:60px;">
+           Nro Factura
+        </th>
+        <th style="width:60px;">
+           Titular
+        </th>
+        <th style="width:60px;">
+           Monto
+        </th>
+        <th style="width:85px;">
+            Estado
+        </th>
+         <th style="width:85px;">
+            Paquete
+        </th>
+        <th style="width:115px;">
+            Viaje
+        </th>
+        <th style="width:10px;"></th> 
+        <th style="width:10px;"></th>       
+    </tr>
+        </thead>
+    
+</table>
+
+ <div id="divMoreDetails" style="display:none;">
+   
+</div>
+
+<div id="divLnkFactura" style="display:none;"> 
+    <a href="#" class="btn-detallefactura button_detail" data-facturaid="{{FacturaID}}" title="Ver Factura" >
+    </a>
+</div>

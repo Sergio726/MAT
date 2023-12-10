@@ -1,0 +1,36 @@
+﻿@model MAT.MVC.Models.NotaCreditoModel
+@if (ViewBag.Error != null)
+{
+    <script type="text/javascript">
+        console.log("@ViewBag.Error");
+    </script>
+    return;
+}
+<div>
+    <a href="javascript: printNota();">
+        <div class="iconPrint" style="margin-left: 94%;" title="Imprimir comprobate de Nota de Credito."></div>
+    </a>
+</div>
+<div >
+        <div class="form-label">Días a la salida del viaje</div>
+        <div class="form-field">@Model.Dias</div>
+       
+        <div class="form-label">Monto de Nota de Crédito</div>
+        <div class="form-field">@string.Format("{0:C}",Model.MontoNota)</div>
+
+        <div class="form-label">% Retención</div>
+        <div class="form-field">@(Math.Round((Model.PorcentajeRetencion * 100),2)) %</div>
+        
+
+        <div class="form-label">Monto retenido</div>
+        <div class="form-field">@string.Format("{0:C}",Model.MontoRetencion)</div>
+
+        <div class="form-label">N° de Nota</div>
+        <div class="form-field">@Model.NroNota</div>
+
+        <div class="form-label">Vendedor</div>
+        <div class="form-field">@Model.Vendedor</div>
+        
+        <div class="form-label">Detalle</div>
+        <div class="form-field">@Model.Detalle</div>
+    </div>

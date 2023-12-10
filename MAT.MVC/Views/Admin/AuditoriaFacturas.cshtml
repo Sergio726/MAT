@@ -1,0 +1,129 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="custom_padding_left_5 custom_width_99percent">
+<h2 class="title">Auditoría de Reservas</h2>
+    <form id="formFilter">
+        <fieldset class="border">
+          <legend>Filtrar por Fecha</legend>
+          <span>Desde</span><input name='dateFrom' class="valtxt" id="dateFrom" type='text' tabindex='1' style="margin-left:2px;">
+          <span>Hasta</span> <input name='dateTo' class="valtxt" id="dateTo" type='text' tabindex='2' style="margin-left:2px;">
+          <input type="button" value="Buscar" onclick="javascript: searchFactura();"/>
+         </fieldset>
+    </form>
+</div>
+<div id="divResult" class="custom_padding_left_5 custom_padding_right_5">
+    <table id="tblAudit" style="display:none;" >
+        @*<thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Acción
+                </th>
+                <th>
+                    Descripción
+                </th>
+                <th>
+                    Fecha
+                </th>
+                <th>
+                    Persona/Cliente
+                </th>
+                <th>
+                    Vendedor
+                </th>
+            </tr>
+        </thead>*@
+    </table>
+</div>
+
+<script type="text/javascript">
+    var _dataTable = "";
+    $(document).ready(function () {
+        $("#dateFrom").datepicker();
+        $("#dateTo").datepicker();
+
+        $("input[type='text']").click(function () {
+            $(this).css("background-color", "#fff");
+        });
+    });
+
+    function valForm() {
+        var bResult = true;
+
+        $.each($(".valtxt"), function (i, l) {
+            if ($(this).val() == "") {
+                $(this).css("background-color", "rgba(162, 130, 169, 0.75)");
+                bResult = false;
+            }
+            
+        });
+        if (!bResult) {
+            alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
+            return bResult;
+        }
+
+        var date1 = $("#dateFrom").val();
+        var date2 = $("#dateTo").val();
+        if (validate_fechaMayorQue(date2, date1)) {
+            alert("La fecha inicial no puede ser mayor a la fecha final.");
+             return false;
+        }
+        return bResult;
+    }
+
+    function searchFactura() {
+        if (valForm()) {
+            $("#divResult").addClass("iconLoading");
+            var date1 = $("#dateFrom").val();
+            var date2 = $("#dateTo").val();
+            $.ajax({
+                url: "/Admin/AuditFactura",
+                data: {
+                    "dateFrom": date1,
+                    "dateTo": date2
+                },
+                dataType: "json",
+                success: function (data) {
+                    loadTable(data);
+
+                }
+
+            });
+        }
+    }
+
+    function loadTable(jTable) {
+        
+        if (_dataTable != "") {
+            $("#tblAudit").hide();
+            $("#tblAudit").DataTable().destroy();
+            $("#tblAudit").empty();
+        }
+        
+        var jTables = eval(jTable);
+        var jt = jTables;
+
+        _dataTable = $("#tblAudit").DataTable({
+                    "aaData": jt,
+                    "columns": [
+        	        {"title":"ID", "data": "ID" },
+        	        { "title": "Acción", "data": "Accion" },
+                    { "Descripcion": "Descripción", "data": "Descripcion" },
+                    { "title": "Fecha","data": "Fecha" },
+        	        { "title": "Persona/Cliente","data": "Cliente" },
+        	        { "title": "Vendedor", "data": "Vendedor" },
+        	
+                    ],
+                    "bAutoWidth": false,
+                    "pageLength": 25
+                });
+
+        $("#divResult").removeClass("iconLoading");
+        $("#tblAudit").show();
+    }
+
+</script>

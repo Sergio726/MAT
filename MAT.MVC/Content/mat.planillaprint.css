@@ -1,0 +1,22 @@
+﻿body{
+      -webkit-print-color-adjust:exact;
+    }
+.encabezado {
+    border:1px solid #000;
+    padding:1em;
+}
+
+table {
+    border: 1px solid #000;
+    background: #000;
+}
+
+    table thead tr th {
+        color: #fff;
+        padding:3px;
+    }
+
+    table tbody tr td {
+        background:#fff;
+        padding:3px;
+    }

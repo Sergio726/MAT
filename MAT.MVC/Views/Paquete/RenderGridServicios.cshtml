@@ -1,0 +1,38 @@
+﻿@model IEnumerable<MAT.Entities.Servicio>
+@using MAT.Enums
+@using MAT.Utilities
+@using MAT.Entities
+<table class="partial-grid mat-customtable">
+    <thead>
+    <tr>
+        <th class="hidden">
+        </th>
+        <th>
+            @Html.Label("Descripción")
+        </th>
+        <th>
+        </th>       
+    </tr>
+        </thead>
+    <tbody>    
+@foreach (var item in Model) {
+    <tr>
+        <td class="hidden">
+            @item.ServicioId
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descripcion)
+        </td>
+        <td>
+            <a href="#" id="btn-vincular-servicio" data-servicio="@item.ServicioId">
+                        <img src="/Images/link.png" width="32" height="32" title="Vincular Servicio" /></a>            
+        </td>
+    </tr>
+}
+        </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

@@ -1,0 +1,46 @@
+﻿
+@using (Html.BeginForm())
+{
+    <p>
+        <span>Hotel</span>    
+        @*@Html.DropDownList("SearchString", Helper.ToSelectEntities("HotelPorViaje", Guid.Parse(ViewData["viajeid"].ToString())), new { @class = "ui-button ui-widget ui-corner-all" })*@
+        <select id="ddHotel" name="ddHotel" >
+            @foreach (MAT.MVC.Models.HotelDropDown item in ViewBag.ListHotel)
+            {
+                <option value="@item.HotelID" fecha="@item.Fecha.ToString("dd/MM/yyyy")">@item.Nombre @item.Fecha.ToString("dd/MM/yyyy")</option>
+            }
+        </select>
+        <input id="btnFiltrarHabitacionCambio" type="button" value="Filtrar" onclick="fnFiltrarHabitacionCambio();" class="btn btn-small btn-inverse view-all hidden-phone" title="Filtrar por hotel"/>
+        
+    </p>
+}
+
+<input id="input-pasaje" type="hidden" value="@ViewData["pasajeid"]" />
+<input id="input-viaje" type="hidden" value="@ViewData["viajeid"]" />
+
+<div id="gridHabitacion">
+
+</div>
+<div style="width: 93%;text-align: right; ">
+    <a class="btn btn-small btn-inverse" id="btnAceptar">Aceptar</a>
+</div>
+
+<input type="hidden" id="viaje-id" value="@ViewData["viajeid"]" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnAceptar").click(function () {
+
+            $("#ElegirNuevaHabitacion").dialog("close");
+            $("#DetalleFactura").dialog("close");
+            PopupDetalleFactura_Load();
+        });
+    });
+
+    $(function () {
+        var HotelID = $('#ddHotel').val();
+        var PasajeroID = $("#hdnPasajeroID").val();
+        var Fecha = $('#ddHotel option:selected').attr("fecha");
+        $('#gridHabitacion').load('/ReservaHabitacion/GridHotelHabitacion?HotelID=' + HotelID + "&viajeid=" + $("#viaje-id").val() + "&PasajeroID=" + PasajeroID + "&Fecha=" + Fecha)
+    });
+
+</script>

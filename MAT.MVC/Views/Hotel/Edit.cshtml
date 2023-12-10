@@ -1,0 +1,134 @@
+﻿@model MAT.Entities.Hotel
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Editar - Hotel</h2>
+
+<div class="form">
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+       
+        
+        <div class="form-label">
+            @Html.LabelFor(model => model.Nombre)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Nombre)
+            @Html.ValidationMessageFor(model => model.Nombre)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Direccion)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Direccion)
+            @Html.ValidationMessageFor(model => model.Direccion)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Cp)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Cp)
+            @Html.ValidationMessageFor(model => model.Cp)
+        </div>
+
+         <div class="form-label">
+            @Html.LabelFor(model => model.LocalidadId, "Localidad")
+        </div>
+        <div class="form-field">
+             @if (Model.LocalidadId != null && Model.LocalidadId.HasValue)
+            {
+                <input type="text" id="txt-busqueda-localidad" value="@Helper.GetLocalidadName(Model.LocalidadId.Value)" />
+                <input type="hidden" id="LocalidadId" name="LocalidadId" value="@Model.LocalidadId" />
+            }
+            else
+            {
+                <input type="text" id="txt-busqueda-localidad" value="" />
+                <input type="hidden" id="LocalidadId" name="LocalidadId" value="" />
+            }
+
+            @Html.ValidationMessageFor(model => model.LocalidadId)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Telefono)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Telefono)
+            @Html.ValidationMessageFor(model => model.Telefono)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Email)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Contacto)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Contacto)
+            @Html.ValidationMessageFor(model => model.Contacto)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.CantidadHabitaciones)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.CantidadHabitaciones)
+            @Html.ValidationMessageFor(model => model.CantidadHabitaciones)
+        </div>
+        
+        <div class="form-label">
+            @Html.LabelFor(model => model.Categoria, "Categoria")
+        </div>
+        <div class="form-field">
+            
+            @Html.DropDownListFor(model=> model.Categoria,eCategoriaHotel.Cinco_Estrellas.ToSelectList(Model.Categoria.ToString()))
+        </div>        
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.CheckIn)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.CheckIn)
+            @Html.ValidationMessageFor(model => model.CheckIn)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.CheckOut)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.CheckOut)
+            @Html.ValidationMessageFor(model => model.CheckOut)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.GoogleMapHtml)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.GoogleMapHtml)
+            @Html.ValidationMessageFor(model => model.GoogleMapHtml)
+        </div>
+
+        <p>
+            <input type="submit" value="Guardar" class="btn btn-small btn-inverse view-all hidden-phone" />
+             @Html.ActionLink("< Volver a la lista", "Index", null, new { @class = "btn btn-small btn-inverse view-all hidden-phone" })
+        </p>
+   
+}
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

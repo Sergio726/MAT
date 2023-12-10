@@ -1,0 +1,135 @@
+﻿@model MAT.Entities.PersonaPasajero
+@using MAT.Utilities
+@using MAT.Enums
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Pasajero - Editar</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="form">
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Apellido)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Apellido)
+            @Html.ValidationMessageFor(model => model.Apellido)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Nombre)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Nombre)
+            @Html.ValidationMessageFor(model => model.Nombre)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.TipoDocumento)
+        </div>
+        <div class="form-field">
+            @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(Model.TipoDocumento.ToString()))
+            @Html.ValidationMessageFor(model => model.TipoDocumento)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.NroDocumento)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.NroDocumento)
+            @Html.ValidationMessageFor(model => model.NroDocumento)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.LocalidadId, "Localidad")
+        </div>
+        <div class="form-field">
+            <input type="text" id="txt-busqueda-localidad" value="@Helper.GetLocalidadName(Model.LocalidadId.Value)" />
+            <input type="hidden" id="Localidad" name="LocalidadId" value="@Model.LocalidadId" />
+            @Html.ValidationMessageFor(model => model.LocalidadId)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Telefono)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Telefono)
+            @Html.ValidationMessageFor(model => model.Telefono)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Email)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.FechaNacimiento)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.FechaNacimiento)
+            @Html.ValidationMessageFor(model => model.FechaNacimiento)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Sexo)
+        </div>
+        <div class="form-field">
+            @Html.DropDownListFor(model => model.Sexo,eSexo.Femenino.ToSelectList())
+            @Html.ValidationMessageFor(model => model.Sexo)
+        </div>
+
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Pasaporte)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Pasaporte)
+            @Html.ValidationMessageFor(model => model.Pasaporte)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.VencimientoPasaporte)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.VencimientoPasaporte)
+            @Html.ValidationMessageFor(model => model.VencimientoPasaporte)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.EmisionPasaporte)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.EmisionPasaporte)
+            @Html.ValidationMessageFor(model => model.EmisionPasaporte)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.PaisOrigen)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.PaisOrigen)
+            @Html.ValidationMessageFor(model => model.PaisOrigen)
+        </div>
+
+
+        <p>
+            <input type="submit" value="Guardar" class="btn btn-small btn-inverse view-all hidden-phone" />
+            @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn btn-small btn-inverse view-all hidden-phone" })
+        </p>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

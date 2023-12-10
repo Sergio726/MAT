@@ -1,0 +1,96 @@
+﻿@model List<MAT.Entities.PersonaCliente>
+@using MAT.Enums
+@using MAT.Utilities
+@using MAT.Entities
+
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+    var ListMenorID = [];
+    $(document).ready(function () {
+        $("#tblListaMenor").DataTable();
+        
+        ListMenorID = [];
+        $('#tblListaMenor tbody').on('click', 'tr', function () {
+
+            var nrMenores = $("#numMenor").val();
+            
+            var MenorID = $(this).data("id");
+            var idxItem = ListMenorID.indexOf(MenorID);
+
+            if (idxItem > -1) {
+                ListMenorID.splice(idxItem, 1);
+                $(this).removeClass('selected');
+            }
+            else {
+                if (nrMenores <= ListMenorID.length) {
+                    return alert("Solo puede seleccionar hasta " + nrMenores + " menores. Si desea seleccionar mas, cambie la cantidad de seguro de menor.")
+                }
+                ListMenorID.push(MenorID);
+                $(this).addClass('selected');
+            }
+            
+        });
+    });
+
+    function closePopup() {
+        ListMenorID = [];
+        $("#divFormListaMenor").dialog("close");
+    }
+
+    function vincularListMenor() {
+        var nrMenores = $("#numMenor").val();
+        if (nrMenores > ListMenorID.length) {
+            var n = parseInt(nrMenores) - parseInt(ListMenorID.length);
+            return alert("Por favor seleccione " + n + " menores más.");
+        }
+        $("#hdnListMenor").val(ListMenorID);
+        $("#divFormListaMenor").dialog("close");
+    }
+</script>
+
+<div style="float: right;padding-bottom: 5px;">
+    <div class="iconHelp" title="La lista solo muestra aquellas personas de 1 a 4 años de edad."></div>
+</div>
+<div>
+    <table id="tblListaMenor" class="mat-customtable">
+    <thead>
+        <tr>
+       
+        <th>
+            Apellido
+        </th>
+        <th>
+            Nombre
+        </th>
+        <th>
+            Nro Documento
+        </th>
+         
+         </tr>
+    </thead>
+    <tbody>    
+    @foreach (PersonaCliente item in Model)
+    {
+        <tr data-id="@item.ClienteId" data-apellido="@item.Apellido" data-nombre="@item.Nombre" >
+        
+            <td>
+                @item.Apellido
+            </td>
+            <td>
+                @item.Nombre
+            </td>
+            <td>
+                @item.NroDocumento
+            </td>
+        </tr>
+    }
+            </tbody>
+    </table>
+</div>
+<div style="text-align: right; margin-top: 20px;">
+    <input type="button" class="btn btn-small btn-inverse" value="Vincular" onclick="javascrpit: vincularListMenor();"/>
+    <input type="button" class="btn btn-small btn-inverse" value="Cancelar" onclick="javascript: closePopup();" />
+</div>

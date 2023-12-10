@@ -1,0 +1,212 @@
+﻿
+<fieldset class="customborder">
+    <legend class="custom_font_size_12">
+        Agregar persona a Lista de Espera
+    </legend>
+
+    <section class="search-perfil custom_padding_4" style="width:60%;">
+        <div id="busqueda-persona" class="custom_display_flex_align_items">
+            @*<p>Lista de clientes que no se encuentran en viaje actual</p>*@
+            <input id="txt-filter-persona-toWaitingList" type="text" placeholder="Ingrese Nombre o DNI" />
+            <input type="hidden" id="hdnPassengerID" />
+            <input type="hidden" id="hdnViajeID" value="@ViewBag.ViajeID" />
+            
+        </div>
+        <div>
+            <label id="lblResultPersona" class="custom_margin_bottom_10 custom_font_size_11 custom_font_weigh_bold"></label>
+            <textarea placeholder="Observaciones" id="txtObservacion" class="custom_width_100percent custom_padding_0"></textarea>
+        </div>
+        <div class="custom_text_aling_right">
+            <input type="button" id="btnAddToList" onclick="AddToList();" value="Agregar a Lista de Espera" class="btn btn-small btn-inverse custom_margin_left_5" />
+        </div>
+
+
+
+    </section>
+</fieldset>
+
+
+
+<fieldset class="customborder">
+    <legend class="custom_font_size_12">
+        Lista de Espera
+    </legend>
+    <div id="divListOffListPassengers">
+        <table id="tblWaitingList" class="mat-customtable">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Vendedor</th>
+                    <th>Fecha</th>
+                    <th>Observaciones</th>
+                    <th></th>
+                </tr>
+                
+            </thead>
+        </table>
+    </div>
+</fieldset>
+    
+
+<script type="text/javascript">
+
+
+    $(function () {
+        $("#txt-filter-persona-toWaitingList").autocomplete({
+            minLength: 3,
+            source: function (request, response) {
+
+                $.ajax({
+                    url: "/Reserva/PersonaAutocomplete",
+                    data: {
+                        sParam: request.term,
+                        sViajeID: $("#hdnViajeID").val()
+                    },
+                    success: function (data) {
+                        response($.map(data,
+                                    function (item) {
+                                        return {
+                                            label: item.Nombre + " " + item.Apellido + " - Doc: " + item.NroDocumento,
+                                            value: item.Nombre + " " + item.Apellido,
+                                            id: item.PersonaID,
+                                        }
+                                    }));
+                    }
+                })
+
+            },
+            select: function (event, ul) {
+                
+                var sRestult = ul.item.label;
+
+                $("#lblResultPersona").text(sRestult);
+                $("#hdnPassengerID").val(ul.item.id);
+            }
+        });
+    });
+
+    function AddToList() {
+        //alert("listo!");
+        //mosrtar loading
+
+     
+        $.ajax({
+            url: "/Reserva/InsertPersonToWatingList",
+            data: {
+                sPersonaID: $("#hdnPassengerID").val(),
+                sViajeID: $("#hdnViajeID").val(),
+                sObservacion: $("#txtObservacion").val()
+            },
+            success: function (data) {
+              
+                console.log(data);
+
+                LoadWaitingList();
+                CleanDataInputs();
+            }
+        })
+
+    };
+
+    function LoadWaitingList() {
+        alert('persona cargada a lista de espera');
+    };
+
+    function CleanDataInputs(){
+        $("#txt-filter-persona-toWaitingList").val("");
+        $("#lblResultPersona").text("");
+        $("#hdnPassengerID").val("");
+        $("#txtObservacion").val("");
+    }
+
+    var tblWaitingList;
+    function Load_tblWaitingList(ViajeID) {
+        var dataSet = datatable;
+        var jTables = eval(dataSet);
+        var jt = jTables.Table;
+
+        if (tblWaitingList != undefined) {
+            tblWaitingList.clear();
+            tblWaitingList.draw();
+            tblWaitingList.destroy();
+        }
+
+
+        //ajax
+
+        $.ajax({
+            url: "/Reserva/GetWatinList",
+            data: {
+                ViajeID: ViajeID
+            },
+            dataType: "json",
+            success: function (data) {
+
+                if (data.Error == "") {
+                    tblWaitingList = data.jsTable;
+                }
+                else {
+                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    console.log(data.Error);
+
+                }
+
+            }
+        });
+
+
+
+        tblWaitingList = $("#tblWaitingList").DataTable({
+            "aaData": jt,
+            "columns": [
+            { "data": "Cliente" },
+            { "data": "Vendedor" },
+            { "data": "Fecha" },
+            { "data": "Observaciones" },
+            {
+                "data": "Opciones",
+                "mRender": function (data, type, row) {
+
+                    var data = "<a href='javascript:deleteItemRow(" + row.Id + ");'><img src='/Images/cross.png' width='32' height='32' title='Quitar'></a>";
+                    return data;
+                }
+            }
+            //{
+            //    "class":          "details-control",
+            //    "orderable":      false,
+            //    "data":           null,
+            //    "defaultContent": ""
+            //}
+            ],
+            "bAutoWidth": false,
+            "pageLength": 25
+        });
+    };
+
+    function deleteItemRow(ID) {
+        //$("#popup_HotelHabitacionViaje").append(divLoading);
+        //$.ajax({
+        //    url: "/HotelHabitacionViaje/deleteDistribucionRow",
+        //    data: {
+        //        TransHotelHabitacionViajeID: TransHotelHabitacionViajeID,
+        //    },
+        //    dataType: "json",
+        //    success: function (data) {
+
+        //        if (data.Mensaje == "Done.") {
+        //            getDistribucion();
+        //            $("#divFullLoading").remove();
+        //        }
+        //        else {
+        //            if (data.Mensaje == "Error.") {
+        //                alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+        //                console.log(data.Error);
+        //            }
+
+        //        }
+
+        //    }
+        //});
+    }
+
+</script>

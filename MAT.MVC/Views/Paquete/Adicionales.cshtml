@@ -1,0 +1,20 @@
+﻿@model Guid
+
+<input id="guid-paquete" type="hidden" value="@Model.ToString()"
+<div id="search-adicional">
+    <div id="busqueda-adicional">
+        <input id="txt-filter-adicional" type="text" placeholder="Ingrese una Descripción" />
+    </div>
+</div>
+<div id="grid-precios">
+</div>
+
+<p class="botonera-form">
+    <a class="btn btn-small btn-inverse" id="btn-cerrar-ventana-adicionales">Cerrar</a>
+</p>
+<script type="text/javascript">
+    jQuery(function ($) {
+        $("div#grid-precios").load("/Paquete/RenderGridAdicionales?id=" + $("#guid-paquete").val());
+    });
+
+</script>

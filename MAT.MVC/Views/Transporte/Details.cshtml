@@ -1,0 +1,58 @@
+﻿@model MAT.Entities.Transporte
+
+@{
+    ViewBag.Title = "Detalles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Detalles - Transporte</h2>
+
+<div class="form">
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.TransporteId)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.TransporteId)
+    </div>
+        
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.NroCoche)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.NroCoche)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.MaxPasajeros)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.MaxPasajeros)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.KmRecorridos)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.KmRecorridos)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.UltimoService)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.UltimoService)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Matricula)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Matricula)
+    </div>
+    <p> 
+    @Html.ActionLink("Volver a la Lista", "Index", null,new { @class = "btn btn-small btn-inverse" })
+</p>
+
+    
+</div>

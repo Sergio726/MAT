@@ -1,0 +1,65 @@
+﻿@using MAT.Entities
+@using MAT.Enums
+@using MAT.Utilities
+@*@model MAT.MVC.Models.ListaFacturasModel*@
+@model List<MAT.MVC.Models.FacturaStandard>
+@{
+    ViewBag.Title = "Facturas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@if (Model.Count() == 0)
+{
+    <div style="margin:15px;">
+        <h4 >El Cliente seleccionado no tiene ninguna factura asociada.</h4>
+    </div>
+    
+    <p>
+        @Html.ActionLink("Lista de clientes", "Index", "PersonaCliente", null, new { @class="btn btn-small btn-inverse" })
+    </p>
+}
+else
+{
+<h2 class="title">Cliente - Facturas (@Model.First().ClienteNombre.ToString() @Model.First().ClienteApellido.ToString())</h2>
+
+<table class="mat-customtable">
+    <thead>
+        <tr>            
+            <th>N° Factura</th>
+            <th>Monto</th>
+            <th>Fecha Facturación</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (MAT.MVC.Models.FacturaStandard factura in Model.ToList())
+        {
+            <tr>                
+                <td>@factura.NroFactura</td>
+                <td>@string.Format("{0:C}",factura.Monto)</td>
+                <td>@factura.Fecha</td>
+                <td>@(factura.EstadoDescripcion)</td>
+                <td>
+                    @if (factura.Estado!=(int)eEstadoFactura.NotadeCredito)
+                    {
+                        <a href="#" data-facturaid="@factura.FacturaID" title="Ver Factura" class="button_detail btn-detallefactura"></a>
+                    }                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p>
+    @Html.ActionLink("Lista de clientes", "Index", "PersonaCliente", null, new { @class="btn btn-small btn-inverse" })
+</p>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>
+
+<input type="hidden" id="hdnClienteID" value="@ViewBag.ClienteID" />
+
+}

@@ -1,0 +1,7 @@
+﻿
+
+
+Generation complete. Execution time: 00:01:40.2377333
+You can view current documentation @ http://docs.netTiers.com
+Generated solution can be found here: 
+file:\\\C:\MARCOANTONIOTOURS\LOCAL_TFS\MAT.sln

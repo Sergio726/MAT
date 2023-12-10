@@ -1,0 +1,118 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        
+        var dataSet = @Html.Raw(ViewBag.sbDataSetJson);
+        var jTables = eval(dataSet);
+        var jt = jTables;
+
+        var table = $("#tblClientes").DataTable({
+            "aaData": jt,
+            "columns": [
+        	{ "data": "Apellido" },
+        	{ "data": "Nombre" },
+            { "data": "NroDocumento" },
+        	{ "data": "Telefono" },
+            { "data": "Celular"},
+            { "data": "LocalidadNombre" },
+        	{ "data": "Nacionalidad" },
+            { "data": "PaisResidencia" },
+        	//{ "data": "PersonaId",
+        	//    "mRender": function (data, type, row) {
+        	//        var _data = { "PersonaId": row.PersonaId}
+        	//        var data = $("#divTools").html().trim().render(_data);
+        	//        return data;
+        	//    }
+        	//},
+            {
+                "class":          "details-control",
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ""
+            }
+            ],
+            "bAutoWidth": false,
+            "pageLength": 25
+        });
+
+        $('#tblClientes tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row( tr );
+ 
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child( format(row.data()) ).show();
+                tr.addClass('shown');
+
+                if (row.data().IsTituarFactura == 0) {
+                    $("#lnkFactura_" + row.data().PersonaId).remove();
+                }
+
+            }
+        } );
+    });
+
+    function format ( d ) {
+        // `d` is the original data object for the row
+        var _data = { "PersonaId": d.PersonaId}
+        var data = $("#divTools").html().trim().render(_data);
+        return data
+        
+    }
+</script>
+
+
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+
+<table class="grid mat-customtable" id="tblClientes">
+    <thead>
+    <tr>
+        
+        <th style="width:60px;">
+           Apellido
+        </th>
+        <th style="width:120px;">
+            Nombre
+        </th>
+        <th style="width:60px;">
+           Nro Doc
+        </th>
+        <th style="width:85px;">
+            Teléfono
+        </th>
+         <th style="width:85px;">
+            Celular
+        </th>
+        <th style="width:115px;">
+            Localidad
+        </th>
+        
+        <th style="width:87px;">
+            Nacionalidad
+        </th>
+        <th style="width:100px;">
+            País de Residencia
+        </th>
+        <th style="width:10px;"></th>       
+    </tr>
+        </thead>
+    
+</table>
+
+ <div id="divTools" style="display:none;">
+    <div class="text_align_rigth">
+        <a href="/PersonaCliente/Edit/{{PersonaId}}" title="Editar Cliente" class="button_edit"></a>
+        <a href="/PersonaCliente/Details/{{PersonaId}}" title="Ver Detalles" class="button_detail"></a>
+        <a href="/PersonaCliente/HistorialdePagos?clienteid={{PersonaId}}" title="Historial de Pagos" class="button_historial_cuenta"></a>
+        <a href="/PersonaCliente/CuentaCorriente?clienteid={{PersonaId}}" title="Movimientos Nota de Credito" class="button_nota_credito"></a>
+        <a id="lnkFactura_{{PersonaId}}" href="/PersonaCliente/Facturas?clienteid={{PersonaId}}" title ="Titular de Facturas" class="button_factura"></a>
+        
+    </div>
+</div>

@@ -1,0 +1,209 @@
+﻿@model List<MAT.Entities.PasajeroViaje>
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "CNRT";
+    int numeracion = 1;
+}
+<link rel="STYLESHEET" type="text/css" href="~/Content/mat.cnrt.css">
+<link rel="STYLESHEET" type="text/css" href="~/Content/mat.cnrt.print.css" media="print">
+
+<div style="display:flex; ">
+    <table style="margin-right:55px;line-height: 0.7cm;">
+    <thead class="Encabezado">
+        <tr>
+            <th  style="width:45px;">N°</th>
+            <th  style="width:330px;">Apellido y Nombre</th>
+            <th style="padding-left:30px;">DNI</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < 51; i++)
+        {
+            if ((i + 1)> Model.Count)
+            {
+                break;
+            }
+            var item = Model[i];
+            <tr>
+                <td style="width:45px;">
+                    @(i + 1)
+                </td>
+                <td style="width:330px;width:110px;">
+                    @{string sFullName = item.Apellido+ ", " + item.Nombre;}
+                    @if (sFullName.Length < 30)
+	                {
+		               @sFullName;
+	                }
+                    else
+                    {
+                        @(sFullName.Substring(0,29) + ".");
+                    }
+                </td>
+                <td style="padding-left:30px;width:110px;">
+                    @item.NroDocumento.ToString()
+                </td>
+            </tr>
+        }
+        
+    </tbody>
+</table>
+
+
+    <table style="line-height: 0.7cm;">
+    <thead class="Encabezado">
+        <tr>
+            <th style="width:45px;">N°</th>
+            <th  style="width:330px;">Apellido y Nombre</th>
+            <th style="padding-left:30px; width:110px;">DNI</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 51; i < Model.Count; i++)
+        {
+           
+            var item = Model[i];
+            <tr>
+                <td style="width:45px;">
+                    @(i + 1)
+                </td>
+                <td style="width:330px;">
+                    @{string sFullName = item.Apellido+ ", " + item.Nombre;}
+                    @if (sFullName.Length < 30)
+	                {
+		               @sFullName;
+	                }
+                    else
+                    {
+                        @(sFullName.Substring(0,29) + ".");
+                    }
+                </td>
+                <td style="padding-left:30px;width:110px;">
+                    @item.NroDocumento.ToString()
+                </td>
+            </tr>
+        }
+        
+    </tbody>
+</table>
+</div>
+
+@*
+<div id="divPagina2" class="tabla">
+    <div class="_col1">
+        <label class="Encabezado">N°</label><br />
+    </div>
+    <div class="_col2">
+        <label class="Encabezado">Apellido y Nombre</label>
+    </div>
+    <div class="_col3">
+        <label class="Encabezado">DNI</label>
+    </div>
+    <div class="_col4">
+        <label class="Encabezado">N°</label><br />
+    </div>
+    <div class="_col5">
+        <label class="Encabezado">Apellido y Nombre</label>
+    </div>
+    <div class="_col6">
+        <label class="Encabezado">DNI</label>
+    </div>
+
+    <br />
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        var item = Model[i];
+        //var item2 = Model[i + (Model.Count / 2)];
+        if (i < 51)
+        {
+        <div class="_col1">
+            @numeracion
+        </div>
+
+        <div class="_col2">
+            @{string sFullName = item.Apellido+ ", " + item.Nombre;}
+            @if (sFullName.Length < 28)
+	        {
+		       @sFullName;
+	        }
+            else
+            {
+                @(sFullName.Substring(0,27) + ".");
+            }
+        </div>
+        
+        <div class="_col3">
+            @item.NroDocumento.ToString()
+        </div>            
+        }
+
+        if ((i + 50) < Model.Count)
+        {
+            var itemright = Model[i + 50];
+        <div class="_col4">
+            @(numeracion + 51)
+        </div>
+
+        <div class="_col5">
+            @{string sFullName2 = itemright.Apellido + ", " + itemright.Nombre;}
+            @if (sFullName2.Length < 28)
+	        {
+		       @sFullName2;
+	        }
+            else
+            {
+                @(sFullName2.Substring(0,27) + ".");
+            }
+          
+        </div>
+        
+        <div class="_col6">
+            @itemright.NroDocumento.ToString()
+        </div>        
+        }
+        <br />                           
+        
+        numeracion += 1;
+    }
+*@
+
+    @*-------------------------------------------2 da lista*@
+
+
+    @*<div class="col4">
+        <label class="Encabezado">N</label><br />
+        @foreach (var item in Model)
+        {
+            if (item.Nro > 4)
+            {
+            @Html.Label(item.Nro.ToString())<br />
+            }
+        }
+    </div>
+
+    <div class="col5">
+        <label class="Encabezado">Apellido y Nombre</label>
+        @foreach (var item in Model)
+        {
+            if (item.Nro > 4)
+            {
+            <br />@Html.Label(item.Apellido + ", " + item.Nombre)
+            }
+        }
+    </div>
+    <div class="col6">
+        <label class="Encabezado">DNI</label>
+        @foreach (var item in Model)
+        {
+            if (item.Nro > 4)
+            {
+            <br />@Html.Label(item.NroDocumento)
+            }
+        }
+    </div>*@
+
+
+
+
+
+</div>

@@ -1,0 +1,116 @@
+﻿@model MAT.Entities.PersonaPasajero
+@using MAT.Utilities
+@using MAT.Enums
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Pasajero - Detalle</h2>
+
+<div class="form">
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.PersonaId)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.PersonaId)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Apellido)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Apellido)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Nombre)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Nombre)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.TipoDocumento)
+    </div>
+    <div class="form-field">
+        @Html.Label(((eTipoDocumento)Model.TipoDocumento).ToString())
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.NroDocumento)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.NroDocumento)
+    </div>
+
+    <div class="form-label">
+        @Html.LabelFor(model => model.LocalidadId, "Localidad")
+    </div>
+    <div class="form-field">
+        @Html.Label(Helper.ToSelectItem("Localidad", Model.LocalidadId.ToString()))
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Telefono)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Telefono)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Email)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Email)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.FechaNacimiento)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.FechaNacimiento)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Sexo)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Sexo)
+    </div>
+
+
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.Pasaporte)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Pasaporte)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.VencimientoPasaporte)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.VencimientoPasaporte)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.EmisionPasaporte)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.EmisionPasaporte)
+    </div>
+
+    <div class="form-label">
+        @Html.DisplayNameFor(model => model.PaisOrigen)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.PaisOrigen)
+    </div>
+
+    <p>
+        @Html.ActionLink("Editar", "Edit", new { id = Model.PersonaId }, new { @class = "btn btn-small btn-inverse view-all hidden-phone" })
+        @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn btn-small btn-inverse view-all hidden-phone" })
+    </p>
+</div>

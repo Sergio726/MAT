@@ -1,0 +1,41 @@
+﻿@model IEnumerable<MAT.Entities.Hotel>
+
+@{
+    ViewBag.Title = "Hoteles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Hoteles</h2>
+
+<input type="hidden" id="viajeID" value="@ViewData["viajeid"]" />
+
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {        
+            <tr>
+                <td>
+                    @item.Nombre
+                </td>
+                <td>
+                    <a href="#" class="btn-editar-habitacion" data-hotel="@item.HotelId" data-viaje="@ViewData["viajeid"]">
+                                <img src="/Images/habitacion.png" width="32" height="32" title="Editar ingreso/egreso al Hotel" /></a>
+                    <a id="btn-desvincular-hotel" href="#" data-hotel="@item.HotelId" data-viaje="@ViewData["viajeid"]">
+                        <img src="/Images/cross.png" width="32" height="32" title="Desvincular Hotel" /></a>
+                </td>
+            </tr>       
+        }
+    </tbody>
+</table>
+<p class="botonera-form">
+    <a href="#" id="btn-agregar-hotel" data-viaje="@ViewData["viajeid"]" class="btn btn-inverse btn-small">Vincular Hotel</a>
+</p>

@@ -1,0 +1,43 @@
+﻿@model MAT.MVC.Models.Comprobante
+<div class="form">
+    <div class="form-label">Fecha</div>
+    <div class="form-field">@Model.Movimiento.FechaRegistro.Value.Date.ToShortDateString()</div>
+
+    <div class="form-label">Hora</div>
+    <div class="form-field">@string.Format("{0}:{1}", Model.Movimiento.FechaRegistro.Value.TimeOfDay.Hours, Model.Movimiento.FechaRegistro.Value.TimeOfDay.Minutes)</div>
+
+    <div class="form-label">Tipo de Comprobante</div>
+    <div class="form-field">@Model.TipoComprobante</div>
+
+    @if (!Model.Movimiento.PagoId.HasValue && !Model.Movimiento.NotaId.HasValue)
+    {       
+        <div class="form-label">N° Factura</div>
+        <div class="form-field">@Model.Factura.NroFactura</div>
+        
+        <div class="form-label">Importe</div>
+        <div class="form-field">@string.Format("{0:C}", Model.Factura.Monto)</div>
+    }
+    else if (Model.Movimiento.PagoId.HasValue)
+    {
+        <div class="form-label">N° Recibo</div>
+        <div class="form-field">@Model.Pago.NroRecibo</div>
+        
+        <div class="form-label">Importe</div>
+        <div class="form-field">@string.Format("{0:C}", Model.Pago.Monto)</div>
+    }
+    
+    else if (Model.Movimiento.NotaId.HasValue)
+    {
+        <div class="form-label">N° Nota</div>
+        <div class="form-field">@Model.Nota.NroNota</div>
+        
+        <div class="form-label">Importe</div>
+        <div class="form-field">@string.Format("{0:C}", Model.Nota.MontoNota)</div>
+        
+        <div class="form-label">Monto Retenido</div>
+        <div class="form-field">@string.Format("{0:C}", Model.Nota.MontoRetencion)</div>
+    }
+
+    <div class="form-label">Vendedor de Transacción</div>
+    <div class="form-field">@Model.Vendedor</div>
+</div>

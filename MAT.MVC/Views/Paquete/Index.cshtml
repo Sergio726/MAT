@@ -1,0 +1,101 @@
+﻿@model List<MAT.MVC.Models.PaqueteStandard>
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Lista de Paquetes</h2>
+@if (ViewData["error"] != null)
+{
+    <label class="alert alert-error" id="lblError">@ViewData["error"].ToString()</label>    
+}
+
+<p class="botonera-form">
+    <a type="button" class="btn btn-small btn-inverse" style="margin-bottom:9px;" href="/Paquete/Edit/?sAction=new">+ Agregar Paquete</a>
+    @*@Html.ActionLink("+ Agregar nuevo Paquete", "Create", null, new { @class="btn btn-inverse btn-small" })*@
+</p>
+<div style="margin-left:5px; margin-right:5px;">
+    <table class="mat-customtable" id="tblPaquetes">
+    <thead>
+        <tr>
+            <th>
+                Paquete
+            </th>
+            <th>
+                Fecha de Creación
+            </th>
+            <th>
+                Moneda
+            </th>
+            <th>
+                Temporada
+            </th>
+            <th>
+                Publicado en WEB
+            </th>
+            <th>
+                Modo Publicidad
+            </th>
+            <th style="width:200px;"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+    @foreach (MAT.MVC.Models.PaqueteStandard item in Model)
+    {
+        
+            <tr>
+                <td>
+                    @item.Descripcion 
+                </td>
+                <td>
+                    @((item.FechaCreacion.Year != 1) ? item.FechaCreacion.ToShortDateString() : "")
+                </td>
+                <td>
+                    @item.MonedaCodigo
+                </td>
+                <td>
+                    @item.Temporada
+                </td>
+                <td>
+                    <input type="checkbox" @(item.PublicWeb == true ? "checked" : "") disabled="disabled" />
+                </td>
+                <td>
+                    <input type="checkbox" @(item.ModePublicity == true ? "checked" : "") disabled="disabled" />
+                </td>
+                <td>
+                    
+                    <a href="/Paquete/Vinculos/@item.PaqueteID" title="Vinculos" class="button_link" >
+                    </a>
+                    <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" title="Editar" class="button_edit">
+                    </a>
+                    <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" title="Detalle" class="button_detail">
+                    </a>
+                    <a href="/Paquete/Delete/@item.PaqueteID" title="Eliminar Paquete" class="button_delete">
+                    </a>
+                </td>
+            </tr>
+       
+    }
+         </tbody>
+
+</table>
+</div>
+
+<script src="//cdn.datatables.net/plug-ins/1.10.15/sorting/date-uk.js" ></script>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+
+        $("#tblPaquetes").DataTable({
+            "columnDefs": [
+                            { type: 'date-uk', targets: 1 },
+                            { targets: 6, "orderable": false },
+            ],
+            "pageLength": 25,
+            //"order": [[1, "desc"]]
+        });
+    });
+</script>

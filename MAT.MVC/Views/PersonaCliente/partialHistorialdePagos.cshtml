@@ -1,0 +1,93 @@
+﻿@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>   
+    return;
+}
+
+@model List<MAT.MVC.Models.FacturaViaje>
+@{int iCount = 0;}
+
+
+<table id="tblFacturaViaje" class="mat-customtable" style="width:98%;">
+    <thead> 
+        <tr>
+            <th colspan="5" >Historial de Pagos por Viaje</th>
+        </tr>
+        <tr>
+            <th>Item</th>
+            <th>Viaje</th>
+            <th>Fecha de Viaje</th>
+            <th>Fecha de Facturación</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody >
+        @foreach (MAT.MVC.Models.FacturaViaje item in Model)
+        {
+            iCount += 1;
+        <tr>
+            <td>@iCount</td>
+            <td>@item.PaqueteNombre.ToString().ToUpper()</td>
+            <td>@item.ViajeSalida.ToShortDateString()</td>
+            <td>@item.FacturaFecha</td>
+            <td><a href="javascript:pagosFactura('@item.FacturaID');" id="lnkDetalles"><img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a></td>
+        </tr>    
+        }
+        
+    </tbody>
+    
+</table>
+
+<div id="divPopup" title="Pagos" style="display:none;">
+    <div id="divContentPagos"></div>
+</div>
+
+<script type="text/javascript">
+    $(".ui-dialog-content").remove();
+
+    function pagosFactura(FacturaID)
+    {
+        //$(".ui-dialog-content").dialog("close");
+        $("#divContentPagos").html(divLoading);
+        $("#divPopup").dialog("open");
+        $("#divPopup").dialog({
+            modal: true,
+            position: { my: 'top', at: 'top', of: window },
+            width: "80%"
+        });
+        //partialHistorialPago.dialog("open");
+       
+
+        $.ajax({
+            url: "/PersonaCliente/partialHistorialdePagosByFactura",
+            data: { FacturaID: FacturaID },
+            dataType: "html",
+            success: function (data) {
+                $("#divContentPagos").html(data);
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+    }
+
+    function cancelarPago(PagoID, FacturaID) {
+        $.ajax({
+            url: "/PersonaCliente/CancelarPago",
+            data: { PagoID: PagoID },
+            dataType: "html",
+            success: function (data) {
+                var response = eval(data);
+                if (response[0] == "Done.") {
+                    $("#divContentPagos").dialog("close");
+                    pagosFactura(FacturaID);
+                } else {
+                    console.log(response[1]);
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+    }
+</script>

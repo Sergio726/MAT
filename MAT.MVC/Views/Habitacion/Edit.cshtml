@@ -1,0 +1,127 @@
+﻿@model MAT.MVC.Models.HabitacionStandard
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+   
+    $(document).on('blur', '#Capacidad', function () {
+        var capacidad = $('#Capacidad').val();
+        
+        if (capacidad>0) {
+            $('#Capacidad').removeAttr('style');
+            $('#GuardarHabitacion').attr('disabled', false);
+            //$('#lbl_error_hora').attr('hidden', true);
+        }
+        else {
+            $('#Capacidad').attr('class', 'input-validation-error');
+            $('#GuardarHabitacion').attr('disabled', true);
+            //$('#lbl_error_hora').attr('hidden', false);
+
+        }
+    });
+
+     $(document).on('blur', '#Ocupacion', function () {
+
+         var ocupacion = $('#Ocupacion').val();
+        if (ocupacion >= '0') {
+            $('#Ocupacion').removeAttr('style');
+            $('#GuardarHabitacion').attr('disabled', false);
+            
+        }
+        else {
+            $('#Ocupacion').attr('class', 'input-validation-error');
+            $('#GuardarHabitacion').attr('disabled', true);
+           
+        }
+    });
+</script>
+
+<h2 class ="title">Editar - Habitacion</h2>
+@if (ViewBag.Error != null)
+{
+    <div class="msgError">@ViewBag.Error</div>    
+}
+<div class="form">
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+            
+        <input type="hidden" id="HabitacionID" name="HabitacionID" value="@Model.HabitacionID" />
+        <div class="form-label">
+            @Html.LabelFor(model => model.NroHabitacion)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.NroHabitacion)
+            @Html.ValidationMessageFor(model => model.NroHabitacion)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Nombre)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Nombre)
+            @Html.ValidationMessageFor(model => model.Nombre)
+        </div>
+        <div class="form-label">
+            @Html.LabelFor(model => model.Tipo)
+        </div>
+        <div class="form-field">
+            <select id="Tipo" name="Tipo">
+                @foreach (MAT.MVC.Models.HabitacionTipo item in MAT.MVC.Models.HabitacionTipoMethod.GetAllHabitacionTipo())
+                {
+                    <option value="@item.Id" @(Model.Tipo == item.Id ? "selected" : "") >@item.Descripcion </option>       
+                }
+            </select>
+            
+            @*@Html.DropDownListFor(model => model.Tipo, eTipoHabitacion.Doble.ToSelectList())
+            @Html.ValidationMessageFor(model => model.Tipo)*@
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.HotelID,"Hotel")
+        </div>
+        <div class="form-field">
+            @Html.DropDownListFor(model => model.HotelID, Helper.ToSelectEntities("Hotel"))
+            @Html.ValidationMessageFor(model => model.HotelID)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Estado)
+        </div>
+        <div class="form-field">
+            @Html.DropDownListFor(model => model.Estado,eEstadoHabitacion.Libre .ToSelectList (Model.Estado.ToString()))
+            @Html.ValidationMessageFor(model => model.Estado)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Capacidad)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Capacidad)
+            @Html.ValidationMessageFor(model => model.Capacidad)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Ocupacion)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Ocupacion)
+            @Html.ValidationMessageFor(model => model.Ocupacion)
+        </div>
+        <p>
+            <input type="submit" value="Guardar" class="btn btn-small btn-inverse view-all hidden-phone" id="GuardarHabitacion"/>
+            <a href="/Habitacion?searchString=@Model.HotelID" class="btn btn-small btn-inverse view-all hidden-phone">< Habitaciones</a>
+             
+        </p>
+    
+}
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

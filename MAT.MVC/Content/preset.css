@@ -1,0 +1,25 @@
+.piso_superior,
+.piso_superior a,
+.piso_inferior,
+.piso_inferior a
+{
+	cursor:pointer
+}
+
+.piso_superior li, .piso_inferior li
+{
+	visibility: visible;
+}
+
+.piso_superior_edicion,
+.piso_superior_edicion a,
+.piso_inferior_edicion,
+.piso_inferior_edicion a
+{
+	cursor:pointer
+}
+
+.piso_superior_edicion li, .piso_inferior_edicion li
+{
+	visibility: visible;
+}

@@ -1,0 +1,72 @@
+﻿@model MAT.Entities.Adicional
+
+@{
+    ViewBag.Title = "Nuevo Adicional";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    function valFomr(){
+        var Monto = $("#Monto");
+        var Descripcion = $("#Descripcion");
+        if (Monto.val().replace(/^\s+|\s+$/g, "") === "") {
+            Monto.css("background-color", "#E83A61");
+            return alert("El campo Monto no puede estar vacio.");
+        }
+        else {
+            Monto.css("background-color", "#fff")
+        }
+        
+        if (Descripcion.val().replace(/^\s+|\s+$/g, "") === "") {
+            Descripcion.css("background-color", "#E83A61");
+            return alert("El campo Descripción no puede estar vacio.");
+        }
+        else {
+            Descripcion.css("background-color", "#fff")
+        }
+        if ($("#chkSeguroMenor").is(":checked")) {
+            var newDesc = "SEGURO MENOR - " + Descripcion.val();
+            Descripcion.val(newDesc);
+        }
+
+        $("#formCreate").submit();
+    }
+
+</script>
+
+<h2 class="title">Nuevo Adicional</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formCreate" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div style="margin-left:60px;margin-top: 20px;">                
+
+        <div style="display: flex;width: 60%;">
+            <label style="width:100px;">Monto</label>
+            <input type="text" id="Monto" name="Monto" style="width:100%;" />
+        </div>
+       
+        <div style="display: flex;width: 60%;">
+            <label style="width:100px;">Descripción</label>
+            <input type="text" id="Descripcion" name="Descripcion" style="width:100%;" />
+            @*<input type="text" id="txtPrefijoSeguroMenor" style="width: 15%;" value="SEGURO MENOR"/>
+            <input type="text" id="Descripcion" name="Descripcion" style="width:78%;" />*@
+        </div>
+        <div style="display: flex;width: 60%;margin-bottom:15px;">
+            <label style="width:100px;">Seguro Menor</label>
+            <input type="checkbox" id="chkSeguroMenor" />
+        </div>
+       
+        <p>
+            <input type="button" value="Crear" class="btn btn-inverse btn-small" onclick="javascript: valFomr();" />
+            <input type="button" value="Volver a la lista" class="btn btn-inverse btn-small" onclick="location.href='@Url.Action("Index", "Adicional")'" />
+        </p>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

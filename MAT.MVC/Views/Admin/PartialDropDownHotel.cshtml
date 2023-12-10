@@ -1,0 +1,21 @@
+﻿@model IEnumerable<SelectListItem>
+@using MAT.Utilities
+     <div class="form-label">Hoteles</div>
+    <div class="form-field">
+        @Html.DropDownList("HotelPorViaje", Model, new { @class = "ui-button ui-widget ui-corner-all" })
+    </div>
+
+<script type="text/javascript">
+    $(function () {
+        var hotelselected = $("#HotelPorViaje option:selected").val();
+        var viajeselected = $("#Viajes option:selected").val();
+        var url = "/Admin/GridPlanillaHotel?hotelid=" + hotelselected + "&viajeid=" + viajeselected;
+        $("#grid_planilla").load(url);
+    });
+    $(document).on("change", "#HotelPorViaje", function () {
+        var hotelselected = $("#HotelPorViaje option:selected").val();
+        var viajeselected = $("#Viajes option:selected").val();
+        var url = "/Admin/GridPlanillaHotel?hotelid=" + hotelselected + "&viajeid=" + viajeselected;
+        $("#grid_planilla").load(url);
+    });
+</script>

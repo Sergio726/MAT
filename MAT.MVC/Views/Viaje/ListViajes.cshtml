@@ -1,0 +1,136 @@
+﻿@model List<MAT.MVC.Models.ViajeModel>
+
+<table id="tblViajes" class="mat-customtable">
+    <thead>
+        <tr>
+            <th style="width:150px">
+                Paquete
+            </th>
+            <th style="width:150px">
+                Descripción
+            </th>
+            <th>
+               Salida
+            </th>
+            <th>
+                Hr de Salida
+            </th>
+            <th>
+                Pais Destino
+            </th>
+            <th>
+                Precio
+            </th>
+            <th>
+                Precio Promo
+            </th>
+            <th style="width:60px">
+                Venc. de Promo
+            </th>
+            <th>
+                Paso
+            </th>
+            <th>
+               Medio
+            </th>
+            <th style="width:250px;"></th>
+           
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.PaqueteNombre
+                </td>
+                <td>
+                    @item.Descripcion.ToUpper()
+                </td>
+                <td>
+                    @item.FechaSalida
+                </td>
+                <td>
+                    @item.HoraSalida
+                </td>
+                <td>
+                    @item.PaisDestino
+                </td>
+                <td>
+                    @("$ ") @item.PrecioSemicama
+                </td>
+                <td>
+                   @("$ ") @item.PrecioPromocional
+                </td>
+                <td>
+                    @item.FechaPromocion
+                </td>
+                <td>
+                    @item.Paso
+                </td>
+                <td>
+                    @if (item.Medio == "TERRESTRE")
+                    {
+                        <div class="iconBus_35px" title="@item.Medio"></div>
+                    }
+                    else
+                    {
+                        if (item.Medio == "AEREO")
+                        {
+                            <div class="iconAvion_35px" title="@item.Medio"></div>
+                        }
+                        else
+                        {
+                            @item.Medio
+                        }
+                    }
+                </td>
+                <td>
+                    <a href="/Viaje/Edit/?sAction=edit&sViajeID=@item.ViajeID" class="button_edit" title="Editar" >
+                    @*    <img src="/Images/pencil.png" width="32" height="32" title="Editar" />*@
+                    </a>
+               
+                    <a href="/Viaje/Edit/?sAction=detail&sViajeID=@item.ViajeID" class="button_detail" title="Ver Detalles">
+                    @*    <img src="/Images/notepad.png" width="32" height="32" title="Detalles" />*@
+                    </a>
+                    <a href="/Viaje/Hoteles/@item.ViajeID" class="button_hotel" title="Ver Hoteles">
+                        @*<img src="/Images/hotel.png" width="32" height="32" title="Hoteles" />*@
+                    </a>
+               
+                    <a href="/PasajeroViaje/Index/@item.ViajeID" class="button_pasajero" title="Ver pasajeros" >
+                        @*<img src="/Images/pasajero.png" width="32" height="32" title="Ver pasajeros" />*@
+                    </a>
+               
+                    <a id="btn-eliminar-viaje" data-id="@item.ViajeID" class="button_delete" title="Eliminar Viaje (mal cargado o sin uso)">
+                    @*    <img src="/Images/cross.png" width="32" height="32" title="Eliminar" />*@
+                    </a>
+
+                    <a id="btn-cancelar-viaje" onclick="javascript: fnCancelViaje('@item.ViajeID');" class="button_cancel" title="Dar de baja el Viaje (fuerza mayor)">
+                        @*    <img src="/Images/cross.png" width="32" height="32" title="Eliminar" />*@
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script src="//cdn.datatables.net/plug-ins/1.10.15/sorting/date-uk.js" ></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#tblViajes").DataTable({
+            "columnDefs": [
+                            { type: 'date-uk', targets: 2 },
+                            { type: 'date-uk', targets: 7 },
+                            { targets: 9, "orderable": false },
+                            { targets: 10, "orderable": false },
+            ],
+            "pageLength": 25,
+            //"order": [[1, "desc"]]
+        });
+
+        function fnCancelViaje(ViajeID) {
+
+        };
+    });
+</script>

@@ -1,0 +1,182 @@
+﻿@model MAT.Entities.Cliente
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Cliente</legend>
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ClienteId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.ClienteId)
+            @Html.ValidationMessageFor(model => model.ClienteId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.OriginalClienteId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.OriginalClienteId)
+            @Html.ValidationMessageFor(model => model.OriginalClienteId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RazonSocial)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.RazonSocial)
+            @Html.ValidationMessageFor(model => model.RazonSocial)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Cuit)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Cuit)
+            @Html.ValidationMessageFor(model => model.Cuit)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Moneda)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Moneda)
+            @Html.ValidationMessageFor(model => model.Moneda)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Empresa)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Empresa)
+            @Html.ValidationMessageFor(model => model.Empresa)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.FormaPago)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FormaPago)
+            @Html.ValidationMessageFor(model => model.FormaPago)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CondicionIva)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.CondicionIva)
+            @Html.ValidationMessageFor(model => model.CondicionIva)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VendedorId)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.VendedorId)
+            @Html.ValidationMessageFor(model => model.VendedorId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Fax)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Fax)
+            @Html.ValidationMessageFor(model => model.Fax)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Web)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Web)
+            @Html.ValidationMessageFor(model => model.Web)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Idioma)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Idioma)
+            @Html.ValidationMessageFor(model => model.Idioma)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Promotor)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Promotor)
+            @Html.ValidationMessageFor(model => model.Promotor)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Observacion)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Observacion)
+            @Html.ValidationMessageFor(model => model.Observacion)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TipoId)
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(model => model.TipoId, eTipoCliente.Mayorista.ToSelectList())
+            @Html.ValidationMessageFor(model => model.TipoId)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EntityTrackingKey)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.EntityTrackingKey)
+            @Html.ValidationMessageFor(model => model.EntityTrackingKey)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.IsNew)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.IsNew)
+            @Html.ValidationMessageFor(model => model.IsNew)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.IsEntityTracked)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.IsEntityTracked)
+            @Html.ValidationMessageFor(model => model.IsEntityTracked)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.SuppressEntityEvents)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.SuppressEntityEvents)
+            @Html.ValidationMessageFor(model => model.SuppressEntityEvents)
+        </div>
+
+        <p>
+            <input type="submit" value="Create" class="ui-button ui-widget ui-state-default ui-corner-all" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

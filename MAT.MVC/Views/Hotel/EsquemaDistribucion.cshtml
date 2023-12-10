@@ -1,0 +1,176 @@
+﻿@model List<MAT.MVC.Models.EsquemaDistribucion>
+
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        loadGrid();
+
+    });
+
+    function loadGrid()
+    {
+        var sViajeId = "@ViewData["viajeid"].ToString()";
+        $.ajax({
+            url: "/Reserva/GetListTutoresByViajeID",
+            data: { sViajeId: sViajeId },
+            dataType: "json",
+            success: function (data) {
+                var list = data.Tutores;
+                $(".divPersona").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0) {
+                        $(this).addClass("Tutor");
+                    }
+                })
+            }
+        });
+    }
+    
+</script>
+
+
+@if (ViewBag.Error != null)
+{
+   <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+
+<div id="hoteles" class="container">
+
+    <div class="backMAT">
+        <span class="title">DISTRIBUCION DE HABITACIONES</span>
+
+        <div class="tabla custom_margin_bottom_15">
+            <div class="row">
+                <div class="col_dos">
+                    <span class="title">MARCO ANTONIO TOURS</span>
+                    <p>
+                        <span>Empresa de Viajes y Turismo - Leg. Nº </span><input name="nro_legajo" placeholder="N° LEGAJO" type="text" class="custom_border_none" value="11.049"/><br />
+                        <span>Dean Funes Nº 29 - Tel. (0387) 4321823</span><br />
+                        <span>Email: reservas@marcoantoniotours.tur.ar</span><br />
+                        <span>SALTA - ARGENTINA</span>
+                    </p>
+                </div>
+                <div class="col_dos">
+                    @if (Model.Count > 0)
+                    {
+                        <span class="title">@Model[0].HotelNombre</span>    
+                
+                        <p>
+                            <span>Ingreso:   </span><input type="text" class="custom_border_none" placeholder="INGRESO" value="@Model[0].HotelIngreso" /><br />
+                            <span>Egreso:    </span><input type="text" class="custom_border_none custom_margin_left_4" placeholder="EGRESO" value="@Model[0].HotelEgreso" /><br />
+                            <span>Total Pax: </span><input type="text" class="custom_border_none" placeholder="TOTAL PAX" value="@ViewBag.CantPax" />
+                        </p>
+                    
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col_dos">
+                    <span>GRUPO: Marco Antonio Tours - SALTA</span>
+                </div>
+                <div class="col_dos">
+                    <span>COORDINADOR: </span><input type="text" id="txt-coordinadora" class="custom_border_none custom_width_200px" placeholder="APELLIDO/NOMBRE" />
+                </div>
+            </div>
+        </div>
+
+       
+        <!--ditribucion de habitaciones-->
+        @for (int i = 1; i < 9; i++) //lista de int tipo de habitacion
+        {
+            var vModel = Model.Where(mod => mod.HabTipo == i).ToList();
+
+            if (vModel.Count() > 0)
+            {
+                int iLength = vModel.Count();
+                int iLength1 = vModel.Count();
+                
+                
+                if (iLength % 2 > 0)
+                {
+                    iLength = iLength + 1;
+                }
+                        
+                        <span class="title">@vModel.First().HabTipoDescripcion</span>
+                        <div class="tabla custom_margin_bottom_15">
+                            <table style="width: 100%;" cellspacing="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <table width="100%;" cellspacing="0" class="tblSingle">
+                                                <thead>
+                                                    <tr style="text-align: center;">
+                                                        <th style="width: 130px;">N° - HAB</th>
+                                                        <th style="width: 500px;">RESERVADO A</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int n = 0; n < (iLength / 2); n++)
+                                                    {
+                                                        <tr class="rowHeigth0">
+                                                            <td class="custom_font_weigh_bold">
+                                                                <span style="font-size:11px;">@vModel[n].NroHabitacion  @vModel[n].HabNombre</span>
+                                                            </td>
+                                                            <td>
+                                                                @foreach (var persona in @vModel[n].lHotelPersona)
+                                                                {
+                                                                    <div style="text-align: left;" class="divPersona" id="@persona.PersonaID">
+                                                                        <span>@("- ") @persona.PersonaNombre @(" ") @persona.PersonaApellido </span>
+                                                                    </div>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+
+                                        </td>
+                                        <!-- col2 -->
+
+                                        <td style="display: flex;">
+                                            <table width="100%;" cellspacing="0" class="tblSingle">
+                                                <thead>
+                                                    <tr style="text-align: center;">
+                                                        <th style="width: 130px;">N° - HAB</th>
+                                                        <th style="width: 500px;">RESERVADO A</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int n = (iLength / 2); n < iLength1; n++)
+                                                    {
+                                                        <tr class="rowHeigth0">
+                                                            <td class="custom_font_weigh_bold">
+                                                                <span style="font-size:11px;">@vModel[n].NroHabitacion  @vModel[n].HabNombre</span>
+                                                            </td>
+                                                            <td>
+                                                                @foreach (var persona in @vModel[n].lHotelPersona)
+                                                                {
+                                                                    <div style="text-align: left;" class="divPersona" id="@persona.PersonaID">
+                                                                        <span>@("- ") @persona.PersonaNombre @(" ") @persona.PersonaApellido </span>
+                                                                    </div>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+
+
+
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+            }
+            
+        }
+
+        <!---->
+        
+    </div>
+
+</div>

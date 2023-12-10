@@ -1,0 +1,61 @@
+﻿@model IEnumerable<MAT.Entities.Viaje>
+@using MAT.Utilities
+@using MAT.Enums
+@{
+    ViewBag.Title = "Lista de Viajes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2 class="title">Viajes</h2>
+
+<p class="botonera-form">
+    <span class="custom_font_weigh_bold">Año </span>
+    <input type="text" id="txtDateYear" style="width:45px;" />
+    <input type="button" class="btn btn-small btn-inverse" value="Filtrar" style="margin-bottom:9px;" onclick="javascript: LoadList();" />
+    <a type="button" class="btn btn-small btn-inverse" style="margin-bottom:9px;" href="/Viaje/Edit/?sAction=new">+ Agregar Viaje</a>
+    
+    
+    @*@Html.ActionLink("+ Agregar Viaje", "Create", null, new { @class = "btn btn-small btn-inverse" })*@
+</p>
+<div id="divContent" style="margin-left:5px; margin-right:5px;">
+
+</div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#txtDateYear").datepicker({
+            changeMonth: true,
+            changeYear: true,
+           // showButtonPanel: true,
+            dateFormat: 'yy',
+            onClose: function (dateText, inst) {
+                var month = $("#ui-datepicker-div .ui-datepicker-month :selected").val();
+                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                $(this).datepicker('setDate', new Date(year, month, 1));
+            }
+        });
+
+        var currentDate = new Date();
+        $("#txtDateYear").datepicker("setDate", currentDate);
+
+        LoadList();
+    })
+
+    function LoadList() {
+        $("#divContent").html(divLoading);
+        var sDateYear = $("#txtDateYear").val(); //Year
+        $.ajax({
+            url: "/Viaje/ListViajes",
+            data: { "sDateYear": sDateYear },
+            dataType: "html",
+            success: function (data) {
+                $("#divContent").html(data);
+            }
+
+        });
+    }
+</script>

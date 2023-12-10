@@ -1,0 +1,222 @@
+﻿@model MAT.MVC.Models.tblHotel
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.HotelID == "")
+{
+    <h2 class="title">Hotel - Nuevo</h2>    
+}
+else
+{
+    <h2 class="title">HOTEL: @Model.Nombre</h2>
+}
+
+
+<div class="form">
+    <form id="formHotel">
+        <input type="hidden" id="HotelID" name="HotelID" value="@Model.HotelID"/>
+    <div class="form-label">
+        <label>Nombre</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="Nombre" id="Nombre" value="@Model.Nombre" />
+    </div>
+
+    <div class="form-label">
+        <label>Direccion</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="Direccion" id="Direccion" value="@Model.Direccion" />
+    </div>
+
+    <div class="form-label">
+        <label>Código Postal</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="CP" id="CP" value="@Model.CP" />
+    </div>
+
+    <div class="form-label">
+        <label>Localidad</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="Localidad" id="Localidad" value="@Model.Localidad" />
+    </div>
+
+    <div class="form-label">
+        <label>Telefono</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="Telefono" id="Telefono" value="@Model.Telefono" />
+    </div>
+
+    <div class="form-label">
+        <label>Email</label>
+    </div>
+    <div class="form-field">
+        <input type="email" name="Email" id="Email" value="@Model.Email" />
+    </div>
+
+    <div class="form-label">
+        <label>Contacto</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="Contacto" id="Contacto" value="@Model.Contacto" />
+    </div>
+
+    <div class="form-label">
+        <label>CantidadHabitaciones</label>
+    </div>
+    <div class="form-field">
+        <input type="number" name="CantidadHabitaciones" id="CantidadHabitaciones" value="@Model.CantidadHabitaciones" />
+    </div>
+               
+
+    <div class="form-label">
+        @Html.Label("Categoria")
+    </div>
+    <div class="form-field">
+        <select name="Categoria" id="Categoria">
+            <option value="1" @(Model.Categoria == 1 ? "selected" : "")>1 Estrella</option>
+            <option value="2" @(Model.Categoria == 2 ? "selected" : "")>2 Estrellas</option>
+            <option value="3" @(Model.Categoria == 3 ? "selected" : "")>3 Estrellas</option>
+            <option value="4" @(Model.Categoria == 4 ? "selected" : "")>4 Estrellas</option>
+            <option value="5" @(Model.Categoria == 5 ? "selected" : "")>5 Estrellas</option>
+        </select>
+
+    </div>        
+
+    <div class="form-label">
+        <label>CheckIn</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="CheckIn" id="CheckIn" value="@Model.CheckIn" />
+    </div>
+
+    <div class="form-label">
+        <label>CheckOut</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="CheckOut" id="CheckOut" value="@Model.CheckOut" />
+    </div>
+
+    <div class="form-label">
+        <label>GoogleMapHtml</label>
+    </div>
+    <div class="form-field">
+        <input type="text" name="GoogleMapHtml" id="GoogleMapHtml" value="@Model.GoogleMapHtml" />
+    </div>
+    </form>
+    
+    <p>
+        <input type="button" value="Guardar" class="btn btn-small btn-inverse view-all hidden-phone" onclick="javascript: save();" />
+        
+            @Html.ActionLink("Volver a la lista", "Index",null, new {@class="btn btn-small btn-inverse view-all hidden-phone"})
+    </p>
+
+    </div>
+    
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script type="text/javascript">
+    function save() {
+        if ($("#Nombre").val().replace(/ /g,'') == "") {
+            alert("El campo nombre es obigatorio. Por favor ingrese el nombre del Hotel.");
+            return;
+        }
+
+        
+        
+
+        var HotelID = $("#HotelID").val();
+        var _data = $("#formHotel").serializeArray();
+
+        if (HotelID == "") //create
+        {
+
+            showLoading();
+            $.ajax({
+                url: "/Hotel/HotelCreate",
+                data: _data,
+                dataType: "json",
+                success: function (data) {
+
+                    hideLoading();
+
+                    if (data.Mensaje === "Done.") {
+                        $("#HotelID").val(data.HotelID);
+                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        window.location.href = "/Hotel/ABM?Id=" + data.HotelID;
+
+                    }
+                    else {
+                        if (data.Mensaje == "Existe.") {
+                            confirm("Ya existe un hotel con ese nombre, por favor cambie el nombre.", "Advertencia");
+                        }
+                        else {
+                            alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                            console.log(data.Error);
+                        }
+                    }
+                }
+            });
+
+        }
+        else //update
+        {
+            showLoading();
+            $.ajax({
+                url: "/Hotel/HotelUpdate",
+                data: _data,
+                dataType: "json",
+                success: function (data) {
+
+                    hideLoading();
+                    if (data.Mensaje === "Done.") {
+                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+
+                        setTimeout(function () {
+                            $('.ui-dialog-titlebar-close.ui-corner-all').click()
+
+                        }, 2000);
+
+                    }
+                    else {
+                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        console.log(data.Error);
+                    }
+                }
+            });
+        }
+
+    }
+
+    function checkNombre(Nombre) {
+        $.ajax({
+            url: "/Hotel/HotelCheckNombre",
+            data: { Nombre: Nombre },
+            dataType: "json",
+            success: function (data) {
+                if (data.Mensaje === "Done.") {
+                    if (data.Existe == "Yes") {
+                        confirm("Ya existe un hotel con ese nombre, por favor cambie el nombre.", "Advertencia");
+                        return true;
+                    }
+                    
+                    return false;
+                }
+                else {
+                    alert("Ha ocurrido un error, al intentar checkear el nombre del hotel.", "Error");
+                    console.log(data.Error);
+                    return true;
+                }
+            }
+        });
+    }
+</script>

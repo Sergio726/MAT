@@ -1,0 +1,85 @@
+﻿@model List<MAT.Entities.PasajeroViaje>
+@using MAT.Enums
+@using MAT.Utilities 
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Lista - Pasajeros</h2>
+
+
+<table class="mat-customtable">
+    <thead>
+    <tr>
+        
+        <th>
+            Apellido
+        </th>
+        <th>
+            Nombre
+        </th>
+        <th>
+            Tipo Documento
+        </th>
+        <th>
+            Nro Documento
+        </th>
+        <th>
+            Telefono
+        </th>
+        <th>
+            Email
+        </th>
+        <th>
+            Fecha Nacimiento
+        </th>
+        <th>
+            Sexo
+        </th>
+        
+        
+        <th></th>
+    </tr>
+</thead>
+    <tbody>
+@foreach (var item in Model) {
+    <tr>
+        
+        <td>
+            @Html.DisplayFor(modelItem => item.Apellido)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nombre)
+        </td>
+        <td>
+            @((eTipoDocumento)(item.TipoDocumento.Value))
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NroDocumento)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Telefono)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FechaNacimiento)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Sexo)
+        </td>
+                
+    </tr>
+}
+
+</table>
+</tbody>
+@if (Model.Count > 0)
+{
+<p class="botonera-form">
+         @Html.ActionLink("Imprimir Manifiesto", "Manifiesto", new { id = Model.First().ViajeId }, new {@class="btn btn-inverse btn-small"})
+        @Html.ActionLink("Imprimir CNRT", "CNRT", new { id = Model.First().ViajeId }, new {@class="btn btn-inverse btn-small"})
+</p>    
+}

@@ -1,0 +1,232 @@
+.mat-customtable p {
+	text-align:center;
+	}	
+.mat-customtable a:link {
+	color:#fff;
+	text-decoration:none;
+	border-bottom:1px dotted #ffbac8;
+	}	
+.mat-customtable a:visited {
+	color:#dcdcdc;
+	border-bottom:none;
+	text-decoration:none;
+	}		
+.mat-customtable a:hover,
+.mat-customtable a:focus {
+	color:#dcdcdc;
+	border-bottom:1px solid #f03b58;
+	text-decoration:none;
+	}
+
+.divDataTable {
+    width:98%;
+    margin-left:1%;
+    margin-right:1%;
+}
+
+table.mat-customtable a,
+table.mat-customtable a:link,
+table.mat-customtable a:visited {
+	border:none;
+	}							
+	
+.mat-customtable img {
+	border:0;
+	margin-top:.5em;
+	}	
+table.mat-customtable {
+	width:95%;
+	border-top:1px solid #6f6f6f;
+	border-right:1px solid #6f6f6f;
+	margin:5px auto;
+		border-collapse:collapse;
+        margin-left: 5px;
+	}
+.mat-customtable caption {
+	color: #9ba9b4;
+	font-size:.94em;
+		letter-spacing:.1em;
+		margin:1em 0 0 0;
+		padding:0;
+		caption-side:top;
+		text-align:center;
+	}	
+.mat-customtable tr td	{
+	background:#ed6a87;
+    color:#fff;
+    font-size:12px;
+    
+	}
+.mat-customtable tr.odd td	{
+	background:#DB7899;
+    color:#fff
+	}
+	
+.mat-customtable tr:hover td, tr.odd:hover td, tr:hover td label, tr.odd:hover td label
+{
+	background:#9C9C9C	;
+	cursor:pointer
+}	
+	
+.mat-customtable tr.selected td{
+	background-color:#929292;
+	cursor:pointer
+}	
+.mat-customtable tr.odd .column1	{
+	background:#f4f9fe;
+	}	
+.mat-customtable .column1	{
+	background:#f9fcfe;
+	}
+.mat-customtable td {
+	color:#678197;
+	border-bottom:1px solid #6f6f6f;/*#e5eff8;*/
+	/*border-left:1px solid #6f6f6f;*/
+	text-align:center;
+	padding:0
+	}				
+.mat-customtable th {
+	font-weight:normal;
+	color: #678197;
+	text-align:left;
+	border-bottom: 1px solid #6f6f6f;
+	border-left:1px solid #6f6f6f; /*#e5eff8;*/
+	padding:.5em;
+	}							
+.mat-customtable thead th {
+    background: #7c7c7c;
+    text-align: center;
+    color: #fff;
+	}	
+.mat-customtable tfoot th {
+	text-align:center;
+	background:#f4f9fe;
+	}	
+.mat-customtable tfoot th strong {
+	font:bold 1.2em "Century Gothic","Trebuchet MS",Arial,Helvetica,sans-serif;
+	margin:.5em .5em .5em 0;
+	color:#66a3d3;
+		}		
+.mat-customtable tfoot th em {
+	color:#f03b58;
+	font-weight: bold;
+	font-size: 1.1em;
+	font-style: normal;
+	}	
+	
+/*Agrupacion*/
+.mat-customtable tr.dtrg-group td {
+    text-align: left;
+    color: white;
+    background: #8b8b8b;
+
+}
+/*Paginación*/
+.mat-custompaging a.btn-pager {
+    text-decoration:none;
+    padding:4px;
+    background-color:#333;
+    border-radius:6px;
+    color:#fff;
+    cursor:pointer;
+}
+    .mat-custompaging a.btn-pager:hover {
+        background-color:#6f6f6f;
+    }
+
+
+    /* RESUM TABLE */
+
+    table.mat-resumtable {
+	width:90%;
+	border-top:1px solid #6f6f6f;
+	border-right:1px solid #6f6f6f;
+	margin:1em auto;
+		border-collapse:collapse;
+        margin-left: 1.2em;
+	}
+.mat-resumtable caption {
+	color: #9ba9b4;
+	font-size:.94em;
+		letter-spacing:.1em;
+		margin:1em 0 0 0;
+		padding:0;
+		caption-side:top;
+		text-align:center;
+	}	
+.mat-resumtable tr td	{
+	background:#E83A61;
+    color:#fff
+	}
+.mat-resumtable tr.odd td	{
+	background:#DB7899;
+    color:#fff
+	}
+	
+.mat-resumtable tr:hover td, tr.odd:hover td, tr:hover td label, tr.odd:hover td label{
+	background:#9C9C9C	;
+	cursor:pointer
+}	
+.mat-resumtable tr.odd .column1	{
+	background:#f4f9fe;
+	}	
+.mat-resumtable .column1	{
+	background:#f9fcfe;
+	}
+.mat-resumtable td {
+	color:#678197;
+	border-bottom:1px solid #6f6f6f;/*#e5eff8;*/
+	border-left:1px solid #6f6f6f;
+	text-align:center;
+	padding:0
+	}				
+.mat-resumtable th {
+	font-weight:normal;
+	color: #678197;
+	text-align:left;
+	border-bottom: 1px solid #6f6f6f;
+	border-left:1px solid #6f6f6f; /*#e5eff8;*/
+	padding:.5em;
+	}							
+.mat-resumtable thead th {
+	background: rgba(0, 0, 0, 0.4);
+	text-align:center;
+	font:bold 1em/1.3em "Century Gothic","Trebuchet MS",Arial,Helvetica,sans-serif;
+	color:#fff;
+    text-shadow: 0 1px 0 #722c43;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2) inset, 0 1px 0 0 #888888 inset;
+	}	
+.mat-customtable tr.odd td.details-control {
+    background: url(../Images/Icons/details_open.png) no-repeat center center;
+    background-color: #DB7899;
+    cursor: pointer;
+}
+
+.mat-customtable tr.even td.details-control {
+    background: url(../Images/Icons/details_open.png) no-repeat center center;
+    background-color: #ed6a87;
+    cursor: pointer;
+}
+
+.mat-customtable tr.even.shown td.details-control {
+	background: url('../Images/Icons/details_close.png') no-repeat center center;
+    background-color: #ed6a87;
+}
+
+.mat-customtable tr.odd.shown td.details-control {
+	background: url('../Images/Icons/details_close.png') no-repeat center center;
+    background-color:#DB7899;
+}
+
+.mat-customtable tr:hover td.details-control
+{
+	background: url('../Images/Icons/details_open.png') no-repeat center center;
+    background-color:#9C9C9C;
+	cursor:pointer
+}	
+.mat-customtable tr.shown:hover td.details-control
+{
+	background: url('../Images/Icons/details_close.png') no-repeat center center;
+    background-color:#9C9C9C;
+	cursor:pointer
+}	

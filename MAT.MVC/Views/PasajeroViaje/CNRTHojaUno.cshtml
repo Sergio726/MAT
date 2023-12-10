@@ -1,0 +1,281 @@
+﻿
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<style type="text/css">
+    @@media print {
+		
+		@@page {
+		  size: legal-sized; 
+		}
+		
+		@@page :first {
+			margin-left: 2cm;
+			margin-right: 2cm;
+			margin-top: 5.8cm;
+		}
+		@@page :left {
+			margin-left: 2cm;
+			margin-right: 2cm;
+		}
+		@@page :right {
+			margin-left: 2cm;
+			margin-right: 2cm;
+		}
+
+        h1 {
+            display:none;
+        }
+        h2,h3 {
+            color:#fff;
+        }
+      
+        label {
+            color:white;
+        }
+        ._hide {
+            color:#fff;
+        }
+        
+    }
+	
+	*{
+		font-family:Arial, Helvetica, sans-serif;
+		font-size:14px	
+	}
+
+	body {
+            width:21cm;
+        }
+	h1{
+		width:100%;
+		padding:5px;
+		background:#333;
+		color:#fff;
+		font-size:20px	
+	}
+	
+	h2{
+		
+		display:compact;
+		padding:5px;
+			
+	}
+	
+	h3{
+		margin:4px 0;
+		padding:0	
+	}
+	
+	.clear{
+		clear:both	
+	}
+	.cols{
+		display:inline-block
+	}
+	
+	.col_100{
+		width:100%;
+	}
+	.col_70{
+		width:69%;
+	}
+    .col_66 {
+        width:66%;
+    }
+	.col_30{
+		width:30%;
+	}
+	.col_33{
+		width:33%;
+	}
+	
+	input, textarea{
+		 border-style: none;
+         /*border-width: medium medium 1px;
+         box-sizing: border-box;
+        
+         margin-left: 2px;
+         padding: 5px;*/
+         /*width: 40%;*/
+		
+	}
+    
+</style>
+<div style="line-height:33px;padding-top:2px;">
+	<h1 style="padding-bottom: 0px;margin-bottom: 0px;padding-top: 0px;">SERVICIO DE TRANSPORTE AUTOMOTOR DE PASAJEROS PARA EL TURISMO</h1>
+    <div style="margin-left:44px;padding-top:3px;">
+        <div class="cols" style="width:475px;">
+            <label>Empresa de Transporte: </label><input type="text" id="nombre_empresa" class="input" placeholder="Ingrese Empresa de Transporte" style="padding-left:10px;width:280px;" />
+        </div>
+        <div class="cols">
+            <label>CUIT:</label><input type="text" id="cuit_empresa" class="input custom_width_200px" placeholder="Ingrese CUIT de la Empresa" style="margin-left:17px;" />
+        </div>
+    </div>
+    
+   
+    <div style="margin-left:44px;padding-top:4px;">
+        <div class="cols" style="width:475px;">
+    	    <label>Domicilio: </label>
+            <input type="text" id="domicilio_empresa" class="input custom_width_215px" placeholder="Ingrese Domicilio de la Empresa" />
+        </div>
+        <div class="cols">
+    	    <label>Inscripcion Reg. Nac.: </label>
+            <input type="text" id="inscripcion_empresa" class="input custom_width_95px" placeholder="Reg. Nac." style="margin-left: 30px;padding-left: 10px;" />
+        </div>
+    </div>
+   
+    <h2 style="margin-bottom: 0px;padding-bottom: 10px;";">CONTRATANTE</h2>
+    <div style="margin-left:44px;padding-top:1px;">
+        <div class="cols" style="width:475px;">
+            <label>Contratante: </label>
+            <input type="text" id="nombre_contratante" class="input" placeholder="Ingrese Nombre de Contratante" style="margin-left: 4px; width:340px;" />
+        </div>
+            <div class="cols ">
+            <label>CUIT: </label>
+            <input type="text" id="cuit_contratante" class="input custom_width_196px" placeholder="Ingrese CUIT de Contratante"  style="margin-left: 5px;padding-left: 15px;"/>
+        </div>
+    </div>
+    
+    <div style="margin-left:44px;padding-top:6px;">
+        <div class="cols" style="width:475px;">
+            <label>Domicilio: </label>
+            <input type="text" id="domicilio_contratante" class="input " placeholder="Ingrese Domicilio de Contratante" style="width:365px;" />
+        </div>
+        <div class="cols ">
+            <label>Legajo: </label>
+            <input type="text" id="legajo_contratante" class="input custom_width_185px" placeholder="Leg. del Contratante" style="margin-left: 10px;padding-left: 15px;" />
+        </div>
+    </div>
+    
+	<h2 style="margin-bottom: 24px;">DATOS DEL VIAJE</h2>
+
+    <div style="margin-left:44px;">
+        <div class="cols" style="width:249px;">
+    	    <label>Origen: </label>
+            <input type="text" id="origen_viaje" class="input" placeholder="Ingrese Origen del Viaje" />
+        </div>
+        <div class="cols" style="width:222px;">
+    	    <label>Destino: </label>
+            <input type="text" id="destino_viaje" class="input" placeholder="Destino del Viaje" style="width: 145px;padding-left: 20px;margin-left:5px;" />
+        </div>
+        <div class="cols">
+    	    <label>Hora: </label>
+            <input type="text" id="hora_viaje" class="input" placeholder="Ingrese Hora del Viaje" style="padding-left: 15px;margin-left:15px;" />
+        </div>
+    </div>
+    
+    <div style="margin-left:44px;">
+        <div class="cols" style="width:475px;">
+    	    <label>Clase: </label>
+            <input type="text" id="clase_viaje" class="input" placeholder="Ingrese Clase del Viaje" style="width:400px;" />
+        </div>
+        <div class="cols col_33">
+    	    <label>KM: </label>
+            <input type="text" id="km_viaje" class="input" placeholder="Ingrese KM del Viaje" style="margin-left: 8px;margin-left:15px; padding-left:10px;" />
+        </div>
+    </div>    
+    
+    
+    <div style="margin-left:44px;">
+         <div class="cols" style="width:249px;">
+    	    <label>Fecha de Inicio: </label>
+            <input type="text" id="inicio_viaje" class="input" placeholder="Inicio del Viaje" style="width:125px; margin-left:10px;" />
+        </div>
+        <div class="cols" style="width:216px;">
+    	    <label>Fecha Fin: </label>
+            <input type="text" id="fin_viaje" class="input" placeholder="Fin del Viaje" style="width:130px;margin-left:12px;padding-left: 17px;" />
+        </div>
+    </div>    
+    
+   
+    
+    
+    <h2 style="margin-bottom: 9px;">CONTENIDO DE LA PROGRAMACION TURISTICA</h2>
+    <div style="margin-left:44px;">
+        <div class="cols" style="width:625px;">
+            <textarea id="contenido_prog_turistica" class="textarea" rows="6" style="line-height: 30px;margin: 0px;max-width: 684px;min-width: 684px;min-height: 100px;max-height: 100px;" placeholder="INGRESE CONTENIDO DE LA PROGRAMACION"></textarea>
+        </div>
+    </div>
+    
+ 
+	<h2 style="margin-bottom: 10px;">DATOS DEL VEHICULO</h2>
+    
+    <div style="margin-left:44px; display: flex;">
+        <span class="custom_font_weigh_bold _hide" style="width:109px;">Titular: </span>
+        <div>
+    	    <label>Dominio: </label>
+            <input type="text" id="dominio_titular_vehiculo" class="input" placeholder="Ingrese Dominio" style="width:153px;padding-left: 5px;" />
+        </div>
+        <div>
+    	    <label>Interno: </label>
+            <input type="text" id="interno_titular_vehiculo" class="input" placeholder="Ingrese Interno" style="width: 150px;margin-left: 3px; padding-left: 9px;" />
+        </div>
+        <div>
+    	    <label>Asientos: </label>
+            <input type="text" id="asientos_titular_vehiculo" class="input" placeholder="Ingrese Asientos" style="width:150px;"/>
+        </div>
+              
+    </div>
+    
+    <div style="margin-left:44px; display: flex;">
+        <span  class="custom_font_weigh_bold _hide" style="width:109px;">Suplente 1: </span>
+        <div>
+    	    <label>Dominio: </label>
+            <input type="text" id="dominio_suplente1_vehiculo" class="input" placeholder="Ingrese Dominio" style="width:153px;padding-left: 5px;" />
+        </div>
+        <div >
+    	    <label>Interno: </label>
+            <input type="text" id="interno_suplente1_vehiculo" class="input" placeholder="Ingrese Interno" style="width: 150px;margin-left: 3px;padding-left: 9px;" />
+        </div>
+        <div>
+    	    <label>Asientos: </label>
+            <input type="text" id="asientos_suplente1_vehiculo" class="input" placeholder="Ingrese Asientos" style="width:150px;"/>
+        </div>
+    </div>
+   
+    <div style="margin-left:44px; display: flex;">
+         <span  class="custom_font_weigh_bold _hide" style="width:109px;">Suplente 2: </span>
+        <div >
+    	    <label>Dominio: </label>
+            <input type="text" id="dominio_suplente2_vehiculo" class="input" placeholder="Ingrese Dominio" style="width:153px;padding-left: 5px;" />
+        </div>
+        <div >
+    	    <label>Interno: </label>
+            <input type="text" id="interno_suplente2_vehiculo" class="input" placeholder="Ingrese Interno" style="width: 150px;margin-left: 3px;padding-left: 9px;" />
+        </div>
+        <div >
+    	    <label>Asientos: </label>
+            <input type="text" id="asientos_suplente2_vehiculo" class="input" placeholder="Ingrese Asientos" style="width:150px;"/>
+        </div>
+    </div>
+    
+    <h2 style="margin-bottom: 16px;">TRIPULACION</h2>
+    <div class="cols col_70">
+    	<label>Apellidos y Nombres: </label>
+        <input type="text" id="apeynom_tripulacion1" class="input" placeholder="Ingrese Apellido y Nombre" style="width:300px;margin-left: 40px;" />
+    </div>
+    <div class="cols col_30">
+    	<label>CUIL: </label>
+        <input type="text" id="cuit_tripulacion1" class="input" placeholder="Ingrese CUIT" />
+    </div>
+    <div class="clear"></div>
+
+    <div class="cols col_70">
+    	<label>Apellidos y Nombres: </label>
+        <input type="text" id="apeynom_tripulacion2" class="input" placeholder="Ingrese Apellido y Nombre" style="width:300px;margin-left: 40px;" />
+    </div>
+    <div class="cols col_30">
+    	<label>CUIL: </label>
+        <input type="text" id="cuit_tripulacion2" class="input" placeholder="Ingrese CUIT" />
+    </div>
+    <div class="clear"></div>
+    
+    <div class="cols col_70">
+    	<label>Apellidos y Nombres: </label>
+        <input type="text" id="apeynom_tripulacion3" class="input" placeholder="Ingrese Apellido y Nombre" style="width:300px;margin-left: 40px;"/>
+    </div>
+    <div class="cols col_30">
+    	<label>CUIL: </label>
+        <input type="text" id="cuit_tripulacion3" class="input" placeholder="Ingrese CUIT" />
+    </div>
+    <div class="clear"></div>
+</div>

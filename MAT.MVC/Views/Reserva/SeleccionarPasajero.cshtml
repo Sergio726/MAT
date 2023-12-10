@@ -1,0 +1,92 @@
+﻿@model MAT.MVC.Models.SeleccionarPasajeroModel
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var eListMenor = $("#hdnListMenor").data("complete");
+        if (eListMenor) {
+            $("#divSeguroMenor").html("<span>EL SEGURO DE MENORES YA FUE SELECCIONADO</span>");
+        }
+    });
+
+    $('div#SeleccionPasajero').on('dialogclose', function (event) {
+        var eListMenor = $("#hdnListMenor").data("complete");
+        if (!eListMenor) {
+            $("#hdnListMenor").val("");
+            $("#hdnListMenor").data("tutor", $(this).data("id"));
+            $("#hdnListMenor").data("complete", true);
+        }
+        
+    });
+
+    function validarMenores() {
+        if ($("#numMenor").val() == "0") {
+            return alert("Por favor defina la cantidad de seguros para menores.");
+        }
+        showFormListaMenor();
+
+    };
+</script>
+
+<input id="input-piso" type="hidden" value="@ViewData["piso"]" />
+<div class="custom_padding_4">
+    <div id="precios">
+    <p>
+        <h3>Precios</h3>
+    </p>
+    @foreach (var item in @Model.Precios)
+    {
+        <p><input type="radio" name="radio_precio" value="@item.Descripcion.ToString().ToUpper()" data-monto="@item.Monto" data-id="@item.PrecioId" /> @item.Descripcion</p>
+    }
+
+    </div>
+    <div id="adicionales">
+        <p>
+            <h3>Adicionales</h3>
+        </p>
+   
+        @foreach (var item in @Model.Adicionales)
+        {
+            if (item.Descripcion.ToString().Contains("SEGURO MENOR"))
+            {
+                <div id="divSeguroMenor">
+                    <input id="numMenor" type="number" step="1" max="5" min="0" style="width: 30px" value="0" data-monto="@item.Monto" data-id="@item.AdicionalId" /> 
+                    <a href="javascript:validarMenores();" style="color: black;"><span>@item.Descripcion</span></a> 
+                </div>
+            
+            
+            }
+            else
+            {
+                <p><input type="checkbox" name="check_adicional" value="@item.Descripcion" data-monto="@item.Monto" data-id="@item.AdicionalId" style="margin-left:31px;" /> @item.Descripcion</p>
+            }
+        
+        }
+    </div>
+    <br />
+    <div id="search-pasajero" style="display:none;">
+        <div id="busqueda-pasajero">
+            <input id="txt-filter-pasajero" type="text" placeholder="Ingrese Nombre o DNI" />
+        </div>
+    </div>
+    <div id="grid-pasajeros">
+        <div class="iconLoading"></div>
+    </div>
+
+    <p class="botonera-form">
+        <a class="btn btn-small btn-inverse" id="btn-cancelar-seleccion">Cancelar Selección de Pasajero</a>
+    </p>
+</div>
+
+<script type="text/javascript">
+    jQuery(function ($) {
+        $("div#grid-pasajeros").load("/Reserva/RenderGridPasajeros?viajeid=" + $("#id_viaje").val());
+        var piso = $("#input-piso").val();
+        if (piso == "2") {
+            //$("#adicionales input[type=checkbox][value*=Cama]").attr("checked", true);
+            $("#adicionales input[type=checkbox][value*=CAMA]").attr("checked", true);
+            //$("#adicionales input[type=checkbox][value*=Cama]").parent().css("color", "red");
+            $("#adicionales input[type=checkbox][value*=CAMA]").parent().css("color", "red");
+        }
+    });
+
+</script>

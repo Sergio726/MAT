@@ -1,0 +1,127 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Entities", "MAT.Entities\MAT.Entities.csproj", "{20E43088-4618-4F4A-B8AD-FC31B50D94CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Data", "MAT.Data\MAT.Data.csproj", "{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Data.SqlClient", "MAT.Data.SqlClient\MAT.Data.SqlClient.csproj", "{8996A7B4-57D3-440B-A545-A701844B8C4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Services", "MAT.Services\MAT.Services.csproj", "{794327CE-DC0A-4381-89EE-4C00AFB08D5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Web", "MAT.Web\MAT.Web.csproj", "{47FE3BE8-3E46-47CA-8494-473755867DD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NetTiers", "NetTiers", "{F3A10C8D-3227-449F-A2CB-014DE2D7F415}"
+	ProjectSection(SolutionItems) = preProject
+		AssemblyInfo.cs = AssemblyInfo.cs
+		MAT.snk = MAT.snk
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.MVC", "MAT.MVC\MAT.MVC.csproj", "{7F372704-B3FF-4A93-81E5-301BF144F42B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Enums", "MAT.Enums\MAT.Enums.csproj", "{6560D8B9-7562-45C9-B40B-BEA63EC6CB30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Utilities", "MAT.Utilities\MAT.Utilities.csproj", "{C1509FB9-12AE-4060-AE47-3E3216012ECB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{628C1765-FCAA-43EC-8C77-CA97FAB4C3F8}"
+	ProjectSection(SolutionItems) = preProject
+		References\Antlr3.Runtime.dll = References\Antlr3.Runtime.dll
+		References\DotNetOpenAuth.AspNet.dll = References\DotNetOpenAuth.AspNet.dll
+		References\DotNetOpenAuth.AspNet.xml = References\DotNetOpenAuth.AspNet.xml
+		References\DotNetOpenAuth.Core.dll = References\DotNetOpenAuth.Core.dll
+		References\DotNetOpenAuth.Core.xml = References\DotNetOpenAuth.Core.xml
+		References\DotNetOpenAuth.OAuth.Consumer.dll = References\DotNetOpenAuth.OAuth.Consumer.dll
+		References\DotNetOpenAuth.OAuth.Consumer.xml = References\DotNetOpenAuth.OAuth.Consumer.xml
+		References\DotNetOpenAuth.OAuth.dll = References\DotNetOpenAuth.OAuth.dll
+		References\DotNetOpenAuth.OAuth.xml = References\DotNetOpenAuth.OAuth.xml
+		References\DotNetOpenAuth.OpenId.dll = References\DotNetOpenAuth.OpenId.dll
+		References\DotNetOpenAuth.OpenId.RelyingParty.dll = References\DotNetOpenAuth.OpenId.RelyingParty.dll
+		References\DotNetOpenAuth.OpenId.RelyingParty.xml = References\DotNetOpenAuth.OpenId.RelyingParty.xml
+		References\DotNetOpenAuth.OpenId.xml = References\DotNetOpenAuth.OpenId.xml
+		References\MATCodeSmithProject.csp = References\MATCodeSmithProject.csp
+		References\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll = References\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll
+		References\Microsoft.Practices.EnterpriseLibrary.Caching.dll = References\Microsoft.Practices.EnterpriseLibrary.Caching.dll
+		References\Microsoft.Practices.EnterpriseLibrary.Common.dll = References\Microsoft.Practices.EnterpriseLibrary.Common.dll
+		References\Microsoft.Practices.EnterpriseLibrary.Data.dll = References\Microsoft.Practices.EnterpriseLibrary.Data.dll
+		References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll = References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll
+		References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll = References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll
+		References\Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll = References\Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll
+		References\Microsoft.Practices.EnterpriseLibrary.Logging.dll = References\Microsoft.Practices.EnterpriseLibrary.Logging.dll
+		References\Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll = References\Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll
+		References\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll = References\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll
+		References\Microsoft.Practices.EnterpriseLibrary.Security.dll = References\Microsoft.Practices.EnterpriseLibrary.Security.dll
+		References\Microsoft.Practices.ServiceLocation.dll = References\Microsoft.Practices.ServiceLocation.dll
+		References\Microsoft.Practices.Unity.dll = References\Microsoft.Practices.Unity.dll
+		References\Microsoft.Practices.Unity.Interception.dll = References\Microsoft.Practices.Unity.Interception.dll
+		References\nunit.framework.dll = References\nunit.framework.dll
+		References\UniversalTypeConverter.dll = References\UniversalTypeConverter.dll
+		References\UniversalTypeConverter.XML = References\UniversalTypeConverter.XML
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		GenerateDebug|Any CPU = GenerateDebug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20E43088-4618-4F4A-B8AD-FC31B50D94CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E43088-4618-4F4A-B8AD-FC31B50D94CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20E43088-4618-4F4A-B8AD-FC31B50D94CD}.GenerateDebug|Any CPU.ActiveCfg = GenerateDebug|Any CPU
+		{20E43088-4618-4F4A-B8AD-FC31B50D94CD}.GenerateDebug|Any CPU.Build.0 = GenerateDebug|Any CPU
+		{20E43088-4618-4F4A-B8AD-FC31B50D94CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E43088-4618-4F4A-B8AD-FC31B50D94CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92}.GenerateDebug|Any CPU.ActiveCfg = GenerateDebug|Any CPU
+		{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92}.GenerateDebug|Any CPU.Build.0 = GenerateDebug|Any CPU
+		{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8996A7B4-57D3-440B-A545-A701844B8C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8996A7B4-57D3-440B-A545-A701844B8C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8996A7B4-57D3-440B-A545-A701844B8C4A}.GenerateDebug|Any CPU.ActiveCfg = GenerateDebug|Any CPU
+		{8996A7B4-57D3-440B-A545-A701844B8C4A}.GenerateDebug|Any CPU.Build.0 = GenerateDebug|Any CPU
+		{8996A7B4-57D3-440B-A545-A701844B8C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8996A7B4-57D3-440B-A545-A701844B8C4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{794327CE-DC0A-4381-89EE-4C00AFB08D5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{794327CE-DC0A-4381-89EE-4C00AFB08D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{794327CE-DC0A-4381-89EE-4C00AFB08D5A}.GenerateDebug|Any CPU.ActiveCfg = GenerateDebug|Any CPU
+		{794327CE-DC0A-4381-89EE-4C00AFB08D5A}.GenerateDebug|Any CPU.Build.0 = GenerateDebug|Any CPU
+		{794327CE-DC0A-4381-89EE-4C00AFB08D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{794327CE-DC0A-4381-89EE-4C00AFB08D5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47FE3BE8-3E46-47CA-8494-473755867DD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47FE3BE8-3E46-47CA-8494-473755867DD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47FE3BE8-3E46-47CA-8494-473755867DD0}.GenerateDebug|Any CPU.ActiveCfg = GenerateDebug|Any CPU
+		{47FE3BE8-3E46-47CA-8494-473755867DD0}.GenerateDebug|Any CPU.Build.0 = GenerateDebug|Any CPU
+		{47FE3BE8-3E46-47CA-8494-473755867DD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47FE3BE8-3E46-47CA-8494-473755867DD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F372704-B3FF-4A93-81E5-301BF144F42B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F372704-B3FF-4A93-81E5-301BF144F42B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F372704-B3FF-4A93-81E5-301BF144F42B}.GenerateDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F372704-B3FF-4A93-81E5-301BF144F42B}.GenerateDebug|Any CPU.Build.0 = Debug|Any CPU
+		{7F372704-B3FF-4A93-81E5-301BF144F42B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F372704-B3FF-4A93-81E5-301BF144F42B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6560D8B9-7562-45C9-B40B-BEA63EC6CB30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6560D8B9-7562-45C9-B40B-BEA63EC6CB30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6560D8B9-7562-45C9-B40B-BEA63EC6CB30}.GenerateDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6560D8B9-7562-45C9-B40B-BEA63EC6CB30}.GenerateDebug|Any CPU.Build.0 = Debug|Any CPU
+		{6560D8B9-7562-45C9-B40B-BEA63EC6CB30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6560D8B9-7562-45C9-B40B-BEA63EC6CB30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.GenerateDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.GenerateDebug|Any CPU.Build.0 = Debug|Any CPU
+		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
+		{8996A7B4-57D3-440B-A545-A701844B8C4A} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
+		{794327CE-DC0A-4381-89EE-4C00AFB08D5A} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
+		{47FE3BE8-3E46-47CA-8494-473755867DD0} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
+		{20E43088-4618-4F4A-B8AD-FC31B50D94CD} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
+	EndGlobalSection
+EndGlobal

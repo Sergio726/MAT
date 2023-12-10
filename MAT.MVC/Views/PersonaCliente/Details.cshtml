@@ -1,0 +1,222 @@
+﻿@model MAT.Entities.PersonaCliente
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Cliente - Detalle</h2>
+
+<div class="form">
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.PersonaId)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.PersonaId)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Apellido)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Apellido)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Nombre)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Nombre)
+    </div>
+
+    <div class="form-label">
+         Tipo de Documento
+    </div>
+    <div class="form-field">
+       
+        @Html.LabelFor(model => model.TipoDocumento,(((eTipoDocumento)Model.TipoDocumento).ToString()))
+       
+    </div>
+
+    <div class="form-label">
+         N° de Documento
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.NroDocumento)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Domicilio)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Domicilio)
+    </div>
+   
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Telefono)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Telefono)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Celular)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Celular)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Email)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Email)
+    </div>
+
+    <div class="form-label">
+         Fecha de Nacimiento
+    </div>
+    <div class="form-field">
+       @Model.FechaNacimiento.ToString().Substring(0,10).Trim()
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Sexo)
+    </div>
+    <div class="form-field">
+        @Html.LabelFor(model => model.Sexo,(((eSexo)Model.Sexo).ToString()))
+    </div>
+
+     <div class="form-label">
+         Localidad
+    </div>
+    <div class="form-field">
+        @Html.Label(Helper.ToSelectItem("Localidad",Model.LocalidadId.ToString()))
+    </div>
+
+     <div class="form-label">
+         @Html.DisplayNameFor(model => model.Provincia)
+    </div>
+    <div class="form-field">
+        @if (Model.Provincia.HasValue)
+        {
+            @Html.Label(Helper.ToSelectItem("Provincia",Model.Provincia.Value.ToString()))
+        }
+        else
+        {
+            <p>Sin Definir</p>
+        }
+         
+    </div>
+
+        <div class="form-label">
+         @Html.DisplayNameFor(model => model.Nacionalidad)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Nacionalidad)
+    </div>
+
+        <div class="form-label">
+         Pais de Residencia
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.PaisResidencia)
+    </div>
+    
+    <div class="form-label">
+         Razón Social
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.RazonSocial)
+    </div>
+
+    <div class="form-label">
+        CUIT/CUIL
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Cuit)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Empresa)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Empresa)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Ocupacion)
+    </div>
+    <div class="form-field">
+         @Html.DisplayFor(model => model.Ocupacion)
+    </div>
+
+    <div class="form-label">
+         @Html.LabelFor(model => model.FormaPago,"Forma de Pago")
+    </div>
+    <div class="form-field">
+        @Html.Label(((eFormaPago)Model.FormaPago).ToString())
+    </div>
+
+    <div class="form-label">
+         Condición de IVA
+    </div>
+    <div class="form-field">
+        @Html.Label(((eCondicionIVA)Model.CondicionIva).GetDescription())
+    </div>
+
+    <div class="form-label">
+         Vendedor Asignado
+    </div>
+    <div class="form-field">
+        @Helper.GetVendedorName(Model.VendedorId.Value)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Fax)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Fax)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Web)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Web)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Idioma)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Idioma)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Promotor)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Promotor)
+    </div>
+
+    <div class="form-label">
+         @Html.DisplayNameFor(model => model.Observacion)
+    </div>
+    <div class="form-field">
+        @Html.DisplayFor(model => model.Observacion)
+    </div>
+
+    <div class="form-label">
+         @Html.Label("Tipo de Cliente")
+    </div>
+    <div class="form-field">
+         @Html.Label(((eTipoCliente)Model.TipoId).ToString())
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.PersonaId }, new { @class="btn btn-small btn-inverse view-all hidden-phone" })
+    @Html.ActionLink("Volver a la Lista", "Index", null, new { @class="btn btn-small btn-inverse view-all hidden-phone" })
+</p>

@@ -1,0 +1,197 @@
+﻿@model MAT.Entities.Viaje
+@using MAT.Enums
+@using MAT.Utilities
+
+@{
+    ViewBag.Title = "Nuevo Viaje";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $('#lbl_error_hora').attr('hidden', true);
+    });
+
+    $(document).on('blur', '#HoraSalida', function () {
+        var hora = $('#HoraSalida').val();
+
+        if (validateTime(hora)) {
+            $('#HoraSalida').removeAttr('style');
+            //$('#btn_crear_viaje').removeAttr('disabled');
+            $('#btn_crear_viaje').attr('disabled', false);
+            $('#lbl_error_hora').attr('hidden', true);
+        }
+        else {
+            $('#HoraSalida').attr('class', 'input-validation-error');
+            $('#btn_crear_viaje').attr('disabled', true);
+            $('#lbl_error_hora').attr('hidden', false);
+
+        }
+    });
+
+    $(document).on('blur', '#HoraRegreso', function () {
+        var hora = $('#HoraRegreso').val();
+
+        if (validateTime(hora)) {
+            $('#HoraRegreso').removeAttr('style');
+            //$('#btn_crear_viaje').removeAttr('disabled');
+            $('#btn_crear_viaje').attr('disabled', false);
+            $('#lbl_error_hora_regreso').attr('hidden', true);
+        }
+        else {
+            $('#HoraRegreso').attr('class', 'input-validation-error');
+            $('#btn_crear_viaje').attr('disabled', true);
+            $('#lbl_error_hora_regreso').attr('hidden', false);
+
+        }
+    });
+
+    /**
+    * Funcion para validar una hora en formato:
+    *  hh:mm
+    * Devuelve true|false
+    */
+    function validateTime(time) {
+        var hh = time.charAt(0) + time.charAt(1);
+        var mm = time.charAt(3) + time.charAt(4);
+        var separador = time.charAt(2);
+
+        if (hh <= 23) {
+            if (separador == ":") {
+                if (mm <= 59)
+                    return true;
+
+            }
+        }
+
+
+        else { return false }
+
+    }
+
+</script>*@
+
+<h2 class="title">Crear - Viaje</h2>
+@if (ViewData["error"] != null)
+{
+<label class="alert alert-error" id="lblError">@ViewData["error"].ToString()</label>    
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="form">
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.PaqueteId, "Paquete")
+        </div>
+        <div class="form-field">
+            @Html.DropDownListFor(model => model.PaqueteId, Helper.ToSelectEntities("Paquete"))
+            @Html.ValidationMessageFor(model => model.PaqueteId)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Descripcion, "Descripción")
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Descripcion)
+            @Html.ValidationMessageFor(model => model.Descripcion)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Origen)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Origen)
+            @Html.ValidationMessageFor(model => model.Origen)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.FechaSalida)
+        </div>
+        <div class="form-field">
+            <input type="text" id="FechaSalida" name="FechaSalida" class="date" />
+            @Html.ValidationMessageFor(model => model.FechaSalida)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.HoraSalida)
+        </div>
+        <div class="form-field">
+            <input type="text" id="HoraSalida" name="HoraSalida" class="time" />
+            @Html.ValidationMessageFor(model => model.HoraSalida)
+
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.FechaRegreso)
+        </div>
+        <div class="form-field">
+            <input type="text" id="FechaRegreso" name="FechaRegreso" class="date" />
+            @Html.ValidationMessageFor(model => model.FechaRegreso)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.HoraRegreso)
+        </div>
+        <div class="form-field">
+            <input type="text" id="HoraRegreso" name="HoraRegreso" class="time" />
+            @Html.ValidationMessageFor(model => model.HoraRegreso)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.PaisOrigen)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.PaisOrigen)
+            @Html.ValidationMessageFor(model => model.PaisOrigen)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.PaisDestino)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.PaisDestino)
+            @Html.ValidationMessageFor(model => model.PaisDestino)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Paso)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Paso)
+            @Html.ValidationMessageFor(model => model.Paso)
+        </div>
+
+        <div class="form-label">
+            @Html.LabelFor(model => model.Medio)
+        </div>
+        <div class="form-field">
+            @Html.EditorFor(model => model.Medio)
+            @Html.ValidationMessageFor(model => model.Medio)
+        </div>
+
+        <p>
+            <input type="submit" value="Crear" id="btn_crear_viaje" class="btn btn-small btn-inverse" />
+            @Html.ActionLink("Volver a lista de viajes", "Index", null, new { @class = "btn btn-small btn-inverse" })
+        </p>
+        
+    </div>
+}
+<script>
+    $(function () {
+        $("input[class='date']").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '-100:+2'
+        });
+        $("input[class='time']").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+    });
+  </script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MAT.MVC.Models.ResumenPlanillaPrintModel>
+
+<h3>@ViewData["Hotel"].ToString().ToUpper()</h3>
+<table class="mat-customtable resumen-planilla">
+    <thead>
+        <tr>
+            <th>Tipo Habitacion</th>
+            <th>Cantidad de Personas</th>
+            <th>Menores</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in @Model)
+        {
+            <tr>
+                <td>@item.TipoHabitacion</td>
+                <td>@item.CantidadPersonas</td>
+                <td>@item.CantidadMenores</td>
+                <td class="alignright subtotal" data-tipo="@item.IntTipoHabitacion">@String.Format("{0:C}",item.Subtotal)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<h4>TOTAL HOTEL: @String.Format("{0:C}", ViewData["TotalHotel"])</h4>

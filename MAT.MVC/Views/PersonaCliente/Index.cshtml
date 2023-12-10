@@ -1,0 +1,36 @@
+﻿@model PagedList.IPagedList<MAT.Entities.PersonaCliente>
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Clientes</h2>
+
+<p class="botonera-form">
+    <input type="button" value="+ Agregar Cliente" class="btn btn-small btn-inverse" onclick="location.href='@Url.Action("Create", "PersonaCliente") ' " />
+</p>
+
+<div id="grid-clientes" style="width:99%;margin-left:5px;">
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        $("#grid-clientes").append(divLoading);
+
+        $.ajax({
+            url: "/PersonaCliente/RenderGridClientes",
+            data: { },
+            dataType: "html",
+            success: function (data) {
+                $("#grid-clientes").html(data);
+
+            }
+        });
+    });
+   
+       
+</script>

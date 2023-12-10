@@ -1,0 +1,347 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<codeSmith xmlns="http://www.codesmithtools.com/schema/csp.xsd">
+  <defaultTemplate path="nettiers-2.3.1\NetTiers.cst" />
+  <variables>
+    <add key="ConnectionString1" value="Data Source=ORION\SQL2012;Initial Catalog=MAT.Intranet;Integrated Security=True" />
+  </variables>
+  <propertySets>
+    <propertySet name="NetTiers.txt" output="NetTiers.txt" template="nettiers-2.3.1\NetTiers.cst">
+      <property name="ExecuteSql">True</property>
+      <property name="SQLFolderName">SQL</property>
+      <property name="ViewReport">True</property>
+      <property name="AutoIncrementBuildVersion">True</property>
+      <property name="LaunchVisualStudio">False</property>
+      <property name="IncludeUnitTest">None</property>
+      <property name="IncludeComponentLayer">ServiceLayer</property>
+      <property name="IncludeWCFDataAttributes">False</property>
+      <property name="SerializeEntityState">False</property>
+      <property name="EntLibVersion">v5_0</property>
+      <property name="VisualStudioVersion">v2010</property>
+      <property name="DotNetVersion">v4</property>
+      <property name="IncludeXmlAttributes">False</property>
+      <property name="CustomCodeFolderName">App_Code</property>
+      <property name="EqualitySemantics">Value</property>
+      <property name="TimeStandard">Local</property>
+      <property name="IsConnectionStringAzure">False</property>
+      <property name="BusinessLogicLayerNameSpace">Entities</property>
+      <property name="DataAccessLayerNameSpace">Data</property>
+      <property name="UnitTestsNameSpace">UnitTests</property>
+      <property name="SignAssembly">False</property>
+      <property name="GenerateWebLibrary">True</property>
+      <property name="IncludeDesignTimeSupport">True</property>
+      <property name="DataSourceEnableTransactionDefault">True</property>
+      <property name="GenerateWebservice">True</property>
+      <property name="AttemptCreateLocalVirtualDirectory">False</property>
+      <property name="GenerateWebsite">True</property>
+      <property name="UseWebAppProject">True</property>
+      <property name="OverwriteWebConfig">True</property>
+      <property name="IncludeAtlasLibrary">False</property>
+      <property name="IncludeAtlasToolkit">False</property>
+      <property name="GenerateWebsiteAdmin">True</property>
+      <property name="DateFormat">dd/mm/yyyy</property>
+      <property name="RetryEnabled">False</property>
+      <property name="RetryMaxAttempts">5</property>
+      <property name="RetrySleepTime">1000</property>
+      <property name="LibraryPath">References</property>
+      <property name="IncludeCustoms">True</property>
+      <property name="CustomNonMatchingReturnType">DataSet</property>
+      <property name="IncludeDrop">True</property>
+      <property name="DropStyle">Entity</property>
+      <property name="IncludeInsert">True</property>
+      <property name="IncludeUpdate">True</property>
+      <property name="IncludeSave">True</property>
+      <property name="IncludeDelete">True</property>
+      <property name="IncludeGet">True</property>
+      <property name="IncludeGetList">True</property>
+      <property name="IncludeGetListByFK">True</property>
+      <property name="IncludeGetListByIX">True</property>
+      <property name="IncludeFind">True</property>
+      <property name="IncludeManyToMany">True</property>
+      <property name="IncludeRelations">True</property>
+      <property name="IsolationLevel">None</property>
+      <property name="UseTimestampConcurrency">True</property>
+      <property name="InsertSuffix">_Insert</property>
+      <property name="UpdateSuffix">_Update</property>
+      <property name="DeleteSuffix">_Delete</property>
+      <property name="SelectSuffix">_Get</property>
+      <property name="SelectAllSuffix">_List</property>
+      <property name="FindSuffix">_Find</property>
+      <property name="GenerateWinLibrary">False</property>
+      <property name="RootNameSpace">MAT</property>
+      <property name="OutputDirectory">C:\MARCOANTONIOTOURS\LOCAL_TFS</property>
+      <property name="MappingFile">C:\MARCOANTONIOTOURS\LOCAL_TFS\MAT.IntranetMapping.config</property>
+      <property name="ComponentLayerNameSpace">Services</property>
+      <property name="SourceTables">
+        <connectionString>$(ConnectionString1)</connectionString>
+        <providerType>SchemaExplorer.SqlSchemaProvider,SchemaExplorer.SqlSchemaProvider</providerType>
+        <tableList>
+      <table>
+        <owner>dbo</owner>
+        <name>Adicional</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Butaca</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Cliente</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Cuenta</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>CuentaCorriente</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Debito</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Departamento</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Excursion</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Factura</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Habitacion</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Historial</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Hotel</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Localidad</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>MovimientoCuenta</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Nota</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Pago</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Pais</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Paquete</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PaqueteAdicional</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PaqueteExcursion</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PaquetePrecio</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PaqueteServicio</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Pasaje</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PasajeAdicional</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Pasajero</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Persona</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Planilla</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PlanillaHabitacionItem</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PlanillaServicioItem</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Precio</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PrecioHabitacion</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>PrecioServicio</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Proveedor</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Provincia</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>ReservaHabitacion</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Servicio</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Transporte</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Vendedor</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Viaje</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>ViajeHotel</name>
+      </table>
+      <table>
+        <owner>dbo</owner>
+        <name>Voucher</name>
+      </table>
+    </tableList>
+      </property>
+      <property name="SourceViews">
+        <connectionString>$(ConnectionString1)</connectionString>
+        <providerType>SchemaExplorer.SqlSchemaProvider,SchemaExplorer.SqlSchemaProvider</providerType>
+        <viewList>
+      <view>
+        <owner>dbo</owner>
+        <name>PasajeroViaje</name>
+      </view>
+      <view>
+        <owner>dbo</owner>
+        <name>PersonaCliente</name>
+      </view>
+      <view>
+        <owner>dbo</owner>
+        <name>PersonaPasajero</name>
+      </view>
+      <view>
+        <owner>dbo</owner>
+        <name>PersonaProveedor</name>
+      </view>
+      <view>
+        <owner>dbo</owner>
+        <name>PersonaVendedor</name>
+      </view>
+      <view>
+        <owner>dbo</owner>
+        <name>Reserva</name>
+      </view>
+      <view>
+        <owner>dbo</owner>
+        <name>vConsultaReservaHabitacion</name>
+      </view>
+      <view>
+        <owner>dbo</owner>
+        <name>vLocalidad</name>
+      </view>
+      <view>
+        <owner>dbo</owner>
+        <name>vPersona</name>
+      </view>
+    </viewList>
+      </property>
+      <property name="WebServiceOutputPath">C:\MARCOANTONIOTOURS\TFS\WebServices</property>
+      <property name="WebServiceUrl">http://localhost:4000/</property>
+      <property name="WebAdminSiteName">MAT.IntranetApplication</property>
+      <property name="ValidationType">NetTiers</property>
+      <property name="GenerateWebSecurity">False</property>
+      <property name="UseMD5Hash">False</property>
+      <property name="ChooseSourceDatabase">
+        <connectionString>$(ConnectionString1)</connectionString>
+        <providerType>SchemaExplorer.SqlSchemaProvider,SchemaExplorer.SqlSchemaProvider</providerType>
+      </property>
+      <property name="CompanyName">Reproisa</property>
+      <property name="CompanyURL">www.reproisa.com</property>
+      <property name="WebServiceClassName">MAT.WebServices</property>
+      <property name="RetrySleepStyle">Constant</property>
+      <property name="IncludeGeneratedDate">False</property>
+      <property name="NameConversion">None</property>
+      <property name="IncludeDatabaseFeatures">None</property>
+      <property name="MethodNames">
+        <MethodNamesProperty xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="">
+      <Get>Get</Get>
+      <GetAll>GetAll</GetAll>
+      <GetPaged>GetPaged</GetPaged>
+      <Find>Find</Find>
+      <Insert>Insert</Insert>
+      <Update>Update</Update>
+      <Save>Save</Save>
+      <Delete>Delete</Delete>
+      <DeepLoad>DeepLoad</DeepLoad>
+      <DeepSave>DeepSave</DeepSave>
+      <GetTotalItems>GetTotalItems</GetTotalItems>
+      <BulkInsert>BulkInsert</BulkInsert>
+    </MethodNamesProperty>
+      </property>
+      <property name="StrippedTablePrefixes">tbl;tbl_</property>
+      <property name="StrippedTableSuffixes">_t</property>
+      <property name="EntityFormat">{0}</property>
+      <property name="EntityKeyFormat">{0}Key</property>
+      <property name="CollectionFormat">{0}Collection</property>
+      <property name="GenericViewFormat">VList&lt;{0}&gt;</property>
+      <property name="GenericListFormat">TList&lt;{0}&gt;</property>
+      <property name="ProviderFormat">{0}Provider</property>
+      <property name="InterfaceFormat">I{0}</property>
+      <property name="BaseClassFormat">{0}Base</property>
+      <property name="EnumFormat">{0}List</property>
+      <property name="ManyToManyFormat">{0}From{1}</property>
+      <property name="ServiceClassNameFormat">{0}Service</property>
+      <property name="ColumnClassNameFormat">{0}Column</property>
+      <property name="ComparerClassNameFormat">{0}Comparer</property>
+      <property name="EventHandlerClassNameFormat">{0}EventHandler</property>
+      <property name="EventArgsClassNameFormat">{0}EventArgs</property>
+      <property name="ParseDbColDefaultVal">True</property>
+      <property name="ChangeUnderscoreToPascalCase">True</property>
+      <property name="SafeNamePrefix">SafeName_</property>
+      <property name="UsePascalCasing">Style2</property>
+      <property name="AliasFilePath" />
+      <property name="ProcedurePrefix">_Procedure</property>
+      <property name="CustomProcedureStartsWith">_{0}_</property>
+      <property name="CSPUseDefaultValForNonNullableTypes">False</property>
+      <property name="AllowCustomProcMultipleResults">True</property>
+    </propertySet>
+  </propertySets>
+</codeSmith>

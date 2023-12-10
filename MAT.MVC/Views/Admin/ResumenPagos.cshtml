@@ -1,0 +1,68 @@
+﻿@using MAT.Utilities
+@{
+    ViewBag.Title = "Resumen de Pagos";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>Error al cargar página.</span></div>   
+      <script type="text/javascript">
+          console.log(@ViewBag.Error);
+      </script>
+    return;
+}
+
+<link href="~/Content/magicsearch/jquery.magicsearch.css" rel="stylesheet" />
+<link href="~/Content/magicsearch/normalize.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.magicsearch.js"></script>
+<script type="text/javascript">
+    
+    $(document).ready(function () {
+        var dataSource = @Html.Raw(ViewBag.jDDViaje);
+        $('#DDViaje').magicsearch({
+            dataSource: dataSource,
+            fields: ['Descripcion'],
+            id: 'ViajeID',
+            format: '%Descripcion%',
+            dropdownBtn: true,
+            success: function(i,data){
+                //alert(data);
+                var ViajeID = data.ViajeID;
+                loagGridPagos(ViajeID);
+                
+            }
+
+        });
+    });
+
+    function loagGridPagos(ViajeID){
+        $("#grid_pagos").html(divLoading);
+
+        $.ajax({
+            url: "/Admin/GridResumenPagos",
+            data: {ViajeID:ViajeID },
+            dataType: "html",
+            success: function (data) {
+                $("#grid_pagos").html(data);
+
+            }
+        });
+    }
+</script>
+
+
+
+<h2 class="title">Resumen de Pagos</h2>
+
+<div class="form">
+    <div class="form-label">Viajes</div>
+    <div class="form-field">
+        @*@Html.DropDownList("Viajes", Helper.ToSelectEntities("Viaje"), new { @class = "ui-button ui-widget ui-corner-all" })*@
+        <input type="text" placeholder="BUSCAR POR VIAJE, PAQUETE O FECHA" id="DDViaje" title="ESCRIBA UN VIAJE PARA BUSCAR" />
+    </div>
+</div>
+
+<div id="grid_pagos" class="custom_padding_left_5 custom_padding_right_5">
+
+</div>

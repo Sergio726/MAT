@@ -1,0 +1,113 @@
+﻿@using MAT.Enums
+@using MAT.Utilities
+
+<script type="text/javascript">
+    function fn_Unsubscribe() {
+        if (parseInt($("#ddProvincia").val()) > 0) {
+            
+            var IdProvincia = $("#ddProvincia").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Localidad/GetDepartamento",
+                data: { "sIdProvincia": IdProvincia },
+                dataType: "json",
+                success: function (response) {
+             
+                    if (response.Result == "Done.") {
+                        
+                        var list = eval(response.LDepartamento);
+                       
+                        $('#popin_ddDepartamento option').remove();
+                        document.getElementById("popin_ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
+                        for (var i = 0; i < list.length; i++) {
+                            var sValue = list[i].IdDepartamento;
+                            var sName = list[i].Nombre;
+                            document.getElementById("popin_ddDepartamento").options[document.getElementById("popin_ddDepartamento").options.length] = new Option(sName, sValue);
+                           
+                        }
+                        
+                    }
+                    else {
+                        alert(response.data);
+                    }
+
+                }
+            });
+        }
+    }
+
+    function AddLocalidad() {
+        if ($("#ddProvincia").val()=="0") {
+            return alert("Por favor seleccione una provincia.");
+        }
+        if ($("#popin_ddDepartamento").val() == "0") {
+            return alert("Por favor seleccione un Departamento.");
+        }
+        if ($("#txtLocalidad").val().trim() == "") {
+            return alert("Por favor ingrese una localidad.");
+        }
+
+        var IdDepartamento = $("#popin_ddDepartamento").val();
+        var Localidad = $("#txtLocalidad").val().trim();
+
+        $.ajax({
+            type: "POST",
+            url: "/Localidad/AddLocalidad",
+            data: {
+                "sIdDepartamento": IdDepartamento,
+                "sLocalidad": Localidad
+            },
+            dataType: "json",
+            success: function (response) {
+                
+                if (response.Result == "Done.") {
+                    alert("Se agrego una localidad.", "Operacion Exitosa");
+                    $("#AgregarLocalidad").dialog("close");
+
+                }
+                else {
+                    alert(response.data);
+                }
+
+            }
+        });
+        
+    }
+
+</script>
+<div  class="custom_width_80percent">
+    <div class="form-label custom_padding_top_4">
+        <label>Provincia: </label>
+    </div>
+    <div class="form-field">
+        <select id="ddProvincia" onchange="javascript: fn_Unsubscribe();">
+            <option value="0">SELECCIONE UNA PROVINCIA</option>
+
+            @foreach (var item in Helper.ToSelectEntitiesLocalidades("Provincia", null))
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-label custom_padding_top_4">
+        <label>Departamento: </label>
+    </div>
+    <div class="form-field">
+        <select id="popin_ddDepartamento">
+            <option value="0">SELECCIONE UN DEPARTAMENTO</option>
+        </select>
+    </div>
+    <div class="form-label custom_padding_top_4">
+        <label>Localidad: </label>
+    </div>
+    <div class="form-field">
+        <input id="txtLocalidad" type="text" class="text-box" size="200" placeholder="INGRESE UNA NUEVA LOCALIDAD" />
+    </div>
+    <div class="form-label custom_padding_top_4">
+    </div>
+    <div class="form-field custom_padding_top_5">
+        <input class="btn btn-small btn-inverse view-all hidden-phone" type="button" value="Agregar Localidad" title="Agregar una nueva localidad." onclick="javascript: AddLocalidad();"/>
+    </div>
+</div>

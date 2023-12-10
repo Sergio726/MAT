@@ -1,0 +1,28 @@
+﻿@model IEnumerable<SelectListItem>
+
+@{
+    ViewBag.Title = "TodosLosViajesIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    
+<div id="drop">
+    @Html.DropDownList("dropyear", Model)
+</div>
+
+<div id="viajes-item">
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var idselected = $("#dropyear option:selected").val();
+        var url = "/Home/TodosLosViajes?yearfilter=" + idselected;
+        $("#viajes-item").load(url);
+    });
+    $(document).on("change", "#dropyear", function () {
+        var idselected = $("#dropyear option:selected").val();
+        var url = "/Home/TodosLosViajes?yearfilter=" + idselected;
+        $("#viajes-item").load(url);
+    });
+</script>

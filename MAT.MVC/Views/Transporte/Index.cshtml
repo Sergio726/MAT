@@ -1,0 +1,74 @@
+﻿@model List<MAT.MVC.Models.TransporteModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="title">Transportes</h2>
+
+
+<table class="mat-customtable">
+    <thead>
+    <tr>
+        
+        <th>
+            @Html.Label("NroCoche")
+        </th>
+        <th>
+            @Html.Label("MaxPasajeros")
+        </th>
+        <th>
+            @Html.Label("KmRecorridos")
+        </th>
+        <th>
+            @Html.Label("UltimoService")
+        </th>
+        <th>
+            @Html.Label("Matricula")
+        </th>
+
+        <th></th>
+    </tr>
+        </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.NroCoche)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.MaxPasajeros)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KmRecorridos)
+            </td>
+            <td>
+                @if (item.UltimoService.ToString() != "1/1/0001 12:00:00 a. m.")
+                {
+                    @item.UltimoService.ToShortDateString()
+                }
+                
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.Matricula)
+            </td>
+
+
+            <td>
+            <a href="/Transporte/Details/@item.TransporteID" title="Ver Detalles" class="button_detail"></a>
+            <a href="/Transporte/Edit/@item.TransporteID" title="Editar" class="button_edit"></a>
+            </td>
+        </tr>
+    }
+        </tbody>
+</table>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

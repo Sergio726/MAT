@@ -1,0 +1,72 @@
+﻿@using MAT.Entities
+@using MAT.MVC.Models
+@model NotaCreditoModel
+
+@if (ViewBag.Error != null)
+{
+    <script type="text/ecmascript">
+        console.log("@ViewBag.Error");
+    </script>
+    return;
+}
+
+
+<form id="formNotaCredito">
+    <div class="divForm">
+        <table class="tableInfo">
+            <tr>
+                <td ><b>Días restantes a la salida del viaje</b></td>
+                <td >@Model.Dias</td>
+            </tr>
+            <tr>
+                <td><b>Total de Factura</b></td>
+                <td>@string.Format("{0:C}",ViewBag.MontoFactura)</td>
+                
+            </tr>
+            <tr>
+                <td><b>Total de Pagos</b></td>
+                <td>@string.Format("{0:C}",ViewBag.TotalPagos)</td>
+                
+            </tr>
+            @*<tr>
+                <td><b>% de Retención</b></td>
+                <td>@string.Format("{0:C}",Model.MontoRetencion) @(Model.PorcentajeRetencion * 100)%</td>
+            </tr>*@
+            <tr>
+                <td><b>N° de Nota</b></td>
+                <td ><span class="required">*</span><input type="text" id="NroNota" name="NroNota" placeholder="INGRESE NRO DE NOTA" /></td>
+            </tr>
+            <tr>
+                <td><b>Monto de Nota de Crédito $</b></td>
+                <td><span class="required">*</span><input type="text" id="MontoNota" name="MontoNota" class="money" value="@String.Format("{0:C}",Model.MontoNota)"/></td>
+            </tr>
+            <tr>
+                <td><b>Monto a retener $</b></td>
+                <td ><span class="required">*</span><input type="text" id="MontoRetencion" name="MontoRetencion" class="money" value="@String.Format("{0:C}",Model.MontoRetencion)"/></td>
+            </tr>
+            <tr>
+                <td><b>Detalle</b></td>
+                <td ><span class="required">*</span><textarea  size="1000" id="DetalleNotaCredito" name="Detalle" style="max-width:206px; max-height: 123px;min-width:206px; min-height: 123px;" /></td>
+            </tr>
+        </table>
+     
+    </div>
+
+     @*<input type="hidden" value="@Model.PorcentajeRetencion" id="PorcentajeRetencion" name="PorcentajeRetencion" />*@
+     <input type="hidden" value="@Model.Dias" id="Dias" name="Dias" />
+     <input type="hidden" value="@Model.ClienteID" id="ClienteID" name="ClienteID" />
+     <input type="hidden" value="@ViewBag.FacturaID" id="FacturaID" name="FacturaID" />
+     <input type="hidden" value="@ViewBag.TotalPagos" id="hdnTotalPagos" name="FacturaID" />
+
+</form>
+
+<p class="botonera-form">
+    <input type="button" id="btn-retencion" class="btn btn-small btn-inverse" value="Aceptar" />
+    <input type="button" id="btn-retencion-cancelar" class="btn btn-small btn-inverse" value="Cancelar" />
+</p>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.money').mask("#.##0,00", { reverse: true });
+    });
+</script>

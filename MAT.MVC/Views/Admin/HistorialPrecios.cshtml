@@ -1,0 +1,35 @@
+﻿@using MAT.Utilities
+
+@{
+    ViewBag.Title = "HistorialPrecios";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="title">Historial de Precios</h2>
+
+<div class="form">
+    <div class="form-label">Hoteles</div>
+    <div class="form-field">
+        @Html.DropDownList("HotelesPrecios", Helper.ToSelectEntities("Hotel"), new { @class = "ui-button ui-widget ui-corner-all" })
+    </div>
+</div>
+
+<div id="grid_precios">
+
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        var idselected = $("#HotelesPrecios option:selected").val();
+        var url = "/Admin/GridHotelPrecios?hotelid=" + idselected;
+        console.log(url);
+        $("#grid_precios").load(url);
+    });
+    $(document).on("change", "#HotelesPrecios", function () {
+        var idselected = $("#HotelesPrecios option:selected").val();
+        var url = "/Admin/GridHotelPrecios?hotelid=" + idselected;
+        console.log(url);
+        $("#grid_precios").load(url);
+    });
+</script>

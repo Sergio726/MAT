@@ -1,0 +1,81 @@
+﻿@model MAT.Entities.Butaca
+@using MAT.Enums
+@using MAT.Utilities
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Detalles</h2>
+
+<fieldset>
+    <legend>Butaca</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ButacaId)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ButacaId)
+    </div>
+    
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.NroButaca)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.NroButaca)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Piso)
+    </div>
+    <div class="display-field">
+        @Html.Label(((ePisoButaca)Model.Piso).ToString())
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Ubicacion)
+    </div>
+    <div class="display-field">
+        @Html.Label(((eUbicacionButaca)Model.Ubicacion).ToString())
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Tipo)
+    </div>
+    <div class="display-field">
+        @Html.Label(((eTipoButaca)Model.Tipo).ToString())
+    </div>
+
+    <div class="display-label">
+         @Html.Label("Nro Coche")
+    </div>
+    <div class="display-field">
+        @Html.Label(Helper.ToSelectItem("Transporte",Model.TransporteId.ToString()))
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Fila)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Fila)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Posicion)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Posicion)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.CodigoButaca)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.CodigoButaca)
+    </div>
+
+</fieldset>
+<p class="botonera-form">
+    @Html.ActionLink("Editar", "Edit", new { id = Model.ButacaId }, new { @class="btn btn-small btn-inverse"}) |
+    @Html.ActionLink("< Volver a lista de butacas", "Index", null, new { @class="btn btn-small btn-inverse" })
+</p>

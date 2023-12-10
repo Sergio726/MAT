@@ -1,0 +1,511 @@
+﻿@model List<MAT.MVC.Models.DistribucionCoche>
+@using MAT.MVC.Models
+@using MAT.Enums
+
+<div id="cole1">
+    @*ES MINIBUS?*@
+    @if (ViewBag.TransporteTipo == "MINIBUS")
+    {
+        <div class="encabezado_superior">MINI BUS</div>
+        <div>
+            <div class="grupo1">
+                @*@foreach (var item in Model.Where(bt => bt.Butaca.NroButaca.Value < 45 && (bt.Butaca.Posicion=="C" || bt.Butaca.Posicion=="D") ).OrderBy(bt => bt.Butaca.NroButaca))*@
+                @foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                {
+                    <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
+                        <span class="spnCodB">@item.ButacaCodigo </span>
+                    
+                        @if (item.PasajeroID != null && item.PasajeroID != "")
+                        {
+                            <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                        }
+                    
+                    </div>
+                }                        
+            </div>
+            <div class="pasillo">
+                <div class="tv tv1">TV</div>
+            </div>
+            <div class="grupo2">
+                 @{
+                var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
+                var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
+                  }
+
+                @foreach (var item in Model.Where(bt => bt.ButacaNro > 2 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                {
+                    <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                       <span class="spnCodB">@item.ButacaCodigo</span> 
+                   
+                         @if (item.PasajeroID != null && item.PasajeroID != "")
+                         {
+                        <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                         }
+                    </div>
+                }
+            
+            </div>
+        </div>
+        <div class="clear"></div>
+
+    }
+    else if (ViewBag.TransporteTipo == "CAMION 4X4")
+    {
+    <div class="encabezado_superior">CAMION 4X4</div>
+    <div>
+    <div class="grupo1">
+        @foreach (var item in Model.Where(bt => bt.ButacaNro < 23 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+        {
+            <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
+                <span class="spnCodB">@item.ButacaCodigo </span>
+
+                @if (item.PasajeroID != null && item.PasajeroID != "")
+                {
+                    <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                }
+
+            </div>
+        }
+        </div>
+        <div class="pasillo">
+            <div class="tv tv1">TV</div>
+        </div>
+        <div class="grupo2">
+            @{
+                var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
+                var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
+            }
+
+            <div class="asiento vacio custom_margin_top_47"></div>
+            <div class="asiento vacio custom_margin_top_47"></div>
+
+
+            @foreach (var item in Model.Where(bt => bt.ButacaNro > 2 && bt.ButacaNro < 23 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+            {
+                <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                    <span class="spnCodB">@item.ButacaCodigo</span>
+
+                    @if (item.PasajeroID != null && item.PasajeroID != "")
+                    {
+                        <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                    }
+                </div>
+            }
+
+        </div>
+        </div>
+        <div class="clear"></div>                           
+        }
+        else if (ViewBag.TransporteTipo == "PISOELEVADO")
+        {
+        <div class="encabezado_superior">PISO ELEVADO</div>
+        <div>
+            <div class="grupo1">
+                @foreach (var item in Model.Where(bt => (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                {
+                    <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
+                        <span class="spnCodB">@item.ButacaCodigo </span>
+
+                        @if (item.PasajeroID != null && item.PasajeroID != "")
+                             {
+                            <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                        }
+                    
+                    </div>
+                }                        
+            </div>
+            <div class="pasillo">
+                <div class="tv tv1">TV</div>
+                <div class="tv tv2">TV</div>
+                <div class="tv tv3">TV</div>
+                <div class="tv tv4">TV</div>
+            </div>
+            <div class="grupo2">
+                 @{
+                var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
+                     var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
+                  }
+
+                @foreach (var item in Model.Where(bt => (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                {
+                    <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                       <span class="spnCodB">@item.ButacaCodigo</span>
+
+                         @if (item.PasajeroID != null && item.PasajeroID != "")
+                     {
+                        <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                         }
+                    </div>
+                }
+                <div class="asiento vacio custom_margin_top_20">
+                    <span>BAR</span>
+                </div>
+                <div class="asiento vacio custom_margin_top_20">
+                    <span>BAÑO</span>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+      
+    }
+    else
+    { 
+        <div class="encabezado_superior">
+        PISO SUPERIOR SEMICAMA
+        </div>
+        <div>
+            <div class="grupo1">
+                @*@foreach (var item in Model.Where(bt => bt.Butaca.NroButaca.Value < 45 && (bt.Butaca.Posicion=="C" || bt.Butaca.Posicion=="D") ).OrderBy(bt => bt.Butaca.NroButaca))*@
+                @foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                {
+                    <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
+                        <span class="spnCodB">@item.ButacaCodigo </span>
+                    
+                        @if (item.PasajeroID != null && item.PasajeroID != "")
+                        {
+                            <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                        }
+                    
+                    </div>
+                }                        
+            </div>
+            <div class="pasillo">
+                <div class="tv tv1">TV</div>
+                <div class="tv tv2">TV</div>
+                <div class="tv tv3">TV</div>
+                <div class="tv tv4">TV</div>
+            </div>
+            <div class="grupo2">
+                 @{
+                var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
+                var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
+                
+                  }
+                <div class="asiento_parabrisa posicion_@ItemPasajero3.ButacaPosicion" id="@(ItemPasajero3 != null ? ItemPasajero3.PasajeroID : "")">
+                  <span class="spnCodB">@ItemPasajero3.ButacaCodigo </span> 
+                
+                    @*@if (ItemPasajero3.PersonaPasajero != null)*@
+                     @if (ItemPasajero3.PasajeroID != null)
+                     {
+                       <span class="spnB"> @ItemPasajero3.PasajeroNombre.ToUpper() @ItemPasajero3.PasajeroApellido.ToUpper()</span>
+                     }
+                </div>
+                <div class="asiento_parabrisa posicion_@ItemPasajero4.ButacaPosicion" id="@(ItemPasajero4 != null ? ItemPasajero4.PasajeroID : "")">
+                    <span class="spnCodB"> @ItemPasajero4.ButacaCodigo</span>
+                
+                     @if (ItemPasajero4.PasajeroID != null)
+                     {
+                        <span class="spnB">@ItemPasajero4.PasajeroNombre.ToUpper() @ItemPasajero4.PasajeroApellido.ToUpper()</span>
+                     }
+                </div>     
+                
+                @if (ViewBag.NroCoche == "81")
+                {
+                    var ItemPasajero59 = Model.Where(bt => bt.ButacaNro == 59).First();
+                    var ItemPasajero60 = Model.Where(bt => bt.ButacaNro == 60).First();
+                    
+                    <div class="asiento_invertido posicion_@ItemPasajero59.ButacaPosicion" id="@(ItemPasajero59.PasajeroID != null && ItemPasajero59.PasajeroID != "" ? ItemPasajero59.PasajeroID : "")">
+                       <span class="spnCodB">@ItemPasajero59.ButacaCodigo</span> 
+                   
+                         @if (ItemPasajero59.PasajeroID != null && ItemPasajero59.PasajeroID != "")
+                         {
+                            <span class="spnB">@ItemPasajero59.PasajeroNombre.ToUpper() @ItemPasajero59.PasajeroApellido.ToUpper()</span>
+                         }
+                    </div>
+                    
+                     <div class="asiento_invertido posicion_@ItemPasajero60.ButacaPosicion" id="@(ItemPasajero60.PasajeroID != null && ItemPasajero60.PasajeroID != "" ? ItemPasajero60.PasajeroID : "")">
+                       <span class="spnCodB">@ItemPasajero60.ButacaCodigo</span> 
+                   
+                         @if (ItemPasajero60.PasajeroID != null && ItemPasajero60.PasajeroID != "")
+                         {
+                            <span class="spnB">@ItemPasajero60.PasajeroNombre.ToUpper() @ItemPasajero60.PasajeroApellido.ToUpper()</span>
+                         }
+                    </div>
+                }
+                
+
+          
+                <div class="asiento_largo vacio" style="padding-top:5px">
+                    <span>ESCALERA</span>
+                </div>
+                <div class="asiento_largo bold">
+                    BAR
+                </div>
+                @foreach (var item in Model.Where(bt => bt.ButacaNro > 4 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                {
+                    <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                       <span class="spnCodB">@item.ButacaCodigo</span> 
+                   
+                         @if (item.PasajeroID != null && item.PasajeroID != "")
+                         {
+                        <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                         }
+                    </div>
+                }
+            
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="encabezado_inferior">
+            PISO INFERIOR CAMA
+        </div>
+        <div>
+            <div class="grupo1">
+                <div class="asiento vacio">
+                    <span>BAÑO</span>
+                </div>
+                <div class="asiento vacio">
+                    <span>BAR</span>
+                </div>
+                    @foreach (var item in Model.Where(bt => bt.ButacaNro >= 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                    {
+                    <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                        <span class="spnCodB">@item.ButacaCodigo</span>
+                    
+                         @if (item.PasajeroID != null && item.PasajeroID != "")
+                         {
+                       <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                         }
+                    </div>
+                            }      
+            </div>
+            <div class="pasillo">
+                <div class="tv tv5">TV</div>
+                <div class="tv tv6">TV</div>
+            </div>
+            <div class="grupo2">
+                <div class="asiento_largo vacio" style="margin-bottom:12px;">
+                    <span>ESCALERA</span>
+                </div>
+            
+                @foreach (var item in Model.Where(bt => bt.ButacaNro > 46 && bt.ButacaNro < 59 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                {
+                    <div class="asiento_largo" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                        <span class="spnCodB"> @item.ButacaCodigo</span> 
+                   
+                            @if (item.PasajeroID != null && item.PasajeroID != "")
+                            {
+                            @item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()
+                            }
+                    </div>
+                }      
+            </div>
+        </div>
+    }
+
+</div>`
+
+<style>
+    body{
+      -webkit-print-color-adjust:exact;
+    }
+    
+    #cole1{
+        width: 700px;
+        margin: auto
+    }
+    
+    .grupo1, .grupo2{
+        width: 44%;
+        
+    }
+    
+    .grupo1{
+        float: left;
+    }
+    
+    .grupo2{
+        float:right
+    }
+    
+    .pasillo{
+        width: 10%;
+        display: inline-block;
+        position: relative
+    }
+    
+    .asiento{
+        width: 149px;
+        display: inline-table;
+        border: 1px solid #666;
+        /*padding-top: 20px;
+        padding-left: 1%;*/
+        height:45px;
+        margin-bottom: 3px;
+        font-size:10pt;
+        padding-left:1px;
+    }
+    .asiento_parabrisa{
+        width: 144px;
+        display: inline-table;
+        border: 1px solid #666;
+        /*padding-top: 20px;
+        padding-left: 1%;*/
+        height:45px;
+        margin-bottom: 3px;
+        font-size:10pt;
+        float:right;
+        margin-left:7px;
+        padding-left:1px;
+    }
+    .asiento_invertido{
+        border: 1px solid #666;
+        display: inline-table;
+        float: right;
+        font-size: 10pt;
+        height: 46px;
+        margin-bottom: 3px;
+        margin-left: 7px;
+        width: 144px;
+        padding-left:1px;
+    }
+    
+    .asiento_largo{
+        width: 97%;
+        display: inline-table;
+        border: 1px solid #666;
+        /*padding-top: 20px;
+        padding-left: 1%;*/
+        height:45px;
+        margin-bottom: 3px;
+        font-size:10pt;
+        float:right;
+        padding-left:1px;
+    }
+    
+    .vacio{
+        border: 1px solid transparent;
+        color: transparent
+    }
+    
+    .vacio span{
+        color: #000 !important;
+        font-weight: bold
+    }
+    .encabezado_superior, .encabezado_inferior{
+        background: red none repeat scroll 0 0;
+        color: white;
+        font-size: 10pt;
+        font-weight: bold;
+        margin: 0 0 5px;
+        padding: 5px 0;
+        text-align: center;
+        width: 100%;
+        
+    }
+    
+    .clear{
+        clear: both
+    }
+    
+    .tv{
+        width: 50%;
+        height: 20px;
+        margin: auto;
+        border: 1px solid #000;
+        text-align: center;
+        background: yellow
+    }
+    
+    .tv1{
+        position: absolute;
+        top: 0;
+        left: 20px;
+    }
+    
+    .tv2{
+        position: absolute;
+        top: 172px;
+        left: 20px;
+    }
+    
+    .tv3{
+        position: absolute;
+        top: 300px;
+        left: 20px;
+    }
+    
+    .tv4{
+        position: absolute;
+        top: 430px;
+        left: 20px;
+    }
+    
+    .tv5{
+        position: absolute;
+        top: 20px;
+        left: 20px;
+    }
+    
+    .tv6{
+        position: absolute;
+        top: 130px;
+        left: 20px;
+    }
+    .spnB {
+        font-size: 9pt;
+    }
+    .spnCodB {
+        font-weight: bold;
+        padding-right: 5px;
+    }
+    
+    div.asiento.Tutor, div.asiento_parabrisa.Tutor, div.asiento_invertido.Tutor, div.asiento_largo.Tutor  {
+        background-image: url(/Images/baby_negro.png);
+        background-position: bottom right;
+        background-repeat: no-repeat;
+        background-size: 19px auto;
+    }
+
+    .asiento_parabrisa.posicion_A, .asiento_invertido.posicion_A {
+        float:right;
+    }
+
+    .asiento_parabrisa.posicion_B, .asiento_invertido.posicion_B {
+        float:left;
+    }
+   
+</style>
+
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        var sViajeId = "@ViewBag.ViajeID";
+        $.ajax({
+            url: "/Reserva/GetListTutoresByViajeID",
+            data: { sViajeId: sViajeId},
+            dataType: "json",
+            success: function (data) {
+                var list = data.Tutores;
+                $(".asiento").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0) {
+                        $(this).addClass("Tutor");
+                    }
+                });
+                $(".asiento_parabrisa").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0) {
+                        $(this).addClass("Tutor");
+                    }
+                });
+                $(".asiento_invertido").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0) {
+                        $(this).addClass("Tutor");
+                    }
+                });
+                $(".asiento_largo").each(function (e) {
+                    var Id = $(this).attr("id");
+                    if (list.indexOf(Id) > 0 ) {
+                        $(this).addClass("Tutor");
+                    }
+                });
+            }
+        });
+    });
+
+    
+</script>

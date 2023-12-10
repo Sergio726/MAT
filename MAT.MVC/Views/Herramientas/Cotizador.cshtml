@@ -1,0 +1,189 @@
+﻿<div  class="custom_margin_5" >
+    <fieldset class="customborder">
+        <legend>Cotizacion USD freeway.com.ar</legend>
+                
+        <!--Cotizacion por operador TN-->
+        <div class="custom_margin_bottom_10">
+            <input type="radio" name="rCotizacion" value="TN" checked class="custom_vertical_align_bottom" onclick="javascript: checkTN();" />
+            <span>FREEWAY CAMBIO 1 U$D = </span><span id="sCotizacionTN" class="custom_font_weigh_bold custom_cursor_progress">Conectando...</span>
+            <br /><br />
+            <a class="link custom_margin_top_10" href="http://freeway.com.ar/" target="_blank">(Ver en FREEWAY)</a>
+        </div>
+        <div class="custom_margin_bottom_15">
+            <input type="radio" name="rCotizacion" value="personalizado" onclick="javascript: unCheckTN();" />
+            <span id="sCotizacionManual" class="custom_color_disabled">EDITAR 1 U$D = </span>
+            <input type="text" id="txtCotizacion" class="money form-field custom_width_70" disabled="disabled"/>
+        </div>
+        <div class="form-label custom_line_height_28">ARS</div>
+        <div class="form-field"><input type="text" id="MontoInt" class="money" /></div>
+        <div class="form-label custom_line_height_28">USD</div>
+        <div class="form-field"><input type="text" name="Descuento" id="MontoOut" class="money"/></div>
+        <div class="form-label"></div>
+        <div class="custom_float_right custom_margin_top_5">
+            <input type="button" onclick="javascript: calcularCotizacion();" value="Calcular" class="btn btn-small btn-inverse">
+            <input type="button" id="btnCargarMonto" onclick="javascript: cargarMonto();" value="Cargar Monto" data-toggle="tooltip" title="Tomar el valor el valor calculado como monto a abonar." class="btn btn-small btn-inverse hide">
+        </div>
+                
+        <div id="divError" class="msgError custom_font_size_12 custom_line_height_16 hide custom_margin_top_35">
+            
+        </div>
+
+    </fieldset>
+    <input type="hidden" id="hdnPersonID" name="PersonaID">
+    <input type="hidden" id="hdnViajeID" name="ViajeID">
+    <input type="hidden" id="hdnCotizacion" />
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        registerFormatNumber();
+        $('.money').mask("#.##0,00", { reverse: true });
+    });
+    
+    
+    var mode = "@ViewBag.Mode";
+    if (mode == "1") {
+        $("#btnCargarMonto").removeClass("hide");
+    }
+
+    //Cargar cotizacion del dolar
+    GetCotizacionTN();
+
+
+    function GetCotizacionTN() {
+        $.ajax({
+
+            //url: 'https://cors.io/?http://freeway.com.ar/',
+            url: 'http://online.zeusgroup.net/pyth-decorator/get?path=freeway/cotizacion-del-dia.json',
+            type: 'GET',
+            crossDomain: true,
+            dataType: 'json',
+            success: function (data) {
+                //$("#sCotizacionTN").text($(data).find('strong').html().replace('&nbsp;', '').replace('<strong>', '').replace('</strong>', ''));
+                //$("#sCotizacionTN").text().replace('<strong>', '').replace('</strong>', '');
+                //$("#sCotizacionTN").addClass("custom_font_size_14");
+                //$("#sCotizacionTN").removeClass("custom_cursor_progress");
+
+                //debugger
+                var sdolar = data.dolar;
+                $("#sCotizacionTN").text(sdolar.substring(sdolar.indexOf('Terrestre') + 10, sdolar.indexOf('Terrestre') + 15).replace('.',','));
+                $("#sCotizacionTN").addClass("custom_font_size_14");
+                $("#sCotizacionTN").removeClass("custom_cursor_progress");
+               
+            },
+            error: function (e) {
+                console.log(e);
+                $("#sCotizacionTN").removeClass("custom_font_size_14");
+                $("#sCotizacionTN").text("No se puede conectar con http://tnoperador.tur.ar");
+            }
+
+        });
+
+    }
+
+    function checkTN() {
+        $("#txtCotizacion").attr("disabled", true);
+        $("#sCotizacionTN").removeClass("custom_color_disabled");
+        $("#sCotizacionManual").addClass("custom_color_disabled");
+    }
+
+    function unCheckTN() {
+        $("#txtCotizacion").attr("disabled", false);
+        $("#sCotizacionTN").addClass("custom_color_disabled");
+        $("#sCotizacionManual").removeClass("custom_color_disabled");
+    }
+
+    function calcularCotizacion() {
+        var sourceCotizacion = $("input[name='rCotizacion']:checked").val();
+        if ($("#txtCotizacion").val() == "" && sourceCotizacion == "personalizado") {
+
+            $("#txtCotizacion").val(0);
+            $("#MontoInt").val(0);
+            $("#MontoOut").val(0);
+            return;
+        }
+        if ($("#MontoInt").val() == "") {
+            $("#MontoInt").val(0);
+        }
+
+        if ($("#MontoOut").val() == "") {
+            $("#MontoOut").val(0);
+        }
+
+        switch (sourceCotizacion) {
+            case "TN": //calcular cotizacion con valores del servidor TN
+                var sCotizacion = $("#sCotizacionTN").text();
+                if (sCotizacion.indexOf("No se puede conectar") >= 0) {
+                    $("#divError").html("No es posible conectar con el servidor de http://tnoperador.tur.ar <br/> Por favor elija elija editar la cotizacion.")
+                    $("#divError").show().removeClass("hide");
+                    $("#divError").fadeOut(14000);
+                    $("#txtCotizacion").val("");
+                    $("#MontoInt").val("");
+                    $("#MontoOut").val("");
+                }
+                else {
+                    var dCotizacion = sCotizacion.replace('$', '').replace(',', '.');
+                    //var dCotizacion = sCotizacion.replace('$', '');
+                    var dARG = parseFloat($("#MontoInt").val().replace(',', '#').replace('.', '').replace('#', '.'));
+                    var dUSD = parseFloat($("#MontoOut").val().replace(',', '#').replace('.', '').replace('#', '.'));
+
+                    if (dARG == 0) {
+                        dtotal = dUSD * dCotizacion;
+                        var rTotal = formatNumberMoney(dtotal).replace('$', '')
+                        $("#MontoInt").val(rTotal);
+                    }
+                    else {
+                        dtotal = dARG / dCotizacion;
+                        var rTotal = formatNumberMoney(dtotal).replace('$', '')
+                        $("#MontoOut").val(rTotal);
+                    }
+                    //$("#hdnCotizacion").val(dCotizacion.replace(',', '#').replace('.', '').replace('#', '.'));
+                    $("#hdnCotizacion").val($("#sCotizacionTN").text());
+                }
+                break;
+
+            case "personalizado":
+                $("#hdnCotizacion").val($("#txtCotizacion").val());
+                var dCotizacion = parseFloat($("#txtCotizacion").val().replace(',', '#').replace('.', '').replace('#', '.'));
+                var dARG = parseFloat($("#MontoInt").val().replace(',', '#').replace('.', '').replace('#', '.'));
+                var dUSD = parseFloat($("#MontoOut").val().replace(',', '#').replace('.', '').replace('#', '.'));
+                var dtotal = 0;
+
+                if (dARG == 0) {
+                    dtotal = dUSD * dCotizacion;
+                    //dtotal = dtotal.replace('.', ',').replace(',', '.');
+                    var rTotal = formatNumberMoney(dtotal).replace('$','')
+                    $("#MontoInt").val(rTotal);
+                }
+                else {
+                    dtotal = dARG / dCotizacion;
+                    var rTotal = formatNumberMoney(dtotal).replace('$', '')
+                    //dtotal = dtotal.replace('.', ',').replace(',', '.');
+                    $("#MontoOut").val(rTotal);
+                }
+                                
+                break;
+
+        }
+
+    }
+
+    function cargarMonto()
+    {
+        calcularCotizacion();
+
+        var tipoMoneda = $("#sMonedaTipo option:selected").text().trim();
+
+        switch (tipoMoneda) {
+            case "ARS":
+                $("#txtPago").val($("#MontoInt").val());
+                break;
+
+            case "USD":
+                $("#txtPago").val($("#MontoOut").val());
+                break;
+
+        }
+    }
+
+</script>

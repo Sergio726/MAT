@@ -1,0 +1,76 @@
+﻿@model IEnumerable<MAT.Entities.Viaje>
+@using MAT.Utilities
+@using MAT.Enums
+@{
+    ViewBag.Title = "Lista de Viajes";
+}
+
+<style>
+
+    .scroll {
+        width: 100%;
+        height: 300px;
+        overflow-y: scroll;
+    }
+
+</style>
+
+<h2 class="title">Viajes</h2>
+<div id="content table" class="scroll">
+<table class="mat-customtable" style="width:95%">
+    <thead>
+        <tr>
+            <th style="width:20%">
+                @Html.Label("Paquete")
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Origen)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaSalida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HoraSalida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PaisDestino)
+            </th>
+           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.Label(Helper.ToSelectItem("Paquete", item.PaqueteId.ToString()))
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Origen)
+                </td>
+                <td>
+                    @Html.LabelFor(modelItem => item.FechaSalida, item.FechaSalida.ToString().Substring(0, 10))
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HoraSalida)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PaisDestino)
+                </td>
+                
+                <td style="width:20%">
+                  
+                    <a href="/PasajeroViaje/Manifiesto/@item.ViajeId">
+                        <img src="#" width="32" height="32" title="Imprimir Manifiesto"/></a>
+                    <a href="/PasajeroViaje/CNRT/@item.ViajeId">
+                        <img src="#" width="32" height="32" title="Imprimir Listado CNRT"/></a>
+                    <a href="/PasajeroViaje/ListadoSimple/@item.ViajeId">
+                        <img src="#" width="32" height="32" title="Imprimir Listado Pasajeros"/></a>
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

@@ -1,0 +1,105 @@
+﻿@model List<MAT.MVC.Models.PasajeroMenorModel>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        loadPasajeroMenor();
+    });
+
+    function addMayor(obj) {
+        
+        var Apellido = $(obj).data("apellido");
+        var Nombre   = $(obj).data("nombre");
+        var PersonID = $(obj).data("id");
+        var PasajeID = $(obj).data("pasajeid");
+
+        $("#txtMayor").val(Apellido + ", " + Nombre);
+        $("#hdnMayorId").val(PersonID);
+        $("#hdnPasajeId").val(PasajeID);
+
+        $("#divFormListaMayor").dialog("close");
+        
+    }
+
+    function addMenor(obj) {
+
+        var Apellido = $(obj).data("apellido");
+        var Nombre = $(obj).data("nombre");
+        var PersonID = $(obj).data("id");
+
+        $("#txtMenor").val(Apellido + ", " + Nombre);
+        $("#hdnMenorId").val(PersonID);
+        $("#divFormListaMenor").dialog("close");
+    }
+
+    function valForm()
+    {
+        var ViajeID = $("#id_viaje").val();
+        if (ViajeID == "") {
+            return alert("No hay un viaje seleccionado, por favor actualice la página.");
+        }
+        var PasajeID = $("#hdnPasajeId").val();
+        var MayorID = $("#hdnMayorId").val();
+        if (MayorID == "" || PasajeID == "") {
+            return alert("Seleccione un tutor o encargado del menor por favor.");
+        }
+        var MenorID = $("#hdnMenorId").val();
+        if (MenorID == "") {
+            return alert("Seleccione un menor por favor.");
+        }
+
+        $.ajax({
+            url: "/Reserva/VincularMenor",
+            data: {
+                sPasajeID: PasajeID,
+                sMayorID: MayorID,
+                sMenorID: MenorID
+            },
+            dataType: "json",
+            success: function (data) {
+
+                if (data.Id == "1") {
+                    loadPasajeroMenor();
+                }
+                else {
+                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                }
+
+            }
+        });
+    }
+
+    function loadPasajeroMenor() {
+
+        $("#divContentPasajeroMenor").append(divLoading);
+
+        $.ajax({
+            url: "/Reserva/PartialVinculacionMenor",
+            data: { sViajeId: "@ViewBag.ViajeID" },
+            dataType: "html",
+            success: function (data) {
+                $("#divContentPasajeroMenor").html(data);
+
+            }
+        });
+    }
+</script>
+<!--Ids -->
+<input type="hidden" id="hdnMayorId" value=""/>
+<input type="hidden" id="hdnMenorId" value=""/>
+<input type="hidden" id="hdnPasajeId" value="" />
+
+
+<div style="height:500px;">
+    <div style="display:none;">
+        <input type="text" id="txtMayor" placeholder="Seleccione un tutor" />
+        <input type="button" onclick="javascript: showFormListaMayor();" title="Click para seleccionar un tutor o responsable del menor." value="+" class="btn-small btn-inverse" style="font-size: 11px;margin-bottom: 10px;margin-right: 20px;"/>
+        <input type="text" id="txtMenor" placeholder="Seleccione un menor" />
+        <input type="button" onclick="javascript: showFormListaMenor();" value="+" class="btn-small btn-inverse" style="font-size: 11px;margin-bottom: 10px;" title="Click para seleccionar un menor."/>
+        <input type="button" onclick="javascript: valForm();" style="font-size: 11px;margin-bottom: 10px;" class="btn btn-small btn-inverse" value="+ Vincular Menor" title="Click para finalizar la vinculación." />
+       
+    </div>
+    <div id="divContentPasajeroMenor">
+       
+    </div>
+    
+</div>

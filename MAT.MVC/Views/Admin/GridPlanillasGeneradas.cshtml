@@ -1,0 +1,37 @@
+﻿@model List<MAT.Entities.Planilla>
+
+<table class="mat-customtable">
+    <thead>
+        <tr>
+            <th class="oculto">Id</th>
+            <th>
+                Fecha de Registro
+            </th>
+            <th>
+                Monto Total
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="oculto">
+                    @item.PlanillaId
+                </td>
+                <td>
+                    @item.FechaRegistro.ToShortDateString()
+                </td> 
+                <td>
+                    @String.Format("{0:C}", item.Total)
+                </td>
+                <td>
+                    <a id="btn-imprimir-planilla-detalle" href="#" class="btn btn-inverse btn-small" data-planilla="@item.PlanillaId">Imprimir Planilla</a>
+                    <a id="btn-eliminar-planilla" href="/Admin/DeletePlanilla/@item.PlanillaId" data-planilla="@item.PlanillaId" title="Eliminar Planilla"><img  width="32" height="32" src="/images/cross.png" alt="" /></a>
+                    <a id="btn-editar-planilla" href="/Admin/EditarPlanilla/@item.PlanillaId" data-planilla="@item.PlanillaId" title="Editar Planilla"><img  width="32" height="32" src="/images/pencil.png" alt="" /></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,16 @@
+﻿body {
+}
+#body_section {
+    position:absolute;
+    left:15%;
+    top:23%;
+    width:40%;
+    height:auto;
+    border-radius:6px;
+    background-color:#007ee9;
+    color:#fff;
+}
+
+#loginForm {
+    padding:2em;
+}

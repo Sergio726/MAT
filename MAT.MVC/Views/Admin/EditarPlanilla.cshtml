@@ -1,0 +1,57 @@
+﻿@model MAT.Entities.Planilla
+@using MAT.Utilities
+
+@{
+    ViewBag.Title = "EditarPlanilla";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2 class="title">EditarPlanilla</h2>
+
+<input id="viaje-id" type="hidden" value="@Model.ViajeId" />
+<input id="planilla-id" type="hidden" value="@Model.PlanillaId" />
+
+<div class="encabezado">
+    <div class="form">
+        <div class="form-label">
+            Viaje
+        </div>
+        <div class="form-field">
+            @Helper.GetViajeDescripcion(Model.ViajeId)
+        </div>
+        <div class="form-label">
+            Fecha de Planilla
+        </div>
+        <div class="form-field">
+            <input type="text" id="fecha-planilla" class="date" value="@Model.FechaRegistro.ToShortDateString()" />
+        </div>
+
+        <div class="form-label">
+            Total Planilla
+        </div>
+        <div class="form-field">
+            <input type="text" id="total-planilla" value="@Model.Total" />
+        </div>
+    </div>
+</div>
+
+<div class="hoteles">
+
+</div>
+
+<div class="servicios">
+
+</div>
+
+<p class="botonera-form">
+    <a class="btn btn-danger btn-small" id="btn-guardar-planilla" data-planilla="@Model.PlanillaId">Guardar Datos</a>
+</p>
+
+<script type="text/javascript">
+    $(function () {
+        var viajeid = $("#viaje-id").val();
+        var planillaid = $("#planilla-id").val();
+        $(".hoteles").load("/Admin/GridPlanillaHotelDetalleEdit?viajeid=" + viajeid + "&planillaid=" + planillaid);
+        $(".servicios").load("/Admin/GridPlanillaServiciosItemEdit?planillaid=" + planillaid);
+    });
+</script>

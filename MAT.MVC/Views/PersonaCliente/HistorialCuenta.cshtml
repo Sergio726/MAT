@@ -1,0 +1,70 @@
+﻿@using MAT.MVC.Models
+@model CuentaModel
+@{
+    ViewBag.Title = "Historial de Cuenta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using MAT.Enums
+
+<h2 class="title">Cliente - Historial de Cuenta (@Model.Persona.Nombre @Model.Persona.Apellido)</h2>
+
+<table class="mat-customtable">
+    <thead>
+        <tr>            
+            <th>Fecha</th>
+            <th>Concepto</th>
+            <th>Medio de Pago</th>
+            <th>Debe</th>
+            <th>Haber</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Resumen item in Model.ResumenCuenta)
+        {
+            <tr>                
+                <td>@item.Fecha.ToShortDateString()</td>    
+                <td>@item.Descripcion</td>
+                <td>@(item.TipoPago != null ?   ((eFormaPago)item.TipoPago).ToString() : "")</td>
+                <td>@string.Format("-{0:C}",item.Debe)</td>
+                <td>@string.Format("{0:C}",item.Haber)</td>
+                <td>
+                    <a href="#" id="btn-resumen-linea" data-comprobanteid="@item.Comprobante"><img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a>
+                    @if (item.Descripcion=="Pago")
+                    {
+                        <a href="#" id="btn-cancelar-pago" data-comprobanteid="@item.Comprobante"><img src="/Images/cross.png" width="32" height="32" title="Cancelar Pago" /></a>
+                    }
+                    @if (item.Descripcion == "Nota de Crédito")
+                    {
+                        <a href="#" id="btn-cancelar-nota" data-comprobanteid="@item.Comprobante"><img src="/Images/cross.png" width="32" height="32" title="Cancelar Nota de Crédito" /></a>
+                    }
+                </td>
+            </tr>    
+        }        
+    </tbody>
+</table>
+
+<table class="mat-resumtable">
+    <thead>
+        <tr>
+            <th>Total Debe</th>
+            <th>Total Haber</th>
+            <th>Total Unificado</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@string.Format("{0:C}",Model.TotalDebe)</td>
+            <td>@string.Format("{0:C}",Model.TotalHaber)</td>
+            <td>@string.Format("{0:C}",Model.Unificado)</td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    @Html.ActionLink("Lista de Clientes", "Index", null, new { @class = "btn btn-small btn-inverse" })
+</p>
+<script type="text/javascript">
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+    });
+</script>

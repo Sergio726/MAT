@@ -1,0 +1,69 @@
+h3{
+	margin:0;
+	padding:0;		
+}
+h4{
+	padding:5px;
+	margin:0;
+	background:#ddd;	
+}
+
+span{
+	padding:5px;
+}
+.container{
+	width:100%	
+}
+
+.tabla{
+	border-collapse:collapse;
+	display: table;	
+	width:100%
+}
+
+.row{
+	display: table-row;
+}
+
+.col_una{
+	width:100%;
+	display: table-cell; 
+	border: thin solid #000;
+}
+
+.col_dos{
+	width:50%;	
+	display: table-cell; 
+	border: thin solid #000;
+}
+
+.col_tres{
+	width:33%;
+	display: table-cell; 
+	border: thin solid #000;	
+}
+
+.subtabla{
+	border-collapse:collapse;
+	display: table;	
+	width:100%
+}
+
+.subtabla .row{
+	border-bottom:thin solid #000;
+	
+}
+
+.subtabla .row:last-child{
+	border-bottom:none
+	
+}
+.rowHeigth0 {
+    height: 42px;
+}
+.rowHeigth1 {
+    height: 64px;
+}
+.rowHeigth2 {
+    height: 84px;
+}

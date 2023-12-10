@@ -1,0 +1,49 @@
+﻿@model List<MAT.MVC.Models.PaquetePrecio>
+@if (ViewBag.Error != null)
+{
+    <div class="msgError"><span>@ViewBag.Error</span></div>    
+}
+else
+{
+    <div class="custom_padding_top_20">
+        <div>
+            <ul>
+                @foreach (MAT.MVC.Models.PaquetePrecio item in Model)
+	            {
+		            <p><input type="radio" name="precio" value="@item.PrecioID"/> @item.Descripcion.ToString() </p>
+	            }
+            </ul>
+    
+        </div>
+        <div class="custom_padding_10 custom_float_right">
+            <a href="javascript: fnSetPrecio('@ViewBag.DetalleFacturaId');" id="btnCambiarPrecio" class="btn btn-small btn-inverse">Cambiar Precio</a>
+        </div>
+     </div>
+    <script type="text/javascript">
+        function fnSetPrecio(DetalleFacturaId) {
+            var PrecioSelected = $("input[name='precio']:checked").val();
+            $.ajax({
+                url: "/PersonaCliente/DetalleFacturaSetPrecio",
+                data: {
+                    DetalleFacturaId: DetalleFacturaId,
+                    PrecioId: PrecioSelected
+                },
+                success: function (data) {
+                    if (data[0] == "Done.") {
+                        PopupDetalleFactura_Load();
+                        $("#PopinPrecioList").dialog("close");
+                    }
+                    else {
+                        alert("Se produjo un error. Contactese con el administrador.");
+                        console.log(data[1]);
+                    }
+                                        
+                },
+                error: function (e) {
+                    alert("Se produjo un error. Contactese con el administrador.");
+                    console.log(e);
+                }
+            })
+        }
+    </script>
+}
