@@ -359,10 +359,10 @@
     <div class="float-rigth">
 
         
-        @if (ViewBag.ListaEspera != null && ViewBag.ListaEspera.Count > 0)
+        @if (ViewBag.ListaEspera != null && ViewBag.ListaEspera > 0)
         {
         <div class="divEmergentInfo" style=" width 280px;height 35px;">
-            <div class="wait"><a title="Hay clientes en lista de espera" href="javascript: showListaEspera();">HAY CLIENTES ESPERANDO</a></div>
+            <div class="wait"><a title="Hay clientes en lista de espera" href="javascript: openWaitingList();">HAY CLIENTES ESPERANDO</a></div>
         </div>
         }
 

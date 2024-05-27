@@ -15,6 +15,8 @@ using System.Data;
 using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using System.Web.Security;
+using WebMatrix.WebData;
+
 namespace MAT.MVC.Controllers.Reserva
 {
     public class ReservaController : Controller
@@ -29,6 +31,8 @@ namespace MAT.MVC.Controllers.Reserva
             {
                 Model = ReservaMethod.GetListOfPasajesByViajeID(viajeid.ToString());
                 ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeid.ToString());
+                ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeid.ToString()).Tables[0].Rows[0]["CountListaEspera"];
+
             }
             catch (Exception e)
             {
@@ -220,18 +224,47 @@ namespace MAT.MVC.Controllers.Reserva
             return Json(lSearch, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult InsertPersonToWatingList(string sPersonaID, string sViajeID, string sObservacion)
+        public JsonResult InsertPersonToWatingList(string sPersonaID, string sViajeID, string sObservacion, string sPasajeroTemporal)
         {
             ListaEsperaModel.ListaEspera objWatingList = new ListaEsperaModel.ListaEspera();
             objWatingList.ClienteID = sPersonaID;
             objWatingList.ViajeID = sViajeID;
             objWatingList.UsuarioID = Convert.ToInt32(Membership.GetUser(User.Identity.Name).ProviderUserKey);
             objWatingList.Observacion = sObservacion;
+            objWatingList.PasajeroTemporal = sPasajeroTemporal;
 
             string[] sResult = new string[2];
             sResult = ListaEsperaModel.Method.InsertListaEspera(objWatingList);
 
-            return Json(sResult, JsonRequestBehavior.AllowGet);
+            return Json(new
+            {
+                Mensaje = sResult[0],
+                Error = sResult[1]
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult DeleteToWatingList(string Id)
+        {
+            string[] sResult = new string[2];
+           
+            
+            try
+            {
+                sResult = MVC.Models.ListaEsperaModel.Method.DeleteListaEspera(Convert.ToInt32(Id), WebSecurity.GetUserId(User.Identity.Name));
+               
+            }
+            catch (Exception e)
+            {
+                sResult[0] = "";
+                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+            }
+
+
+            return Json(new
+            {
+                Mensaje = sResult[0],
+                Error = sResult[1]
+            }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult GetListTutoresByViajeID(string sViajeId = "")

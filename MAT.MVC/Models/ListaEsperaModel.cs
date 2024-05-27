@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
+using System.Security.Principal;
 
 namespace MAT.MVC.Models
 {
@@ -19,6 +20,7 @@ namespace MAT.MVC.Models
             public int UsuarioID { get; set; }
             public DateTime Fecha { get; set; }
             public string Observacion { get; set; }
+            public string PasajeroTemporal { get; set; }
 
         }
 
@@ -54,9 +56,10 @@ namespace MAT.MVC.Models
                     SqlParameter[] dbParams = new SqlParameter[]
                             {
                         DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, new Guid(Obj.ViajeID)),
-                        DBHelper.MakeParam("@ClienteID", SqlDbType.UniqueIdentifier, 0, new Guid(Obj.ClienteID)),
+                        DBHelper.MakeParam("@ClienteID", SqlDbType.VarChar,36,  Obj.ClienteID),
                         DBHelper.MakeParam("@UsuarioID", SqlDbType.Int, 0, Obj.UsuarioID),
-                        DBHelper.MakeParam("@Observacion", SqlDbType.VarChar, 300, Obj.Observacion)
+                        DBHelper.MakeParam("@Observacion", SqlDbType.VarChar, 300, Obj.Observacion),
+                        DBHelper.MakeParam("@PasajeroTemporal", SqlDbType.VarChar, 100, Obj.PasajeroTemporal),
                             };
                     SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_InsertNew", dbParams);
 
@@ -92,7 +95,7 @@ namespace MAT.MVC.Models
 
                     while (_reader.Read())
                     {
-                        sResult[0] = "";
+                        sResult[0] = "Done";
                         sResult[1] = _reader["Result"].ToString();
                     }
                 }
@@ -110,9 +113,20 @@ namespace MAT.MVC.Models
             {
                 List<ListaEsperaView> _List = new List<ListaEsperaView>();
                 SqlParameter[] dbParams = new SqlParameter[] {
-                 DBHelper.MakeParam("@param", SqlDbType.VarChar, 0, ViajeID),
+                 DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, ViajeID),
             };
                 DataSet _ds = DBHelper.ExecuteDataSet("dbo.usp_MAT_ListaEspera_SelectByViajeId", dbParams);
+
+                return _ds;
+            }
+
+            public static DataSet GetCountListaEsperaByViajeId(string ViajeID)
+            {
+                List<ListaEsperaView> _List = new List<ListaEsperaView>();
+                SqlParameter[] dbParams = new SqlParameter[] {
+                 DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0,new Guid(ViajeID)),
+            };
+                DataSet _ds = DBHelper.ExecuteDataSet("dbo.usp_MAT_CountListaEsperaByViajeId", dbParams);
 
                 return _ds;
             }
@@ -138,6 +152,11 @@ namespace MAT.MVC.Models
                 }
 
                 return _List;
+            }
+
+            internal static string[] DeleteListaEspera(int v, IIdentity identity)
+            {
+                throw new NotImplementedException();
             }
         }
     }

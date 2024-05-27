@@ -5,13 +5,26 @@
     </legend>
 
     <section class="search-perfil custom_padding_4" style="width:60%;">
-        <div id="busqueda-persona" class="custom_display_flex_align_items">
-            @*<p>Lista de clientes que no se encuentran en viaje actual</p>*@
-            <input id="txt-filter-persona-toWaitingList" type="text" placeholder="Ingrese Nombre o DNI" />
-            <input type="hidden" id="hdnPassengerID" />
-            <input type="hidden" id="hdnViajeID" value="@ViewBag.ViajeID" />
+        <div>
+            <div class="custom_display_inline_flex custom_padding_4 custom_font_weigh_bold">
+                <input type="radio" name="type_pasajero" value="Pasajero Temporal" id="op_pTemporal" checked/><label for="op_pTemporal">Pasajero Temporal</label>
+            </div>
+            <div id="div_B" class="custom_display_inline_flex custom_padding_4 custom_font_weigh_bold">
+                <input type="radio" name="type_pasajero" value="Pasajero Frecuente" id="op_pFrecuante" /><label for="op_pFrecuante">Pasajero Frecuente</label>
+            </div>
             
+            <div id="busqueda-persona" class="custom_display_flex_align_items hide">
+                @*<p>Lista de clientes que no se encuentran en viaje actual</p>*@
+                <input id="txt-filter-persona-toWaitingList" type="text" placeholder="Ingrese Nombre o DNI" />
+                <input type="hidden" id="hdnPassengerID" />
+                <input type="hidden" id="hdnViajeID" value="@ViewBag.ViajeID" />
+
+            </div>
+            <div id="div-pasajero-temporal" class="custom_display_flex_align_items">
+                <input id="txt-pasajero-temporal" type="text" placeholder="Apellido y Nombre" />
+            </div>
         </div>
+        
         <div>
             <label id="lblResultPersona" class="custom_margin_bottom_10 custom_font_size_11 custom_font_weigh_bold"></label>
             <textarea placeholder="Observaciones" id="txtObservacion" class="custom_width_100percent custom_padding_0"></textarea>
@@ -49,7 +62,20 @@
     
 
 <script type="text/javascript">
+    
+    $("#op_pTemporal").click(function () {
+        $("#div-pasajero-temporal").removeClass("hide");
+        $("#busqueda-persona").addClass("hide");
+        $("#hdnPassengerID").val("");
+        $("#txt-filter-persona-toWaitingList").val("");
+        $("#lblResultPersona").text("");
+    });
 
+    $("#op_pFrecuante").click(function () {
+        $("#busqueda-persona").removeClass("hide");
+        $("#div-pasajero-temporal").addClass("hide");
+        $("#txt-pasajero-temporal").val("");
+    });
 
     $(function () {
         $("#txt-filter-persona-toWaitingList").autocomplete({
@@ -76,54 +102,53 @@
 
             },
             select: function (event, ul) {
-                
+
                 var sRestult = ul.item.label;
 
                 $("#lblResultPersona").text(sRestult);
                 $("#hdnPassengerID").val(ul.item.id);
             }
         });
+
+        Load_tblWaitingList('@ViewBag.ViajeID');
     });
 
     function AddToList() {
         //alert("listo!");
         //mosrtar loading
 
-     
+
         $.ajax({
             url: "/Reserva/InsertPersonToWatingList",
             data: {
                 sPersonaID: $("#hdnPassengerID").val(),
                 sViajeID: $("#hdnViajeID").val(),
-                sObservacion: $("#txtObservacion").val()
+                sObservacion: $("#txtObservacion").val(),
+                sPasajeroTemporal: $("#txt-pasajero-temporal").val()
             },
             success: function (data) {
-              
+
                 console.log(data);
 
-                LoadWaitingList();
                 CleanDataInputs();
+                Load_tblWaitingList('@ViewBag.ViajeID');
             }
         })
 
     };
 
-    function LoadWaitingList() {
-        alert('persona cargada a lista de espera');
-    };
-
+  
     function CleanDataInputs(){
         $("#txt-filter-persona-toWaitingList").val("");
         $("#lblResultPersona").text("");
         $("#hdnPassengerID").val("");
         $("#txtObservacion").val("");
+        $("#txt-pasajero-temporal").val("");
     }
 
     var tblWaitingList;
     function Load_tblWaitingList(ViajeID) {
-        var dataSet = datatable;
-        var jTables = eval(dataSet);
-        var jt = jTables.Table;
+
 
         if (tblWaitingList != undefined) {
             tblWaitingList.clear();
@@ -131,8 +156,8 @@
             tblWaitingList.destroy();
         }
 
+        var jTables = '';
 
-        //ajax
 
         $.ajax({
             url: "/Reserva/GetWatinList",
@@ -141,9 +166,10 @@
             },
             dataType: "json",
             success: function (data) {
-
+                //debugger
                 if (data.Error == "") {
-                    tblWaitingList = data.jsTable;
+                    jTables = JSON.parse(data.jsTable);
+                    //console.log(jTables);
                 }
                 else {
                     alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
@@ -151,62 +177,65 @@
 
                 }
 
+                //load table
+
+                tblWaitingList = $("#tblWaitingList").DataTable({
+                    "data": jTables.Table,
+                    "columns": [
+                        { "data": "Cliente" },
+                        { "data": "Vendedor" },
+                        { "data": "Fecha" },
+                        { "data": "Observacion" },
+                        {
+                            "data": "Opciones",
+                            "mRender": function (data, type, row) {
+
+                                var data = "<a LinkId='" + row.Id + "' class='.delete-pas-link' href='#' onclick='deleteItemRow(this);'><img src='/Images/cross.png' width='32' height='32' title='Quitar'></a>";
+                                return data;
+                            }
+                        }
+                    ],
+                    "bAutoWidth": false,
+                    "pageLength": 25
+                });
+
             }
         });
 
 
-
-        tblWaitingList = $("#tblWaitingList").DataTable({
-            "aaData": jt,
-            "columns": [
-            { "data": "Cliente" },
-            { "data": "Vendedor" },
-            { "data": "Fecha" },
-            { "data": "Observaciones" },
-            {
-                "data": "Opciones",
-                "mRender": function (data, type, row) {
-
-                    var data = "<a href='javascript:deleteItemRow(" + row.Id + ");'><img src='/Images/cross.png' width='32' height='32' title='Quitar'></a>";
-                    return data;
-                }
-            }
-            //{
-            //    "class":          "details-control",
-            //    "orderable":      false,
-            //    "data":           null,
-            //    "defaultContent": ""
-            //}
-            ],
-            "bAutoWidth": false,
-            "pageLength": 25
-        });
     };
 
-    function deleteItemRow(ID) {
-        //$("#popup_HotelHabitacionViaje").append(divLoading);
-        //$.ajax({
-        //    url: "/HotelHabitacionViaje/deleteDistribucionRow",
-        //    data: {
-        //        TransHotelHabitacionViajeID: TransHotelHabitacionViajeID,
-        //    },
-        //    dataType: "json",
-        //    success: function (data) {
+  
+    function deleteItemRow(link) {
 
-        //        if (data.Mensaje == "Done.") {
-        //            getDistribucion();
-        //            $("#divFullLoading").remove();
-        //        }
-        //        else {
-        //            if (data.Mensaje == "Error.") {
-        //                alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
-        //                console.log(data.Error);
-        //            }
+        RowId = $(link).attr('linkid').toString();
+       
+        $.ajax({
+            url: "/Reserva/DeleteToWatingList",
+            data: {
+                Id: RowId,
+            },
+            dataType: "json",
+            success: function (data) {
 
-        //        }
+                if (data.Mensaje == "Done") {
 
-        //    }
-        //});
+                    //delete row to table
+                    tblWaitingList
+                                .row($(link).parents('tr'))
+                                .remove()
+                                .draw();
+                }
+                else {
+                    if (data.Mensaje == "Error.") {
+                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        console.log(data.Error);
+                    }
+
+                }
+
+            }
+        });
     }
 
 </script>

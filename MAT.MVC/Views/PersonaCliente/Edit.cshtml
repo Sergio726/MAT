@@ -506,8 +506,24 @@
             changeYear: true,
             yearRange: '-100:+2'
         });
-        $("#NroDocumento").mask("99.999.999");
+       
         $("#Cuit").mask("99-99999999-9");
         $("#FechaNacimiento").mask("99/99/9999");
+
+        if ($("#TipoDocumento").val() == "2") {
+            $("#NroDocumento").mask("#");
+        } else {
+            $("#NroDocumento").mask("99.999.999");
+        }
     });
+
+    $("#TipoDocumento").change(function () {
+        if ($("#TipoDocumento").val() == "2") {
+            $("#NroDocumento").mask("#");
+        } else {
+            $("#NroDocumento").mask("99.999.999");
+        }
+
+    });
+
 </script>
