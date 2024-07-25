@@ -84,15 +84,14 @@
                 <div class="div100">
                     <div>
                         <span class="custom_font_weigh_bold">CONCENTRACIÓN: </span>
+                        
                         @switch (item.ViajeMedio)
                         {
                             case "TERRESTRE":
-                            <span>@(DateTime.ParseExact(item.ViajeHoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, item.TiempoConsentracion, 0)).ToString()) </span>
-                            <span>desde Terminal de Omnibus, plataforma 26 a la 28.</span>
-                                    break;
-                                case "AEREO": 
-                            <span>@(DateTime.ParseExact(item.ViajeHoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, 120, 0)).ToString()) </span>
-                            <span>en el Aeropuerto de Salta.</span>
+                               <input type="text" class="custom_width_400px" value="@(DateTime.ParseExact(item.ViajeHoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, item.TiempoConsentracion, 0)).ToString()) desde Terminal de Omnibus, plataforma 26 a la 28."/>
+                                break;
+                            case "AEREO":
+                                <input type="text" class="custom_width_400px" value="@(DateTime.ParseExact(item.ViajeHoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, 120, 0)).ToString()) en el Aeropuerto de Salta." />
                                     break;
                         }
                         <br />
@@ -113,9 +112,11 @@
                      <span class="custom_font_weigh_bold">TRANSPORTE: </span> 
                     @switch (item.ViajeMedio)
                     {
-                        case "TERRESTRE":<span>Moderna unidad, dotado con triple circuito de video, aire acondicionado, bar, música funcional, asientos cama y  semi-cama.</span><br />
-                            break;
-                        case "AEREO": <span>Aéreo.</span><br />
+                        @*case "TERRESTRE":<span>Moderna unidad, dotado con triple circuito de video, aire acondicionado, bar, música funcional, asientos cama y  semi-cama.</span><br />
+                            break;*@
+                    case "TERRESTRE": <input type="text" class="custom_width_90percent" value="Moderna unidad, dotado con triple circuito de video, aire acondicionado, bar, música funcional, asientos cama y  semi-cama." /><br />
+                                            break;
+                    case "AEREO": <span>Aéreo.</span><br />
                             break;
                     }
                     
