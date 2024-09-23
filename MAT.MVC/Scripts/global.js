@@ -186,3 +186,7 @@ function showLoading_div(div) {
 function hideLoading() {
     $("#divFullLoading").remove();
 }
+
+function changeSeparatorDecimal(input) {
+    return input.replaceAll(".", "").replaceAll(",", ".");
+}

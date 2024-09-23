@@ -20,6 +20,8 @@ namespace MAT.MVC.Models
         public int Ocupacion { get; set; }
         public string Nombre { get; set; }
         public string Hotel { get; set; }
+        public decimal HabitacionPrecio { get; set; }
+        public string HabitacionDescripcion { get; set; }
     }
 
     public class HabitacionDisponibilidad
@@ -77,7 +79,9 @@ namespace MAT.MVC.Models
                     DBHelper.MakeParam("@Tipo", SqlDbType.Int, 0, Hab.Tipo),
                     DBHelper.MakeParam("@Estado", SqlDbType.Int, 0, Hab.Estado),
                     DBHelper.MakeParam("@Capacidad", SqlDbType.Int, 0, Hab.Capacidad),
-                    DBHelper.MakeParam("@Nombre", SqlDbType.VarChar, 100, Hab.Nombre)
+                    DBHelper.MakeParam("@Nombre", SqlDbType.VarChar, 100, Hab.Nombre),
+                    DBHelper.MakeParam("@HabitacionPrecio", SqlDbType.Decimal, 0, Hab.HabitacionPrecio),
+                    DBHelper.MakeParam("@HabitacionDescripcion", SqlDbType.VarChar, 100, Hab.HabitacionDescripcion),
                 };
             SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_EditHabitacion", dbParams);
 
@@ -129,6 +133,8 @@ namespace MAT.MVC.Models
                 //Hab.Ocupacion = Convert.ToInt32(_reader["ocupacion"]);
                 Hab.Nombre = _reader["nombre"].ToString();
                 //Hab.Hotel = _reader["Hotel"].ToString();
+                Hab.HabitacionPrecio = Convert.ToDecimal(_reader["HabPrecio"]);
+                Hab.HabitacionDescripcion = _reader["HabDescripcion"].ToString();
             }
             return Hab;
         }

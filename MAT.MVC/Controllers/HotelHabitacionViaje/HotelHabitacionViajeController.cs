@@ -22,7 +22,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             string json = "";
             try
             {
-                item = MVC.Models.HotelHabitacionViajMethod.GetEncabezado(new Guid(ViajeHotelID));
+                  item = MVC.Models.HotelHabitacionViajMethod.GetEncabezado(new Guid(ViajeHotelID));
                 ViewBag.HabitacionTipo = MAT.MVC.Models.HabitacionTipoMethod.GetAllHabitacionTipo();
                 
                 ds = MVC.Models.HotelHabitacionViajMethod.GetDistribucionHab(new Guid(item.ViajeID),new Guid(item.HotelID),Convert.ToString(item.Fecha));
@@ -39,7 +39,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
         }
 
         [Authorize]
-        public JsonResult AddDistribucion(string HotelID, string ViajeID , string Fecha, int Tipo, int Cantidad)
+        public JsonResult AddDistribucion(string HotelID, string ViajeID , string Fecha, int Tipo, int Cantidad, decimal habPrecio, string habDescripcion)
         {
             string[] sResult = new string[2];
 
@@ -52,7 +52,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
                 }
                 string sTipo = string.Join(",", aTipo);
 
-                MVC.Models.HotelHabitacionViajMethod.Insert(new Guid(HotelID), new Guid(ViajeID), Convert.ToDateTime(Fecha), sTipo);
+                MVC.Models.HotelHabitacionViajMethod.Insert(new Guid(HotelID), new Guid(ViajeID), Convert.ToDateTime(Fecha), sTipo, habPrecio, habDescripcion);
                 sResult[0] = "Done.";
             }
             catch (Exception e)
