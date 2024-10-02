@@ -17,18 +17,22 @@
                 Distribucion de Habitaciones
             </legend>
             <label>
-                Cantidad 
+                Cantidad
                 <input class="custom_width_45px" type="number" min="1" value="1" id="txtCantidad" />
-            @*</label>
-            
-            <label>*@
+                @*</label>
+
+        <label>*@
                 Tipo Hab.
-                 <select id="Tipo" name="Tipo" class="valid" title="Cantidad de Habitaciones">
+                <select id="Tipo" name="Tipo" class="valid" title="Cantidad de Habitaciones">
                     @foreach (MAT.MVC.Models.HabitacionTipo item in ViewBag.HabitacionTipo)
                     {
-                        <option value="@item.Id" capacidad="@item.CapacidadNormal" >@item.Descripcion</option>
+                        <option value="@item.Id" capacidad="@item.CapacidadNormal">@item.Descripcion</option>
                     }
                 </select>
+                Precio
+                <input class="custom_width_65" type="text" value="" id="txtPrecio" />
+                Detalle
+                <input class="custom_width_50px" type="text" value="" id="txtDescripcion" />
                 <input type="button" class="btn btn-small btn-inverse view-all" value="Agregar" style="vertical-align: text-bottom;" title="Agregar Habitaciones" onclick="javascript: addDistribucion()" />
                 <input type="button" class="btn btn-small btn-inverse view-all" value="Guardar Plantilla" style="vertical-align: text-bottom;" title="Guardar distribucion en una planilla para usarla después." onclick="javascript: showNombrePlantila()" />
                 <input type="button" class="btn btn-small btn-inverse view-all" value="Cargar Plantilla" style="vertical-align: text-bottom;" title="Cargar una plantilla" onclick="javascript: showPlantilas()" />
@@ -42,6 +46,8 @@
                             <th>Nombre Hab.</th>
                             <th>Tipo</th>
                             <th>Capacidad</th>
+                            <th>Precio</th>
+                            <th>Descripción</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -87,6 +93,8 @@
             //},
             { "data": "Tipo" },
             { "data": "Capacidad" },
+            { "data": "HabPrecio", render: $.fn.dataTable.render.number(',', '.', 2) },
+            { "data": "HabDescripcion" },
             { "data": "Capacidad",
                 "mRender": function (data, type, row) {
 
@@ -113,6 +121,8 @@
         var Cantidad = $("#txtCantidad").val();
         var Tipo = $("#Tipo").val();
         var Fecha = "@Model.Fecha";
+        var habPrecio = $("#txtPrecio").val();;
+        var habDescripcion = $("#txtDescripcion").val();
         
         //AddDistribucion(string HotelID, string ViajeID , string Fecha, int Tipo, int Cantidad)
         $.ajax({
@@ -122,7 +132,9 @@
                 ViajeID: ViajeID,
                 Fecha: Fecha,
                 Tipo: Tipo,
-                Cantidad: Cantidad
+                Cantidad: Cantidad,
+                habPrecio: habPrecio,
+                habDescripcion: habDescripcion
             },
             dataType: "json",
             success: function (data) {

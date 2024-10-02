@@ -1,7 +1,6 @@
 ﻿@{
      if (!WebSecurity.Initialized)
     {
-        WebSecurity.InitializeDatabaseConnection("MAT.Session.ConnectionString", "UserProfile", "UserId",
-                                                 "UserName", autoCreateTables: true);
+        WebSecurity.InitializeDatabaseConnection("MAT.Session.ConnectionString", "UserProfile", "UserId", "UserName", autoCreateTables: true);
     }
 }

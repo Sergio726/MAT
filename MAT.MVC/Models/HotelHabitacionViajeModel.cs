@@ -43,14 +43,17 @@ namespace MAT.MVC.Models
             return item;
         }
 
-        public static void Insert(Guid HotelID, Guid ViajeID, DateTime Fecha, string sTipo)
+        public static void Insert(Guid HotelID, Guid ViajeID, DateTime Fecha, string sTipo, decimal habPrecio, string habDescripcion)
         {
             SqlParameter[] dbParams = new SqlParameter[]
                     {             
                           DBHelper.MakeParam("@HotelID", SqlDbType.UniqueIdentifier, 0, HotelID),
                           DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, ViajeID),
                           DBHelper.MakeParam("@Fecha", SqlDbType.Date, 0, Fecha),
-                          DBHelper.MakeTableParam("@Tipo",TableDataType.tvp_int,sTipo)
+                          DBHelper.MakeTableParam("@Tipo",TableDataType.tvp_int,sTipo),
+                          DBHelper.MakeParam("@HabPrecio", SqlDbType.Decimal, 0, habPrecio),
+                          DBHelper.MakeParam("@HabDescripcion", SqlDbType.VarChar, 500, habDescripcion),
+
                     };
             DBHelper.ExecuteNonQuery("dbo.usp_TransHotelHabitacionViaje_Insert", dbParams);
         }
