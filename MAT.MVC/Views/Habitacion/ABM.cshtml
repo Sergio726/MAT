@@ -48,7 +48,7 @@
             <label>Nro de Habitacion</label>
         </div>
         <div class="form-field">
-            <input type="number" id="NroHabitacion" name="NroHabitacion" min="0" value="@Model.NroHabitacion"/>
+            <input type="number" id="NroHabitacion" name="NroHabitacion" min="0" value="@Model.NroHabitacion" />
         </div>
 
         <div class="form-label">
@@ -56,9 +56,9 @@
         </div>
         <div class="form-field">
             <input type="text" id="Nombre" name="Nombre" maxlength="50" />
-             
-        </div>        
-    
+
+        </div>
+
         <div class="form-label">
             <label>Tipo</label>
         </div>
@@ -66,12 +66,12 @@
             <select id="Tipo" name="Tipo" class="valid">
                 @foreach (MAT.MVC.Models.HabitacionTipo item in ViewBag.HabitacionTipo)
                 {
-                    <option value="@item.Id" @(item.Id == Model.Tipo ? "selected" : "") >@item.Descripcion</option>
+                    <option value="@item.Id" @(item.Id == Model.Tipo ? "selected" : "")>@item.Descripcion</option>
                 }
             </select>
-          
+
         </div>
-    
+
         <div class="form-label">
             <label>Estado</label>
         </div>
@@ -86,7 +86,20 @@
             <label>Capacidad</label>
         </div>
         <div class="form-field">
-           <input type="number" value="@Model.Capacidad" id="Capacidad" name="Capacidad" min="0" />
+            <input type="number" value="@Model.Capacidad" id="Capacidad" name="Capacidad" min="0" />
+        </div>
+
+        <div class="form-label">
+            <label>Precio</label>
+        </div>
+        <div class="form-field">
+            <input type="text" value="@Model.HabitacionPrecio.ToString("N2")" id="HabitacionPrecio" name="HabitacionPrecio" min="0" />
+        </div>
+        <div class="form-label">
+            <label>Descripción</label>
+        </div>
+        <div class="form-field">
+            <input type="text" value="@Model.HabitacionDescripcion" id="HabitacionDescripcion" name="HabitacionDescripcion" min="0" />
         </div>
 
     </form>  
@@ -104,7 +117,12 @@
     $("input[type=number]").attr("min", 0);
 
     function updateHabitacion() {
-        var _data = $("#formHabitacion").serializeArray();
+        const _form = $("#formHabitacion").serializeArray();
+        const _data = _form.map((x) => {
+                if (x.name == 'HabitacionPrecio')
+                    x.value = changeSeparatorDecimal(x.value);
+                return x;            
+            })
         $("#popup_HabitacionEdit").append(divLoading);
 
         $.ajax({
