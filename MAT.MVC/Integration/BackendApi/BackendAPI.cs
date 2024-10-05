@@ -12,23 +12,24 @@ namespace MAT.MVC.Integration
     public interface IBackendAPI
     {
         //Task<ShopwareGetAllSKUsResponse> GetSKUAsync(string sku);
-        Task<ImageResponse> GetAllImageAsync();
+        Task<List<ImageResponse>> GetAllImageAsync();
     }
-    public class BackendAPI: BaseHttpClient, IBackendAPI
+    public class BackendAPI: IBackendAPI
     {
-        public BackendAPI(IHttpClientFactory httpClientFactory, ILogger<BackendAPI> looger) : base(httpClientFactory, looger)
+        
+        private readonly IApiClient _apiClient;
+        public BackendAPI() 
         {
+            string backendApiURL = System.Configuration.ConfigurationManager.AppSettings["BackendAPI_URL"].ToString();
+            HttpClient httpClient = HttpClientFactory.Create();
+            httpClient.BaseAddress = new Uri(backendApiURL);
             
+            _apiClient = new ApiClient(httpClient);
         }
 
-        public async Task<ImageResponse> GetAllImageAsync()
+        public async Task<List<ImageResponse>> GetAllImageAsync()
         {
-            using(HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "api/image"))
-            {
-                return await GetAsync<ImageResponse>(requestMessage);
-            }
-            
-            
+            return await _apiClient.GetAsync<List<ImageResponse>>("api/image");
         }
     }
 }
