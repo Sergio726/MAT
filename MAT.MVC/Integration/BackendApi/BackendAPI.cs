@@ -1,4 +1,5 @@
 ﻿using MAT.MVC.Integration.BackendApi.Models;
+using MAT.MVC.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,13 @@ namespace MAT.MVC.Integration
         public async Task<List<ImageResponse>> GetAllImageAsync()
         {
             return await _apiClient.GetAsync<List<ImageResponse>>("api/image");
+        }
+
+        public async Task<List<ReservaStandard>> GetListOfPasajesByViajeID(string viajeId)
+        {
+            string queryParam = $"viajeId={viajeId}";
+            string url = "api/pasajes/getPasajesByViajeID?" + queryParam;
+            return await _apiClient.GetAsync<List<ReservaStandard>>(url);
         }
     }
 }

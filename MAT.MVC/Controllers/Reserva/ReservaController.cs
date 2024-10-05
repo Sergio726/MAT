@@ -33,13 +33,14 @@ namespace MAT.MVC.Controllers.Reserva
         [Authorize]
         public async Task<ActionResult> Index(Guid viajeid)
         {
-            var tt = await _backendAPI.GetAllImageAsync();
+            //var tt = await _backendAPI.GetAllImageAsync();
 
             List<ReservaStandard> Model = new List<ReservaStandard>();
 
             try
             {
                 Model = ReservaMethod.GetListOfPasajesByViajeID(viajeid.ToString());
+                var test = await _backendAPI.GetListOfPasajesByViajeID(viajeid.ToString());
                 ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeid.ToString());
                 ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeid.ToString()).Tables[0].Rows[0]["CountListaEspera"];
 
