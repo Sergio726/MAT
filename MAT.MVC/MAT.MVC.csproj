@@ -810,10 +810,12 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Reserva\GetOffListPassengers.cshtml" />
+    <Content Include="Views\Reserva\NuevaReserva.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="bin\" />
+    <Folder Include="Integration\BackendApi\Models\DtoFromAPI\" />
     <Folder Include="Views\Pago\" />
   </ItemGroup>
   <ItemGroup>

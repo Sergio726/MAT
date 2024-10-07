@@ -340,16 +340,15 @@
     </section>
 
     <p class="botonera-form">
-
+   
         <input id="btn-reservar" type="button" title="Reservar" value="Reservar" class="btn btn-small btn-danger" />
-        <input id="btn-new-reservar" type="button" title="Nueva Reserva" value="Neuva Reserva" class="btn btn-small btn-danger" onclick="javascript: openNewReserva('@(ViajeID.ToString())');" />
         <input id="btn-nomina" data-id="@ViajeID" type="button" title="Lista Completa" value="Manifiesto" class="btn btn-small btn-inverse" />
         <input id="btn-listasimple" data-id="@ViajeID" type="button" title="Lista de Pasajero" value="Lista de Pasajeros" class="btn btn-small btn-inverse" />
-        @* <input id="btn-cnrt-hojauno" data-id="@ViajeID" type="button" title="CNRT Hoja Uno" value="CNRT Hoja Uno" class="btn btn-small btn-inverse" />
+       @* <input id="btn-cnrt-hojauno" data-id="@ViajeID" type="button" title="CNRT Hoja Uno" value="CNRT Hoja Uno" class="btn btn-small btn-inverse" />
         input id="btn-cnrt" data-id="@ViajeID" type="button" title="CNRT" value="CNRT Hoja Dos" class="btn btn-small btn-inverse" />    <*@
-        <input id="btn-distribucion-habitaciones" data-viaje="@ViajeID" type="button" title="Distribución de Habitaciones" value="Distribución de Habitaciones" class="btn btn-small btn-inverse" />
-        <input id="btn-distribucion-coche" data-viaje="@ViajeID" type="button" title="Distribución de Butacas" value="Distribución de Butacas" class="btn btn-small btn-inverse" />
-        <input id="btn-ObservacionViaje" type="button" title="Observaciones del Viaje" value="Observaciones" class="btn btn-small btn-inverse" onclick="javascript: showObservacion();" />
+        <input id="btn-distribucion-habitaciones" data-viaje="@ViajeID" type="button" title="Distribución de Habitaciones" value="Distribución de Habitaciones" class="btn btn-small btn-inverse" />    
+        <input id="btn-distribucion-coche" data-viaje="@ViajeID" type="button" title="Distribución de Butacas" value="Distribución de Butacas" class="btn btn-small btn-inverse" />    
+        <input id="btn-ObservacionViaje" type="button" title="Observaciones del Viaje" value="Observaciones" class="btn btn-small btn-inverse" onclick="javascript: showObservacion();" />    
     </p>
 
     <input type="hidden" id="hdnPasajeroID" value="" />
@@ -616,11 +615,6 @@
            
             window.open(url, '_blank')
         }
-
-        /* New Reserva*/
-        function openNewReserva(viajeId) {            
-            window.location.href = "/Reserva/NuevaReserva?viajeid=" + viajeID;
-        };
     </script>
   }
   
