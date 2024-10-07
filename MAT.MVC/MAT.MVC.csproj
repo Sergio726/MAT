@@ -54,6 +54,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=6.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.6.0.2\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth.AspNet">
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.4.13329\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
     </Reference>
@@ -321,7 +324,9 @@
     <Compile Include="Integration\BackendApi\Models\GalleryResponse.cs" />
     <Compile Include="Integration\BackendApi\Models\ImageResponse.cs" />
     <Compile Include="Integration\ApiClient.cs" />
+    <Compile Include="Integration\BackendApi\Models\ResultPasajeDto.cs" />
     <Compile Include="Integration\IApiClient.cs" />
+    <Compile Include="Integration\MappingProfile.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AuditModel.cs" />
     <Compile Include="Models\ClienteModel.cs" />
