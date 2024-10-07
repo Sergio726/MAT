@@ -6,6 +6,8 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using AutoMapper;
+using MAT.MVC.Integration;
 using MAT.Utilities;
 using WebMatrix.WebData;
 
@@ -18,6 +20,12 @@ namespace MAT.MVC
     {
         protected void Application_Start()
         {
+            // Inicialización de AutoMapper
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<MappingProfile>(); // Agrega tu perfil
+            });
+
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);

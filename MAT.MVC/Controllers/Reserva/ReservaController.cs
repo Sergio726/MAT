@@ -18,6 +18,8 @@ using System.Web.Security;
 using WebMatrix.WebData;
 using MAT.MVC.Integration;
 using System.Threading.Tasks;
+using AutoMapper;
+using MAT.MVC.Integration.BackendApi.Models;
 
 namespace MAT.MVC.Controllers.Reserva
 {
@@ -40,7 +42,8 @@ namespace MAT.MVC.Controllers.Reserva
             try
             {
                 Model = ReservaMethod.GetListOfPasajesByViajeID(viajeid.ToString());
-                var test = await _backendAPI.GetListOfPasajesByViajeID(viajeid.ToString());
+                //List<ResultPasajeDto> resultPasajeDto = await _backendAPI.GetListOfPasajesByViajeID(viajeid.ToString());
+                //Model = Mapper.Map<List<ReservaStandard>>(resultPasajeDto);
                 ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeid.ToString());
                 ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeid.ToString()).Tables[0].Rows[0]["CountListaEspera"];
 

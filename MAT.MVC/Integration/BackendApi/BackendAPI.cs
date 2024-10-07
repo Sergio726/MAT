@@ -33,11 +33,11 @@ namespace MAT.MVC.Integration
             return await _apiClient.GetAsync<List<ImageResponse>>("api/image");
         }
 
-        public async Task<List<ReservaStandard>> GetListOfPasajesByViajeID(string viajeId)
+        public async Task<List<ResultPasajeDto>> GetListOfPasajesByViajeID(string viajeId)
         {
             string queryParam = $"viajeId={viajeId}";
             string url = "api/pasajes/getPasajesByViajeID?" + queryParam;
-            return await _apiClient.GetAsync<List<ReservaStandard>>(url);
+            return await _apiClient.GetAsync<List<ResultPasajeDto>>(url);
         }
     }
 }
