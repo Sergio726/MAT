@@ -16,20 +16,31 @@ using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using System.Web.Security;
 using WebMatrix.WebData;
+using MAT.MVC.Integration;
+using System.Threading.Tasks;
 
 namespace MAT.MVC.Controllers.Reserva
 {
     public class ReservaController : Controller
     {
+        private BackendAPI _backendAPI;
+
+        public ReservaController()
+        {
+            _backendAPI = new BackendAPI();
+        }
         
         [Authorize]
-        public ActionResult Index(Guid viajeid)
+        public async Task<ActionResult> Index(Guid viajeid)
         {
+            //var tt = await _backendAPI.GetAllImageAsync();
+
             List<ReservaStandard> Model = new List<ReservaStandard>();
 
             try
             {
                 Model = ReservaMethod.GetListOfPasajesByViajeID(viajeid.ToString());
+                var test = await _backendAPI.GetListOfPasajesByViajeID(viajeid.ToString());
                 ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeid.ToString());
                 ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeid.ToString()).Tables[0].Rows[0]["CountListaEspera"];
 
