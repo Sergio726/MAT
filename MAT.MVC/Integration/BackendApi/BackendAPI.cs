@@ -39,5 +39,26 @@ namespace MAT.MVC.Integration
             string url = "api/pasajes/getPasajesByViajeID?" + queryParam;
             return await _apiClient.GetAsync<List<ResultPasajeDto>>(url);
         }
+        public async Task<DetalleViajeDto> GetDetalleViajeAsync(string viajeId)
+        {
+            string queryParam = $"viajeId={viajeId}";
+            string url = "api/pasajes/getDetalleViaje?" + queryParam;
+            return await _apiClient.GetAsync<DetalleViajeDto>(url);
+        }
+
+        public async Task<List<PersonaDto>> SearchClientAsync(string search)
+        {
+            string queryParam = $"search={search}";
+            string url = "api/personas/searchClient?" + queryParam;
+            return await _apiClient.GetAsync<List<PersonaDto>>(url);
+        }
+
+        public async Task<List<HabitacionDto>> GetHabitacionesDisponiblesByViaje(string viajeId)
+        {
+            string queryParam = $"viajeId={viajeId}";
+            string url = "api/pasajes/getHabitacionesDisponiblesByViaje?" + queryParam;
+            return await _apiClient.GetAsync<List<HabitacionDto>>(url);
+        }
+
     }
 }
