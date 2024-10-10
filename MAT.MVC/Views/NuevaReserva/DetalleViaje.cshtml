@@ -1,0 +1,45 @@
+﻿@model MAT.MVC.Models.DetalleViaje
+@using MAT.Entities
+
+<h4>@Model.Descripcion</h4>
+<h5>Destino: @Model.Destino</h5>
+<h5>Salida: @(Convert.ToDateTime(Model.FechaSalida).ToShortDateString()) - @Model.HoraSalida hs.</h5>
+<h5>Regreso: @(Convert.ToDateTime(Model.FechaRegreso).ToShortDateString()) - @Model.HoraRegreso hs. </h5>
+<h5>Concentración: @(DateTime.ParseExact(Model.HoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, Model.TiempoConsentracion, 0)).ToString().Substring(0,5)) hs.</h5>
+<h5>
+@if (Model.NroCoche != null)
+{
+    @("Coche: " + Model.NroCoche.ToString());
+}
+</h5>
+
+<u><span class="custom_font_weigh_bold">Servicios Incluídos</span></u>
+<ul>
+    @foreach (var item in Model.PaqueteServicios.ToString().Split(','))
+    {
+        <li>@item</li>
+    }
+</ul>
+<u><span class="custom_font_weigh_bold">Excursiones Incluidas</span></u>
+<ul>
+    @foreach (var item in Model.PaqueteExcusionesIncluidas.ToString().Split(','))
+    {
+        <li>@item</li>
+    }
+</ul>
+
+<u><span class="custom_font_weigh_bold">Excursiones Opcionales</span></u>
+<ul>
+    @foreach (var item in Model.PaqueteExcusionesOpcionales.ToString().Split(','))
+    {
+        <li>@item</li>
+    }
+</ul>
+
+<u><span class="custom_font_weigh_bold">Observaciones del viaje</span></u>
+<ul>
+    @foreach (var item in Model.Observaciones.ToString().Split(','))
+    {
+        <li>@item</li>
+    }
+</ul>

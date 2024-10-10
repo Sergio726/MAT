@@ -1,0 +1,107 @@
+﻿<script type="text/javascript">
+    var oSeleccionPasajeros = {};
+    oSeleccionPasajeros.habitacionId = "";
+    oSeleccionPasajeros.habitacionCapacidad = 0;
+    oSeleccionPasajeros.loadTablePasajeros = function (data) {
+        if (this.tblPasajeros != undefined) {
+            this.tblPasajeros.clear();
+            this.tblPasajeros.draw();
+            this.tblPasajeros.destroy();
+        }
+        this.tblPasajeros = $("#selectPasajeros_tblPasajeros").DataTable({
+            "aaData": data,
+            "columns": [
+                {
+                    "mRender": function (data, type, row) {
+                        return oSeleccionPasajeros.fnRenderCheckBoxPasajeros(row);
+                    }
+                },
+                { "title": "Nombre", "data": "Nombre" },
+                { "title": "Apellido", "data": "Apellido" },
+                { "title": "Email", "data": "Email" },
+                { "title": "Nro Documento", "data": "NroDocumento" },               
+            ],
+            "bAutoWidth": false,
+            "paging": false,
+            "searching": false,
+        });
+    }
+
+    oSeleccionPasajeros.fnRenderCheckBoxPasajeros = function (row) {
+        const html = "<input type=\"checkbox\" id=\"selectPasajeros_tblPasajeros_checkbox_" + row.Id + "\" " +
+            " onclick=\"oSeleccionPasajeros.checkBoxPasajero('" + row.Id + "')\" >";
+        return html;
+    }
+
+    oSeleccionPasajeros.checkBoxPasajero = function (pasajeroId) {
+        if ($("#selectPasajeros_tblPasajeros_checkbox_" + pasajeroId).is(':checked')) {
+
+
+        }
+    }
+    oSeleccionPasajeros.loadHabitacion = function (data) {
+        const result = data.HabitacionesDisponibles.filter(h => h.HabitacionId == this.habitacionId);
+        if (result.length > 0) {
+            const habitacion = result[0];
+            this.habitacionCapacidad = habitacion.Capacidad;
+            $("#hab_nombre").html(habitacion.HabitacionNombre);
+            $("#hab_nro").html(habitacion.NroHabitacion);
+            $("#hab_tipo").html(habitacion.HabitacionTipo);
+            $("#hab_descripcion").html(habitacion.HabitacionDescripcion);
+            $("#hab_precio").html(habitacion.Precio);
+            $("#hab_capacidad").html(habitacion.Capacidad);
+            
+        }
+    }
+</script>
+<div>
+    <div class="content-box">
+        <div>
+            <h5>Detalle de la Habitación</h5>
+        </div>
+        <div class="divflex">
+            <div style="width:50%">
+                <div class="form-group">
+                    <label>Nombre:</label><label class="show-data" id="hab_nombre"></label>
+                </div>
+                <div class="form-group">
+                    <label>Número:</label><label class="show-data" id="hab_nro"></label>
+                </div>
+                <div class="form-group">
+                    <label>Tipo:</label><label class="show-data" id="hab_tipo"></label>
+                </div>
+            </div>
+            <div style="width:50%">
+                <div class="form-group">
+                    <label>Descripcion:</label><label class="show-data" id="hab_descripcion"></label>
+                </div>
+                <div class="form-group">
+                    <label>Precio:</label><label class="show-data" id="hab_precio"></label>
+                </div>
+                <div class="form-group">
+                    <label>Capacidad:</label><label class="show-data" id="hab_capacidad"></label>
+                </div>
+            </div>
+        </div>        
+        <div class="content-table">
+            <h5>Pasajeros</h5>
+            <table id="selectPasajeros_tblPasajeros" class="mat-customtable" width="100%"></table>
+        </div>
+        <div>
+            <br />
+            <input id="selectPasajeros-btn-select" type="button" title="Asignar pajero a la habitación" value="Asignar" class="btn btn-small btn-inverse" onclick="" />
+        </div>
+    </div>
+   
+    
+    
+</div>
+<input type="hidden" id="selectPasajeros_habitacionId" value="@ViewData["habitacionId"]" />
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        oSeleccionPasajeros.habitacionId = $("#selectPasajeros_habitacionId").val();
+        oSeleccionPasajeros.loadHabitacion(oReserva);
+        oSeleccionPasajeros.loadTablePasajeros(oReserva.Pasajeros);
+    });
+</script>

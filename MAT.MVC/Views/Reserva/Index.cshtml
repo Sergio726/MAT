@@ -40,309 +40,324 @@
         <input type="text" id="id_paquete" value="@PaqueteID" />
     </div>
 
+    <div class="container-flex">
+        <div class="left-container">
+            <section id="panel-detalle">
 
-    <section id="panel-detalle">
-     
-        <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
-            <div class="widget-head">
-                <h4 class="heading glyphicons"><i></i>Detalle de Viaje</h4>
-                <span class="collapse-toggle"></span>
-            </div>
-            <div id="divDetalleViaje" class="widget-body in collapse" style="height: auto;">
-                @*@Html.Partial("_DetalleViaje", new PaqueteModel(ViajeID))*@
-                <div class="iconLoading" style="height: 60px;"></div>
-            </div>
-        </div>
-        <div class="widget" data-toggle="collapse-widget" data-collapse-closed="true">
-            <div class="widget-head">
-                <h4 class="heading glyphicons"><i></i>Opciones</h4>
-                <span class="collapse-toggle"></span>
-            </div>
-            <div class="widget-body collapse" style="height: 0px;">
-               <input type="button" class="btnBaby_balck" title="Vinculación de menores" onclick="showVinculosMenor();" />
-               <input type="button" class="btnsearchFactura" title="Ver lista de facturas de este viaje" onclick="javascript:goFacturas('@(ViajeID.ToString())');" />
-               <input type="button" class="btnaddtoWaitingList" title="Lista de Espera" onclick="openWaitingList();" />
-                @*<a href="javascript:goFacturas('@ViajeID');" title="Ver lista de facturas de este viaje" target="_blank">Ver Facturas</a>*@
-            </div>
-        </div>
-    </section>
-
-    <section id="panel-bus">
-        <div id="container">
-            
-            
-            @*MINIBUS*@
-            @if (Model.First().TransporteTipo == "MINIBUS") 
-            {
-               <div id="coche_minibus" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
-                    <div id="bus-tabs" class="scroll_x">
-                        <ul>
-                            <li><a href="#tabs-1">MINIBUS</a></li>
-                        </ul>
-                        <div id="tabs-1">
-                            <h2>MINI BUS</h2>
-                            <ul class="piso_superior">
-                            
-                                <li class="tv1">TV</li>
-                         
-                                 @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
-                                 {
-                                     if (pasaje.PasajeroId != null)
-                                     {
-                                         string sPosition = "top";
-                                         if (pasaje.ButacaPosicion == "A")
-                                         {
-                                             sPosition = "bottom";
-                                         }
-                                         <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-toggle="tooltip" data-placement="@sPosition" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>    
-                                     }
-                                     else
-                                     {
-                                    <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>   
-                                     }
-                                 }
-                            </ul>
-                        </div>
+                <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
+                    <div class="widget-head">
+                        <h4 class="heading glyphicons"><i></i>Detalle de Viaje</h4>
+                        <span class="collapse-toggle"></span>
+                    </div>
+                    <div id="divDetalleViaje" class="widget-body in collapse" style="height: auto;">
+                        @*@Html.Partial("_DetalleViaje", new PaqueteModel(ViajeID))*@
+                        <div class="iconLoading" style="height: 60px;"></div>
                     </div>
                 </div>
-            }
-            else if (Model.First().TransporteTipo == "CAMION 4X4")
-            {
-                <div id="coche_minibus" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
-                    <div id="bus-tabs" class="scroll_x">
-                        <ul>
-                            <li><a href="#tabs-1">CAMION 4X4</a></li>
-                        </ul>
-                        <div id="tabs-1">
-                            <h2>CAMION 4X4</h2>
-                            <ul class="piso_superior">
+                <div class="widget" data-toggle="collapse-widget" data-collapse-closed="true">
+                    <div class="widget-head">
+                        <h4 class="heading glyphicons"><i></i>Opciones</h4>
+                        <span class="collapse-toggle"></span>
+                    </div>
+                    <div class="widget-body collapse" style="height: 0px;">
+                        <input type="button" class="btnBaby_balck" title="Vinculación de menores" onclick="showVinculosMenor();" />
+                        <input type="button" class="btnsearchFactura" title="Ver lista de facturas de este viaje" onclick="javascript:goFacturas('@(ViajeID.ToString())');" />
+                        <input type="button" class="btnaddtoWaitingList" title="Lista de Espera" onclick="openWaitingList();" />
+                        @*<a href="javascript:goFacturas('@ViajeID');" title="Ver lista de facturas de este viaje" target="_blank">Ver Facturas</a>*@
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="right-container">
+            <section id="panel-bus">
+                <div id="container">
 
-                                <li class="tv1">TV</li>
 
-                                @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
-                                {
-                                    if (pasaje.PasajeroId != null)
-                                    {
-                                        string sPosition = "top";
-                                        if (pasaje.ButacaPosicion == "A")
+                    @*MINIBUS*@
+                    @if (Model.First().TransporteTipo == "MINIBUS")
+                    {
+                        <div id="coche_minibus" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
+                            <div id="bus-tabs" class="scroll_x">
+                                <ul>
+                                    <li><a href="#tabs-1">MINIBUS</a></li>
+                                </ul>
+                                <div id="tabs-1">
+                                    <h2>MINI BUS</h2>
+                                    <ul class="piso_superior">
+
+                                        <li class="tv1">TV</li>
+
+                                        @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
                                         {
-                                            sPosition = "bottom";
+                                            if (pasaje.PasajeroId != null)
+                                            {
+                                                string sPosition = "top";
+                                                if (pasaje.ButacaPosicion == "A")
+                                                {
+                                                    sPosition = "bottom";
+                                                }
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-toggle="tooltip" data-placement="@sPosition" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+
+                                            }
+                                            else
+                                            {
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+
+                                            }
                                         }
-                                        <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-toggle="tooltip" data-placement="@sPosition" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
-                                    }
-                                    else
-                                    {
-                                        <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
-                                    }
-                                }
-                            </ul>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            }
-            else if (Model.First().TransporteTipo == "PISOELEVADO")
-            {
-                <div id="coche_pisoelevado" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
-                    <div id="bus-tabs" class="scroll_x">
-                        <ul>
-                            <li><a href="#tabs-1">Piso Elevado</a></li>
-                        </ul>
-                        <div id="tabs-1">
-                            <h2>PISO ELEVADO SEMI CAMA</h2>
-                            <ul class="piso_inferior">
-                                <li class="banio">BAÑO</li>
-                                <li class="bar">BAR</li>
-                                <li class="tv1">TV</li>
-                                <li class="tv2">TV</li>
-                                <li class="tv3">TV</li>
-                                <li class="tv4">TV</li>
-
-                                @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
-                                {
-                                    if (pasaje.PasajeroId != null)
-                                    {
-                                        string sPosition = "top";
-                                        if (pasaje.ButacaPosicion == "A")
-                                        {
-                                            sPosition = "bottom";
-                                        }
-                                        <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-toggle="tooltip" data-placement="@sPosition" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
-
-
-                                    }
-                                    else
-                                    {
-                                        <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
-                                    }
-
-                                }
-                            </ul>
-                        </div>
-                    
-                    </div>
-
-
-                </div>
-            }
-            else
-            {
-              <div id="coche51_61" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
-                <div id="bus-tabs" class="scroll_x">
-                    <ul>
-                        <li><a href="#tabs-1">Piso Superior</a></li>
-                        <li><a href="#tabs-2">Piso Inferior</a></li>
-                    </ul>
-                    <div id="tabs-1">
-                        <h2>PISO SUPERIOR SEMI CAMA</h2>
-                        <ul class="piso_superior">
-                            <li class="escalera">ESCALERA</li>
-                            <li class="bar">BAR</li>
-                            <li class="tv1">TV</li>
-                            <li class="tv2">TV</li>
-                            <li class="tv3">TV</li>
-                            <li class="tv4">TV</li>
-
-                             @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
-                             {
-                                 if (pasaje.PasajeroId != null)
-                                 {
-                                     string sPosition = "top";
-                                     if (pasaje.ButacaPosicion == "A")
-                                     {
-                                         sPosition = "bottom";
-                                     }
-                                     <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-toggle="tooltip" data-placement="@sPosition" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>    
-                                     
-                                     
-                                 }
-                                 else
-                                 {
-                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>   
-                                 }
-
-                             }
-                        </ul>
-                    </div>
-                    <div id="tabs-2">
-                        <h2>PISO INFERIOR CAMA</h2>
-                        <ul class="piso_inferior">
-                            <li class="escalera">ESCALERA</li>
-                            <li class="bar">BAR</li>
-                            <li class="banio">BAÑO</li>
-                            <li class="tv1">TV</li>
-
-                             @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 2))
-                             {
-                                 if (pasaje.PasajeroId != null)
-                                 {
-                                     string sPosition = "top";
-                                     if (pasaje.ButacaPosicion == "A")
-                                     {
-                                         sPosition = "bottom";
-                                     }
-                                     <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="" data-toggle="tooltip" data-placement="@sPosition">@pasaje.ButacaCodigoButaca</a></li>    
-                                 }
-                                 else
-                                 {
-                                     <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>   
-                                 }
-
-                             }
-                        </ul>
-                    </div>
-                </div>
-
-                
-            </div>
-            }
-
-          
-        </div>
-
-        <script type="text/javascript">
-            $(function () {
-                $("#bus-tabs").tabs();
-                $("#panel-bus a").each(function () {
-                    var estado = parseInt($(this).data("estado"));
-                    if (estado == 1) {
-                        $(this).addClass("disponible");
-                    } else if (estado == 3) {
-                        $(this).removeClass("disponible");
-                        $(this).addClass("señado");
-                    } else if (estado == 4) {
-                        $(this).removeClass("disponible");
-                        $(this).addClass("reservado");
-                    } else if (estado == 5) {
-                        $(this).removeClass("disponible");
-                        $(this).addClass("prereserva");
-                    } else if (estado == 6) {
-                        $(this).removeClass("disponible");
-                        $(this).addClass("reservahotel");
-                    } else if (estado == 8) {
-                        $(this).removeClass("disponible");
-                        $(this).addClass("reservapasajehotel");
-                    } else if (estado == 9) {
-                        $(this).removeClass("disponible");
-                        $(this).addClass("prereservahotel");
                     }
-                });
-            });
-        </script>
+                    else if (Model.First().TransporteTipo == "CAMION 4X4")
+                    {
+                        <div id="coche_minibus" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
+                            <div id="bus-tabs" class="scroll_x">
+                                <ul>
+                                    <li><a href="#tabs-1">CAMION 4X4</a></li>
+                                </ul>
+                                <div id="tabs-1">
+                                    <h2>CAMION 4X4</h2>
+                                    <ul class="piso_superior">
 
-        <div id="tabla-referencia" >
-            <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
-                <div class="widget-head">
-                    <h4 class="heading glyphicons"><i></i>Tabla de Referencias</h4>
-                    <span class="collapse-toggle"></span>
+                                        <li class="tv1">TV</li>
+
+                                        @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
+                                        {
+                                            if (pasaje.PasajeroId != null)
+                                            {
+                                                string sPosition = "top";
+                                                if (pasaje.ButacaPosicion == "A")
+                                                {
+                                                    sPosition = "bottom";
+                                                }
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-toggle="tooltip" data-placement="@sPosition" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.First().TransporteTipo == "PISOELEVADO")
+                    {
+                        <div id="coche_pisoelevado" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
+                            <div id="bus-tabs" class="scroll_x">
+                                <ul>
+                                    <li><a href="#tabs-1">Piso Elevado</a></li>
+                                </ul>
+                                <div id="tabs-1">
+                                    <h2>PISO ELEVADO SEMI CAMA</h2>
+                                    <ul class="piso_inferior">
+                                        <li class="banio">BAÑO</li>
+                                        <li class="bar">BAR</li>
+                                        <li class="tv1">TV</li>
+                                        <li class="tv2">TV</li>
+                                        <li class="tv3">TV</li>
+                                        <li class="tv4">TV</li>
+
+                                        @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
+                                        {
+                                            if (pasaje.PasajeroId != null)
+                                            {
+                                                string sPosition = "top";
+                                                if (pasaje.ButacaPosicion == "A")
+                                                {
+                                                    sPosition = "bottom";
+                                                }
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-toggle="tooltip" data-placement="@sPosition" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+
+
+                                            }
+                                            else
+                                            {
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+                                            }
+
+                                        }
+                                    </ul>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div id="coche51_61" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
+                            <div id="bus-tabs" class="scroll_x">
+                                <ul>
+                                    <li><a href="#tabs-1">Piso Superior</a></li>
+                                    <li><a href="#tabs-2">Piso Inferior</a></li>
+                                </ul>
+                                <div id="tabs-1">
+                                    <h2>PISO SUPERIOR SEMI CAMA</h2>
+                                    <ul class="piso_superior">
+                                        <li class="escalera">ESCALERA</li>
+                                        <li class="bar">BAR</li>
+                                        <li class="tv1">TV</li>
+                                        <li class="tv2">TV</li>
+                                        <li class="tv3">TV</li>
+                                        <li class="tv4">TV</li>
+
+                                        @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
+                                        {
+                                            if (pasaje.PasajeroId != null)
+                                            {
+                                                string sPosition = "top";
+                                                if (pasaje.ButacaPosicion == "A")
+                                                {
+                                                    sPosition = "bottom";
+                                                }
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-toggle="tooltip" data-placement="@sPosition" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+
+
+
+
+
+                                            }
+                                            else
+                                            {
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+
+                                            }
+
+                                        }
+                                    </ul>
+                                </div>
+                                <div id="tabs-2">
+                                    <h2>PISO INFERIOR CAMA</h2>
+                                    <ul class="piso_inferior">
+                                        <li class="escalera">ESCALERA</li>
+                                        <li class="bar">BAR</li>
+                                        <li class="banio">BAÑO</li>
+                                        <li class="tv1">TV</li>
+
+                                        @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 2))
+                                        {
+                                            if (pasaje.PasajeroId != null)
+                                            {
+                                                string sPosition = "top";
+                                                if (pasaje.ButacaPosicion == "A")
+                                                {
+                                                    sPosition = "bottom";
+                                                }
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.PasajeroNombre @pasaje.PasajeroApellido" data-pasajero="@pasaje.PasajeroId" data-precio="" data-adicionales="" data-toggle="tooltip" data-placement="@sPosition">@pasaje.ButacaCodigoButaca</a></li>
+
+                                            }
+                                            else
+                                            {
+                                                <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>
+
+                                            }
+
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    }
+
+
                 </div>
-                <div class="widget-body in collapse scroll_x" style="height: 130px;">
-                    <ul class="referencias">
-                        <li>
-                            <a class="disponible"></a>
-                            <p>Disponible</p>
-                        </li>
-                        <li>
-                            <a class="seleccionado"></a>
-                            <p>Seleccionado</p>
-                        </li>
-                        <li>
-                            <a class="señado"></a>
-                            <p>Señado</p>
-                        </li>
-                        <li>
-                            <a class="reservado_ref"></a>
-                            <p>Pagado</p>
-                        </li>
-                        <li>
-                            <a class="prereserva"></a>
-                            <p>Pre-reserva</p>
-                        </li>
-                        <li style="width: 60px">
-                            <a class="reservahotel"></a>
-                            <p>Pasaje Pagado y Hotel Reservado</p>
-                        </li>
-                        <li style="width: 60px">
-                            <a class="reservapasajehotel_ref"></a>
-                            <p>Pasaje Señado y Hotel Reservado</p>
-                        </li>
-                        <li style="width: 60px">
-                            <a class="prereservapasajehotel_ref"></a>
-                            <p>Pasaje Pre-Reserva y Hotel Pre-Reservado</p>
-                        </li>
-                        <li style="width: 60px">
-                            <a class="SenaIncompleta"></a>
-                            <p>No cumple con el mínimo de Seña</p>
-                        </li>
-                    </ul>
+
+                <script type="text/javascript">
+                    $(function () {
+                        $("#bus-tabs").tabs();
+                        $("#panel-bus a").each(function () {
+                            var estado = parseInt($(this).data("estado"));
+                            if (estado == 1) {
+                                $(this).addClass("disponible");
+                            } else if (estado == 3) {
+                                $(this).removeClass("disponible");
+                                $(this).addClass("señado");
+                            } else if (estado == 4) {
+                                $(this).removeClass("disponible");
+                                $(this).addClass("reservado");
+                            } else if (estado == 5) {
+                                $(this).removeClass("disponible");
+                                $(this).addClass("prereserva");
+                            } else if (estado == 6) {
+                                $(this).removeClass("disponible");
+                                $(this).addClass("reservahotel");
+                            } else if (estado == 8) {
+                                $(this).removeClass("disponible");
+                                $(this).addClass("reservapasajehotel");
+                            } else if (estado == 9) {
+                                $(this).removeClass("disponible");
+                                $(this).addClass("prereservahotel");
+                            }
+                        });
+                    });
+                </script>
+
+                <div id="tabla-referencia">
+                    <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
+                        <div class="widget-head">
+                            <h4 class="heading glyphicons"><i></i>Tabla de Referencias</h4>
+                            <span class="collapse-toggle"></span>
+                        </div>
+                        <div class="widget-body in collapse scroll_x" style="height: 130px;">
+                            <ul class="referencias">
+                                <li>
+                                    <a class="disponible"></a>
+                                    <p>Disponible</p>
+                                </li>
+                                <li>
+                                    <a class="seleccionado"></a>
+                                    <p>Seleccionado</p>
+                                </li>
+                                <li>
+                                    <a class="señado"></a>
+                                    <p>Señado</p>
+                                </li>
+                                <li>
+                                    <a class="reservado_ref"></a>
+                                    <p>Pagado</p>
+                                </li>
+                                <li>
+                                    <a class="prereserva"></a>
+                                    <p>Pre-reserva</p>
+                                </li>
+                                <li style="width: 60px">
+                                    <a class="reservahotel"></a>
+                                    <p>Pasaje Pagado y Hotel Reservado</p>
+                                </li>
+                                <li style="width: 60px">
+                                    <a class="reservapasajehotel_ref"></a>
+                                    <p>Pasaje Señado y Hotel Reservado</p>
+                                </li>
+                                <li style="width: 60px">
+                                    <a class="prereservapasajehotel_ref"></a>
+                                    <p>Pasaje Pre-Reserva y Hotel Pre-Reservado</p>
+                                </li>
+                                <li style="width: 60px">
+                                    <a class="SenaIncompleta"></a>
+                                    <p>No cumple con el mínimo de Seña</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
-    </section>
+    </div>
+    
+
+    
 
     <p class="botonera-form">
 
         <input id="btn-reservar" type="button" title="Reservar" value="Reservar" class="btn btn-small btn-danger" />
-        <input id="btn-new-reservar" type="button" title="Nueva Reserva" value="Neuva Reserva" class="btn btn-small btn-danger" onclick="javascript: openNewReserva('@(ViajeID.ToString())');" />
+        <input id="btn-new-reservar" type="button" title="Nueva Reserva" value="Nueva Reserva" class="btn btn-small btn-danger" onclick="javascript: openNewReserva('@(ViajeID.ToString())');" />
         <input id="btn-nomina" data-id="@ViajeID" type="button" title="Lista Completa" value="Manifiesto" class="btn btn-small btn-inverse" />
         <input id="btn-listasimple" data-id="@ViajeID" type="button" title="Lista de Pasajero" value="Lista de Pasajeros" class="btn btn-small btn-inverse" />
         @* <input id="btn-cnrt-hojauno" data-id="@ViajeID" type="button" title="CNRT Hoja Uno" value="CNRT Hoja Uno" class="btn btn-small btn-inverse" />
@@ -619,7 +634,7 @@
 
         /* New Reserva*/
         function openNewReserva(viajeId) {            
-            window.location.href = "/Reserva/NuevaReserva?viajeid=" + viajeID;
+            window.location.href = "/NuevaReserva/Index?viajeid=" + viajeId;
         };
     </script>
   }

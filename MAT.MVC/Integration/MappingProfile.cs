@@ -34,11 +34,29 @@ namespace MAT.MVC.Integration
                 .ForMember(dest => dest.PasajeroApellido, opt => opt.MapFrom(src => src.PasajeroApellido))
                 .ForMember(dest => dest.MonedaTipo, opt => opt.MapFrom(src => src.MonedaTipo))
                 .ForMember(dest => dest.TransporteTipo, opt => opt.MapFrom(src => src.TransporteTipo));
+
+            CreateMap<DetalleViajeDto, DetalleViaje>()
+                .ForMember(dest => dest.Descripcion, opt => opt.MapFrom(src => GetString(src.Descripcion)))
+                .ForMember(dest => dest.Destino, opt => opt.MapFrom(src => GetString(src.Destino)))
+                .ForMember(dest => dest.FechaSalida, opt => opt.MapFrom(src => GetString(src.FechaSalida)))
+                .ForMember(dest => dest.FechaRegreso, opt => opt.MapFrom(src => GetString(src.FechaRegreso)))
+                .ForMember(dest => dest.HoraSalida, opt => opt.MapFrom(src => GetString(src.HoraSalida)))
+                .ForMember(dest => dest.HoraRegreso, opt => opt.MapFrom(src => GetString(src.HoraRegreso)))
+                .ForMember(dest => dest.TiempoConsentracion, opt => opt.MapFrom(src => src.TiempoConsentracion))
+                .ForMember(dest => dest.NroCoche, opt => opt.MapFrom(src => GetString(src.NroCoche)))
+                .ForMember(dest => dest.PaqueteServicios, opt => opt.MapFrom(src => GetString(src.PaqueteServicios)))
+                .ForMember(dest => dest.PaqueteExcusionesIncluidas, opt => opt.MapFrom(src => GetString(src.PaqueteExcusionesIncluidas)))
+                .ForMember(dest => dest.PaqueteExcusionesOpcionales, opt => opt.MapFrom(src => GetString(src.PaqueteExcusionesOpcionales)))
+                .ForMember(dest => dest.Observaciones, opt => opt.MapFrom(src => GetString(src.Observaciones)));
         }
 
         private Guid GetGuid(Guid? id)
         {
             return id ?? Guid.Empty;
+        }
+        private string GetString(string value)
+        {
+            return value ?? string.Empty;
         }
     }
 }
