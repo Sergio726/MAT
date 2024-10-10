@@ -1,19 +1,23 @@
 ﻿<script type="text/javascript">
-    var oSeleccionPasajeros = {};
-    oSeleccionPasajeros.habitacionId = "";
-    oSeleccionPasajeros.habitacionCapacidad = 0;
-    oSeleccionPasajeros.loadTablePasajeros = function (data) {
-        if (this.tblPasajeros != undefined) {
-            this.tblPasajeros.clear();
-            this.tblPasajeros.draw();
-            this.tblPasajeros.destroy();
+    var oSeleccionarPasajeros = {};    
+    oSeleccionarPasajeros.Habitacion = {};
+    oSeleccionarPasajeros.PasajerosSelected = [];
+
+    oSeleccionarPasajeros.loadTablePasajeros = function (dataSource) {
+
+        const dataFilter = dataSource.filter(p => p.HabitacionAsignada == "");
+
+        if (this.TblPasajeros != undefined) {
+            this.TblPasajeros.clear();
+            this.TblPasajeros.draw();
+            this.TblPasajeros.destroy();
         }
-        this.tblPasajeros = $("#selectPasajeros_tblPasajeros").DataTable({
-            "aaData": data,
+        this.TblPasajeros = $("#selectPasajeros_tblPasajeros").DataTable({
+            "aaData": dataFilter,
             "columns": [
                 {
                     "mRender": function (data, type, row) {
-                        return oSeleccionPasajeros.fnRenderCheckBoxPasajeros(row);
+                        return oSeleccionarPasajeros.fnRenderCheckBoxPasajeros(row);
                     }
                 },
                 { "title": "Nombre", "data": "Nombre" },
@@ -27,30 +31,49 @@
         });
     }
 
-    oSeleccionPasajeros.fnRenderCheckBoxPasajeros = function (row) {
+    oSeleccionarPasajeros.fnRenderCheckBoxPasajeros = function (row) {
         const html = "<input type=\"checkbox\" id=\"selectPasajeros_tblPasajeros_checkbox_" + row.Id + "\" " +
-            " onclick=\"oSeleccionPasajeros.checkBoxPasajero('" + row.Id + "')\" >";
+            " onclick=\"oSeleccionarPasajeros.checkBoxPasajero('" + row.Id + "')\" >";
         return html;
     }
 
-    oSeleccionPasajeros.checkBoxPasajero = function (pasajeroId) {
-        if ($("#selectPasajeros_tblPasajeros_checkbox_" + pasajeroId).is(':checked')) {
-
-
+    oSeleccionarPasajeros.checkBoxPasajero = function (pasajeroId) {
+        const oChecBox = $("#selectPasajeros_tblPasajeros_checkbox_" + pasajeroId);
+        if (oChecBox.is(':checked')) {
+            const ocupacion = this.PasajerosSelected.length;
+            const disponibilidad = this.Habitacion.Capacidad - ocupacion;
+            if (disponibilidad > 0) {
+                this.PasajerosSelected.push(pasajeroId);
+            } else {
+                alert("La capacidad de la habitacion ya esta cubierta");
+                oChecBox.prop("checked", false);
+            }
+        }
+        else {
+            const idx = this.PasajerosSelected.findIndex(x => x == pasajeroId);
+            if (idx != -1) {
+                this.PasajerosSelected.splice(idx, 1);
+            }
         }
     }
-    oSeleccionPasajeros.loadHabitacion = function (data) {
-        const result = data.HabitacionesDisponibles.filter(h => h.HabitacionId == this.habitacionId);
-        if (result.length > 0) {
-            const habitacion = result[0];
-            this.habitacionCapacidad = habitacion.Capacidad;
-            $("#hab_nombre").html(habitacion.HabitacionNombre);
-            $("#hab_nro").html(habitacion.NroHabitacion);
-            $("#hab_tipo").html(habitacion.HabitacionTipo);
-            $("#hab_descripcion").html(habitacion.HabitacionDescripcion);
-            $("#hab_precio").html(habitacion.Precio);
-            $("#hab_capacidad").html(habitacion.Capacidad);
-            
+
+    oSeleccionarPasajeros.asignar = function () {
+        const habId = this.Habitacion.HabitacionId;        
+        $("#AsignarPasajeroHabitacion").dialog("close");
+        oReserva.updateHabitacionesSeleted(this.PasajerosSelected, habId);
+    }
+    
+    oSeleccionarPasajeros.loadHabitacion = function (data) {
+        const habitacionId = $("#selectPasajeros_habitacionId").val();
+        const result = data.HabitacionesDisponibles.filter(h => h.HabitacionId == habitacionId);
+        if (result.length > 0) {            
+            this.Habitacion = result[0];
+            $("#hab_nombre").html(this.Habitacion.HabitacionNombre);
+            $("#hab_nro").html(this.Habitacion.NroHabitacion);
+            $("#hab_tipo").html(this.Habitacion.HabitacionTipo);
+            $("#hab_descripcion").html(this.Habitacion.HabitacionDescripcion);
+            $("#hab_precio").html(this.Habitacion.Precio);
+            $("#hab_capacidad").html(this.Habitacion.Capacidad);            
         }
     }
 </script>
@@ -89,7 +112,7 @@
         </div>
         <div>
             <br />
-            <input id="selectPasajeros-btn-select" type="button" title="Asignar pajero a la habitación" value="Asignar" class="btn btn-small btn-inverse" onclick="" />
+            <input id="selectPasajeros-btn-select" type="button" title="Asignar pajero a la habitación" value="Asignar" class="btn btn-small btn-inverse" onclick="oSeleccionarPasajeros.asignar();" />
         </div>
     </div>
    
@@ -99,9 +122,8 @@
 <input type="hidden" id="selectPasajeros_habitacionId" value="@ViewData["habitacionId"]" />
 <script type="text/javascript">
     $(document).ready(function () {
-        
-        oSeleccionPasajeros.habitacionId = $("#selectPasajeros_habitacionId").val();
-        oSeleccionPasajeros.loadHabitacion(oReserva);
-        oSeleccionPasajeros.loadTablePasajeros(oReserva.Pasajeros);
+                
+        oSeleccionarPasajeros.loadHabitacion(oReserva);
+        oSeleccionarPasajeros.loadTablePasajeros(oReserva.Pasajeros);
     });
 </script>

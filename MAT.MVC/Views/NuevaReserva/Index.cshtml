@@ -1,6 +1,4 @@
-﻿@*@model List<MAT.MVC.Models.PasajeModel>*@
-
-@model NuevaReservaModel
+﻿@model NuevaReservaModel
 
 @using MAT.MVC.Models
 @using MAT.Enums
@@ -124,6 +122,7 @@
 
                 </section>
                 <section id="panel-bus">
+                    
                     <div id="container">
 
 
@@ -475,7 +474,7 @@
 
         <script type="text/javascript">
             let oReserva = {};
-            oReserva.viajeId = "@Model.ViajeId";
+            oReserva.ViajeId = "@Model.ViajeId";
             oReserva.Cliente = {};
             oReserva.Pasajeros = [];
             oReserva.HabitacionesDisponibles = [];
@@ -483,15 +482,25 @@
 
 
             $(document).ready(function () {
-                getPasajesSenaIncompleta();
-                //getDetalleViaje();
+                getPasajesSenaIncompleta();               
                 checkBus();
+
                 loadAutoComplete();
-                loadTablePasajeros();
+                oReserva.loadTablePasajeros();
                 getHabitacionesDisponibles();
                 setTimeout(formatDisplay, 2000);
-
             });
+
+            function getHabitacionesDisponibles() {
+                $.ajax({
+                    url: "/NuevaReserva/GetHabitacionesDisponiblesByViaje",
+                    data: { viajeId: oReserva.ViajeId },
+                    success: function (data) {
+                        oReserva.HabitacionesDisponibles = data;
+                        oReserva.loadTableHabitaciones();
+                    }
+                })
+            }
 
             function loadAutoComplete() {
                 $("#txt-busqueda-cliente").autocomplete({
@@ -515,8 +524,7 @@
                     },
                     select: function (event, ul) {
                         oReserva.Cliente = ul.item.data;
-                        oReserva.Pasajeros.push(ul.item.data);
-                        loadTablePasajeros();
+                        oReserva.addPasajero(ul.item.data);
                         $("#cliente-dni").html(ul.item.data.NroDocumento);
                     }
                 });
@@ -539,32 +547,28 @@
                         })
 
                     },
-                    select: function (event, ul) {
-                        oReserva.Pasajeros.push(ul.item.data);
-                        loadTablePasajeros();
+                    select: function (event, ul) {                        
+                        oReserva.addPasajero(ul.item.data);
                         ul.item.value = ''; //clean input
                     }
                 });
             }
 
-            function loadTablePasajeros() {
-                if (oReserva.tblPasajeros != undefined) {
-                    oReserva.tblPasajeros.clear();
-                    oReserva.tblPasajeros.draw();
-                    oReserva.tblPasajeros.destroy();
+            oReserva.loadTablePasajeros = function () {
+                if (this.TblPasajeros != undefined) {
+                    this.TblPasajeros.clear();
+                    this.TblPasajeros.draw();
+                    this.TblPasajeros.destroy();
                 }
-                oReserva.tblPasajeros = $("#tblPasajeros").DataTable({
-                    "aaData": oReserva.Pasajeros,
+                this.TblPasajeros = $("#tblPasajeros").DataTable({
+                    "aaData": this.Pasajeros,
                     "columns": [
                         { "title": "Nombre", "data": "Nombre" },
                         { "title": "Apellido", "data": "Apellido" },
                         { "title": "Email", "data": "Email" },
                         { "title": "Nro Documento", "data": "NroDocumento" },
                         {
-                            "title": "Habitacion Asignada",
-                            "mRender": function (data, type, row) {
-                                return "";
-                            }
+                            "title": "Habitacion Asignada", "data": "HabitacionAsignada"
                         },
                         {
                             "mRender": function (data, type, row) {
@@ -578,25 +582,14 @@
                 });
             }
 
-            function getHabitacionesDisponibles() {
-                $.ajax({
-                    url: "/NuevaReserva/GetHabitacionesDisponiblesByViaje",
-                    data: { viajeId: oReserva.viajeId },
-                    success: function (data) {
-                        oReserva.HabitacionesDisponibles = data;
-                        loadTableHabitaciones();
-                    }
-                })
-            }
-
-            function loadTableHabitaciones() {
-                if (oReserva.tblHabitaciones != undefined) {
-                    oReserva.tblHabitaciones.clear();
-                    oReserva.tblHabitaciones.draw();
-                    oReserva.tblHabitaciones.destroy();
+            oReserva.loadTableHabitaciones = function() {
+                if (this.TblHabitaciones != undefined) {
+                    this.TblHabitaciones.clear();
+                    this.TblHabitaciones.draw();
+                    this.TblHabitaciones.destroy();
                 }
-                oReserva.tblHabitaciones = $("#tblHabitaciones").DataTable({
-                    "aaData": oReserva.HabitacionesDisponibles,
+                this.TblHabitaciones = $("#tblHabitaciones").DataTable({
+                    "aaData": this.HabitacionesDisponibles,
                     "columns": [
                         {
                             "mRender": function (data, type, row) {
@@ -609,12 +602,7 @@
                         { "title": "Tipo Habitacion", "data": "HabitacionTipo" },
                         { "title": "Descripcion", "data": "HabitacionDescripcion" },
                         { "title": "Capacidad", "data": "Capacidad" },
-                        { "title": "Precio", "data": "Precio" },
-                        //{
-                        //    "mRender": function (data, type, row) {
-                        //        return oReserva.fnRenderButtonRemovePasajero(row);
-                        //    }
-                        //},
+                        { "title": "Precio", "data": "Precio" },                        
                     ],
                     "bAutoWidth": false,
                     "paging": false,
@@ -629,38 +617,50 @@
             }
 
             oReserva.checkBoxHabitacionesDispoinbles = function (id) {
-                if ($("#tblHabitacion_checkbox_" + id).is(':checked')) {
-                    let capacidadActual = oReserva.calularCapacidadCubierta();
+
+                const oCheckBox = $("#tblHabitacion_checkbox_" + id);
+                if (this.Pasajeros.length == 0) {
+                    alert("Agregue pasajeros para continuar.")
+                    oCheckBox.prop("checked", false);
+                    return false;
+                }
+               
+                if (oCheckBox.is(':checked')) {
+                    const capacidadActual = oReserva.calularCapacidadCubierta();
                     switch (true) {
                         case capacidadActual < 0:
-                            oReserva.HabitacionesSelected.push(id);
-                            oReserva.AsignarPasajeroHabitacion(id);
+                            habitacionSelected = {};
+                            habitacionSelected.Id = id;
+                            habitacionSelected.PasajerosAssigned = [];
+                            this.HabitacionesSelected.push(habitacionSelected);
+                            this.asignarPasajeroHabitacion(id);
                             break;
                         case capacidadActual > 0:
                             alert("La capacidad ya esta cubierta y tiene disponible " + capacidadActual);
-                            $("#tblHabitacion_checkbox_" + id).prop("checked", false);
+                            oCheckBox.prop("checked", false);
                             break;
                         case capacidadActual == 0:
                             alert("La capacidad ya esta cubierta");
-                            $("#tblHabitacion_checkbox_" + id).prop("checked", false);
+                            oCheckBox.prop("checked", false);
                             break;
                     }
 
                 } else {
-                    const idx = oReserva.HabitacionesSelected.findIndex(x => x == id);
+                    const idx = this.HabitacionesSelected.findIndex(x => x.Id == id);
                     if (idx != -1) {
-                        oReserva.HabitacionesSelected.splice(idx, 1);
+                        oReserva.updateHabitacionesSeleted([], id);
+                        this.HabitacionesSelected.splice(idx, 1);
                     }
                 }
-                oReserva.RecalcularDetallePago();
+                this.recalcularDetallePago();
             }
 
             oReserva.calularCapacidadCubierta = function () {
-                const cantidadPasajeros = oReserva.Pasajeros.length;
+                const cantidadPasajeros = this.Pasajeros.length;
                 let capacidadCubierta = 0;
 
-                for (const item of oReserva.HabitacionesSelected) {
-                    const habitacion = oReserva.HabitacionesDisponibles.filter(x => x.HabitacionId == item);
+                for (let item of this.HabitacionesSelected) {
+                    const habitacion = this.HabitacionesDisponibles.filter(x => x.HabitacionId == item.Id);
                     if (habitacion.length > 0)
                         capacidadCubierta = capacidadCubierta + habitacion[0].Capacidad;
                 }
@@ -675,22 +675,28 @@
                 return button;
             }
 
+            oReserva.addPasajero = function (pasajero) {
+                let data = pasajero;
+                data.HabitacionAsignada = "";
+                oReserva.Pasajeros.push(data);
+                oReserva.loadTablePasajeros();
+            }
+
             oReserva.removePasajero = function (pasajeroId)
             {
-                const idx = oReserva.Pasajeros.findIndex(x => x.Id == pasajeroId);
+                const idx = this.Pasajeros.findIndex(x => x.Id == pasajeroId);
                 if (idx != -1) {
-                    oReserva.Pasajeros.splice(idx, 1);
-                    loadTablePasajeros();
+                    this.Pasajeros.splice(idx, 1);
+                    this.loadTablePasajeros();
                 }
             }
 
-            oReserva.RecalcularDetallePago = function () {
+            oReserva.recalcularDetallePago = function () {
                 let precioTotal = 0;
                 let html = "";
-                html += "<h4>Detalle de compra</h4>"
-                //html += "<h5>Habitaciones</h5>"
+                html += "<h4>Detalle de compra</h4>"                
                 for (let item of this.HabitacionesSelected) {
-                    const result = this.HabitacionesDisponibles.filter(h => h.HabitacionId == item);
+                    const result = this.HabitacionesDisponibles.filter(h => h.HabitacionId == item.Id);
                     if (result.length > 0) {
                         const habitacion = result[0];
                         precioTotal += habitacion.Precio;
@@ -702,12 +708,38 @@
                 $("#detalle-pago").html(html);
             }
 
-            oReserva.AsignarPasajeroHabitacion = function (habitacionId) {
+            oReserva.asignarPasajeroHabitacion = function (habitacionId) {
                 var url = "/NuevaReserva/SeleccionarPasajero?habitacionId=" + habitacionId; 
                 var dialogid = "AsignarPasajeroHabitacion";
                 var dialogtitle = "Asignar pasajero a la habitación";
                 ShowFormDialog(url, dialogid, dialogtitle, "medium");                
                 return false;
+            }
+
+            oReserva.updateHabitacionesSeleted = function (pasajerosSelected, habitacionId) {
+                const idx = this.HabitacionesSelected.findIndex(x => x.Id == habitacionId);
+                if (idx != -1) {
+                    const pasajerosUnassigned = [...oReserva.HabitacionesSelected[idx].PasajerosAssigned];
+                    oReserva.HabitacionesSelected[idx].PasajerosAssigned = pasajerosSelected;
+
+                    //Unassign pasajeros
+                    this.asignarHabitacionToPasajeros(pasajerosUnassigned, "");
+
+                    //Assign pasajeros
+                    const habitacion = this.HabitacionesDisponibles.find(h => h.HabitacionId == habitacionId);
+                    this.asignarHabitacionToPasajeros(pasajerosSelected, habitacion.NroHabitacion);
+                }
+                
+                this.loadTablePasajeros();
+            }
+
+            oReserva.asignarHabitacionToPasajeros = function (pasajeros, nroHabitacion) {                
+                for (let pasajeroId of pasajeros) {
+                    const idxp = this.Pasajeros.findIndex(p => p.Id == pasajeroId);
+                    if (idxp != -1) {
+                        this.Pasajeros[idxp].HabitacionAsignada = nroHabitacion;
+                    }
+                }
             }
 
         function checkBus(){
@@ -858,7 +890,7 @@
                     if (data.sMsg == "Done.") {
                         var oData = eval(data.sResult);
                         if (oData.length > 0) {
-                            for (var i = 0; i < oData.length; i++) {
+                            for (let i = 0; i < oData.length; i++) {
                                 $("#" + oData[i].PasajeID).addClass("señaIncompleta");
                                 $("#" + oData[i].PasajeID).attr("FacturaID", oData[i].FacturaID);
                                 $("#" + oData[i].PasajeID).attr("ClienteID", oData[i].ClienteID);
