@@ -29,6 +29,9 @@ namespace MAT.MVC.Integration.BackendApi.Models
         public string PasajeroApellido { get; set; }
         public int? MonedaTipo { get; set; }
         public string TransporteTipo { get; set; }
+        public string PrecioCama { get;set; }
+        public string PrecioSemicama { get;set; }
+        public string PrecioCalculado { get; set; } 
     }
 
 }

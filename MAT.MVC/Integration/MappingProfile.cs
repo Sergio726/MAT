@@ -33,7 +33,10 @@ namespace MAT.MVC.Integration
                 .ForMember(dest => dest.PasajeroNombre, opt => opt.MapFrom(src => src.PasajeroNombre))
                 .ForMember(dest => dest.PasajeroApellido, opt => opt.MapFrom(src => src.PasajeroApellido))
                 .ForMember(dest => dest.MonedaTipo, opt => opt.MapFrom(src => src.MonedaTipo))
-                .ForMember(dest => dest.TransporteTipo, opt => opt.MapFrom(src => src.TransporteTipo));
+                .ForMember(dest => dest.TransporteTipo, opt => opt.MapFrom(src => src.TransporteTipo))
+                .ForMember(dest => dest.PrecioCama, opt => opt.MapFrom(src => src.PrecioCama))
+                .ForMember(dest => dest.PrecioSemicama, opt => opt.MapFrom(src => src.PrecioSemicama))
+                .ForMember(dest => dest.PrecioCalculado, opt => opt.MapFrom(src => src.PrecioCalculado));
 
             CreateMap<DetalleViajeDto, DetalleViaje>()
                 .ForMember(dest => dest.Descripcion, opt => opt.MapFrom(src => GetString(src.Descripcion)))

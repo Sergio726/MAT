@@ -96,9 +96,10 @@ namespace MAT.MVC.Controllers.NuevaReserva
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult SeleccionarPasajero(string habitacionId)
+        public ActionResult SeleccionarPasajero(string entityId, string source)
         {
-            if (!string.IsNullOrEmpty(habitacionId)) ViewData["habitacionId"] = habitacionId;
+            if (!string.IsNullOrEmpty(source)) ViewData["source"] = source;
+            if (!string.IsNullOrEmpty(entityId)) ViewData["entityId"] = entityId;
             //SeleccionarPasajeroModel seleccionarpasajeromodel = new SeleccionarPasajeroModel(paqueteid);
             return PartialView();
         }

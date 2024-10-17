@@ -5,7 +5,8 @@ div#container {
 	padding: 0;
 	width: 100%;
 }
-.piso_superior, .piso_inferior, .piso_superior_edicion, .piso_inferior_edicion
+.piso_superior, .piso_inferior, .piso_superior_edicion, .piso_inferior_edicion,
+.new_piso_superior, .new_piso_inferior
 {
 	clear: both;
 	font-size: 11px;
@@ -17,7 +18,8 @@ div#container {
 	height: 290px;
 }
 
-.piso_superior a, .piso_inferior a, .piso_superior_edicion a, .piso_inferior_edicion a
+.piso_superior a, .piso_inferior a, .piso_superior_edicion a, .piso_inferior_edicion a, 
+.new_piso_superior a, .new_piso_inferior a
 {
 	color:#666 !important;
 	background-image: url(/Images/estados_butacas.png);
@@ -113,7 +115,11 @@ div#container {
 .piso_superior_edicion a:hover,
 .piso_superior_edicion a:focus,
 .piso_inferior_edicion a:hover,
-.piso_inferior_edicion a:focus
+.piso_inferior_edicion a:focus,
+.new_piso_superior a:hover,
+.new_piso_superior a:focus,
+.new_piso_inferior a:hover,
+.new_piso_inferior a:focus
 {
 	background-position: -100px 0;
 }
@@ -125,7 +131,11 @@ div#container {
 .piso_superior_edicion a.selected,
 .piso_superior_edicion a.selected:hover,
 .piso_inferior_edicion a.selected,
-.piso_inferior_edicion a.selected:hover
+.piso_inferior_edicion a.selected:hover,
+.new_piso_superior a.selected,
+.new_piso_superior a.selected:hover,
+.new_piso_inferior a.selected,
+.new_piso_inferior a.selected:hover
 {
 	background-position: -100px 0;
 }
@@ -133,7 +143,9 @@ div#container {
 .piso_superior a.reservado,
 .piso_inferior a.reservado,
 .piso_superior_edicion a.reservado,
-.piso_inferior_edicion a.reservado
+.piso_inferior_edicion a.reservado,
+.new_piso_superior a.reservado,
+.new_piso_inferior a.reservado
 {
 	background-position: -50px 0;
 }
@@ -141,7 +153,9 @@ div#container {
 .piso_superior a.señado,
 .piso_inferior a.señado,
 .piso_superior_edicion a.señado,
-.piso_inferior_edicion a.señado
+.piso_inferior_edicion a.señado,
+.new_piso_superior a.señado,
+.new_piso_inferior a.señado
 {
 	background-position: -250px 0;
 }
@@ -149,7 +163,9 @@ div#container {
 .piso_superior a.prereserva,
 .piso_inferior a.prereserva,
 .piso_superior_edicion a.prereserva,
-.piso_inferior_edicion a.prereserva
+.piso_inferior_edicion a.prereserva,
+.new_piso_superior a.prereserva,
+.new_piso_inferior a.prereserva
 {
 	background-position: -155px 0;
 }
@@ -157,7 +173,9 @@ div#container {
 .piso_superior a.prereservahotel,
 .piso_inferior a.prereservahotel,
 .piso_superior_edicion a.prereservahotel,
-.piso_inferior_edicion a.prereservahotel
+.piso_inferior_edicion a.prereservahotel,
+.new_piso_superior a.prereservahotel,
+.new_piso_inferior a.prereservahotel
 {
 	background-position: -349px 0;
 }
@@ -165,7 +183,9 @@ div#container {
 .piso_superior a.reservahotel,
 .piso_inferior a.reservahotel,
 .piso_superior_edicion a.reservahotel,
-.piso_inferior_edicion a.reservahotel
+.piso_inferior_edicion a.reservahotel,
+.new_piso_superior a.reservahotel,
+.new_piso_inferior a.reservahotel
 {
 	background-position: -200px 0;
 }
@@ -173,14 +193,20 @@ div#container {
 .piso_superior a.reservapasajehotel,
 .piso_inferior a.reservapasajehotel,
 .piso_superior_edicion a.reservapasajehotel,
-.piso_inferior_edicion a.reservapasajehotel
+.piso_inferior_edicion a.reservapasajehotel,
+.new_piso_superior a.reservapasajehotel,
+.new_piso_inferior a.reservapasajehotel
 {
 	background-position: -300px 0;
 }
 
 
-.piso_superior li, .piso_inferior li,
-.piso_superior_edicion li, .piso_inferior_edicion li
+.piso_superior li,
+.piso_inferior li,
+.piso_superior_edicion li,
+.piso_inferior_edicion li,
+.new_piso_superior li,
+.new_piso_inferior li
 {
 	list-style: none;
 	position: absolute;
@@ -189,8 +215,10 @@ div#container {
 	height: 50px;
 }
 
-.piso_superior li#master, .piso_inferior li#master,
-.piso_superior_edicion li#master, .piso_inferior_edicion li#master
+.piso_superior li#master,
+.piso_inferior li#master,
+.piso_superior_edicion li#master,
+.piso_inferior_edicion li#master
 {
 	font-size: 10px;
 	overflow: visible;
@@ -205,59 +233,84 @@ div#container {
 /* COCHES 
 ----------------------------------------------------------------------*/
 
-.piso_superior .A, .piso_inferior .A,
-.piso_superior_edicion .A, .piso_inferior_edicion .A
+.piso_superior .A,
+.piso_inferior .A,
+.piso_superior_edicion .A,
+.piso_inferior_edicion .A,
+.new_piso_superior .A,
+.new_piso_inferior .A
 {
 	top: 20px;
 }
 
-.piso_superior .B, .piso_inferior .B,
-.piso_superior_edicion .B, .piso_inferior_edicion .B
+.piso_superior .B,
+.piso_inferior .B,
+.piso_superior_edicion .B,
+.piso_inferior_edicion .B,
+.new_piso_superior .B,
+.new_piso_inferior .B
 {
 	top: 70px;
 }
 
-.piso_superior .C, .piso_inferior .C,
-.piso_superior_edicion .C, .piso_inferior_edicion .C
+.piso_superior .C,
+.piso_inferior .C,
+.piso_superior_edicion .C,
+.piso_inferior_edicion .C,
+.new_piso_superior .C,
+.new_piso_inferior .C
 {
 	top: 180px;
 }
 
-.piso_superior .D, .piso_inferior .D,
-.piso_superior_edicion .D, .piso_inferior_edicion .D
+.piso_superior .D,
+.piso_inferior .D,
+.piso_superior_edicion .D,
+.piso_inferior_edicion .D,
+.new_piso_superior .D,
+.new_piso_inferior .D
 {
 	top: 230px;
 }
 
 .piso_superior .E, .piso_inferior .E,
-.piso_superior_edicion .E, .piso_inferior_edicion .E
+.piso_superior_edicion .E, .piso_inferior_edicion .E,
+.new_piso_superior .E, .new_piso_inferior .E
 {
 	top: 290px;
 }
 
-.piso_superior .F, .piso_inferior .F,
-.piso_superior_edicion .F, .piso_inferior_edicion .F
+.piso_superior .F,
+.piso_inferior .F,
+.piso_superior_edicion .F,
+.piso_inferior_edicion .F
+.new_piso_superior .F,
+.new_piso_inferior .F
 {
 	top: 340px;
 }
 
 .piso_superior .escalera,
-.piso_superior_edicion .escalera
+.piso_superior_edicion .escalera,
+.new_piso_superior .escalera
 {
-	-webkit-transform:rotate(270deg);
-	left:180px;
-	top:60px;
-	font-weight:bold;
-	font-size:13px	
+	-webkit-transform: rotate(270deg);
+	/*left: 180px;*/
+	left: 200px;
+	top: 60px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 .piso_superior .bar,
-.piso_superior_edicion .bar{
-	-webkit-transform:rotate(270deg);
-	left:220px;
-	top:40px;
-	font-weight:bold;
-	font-size:13px	
+.piso_superior_edicion .bar,
+.new_piso_superior .bar
+{
+	-webkit-transform: rotate(270deg);
+	left: 220px;
+	top: 40px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 
@@ -278,308 +331,441 @@ div#container {
 }
 
 #coche51_61 .piso_superior .tv1,
-#coche51_61 .piso_superior_edicion .tv1{
-	-webkit-transform:rotate(270deg);
-	left:80px;
-	top:105px;
-	font-weight:bold;
-	font-size:13px	
+#coche51_61 .piso_superior_edicion .tv1,
+#coche51_61 .new_piso_superior .tv1
+{
+	-webkit-transform: rotate(270deg);
+	left: 80px;
+	top: 105px;
+	font-weight: bold;
+	font-size: 13px
 }
 #coche51_61 .piso_superior .tv2,
-#coche51_61 .piso_superior_edicion .tv2{
-	-webkit-transform:rotate(270deg);
-	left:280px;
-	top:105px;
-	font-weight:bold;
-	font-size:13px	
+#coche51_61 .piso_superior_edicion .tv2,
+#coche51_61 .new_piso_superior .tv2
+{
+	-webkit-transform: rotate(270deg);
+	left: 280px;
+	top: 105px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche51_61 .piso_superior .tv3,
-#coche51_61 .piso_superior_edicion .tv3{
-	-webkit-transform:rotate(270deg);
-	left:430px;
-	top:105px;
-	font-weight:bold;
-	font-size:13px	
+#coche51_61 .piso_superior_edicion .tv3,
+#coche51_61 .new_piso_superior .tv3
+{
+	-webkit-transform: rotate(270deg);
+	left: 430px;
+	top: 105px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche51_61 .piso_superior .tv4,
-#coche51_61 .piso_superior_edicion .tv4{
-	-webkit-transform:rotate(270deg);
-	left:580px;
-	top:105px;
-	font-weight:bold;
-	font-size:13px	
+#coche51_61 .piso_superior_edicion .tv4,
+#coche51_61 .new_piso_superior .tv4
+{
+	-webkit-transform: rotate(270deg);
+	left: 580px;
+	top: 105px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche51_61 .piso_inferior .escalera,
-#coche51_61 .piso_inferior_edicion .escalera{
-	-webkit-transform:rotate(270deg);
-	left:120px;
-	top:60px;
-	font-weight:bold;
-	font-size:13px	
+#coche51_61 .piso_inferior_edicion .escalera,
+#coche51_61 .new_piso_inferior .escalera
+{
+	-webkit-transform: rotate(270deg);
+	left: 120px;
+	top: 60px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche51_61 .piso_inferior .bar,
-#coche51_61 .piso_inferior_edicion .bar{
-	-webkit-transform:rotate(270deg);
-	left:120px;
-	top:230px;
-	font-weight:bold;
-	font-size:13px	
+#coche51_61 .piso_inferior_edicion .bar,
+#coche51_61 .new_piso_inferior .bar
+{
+	-webkit-transform: rotate(270deg);
+	left: 120px;
+	top: 230px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche51_61 .piso_inferior .banio,
-#coche51_61 .piso_inferior_edicion .banio{
-	-webkit-transform:rotate(270deg);
-	left:120px;
-	top:170px;
-	font-weight:bold;
-	font-size:13px	
+#coche51_61 .piso_inferior_edicion .banio,
+#coche51_61 .new_piso_inferior .banio
+{
+	-webkit-transform: rotate(270deg);
+	left: 120px;
+	top: 170px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche_pisoelevado .piso_inferior .banio,
-#coche_pisoelevado .piso_inferior_edicion .banio{
-    -webkit-transform: rotate( 
-                        270deg
-                            );
-    left: 736px;
-    top: 35px;
-    font-weight: bold;
-    font-size: 13px;
+#coche_pisoelevado .piso_inferior_edicion .banio,
+#coche_pisoelevado .new_piso_inferior .banio
+{
+	-webkit-transform: rotate( 270deg );
+	left: 736px;
+	top: 35px;
+	font-weight: bold;
+	font-size: 13px;
 }
 
 #coche_pisoelevado .piso_inferior .bar,
-#coche_pisoelevado .piso_inferior_edicion .bar{
-    -webkit-transform: rotate( 
-                        270deg
-                            );
-    left: 736px;
-    top: 107px;
-    font-weight: bold;
-    font-size: 13px;
+#coche_pisoelevado .piso_inferior_edicion .bar,
+#coche_pisoelevado .new_piso_inferior .bar 
+{
+	-webkit-transform: rotate( 270deg );
+	left: 736px;
+	top: 107px;
+	font-weight: bold;
+	font-size: 13px;
 }
 
 
 #coche50 .piso_inferior .tv1,
-#coche50 .piso_inferior_edicion .tv1{
-	-webkit-transform:rotate(270deg);
-	left:160px;
-	top:100px;
-	font-weight:bold;
-	font-size:13px	
+#coche50 .piso_inferior_edicion .tv1,
+#coche50 .new_piso_inferior .tv1 
+{
+	-webkit-transform: rotate(270deg);
+	left: 160px;
+	top: 100px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 
 #coche50 .piso_superior .tv1,
-#coche50 .piso_superior_edicion .tv1{
-	-webkit-transform:rotate(270deg);
-	left:80px;
-	top:105px;
-	font-weight:bold;
-	font-size:13px	
+#coche50 .piso_superior_edicion .tv1,
+#coche50 .new_piso_superior .tv1 
+{
+	-webkit-transform: rotate(270deg);
+	left: 80px;
+	top: 105px;
+	font-weight: bold;
+	font-size: 13px
 }
 #coche50 .piso_superior .tv2,
-#coche50 .piso_superior_edicion .tv2{
-	-webkit-transform:rotate(270deg);
-	left:280px;
-	top:105px;
-	font-weight:bold;
-	font-size:13px	
+#coche50 .piso_superior_edicion .tv2,
+#coche50 .new_piso_superior .tv2 
+{
+	-webkit-transform: rotate(270deg);
+	left: 280px;
+	top: 105px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche50 .piso_superior .tv3,
-#coche50 .piso_superior_edicion .tv3{
-	-webkit-transform:rotate(270deg);
-	left:480px;
-	top:105px;
-	font-weight:bold;
-	font-size:13px	
+#coche50 .piso_superior_edicion .tv3,
+#coche50 .new_piso_superior .tv3
+{
+	-webkit-transform: rotate(270deg);
+	left: 480px;
+	top: 105px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche50 .piso_inferior .escalera,
-#coche50 .piso_inferior_edicion .escalera{
-	-webkit-transform:rotate(270deg);
-	left:120px;
-	top:60px;
-	font-weight:bold;
-	font-size:13px	
+#coche50 .piso_inferior_edicion .escalera,
+#coche50 .new_piso_inferior .escalera
+{
+	-webkit-transform: rotate(270deg);
+	left: 120px;
+	top: 60px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche50 .piso_inferior .bar,
-#coche50 .piso_inferior_edicion .bar{
-	-webkit-transform:rotate(270deg);
-	left:120px;
-	top:230px;
-	font-weight:bold;
-	font-size:13px	
+#coche50 .piso_inferior_edicion .bar,
+#coche50 .new_piso_inferior .bar
+{
+	-webkit-transform: rotate(270deg);
+	left: 120px;
+	top: 230px;
+	font-weight: bold;
+	font-size: 13px
 }
 
 #coche50 .piso_inferior .banio,
-#coche50 .piso_inferior_edicion .banio{
-	-webkit-transform:rotate(270deg);
-	left:120px;
-	top:170px;
-	font-weight:bold;
-	font-size:13px	
+#coche50 .piso_inferior_edicion .banio,
+#coche50 .new_piso_inferior .banio
+{
+	-webkit-transform: rotate(270deg);
+	left: 120px;
+	top: 170px;
+	font-weight: bold;
+	font-size: 13px
 }
 
-#coche50 .piso_inferior .tv1, #coche51_61 .piso_inferior .tv1,
-#coche50 .piso_inferior_edicion .tv1, #coche51_61 .piso_inferior_edicion .tv1{
-	-webkit-transform:rotate(270deg);
-	left:160px;
-	top:100px;
-	font-weight:bold;
-	font-size:13px	
+#coche50 .piso_inferior .tv1,
+#coche51_61 .piso_inferior .tv1,
+#coche50 .piso_inferior_edicion .tv1,
+#coche51_61 .piso_inferior_edicion .tv1,
+#coche50 .new_piso_inferior .tv1,
+#coche51_61 .new_piso_inferior .tv1
+{
+	-webkit-transform: rotate(270deg);
+	left: 160px;
+	top: 100px;
+	font-weight: bold;
+	font-size: 13px
 }
 
-.piso_superior .seat_01, .piso_inferior .seat_01,
-.piso_superior_edicion .seat_01, .piso_inferior_edicion .seat_01
+.piso_superior .seat_01,
+.piso_inferior .seat_01,
+.piso_superior_edicion .seat_01,
+.piso_inferior_edicion .seat_01,
+.new_piso_superior .seat_01,
+.new_piso_inferior .seat_01
 {
 	left: 100px;
 }
 
-.piso_superior .seat_02, .piso_inferior .seat_02,
-.piso_superior_edicion .seat_02, .piso_inferior_edicion .seat_02
+.piso_superior .seat_02,
+.piso_inferior .seat_02,
+.piso_superior_edicion .seat_02,
+.piso_inferior_edicion .seat_02,
+.new_piso_superior .seat_02,
+.new_piso_inferior .seat_02
 {
 	left: 160px;
 }
 
-.piso_superior .seat_03, .piso_inferior .seat_03,
-.piso_superior_edicion .seat_03, .piso_inferior_edicion .seat_03
+.piso_superior .seat_03,
+.piso_inferior .seat_03,
+.piso_superior_edicion .seat_03,
+.piso_inferior_edicion .seat_03,
+.new_piso_superior .seat_03,
+.new_piso_inferior .seat_03
 {
 	left: 210px;
 }
 
-.piso_superior .seat_04, .piso_inferior .seat_04,
-.piso_superior_edicion .seat_04, .piso_inferior_edicion .seat_04
+.piso_superior .seat_04,
+.piso_inferior .seat_04,
+.piso_superior_edicion .seat_04,
+.piso_inferior_edicion .seat_04,
+.new_piso_superior .seat_04,
+.new_piso_inferior .seat_04
 {
 	left: 260px;
 }
 
-.piso_superior .seat_05, .piso_inferior .seat_05,
-.piso_superior_edicion .seat_05, .piso_inferior_edicion .seat_05
+.piso_superior .seat_05,
+.piso_inferior .seat_05,
+.piso_superior_edicion .seat_05,
+.piso_inferior_edicion .seat_05,
+.new_piso_superior .seat_05,
+.new_piso_inferior .seat_05
 {
 	left: 310px;
 }
 
-.piso_superior .seat_06, .piso_inferior .seat_06,
-.piso_superior_edicion .seat_06, .piso_inferior_edicion .seat_06
+.piso_superior .seat_06,
+.piso_inferior .seat_06,
+.piso_superior_edicion .seat_06,
+.piso_inferior_edicion .seat_06,
+.new_piso_superior .seat_06,
+.new_piso_inferior .seat_06
 {
 	left: 360px;
 }
 
-.piso_superior .seat_07, .piso_inferior .seat_07,
-.piso_superior_edicion .seat_07, .piso_inferior_edicion .seat_07
+.piso_superior .seat_07,
+.piso_inferior .seat_07,
+.piso_superior_edicion .seat_07,
+.piso_inferior_edicion .seat_07,
+.new_piso_superior .seat_07,
+.new_piso_inferior .seat_07
 {
 	left: 410px;
 }
 
-.piso_superior .seat_08, .piso_inferior .seat_08,
-.piso_superior_edicion .seat_08, .piso_inferior_edicion .seat_08
+.piso_superior .seat_08,
+.piso_inferior .seat_08,
+.piso_superior_edicion .seat_08,
+.piso_inferior_edicion .seat_08,
+.new_piso_superior .seat_08,
+.new_piso_inferior .seat_08
 {
 	left: 460px;
 }
 
-.piso_superior .seat_09, .piso_inferior .seat_09,
-.piso_superior_edicion .seat_09, .piso_inferior_edicion .seat_09
+.piso_superior .seat_09,
+.piso_inferior .seat_09,
+.piso_superior_edicion .seat_09,
+.piso_inferior_edicion .seat_09,
+.new_piso_superior .seat_09,
+.new_piso_inferior .seat_09
 {
 	left: 510px;
 }
 
-.piso_superior .seat_10, .piso_inferior .seat_10,
-.piso_superior_edicion .seat_10, .piso_inferior_edicion .seat_10
+.piso_superior .seat_10,
+.piso_inferior .seat_10,
+.piso_superior_edicion .seat_10,
+.piso_inferior_edicion .seat_10,
+.new_piso_superior .seat_10,
+.new_piso_inferior .seat_10
 {
 	left: 560px;
 }
 
-.piso_superior .seat_11, .piso_inferior .seat_11,
-.piso_superior_edicion .seat_11, .piso_inferior_edicion .seat_11
+.piso_superior .seat_11,
+.piso_inferior .seat_11,
+.piso_superior_edicion .seat_11,
+.piso_inferior_edicion .seat_11,
+.new_piso_superior .seat_11,
+.new_piso_inferior .seat_11
 {
 	left: 610px;
 }
 
-.piso_superior .seat_12, .piso_inferior .seat_12,
-.piso_superior_edicion .seat_12, .piso_inferior_edicion .seat_12
+.piso_superior .seat_12,
+.piso_inferior .seat_12,
+.piso_superior_edicion .seat_12,
+.piso_inferior_edicion .seat_12,
+.new_piso_superior .seat_12,
+.new_piso_inferior .seat_12
 {
 	left: 660px;
 }
 
-.piso_superior .seat_13, .piso_inferior .seat_13,
-.piso_superior_edicion .seat_13, .piso_inferior_edicion .seat_13
+.piso_superior .seat_13,
+.piso_inferior .seat_13,
+.piso_superior_edicion .seat_13,
+.piso_inferior_edicion .seat_13,
+.new_piso_superior .seat_13,
+.new_piso_inferior .seat_13
 {
 	left: 710px;
 }
 
-.piso_superior .seat_14, .piso_inferior .seat_14,
-.piso_superior_edicion .seat_14, .piso_inferior_edicion .seat_14
+.piso_superior .seat_14,
+.piso_inferior .seat_14,
+.piso_superior_edicion .seat_14,
+.piso_inferior_edicion .seat_14,
+.new_piso_superior .seat_14,
+.new_piso_inferior .seat_14
 {
 	left: 760px;
 }
 
-.piso_superior .seat_15, .piso_inferior .seat_15,
-.piso_superior_edicion .seat_15, .piso_inferior_edicion .seat_15
+.piso_superior .seat_15,
+.piso_inferior .seat_15,
+.piso_superior_edicion .seat_15,
+.piso_inferior_edicion .seat_15,
+.new_piso_superior .seat_15,
+.new_piso_inferior .seat_15
 {
 	left: 810px;
 }
 
-.piso_superior .seat_16, .piso_inferior .seat_16,
-.piso_superior_edicion .seat_16, .piso_inferior_edicion .seat_16
+.piso_superior .seat_16,
+.piso_inferior .seat_16,
+.piso_superior_edicion .seat_16,
+.piso_inferior_edicion .seat_16,
+.new_piso_superior .seat_16,
+.new_piso_inferior .seat_16
 {
 	left: 860px;
 }
 
-.piso_superior .seat_17, .piso_inferior .seat_17,
-.piso_superior_edicion .seat_17, .piso_inferior_edicion .seat_17
+.piso_superior .seat_17,
+.piso_inferior .seat_17,
+.piso_superior_edicion .seat_17,
+.piso_inferior_edicion .seat_17,
+.new_piso_superior .seat_17,
+.new_piso_inferior .seat_17
 {
 	left: 910px;
 }
 
-.piso_superior .seat_18, .piso_inferior .seat_18,
-.piso_superior_edicion .seat_18, .piso_inferior_edicion .seat_18
+.piso_superior .seat_18,
+.piso_inferior .seat_18,
+.piso_superior_edicion .seat_18,
+.piso_inferior_edicion .seat_18,
+.new_piso_superior .seat_18,
+.new_piso_inferior .seat_18
 {
 	left: 960px;
 }
 
-.piso_superior .seat_19, .piso_inferior .seat_19,
-.piso_superior_edicion .seat_19, .piso_inferior_edicion .seat_19
+.piso_superior .seat_19,
+.piso_inferior .seat_19,
+.piso_superior_edicion .seat_19,
+.piso_inferior_edicion .seat_19,
+.new_piso_superior .seat_19,
+.new_piso_inferior .seat_19
 {
 	left: 1010px;
 }
 
-.piso_superior .seat_20, .piso_inferior .seat_20,
-.piso_superior_edicion .seat_20, .piso_inferior_edicion .seat_20
+.piso_superior .seat_20,
+.piso_inferior .seat_20,
+.piso_superior_edicion .seat_20,
+.piso_inferior_edicion .seat_20,
+.new_piso_superior .seat_20,
+.new_piso_inferior .seat_20
 {
 	left: 1060px;
 }
 
-.piso_superior .seat_21, .piso_inferior .seat_21,
-.piso_superior_edicion .seat_21, .piso_inferior_edicion .seat_21
+.piso_superior .seat_21,
+.piso_inferior .seat_21,
+.piso_superior_edicion .seat_21,
+.piso_inferior_edicion .seat_21,
+.new_piso_superior .seat_21,
+.new_piso_inferior .seat_21
 {
 	left: 1110px;
 }
 
-.piso_superior .seat_22, .piso_inferior .seat_22,
-.piso_superior_edicion .seat_22, .piso_inferior_edicion .seat_22
+.piso_superior .seat_22,
+.piso_inferior .seat_22,
+.piso_superior_edicion .seat_22,
+.piso_inferior_edicion .seat_22,
+.new_piso_superior .seat_22,
+.new_piso_inferior .seat_22
 {
 	left: 1160px;
 }
 
-.piso_superior .seat_23, .piso_inferior .seat_23,
-.piso_superior_edicion .seat_23, .piso_inferior_edicion .seat_23
+.piso_superior .seat_23,
+.piso_inferior .seat_23,
+.piso_superior_edicion .seat_23,
+.piso_inferior_edicion .seat_23,
+.new_piso_superior .seat_23,
+.new_piso_inferior .seat_23
 {
 	left: 1210px;
 }
 
-.piso_superior .seat_24, .piso_inferior .seat_24,
-.piso_superior_edicion .seat_24, .piso_inferior_edicion .seat_24
+.piso_superior .seat_24,
+.piso_inferior .seat_24,
+.piso_superior_edicion .seat_24,
+.piso_inferior_edicion .seat_24,
+.new_piso_superior .seat_24,
+.new_piso_inferior .seat_24
 {
 	left: 1260px;
 }
 
-.piso_superior .seat_25, .piso_inferior .seat_25,
-.piso_superior_edicion .seat_25, .piso_inferior_edicion .seat_25
+.piso_superior .seat_25,
+.piso_inferior .seat_25,
+.piso_superior_edicion .seat_25,
+.piso_inferior_edicion .seat_25,
+.new_piso_superior .seat_25,
+.new_piso_inferior .seat_25
 {
 	left: 1310px;
 }

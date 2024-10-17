@@ -383,6 +383,9 @@ namespace MAT.MVC.Models
         public string PasajeroApellido { get; set; }
         public int MonedaTipo { get; set; }
         public string TransporteTipo { get; set; }
+        public string PrecioCama { get; set; }
+        public string PrecioSemicama { get; set; }
+        public string PrecioCalculado { get; set; }
     }
 
     public class DistribucionCoche

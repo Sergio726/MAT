@@ -1,19 +1,26 @@
 ﻿<script type="text/javascript">
-    var oSeleccionPasajeros = {};
-    oSeleccionPasajeros.habitacionId = "";
-    oSeleccionPasajeros.habitacionCapacidad = 0;
-    oSeleccionPasajeros.loadTablePasajeros = function (data) {
-        if (this.tblPasajeros != undefined) {
-            this.tblPasajeros.clear();
-            this.tblPasajeros.draw();
-            this.tblPasajeros.destroy();
+    var oSeleccionarPasajeros = {};
+    oSeleccionarPasajeros.Source = "";
+    oSeleccionarPasajeros.EntityId = "";
+    oSeleccionarPasajeros.DataSource = [];
+    oSeleccionarPasajeros.Habitacion = {};
+    oSeleccionarPasajeros.PasajerosSelected = [];
+
+    oSeleccionarPasajeros.loadTablePasajeros = function () {
+
+        const dataFilter = this.DataSource;
+
+        if (this.TblPasajeros != undefined) {
+            this.TblPasajeros.clear();
+            this.TblPasajeros.draw();
+            this.TblPasajeros.destroy();
         }
-        this.tblPasajeros = $("#selectPasajeros_tblPasajeros").DataTable({
-            "aaData": data,
+        this.TblPasajeros = $("#selectPasajeros_tblPasajeros").DataTable({
+            "aaData": dataFilter,
             "columns": [
                 {
                     "mRender": function (data, type, row) {
-                        return oSeleccionPasajeros.fnRenderCheckBoxPasajeros(row);
+                        return oSeleccionarPasajeros.fnRenderPasajeros(row);
                     }
                 },
                 { "title": "Nombre", "data": "Nombre" },
@@ -27,81 +34,191 @@
         });
     }
 
-    oSeleccionPasajeros.fnRenderCheckBoxPasajeros = function (row) {
-        const html = "<input type=\"checkbox\" id=\"selectPasajeros_tblPasajeros_checkbox_" + row.Id + "\" " +
-            " onclick=\"oSeleccionPasajeros.checkBoxPasajero('" + row.Id + "')\" >";
+    oSeleccionarPasajeros.fnRenderPasajeros = function (row) {
+        let html = "";
+        if (oSeleccionarPasajeros.Source == "BUTACA") {
+            html = "<input type=\"radio\" id=\"selectPasajeros_tblPasajeros_radio_" + row.Id + "\" " +
+                " name=\"selectPasajeros_tblPasajeros_radio\"" +
+                " onclick=\"oSeleccionarPasajeros.radioButtonPasajero('" + row.Id + "')\" >";
+        } else {
+            html = "<input type=\"checkbox\" id=\"selectPasajeros_tblPasajeros_checkbox_" + row.Id + "\" " +
+                " onclick=\"oSeleccionarPasajeros.checkBoxPasajero('" + row.Id + "')\" >";
+        }
         return html;
     }
 
-    oSeleccionPasajeros.checkBoxPasajero = function (pasajeroId) {
-        if ($("#selectPasajeros_tblPasajeros_checkbox_" + pasajeroId).is(':checked')) {
+    oSeleccionarPasajeros.checkBoxPasajero = function (pasajeroId) {
+        const oChecBox = $("#selectPasajeros_tblPasajeros_checkbox_" + pasajeroId);
+        if (oChecBox.is(':checked')) {
 
-
+            switch (this.Source) {
+                case "HABITACION":
+                    this.validacionSourceHabitaciones(pasajeroId, oChecBox);
+                    break;
+                case "BUTACA":
+                    this.PasajerosSelected.push(pasajeroId);
+                    break;
+            }
+        }
+        else {
+            const idx = this.PasajerosSelected.findIndex(x => x == pasajeroId);
+            if (idx != -1) {
+                this.PasajerosSelected.splice(idx, 1);
+            }
         }
     }
-    oSeleccionPasajeros.loadHabitacion = function (data) {
-        const result = data.HabitacionesDisponibles.filter(h => h.HabitacionId == this.habitacionId);
-        if (result.length > 0) {
-            const habitacion = result[0];
-            this.habitacionCapacidad = habitacion.Capacidad;
-            $("#hab_nombre").html(habitacion.HabitacionNombre);
-            $("#hab_nro").html(habitacion.NroHabitacion);
-            $("#hab_tipo").html(habitacion.HabitacionTipo);
-            $("#hab_descripcion").html(habitacion.HabitacionDescripcion);
-            $("#hab_precio").html(habitacion.Precio);
-            $("#hab_capacidad").html(habitacion.Capacidad);
-            
+
+    oSeleccionarPasajeros.radioButtonPasajero = function (pasajeroId) {
+        const oChecBox = $("#selectPasajeros_tblPasajeros_radio_" + pasajeroId);
+        if (oChecBox.is(':checked')) {
+            this.PasajerosSelected = [];
+            this.PasajerosSelected.push(pasajeroId);
+        }
+    }
+
+    oSeleccionarPasajeros.asignar = function () {        
+        const entityId = this.EntityId;
+        const source = this.Source;
+        const pasajerosSelected = this.PasajerosSelected;
+        $("#AsignarPasajero").dialog("close");
+        switch (source) {
+            case "HABITACION":
+                oReserva.updateHabitacionesSeleted(pasajerosSelected, entityId);
+                break;
+            case "BUTACA":
+                oReserva.updateButacasSeleted(pasajerosSelected, entityId);
+                break;
+        }
+        
+    }
+
+    oSeleccionarPasajeros.loadEntity = function (data) {
+        this.Source = $("#selectPasajeros_source").val();
+        this.EntityId = $("#selectPasajeros_entityId").val();
+
+        switch (this.Source) {
+            case "HABITACION":
+                this.loadHabitacion(data, this.EntityId);
+                this.DataSource = data.Pasajeros.filter(p => p.HabitacionAsignada == "");
+                break;
+            case "BUTACA":
+                this.loadButaca(data, this.EntityId);
+                this.DataSource = data.Pasajeros.filter(p => p.Butaca.Id == "");
+                break;
+        }
+
+        this.loadTablePasajeros();
+
+    }
+    oSeleccionarPasajeros.loadHabitacion = function (data, habitacionId) {
+        $("#divHabitacion").removeClass("hidden");
+        const result = data.HabitacionesDisponibles.filter(h => h.HabitacionId == habitacionId);
+        if (result.length > 0) {            
+            this.Habitacion = result[0];
+            $("#hab_nombre").html(this.Habitacion.HabitacionNombre);
+            $("#hab_nro").html(this.Habitacion.NroHabitacion);
+            $("#hab_tipo").html(this.Habitacion.HabitacionTipo);
+            $("#hab_descripcion").html(this.Habitacion.HabitacionDescripcion);
+            $("#hab_precio").html(this.Habitacion.Precio);
+            $("#hab_capacidad").html(this.Habitacion.Capacidad);            
+        }
+    }
+
+    oSeleccionarPasajeros.loadButaca = function (data, pasajeId) {
+        $("#divButaca").removeClass("hidden");
+        const result = data.Reservas[pasajeId];
+        if (result != null) {
+            $("#but_codigo").html(result.ButacaCodigoButaca);
+            $("#but_fila").html(result.ButacaFila);
+            $("#but_posicion").html(result.ButacaPosicion);
+            $("#but_precio").html(result.PrecioCalculado);
+        }
+    }
+
+    oSeleccionarPasajeros.validacionSourceHabitaciones = function (pasajeroId, oChecBox) {
+        const ocupacion = this.PasajerosSelected.length;
+        const disponibilidad = this.Habitacion.Capacidad - ocupacion;
+        if (disponibilidad > 0) {
+            this.PasajerosSelected.push(pasajeroId);
+        } else {
+            alert("La capacidad de la habitacion ya esta cubierta");
+            oChecBox.prop("checked", false);
         }
     }
 </script>
 <div>
     <div class="content-box">
-        <div>
-            <h5>Detalle de la Habitación</h5>
+        <div id="divHabitacion" class="hidden">
+            <div>
+                <h5>Detalle de la Habitación</h5>
+            </div>
+            <div class="divflex">
+                <div style="width:50%">
+                    <div class="form-group">
+                        <label>Nombre:</label><label class="show-data" id="hab_nombre"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Número:</label><label class="show-data" id="hab_nro"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo:</label><label class="show-data" id="hab_tipo"></label>
+                    </div>
+                </div>
+                <div style="width:50%">
+                    <div class="form-group">
+                        <label>Descripcion:</label><label class="show-data" id="hab_descripcion"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio:</label><label class="show-data" id="hab_precio"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Capacidad:</label><label class="show-data" id="hab_capacidad"></label>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="divflex">
-            <div style="width:50%">
-                <div class="form-group">
-                    <label>Nombre:</label><label class="show-data" id="hab_nombre"></label>
+        <div id="divButaca" class="hidden">
+            <div>
+                <h5>Detalle de la Butaca</h5>
+            </div>
+            <div class="divflex">
+                <div style="width:50%">
+                    <div class="form-group">
+                        <label>Código:</label><label class="show-data" id="but_codigo"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Fila:</label><label class="show-data" id="but_fila"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Posición:</label><label class="show-data" id="but_posicion"></label>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Número:</label><label class="show-data" id="hab_nro"></label>
-                </div>
-                <div class="form-group">
-                    <label>Tipo:</label><label class="show-data" id="hab_tipo"></label>
+                <div style="width:50%">
+                    <div class="form-group">
+                        <label>Precio:</label><label class="show-data" id="but_precio"></label>
+                    </div>                    
                 </div>
             </div>
-            <div style="width:50%">
-                <div class="form-group">
-                    <label>Descripcion:</label><label class="show-data" id="hab_descripcion"></label>
-                </div>
-                <div class="form-group">
-                    <label>Precio:</label><label class="show-data" id="hab_precio"></label>
-                </div>
-                <div class="form-group">
-                    <label>Capacidad:</label><label class="show-data" id="hab_capacidad"></label>
-                </div>
-            </div>
-        </div>        
+        </div>
         <div class="content-table">
             <h5>Pasajeros</h5>
             <table id="selectPasajeros_tblPasajeros" class="mat-customtable" width="100%"></table>
         </div>
         <div>
             <br />
-            <input id="selectPasajeros-btn-select" type="button" title="Asignar pajero a la habitación" value="Asignar" class="btn btn-small btn-inverse" onclick="" />
+            <input id="selectPasajeros-btn-select" type="button" title="Asignar pajero a la habitación" value="Asignar" class="btn btn-small btn-inverse" onclick="oSeleccionarPasajeros.asignar();" />
         </div>
     </div>
    
     
     
 </div>
-<input type="hidden" id="selectPasajeros_habitacionId" value="@ViewData["habitacionId"]" />
+<input type="hidden" id="selectPasajeros_entityId" value="@ViewData["entityId"]" />
+<input type="hidden" id="selectPasajeros_source" value="@ViewData["source"]" />
 <script type="text/javascript">
     $(document).ready(function () {
+                
+        oSeleccionarPasajeros.loadEntity(oReserva);
         
-        oSeleccionPasajeros.habitacionId = $("#selectPasajeros_habitacionId").val();
-        oSeleccionPasajeros.loadHabitacion(oReserva);
-        oSeleccionPasajeros.loadTablePasajeros(oReserva.Pasajeros);
     });
 </script>
