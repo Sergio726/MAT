@@ -543,7 +543,7 @@
                     minLength: 3,
                     source: function (request, response) {
                         $.ajax({
-                            url: "/NuevaReserva/QuickClienteSearchAsync",
+                            url: "/NuevaReserva/QuickPersonaSearchAsync",
                             data: { query: request.term },
                             success: function (data) {
                                 response($.map(data,
@@ -696,6 +696,13 @@
                         { "title": "Email", "data": "Email" },
                         { "title": "Nro Documento", "data": "NroDocumento" },
                         {
+                            "title": "Es Menor",
+                            "mRender": function (data, type, row) {
+                                let html = row.IsMenor? "Si": "No"
+                                return html;
+                            }
+                        },
+                        {
                             "title": "Habitacion Asignada", "data": "HabitacionAsignada"
                         },
                         {
@@ -807,12 +814,15 @@
             }
 
             oReserva.addPasajero = function (pasajero) {
-                let data = pasajero;
-                data.HabitacionAsignada = "";
-                data.Butaca = { Id: "", Codigo: "", Precio: 0 };                
-                data.Adicionales = [];
-                oReserva.Pasajeros.push(data);
-                oReserva.loadTablePasajeros();
+                const idx = oReserva.Pasajeros.findIndex(p => p.Id == pasajero.Id);
+                if (idx == -1) {
+                    let data = pasajero;
+                    data.HabitacionAsignada = "";
+                    data.Butaca = { Id: "", Codigo: "", Precio: 0 };
+                    data.Adicionales = [];
+                    oReserva.Pasajeros.push(data);
+                    oReserva.loadTablePasajeros();
+                }
             }
 
             oReserva.removePasajero = function (pasajeroId)
@@ -840,20 +850,21 @@
                 //Butacas
                 const butacasSelected = this.Pasajeros.filter(p => p.Butaca.Id != "");
                 for (let pasajero of butacasSelected) {
-                    html += `<h5>Butaca:  ${pasajero.Butaca.Codigo} Precio: ${pasajero.Butaca.Precio}</h5>`;
+                    precioTotal += parseFloat(pasajero.Butaca.Precio);
+                    html += `<h5>Butaca:  ${pasajero.Butaca.Codigo} Precio: ${formatNumberMoney(pasajero.Butaca.Precio)}</h5>`;
                 }
                 //Habitaciones
                 for (let item of this.HabitacionesSelected) {
                     const result = this.HabitacionesDisponibles.filter(h => h.HabitacionId == item.Id);
                     if (result.length > 0) {
                         const habitacion = result[0];
-                        precioTotal += habitacion.Precio;
-                        html += `<h5>Habitacion ${habitacion.HabitacionDescripcion} Precio: ${habitacion.Precio}"</h5>`;
+                        precioTotal += parseFloat(habitacion.Precio);
+                        html += `<h5>Habitacion ${habitacion.HabitacionDescripcion} Precio: ${formatNumberMoney(habitacion.Precio)}</h5>`;
                     }
                 }
                 
                 html += "<br>";
-                html += `<h5>Total: ${precioTotal}</h5>`;
+                html += `<h5>Total: ${formatNumberMoney(precioTotal)}</h5>`;
                 $("#detalle-pago").html(html);
             }
 

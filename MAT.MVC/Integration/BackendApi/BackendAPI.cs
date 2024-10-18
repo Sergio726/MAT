@@ -53,6 +53,13 @@ namespace MAT.MVC.Integration
             return await _apiClient.GetAsync<List<PersonaDto>>(url);
         }
 
+        public async Task<List<PersonaDto>> SearchPersonAsync(string search)
+        {
+            string queryParam = $"search={search}";
+            string url = "api/personas/searchPerson?" + queryParam;
+            return await _apiClient.GetAsync<List<PersonaDto>>(url);
+        }
+
         public async Task<List<HabitacionDto>> GetHabitacionesDisponiblesByViaje(string viajeId)
         {
             string queryParam = $"viajeId={viajeId}";

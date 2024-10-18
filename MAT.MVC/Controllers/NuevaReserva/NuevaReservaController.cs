@@ -82,6 +82,20 @@ namespace MAT.MVC.Controllers.NuevaReserva
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        public async Task<JsonResult> QuickPersonaSearchAsync(string query)
+        {
+            List<PersonaDto> result = new List<PersonaDto>();
+            try
+            {
+                result = await _backendAPI.SearchPersonAsync(query);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+            }
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
         public async Task<JsonResult> GetHabitacionesDisponiblesByViaje(string viajeId)
         {
             List<HabitacionDto> result = new List<HabitacionDto>();

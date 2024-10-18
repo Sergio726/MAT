@@ -119,7 +119,7 @@
             $("#hab_nro").html(this.Habitacion.NroHabitacion);
             $("#hab_tipo").html(this.Habitacion.HabitacionTipo);
             $("#hab_descripcion").html(this.Habitacion.HabitacionDescripcion);
-            $("#hab_precio").html(this.Habitacion.Precio);
+            $("#hab_precio").html(formatNumberMoney(this.Habitacion.Precio));
             $("#hab_capacidad").html(this.Habitacion.Capacidad);            
         }
     }
@@ -131,7 +131,7 @@
             $("#but_codigo").html(result.ButacaCodigoButaca);
             $("#but_fila").html(result.ButacaFila);
             $("#but_posicion").html(result.ButacaPosicion);
-            $("#but_precio").html(result.PrecioCalculado);
+            $("#but_precio").html(formatNumberMoney(result.PrecioCalculado));
         }
     }
 
