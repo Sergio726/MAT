@@ -466,6 +466,14 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\mat.cnrt.print.css" />
     <Content Include="Content\voucher.css" />
+    <Content Include="Dependencies\Microsoft.Web.WebPages.OAuth.dll" />
+    <Content Include="Dependencies\Microsoft.Web.WebPages.OAuth.xml" />
+    <Content Include="Dependencies\System.Web.Helpers.dll" />
+    <Content Include="Dependencies\System.Web.Helpers.xml" />
+    <Content Include="Dependencies\WebMatrix.Data.dll" />
+    <Content Include="Dependencies\WebMatrix.Data.xml" />
+    <Content Include="Dependencies\WebMatrix.WebData.dll" />
+    <Content Include="Dependencies\WebMatrix.WebData.xml" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\agregarHabitacion.png" />
