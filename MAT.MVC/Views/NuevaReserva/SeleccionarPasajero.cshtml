@@ -5,6 +5,77 @@
     oSeleccionarPasajeros.DataSource = [];
     oSeleccionarPasajeros.Habitacion = {};
     oSeleccionarPasajeros.PasajerosSelected = [];
+    oSeleccionarPasajeros.Adicional = {};
+
+    oSeleccionarPasajeros.loadEntity = function (data) {
+        this.Source = $("#selectPasajeros_source").val();
+        this.EntityId = $("#selectPasajeros_entityId").val();
+
+        switch (this.Source) {
+            case "HABITACION":
+                this.loadHabitacion(data, this.EntityId);
+                this.DataSource = data.Pasajeros.filter(p => p.HabitacionAsignada == "");
+                break;
+            case "BUTACA":
+                this.loadButaca(data, this.EntityId);
+                this.DataSource = data.Pasajeros.filter(p => p.Butaca.Id == "");
+                break;
+            case "ADICIONAL":                
+                this.loadAdicional(data, this.EntityId);
+                this.setDataSourceAdicional(data);
+                break;
+                
+        }
+
+        this.loadTablePasajeros();
+
+    }
+
+    oSeleccionarPasajeros.loadHabitacion = function (data, habitacionId) {
+        $("#divHabitacion").removeClass("hidden");
+        const result = data.HabitacionesDisponibles.filter(h => h.HabitacionId == habitacionId);
+        if (result.length > 0) {            
+            this.Habitacion = result[0];
+            $("#hab_nombre").html(this.Habitacion.HabitacionNombre);
+            $("#hab_nro").html(this.Habitacion.NroHabitacion);
+            $("#hab_tipo").html(this.Habitacion.HabitacionTipo);
+            $("#hab_descripcion").html(this.Habitacion.HabitacionDescripcion);
+            $("#hab_precio").html(formatNumberMoney(this.Habitacion.Precio));
+            $("#hab_capacidad").html(this.Habitacion.Capacidad);            
+        }
+    }
+
+    oSeleccionarPasajeros.loadButaca = function (data, pasajeId) {
+        $("#divButaca").removeClass("hidden");
+        const result = data.Reservas[pasajeId];
+        if (result != null) {
+            $("#but_codigo").html(result.ButacaCodigoButaca);
+            $("#but_fila").html(result.ButacaFila);
+            $("#but_posicion").html(result.ButacaPosicion);
+            $("#but_precio").html(formatNumberMoney(result.PrecioCalculado));
+        }
+    }
+
+    oSeleccionarPasajeros.loadAdicional = function (data, adicionalId) {
+        $("#divAdicional").removeClass("hidden");
+        const result = data.Adicionales.filter(a => a.AdicionalId == adicionalId);
+        if (result.length > 0) {
+            this.Adicional = result[0];
+            $("#adi_descripcion").html(this.Adicional.Descripcion);
+            $("#adi_precio").html(formatNumberMoney(this.Adicional.Precio));
+            const menorHtml = this.Adicional.IsMenor ? "Si" : "No";
+            $("#adi_menor").html(menorHtml);            
+        }
+    }
+
+    oSeleccionarPasajeros.setDataSourceAdicional = function (data) {
+        const menor3anios = 3;
+        if (this.Adicional.IsMenor) {
+            this.DataSource = data.Pasajeros.filter(p => p.Edad < menor3anios && p.Butaca.Id == "");
+        } else {
+            this.DataSource = data.Pasajeros.filter(p => (p.Edad < menor3anios && p.Butaca.Id != "") || p.Edad > 2);
+        }
+    }
 
     oSeleccionarPasajeros.loadTablePasajeros = function () {
 
@@ -26,7 +97,8 @@
                 { "title": "Nombre", "data": "Nombre" },
                 { "title": "Apellido", "data": "Apellido" },
                 { "title": "Email", "data": "Email" },
-                { "title": "Nro Documento", "data": "NroDocumento" },               
+                { "title": "Nro Documento", "data": "NroDocumento" },
+                { "title": "Edad", "data": "Edad" },                
             ],
             "bAutoWidth": false,
             "paging": false,
@@ -58,6 +130,9 @@
                 case "BUTACA":
                     this.PasajerosSelected.push(pasajeroId);
                     break;
+                case "ADICIONAL":
+                    this.PasajerosSelected.push(pasajeroId);
+                    break;
             }
         }
         else {
@@ -76,63 +151,23 @@
         }
     }
 
-    oSeleccionarPasajeros.asignar = function () {        
+    oSeleccionarPasajeros.asignar = function () {
         const entityId = this.EntityId;
         const source = this.Source;
         const pasajerosSelected = this.PasajerosSelected;
         $("#AsignarPasajero").dialog("close");
         switch (source) {
             case "HABITACION":
-                oReserva.updateHabitacionesSeleted(pasajerosSelected, entityId);
+                oReserva.updateHabitacionSelected(pasajerosSelected, entityId);
                 break;
             case "BUTACA":
-                oReserva.updateButacasSeleted(pasajerosSelected, entityId);
+                oReserva.updateButacaSelected(pasajerosSelected, entityId);
                 break;
-        }
-        
-    }
-
-    oSeleccionarPasajeros.loadEntity = function (data) {
-        this.Source = $("#selectPasajeros_source").val();
-        this.EntityId = $("#selectPasajeros_entityId").val();
-
-        switch (this.Source) {
-            case "HABITACION":
-                this.loadHabitacion(data, this.EntityId);
-                this.DataSource = data.Pasajeros.filter(p => p.HabitacionAsignada == "");
-                break;
-            case "BUTACA":
-                this.loadButaca(data, this.EntityId);
-                this.DataSource = data.Pasajeros.filter(p => p.Butaca.Id == "");
+            case "ADICIONAL":
+                oReserva.updateAdicionalSelected(pasajerosSelected, entityId);
                 break;
         }
 
-        this.loadTablePasajeros();
-
-    }
-    oSeleccionarPasajeros.loadHabitacion = function (data, habitacionId) {
-        $("#divHabitacion").removeClass("hidden");
-        const result = data.HabitacionesDisponibles.filter(h => h.HabitacionId == habitacionId);
-        if (result.length > 0) {            
-            this.Habitacion = result[0];
-            $("#hab_nombre").html(this.Habitacion.HabitacionNombre);
-            $("#hab_nro").html(this.Habitacion.NroHabitacion);
-            $("#hab_tipo").html(this.Habitacion.HabitacionTipo);
-            $("#hab_descripcion").html(this.Habitacion.HabitacionDescripcion);
-            $("#hab_precio").html(this.Habitacion.Precio);
-            $("#hab_capacidad").html(this.Habitacion.Capacidad);            
-        }
-    }
-
-    oSeleccionarPasajeros.loadButaca = function (data, pasajeId) {
-        $("#divButaca").removeClass("hidden");
-        const result = data.Reservas[pasajeId];
-        if (result != null) {
-            $("#but_codigo").html(result.ButacaCodigoButaca);
-            $("#but_fila").html(result.ButacaFila);
-            $("#but_posicion").html(result.ButacaPosicion);
-            $("#but_precio").html(result.PrecioCalculado);
-        }
     }
 
     oSeleccionarPasajeros.validacionSourceHabitaciones = function (pasajeroId, oChecBox) {
@@ -196,8 +231,31 @@
                 <div style="width:50%">
                     <div class="form-group">
                         <label>Precio:</label><label class="show-data" id="but_precio"></label>
-                    </div>                    
+                    </div>
                 </div>
+            </div>
+        </div>
+        <div id="divAdicional" class="hidden">
+            <div>
+                <h5>Detalle de Adicional</h5>
+            </div>
+            <div class="divflex">
+                <div style="width:50%">
+                    <div class="form-group">
+                        <label>Descripcion:</label><label class="show-data" id="adi_descripcion"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio:</label><label class="show-data" id="adi_precio"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Es para menor:</label><label class="show-data" id="adi_menor"></label>
+                    </div>
+                </div>
+                @*<div style="width:50%">
+                    <div class="form-group">
+                        <label>Precio:</label><label class="show-data" id="but_precio"></label>
+                    </div>
+                </div>*@
             </div>
         </div>
         <div class="content-table">

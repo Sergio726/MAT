@@ -12,6 +12,7 @@ namespace MAT.MVC.Integration.BackendApi.Models
         public string Apellido { get;set; }
         public string Email { get; set; }
         public string NroDocumento { get; set; }
+        public byte Edad { get; set; }
     }
     
 }
