@@ -30,7 +30,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
             //var tt = await _backendAPI.GetAllImageAsync();
 
             //List<ReservaStandard> Model = new List<ReservaStandard>();
-            NuevaReservaModel Model = new NuevaReservaModel();
+            var Model = new NuevaReservaModel();
 
             try
             {
@@ -51,26 +51,9 @@ namespace MAT.MVC.Controllers.NuevaReserva
             return View(Model);
         }
 
-        //public async Task<ActionResult> DetalleViaje(string sViajeID = "")
-        //{
-        //    MAT.MVC.Models.DetalleViaje oDetalleViaje = new DetalleViaje();
-        //    try
-        //    {
-        //        var oDto = await _backendAPI.GetDetalleViajeAsync(sViajeID);
-        //        oDetalleViaje = Mapper.Map<DetalleViaje>(oDto);
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        ViewBag.Error = e.Message;
-        //    }
-
-        //    return PartialView(oDetalleViaje);
-        //}
-
         public async Task<JsonResult> QuickClienteSearchAsync(string query)
         {
-            List<PersonaDto> result =  new List<PersonaDto>();
+            var result =  new List<PersonaDto>();
             try
             {
                 result = await _backendAPI.SearchClientAsync(query);
@@ -84,7 +67,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
 
         public async Task<JsonResult> QuickPersonaSearchAsync(string query)
         {
-            List<PersonaDto> result = new List<PersonaDto>();
+            var result = new List<PersonaDto>();
             try
             {
                 result = await _backendAPI.SearchPersonAsync(query);
@@ -98,7 +81,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
 
         public async Task<JsonResult> GetHabitacionesDisponiblesByViaje(string viajeId)
         {
-            List<HabitacionDto> result = new List<HabitacionDto>();
+            var result = new List<HabitacionDto>();
             try
             {
                 result = await _backendAPI.GetHabitacionesDisponiblesByViaje(viajeId);
@@ -110,11 +93,24 @@ namespace MAT.MVC.Controllers.NuevaReserva
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        public async Task<JsonResult> GetAdicionalesByViaje(string viajeId)
+        {
+            var result = new List<AdicionalDto>();
+            try
+            {
+                result = await _backendAPI.GetAdicionalesByViaje(viajeId);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+            }
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult SeleccionarPasajero(string entityId, string source)
         {
             if (!string.IsNullOrEmpty(source)) ViewData["source"] = source;
-            if (!string.IsNullOrEmpty(entityId)) ViewData["entityId"] = entityId;
-            //SeleccionarPasajeroModel seleccionarpasajeromodel = new SeleccionarPasajeroModel(paqueteid);
+            if (!string.IsNullOrEmpty(entityId)) ViewData["entityId"] = entityId;            
             return PartialView();
         }
     }

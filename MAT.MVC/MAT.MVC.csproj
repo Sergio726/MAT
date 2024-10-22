@@ -322,6 +322,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Integration\BackendApi\BackendAPI.cs" />
+    <Compile Include="Integration\BackendApi\Models\AdicionalDto.cs" />
     <Compile Include="Integration\BackendApi\Models\DetalleViajeDto.cs" />
     <Compile Include="Integration\BackendApi\Models\GalleryResponse.cs" />
     <Compile Include="Integration\BackendApi\Models\HabitacionDto.cs" />

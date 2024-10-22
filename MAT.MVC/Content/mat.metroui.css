@@ -234,6 +234,50 @@ div#divDetalleViaje ul {
     display: flex;
 }
 
+.detalle-compra {
+    display: flex;
+    width: 100%;
+}
+
+.detalle-compra label.left {
+    width: 70%;
+    text-align: left;
+    margin-right: 10px; /* Espacio opcional entre el label y el input */
+    margin-bottom: 0px;
+    line-height: 30px;
+    color: rgb(124,124,124);
+    cursor: auto;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.detalle-compra label.rigth {
+    width: 30%;
+    text-align: right;
+    /*margin-right: 10px;*/ /* Espacio opcional entre el label y el input */
+    margin-bottom: 0px;
+    line-height: 30px;
+    color: rgb(124,124,124);
+    cursor: auto;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.detalle-compra-titulo {    
+    width: 100%;
+    font-size: 14px;
+    text-align:center;
+}
+
+.detalle-compra-seccion {
+    display:flex;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: 600;
+}
 
 
 .ui-tabs-nav {
