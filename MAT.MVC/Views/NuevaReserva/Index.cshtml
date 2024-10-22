@@ -1069,6 +1069,11 @@
             oReserva.checkBoxAdicionales = function (id) {
 
                 const oCheckBox = $("#tblAdicional_checkbox_" + id);
+
+                if (!oCheckBox.is(':checked')) {
+                    oReserva.updateAdicionalSelected([], id)
+                }
+
                 if (this.Pasajeros.length == 0) {
                     alert("Agregue pasajeros para continuar.")
                     oCheckBox.prop("checked", false);
@@ -1091,9 +1096,7 @@
 
                 if (oCheckBox.is(':checked')) {
                     oReserva.assignPasajeroAdicional(id);
-                } else {
-
-                }
+                } 
             }
 
             oReserva.assignPasajeroAdicional = function (adicionalId) {
@@ -1114,10 +1117,20 @@
                 const adicional = this.Adicionales[idx];
 
                 if (pasajerosSelected.length == 0) {
-                    const oCheckBox = $("#tblAdicional_checkbox_" + id);
+                    const oCheckBox = $("#tblAdicional_checkbox_" + adicionalId);
                     oCheckBox.prop("checked", false);
 
                     //Clean pasajeros?
+                    //const pasajeros = this.Pasajeros.filter(p => p.Adicionales.Id == id);
+                    this.Pasajeros.forEach(pasajero => {
+                        if (pasajero.Adicionales.length > 0) {
+                            const idx = pasajero.Adicionales.findIndex(adicional => adicional.AdicionalId == adicionalId);
+                            if (idx != -1) {
+                                pasajero.Adicionales.splice(idx, 1);
+                            }                            
+                        }
+                        
+                    });
                 }
 
                 for (let pasajeroId of pasajerosSelected) {
