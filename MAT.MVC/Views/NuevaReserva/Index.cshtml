@@ -499,14 +499,12 @@
             oReserva.Reservas = {}
             oReserva.Cliente = {};
             oReserva.Pasajeros = [];
-            oReserva.HabitacionesDisponibles = [];
-            oReserva.HabitacionesSelected = [];
+            oReserva.HabitacionesDisponibles = [];            
             oReserva.Adicionales = [];
 
 
             $(document).ready(function () {
                 getPasajesSenaIncompleta();
-                //checkBus(); acomodaba los labels de escalera y bar
 
                 loadAutoComplete();
                 oReserva.loadTablePasajeros();
@@ -572,6 +570,7 @@
                 let precioTotal = 0;
                 let html = "";
                 html += "<div class='detalle-compra-titulo'>Detalle de compra</div>"
+
                 //Butacas
                 const butacasSelected = this.Pasajeros.filter(p => p.Butaca.Id != "");
                 if (butacasSelected.length > 0)
@@ -584,10 +583,11 @@
                     html += `</div>`;
                 }
                 //Habitaciones
-                if (this.HabitacionesSelected.length > 0)
+                const habitacionesSelected = this.gethabitacionesSelected();
+                if (habitacionesSelected.length > 0)
                     html += `<div class='detalle-compra-seccion'>Habitaciones</div>`;
                     
-                for (let item of this.HabitacionesSelected) {
+                for (let item of habitacionesSelected) {
                     const result = this.HabitacionesDisponibles.filter(h => h.HabitacionId == item.Id);
                     if (result.length > 0) {
                         const habitacion = result[0];
@@ -604,11 +604,7 @@
                 if (pasajerosConAdicionales.length > 0)
                     html += `<div class='detalle-compra-seccion'>Adicionales</div>`;                    
                 for (const pasajero of pasajerosConAdicionales) {                    
-                    //html += `<div class='detalle-compra'>`;
-                    //html += `   <label class='left'>Pasajero: ${pasajero.Nombre} ${pasajero.Apellido}</label>`;
-                    //html += `</div>`;
-                    for (const adicional of pasajero.Adicionales) {
-                        
+                    for (const adicional of pasajero.Adicionales) {                        
                         precioTotal += parseFloat(adicional.Precio);
                         html += `<div class='detalle-compra'>`;
                         html += `   <label class='left'>${adicional.Descripcion}</label>`;
@@ -617,6 +613,7 @@
                     }                   
                 }
 
+                //Total
                 html += "<br>";
                 html += `<div class='detalle-compra'>`;
                 html += `   <label class='left'>TOTAL</label>`;
@@ -640,7 +637,7 @@
                         { "title": "Email", "data": "Email" },
                         { "title": "Nro Documento", "data": "NroDocumento" },
                         { "title": "Edad", "data": "Edad" },
-                        { "title": "Habitación", "data": "HabitacionAsignada" },                        
+                        { "title": "Habitación", "data": "Habitacion.NroHabitacion" },                        
                         { "title": "Butaca", "data": "Butaca.Codigo" },
                         {
                             "title": "Adicional",
@@ -671,7 +668,8 @@
                 const idx = oReserva.Pasajeros.findIndex(p => p.Id == pasajero.Id);
                 if (idx == -1) {
                     let data = pasajero;
-                    data.HabitacionAsignada = "";
+                    //data.HabitacionAsignada = "";
+                    data.Habitacion = { Id: "", Capacidad: 0, NroHabitacion: "" };
                     data.Butaca = { Id: "", Codigo: "", Precio: 0 };
                     data.Adicionales = [];
                     oReserva.Pasajeros.push(data);
@@ -689,6 +687,17 @@
                         this.updateButacaSelected([], pasajero.Butaca.Id);
 
                     //Actualizar Habitaciones
+                    if (pasajero.Habitacion.Id != "") {
+                        const habitacionId = pasajero.Habitacion.Id;
+                        const pasajeros = this.Pasajeros
+                            .filter(p =>
+                                (p.Habitacion.Id == habitacionId)
+                                && (p.Id != pasajero.Id)
+                            )
+                            .map(p => p.Id);
+
+                        this.updateHabitacionSelected(pasajeros, habitacionId);
+                    }
 
 
                     //Actualizar Adicionales
@@ -711,6 +720,7 @@
                     //Actualizar tabla de pasajeros
                     this.Pasajeros.splice(idx, 1);
                     this.loadTablePasajeros();
+                    this.recalcularDetallePago();
 
                 }
             }
@@ -949,20 +959,23 @@
             oReserva.checkBoxHabitaciones = function (id) {
 
                 const oCheckBox = $("#tblHabitacion_checkbox_" + id);
+
                 if (this.Pasajeros.length == 0) {
                     alert("Agregue pasajeros para continuar.")
                     oCheckBox.prop("checked", false);
                     return false;
                 }
 
+                const habitacion = this.HabitacionesDisponibles.find(h => h.HabitacionId == id);
+                if (habitacion == undefined) {
+                    return false;
+                }
+
+
                 if (oCheckBox.is(':checked')) {
                     const capacidadActual = oReserva.calularCapacidadCubierta();
                     switch (true) {
-                        case capacidadActual < 0:
-                            habitacionSelected = {};
-                            habitacionSelected.Id = id;
-                            habitacionSelected.PasajerosAssigned = [];
-                            this.HabitacionesSelected.push(habitacionSelected);
+                        case capacidadActual < 0:                            
                             this.assignPasajeroHabitacion(id);
                             break;
                         case capacidadActual > 0:
@@ -976,25 +989,29 @@
                     }
 
                 } else {
-                    const idx = this.HabitacionesSelected.findIndex(x => x.Id == id);
-                    if (idx != -1) {
-                        oReserva.updateHabitacionSelected([], id);
-                        this.HabitacionesSelected.splice(idx, 1);
-                    }
-                }
-                this.recalcularDetallePago();
+                    oReserva.updateHabitacionSelected([], id);
+                }                
+            }
+
+            oReserva.gethabitacionesSelected = function () {
+                const idsUnique = new Set();
+
+                const habitaciones = this.Pasajeros
+                    .filter(p => {
+                        if (p.Habitacion.Id != "" && !idsUnique.has(p.Habitacion.Id)) {
+                            idsUnique.add(p.Habitacion.Id);
+                            return true
+                        }
+                        return false;
+                    })
+                    .map(p => p.Habitacion);
+
+                return habitaciones;
             }
 
             oReserva.calularCapacidadCubierta = function () {
-                const cantidadPasajeros = this.Pasajeros.length;
-                let capacidadCubierta = 0;
-
-                for (let item of this.HabitacionesSelected) {
-                    const habitacion = this.HabitacionesDisponibles.filter(x => x.HabitacionId == item.Id);
-                    if (habitacion.length > 0)
-                        capacidadCubierta = capacidadCubierta + habitacion[0].Capacidad;
-                }
-
+                const cantidadPasajeros = this.Pasajeros.length;                
+                const capacidadCubierta = this.gethabitacionesSelected().reduce((result, item) => { return result += item.Capacidad; }, 0);
                 return capacidadCubierta - cantidadPasajeros;
             }
 
@@ -1007,29 +1024,43 @@
             }
 
             oReserva.updateHabitacionSelected = function (pasajerosSelected, habitacionId) {
-                const idx = this.HabitacionesSelected.findIndex(x => x.Id == habitacionId);
-                if (idx != -1) {
-                    const pasajerosUnassigned = [...oReserva.HabitacionesSelected[idx].PasajerosAssigned];
-                    oReserva.HabitacionesSelected[idx].PasajerosAssigned = pasajerosSelected;
 
-                    //Unassign pasajeros
-                    this.asignarHabitacionToPasajeros(pasajerosUnassigned, "");
+                const habitacion = this.HabitacionesDisponibles.find(h => h.HabitacionId == habitacionId);
+                if (habitacion == undefined)
+                    return false
 
-                    //Assign pasajeros
-                    const habitacion = this.HabitacionesDisponibles.find(h => h.HabitacionId == habitacionId);
-                    this.asignarHabitacionToPasajeros(pasajerosSelected, habitacion.NroHabitacion);
+                if (pasajerosSelected.length == 0) {
+                    const oCheckBox = $("#tblHabitacion_checkbox_" + habitacionId);
+                    oCheckBox.prop("checked", false);
+
+                    //Clean pasajeros
+                    this.Pasajeros.forEach(pasajero => {
+                        if (pasajero.Habitacion.Id == habitacionId) {
+                            pasajero.Habitacion = {
+                                Id: "",
+                                Capacidad: 0,
+                                NroHabitacion: ""
+                            }
+                        }
+                    });                    
+                }
+
+                for (let pasajeroId of pasajerosSelected) {
+                    const idxPasajero = this.Pasajeros.findIndex(p => p.Id == pasajeroId)
+                    if (idxPasajero == -1)
+                        break;
+
+                    const pasajero = this.Pasajeros[idxPasajero];                    
+                    pasajero.Habitacion = {
+                        Id: habitacion.HabitacionId,
+                        Capacidad: habitacion.Capacidad,
+                        NroHabitacion: habitacion.NroHabitacion
+                    }
                 }
 
                 this.loadTablePasajeros();
-            }
-
-            oReserva.asignarHabitacionToPasajeros = function (pasajeros, nroHabitacion) {
-                for (let pasajeroId of pasajeros) {
-                    const idxp = this.Pasajeros.findIndex(p => p.Id == pasajeroId);
-                    if (idxp != -1) {
-                        this.Pasajeros[idxp].HabitacionAsignada = nroHabitacion;
-                    }
-                }
+                this.recalcularDetallePago();
+               
             }
 
             //Adicionales
@@ -1100,21 +1131,22 @@
                     return false;
                 }
 
-                const adicionales = oReserva.Adicionales.filter(a => a.AdicionalId == id);
-                if (adicionales.length <= 0) {
+                const adicional = oReserva.Adicionales.find(a => a.AdicionalId == id);
+                if (adicional == undefined) {
                     return false;
                 }
 
-                if (adicionales[0].IsMenor) {
-                    const pasajerosMenores = oReserva.Pasajeros.filter(p => p.Edad < 3 && p.Butaca.Id == "");
-                    if (pasajerosMenores.length <= 0) {
-                        alert("No hay menores a 3 años de edad y sin butacas para asignar este adicional");
-                        oCheckBox.prop("checked", false);
-                        return false;
-                    }
-                }
-
                 if (oCheckBox.is(':checked')) {
+
+                    if (adicional.IsMenor) {
+                        const pasajerosMenores = oReserva.Pasajeros.filter(p => p.Edad < 3 && p.Butaca.Id == "");
+                        if (pasajerosMenores.length <= 0) {
+                            alert("No hay menores a 3 años de edad y sin butacas para asignar este adicional");
+                            oCheckBox.prop("checked", false);
+                            return false;
+                        }
+                    }
+
                     oReserva.assignPasajeroAdicional(id);
                 } 
             }
@@ -1166,7 +1198,6 @@
 
                 this.loadTablePasajeros();
                 this.recalcularDetallePago();
-
             }
 
 
