@@ -45,6 +45,10 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
             catch (Exception e)
             {
+                Model.ViajeId = viajeid;
+                Model.Reservas = new List<ReservaStandard>();
+                ViewBag.PreReservas = new List<PreReserva>();
+                ViewBag.ListaEspera = new DataSet();
                 ViewBag.MsgError = e.Message;
             }
 

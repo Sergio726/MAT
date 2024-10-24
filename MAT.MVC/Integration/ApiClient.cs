@@ -24,10 +24,29 @@ namespace MAT.MVC.Integration
 
         public async Task<T> GetAsync<T>(string uri)
         {
-            var response = await _httpClient.GetAsync(uri);
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(content);
+            try
+            {
+                var response = await _httpClient.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+
+                var jsonToken = JToken.Parse(content);
+                if (jsonToken.Type == JTokenType.Object) {
+                    var jsonResponse = JObject.Parse(content);
+                    if (jsonResponse.ContainsKey("ok") && jsonResponse.ContainsKey("data"))
+                    {
+                        return jsonResponse["data"].ToObject<T>();
+                    }
+                }
+
+                return JsonConvert.DeserializeObject<T>(content);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error with url: {uri}. MessajeError: {ex.Message}. StackTrace: {ex.StackTrace}");
+            }
+            
         }
 
         public async Task<T> PostAsync<T>(string uri, object data)
