@@ -693,14 +693,17 @@
 
                     //Actualizar Adicionales
                     //buscar todos los pasajeros que tienen ese adicional
-                    if (pasajero.Adicionales.length > 0) {
-                        const adicionales = pasajero.Adicionales.map(a => a.AdicionalId);
-                        for (let adicionalId of adicionales) {
-                            const pasajeros = this.Pasajeros.filter(p => p.Adicionales.findIndex(a => a.AdicionalId == adicionalId) != -1)
+                    if (pasajero.Adicionales.length > 0) {                        
+                        for (let adicional of pasajero.Adicionales) {
+                            const pasajeros = this.Pasajeros
+                                .filter(p =>
+                                    (p.Adicionales.findIndex(a => a.AdicionalId == adicional.AdicionalId) != -1)
+                                    && (p.Id != pasajero.Id)
+                                )
                                 .map(p => p.Id);
 
-                            if (pasajeros.length > 0)
-                                this.updateAdicionalSelected(pasajeros, adicionalId);
+                            //if (pasajeros.length > 0)
+                            this.updateAdicionalSelected(pasajeros, adicional.AdicionalId);
 
                         }
                     }
