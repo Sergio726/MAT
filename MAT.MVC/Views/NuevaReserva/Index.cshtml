@@ -450,7 +450,7 @@
 
             @if (ViewBag.ListaEspera != null && ViewBag.ListaEspera > 0)
             {
-                <div class="divEmergentInfo" style=" width 280px;height 35px;">
+                <div class="divEmergentInfo" style=" width: 280px; height:35px;">
                     <div class="wait"><a title="Hay clientes en lista de espera" href="javascript: openWaitingList();">HAY CLIENTES ESPERANDO</a></div>
                 </div>
             }
@@ -458,7 +458,7 @@
 
             @if (ViewBag.PreReservas != null && ViewBag.PreReservas.Count > 0)
             {
-                <div class="divEmergent" style=" width 280px;height 35px;">
+                <div class="divEmergent" style=" width: 280px; height: 35px;">
                     <div class="attention"><a title="Ver Pre Reservas Vencidas" href="javascript: showPreReservas();">EXISTEN PRE-RESERVAS VENCIDAS</a></div>
                 </div>
 
@@ -667,6 +667,7 @@
             }
 
             oReserva.addPasajero = function (pasajero) {
+
                 const idx = oReserva.Pasajeros.findIndex(p => p.Id == pasajero.Id);
                 if (idx == -1) {
                     let data = pasajero;
@@ -687,6 +688,22 @@
                     if (pasajero.Butaca.Id != "")
                         this.updateButacaSelected([], pasajero.Butaca.Id);
 
+                    //Actualizar Habitaciones
+
+
+                    //Actualizar Adicionales
+                    //buscar todos los pasajeros que tienen ese adicional
+                    if (pasajero.Adicionales.length > 0) {
+                        const adicionales = pasajero.Adicionales.map(a => a.AdicionalId);
+                        for (let adicionalId of adicionales) {
+                            const pasajeros = this.Pasajeros.filter(p => p.Adicionales.findIndex(a => a.AdicionalId == adicionalId) != -1)
+                                .map(p => p.Id);
+
+                            if (pasajeros.length > 0)
+                                this.updateAdicionalSelected(pasajeros, adicionalId);
+
+                        }
+                    }
 
                     //Actualizar tabla de pasajeros
                     this.Pasajeros.splice(idx, 1);
@@ -1069,6 +1086,11 @@
             oReserva.checkBoxAdicionales = function (id) {
 
                 const oCheckBox = $("#tblAdicional_checkbox_" + id);
+
+                if (!oCheckBox.is(':checked')) {
+                    oReserva.updateAdicionalSelected([], id)
+                }
+
                 if (this.Pasajeros.length == 0) {
                     alert("Agregue pasajeros para continuar.")
                     oCheckBox.prop("checked", false);
@@ -1091,9 +1113,7 @@
 
                 if (oCheckBox.is(':checked')) {
                     oReserva.assignPasajeroAdicional(id);
-                } else {
-
-                }
+                } 
             }
 
             oReserva.assignPasajeroAdicional = function (adicionalId) {
@@ -1114,10 +1134,19 @@
                 const adicional = this.Adicionales[idx];
 
                 if (pasajerosSelected.length == 0) {
-                    const oCheckBox = $("#tblAdicional_checkbox_" + id);
+                    const oCheckBox = $("#tblAdicional_checkbox_" + adicionalId);
                     oCheckBox.prop("checked", false);
 
-                    //Clean pasajeros?
+                    //Clean pasajeros                    
+                    this.Pasajeros.forEach(pasajero => {
+                        if (pasajero.Adicionales.length > 0) {
+                            const idx = pasajero.Adicionales.findIndex(adicional => adicional.AdicionalId == adicionalId);
+                            if (idx != -1) {
+                                pasajero.Adicionales.splice(idx, 1);
+                            }                            
+                        }
+                        
+                    });
                 }
 
                 for (let pasajeroId of pasajerosSelected) {
