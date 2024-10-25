@@ -27,9 +27,6 @@ namespace MAT.MVC.Controllers.NuevaReserva
         [Authorize]
         public async Task<ActionResult> Index(Guid viajeid)
         {
-            //var tt = await _backendAPI.GetAllImageAsync();
-
-            //List<ReservaStandard> Model = new List<ReservaStandard>();
             var Model = new NuevaReservaModel();
 
             try
@@ -37,18 +34,13 @@ namespace MAT.MVC.Controllers.NuevaReserva
                 Model.ViajeId = viajeid;                
                 List<ResultPasajeDto> resultPasajeDto = await _backendAPI.GetListOfPasajesByViajeID(viajeid.ToString());
                 Model.Reservas = Mapper.Map<List<ReservaStandard>>(resultPasajeDto);
-                var resultDetalleViaje = await _backendAPI.GetDetalleViajeAsync(viajeid.ToString());
+                DetalleViajeDto resultDetalleViaje = await _backendAPI.GetDetalleViajeAsync(viajeid.ToString());
                 Model.DetalleViaje = Mapper.Map<DetalleViaje>(resultDetalleViaje);
-                ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeid.ToString());
-                ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeid.ToString()).Tables[0].Rows[0]["CountListaEspera"];
-
             }
             catch (Exception e)
             {
                 Model.ViajeId = viajeid;
                 Model.Reservas = new List<ReservaStandard>();
-                ViewBag.PreReservas = new List<PreReserva>();
-                ViewBag.ListaEspera = new DataSet();
                 ViewBag.MsgError = e.Message;
             }
 
