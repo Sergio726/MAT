@@ -491,6 +491,7 @@
     <Content Include="Images\Estado\0 _.png" />
     <Content Include="Images\Estado\1 _.png" />
     <Content Include="Images\factura.png" />
+    <Content Include="Images\favicon.ico" />
     <Content Include="Images\Icons\details_close.png" />
     <Content Include="Images\Icons\details_open.png" />
     <Content Include="Images\Icons\icon-agregar-habitacion.png" />
@@ -832,6 +833,7 @@
     <Content Include="Views\NuevaReserva\Index.cshtml" />
     <Content Include="Views\NuevaReserva\DetalleViaje.cshtml" />
     <Content Include="Views\NuevaReserva\SeleccionarPasajero.cshtml" />
+    <Content Include="Views\NuevaReserva\FormReserva.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

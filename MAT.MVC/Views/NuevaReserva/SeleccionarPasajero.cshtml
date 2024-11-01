@@ -14,11 +14,11 @@
         switch (this.Source) {
             case "HABITACION":
                 this.loadHabitacion(data, this.EntityId);
-                this.DataSource = data.Pasajeros.filter(p => p.HabitacionAsignada == "");
+                this.DataSource = data.Pasajeros.filter(p => p.Habitacion.Id == "");
                 break;
             case "BUTACA":
                 this.loadButaca(data, this.EntityId);
-                this.DataSource = data.Pasajeros.filter(p => p.Butaca.Id == "");
+                this.DataSource = data.Pasajeros.filter(p => p.Butaca.ButacaId == "");
                 break;
             case "ADICIONAL":                
                 this.loadAdicional(data, this.EntityId);
@@ -33,9 +33,9 @@
 
     oSeleccionarPasajeros.loadHabitacion = function (data, habitacionId) {
         $("#divHabitacion").removeClass("hidden");
-        const result = data.HabitacionesDisponibles.filter(h => h.HabitacionId == habitacionId);
-        if (result.length > 0) {            
-            this.Habitacion = result[0];
+        const habitacion = data.HabitacionesDisponibles.find(h => h.HabitacionId == habitacionId);
+        if (habitacion) {
+            this.Habitacion = habitacion;
             $("#hab_nombre").html(this.Habitacion.HabitacionNombre);
             $("#hab_nro").html(this.Habitacion.NroHabitacion);
             $("#hab_tipo").html(this.Habitacion.HabitacionTipo);
@@ -71,9 +71,9 @@
     oSeleccionarPasajeros.setDataSourceAdicional = function (data) {
         const menor3anios = 3;
         if (this.Adicional.IsMenor) {
-            this.DataSource = data.Pasajeros.filter(p => p.Edad < menor3anios && p.Butaca.Id == "");
+            this.DataSource = data.Pasajeros.filter(p => p.Edad < menor3anios && p.Butaca.ButacaId == "");
         } else {
-            this.DataSource = data.Pasajeros.filter(p => (p.Edad < menor3anios && p.Butaca.Id != "") || p.Edad > 2);
+            this.DataSource = data.Pasajeros.filter(p => (p.Edad < menor3anios && p.Butaca.ButacaId != "") || p.Edad > 2);
         }
     }
 
@@ -112,7 +112,7 @@
             html = "<input type=\"radio\" id=\"selectPasajeros_tblPasajeros_radio_" + row.Id + "\" " +
                 " name=\"selectPasajeros_tblPasajeros_radio\"" +
                 " onclick=\"oSeleccionarPasajeros.radioButtonPasajero('" + row.Id + "')\" >";
-        } else {
+        } else { //Habitacion y Adicional
             html = "<input type=\"checkbox\" id=\"selectPasajeros_tblPasajeros_checkbox_" + row.Id + "\" " +
                 " onclick=\"oSeleccionarPasajeros.checkBoxPasajero('" + row.Id + "')\" >";
         }
@@ -126,9 +126,6 @@
             switch (this.Source) {
                 case "HABITACION":
                     this.validacionSourceHabitaciones(pasajeroId, oChecBox);
-                    break;
-                case "BUTACA":
-                    this.PasajerosSelected.push(pasajeroId);
                     break;
                 case "ADICIONAL":
                     this.PasajerosSelected.push(pasajeroId);

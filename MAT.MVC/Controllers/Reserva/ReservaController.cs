@@ -703,13 +703,13 @@ namespace MAT.MVC.Controllers.Reserva
 
                 List<PasajeInputModel> _pasajes = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<PasajeInputModel>>(jsonobject);
 
-                DataSet dsRegFactura = MVC.Models.ReservaMethod.RegistrarFactura(cliente, MATContext.CurrentVendedor.VendedorId.ToString(), observaciones, condicion, Convert.ToInt32(ViajeMonedaTipo));
+                string vendedorId = MATContext.CurrentVendedor.VendedorId.ToString();
+                DataSet dsRegFactura = MVC.Models.ReservaMethod.RegistrarFactura(cliente, vendedorId, observaciones, condicion, Convert.ToInt32(ViajeMonedaTipo));
 
                 string sFacturaID = dsRegFactura.Tables[0].Rows[0]["FacturaID"].ToString();
 
                 if (sFacturaID != "")
-                {
-                    string sVendedorId = MATContext.CurrentVendedor.VendedorId.ToString();
+                {                    
                     foreach (PasajeInputModel pasaje in _pasajes)
                     {
                         string _adicionalesid = "";
@@ -718,7 +718,7 @@ namespace MAT.MVC.Controllers.Reserva
                             _adicionalesid = string.Join(",", pasaje.adicionalesid);
                         }
                         //registrar pasajeros como prereserva
-                        MVC.Models.ReservaMethod.UpdatePasajeAdicionalesVoucher(pasaje.pasajeid, sFacturaID, pasaje.pasajeroid, _adicionalesid,5, sVendedorId);
+                        MVC.Models.ReservaMethod.UpdatePasajeAdicionalesVoucher(pasaje.pasajeid, sFacturaID, pasaje.pasajeroid, _adicionalesid,5, vendedorId);
 
                         //registrar detalles de factura
 

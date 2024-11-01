@@ -1071,3 +1071,7 @@ input.buttonAdd_29px:hover {
     border-radius: 28px;
     margin: 1px;
 }
+
+.custom_margin_20 {
+    margin: 20px;    
+}
