@@ -120,15 +120,18 @@ namespace MAT.MVC.Common
                 PersonaService personaService = new PersonaService();
                 VendedorService vendedorService = new VendedorService();
                 Persona currentpersona;
+                int userId = 0; 
               
                 if (WebSecurity.HasUserId)
                 {
-                    currentpersona = personaService.GetAll().Where(p => p.UserId == WebSecurity.CurrentUserId).FirstOrDefault();
+                    userId = WebSecurity.CurrentUserId;
+                    
                 }
                 else
                 {
-                    currentpersona = personaService.GetAll().Where(p => p.UserId == MATContext.CurrentUserId).FirstOrDefault();
+                    userId = MATContext.CurrentUserId;
                 }
+                currentpersona = personaService.GetAll().Where(p => p.UserId == userId).FirstOrDefault();                
 
                 return vendedorService.GetByVendedorId(currentpersona.PersonaId);
             }

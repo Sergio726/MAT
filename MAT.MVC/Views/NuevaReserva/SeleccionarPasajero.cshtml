@@ -18,7 +18,7 @@
                 break;
             case "BUTACA":
                 this.loadButaca(data, this.EntityId);
-                this.DataSource = data.Pasajeros.filter(p => p.Butaca.Id == "");
+                this.DataSource = data.Pasajeros.filter(p => p.Butaca.ButacaId == "");
                 break;
             case "ADICIONAL":                
                 this.loadAdicional(data, this.EntityId);
@@ -71,9 +71,9 @@
     oSeleccionarPasajeros.setDataSourceAdicional = function (data) {
         const menor3anios = 3;
         if (this.Adicional.IsMenor) {
-            this.DataSource = data.Pasajeros.filter(p => p.Edad < menor3anios && p.Butaca.Id == "");
+            this.DataSource = data.Pasajeros.filter(p => p.Edad < menor3anios && p.Butaca.ButacaId == "");
         } else {
-            this.DataSource = data.Pasajeros.filter(p => (p.Edad < menor3anios && p.Butaca.Id != "") || p.Edad > 2);
+            this.DataSource = data.Pasajeros.filter(p => (p.Edad < menor3anios && p.Butaca.ButacaId != "") || p.Edad > 2);
         }
     }
 

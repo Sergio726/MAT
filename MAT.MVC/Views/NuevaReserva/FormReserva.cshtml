@@ -1,0 +1,422 @@
+﻿@using MAT.MVC.Models
+@using MAT.Enums
+@using MAT.Utilities
+@model NuevaReservaModel
+
+<script>
+    oFormReserva = {};    
+    oFormReserva.Reserva = @Html.Raw(Json.Encode(Model.Reserva));
+    oFormReserva.ViajeMonedaTipo = 1;
+
+    oFormReserva.initial = function () {
+        $('.money').mask("#.##0,00", { reverse: true });
+
+        this.ViajeMonedaTipo = $("#sMonedaTipo").val();
+        $("#divContentCotizador").addClass("hide");
+        $("#ddlTipoPago").attr("name", "ddlTipoPago");
+
+        if (oFormReserva.ViajeMonedaTipo != "1") {
+            $("#divMontoTotal1").hide();
+            $("#divMontoTotal2").removeClass("hide");
+            loadCotizador();
+        }
+
+        //radio button
+        var condicion = $("input[name=condicion]:checked").val();
+        if (condicion == "Efectivo") {
+            $("#efectivo").css("display", "inline-block");
+        } else {
+            $("#efectivo").hide();
+        }
+
+        changeFormaPago();
+
+
+        $("input[name='comprobante']").click(function () {
+            if ($(this).val() == "Recibo") {
+                $("#txtRecibo").attr("disabled", false);
+                $("#txtnroFactura").attr("disabled", true);
+                $("#txtnroFactura").val("");
+            }
+            else {
+                $("#txtRecibo").attr("disabled", true);
+                $("#txtRecibo").val("");
+                $("#txtnroFactura").attr("disabled", false);
+            }
+        });
+    }
+
+    function loadCotizador() {
+        $("#divContentCotizador").removeClass("hide");
+        $.ajax({
+            url: "/Herramientas/Cotizador",
+            data: { "sMode": "1" },
+            success: function (data) {
+                $("#divContentCotizador").html(data);
+            }
+        })
+    }
+
+    function changeMonedaTipo(o) {
+        var MonedaTipo = $(o).val();
+        if (MonedaTipo == "3") //USD
+        {
+            loadCotizador();
+        } else {
+            $("#divContentCotizador").addClass("hide");
+        }
+    }
+
+    function changeFormaPago() {
+        var tipopago = parseInt($("#ddlTipoPago").val());
+        //var tipopago = parseInt($(this).val());
+        $("#total-credito-label").css("display", "none");
+        $("#total-credito-field").css("display", "none");
+        //TIPOS DE PAGO CREDITO, DEBITO Y TRANSFERENCIA
+
+        //TIPO DE PAGO EN EFECTIVO
+        if (tipopago == 1) {
+            $("#transaccion-label").hide();
+            $("#transaccion-field").hide();
+        }
+        else {
+            $("#transaccion-label").css("display", "inline-block");
+            $("#transaccion-field").css("display", "inline-block");
+        }
+        if (tipopago == 4) {
+            $("#total-credito-label").css("display", "inline-block");
+            $("#total-credito-field").css("display", "inline-block");
+
+            var ClienteID = oFormReserva.Reserva.Cliente.Id; //  $("#Cliente").val();
+
+            $.ajax({
+                url: "/NotaCredito/getCreditoDisponible",
+                data: { ClienteID: ClienteID },
+                success: function (data) {
+                    var response = eval(data);
+                    if (response[0] == "Done.") {
+                        var Cred = parseFloat(response[1]);
+                        $("#total-credito").val(Cred);
+                    }
+                    else {
+                        alert("Ocurrió un error a intentar calcular el crédito disponible.");
+                        console.log(response[1]);
+                    }
+                },
+                error: function (e) {
+                    alert("Ocurrió un error a intentar calcular el crédito disponible.");
+                    console.log(e);
+                }
+            })
+        }
+    }
+
+    closeForm = function () {
+        $("#FormReserva").dialog("close");
+    }
+
+    oFormReserva.pagar = function () {
+
+        let condition = $("input[name=condicion]:checked").val();
+        let monto = $("#txtPago").val();
+        let montoFactura = $("#hdnMontoFactura").val();
+        let tipopago = parseInt($("#ddlTipoPago").val()); // parseInt($("select[name='Pago.TipoPago']").val());
+        let descuento = $("input[name=Descuento]").val();
+        let detalledescuento = $("#detalledescuento").val();
+
+        if (oFormReserva.ViajeMonedaTipo != "1" && condicion == "Efectivo") {
+            if ($("#hdnCotizacion").val() == "") {
+                $("#divError").html("Debe definir la cotizacion de la moneda para el pago de este viaje.")
+                $("#divError").show().removeClass("hide");
+                $("#divError").fadeOut(14000);
+
+                return;
+            }
+        }
+
+        if (montoFactura == monto) {
+            if ($("input[name='comprobante']:checked").val() == "Recibo") {
+                return alert("Esta realizando el pago total de la factura. Debe ingresar un número de factura.");
+            }
+        }
+
+        if (tipopago == 4) {
+            if (parseFloat(monto) > parseFloat($("#total-credito").val())) {
+                return alert("Credito insufiente. Ingrese un monto menor o igual al Crédito Disponible.")
+            }
+        }
+
+        if (descuento > 0) {
+            if (detalledescuento.trim() == '') {
+                return alert('Por favor agregue una descripción para el descuento aplicado.');
+            }
+        }
+
+        /*pago con cotizador*/
+        let MontoRecibidoMonedaTipo = $("#sMonedaTipo").val();
+        let MontoEquivalente = "";
+        let MontoEquivalenteMonedaTipo = "";
+        let MontoEquivalenteCotizacion = ""
+        let ViajeMonedaTipo = this.ViajeMonedaTipo; // $("#hdnViajeMonedaTipo").val();
+        let MontoRecibido = monto;
+
+        if ((ViajeMonedaTipo != "1") || (MontoRecibidoMonedaTipo != "1")) {
+
+            MontoEquivalenteCotizacion = $("#hdnCotizacion").val();
+
+            if (MontoRecibidoMonedaTipo == "1") {
+                MontoEquivalenteMonedaTipo = "3"; //dolar
+                MontoEquivalente = $("#MontoOut").val();
+
+            }
+            else {
+                MontoEquivalenteMonedaTipo = "1"; //pesos
+                MontoEquivalente = $("#MontoInt").val();
+            }
+
+            if (ViajeMonedaTipo != MontoRecibidoMonedaTipo) {
+                monto = MontoEquivalente;//monto recibido, tabla pago
+            }
+        }
+
+        const pago = {};
+
+        //pago.ClientId = oReserva.Client.Id;
+        pago.Condition = condition;
+        pago.Monto = stringToFloat(monto) ;
+        pago.MontoFactura = stringToFloat(montoFactura);
+        pago.TipoPago = tipopago
+        
+        pago.Descuento = stringToFloat(descuento);
+        pago.Detalledescuento = detalledescuento;
+        pago.Recibo = $("#txtRecibo").val();
+        pago.TransaccionId = $("#TransaccionId").val();
+        pago.NroFactura = $("#txtnroFactura").val();
+        pago.Observaciones = $("#Observaciones").val();
+        pago.MontoRecibidoMonedaTipo = MontoRecibidoMonedaTipo;
+        pago.MontoEquivalente = MontoEquivalente == ""? null: stringToFloat(MontoEquivalente);
+        pago.MontoEquivalenteMonedaTipo = MontoEquivalenteMonedaTipo;
+        pago.MontoEquivalenteCotizacion = MontoEquivalenteCotizacion;
+        pago.ViajeMonedaTipo = ViajeMonedaTipo;
+        pago.MontoRecibido = stringToFloat(MontoRecibido);
+
+        oFormReserva.Reserva.Pago = pago;
+
+        
+
+        var divLoading = "<div id='divFullLoading'></div>";
+        $("#FormReserva").append(divLoading);
+        $.ajax({
+            url: "/NuevaReserva/PagarReserva",
+            type: "POST",
+            data: JSON.stringify(oFormReserva.Reserva),
+            contentType: "application/json; charset=utf-8",            
+            success: function (data) {
+
+                $("#divFullLoading").remove();
+
+                var result = data == "True" ? true : false;
+                $("#FormReserva").dialog("close");
+                let message = "";
+                switch (data) {
+                    case "Pagado":
+                        message = "Reserva realizada correctamente. Pago total recibido.";
+                        break;
+                    case "Señado":
+                        message = "Reserva realizada correctamente. Seña parcial recibida.";
+                        break;
+                    case "Pre-reserva":
+                        message = "Pre-Reserva realizada correctamente.";
+                        break;
+                    case "Error":
+                        message = "Error de Sistema. Contacte con el Administrador.";
+                        break;                    
+                }
+
+                oFormReserva.TerminarReserva(message);
+
+                //if (data == "Pagado") {
+                //    alert("Reserva realizada correctamente. Pago total recibido.");
+                //    $(document).off("click", "#panel-bus a.selected", null);
+                //    $("#panel-bus a.selected").addClass("reservado").removeClass("selected");
+                //} else if (data == "Señado") {
+                //    alert("Reserva realizada correctamente. Seña parcial recibida.");
+                //    $(document).off("click", "#panel-bus a.selected", null);
+                //    $("#panel-bus a.selected").addClass("señado").removeClass("selected");
+                //} else if (data == "Pre-reserva") {
+                //    alert("Pre-Reserva realizada correctamente.");
+                //    $(document).off("click", "#panel-bus a.selected", null);
+                //    $("#panel-bus a.selected").addClass("prereserva").removeClass("selected");
+                //} else if (data == "Error") {
+                //    alert("Error de Sistema. Contacte con el Administrador.");
+                //}
+
+                
+            }
+        });
+    }
+
+    oFormReserva.TerminarReserva = function (message) {
+        confirm(message, "Atención", () => {
+            let viajeid = oFormReserva.Reserva.ViajeId;
+            var url = "/Reserva/Index?viajeid=" + viajeid;
+            document.location.href = url;
+        });
+    }
+
+    function stringToFloat(input) {
+        input = input.replaceAll(".", "").replaceAll(",", ".").replaceAll("$", "");
+        
+        return (input == "")? 0 : parseFloat(input);
+    }
+
+</script>
+<div class="custom_display_box custom_padding_top_10 custom_background_dialog">
+
+
+    <div class="custom_width_60percent fromReservaPasaje">
+
+        <div class="form-label"><b>Pasajes</b></div>
+        <div class="form-field"><b>@Model.Reserva.Pasajeros.Count</b></div>
+        <br />
+        <br />
+        <div class="form-label">
+            Cliente
+        </div>
+        <div class="form-field">
+            <input type="text" id="txt-busqueda-cliente" value="@Model.Reserva.Cliente.Nombre @Model.Reserva.Cliente.Apellido" readonly />
+            <input type="hidden" id="Cliente" name="Cliente" />
+        </div>
+        <div class="form-label">Condición de Venta</div>
+        <div class="form-field">
+            <div class="form-radio">
+                <input type="radio" name="condicion" value="Efectivo" title="Efectivo" checked="checked" />
+            </div>
+            <div class="label">Efectivo </div><br />
+            <div class="form-radio">
+                <input type="radio" name="condicion" value="Cuenta Corriente" title="Cuenta Corriente" />
+            </div>
+            <div class="label">Cuenta Corriente </div>
+
+        </div>
+        <div id="efectivo">
+            <div id="label-formapago" class="form-label">Forma de Pago</div>
+            <div id="field-formapago" class="form-field">
+                @Html.DropDownListFor(m => m.Pago.TipoPago, eFormaPago.Credito.ToSelectList(), new { id="ddlTipoPago", name= "ddlTipoPago", @onchange = "changeFormaPago();" })
+            </div>
+
+            <div id="transaccion-label" class="form-label">N° de Transacción</div>
+            <div id="transaccion-field" class="form-field">
+                <input type="text" name="TransaccionId" id="TransaccionId" />
+            </div>
+
+            <div id="total-credito-label" class="form-label">Crédito Disponible $</div>
+            <div id="total-credito-field" class="form-field">
+                <input type="text" name="total-credito" id="total-credito" disabled />
+            </div>
+
+            <!--Moneda********-->
+            <div class="form-label">
+                Moneda
+            </div>
+            <div class="form-field">
+                <select name="MonedaTipo" id="sMonedaTipo" onchange="changeMonedaTipo(this);">
+                    @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
+                    {
+                        <option value="@item.Id" @(item.Id == 1 ? "selected" : "")>@item.Codigo</option>
+                    }
+                </select>
+            </div>
+            <div class="form-label">
+                Monto a abonar $
+            </div>
+            <div class="form-field">
+                <input type="text" name="MontoPago" class="money" id="txtPago" />
+            </div>
+
+
+
+            <div class="form-label">
+                N° de Recibo<input type="radio" value="Recibo" name="comprobante" checked />
+            </div>
+            <div class="form-field">
+                <input type="text" name="Recibo" id="txtRecibo" />
+            </div>
+            <div class="form-label">
+                N° de Factura <input type="radio" value="Factura" name="comprobante" />
+            </div>
+            <div class="form-field">
+                <input type="text" name="nroFactura" id="txtnroFactura" disabled="disabled" />
+            </div>
+
+            <div class="form-label">
+                <input type="checkbox" name="chkDescuento" id="chkDescuento" />
+                Descuento a aplicar $
+            </div>
+            <div class="form-field">
+                <input type="text" name="Descuento" id="txtDescuento" disabled="disabled" class="money" />
+                <input type="text" name="detalledescuento" id="detalledescuento" disabled="disabled" placeholder="DETALLE DEL DESCUENTO" />
+            </div>
+
+            <div class="form-label">
+                Observaciones
+            </div>
+            <div class="form-field">
+                <textarea name="Observaciones" id="Observaciones"></textarea>
+            </div>
+        </div>
+        <div class="custom_margin_20">
+            <p>
+                <input type="button" 
+                       name="btnReservaPagar" 
+                       id="btnReservaPagar" 
+                       title="Reservar" 
+                       value="Aceptar" 
+                       class="btn btn-small btn-inverse",
+                       onclick="oFormReserva.pagar()"
+                       />
+                <input type="button" 
+                       name="btnReservaCancelar" 
+                       id="btnReservaCancelar" 
+                       title="Cancelar" 
+                       value="Cancelar" 
+                       class="btn btn-small btn-inverse"
+                       onclick="closeForm();"
+                       />
+            </p>
+        </div>
+
+    </div>
+
+    <div class="custom_width_40percent fromReservaPasaje">
+        <div id="divMontoTotal1">
+             <div class="form-label "><b>Monto Total</b></div>
+            <div class="form-field custom_font_size_18"><b>@string.Format("{0:C}", ViewBag.MontoFactura)</b></div>
+        </div>
+               
+        <div id="divMontoTotal2" class="hide">
+            <div class="custom_font_size_16 custom_margin_left_10"><b>Total @string.Format("{0:C}", ViewBag.MontoFactura) (USD)</b></div>
+        </div>
+        <input type="hidden" id="hdnMontoFactura" value="@ViewBag.MontoFactura" />
+        
+        <div id="divContentCotizador" class="hide">
+            <div class="iconLoading"></div>
+        </div>
+        
+    </div>
+</div>
+@*<input type="hidden" name="jsonobject" id="jsonobject" value="@ViewBag.Pasajes" />*@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        oFormReserva.initial();
+
+    });
+
+    
+
+   
+</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

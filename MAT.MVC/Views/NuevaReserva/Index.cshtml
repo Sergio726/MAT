@@ -25,6 +25,16 @@
     }
     else
     {
+        <p class="botonera-form">
+
+            <input id="btn-nueva-reserva2"
+                   type="button"
+                   title="Pagar"
+                   value="Pagar"
+                   class="btn btn-small btn-danger"
+                   onclick="oReserva.reservar();" />
+
+        </p>
         <div class="container-flex">
             <div class="left-container">
                 <section id="panel-detalle">
@@ -33,7 +43,7 @@
                             <h4 class="heading glyphicons"><i></i>Detalle de Viaje</h4>
                             <span class="collapse-toggle"></span>
                         </div>
-                        <div id="divDetalleViaje" class="widget-body in collapse" style="height: auto;">                            
+                        <div id="divDetalleViaje" class="widget-body in collapse" style="height: auto;">
                             @Html.Partial("DetalleViaje", Model.DetalleViaje)
                         </div>
                     </div>
@@ -266,21 +276,28 @@
                 </section>
             </div>
         </div>
-        
+
         <p class="botonera-form">
 
-            <input id="btn-pagar" type="button" title="Pagar" value="Pagar" class="btn btn-small btn-danger" />            
-            
+            <input id="btn-nueva-reserva"
+                   type="button"
+                   title="Pagar"
+                   value="Pagar"
+                   class="btn btn-small btn-danger"
+                   onclick="oReserva.reservar();" />
+
         </p>
-        
+
         <script type="text/javascript">
             let oReserva = {};
             oReserva.ViajeId = "@Model.ViajeId";
             oReserva.Reservas = {}
             oReserva.Cliente = {};
             oReserva.Pasajeros = [];
-            oReserva.HabitacionesDisponibles = [];            
+            oReserva.HabitacionesDisponibles = [];
             oReserva.Adicionales = [];
+            oReserva.PrecioTotal = 0;
+
 
             function loadAutoComplete() {
                 $("#txt-busqueda-cliente").autocomplete({
@@ -340,45 +357,45 @@
                 html += "<div class='detalle-compra-titulo'>Detalle de compra</div>"
 
                 //Butacas
-                const butacasSelected = this.Pasajeros.filter(p => p.Butaca.Id != "");
+                const butacasSelected = this.Pasajeros.filter(p => p.Butaca.ButacaId != "");
                 if (butacasSelected.length > 0)
                     html += `<div class='detalle-compra-seccion'>Butacas</div>`;
                 for (let pasajero of butacasSelected) {
                     precioTotal += parseFloat(pasajero.Butaca.Precio);
                     html += `<div class='detalle-compra'>`;
                     html += `   <label class='left'>Codigo: ${pasajero.Butaca.Codigo}</label>`;
-                    html += `   <label class='rigth'>${formatNumberMoney(pasajero.Butaca.Precio)}</label>`;                    
+                    html += `   <label class='rigth'>${formatNumberMoney(pasajero.Butaca.Precio)}</label>`;
                     html += `</div>`;
                 }
                 //Habitaciones
                 const habitacionesSelected = this.gethabitacionesSelected();
                 if (habitacionesSelected.length > 0)
                     html += `<div class='detalle-compra-seccion'>Habitaciones</div>`;
-                    
-                for (let item of habitacionesSelected) {
-                    const result = this.HabitacionesDisponibles.filter(h => h.HabitacionId == item.Id);
-                    if (result.length > 0) {
-                        const habitacion = result[0];
-                        precioTotal += parseFloat(habitacion.Precio);
-                        html += `<div class='detalle-compra'>`;
-                        html += `   <label class='left'>Habitacion: ${habitacion.HabitacionDescripcion}</label>`;
-                        html += `   <label class='rigth'>${formatNumberMoney(habitacion.Precio)}</label>`;
-                        html += `</div>`;                        
-                    }
+
+                for (let habitacion of habitacionesSelected) {
+                    //const result = this.HabitacionesDisponibles.filter(h => h.HabitacionId == item.Id);
+                    //if (result.length > 0) {
+                    //const habitacion = result[0];
+                    precioTotal += parseFloat(habitacion.Precio);
+                    html += `<div class='detalle-compra'>`;
+                    html += `   <label class='left'>Habitacion: ${habitacion.Descripcion}</label>`;
+                    html += `   <label class='rigth'>${formatNumberMoney(habitacion.Precio)}</label>`;
+                    html += `</div>`;
+                    //}
                 }
 
                 //Adicionales
                 const pasajerosConAdicionales = this.Pasajeros.filter(p => p.Adicionales.length > 0);
                 if (pasajerosConAdicionales.length > 0)
-                    html += `<div class='detalle-compra-seccion'>Adicionales</div>`;                    
-                for (const pasajero of pasajerosConAdicionales) {                    
-                    for (const adicional of pasajero.Adicionales) {                        
+                    html += `<div class='detalle-compra-seccion'>Adicionales</div>`;
+                for (const pasajero of pasajerosConAdicionales) {
+                    for (const adicional of pasajero.Adicionales) {
                         precioTotal += parseFloat(adicional.Precio);
                         html += `<div class='detalle-compra'>`;
                         html += `   <label class='left'>${adicional.Descripcion}</label>`;
                         html += `   <label class='rigth'>${formatNumberMoney(adicional.Precio)}</label>`;
                         html += `</div>`;
-                    }                   
+                    }
                 }
 
                 //Total
@@ -386,10 +403,11 @@
                 html += `<div class='detalle-compra'>`;
                 html += `   <label class='left'>TOTAL</label>`;
                 html += `   <label class='rigth'>${formatNumberMoney(precioTotal)}</label>`;
-                html += `</div>`;                
+                html += `</div>`;
                 $("#detalle-pago").html(html);
+                this.PrecioTotal = precioTotal;
             }
-            
+
             //Pasajeros
             oReserva.loadTablePasajeros = function () {
                 if (this.TblPasajeros != undefined) {
@@ -405,7 +423,7 @@
                         { "title": "Email", "data": "Email" },
                         { "title": "Nro Documento", "data": "NroDocumento" },
                         { "title": "Edad", "data": "Edad" },
-                        { "title": "Habitación", "data": "Habitacion.NroHabitacion" },                        
+                        { "title": "Habitación", "data": "Habitacion.NroHabitacion" },
                         { "title": "Butaca", "data": "Butaca.Codigo" },
                         {
                             "title": "Adicional",
@@ -436,9 +454,8 @@
                 const idx = oReserva.Pasajeros.findIndex(p => p.Id == pasajero.Id);
                 if (idx == -1) {
                     let data = pasajero;
-                    //data.HabitacionAsignada = "";
-                    data.Habitacion = { Id: "", Capacidad: 0, NroHabitacion: "" };
-                    data.Butaca = { Id: "", Codigo: "", Precio: 0 };
+                    data.Habitacion = { Id: "", Capacidad: 0, NroHabitacion: "", Precio: 0 };
+                    data.Butaca = { ButacaId: "", PasajeId: "", Codigo: "", Precio: 0 };
                     data.Adicionales = [];
                     oReserva.Pasajeros.push(data);
                     oReserva.loadTablePasajeros();
@@ -451,8 +468,8 @@
                     const pasajero = this.Pasajeros[idx];
 
                     //Actualizar Butacas
-                    if (pasajero.Butaca.Id != "")
-                        this.updateButacaSelected([], pasajero.Butaca.Id);
+                    if (pasajero.Butaca.ButacaId != "")
+                        this.updateButacaSelected([], pasajero.Butaca.PasajeId);
 
                     //Actualizar Habitaciones
                     if (pasajero.Habitacion.Id != "") {
@@ -470,7 +487,7 @@
 
                     //Actualizar Adicionales
                     //buscar todos los pasajeros que tienen ese adicional
-                    if (pasajero.Adicionales.length > 0) {                        
+                    if (pasajero.Adicionales.length > 0) {
                         for (let adicional of pasajero.Adicionales) {
                             const pasajeros = this.Pasajeros
                                 .filter(p =>
@@ -494,7 +511,7 @@
             }
 
 
-            //Butacas
+            //Butacas            
             oReserva.buildReservas = function () {
                 this._reservas = @Html.Raw(Json.Encode(Model.Reservas));
                 for (item of this._reservas) {
@@ -515,23 +532,21 @@
                         break;
                     case "MINIBUS":
                         this.buildButaca("coche_minibus-tabs-1", 1);
-                        break;                        
+                        break;
                 }
             }
 
             oReserva.buildButaca = function (ulId, butacaPiso) {
-
                 let pasajes = this._reservas.filter(p => p.ButacaPiso == butacaPiso);
                 for (pasaje of pasajes) {
-
                     let aHtml = $("<a onclick=\"oReserva.selectButaca('" + pasaje.PasajeId + "')\"/>")
                         .html(pasaje.ButacaCodigoButaca)
                         .attr("id", pasaje.PasajeId)
                         .attr("title", pasaje.ButacaCodigoButaca)
-                        .addClass(oReserva.getClassButacaByEstado(pasaje.EstadoPasaje));                        
+                        .addClass(oReserva.getClassButacaByEstado(pasaje.EstadoPasaje));
 
                     if (pasaje.PasajeroId != "00000000-0000-0000-0000-000000000000") {
-                        let sPosition = pasaje.ButacaPosicion == "A" ? "bottom": "top";                        
+                        let sPosition = pasaje.ButacaPosicion == "A" ? "bottom": "top";
                         aHtml.attr("title", pasaje.PasajeroNombre + " " + pasaje.PasajeroApellido)
                             .attr("data-toggle", "tooltip")
                             .attr("data-placement", sPosition);
@@ -540,10 +555,8 @@
                     let liHtml = $("<li/>")
                         .addClass("seat_" + pasaje.ButacaFila)
                         .addClass(pasaje.ButacaPosicion)
-                        
 
                     liHtml.append(aHtml);
-
                     $("#" + ulId).append(liHtml);
                 }
             }
@@ -575,16 +588,16 @@
                     return false;
 
                 if ($("#" + pasajeId).hasClass("selected")) {
-                    
+
                     confirm("La butaca ya esta asignada. Quiere liberar la butaca?",
                         "Confirmar",
                         function () {
                             var $dlg = $(this);
-                            oReserva.updateButacaSelected([], pasajeId);                            
+                            oReserva.updateButacaSelected([], pasajeId);
                             $dlg.dialog("close");
                             $dlg.remove();
                         },
-                        
+
                         function () {
                             var $dlg = $(this);
                             $dlg.dialog("close");
@@ -599,7 +612,7 @@
                     return false;
                 }
 
-                const pasajerosSinButacas = this.Pasajeros.filter(p => p.Butaca.Id == "");
+                const pasajerosSinButacas = this.Pasajeros.filter(p => p.Butaca.ButacaId == "");
                 if (pasajerosSinButacas.length == 0) {
                     alert("Todos los pasajeros estan asignados a butacas.")
                     return false;
@@ -655,14 +668,16 @@
                 if (pasajeroId != "00000000-0000-0000-0000-000000000000") {
                     const idx = this.Pasajeros.findIndex(p => p.Id == pasajeroId);
                     if (idx != -1) {
-                        this.Pasajeros[idx].Butaca.Id = pasaje.PasajeId;
+                        this.Pasajeros[idx].Butaca.ButacaId = pasaje.ButacaId;
+                        this.Pasajeros[idx].Butaca.PasajeId = pasaje.PasajeId;
                         this.Pasajeros[idx].Butaca.Codigo = pasaje.ButacaCodigoButaca;
                         this.Pasajeros[idx].Butaca.Precio = pasaje.PrecioCalculado;
                     }
                 } else {
-                    const idx = this.Pasajeros.findIndex(p => p.Butaca.Id == pasaje.PasajeId);
+                    const idx = this.Pasajeros.findIndex(p => p.Butaca.PasajeId == pasaje.PasajeId);
                     if (idx != -1) {
-                        this.Pasajeros[idx].Butaca.Id = "";
+                        this.Pasajeros[idx].Butaca.ButacaId = "";
+                        this.Pasajeros[idx].Butaca.PasajeId = "";
                         this.Pasajeros[idx].Butaca.Codigo = "";
                         this.Pasajeros[idx].Butaca.Precio = 0;
                     }
@@ -705,7 +720,7 @@
                         { "title": "Descripcion", "data": "HabitacionDescripcion" },
                         { "title": "Capacidad", "data": "Capacidad" },
                         {
-                            "title": "Precio", 
+                            "title": "Precio",
                             "mRender": function (data, type, row) {
                                 let html = formatNumberMoney(row.Precio);
                                 return html;
@@ -743,7 +758,7 @@
                 if (oCheckBox.is(':checked')) {
                     const capacidadActual = oReserva.calularCapacidadCubierta();
                     switch (true) {
-                        case capacidadActual < 0:                            
+                        case capacidadActual < 0:
                             this.assignPasajeroHabitacion(id);
                             break;
                         case capacidadActual > 0:
@@ -758,12 +773,11 @@
 
                 } else {
                     oReserva.updateHabitacionSelected([], id);
-                }                
+                }
             }
 
             oReserva.gethabitacionesSelected = function () {
                 const idsUnique = new Set();
-
                 const habitaciones = this.Pasajeros
                     .filter(p => {
                         if (p.Habitacion.Id != "" && !idsUnique.has(p.Habitacion.Id)) {
@@ -778,7 +792,7 @@
             }
 
             oReserva.calularCapacidadCubierta = function () {
-                const cantidadPasajeros = this.Pasajeros.length;                
+                const cantidadPasajeros = this.Pasajeros.length;
                 const capacidadCubierta = this.gethabitacionesSelected().reduce((result, item) => { return result += item.Capacidad; }, 0);
                 return capacidadCubierta - cantidadPasajeros;
             }
@@ -807,10 +821,12 @@
                             pasajero.Habitacion = {
                                 Id: "",
                                 Capacidad: 0,
-                                NroHabitacion: ""
+                                NroHabitacion: "",
+                                Precio: 0,
+                                Descripcion: ""
                             }
                         }
-                    });                    
+                    });
                 }
 
                 for (let pasajeroId of pasajerosSelected) {
@@ -818,17 +834,19 @@
                     if (idxPasajero == -1)
                         break;
 
-                    const pasajero = this.Pasajeros[idxPasajero];                    
+                    const pasajero = this.Pasajeros[idxPasajero];
                     pasajero.Habitacion = {
                         Id: habitacion.HabitacionId,
                         Capacidad: habitacion.Capacidad,
-                        NroHabitacion: habitacion.NroHabitacion
+                        NroHabitacion: habitacion.NroHabitacion,
+                        Precio: habitacion.Precio,
+                        Descripcion: habitacion.HabitacionDescripcion,
                     }
                 }
 
                 this.loadTablePasajeros();
                 this.recalcularDetallePago();
-               
+
             }
 
             //Adicionales
@@ -907,7 +925,7 @@
                 if (oCheckBox.is(':checked')) {
 
                     if (adicional.IsMenor) {
-                        const pasajerosMenores = oReserva.Pasajeros.filter(p => p.Edad < 3 && p.Butaca.Id == "");
+                        const pasajerosMenores = oReserva.Pasajeros.filter(p => p.Edad < 3 && p.Butaca.ButacaId == "");
                         if (pasajerosMenores.length <= 0) {
                             alert("No hay menores a 3 años de edad y sin butacas para asignar este adicional");
                             oCheckBox.prop("checked", false);
@@ -916,7 +934,7 @@
                     }
 
                     oReserva.assignPasajeroAdicional(id);
-                } 
+                }
             }
 
             oReserva.assignPasajeroAdicional = function (adicionalId) {
@@ -940,15 +958,15 @@
                     const oCheckBox = $("#tblAdicional_checkbox_" + adicionalId);
                     oCheckBox.prop("checked", false);
 
-                    //Clean pasajeros                    
+                    //Clean pasajeros
                     this.Pasajeros.forEach(pasajero => {
                         if (pasajero.Adicionales.length > 0) {
                             const idx = pasajero.Adicionales.findIndex(adicional => adicional.AdicionalId == adicionalId);
                             if (idx != -1) {
                                 pasajero.Adicionales.splice(idx, 1);
-                            }                            
+                            }
                         }
-                        
+
                     });
                 }
 
@@ -970,7 +988,7 @@
 
 
             oReserva.formatDisplay = function()
-            {   
+            {
                 var width = $(window).width();
                 if (width < 800) {
                     $('#panel-detalle').css('width','98%');
@@ -981,18 +999,89 @@
 
                 };
             }
-       
-            $(document).ready(function () {
-                loadAutoComplete();
-                oReserva.loadTablePasajeros();
+
+            oReserva.validarReserva = function () {
+                let message = [];
+                let edadBebe = 2; //mayor a 2 tiene que ocupar butaca
+
+
+                if (!this.Cliente.Id) {
+                    message.push("Falta agregar el cliente.");
+                }
+
+                if (this.Pasajeros.length == 0) {
+                    message.push("Falta agregar pasajeros.");
+                }
+
+
+
+                for (const pasajero of this.Pasajeros) {
+                    //Butaca
+                    if (pasajero.Edad > edadBebe && !pasajero.Butaca.ButacaId) {
+                        message.push(`El pasajero ${pasajero.Nombre} ${pasajero.Apellido} no tiene butaca asignada`);
+                    }
+
+                    //Habitaction
+                    if (!pasajero.Habitacion.Id) {
+                        message.push(`El pasajero ${pasajero.Nombre} ${pasajero.Apellido} no tiene habitacion asignada`);
+                    }
+
+                    //Adicionales obligatorio si es bebe
+                    if (pasajero.Edad < edadBebe) {
+                        let idxSeguroBebe = pasajero.Adicionales.findIndex(a => a.IsMenor);
+                        if (idxSeguroBebe == -1) {
+                            message.push(`El menor ${pasajero.Nombre} ${pasajero.Apellido} tiene que tener asignado un seguro`);
+                        }
+                    }
+                }
+
+                return message.join("<br/>");
+            }
+
+            oReserva.reservar = function () {
+                const message = this.validarReserva();
+                if (message != "") {
+                    alert(message);
+                    return false;
+                }
+
+                var _data = {
+                    Cliente: this.Cliente,
+                    Pasajeros: this.Pasajeros,
+                    ViajeId: this.ViajeId,
+                    PrecioTotal: this.PrecioTotal
+                };
+                $.ajax({
+                    url: "/NuevaReserva/ReservarPasajes",
+                    type: "POST",
+                    data: JSON.stringify(_data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    success: function (result) {
+                        var dialogid = "FormReserva";
+                        var dialogtitle = "Reserva de Pasajes";
+                        ShowFormDialogHTML(result, dialogid, dialogtitle, "min");
+
+                    }
+                });
+            }
+
+            oReserva.Init = function () {
+                oReserva.loadTablePasajeros();                
                 oReserva.buildReservas();
                 oReserva.getHabitacionesDisponibles();
                 oReserva.getAdicionales();
                 oReserva.recalcularDetallePago();
                 $("#bus-tabs").tabs();
+            }
+
+
+            $(document).ready(function () {
+                loadAutoComplete();
+                oReserva.Init();
                 setTimeout(oReserva.formatDisplay, 2000);
             });
-            
+
         </script>
     }
 

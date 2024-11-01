@@ -833,6 +833,7 @@
     <Content Include="Views\NuevaReserva\Index.cshtml" />
     <Content Include="Views\NuevaReserva\DetalleViaje.cshtml" />
     <Content Include="Views\NuevaReserva\SeleccionarPasajero.cshtml" />
+    <Content Include="Views\NuevaReserva\FormReserva.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using MAT.Entities;
+using MAT.MVC.Common;
 using MAT.MVC.Integration;
 using MAT.MVC.Integration.BackendApi.Models;
 using MAT.MVC.Models;
 using MAT.Services;
+using MAT.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,6 +13,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using MAT.Enums.SharedModels;
+using MAT.Enums;
+
 
 namespace MAT.MVC.Controllers.NuevaReserva
 {
@@ -27,29 +33,23 @@ namespace MAT.MVC.Controllers.NuevaReserva
         [Authorize]
         public async Task<ActionResult> Index(Guid viajeid)
         {
-            var Model = new NuevaReservaModel();
-
             try
             {
-                Model.ViajeId = viajeid;                
-                List<ResultPasajeDto> resultPasajeDto = await _backendAPI.GetListOfPasajesByViajeID(viajeid.ToString());
-                Model.Reservas = Mapper.Map<List<ReservaStandard>>(resultPasajeDto);
-                DetalleViajeDto resultDetalleViaje = await _backendAPI.GetDetalleViajeAsync(viajeid.ToString());
-                Model.DetalleViaje = Mapper.Map<DetalleViaje>(resultDetalleViaje);
+                var Model = await NuevaReservaModel.CreateAsync(viajeid);
+                return View(Model);
             }
             catch (Exception e)
             {
-                Model.ViajeId = viajeid;
+                var Model = new NuevaReservaModel(viajeid);                
                 Model.Reservas = new List<ReservaStandard>();
                 ViewBag.MsgError = e.Message;
+                return View(Model);
             }
-
-            return View(Model);
         }
 
         public async Task<JsonResult> QuickClienteSearchAsync(string query)
         {
-            var result =  new List<PersonaDto>();
+            var result = new List<PersonaDto>();
             try
             {
                 result = await _backendAPI.SearchClientAsync(query);
@@ -106,8 +106,66 @@ namespace MAT.MVC.Controllers.NuevaReserva
         public ActionResult SeleccionarPasajero(string entityId, string source)
         {
             if (!string.IsNullOrEmpty(source)) ViewData["source"] = source;
-            if (!string.IsNullOrEmpty(entityId)) ViewData["entityId"] = entityId;            
+            if (!string.IsNullOrEmpty(entityId)) ViewData["entityId"] = entityId;
             return PartialView();
+        }
+
+        [HttpPost]
+        public ActionResult ReservarPasajes(DatosReserva reserva)
+        {
+            try
+            {
+                var Model = new NuevaReservaModel(reserva.ViajeId);
+                Model.Reserva = reserva;                
+                ViewBag.MontoFactura = reserva.PrecioTotal;
+                return PartialView("FormReserva", Model);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return PartialView("FormReserva");
+            }
+        }
+
+        //29-10-2024: nuevo proceso para la reserva de pasajes, API
+        [HttpPost]
+        //public string FormReserva(string cliente, string tipopago, string condicion, string recibo, string TransaccionId, string nroFactura,
+        //                          string observaciones, string jsonobject, string descuento = "", string monto = "0", string montoFactura = "0", string listmenores = "",
+        //                          string tutormenor = "", string viajeid = "", string detalledescuento = "",
+        //                          string MontoRecibido = "", string MontoRecibidoMonedaTipo = "1", string MontoEquivalente = "", string MontoEquivalenteMonedaTipo = "", string MontoEquivalenteCotizacion = "", string ViajeMonedaTipo = "1")
+        public string PagarReserva(DatosReserva reserva)
+        {
+            try
+            {
+                var datosPasajes = new List<TablePasaje>();
+                foreach(var pasajero in reserva.Pasajeros)
+                {
+                    var pasaje = new TablePasaje();
+                    pasaje.PasajeId = new Guid(pasajero.Butaca.PasajeId);
+                    pasaje.PasajeroId = new Guid(pasajero.Id);
+                    pasaje.ButacaId = new Guid(pasajero.Butaca.ButacaId);
+                    pasaje.ButacaPrecio = Convert.ToDecimal(pasajero.Butaca.Precio);
+                    pasaje.ButacaCodigo = pasajero.Butaca.Codigo;
+                    pasaje.AdicionalesIds = pasajero.Adicionales.Select(x => new Guid(x.AdicionalId)).ToList();
+                    pasaje.HabiactionId = new Guid(pasajero.Habitacion.Id);
+
+                    datosPasajes.Add(pasaje);
+                }
+                string sEstadoFactura = "";
+                DataSet ds = ReservaMethod.NuevoSPPago(reserva, datosPasajes);
+
+                if(ds.Tables.Count > 0 && ds.Tables[0]?.Rows[0]["Result"]?.ToString() == "Done.")
+                {
+                    sEstadoFactura = ds.Tables[0]?.Rows[0]["EstadoFactura"].ToString();
+                }
+
+                return sEstadoFactura;
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log(String.Format("{0} {1}", ex.Message, ex.StackTrace), 1);
+                return "Error";
+            }
         }
     }
 }
