@@ -214,9 +214,8 @@
             success: function (data) {
 
                 $("#divFullLoading").remove();
-
-                var result = data == "True" ? true : false;
                 $("#FormReserva").dialog("close");
+
                 let message = "";
                 switch (data) {
                     case "Pagado":
@@ -232,26 +231,8 @@
                         message = "Error de Sistema. Contacte con el Administrador.";
                         break;                    
                 }
-
+                alert(message);
                 oFormReserva.TerminarReserva(message);
-
-                //if (data == "Pagado") {
-                //    alert("Reserva realizada correctamente. Pago total recibido.");
-                //    $(document).off("click", "#panel-bus a.selected", null);
-                //    $("#panel-bus a.selected").addClass("reservado").removeClass("selected");
-                //} else if (data == "Señado") {
-                //    alert("Reserva realizada correctamente. Seña parcial recibida.");
-                //    $(document).off("click", "#panel-bus a.selected", null);
-                //    $("#panel-bus a.selected").addClass("señado").removeClass("selected");
-                //} else if (data == "Pre-reserva") {
-                //    alert("Pre-Reserva realizada correctamente.");
-                //    $(document).off("click", "#panel-bus a.selected", null);
-                //    $("#panel-bus a.selected").addClass("prereserva").removeClass("selected");
-                //} else if (data == "Error") {
-                //    alert("Error de Sistema. Contacte con el Administrador.");
-                //}
-
-                
             }
         });
     }
