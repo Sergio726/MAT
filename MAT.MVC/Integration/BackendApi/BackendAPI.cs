@@ -1,4 +1,5 @@
-﻿using MAT.MVC.Integration.BackendApi.Models;
+﻿using MAT.MVC.Integration.BackendApi;
+using MAT.MVC.Integration.BackendApi.Models;
 using MAT.MVC.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,8 +12,7 @@ using System.Web;
 namespace MAT.MVC.Integration
 {
     public interface IBackendAPI
-    {
-        //Task<ShopwareGetAllSKUsResponse> GetSKUAsync(string sku);
+    {        
         Task<List<ImageResponse>> GetAllImageAsync();
     }
     public class BackendAPI: IBackendAPI
@@ -36,13 +36,13 @@ namespace MAT.MVC.Integration
         public async Task<List<ResultPasajeDto>> GetListOfPasajesByViajeID(string viajeId)
         {
             string queryParam = $"viajeId={viajeId}";
-            string url = "api/pasajes/getPasajesByViajeID?" + queryParam;
+            string url = "api/pasajes/pasajesByViajeID?" + queryParam;
             return await _apiClient.GetAsync<List<ResultPasajeDto>>(url);
         }
         public async Task<DetalleViajeDto> GetDetalleViajeAsync(string viajeId)
         {
             string queryParam = $"viajeId={viajeId}";
-            string url = "api/pasajes/getDetalleViaje?" + queryParam;
+            string url = "api/pasajes/detalleViaje?" + queryParam;
             return await _apiClient.GetAsync<DetalleViajeDto>(url);
         }
 
@@ -63,7 +63,7 @@ namespace MAT.MVC.Integration
         public async Task<List<HabitacionDto>> GetHabitacionesDisponiblesByViaje(string viajeId)
         {
             string queryParam = $"viajeId={viajeId}";
-            string url = "api/pasajes/getHabitacionesDisponiblesByViaje?" + queryParam;
+            string url = "api/pasajes/habitacionesDisponiblesByViaje?" + queryParam;
             return await _apiClient.GetAsync<List<HabitacionDto>>(url);
         }
 
@@ -74,5 +74,12 @@ namespace MAT.MVC.Integration
             return await _apiClient.GetAsync<List<AdicionalDto>>(url);
         }
 
+        public async Task<ResultPagoDto> PagarPasajes(PagoDto datosPago)
+        {            
+            string url = "api/pasajes/pagar";
+            var response = await _apiClient.PostAsync<ApiResponse<ResultPagoDto>>(url, datosPago);
+
+            return response.Data;
+        }
     }
 }

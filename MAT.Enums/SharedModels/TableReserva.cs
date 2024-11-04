@@ -11,6 +11,6 @@ namespace MAT.Enums.SharedModels
         public string ButacaCodigo { get; set; }
         public decimal ButacaPrecio { get; set; }
         public List<Guid> AdicionalesIds { get; set; }
-        public Guid HabiactionId { get; set; }
+        public Guid HabitacionId { get; set; }
     } 
 }

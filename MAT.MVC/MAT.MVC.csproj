@@ -323,13 +323,17 @@
     </Compile>
     <Compile Include="Integration\BackendApi\BackendAPI.cs" />
     <Compile Include="Integration\BackendApi\Models\AdicionalDto.cs" />
+    <Compile Include="Integration\BackendApi\Models\ApiResponse.cs" />
     <Compile Include="Integration\BackendApi\Models\DetalleViajeDto.cs" />
+    <Compile Include="Integration\BackendApi\Models\ErrorDto.cs" />
     <Compile Include="Integration\BackendApi\Models\GalleryResponse.cs" />
     <Compile Include="Integration\BackendApi\Models\HabitacionDto.cs" />
     <Compile Include="Integration\BackendApi\Models\ImageResponse.cs" />
     <Compile Include="Integration\ApiClient.cs" />
     <Compile Include="Integration\BackendApi\Models\PersonaDto.cs" />
     <Compile Include="Integration\BackendApi\Models\ResultPasajeDto.cs" />
+    <Compile Include="Integration\BackendApi\Models\PagoDto.cs" />
+    <Compile Include="Integration\BackendApi\Models\ResultPagoDto.cs" />
     <Compile Include="Integration\IApiClient.cs" />
     <Compile Include="Integration\MappingProfile.cs" />
     <Compile Include="Models\AccountModels.cs" />

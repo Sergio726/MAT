@@ -654,41 +654,5 @@ namespace MAT.MVC.Models
             return DBHelper.ExecuteDataSet("dbo.usp_Reserva_GetSenasByViajeID", dbParams);
         }
 
-        public static DataSet NuevoSPPago(DatosReserva reserva, List<TablePasaje> pasajes)
-        {
-            bool isDescuento = reserva.Pago.Descuento > 0;
-            var vendedorId = MATContext.CurrentVendedor.VendedorId.ToString();
-            SqlParameter[] dbParams = new SqlParameter[]
-            {
-                DBHelper.MakeParam("@ViajeId", SqlDbType.UniqueIdentifier, 0, reserva.ViajeId),
-                DBHelper.MakeParam("@VendedorID", SqlDbType.UniqueIdentifier, 0, new Guid(vendedorId)),
-                DBHelper.MakeParam("@ClienteID", SqlDbType.UniqueIdentifier, 0, new Guid (reserva.Cliente.Id)),
-                DBHelper.MakeParam("@Observaciones", SqlDbType.VarChar, 8000, reserva.Pago.Observaciones),
-                DBHelper.MakeParam("@Condicion", SqlDbType.VarChar, 50, reserva.Pago.Condition),
-                DBHelper.MakeParam("@MonedaTipo", SqlDbType.Int, 0, Convert.ToInt32(reserva.Pago.ViajeMonedaTipo)),
-
-                DBHelper.MakeTableParam<TablePasaje>("@Pasajes", TableDataType.tvp_pasaje, pasajes),
-
-                DBHelper.MakeParam("@DescuentoDetalle", SqlDbType.VarChar, 200, reserva.Pago.Detalledescuento),
-                DBHelper.MakeParam("@DescuentoMonto", SqlDbType.Money, 0, reserva.Pago.Descuento),
-                DBHelper.MakeParam("@DescuentoIsDescuento", SqlDbType.Bit, 0, isDescuento),
-
-                DBHelper.MakeParam("@PagoMonto", SqlDbType.Money, 0, reserva.Pago.Monto),
-                //DBHelper.MakeParam("@PagoClienteID", SqlDbType.VarChar, 0, ClienteID),
-                DBHelper.MakeParam("@PagoNroRecibo", SqlDbType.VarChar, 0, reserva.Pago.Recibo),
-                DBHelper.MakeParam("@PagoTransaccionId", SqlDbType.VarChar, 0, reserva.Pago.TransaccionId),
-                DBHelper.MakeParam("@PagoTipoPago", SqlDbType.Int, 0, reserva.Pago.TipoPago),
-                //DBHelper.MakeParam("@PagoVendedorId", SqlDbType.VarChar, 0, MATContext.CurrentVendedor.VendedorId.ToString()),
-                //DBHelper.MakeParam("@PagoFacturaID", SqlDbType.VarChar, 0, FacturaID),
-                DBHelper.MakeParam("@PagoNroFactura", SqlDbType.VarChar, 0, reserva.Pago.NroFactura),
-                //DBHelper.MakeParam("@MontoRecibido", SqlDbType.Float, 0, MontoRecibido),
-                DBHelper.MakeParam("@PagoMontoRecibidoMonedaTipo", SqlDbType.Int, 0, reserva.Pago.MontoRecibidoMonedaTipo),
-                DBHelper.MakeParam("@PagoMontoEquivalente", SqlDbType.Money, 0, reserva.Pago.MontoEquivalente),
-                DBHelper.MakeParam("@PagoMontoEquivalenteMonedaTipo", SqlDbType.Int, 0, reserva.Pago.MontoEquivalenteMonedaTipo),
-                DBHelper.MakeParam("@PagoMontoEquivalenteCotizacion", SqlDbType.Money, 0, reserva.Pago.MontoEquivalenteCotizacion)
-            };
-            return DBHelper.ExecuteDataSet("usp_MAT_Reserva_Pagar", dbParams);
-        }
-
     }
 }

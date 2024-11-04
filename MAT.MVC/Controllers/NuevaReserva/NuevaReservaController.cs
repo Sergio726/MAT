@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.Mvc;
 using MAT.Enums.SharedModels;
 using MAT.Enums;
+using MAT.MVC.Integration.BackendApi;
 
 
 namespace MAT.MVC.Controllers.NuevaReserva
@@ -127,39 +128,55 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
         }
 
-        //29-10-2024: nuevo proceso para la reserva de pasajes, API
+        
         [HttpPost]
-        //public string FormReserva(string cliente, string tipopago, string condicion, string recibo, string TransaccionId, string nroFactura,
-        //                          string observaciones, string jsonobject, string descuento = "", string monto = "0", string montoFactura = "0", string listmenores = "",
-        //                          string tutormenor = "", string viajeid = "", string detalledescuento = "",
-        //                          string MontoRecibido = "", string MontoRecibidoMonedaTipo = "1", string MontoEquivalente = "", string MontoEquivalenteMonedaTipo = "", string MontoEquivalenteCotizacion = "", string ViajeMonedaTipo = "1")
-        public string PagarReserva(DatosReserva reserva)
+        public async Task<string> PagarReserva(DatosReserva reserva)
         {
             try
             {
-                var datosPasajes = new List<TablePasaje>();
-                foreach(var pasajero in reserva.Pasajeros)
+                var datosPasajes = new List<PasajeDto>();
+                foreach (var pasajero in reserva.Pasajeros)
                 {
-                    var pasaje = new TablePasaje();
+                    var pasaje = new PasajeDto();
                     pasaje.PasajeId = new Guid(pasajero.Butaca.PasajeId);
                     pasaje.PasajeroId = new Guid(pasajero.Id);
                     pasaje.ButacaId = new Guid(pasajero.Butaca.ButacaId);
-                    pasaje.ButacaPrecio = Convert.ToDecimal(pasajero.Butaca.Precio);
                     pasaje.ButacaCodigo = pasajero.Butaca.Codigo;
+                    pasaje.ButacaPrecio = Convert.ToDecimal(pasajero.Butaca.Precio);
+                    pasaje.HabitacionId = new Guid(pasajero.Habitacion.Id);
                     pasaje.AdicionalesIds = pasajero.Adicionales.Select(x => new Guid(x.AdicionalId)).ToList();
-                    pasaje.HabiactionId = new Guid(pasajero.Habitacion.Id);
 
                     datosPasajes.Add(pasaje);
                 }
+
+                var datosPago = new PagoDto();
+                datosPago.ViajeId = reserva.ViajeId;
+                datosPago.VendedorId = MATContext.CurrentVendedor.VendedorId;
+                datosPago.ClienteId = new Guid(reserva.Cliente.Id);
+                datosPago.Observaciones = reserva.Pago.Observaciones;
+                datosPago.Condicion = reserva.Pago.Condition;
+                datosPago.MonedaTipo = reserva.Pago.ViajeMonedaTipo;
+                datosPago.DescuentoDetalle = reserva.Pago.Detalledescuento;
+                datosPago.DescuentoMonto = reserva.Pago.Descuento;
+                datosPago.Monto = reserva.Pago.Monto;
+                datosPago.NroRecibo = reserva.Pago.Recibo;
+                datosPago.TransaccionId = reserva.Pago.TransaccionId;
+                datosPago.TipoPago = reserva.Pago.TipoPago;
+                datosPago.NroFactura = reserva.Pago.NroFactura;
+                datosPago.MontoRecibidoMonedaTipo = reserva.Pago.MontoRecibidoMonedaTipo.ToString();
+                datosPago.MontoEquivalente = reserva.Pago.MontoEquivalente;
+                datosPago.MontoEquivalenteCotizacion = Convert.ToDecimal(reserva.Pago.MontoEquivalenteCotizacion);
+                datosPago.Pasajes = datosPasajes;
+
                 string sEstadoFactura = "";
-                DataSet ds = ReservaMethod.NuevoSPPago(reserva, datosPasajes);
 
-                if(ds.Tables.Count > 0 && ds.Tables[0]?.Rows[0]["Result"]?.ToString() == "Done.")
-                {
-                    sEstadoFactura = ds.Tables[0]?.Rows[0]["EstadoFactura"].ToString();
-                }
-
+                var result = await _backendAPI.PagarPasajes(datosPago);
+                if (result.Result == "Done.")
+                    sEstadoFactura = result.EstadoFactura;
+                else
+                    sEstadoFactura = result.Result;
                 return sEstadoFactura;
+                
             }
             catch (Exception ex)
             {

@@ -578,7 +578,7 @@ namespace MAT.Utilities
                 Row.SetString(3, pasaje.ButacaCodigo);
                 Row.SetDecimal(4, pasaje.ButacaPrecio);
                 Row.SetString(5, string.Join(",", pasaje.AdicionalesIds));
-                Row.SetGuid(6, pasaje.HabiactionId);
+                Row.SetGuid(6, pasaje.HabitacionId);
                 MyList.Add(Row);
             }
             return MyList;

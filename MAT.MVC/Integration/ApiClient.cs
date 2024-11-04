@@ -53,8 +53,7 @@ namespace MAT.MVC.Integration
         {
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(uri, content);
-            response.EnsureSuccessStatusCode();
+            var response = await _httpClient.PostAsync(uri, content);            
             var result = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(result);
         }
