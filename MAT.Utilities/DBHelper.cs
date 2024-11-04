@@ -502,8 +502,6 @@ namespace MAT.Utilities
         tvp_uniqueidentifier = 7,
         tvp_int = 8,
         tvp_int_unique = 9,
-        tvp_pasaje = 10,
-        
     }
 
     public interface ITableStrategy<T>
@@ -554,43 +552,6 @@ namespace MAT.Utilities
         }
     }
 
-    public class TvpPasajeStrategy : ITableStrategy<TablePasaje>
-    {
-        public List<SqlDataRecord> CreateRecords(List<TablePasaje> pasajes)
-        {
-            
-            var MyList = new List<SqlDataRecord>();
-            var MyList_tblType = new SqlMetaData[] { 
-                new SqlMetaData("PasajeId", SqlDbType.UniqueIdentifier),
-                new SqlMetaData("PasajeroId", SqlDbType.UniqueIdentifier),
-                new SqlMetaData("ButacaId", SqlDbType.UniqueIdentifier),
-                new SqlMetaData("ButacaCodigo", SqlDbType.VarChar, 4),
-                new SqlMetaData("ButacaPrecio", SqlDbType.Decimal,18, 2),
-                new SqlMetaData("AdicionalesIds", SqlDbType.VarChar, -1),
-                new SqlMetaData("HabitacionId", SqlDbType.UniqueIdentifier),
-            };
-            foreach (var pasaje in pasajes)
-            {
-                var Row = new SqlDataRecord(MyList_tblType);
-                Row.SetGuid(0, pasaje.PasajeId);
-                Row.SetGuid(1, pasaje.PasajeroId);
-                Row.SetGuid(2, pasaje.ButacaId);
-                Row.SetString(3, pasaje.ButacaCodigo);
-                Row.SetDecimal(4, pasaje.ButacaPrecio);
-                Row.SetString(5, string.Join(",", pasaje.AdicionalesIds));
-                Row.SetGuid(6, pasaje.HabitacionId);
-                MyList.Add(Row);
-            }
-            return MyList;
-        }
-
-        public string GetParamType()
-        {
-            return "tvp_pasaje";
-        }
-    }
-
-
     public class TableStrategyFactory
     {
         public static ITableStrategy<T> GetStrategy<T>(TableDataType tableType)
@@ -600,9 +561,7 @@ namespace MAT.Utilities
                 case TableDataType.tvp_int_unique:
                     return (ITableStrategy<T>)new TvpIntUniqueStrategy();
                 case TableDataType.tvp_uniqueidentifier:
-                    return (ITableStrategy<T>)new TvpUniqueIdentifierStrategy();
-                case TableDataType.tvp_pasaje:
-                    return (ITableStrategy<T>)new TvpPasajeStrategy();
+                    return (ITableStrategy<T>)new TvpUniqueIdentifierStrategy();                
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tableType), "Unknown table type");
             }
