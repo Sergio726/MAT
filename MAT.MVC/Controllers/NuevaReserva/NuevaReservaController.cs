@@ -172,7 +172,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
 
                 var result = await _backendAPI.PagarPasajes(datosPago);
                 if (result.Result == "Done.")
-                    sEstadoFactura = result.EstadoFactura;
+                    sEstadoFactura = result.FacturaEstado;
                 else
                     sEstadoFactura = result.Result;
                 return sEstadoFactura;
@@ -180,8 +180,9 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
             catch (Exception ex)
             {
-                MATLogger.Log(String.Format("{0} {1}", ex.Message, ex.StackTrace), 1);
-                return "Error";
+                string msg = String.Format("Error in PagarReserva. Message: {0}. StackTrace:{1}", ex.Message, ex.StackTrace);
+                MATLogger.Log(msg, 1);
+                return msg;
             }
         }
     }

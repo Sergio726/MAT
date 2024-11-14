@@ -227,8 +227,9 @@
                     case "Pre-reserva":
                         message = "Pre-Reserva realizada correctamente.";
                         break;
-                    case "Error":
+                    default: //"Error":
                         message = "Error de Sistema. Contacte con el Administrador.";
+                        console.log(data);
                         break;                    
                 }
                 alert(message);
