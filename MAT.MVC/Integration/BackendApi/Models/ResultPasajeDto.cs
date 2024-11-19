@@ -22,6 +22,7 @@ namespace MAT.MVC.Integration.BackendApi.Models
         public string ButacaFila { get; set; }
         public string ButacaPosicion { get; set; }
         public string ButacaCodigoButaca { get; set; }
+        public int? ButacaTipo { get; set; }
         public Guid? TransporteID { get; set; }
         public string TransporteNroCoche { get; set; }
         public Guid? PaqueteID { get; set; }

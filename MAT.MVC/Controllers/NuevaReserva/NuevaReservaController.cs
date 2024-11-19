@@ -22,9 +22,6 @@ namespace MAT.MVC.Controllers.NuevaReserva
 {
     public class NuevaReservaController : Controller
     {
-        //
-        // GET: /NuevaReserva/
-
         private BackendAPI _backendAPI;
 
         public NuevaReservaController()
@@ -43,7 +40,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
             {
                 var Model = new NuevaReservaModel(viajeid);                
                 Model.Reservas = new List<ReservaStandard>();
-                ViewBag.MsgError = e.Message;
+                ViewBag.MsgError = MATLogger.FormatExceptionToHtml(e);
                 return View(Model);
             }
         }
@@ -138,18 +135,24 @@ namespace MAT.MVC.Controllers.NuevaReserva
                 foreach (var pasajero in reserva.Pasajeros)
                 {
                     var pasaje = new PasajeDto();
-                    pasaje.PasajeId = new Guid(pasajero.Butaca.PasajeId);
-                    pasaje.PasajeroId = new Guid(pasajero.Id);
-                    pasaje.ButacaId = new Guid(pasajero.Butaca.ButacaId);
-                    pasaje.ButacaCodigo = pasajero.Butaca.Codigo;
-                    pasaje.ButacaPrecio = Convert.ToDecimal(pasajero.Butaca.Precio);
+                    pasaje.PasajeroId = new Guid(pasajero.Id);                    
                     pasaje.HabitacionId = new Guid(pasajero.Habitacion.Id);
                     pasaje.AdicionalesIds = pasajero.Adicionales.Select(x => new Guid(x.AdicionalId)).ToList();
-
+                    if (pasajero.PasajeroAdulto != null && pasajero.PasajeroAdulto.Id != null)
+                    {
+                        pasaje.PasajeroAdultoId = new Guid(pasajero.PasajeroAdulto.Id);
+                    }
+                    else
+                    {
+                        pasaje.PasajeId = new Guid(pasajero.Butaca.PasajeId);
+                        pasaje.ButacaId = new Guid(pasajero.Butaca.ButacaId);
+                        pasaje.ButacaCodigo = pasajero.Butaca.Codigo;
+                        pasaje.ButacaPrecio = Convert.ToDecimal(pasajero.Butaca.Precio);
+                    }
                     datosPasajes.Add(pasaje);
                 }
 
-                var datosPago = new PagoDto();
+                var datosPago = new ReservaDto();
                 datosPago.ViajeId = reserva.ViajeId;
                 datosPago.VendedorId = MATContext.CurrentVendedor.VendedorId;
                 datosPago.ClienteId = new Guid(reserva.Cliente.Id);
@@ -170,7 +173,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
 
                 string sEstadoFactura = "";
 
-                var result = await _backendAPI.PagarPasajes(datosPago);
+                var result = await _backendAPI.ReservarPasajes(datosPago);
                 if (result.Result == "Done.")
                     sEstadoFactura = result.FacturaEstado;
                 else
@@ -181,7 +184,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
             catch (Exception ex)
             {
                 string msg = String.Format("Error in PagarReserva. Message: {0}. StackTrace:{1}", ex.Message, ex.StackTrace);
-                MATLogger.Log(msg, 1);
+                //MATLogger.Log(msg, 1);
                 return msg;
             }
         }

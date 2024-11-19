@@ -373,10 +373,12 @@ namespace MAT.MVC.Models
         public Int32 EstadoPasaje { get; set; }
         public Guid VoucherId { get; set; }
         public Guid PrecioId { get; set; }
+        public string ButacaNro { get; set; }
         public int ButacaPiso { get; set; }
         public string ButacaFila { get; set; }
         public string ButacaPosicion { get; set; }
         public string ButacaCodigoButaca { get; set; }
+        public int? ButacaTipo { get; set; }
         public Guid TransporteID {get;set;}
         public string TransporteNroCoche { get; set; }
         public Guid PaqueteID { get; set; }

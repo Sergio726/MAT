@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace MAT.Enums.SharedModels
@@ -20,6 +21,11 @@ namespace MAT.Enums.SharedModels
         [JsonProperty("NroDocumento")]
         public string NroDocumento { get; set; }
 
+        
+    }
+
+    public class Pasajero: NuevaPersona
+    {
         [JsonProperty("Edad")]
         public int Edad { get; set; }
 
@@ -31,5 +37,17 @@ namespace MAT.Enums.SharedModels
 
         [JsonProperty("Adicionales")]
         public List<NuevoAdicional> Adicionales { get; set; }
+
+        [JsonProperty("PasajeroAdulto")]
+        public PasajeroAdulto PasajeroAdulto { get; set; }
+    }
+
+    public class PasajeroAdulto
+    {
+        [JsonProperty("Id")]
+        public string Id { get; set; }
+
+        [JsonProperty("NombreCompleto")]
+        public string NombreCompleto { get; set; }
     }
 }

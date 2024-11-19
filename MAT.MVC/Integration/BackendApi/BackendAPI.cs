@@ -74,10 +74,10 @@ namespace MAT.MVC.Integration
             return await _apiClient.GetAsync<List<AdicionalDto>>(url);
         }
 
-        public async Task<ResultPagoDto> PagarPasajes(PagoDto datosPago)
+        public async Task<ResultReservaDto> ReservarPasajes(ReservaDto reserva)
         {            
-            string url = "api/pasajes/pagar";
-            var response = await _apiClient.PostAsync<ApiResponse<ResultPagoDto>>(url, datosPago);
+            string url = "api/pasajes/reservar";
+            var response = await _apiClient.PostAsync<ApiResponse<ResultReservaDto>>(url, reserva);
 
             return response.Data;
         }

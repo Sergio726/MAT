@@ -16,6 +16,22 @@
             "aaData": jt,
             "columns": [
         	{ "data": "NroFactura" },
+                {
+                    "data": "Fecha",
+                    "mRender": function (data, type, row) {
+                        //const dateString = "2024-11-14";
+                        // Crear un objeto Date a partir de la cadena
+                        //const date = new Date(dateString); // Extraer las partes de la fecha 
+                        const date = new Date(row.Fecha); // Extraer las partes de la fecha 
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexed 
+                        const day = String(date.getDate()).padStart(2, '0'); // Formatear la fecha en el formato deseado 
+                        const hours = String(date.getHours()).padStart(2, '0');
+                        const minutes = String(date.getMinutes()).padStart(2, '0');
+                        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`
+                        return formattedDate;
+                    }
+                },
             { "data": "ClienteFullName"},
             { "data": "Monto", 
             "mRender": function (data, type, row) {
@@ -95,29 +111,32 @@
 
 <table class="grid mat-customtable" id="tblFacturas">
     <thead>
-    <tr>
-        
-        <th style="width:60px;">
-           Nro Factura
-        </th>
-        <th style="width:60px;">
-           Titular
-        </th>
-        <th style="width:60px;">
-           Monto
-        </th>
-        <th style="width:85px;">
-            Estado
-        </th>
-         <th style="width:85px;">
-            Paquete
-        </th>
-        <th style="width:115px;">
-            Viaje
-        </th>
-        <th style="width:10px;"></th> 
-        <th style="width:10px;"></th>       
-    </tr>
+        <tr>
+
+            <th style="width:60px;">
+                Nro Factura
+            </th>
+            <th style="width:60px;">
+                Fecha
+            </th>
+            <th style="width:60px;">
+                Titular
+            </th>
+            <th style="width:60px;">
+                Monto
+            </th>
+            <th style="width:85px;">
+                Estado
+            </th>
+            <th style="width:85px;">
+                Paquete
+            </th>
+            <th style="width:115px;">
+                Viaje
+            </th>
+            <th style="width:10px;"></th>
+            <th style="width:10px;"></th>
+        </tr>
         </thead>
     
 </table>
