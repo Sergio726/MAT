@@ -6,10 +6,13 @@
     oSeleccionarPasajeros.Habitacion = {};
     oSeleccionarPasajeros.PasajerosSelected = [];
     oSeleccionarPasajeros.Adicional = {};
+    oSeleccionarPasajeros.Menor = {};
 
     oSeleccionarPasajeros.loadEntity = function (data) {
         this.Source = $("#selectPasajeros_source").val();
         this.EntityId = $("#selectPasajeros_entityId").val();
+
+        const edadResponsable = 20; //ajustar la edad
 
         switch (this.Source) {
             case "HABITACION":
@@ -24,6 +27,9 @@
                 this.loadAdicional(data, this.EntityId);
                 this.setDataSourceAdicional(data);
                 break;
+            case "RESPONSABLE":
+                this.loadResponsable(data, this.EntityId);
+                this.DataSource = data.Pasajeros.filter(p => p.Edad >= edadResponsable)
                 
         }
 
@@ -68,6 +74,17 @@
         }
     }
 
+    oSeleccionarPasajeros.loadResponsable = function (data, menorId) {
+        $("#divResponsable").removeClass("hidden");
+        const result = data.Pasajeros.filter(p => p.Id == menorId);
+        if (result.length > 0) {
+            this.Menor = result[0];
+            $("#res_nombre").html(this.Menor.Nombre);
+            $("#res_apellido").html(this.Menor.Apellido);
+            $("#res_edad").html(this.Menor.Edad);
+        }
+    }
+
     oSeleccionarPasajeros.setDataSourceAdicional = function (data) {
         const menor3anios = 3;
         if (this.Adicional.IsMenor) {
@@ -108,7 +125,7 @@
 
     oSeleccionarPasajeros.fnRenderPasajeros = function (row) {
         let html = "";
-        if (oSeleccionarPasajeros.Source == "BUTACA") {
+        if (oSeleccionarPasajeros.Source == "BUTACA" || oSeleccionarPasajeros.Source == "RESPONSABLE") {
             html = "<input type=\"radio\" id=\"selectPasajeros_tblPasajeros_radio_" + row.Id + "\" " +
                 " name=\"selectPasajeros_tblPasajeros_radio\"" +
                 " onclick=\"oSeleccionarPasajeros.radioButtonPasajero('" + row.Id + "')\" >";
@@ -162,6 +179,9 @@
                 break;
             case "ADICIONAL":
                 oReserva.updateAdicionalSelected(pasajerosSelected, entityId);
+                break;
+            case "RESPONSABLE":
+                oReserva.updateResponsableSelected(pasajerosSelected, entityId);
                 break;
         }
 
@@ -247,12 +267,25 @@
                     <div class="form-group">
                         <label>Es para menor:</label><label class="show-data" id="adi_menor"></label>
                     </div>
-                </div>
-                @*<div style="width:50%">
+                </div>                
+            </div>
+        </div>
+        <div id="divResponsable" class="hidden">
+            <div>
+                <h5>Detalle del Pasajero Menor</h5>
+            </div>
+            <div class="divflex">
+                <div style="width:50%">
                     <div class="form-group">
-                        <label>Precio:</label><label class="show-data" id="but_precio"></label>
+                        <label>Nombre:</label><label class="show-data" id="res_nombre"></label>
                     </div>
-                </div>*@
+                    <div class="form-group">
+                        <label>Apellido:</label><label class="show-data" id="res_apellido"></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Edad:</label><label class="show-data" id="res_edad"></label>
+                    </div>
+                </div>                
             </div>
         </div>
         <div class="content-table">

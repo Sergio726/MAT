@@ -16,15 +16,27 @@
 
 <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
 <div class="MsgError">
-    <span>@ViewBag.MsgError</span>
+    <span>@Html.Raw(@ViewBag.MsgError)</span>
 </div>
 
 @{if (Model.Reservas.Count <= 0)
     {
-        <h3>El viaje seleccionado posee campos incompletos. Por favor revise los datos del viaje.</h3>
+        var message = ViewBag.MsgError;
+        if (message.Contains("Error with url:"))
+        {
+            <script> // Muestra el HTML formateado del mensaje de error en la consola 
+                const errorMessage = '@Html.Raw(ViewBag.MsgError)';
+                console.log(errorMessage); 
+            </script>
+            <h3>Los servicios no estan disponibles en este momento. Contacte con soporte.</h3>
+        }
+        else
+        {
+            <h3>El viaje seleccionado posee campos incompletos. Por favor revise los datos del viaje.</h3>
+        }
     }
     else
-    {        
+    {
         <div class="container-flex">
             <div class="left-container">
                 <section id="panel-detalle">
@@ -420,7 +432,14 @@
                             "mRender": function (data, type, row) {
                                 const html = row.Adicionales.map(a => a.Descripcion).join(" <br/>");
                                 return html;
-                            } },
+                            }
+                        },
+                        {
+                            "title": "Responsable",
+                            "mRender": function (data, type, row) {
+                                return oReserva.fnRenderResponsable(row);
+                            }
+                        },
                         {
                             "mRender": function (data, type, row) {
                                 return oReserva.fnRenderButtonRemovePasajero(row);
@@ -434,19 +453,36 @@
             }
 
             oReserva.fnRenderButtonRemovePasajero = function (row) {
-                var button = "<a href=\"#\" onclick=\"oReserva.removePasajero('" + row.Id + "')\" >" +
+                const button = "<a href=\"#\" onclick=\"oReserva.removePasajero('" + row.Id + "')\" >" +
                     "<img src =\"/Images/cross.png\" width=\"32\" height=\"32\" title=\"Eliminar\"></a >";
                 return button;
             }
 
+            oReserva.fnRenderResponsable = function (row) {
+                let button = "";
+                if (row.Edad < 20) {
+                    if (row.PasajeroAdulto.Id == "") {
+                        button = "<a href=\"#\" onclick=\"oReserva.assignPasajeroResponsable('" + row.Id + "')\" "+
+                            " class=\"btn btn-inverse btn-small\" >Seleccionar</a >";
+                    }
+                    else {
+                        button = row.PasajeroAdulto.NombreCompleto;
+                        }
+                } else {
+                    button = "";
+                }
+                return button;
+            }
+            
             oReserva.addPasajero = function (pasajero) {
 
                 const idx = oReserva.Pasajeros.findIndex(p => p.Id == pasajero.Id);
                 if (idx == -1) {
-                    let data = pasajero;
+                    let data = { ...pasajero };
                     data.Habitacion = { Id: "", Capacidad: 0, NroHabitacion: "", Precio: 0 };
                     data.Butaca = { ButacaId: "", PasajeId: "", Codigo: "", Precio: 0 };
                     data.Adicionales = [];
+                    data.PasajeroAdulto = { Id: "", NombreCompleto: "" }
                     oReserva.Pasajeros.push(data);
                     oReserva.loadTablePasajeros();
                 }
@@ -501,7 +537,7 @@
             }
 
 
-            //Butacas            
+            //Butacas
             oReserva.buildReservas = function () {
                 this._reservas = @Html.Raw(Json.Encode(Model.Reservas));
                 for (item of this._reservas) {
@@ -976,6 +1012,32 @@
                 this.recalcularDetallePago();
             }
 
+            //Pasajero Responsable
+            oReserva.assignPasajeroResponsable = function (menorId) {
+                var url = "/NuevaReserva/SeleccionarPasajero?entityId=" + menorId + "&source=RESPONSABLE";
+                var dialogid = "AsignarPasajero";
+                var dialogtitle = "Asignar pasajero a un menor";
+                ShowFormDialog(url, dialogid, dialogtitle, "medium");
+                return false;
+            }
+
+            oReserva.updateResponsableSelected = function (pasajerosSelected, menorId) {
+
+                const menor = this.Pasajeros.find(p => p.Id == menorId);
+                if (menor == undefined)
+                    return false;
+                const adulto = this.Pasajeros.find(p => p.Id == pasajerosSelected[0]);
+                if (adulto == undefined)
+                    return false;
+
+                menor.PasajeroAdulto = {
+                    Id: adulto.Id,
+                    NombreCompleto: adulto.Nombre + " " + adulto.Apellido
+                };
+                
+                this.loadTablePasajeros();
+            }
+
 
             oReserva.formatDisplay = function()
             {
@@ -1057,7 +1119,7 @@
             }
 
             oReserva.Init = function () {
-                oReserva.loadTablePasajeros();                
+                oReserva.loadTablePasajeros();
                 oReserva.buildReservas();
                 oReserva.getHabitacionesDisponibles();
                 oReserva.getAdicionales();

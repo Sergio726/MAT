@@ -7,7 +7,7 @@ using System.Web;
 
 namespace MAT.MVC.Integration.BackendApi
 {
-    public class ResultPagoDto: ErrorDto
+    public class ResultReservaDto: ErrorDto
     {
         public string Result { get; set; }
         public string FacturaId { get; set; }

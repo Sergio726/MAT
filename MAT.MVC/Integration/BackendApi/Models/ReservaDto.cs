@@ -6,7 +6,7 @@ using System.Web;
 
 namespace MAT.MVC.Integration.BackendApi
 {
-    public class PagoDto
+    public class ReservaDto
     {
         [JsonProperty("viajeId")]
         public Guid ViajeId { get; set; }
@@ -66,13 +66,13 @@ namespace MAT.MVC.Integration.BackendApi
     public class PasajeDto
     {
         [JsonProperty("pasajeId")]
-        public Guid PasajeId { get; set; }
+        public Guid? PasajeId { get; set; }
 
         [JsonProperty("pasajeroId")]
         public Guid PasajeroId { get; set; }
 
         [JsonProperty("butacaId")]
-        public Guid ButacaId { get; set; }
+        public Guid? ButacaId { get; set; }
 
         [JsonProperty("butacaCodigo")]
         public string ButacaCodigo { get; set; }
@@ -85,5 +85,9 @@ namespace MAT.MVC.Integration.BackendApi
 
         [JsonProperty("habitacionId")]
         public Guid HabitacionId { get; set; }
+
+        [JsonProperty("pasajeroAdultoId")]
+        public Guid? PasajeroAdultoId { get; set; }
+        
     }
 }
