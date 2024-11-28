@@ -136,14 +136,15 @@ namespace MAT.MVC.Controllers.NuevaReserva
                 {
                     var pasaje = new PasajeDto();
                     pasaje.PasajeroId = new Guid(pasajero.Id);                    
-                    pasaje.HabitacionId = new Guid(pasajero.Habitacion.Id);
+                    
                     pasaje.AdicionalesIds = pasajero.Adicionales.Select(x => new Guid(x.AdicionalId)).ToList();
                     if (pasajero.PasajeroAdulto != null && pasajero.PasajeroAdulto.Id != null)
                     {
                         pasaje.PasajeroAdultoId = new Guid(pasajero.PasajeroAdulto.Id);
                     }
-                    else
+                    else                    
                     {
+                        pasaje.HabitacionId = new Guid(pasajero.Habitacion.Id);
                         pasaje.PasajeId = new Guid(pasajero.Butaca.PasajeId);
                         pasaje.ButacaId = new Guid(pasajero.Butaca.ButacaId);
                         pasaje.ButacaCodigo = pasajero.Butaca.Codigo;
