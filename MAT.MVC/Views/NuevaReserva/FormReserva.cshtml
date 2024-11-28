@@ -217,14 +217,15 @@
                 $("#FormReserva").dialog("close");
 
                 let message = "";
-                switch (data) {
-                    case "Pagado":
+                const estadoFactura = data.toLowerCase();
+                switch (estadoFactura) {
+                    case "pagado":
                         message = "Reserva realizada correctamente. Pago total recibido.";
                         break;
-                    case "Señado":
+                    case "señado":
                         message = "Reserva realizada correctamente. Seña parcial recibida.";
                         break;
-                    case "Pre-reserva":
+                    case "pre-reserva":
                         message = "Pre-Reserva realizada correctamente.";
                         break;
                     default: //"Error":

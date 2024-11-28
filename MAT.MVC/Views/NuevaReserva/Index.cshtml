@@ -1074,7 +1074,7 @@
                     }
 
                     //Habitaction
-                    if (!pasajero.Habitacion.Id) {
+                    if (pasajero.Edad > edadBebe && !pasajero.Habitacion.Id) {
                         message.push(`El pasajero ${pasajero.Nombre} ${pasajero.Apellido} no tiene habitacion asignada`);
                     }
 
