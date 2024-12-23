@@ -1,11 +1,13 @@
 ﻿using MAT.MVC.Common;
 using MAT.Utilities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace MAT.MVC.Models
@@ -440,6 +442,21 @@ namespace MAT.MVC.Models
 
             return EPasajeroViaje;
         }
-        
+
+        public static string GetViajesPorVencer()
+        {
+            SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    // Agregar parámetros si es necesario
+                };
+
+            // Ejecutar el procedimiento almacenado y obtener el DataSet
+            DataSet dataSet = DBHelper.ExecuteDataSet("dbo.usp_MAT_Dashboard_Viajes_LugaresDisponibles", dbParams);
+
+            // Convertir el DataSet a JSON
+            string sJson = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+
+            return sJson;
+        }
     }
 }

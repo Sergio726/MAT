@@ -11,16 +11,16 @@
 
         @*<div class="span3">
 
-            <!-- Stats Widget -->
-            <a href="/Admin/ServiciosAdminPrecioHistorial" class="widget-stats">
-                <span><i></i></span>
-                <span class="txt">Historial de Precios Servicios</span>
-                <div class="clearfix"></div>
-                <span class="count label">2</span>
-            </a>
-            <!-- // Stats Widget END -->
+                <!-- Stats Widget -->
+                <a href="/Admin/ServiciosAdminPrecioHistorial" class="widget-stats">
+                    <span><i></i></span>
+                    <span class="txt">Historial de Precios Servicios</span>
+                    <div class="clearfix"></div>
+                    <span class="count label">2</span>
+                </a>
+                <!-- // Stats Widget END -->
 
-        </div>*@
+            </div>*@
         <div class="span3">
 
             <!-- Stats Widget -->
@@ -66,28 +66,27 @@
 <div class="innerLR">
 
     <div class="row-fluid border-bottom">
-        
-    
-            <!-- // Stats Widget END -->
-        </div>
 
-        @if (User.Identity.Name.ToUpper().Equals("ADMINDEV"))
-        {
-            <div class="span3">
 
-                <!-- Stats Widget -->
-                <a href="/Home/HistorialPagos" class="widget-stats icons-home historial-pagos-icon">
-                    <span><i></i></span>
-                    <span class="txt">Historial</span>
-                    <div class="clearfix"></div>
-                    <span class="count label label-primary">6</span>
-                </a>
-                <!-- // Stats Widget END -->
-
-            </div>    
-        }
-
+        <!-- // Stats Widget END -->
     </div>
-</div>
-<div class="separator bottom"></div>
 
+    @if (User.Identity.Name.ToUpper().Equals("ADMINDEV"))
+    {
+        <div class="span3">
+
+            <!-- Stats Widget -->
+            <a href="/Home/HistorialPagos" class="widget-stats icons-home historial-pagos-icon">
+                <span><i></i></span>
+                <span class="txt">Historial</span>
+                <div class="clearfix"></div>
+                <span class="count label label-primary">6</span>
+            </a>
+            <!-- // Stats Widget END -->
+
+        </div>
+    }
+
+</div>
+
+<div class="separator bottom"></div>

@@ -95,33 +95,85 @@
                 </a>
                 <!-- // Stats Widget END -->
 
-            </div>    
+            </div>
         }
 
-            <div class="span3">
+        <div class="span3">
 
-                <!-- Stats Widget -->
-                <a href="/Factura/Index" class="widget-stats icons-home searchFactura-icon">
-                    <span><i></i></span>
-                    <span class="txt">Busqueda de Facturas</span>
-                    <div class="clearfix"></div>
-                    <span class="count label label-primary">7</span>
-                </a>
-                <!-- // Stats Widget END -->
+            <!-- Stats Widget -->
+            <a href="/Factura/Index" class="widget-stats icons-home searchFactura-icon">
+                <span><i></i></span>
+                <span class="txt">Busqueda de Facturas</span>
+                <div class="clearfix"></div>
+                <span class="count label label-primary">7</span>
+            </a>
+            <!-- // Stats Widget END -->
 
-            </div>  
-            <div class="span3">
+        </div>
+        <div class="span3">
 
-                <!-- Stats Widget -->
-                <a href="/PersonaCliente/NotaCreditoList" class="widget-stats icons-home cheque-icon">
-                    <span><i></i></span>
-                    <span class="txt">Notas de Crédito</span>
-                    <div class="clearfix"></div>
-                    <span class="count label label-primary">8</span>
-                </a>
-                <!-- // Stats Widget END -->
+            <!-- Stats Widget -->
+            <a href="/PersonaCliente/NotaCreditoList" class="widget-stats icons-home cheque-icon">
+                <span><i></i></span>
+                <span class="txt">Notas de Crédito</span>
+                <div class="clearfix"></div>
+                <span class="count label label-primary">8</span>
+            </a>
+            <!-- // Stats Widget END -->
 
-            </div>  
+        </div>
     </div>
 </div>
-<div class="separator bottom"></div>
+
+<div>
+    <div class="bnn_floating-banner hidden" id="banner">
+        <button class="bnn_close-banner" onclick="closeBanner()"><span>&times;</span></button>
+        <ul id="banner-list"></ul>
+    </div>
+
+    <script>
+        function closeBanner() {
+            const banner = document.getElementById('banner');
+            banner.style.display = 'none';
+        }
+
+        function formatDateDiff(dateString) {
+            const today = new Date();
+            const targetDate = new Date(dateString);
+            const diffTime = targetDate - today;
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        $.ajax({
+            url: "/Viaje/GetViajesPorVencer",
+            data: {},
+            dataType: "json",
+            success: function (data) {
+                
+                const jsonString = JSON.parse(data.sJsonResult);
+
+                if (jsonString.Table.length > 0) {
+                    const bannerList = document.getElementById('banner-list');
+                    jsonString.Table.forEach(jsonString => {
+                        const daysToDeparture = formatDateDiff(jsonString.fechasalida);
+                        const listItem = document.createElement('li');
+
+                        listItem.innerHTML = `
+                            <h2><a href="/Reserva/Index?viajeid=${jsonString.ViajeID}">${jsonString.descripcion}</a></h2>
+                            <p>A ${daysToDeparture} días de la salida</p>
+                            <p>Lugares disponibles: ${jsonString.Disponibles}</p>
+                            `;
+
+                        bannerList.appendChild(listItem);
+                    })
+
+                    $("#banner").removeClass("hidden");
+                }
+               
+
+            }
+        });
+        
+
+    </script>
+</div>
