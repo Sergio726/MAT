@@ -333,7 +333,7 @@
     <Compile Include="Integration\BackendApi\Models\PersonaDto.cs" />
     <Compile Include="Integration\BackendApi\Models\ResultPasajeDto.cs" />
     <Compile Include="Integration\BackendApi\Models\ReservaDto.cs" />
-    <Compile Include="Integration\BackendApi\Models\ResultReservaDto.cs" />
+    <Compile Include="Integration\BackendApi\Models\ResponseReservaDto.cs" />
     <Compile Include="Integration\IApiClient.cs" />
     <Compile Include="Integration\MappingProfile.cs" />
     <Compile Include="Models\AccountModels.cs" />
