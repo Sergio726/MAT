@@ -174,13 +174,18 @@ namespace MAT.MVC.Controllers.NuevaReserva
 
                 string sEstadoFactura = "";
 
-                var result = await _backendAPI.ReservarPasajes(datosPago);
-                if (result.Result == "Done.")
-                    sEstadoFactura = result.FacturaEstado;
-                else
-                    sEstadoFactura = result.Result;
+                try
+                {
+                    var result = await _backendAPI.ReservarPasajes(datosPago);
+                    sEstadoFactura = result.Factura.EstadoDescripcion;
+                }
+                catch (Exception ex) { 
+                    string mess = ex.Message;
+                    sEstadoFactura += mess;
+                }
+
+
                 return sEstadoFactura;
-                
             }
             catch (Exception ex)
             {

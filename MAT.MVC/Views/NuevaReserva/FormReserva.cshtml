@@ -213,6 +213,8 @@
             contentType: "application/json; charset=utf-8",            
             success: function (data) {
 
+                console.log(JSON.stringify(data));
+
                 $("#divFullLoading").remove();
                 $("#FormReserva").dialog("close");
 
