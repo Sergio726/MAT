@@ -13,6 +13,7 @@ using System.Data;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using MAT.MVC.Common;
+using System.Web.Helpers;
 
 namespace MAT.MVC.Controllers.Viaje
 {
@@ -503,6 +504,26 @@ namespace MAT.MVC.Controllers.Viaje
             {
                 ID = sResult[0],
                 Mensaje = sResult[1]
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        public  JsonResult GetViajesPorVencer()
+        {
+            string[] sResult = new string[2];
+            try
+            {
+                sResult[0] = ViajeMethod.GetViajesPorVencer();
+            }
+            catch (Exception e)
+            {
+                sResult[0] = "";
+                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+            }
+
+            return Json(new
+            {
+                sJsonResult = sResult[0],
+                sMensaje = sResult[1]
             }, JsonRequestBehavior.AllowGet);
         }
 
