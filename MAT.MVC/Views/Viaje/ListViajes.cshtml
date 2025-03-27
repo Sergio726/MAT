@@ -19,6 +19,9 @@
                 Pais Destino
             </th>
             <th>
+                Moneda Tipo
+            </th>
+            <th>
                 Precio
             </th>
             <th>
@@ -55,6 +58,9 @@
                 </td>
                 <td>
                     @item.PaisDestino
+                </td>
+                <td>
+                    @(item.MonedaTipo == 1 ? "$ ARG" : "U$D")
                 </td>
                 <td>
                     @("$ ") @item.PrecioSemicama

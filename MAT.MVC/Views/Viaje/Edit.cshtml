@@ -20,9 +20,9 @@
             <label>Paquete <span class="required">*</span></label>
         </div>
         <div class="form-field">
-     
+
             <input id="DDPaqueteId" placeholder="BUSCAR PAQUETE" type="text" value="@Model.PaqueteNombre" title="ESCRIBA PARA BUSCAR UN PAQUETE" />
-            <input type="hidden" id="PaqueteId" name="PaqueteId" value="@Model.PaqueteID"/>
+            <input type="hidden" id="PaqueteId" name="PaqueteId" value="@Model.PaqueteID" />
         </div>
         <div class="form-label">
             <label>Transporte <span class="required">*</span></label>
@@ -31,7 +31,7 @@
             <select id="BusID" name="BusID">
                 @foreach (TransporteModel Transporte in TransporteMethod.GetListTransporte())
                 {
-                    <option value="@Transporte.TransporteID" @(Model.BusID == Transporte.TransporteID ? "selected" : "") >@(Transporte.NroCoche +" MATRICULA: " + Transporte.Matricula)</option>
+                    <option value="@Transporte.TransporteID" @(Model.BusID == Transporte.TransporteID ? "selected" : "")>@(Transporte.NroCoche +" MATRICULA: " + Transporte.Matricula)</option>
                 }
             </select>
         </div>
@@ -73,14 +73,14 @@
             <label>Hora de Regreso <span class="required">*</span></label>
         </div>
         <div class="form-field">
-            <input type="text" id="HoraRegreso" name="HoraRegreso" class="time" value="@Model.HoraRegreso"/>
+            <input type="text" id="HoraRegreso" name="HoraRegreso" class="time" value="@Model.HoraRegreso" />
         </div>
 
         <div class="form-label">
             <label title="Indicar cuando minitos antes de la salida del viaje es la concentración">Tiempo de Concentración en Minutos<span class="required">*</span></label>
         </div>
         <div class="form-field">
-            <input type="number" id="TiempoConsentracion" name="TiempoConsentracion" value="@Model.TiempoConsentracion"/>
+            <input type="number" id="TiempoConsentracion" name="TiempoConsentracion" value="@Model.TiempoConsentracion" />
         </div>
 
         <div class="form-label">
@@ -114,10 +114,19 @@
             </select>
         </div>
         <div class="form-label">
+            <label>Tipo Moneda</label>
+        </div>
+        <div class="form-field">
+            <select id="MonedaTipo" name="MonedaTipo">
+                <option value="1" @(Model.MonedaTipo == 1 ? "selected" : "")>Peso Argentino $</option>
+                <option value="3" @(Model.MonedaTipo == 3 ? "selected" : "")>Dolar U$D</option>
+            </select>
+        </div>
+        <div class="form-label">
             <label>Precio Semicama</label>
         </div>
         <div class="form-field">
-            <input type="number" id="PrecioSemicama" name="PrecioSemicama"  value="@Model.PrecioSemicama"/>
+            <input type="number" id="PrecioSemicama" name="PrecioSemicama" value="@Model.PrecioSemicama" />
         </div>
         <div class="form-label">
             <label>Precio Cama</label>
@@ -129,7 +138,7 @@
             <label>Precio Promocional</label>
         </div>
         <div class="form-field">
-            <input type="number" id="PrecioPromocional" name="PrecioPromocional" value="@Model.PrecioPromocional"/>
+            <input type="number" id="PrecioPromocional" name="PrecioPromocional" value="@Model.PrecioPromocional" />
         </div>
         <div class="form-label">
             <label>Vencimiento de Promoción</label>
@@ -206,6 +215,8 @@
                 $("#PaqueteId").css("background-color", "transparent");
                 $("#Medio").attr("disabled", "disabled");
                 $("#Medio").css("background-color", "transparent");
+                $("#MonedaTipo").attr("disabled", "disabled");
+                $("#MonedaTipo").css("background-color", "transparent");
                 $("#BusID").attr("disabled", "disabled");
                 $("#BusID").css("background-color", "transparent");
                 $("input").css("border", "none")

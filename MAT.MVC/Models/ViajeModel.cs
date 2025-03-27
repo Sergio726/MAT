@@ -42,6 +42,7 @@ namespace MAT.MVC.Models
         public int TiempoConsentracion { get; set; }
         public string Observaciones { get; set; }
         public string DeleteOn { get; set; }
+        public int MonedaTipo { get; set; }
 
     }
     
@@ -108,6 +109,7 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@HoraRegreso", SqlDbType.VarChar, 0, Viaje.HoraRegreso),
                         DBHelper.MakeParam("@TiempoConsentracion", SqlDbType.Int, 0, Viaje.TiempoConsentracion),
                         DBHelper.MakeParam("@Descripcion", SqlDbType.VarChar, 0, Viaje.Descripcion),
+                        DBHelper.MakeParam("@MonedaTipo", SqlDbType.Int, 1, Viaje.MonedaTipo),
                         DBHelper.MakeParam("@PrecioSemicama", SqlDbType.Float, 0, Viaje.PrecioSemicama),
                         DBHelper.MakeParam("@PrecioCama", SqlDbType.Float, 0, Viaje.PrecioCama),
                         DBHelper.MakeParam("@PrecioPromocional", SqlDbType.Float, 0, Viaje.PrecioPromocional),
@@ -184,6 +186,7 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@HoraRegreso", SqlDbType.VarChar, 0, Viaje.HoraRegreso),
                         DBHelper.MakeParam("@TiempoConsentracion", SqlDbType.Int, 0, Viaje.TiempoConsentracion),
                         DBHelper.MakeParam("@Descripcion", SqlDbType.VarChar, 0, Viaje.Descripcion),
+                        DBHelper.MakeParam("@MonedaTipo", SqlDbType.Int, 1, Viaje.MonedaTipo),
                         DBHelper.MakeParam("@PrecioSemicama", SqlDbType.Float, 0, Viaje.PrecioSemicama),
                         DBHelper.MakeParam("@PrecioCama", SqlDbType.Float, 0, Viaje.PrecioCama),
                         DBHelper.MakeParam("@PrecioPromocional", SqlDbType.Float, 0, Viaje.PrecioPromocional),
@@ -236,6 +239,7 @@ namespace MAT.MVC.Models
                     Item.HoraSalida = _reader["HoraSalida"].ToString();
                     Item.PaisOrigen = _reader["PaisOrigen"].ToString();
                     Item.PaisDestino = _reader["PaisDestino"].ToString();
+                    Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
                     Item.Paso = _reader["Paso"].ToString();
                     Item.Medio = _reader["Medio"].ToString();
                     Item.BusID = _reader["BusID"].ToString();
@@ -312,6 +316,7 @@ namespace MAT.MVC.Models
                     Item.HoraRegreso = _reader["HoraRegreso"].ToString();
                     Item.TiempoConsentracion = Convert.ToInt32(_reader["TiempoConsentracion"]);
                     Item.Descripcion = _reader["Descripcion"].ToString();
+                    Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
                     if (_reader["PrecioSemicama"].ToString() != "")
                     {
                         Item.PrecioSemicama = Convert.ToDouble(_reader["PrecioSemicama"]);
