@@ -11,6 +11,7 @@ using MAT.MVC.Common;
 using MAT.Utilities;
 using System.Data.SqlClient;
 using System.Data;
+using MAT.Enums.SharedModels;
 
 namespace MAT.MVC.Models
 {
@@ -372,10 +373,12 @@ namespace MAT.MVC.Models
         public Int32 EstadoPasaje { get; set; }
         public Guid VoucherId { get; set; }
         public Guid PrecioId { get; set; }
+        public string ButacaNro { get; set; }
         public int ButacaPiso { get; set; }
         public string ButacaFila { get; set; }
         public string ButacaPosicion { get; set; }
         public string ButacaCodigoButaca { get; set; }
+        public int? ButacaTipo { get; set; }
         public Guid TransporteID {get;set;}
         public string TransporteNroCoche { get; set; }
         public Guid PaqueteID { get; set; }
@@ -383,6 +386,9 @@ namespace MAT.MVC.Models
         public string PasajeroApellido { get; set; }
         public int MonedaTipo { get; set; }
         public string TransporteTipo { get; set; }
+        public string PrecioCama { get; set; }
+        public string PrecioSemicama { get; set; }
+        public string PrecioCalculado { get; set; }
     }
 
     public class DistribucionCoche
@@ -649,5 +655,6 @@ namespace MAT.MVC.Models
                     };
             return DBHelper.ExecuteDataSet("dbo.usp_Reserva_GetSenasByViajeID", dbParams);
         }
+
     }
 }

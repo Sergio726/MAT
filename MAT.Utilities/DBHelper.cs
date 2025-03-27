@@ -1,4 +1,6 @@
-﻿using Microsoft.SqlServer.Server;
+﻿using MAT.Entities;
+using MAT.Enums.SharedModels;
+using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -6,9 +8,11 @@ using System.Data;
 using System.Data.Common;
 //using System.Data.EntityClient;
 using System.Data.SqlClient;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Web;
+
 
 namespace MAT.Utilities
 {
@@ -295,30 +299,6 @@ namespace MAT.Utilities
             return param;
         }
 
-        public static SqlParameter MakeTableParam(string sParamName, string sParamType, string sListIds)
-        {
-            List<SqlDataRecord> MyList = new List<SqlDataRecord>();
-            SqlMetaData[] MyList_tblType = { new SqlMetaData("Value", SqlDbType.Int, false, true, SortOrder.Unspecified, -1) };
-
-            if (sListIds != "")
-            {
-                foreach (string sId in sListIds.Split(','))
-                {
-                    if (sId != "")
-                    {
-                        SqlDataRecord Row = new SqlDataRecord(MyList_tblType);
-                        Row.SetInt32(0, Convert.ToInt32(sId));
-                        MyList.Add(Row);
-                    }
-                }
-            }
-
-            SqlParameter tvpListInt = new SqlParameter(sParamName, SqlDbType.Structured);
-            tvpListInt.TypeName = sParamType;
-            tvpListInt.Value = MyList.Count == 0 ? null : MyList;
-            return tvpListInt;
-        }
-
         public static SqlParameter MakeTableParam(string sParamName, TableDataType TableType, string sListIds)
         {
             List<SqlDataRecord> MyList = new List<SqlDataRecord>();
@@ -399,6 +379,23 @@ namespace MAT.Utilities
             tvpListInt.Value = MyList.Count == 0 ? null : MyList;
             return tvpListInt;
         }
+
+        public static SqlParameter MakeTableParam<T>(string sParamName, TableDataType TableType, List<T> items)
+        {
+            var strategy = TableStrategyFactory.GetStrategy<T>(TableType);
+            var MyList = strategy.CreateRecords(items);
+            var sParamType = strategy.GetParamType();
+
+            var tvpList = new SqlParameter(sParamName, SqlDbType.Structured)
+            {
+                TypeName = sParamType,
+                Value = MyList.Count == 0 ? null : MyList
+            };
+
+            return tvpList;
+        }
+
+
         public static SqlParameter MakeParamOutput(string paramName, SqlDbType dbType, int size)
         {
             SqlParameter param;
@@ -504,7 +501,70 @@ namespace MAT.Utilities
     {
         tvp_uniqueidentifier = 7,
         tvp_int = 8,
-        tvp_int_unique = 9
-        
+        tvp_int_unique = 9,
+    }
+
+    public interface ITableStrategy<T>
+    {
+        List<SqlDataRecord> CreateRecords(List<T> items);
+        string GetParamType();
+    }
+    public class TvpIntUniqueStrategy : ITableStrategy<int>
+    {
+        public List<SqlDataRecord> CreateRecords(List<int> items)
+        {
+            List<int> uniqueIds = items.Distinct().ToList();
+            var MyList = new List<SqlDataRecord>();
+            var MyList_tblType = new SqlMetaData[] { new SqlMetaData("Value", SqlDbType.Int) };
+            foreach (var item in uniqueIds)
+            {
+                var Row = new SqlDataRecord(MyList_tblType);
+                Row.SetInt32(0, item);
+                MyList.Add(Row);
+            }
+            return MyList;
+        }
+
+        public string GetParamType()
+        {
+            return "tvp_int_unique";
+        }
+    }
+    public class TvpUniqueIdentifierStrategy : ITableStrategy<Guid>
+    {
+        public List<SqlDataRecord> CreateRecords(List<Guid> items)
+        {
+            List<Guid> uniqueIds = items.Distinct().ToList();
+            var MyList = new List<SqlDataRecord>();
+            var MyList_tblType = new SqlMetaData[] { new SqlMetaData("Value", SqlDbType.UniqueIdentifier) };
+            foreach (var item in uniqueIds)
+            {
+                var Row = new SqlDataRecord(MyList_tblType);
+                Row.SetGuid(0, item);
+                MyList.Add(Row);
+            }
+            return MyList;
+        }
+
+        public string GetParamType()
+        {
+            return "tvp_uniqueidentifier";
+        }
+    }
+
+    public class TableStrategyFactory
+    {
+        public static ITableStrategy<T> GetStrategy<T>(TableDataType tableType)
+        {
+            switch (tableType)
+            {
+                case TableDataType.tvp_int_unique:
+                    return (ITableStrategy<T>)new TvpIntUniqueStrategy();
+                case TableDataType.tvp_uniqueidentifier:
+                    return (ITableStrategy<T>)new TvpUniqueIdentifierStrategy();                
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(tableType), "Unknown table type");
+            }
+        }
     }
 }

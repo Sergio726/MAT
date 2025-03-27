@@ -16,20 +16,30 @@ using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using System.Web.Security;
 using WebMatrix.WebData;
+using MAT.MVC.Integration;
+using System.Threading.Tasks;
+using AutoMapper;
+using MAT.MVC.Integration.BackendApi.Models;
 
 namespace MAT.MVC.Controllers.Reserva
 {
     public class ReservaController : Controller
     {
+        private BackendAPI _backendAPI;
+
+        public ReservaController()
+        {
+            _backendAPI = new BackendAPI();
+        }
         
         [Authorize]
-        public ActionResult Index(Guid viajeid)
+        public async Task<ActionResult> Index(Guid viajeid)
         {
             List<ReservaStandard> Model = new List<ReservaStandard>();
 
             try
             {
-                Model = ReservaMethod.GetListOfPasajesByViajeID(viajeid.ToString());
+                Model = ReservaMethod.GetListOfPasajesByViajeID(viajeid.ToString());                
                 ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeid.ToString());
                 ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeid.ToString()).Tables[0].Rows[0]["CountListaEspera"];
 
@@ -689,13 +699,13 @@ namespace MAT.MVC.Controllers.Reserva
 
                 List<PasajeInputModel> _pasajes = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<PasajeInputModel>>(jsonobject);
 
-                DataSet dsRegFactura = MVC.Models.ReservaMethod.RegistrarFactura(cliente, MATContext.CurrentVendedor.VendedorId.ToString(), observaciones, condicion, Convert.ToInt32(ViajeMonedaTipo));
+                string vendedorId = MATContext.CurrentVendedor.VendedorId.ToString();
+                DataSet dsRegFactura = MVC.Models.ReservaMethod.RegistrarFactura(cliente, vendedorId, observaciones, condicion, Convert.ToInt32(ViajeMonedaTipo));
 
                 string sFacturaID = dsRegFactura.Tables[0].Rows[0]["FacturaID"].ToString();
 
                 if (sFacturaID != "")
-                {
-                    string sVendedorId = MATContext.CurrentVendedor.VendedorId.ToString();
+                {                    
                     foreach (PasajeInputModel pasaje in _pasajes)
                     {
                         string _adicionalesid = "";
@@ -704,7 +714,7 @@ namespace MAT.MVC.Controllers.Reserva
                             _adicionalesid = string.Join(",", pasaje.adicionalesid);
                         }
                         //registrar pasajeros como prereserva
-                        MVC.Models.ReservaMethod.UpdatePasajeAdicionalesVoucher(pasaje.pasajeid, sFacturaID, pasaje.pasajeroid, _adicionalesid,5, sVendedorId);
+                        MVC.Models.ReservaMethod.UpdatePasajeAdicionalesVoucher(pasaje.pasajeid, sFacturaID, pasaje.pasajeroid, _adicionalesid,5, vendedorId);
 
                         //registrar detalles de factura
 

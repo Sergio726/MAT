@@ -130,12 +130,7 @@ footer {
     height: 2em;
 }
 
-section#panel-pasajero {
-    display: inline-block;
-    width: 100%;
-}
-
-section#panel-viaje {
+/*section#panel-viaje {
     display: inline-block;
     vertical-align: top;
     width:93%;
@@ -144,28 +139,146 @@ section#panel-viaje {
     border-radius:6px;
     background-color:#e0e0e0;
     text-align:left;
+}*/
+section#panel-viaje p {
+    text-align:left !important;
 }
-    section#panel-viaje p {
-        text-align:left !important;
-    }
-    section#panel-viaje ul {
-        list-style:none;
-    }
+section#panel-viaje ul {
+    list-style:none;
+}
 
-section#panel-detalle {
+div#divDetalleViaje ul {
+    padding-left: 20px;
+}
+
+/*section#panel-detalle {
     display: inline-block;
     width: 25%;
     vertical-align: top;
     margin-left:1em;
     margin-top: 1em;
 }
+*/
 
-section#panel-bus {
-    display: inline-block;
-    width: 70%;
-    margin-left: 1em;
-    margin-top: 1em;
+
+
+.container-flex {
+    display: flex;
+    width: 100%;
+    padding: 1em;
+    box-sizing: border-box;
 }
+
+.left-container {
+    width: 25%;
+    margin: 0 1em 1em 0;
+}
+.right-container {
+    width: 75%;
+    display: flex;
+    flex-direction: column;    
+}
+
+.container-section {
+    flex: 1; /* Hace que todas las secciones tengan el mismo tamaño */    
+}
+
+/* Para ajustar el último margen inferior */
+.container-section:last-child {
+    margin-bottom: 0;
+}
+
+.form-group {
+    display: flex;
+    width: 100%; /* Asegúrate de que ocupe el 100% del contenedor padre */
+}
+
+    .form-group label {
+        width: 20%; /* El label ocupará el 40% del ancho del div */
+        text-align: right;
+        margin-right: 10px; /* Espacio opcional entre el label y el input */
+        margin-bottom: 0px;
+        line-height: 30px;
+        color: rgb(124,124,124);
+        cursor: auto;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+
+    }
+
+.form-group input {
+    width: 80%; /* El input ocupará el 60% del ancho del div */
+}
+
+.form-group label.show-data {
+    width: 80%; /* El label ocupará el 40% del ancho del div */
+    text-align: left;    
+    margin-bottom: 0px;
+    line-height: 30px;
+}
+
+.content-box {
+    display: flex;
+    width: 100%;
+    padding: 1em;
+    box-sizing: border-box;
+    flex-direction:column;
+    gap: 10px;
+}
+.content-box > div{
+    width: 100%
+}
+
+.divflex {
+    display: flex;
+}
+
+.detalle-compra {
+    display: flex;
+    width: 100%;
+}
+
+.detalle-compra label.left {
+    width: 70%;
+    text-align: left;
+    margin-right: 10px; /* Espacio opcional entre el label y el input */
+    margin-bottom: 0px;
+    line-height: 30px;
+    color: rgb(124,124,124);
+    cursor: auto;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.detalle-compra label.rigth {
+    width: 30%;
+    text-align: right;
+    /*margin-right: 10px;*/ /* Espacio opcional entre el label y el input */
+    margin-bottom: 0px;
+    line-height: 30px;
+    color: rgb(124,124,124);
+    cursor: auto;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.detalle-compra-titulo {    
+    width: 100%;
+    font-size: 14px;
+    text-align:center;
+}
+
+.detalle-compra-seccion {
+    display:flex;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
 
 .ui-tabs-nav {
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
@@ -192,6 +305,6 @@ section#panel-bus {
         background-color:#96989A;
     }
 
-        .ui-tabs-nav li.ui-tabs-selected a {
-            color:#333;
-        }
+    .ui-tabs-nav li.ui-tabs-selected a {
+        color:#333;
+    }

@@ -1,12 +1,19 @@
 .piso_superior,
 .piso_superior a,
 .piso_inferior,
-.piso_inferior a
+.piso_inferior a,
+.new_piso_superior,
+.new_piso_superior a,
+.new_piso_inferior,
+.new_piso_inferior a 
 {
-	cursor:pointer
+	cursor: pointer
 }
 
-.piso_superior li, .piso_inferior li
+.piso_superior li,
+.piso_inferior li,
+.new_piso_superior li,
+.new_piso_inferior li
 {
 	visibility: visible;
 }
@@ -19,7 +26,8 @@
 	cursor:pointer
 }
 
-.piso_superior_edicion li, .piso_inferior_edicion li
+.piso_superior_edicion li,
+.piso_inferior_edicion li
 {
 	visibility: visible;
 }

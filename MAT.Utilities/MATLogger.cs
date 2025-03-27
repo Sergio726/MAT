@@ -87,5 +87,46 @@ namespace MAT.Utilities
                 r.Close();
             }
         }
+
+        public static string FormatMessageToHtml(string message)
+        {
+            message = message.Replace(Environment.NewLine, "<br>").Replace("\n", "<br>");
+
+            return message;
+        }
+        public static string FormatExceptionToHtml(Exception e, string customMessage = "")
+        {
+            StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder.Append("<div>");            
+            messageBuilder.AppendLine("Detail Error");
+            if (customMessage != "")
+            {
+                messageBuilder.AppendLine("Custom message:");
+                messageBuilder.Append("<div style=\"margin-left: 20px\">");
+                messageBuilder.Append(customMessage);
+                messageBuilder.Append("</div>");                
+            }
+            messageBuilder.AppendLine("Message:");
+            messageBuilder.Append("<div style=\"margin-left: 20px\">");
+            messageBuilder.Append(e.Message);
+            messageBuilder.Append("</div>");
+
+            messageBuilder.AppendLine("Stack Trace:");
+            messageBuilder.Append("<div style=\"margin-left: 20px\">");
+            messageBuilder.Append(e.StackTrace);
+            messageBuilder.Append("</div>");
+
+            messageBuilder.Append("</div>");
+            string message = messageBuilder.ToString();
+            message = message.Replace(Environment.NewLine, "<br>").Replace("\n", "<br>");
+
+            return message;
+        }
+
+        private static string ReplaceNewLine(string line)
+        {
+            line = line.Replace(Environment.NewLine, "<br>").Replace("\n", "<br>");
+            return line;
+        }
     }
 }

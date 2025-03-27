@@ -45,6 +45,9 @@
     <AssemblyOriginatorKeyFile>MAT.Enums.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -73,10 +76,19 @@
     <Compile Include="eTipoDocumento.cs" />
     <Compile Include="eUbicacionButaca.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharedModels\Butaca.cs" />
+    <Compile Include="SharedModels\DatosPago.cs" />
+    <Compile Include="SharedModels\Habitacion.cs" />
+    <Compile Include="SharedModels\NuevaPersona.cs" />
+    <Compile Include="SharedModels\DatosReserva.cs" />
+    <Compile Include="SharedModels\NuevoAdicional.cs" />
+    <Compile Include="SharedModels\TableReserva.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MAT.Enums.snk" />
+    <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

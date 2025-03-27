@@ -4,7 +4,12 @@ $(document).ready(function(){
 
 });
 
-function ElegirButaca(elto){
+function ElegirButaca(elto) {
+
+    //Para la nueva reserva:
+    //if (elto.closest(".right-container").length > 0)
+    //    return false;
+
 	//$('.piso_superior a').removeClass('selected');
 	//$('.piso_inferior a').removeClass('selected');
 	// Asign value of the link target

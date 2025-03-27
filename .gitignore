@@ -243,3 +243,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+#MAT.MVC
+/bin/
+/MAT.MVC/Properties/PublishProfiles/IISProfile.pubxml
