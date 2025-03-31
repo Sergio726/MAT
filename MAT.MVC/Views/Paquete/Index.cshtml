@@ -9,7 +9,7 @@
 <h2 class="title">Lista de Paquetes</h2>
 @if (ViewData["error"] != null)
 {
-    <label class="alert alert-error" id="lblError">@ViewData["error"].ToString()</label>    
+    <label class="alert alert-error" id="lblError">@ViewData["error"].ToString()</label>
 }
 
 <p class="botonera-form">
@@ -18,84 +18,74 @@
 </p>
 <div style="margin-left:5px; margin-right:5px;">
     <table class="mat-customtable" id="tblPaquetes">
-    <thead>
-        <tr>
-            <th>
-                Paquete
-            </th>
-            <th>
-                Fecha de Creación
-            </th>
-            <th>
-                Moneda
-            </th>
-            <th>
-                Temporada
-            </th>
-            <th>
-                Publicado en WEB
-            </th>
-            <th>
-                Modo Publicidad
-            </th>
-            <th style="width:200px;"></th>
-        </tr>
-    </thead>
-
-    <tbody>
-    @foreach (MAT.MVC.Models.PaqueteStandard item in Model)
-    {
-        
+        <thead>
             <tr>
-                <td>
-                    @item.Descripcion 
-                </td>
-                <td>
-                    @((item.FechaCreacion.Year != 1) ? item.FechaCreacion.ToShortDateString() : "")
-                </td>
-                <td>
-                    @item.MonedaCodigo
-                </td>
-                <td>
-                    @item.Temporada
-                </td>
-                <td>
-                    <input type="checkbox" @(item.PublicWeb == true ? "checked" : "") disabled="disabled" />
-                </td>
-                <td>
-                    <input type="checkbox" @(item.ModePublicity == true ? "checked" : "") disabled="disabled" />
-                </td>
-                <td>
-                    
-                    <a href="/Paquete/Vinculos/@item.PaqueteID" title="Vinculos" class="button_link" >
-                    </a>
-                    <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" title="Editar" class="button_edit">
-                    </a>
-                    <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" title="Detalle" class="button_detail">
-                    </a>
-                    <a href="/Paquete/Delete/@item.PaqueteID" title="Eliminar Paquete" class="button_delete">
-                    </a>
-                </td>
+                <th>
+                    Paquete
+                </th>
+                <th>
+                    Fecha de Creación
+                </th>
+                <th>
+                    Moneda
+                </th>
+                <th>
+                    Temporada
+                </th>
+                <th style="width:200px;"></th>
             </tr>
-       
-    }
-         </tbody>
+        </thead>
 
-</table>
+        <tbody>
+            @foreach (MAT.MVC.Models.PaqueteStandard item in Model)
+            {
+
+                <tr>
+                    <td>
+                        @item.Descripcion
+                    </td>
+                    <td>
+                        @((item.FechaCreacion.Year != 1) ? item.FechaCreacion.ToShortDateString() : "")
+                    </td>
+                    <td>
+                        @item.MonedaCodigo
+                    </td>
+                    <td>
+                        @item.Temporada
+                    </td>
+                    <td>
+
+                        <a href="/Paquete/Vinculos/@item.PaqueteID" title="Vinculos" class="button_link">
+                        </a>
+                        <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" title="Editar" class="button_edit">
+                        </a>
+                        <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" title="Detalle" class="button_detail">
+                        </a>
+                        <a href="/Paquete/Delete/@item.PaqueteID" title="Eliminar Paquete" class="button_delete">
+                        </a>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+
+    </table>
 </div>
 
-<script src="//cdn.datatables.net/plug-ins/1.10.15/sorting/date-uk.js" ></script>
-<script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
+<script src="//cdn.datatables.net/plug-ins/1.10.15/sorting/date-uk.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
         $("#tblPaquetes").DataTable({
             "columnDefs": [
-                            { type: 'date-uk', targets: 1 },
-                            { targets: 6, "orderable": false },
+                { type: 'date-uk', targets: 1 }, // Para ordenar fechas correctamente
+                { targets: 4, "orderable": false } // Evita que se ordene la columna de acciones
             ],
             "pageLength": 25,
-            //"order": [[1, "desc"]]
+            "order": [[1, "desc"]] // Ordenar por fecha de creación descendente
         });
     });
 </script>

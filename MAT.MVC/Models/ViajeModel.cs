@@ -43,6 +43,7 @@ namespace MAT.MVC.Models
         public string Observaciones { get; set; }
         public string DeleteOn { get; set; }
         public int MonedaTipo { get; set; }
+        public Boolean IsPublicWeb { get; set; }
 
     }
     
@@ -117,7 +118,9 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@nDias", SqlDbType.Int, 0, Viaje.nDias),
                         DBHelper.MakeParam("@nNoches", SqlDbType.Int, 0, Viaje.nNoches),
                         DBHelper.MakeParam("@Observaciones", SqlDbType.VarChar, 500, Viaje.Observaciones),
-                        DBHelper.MakeParam("@VendedorID", SqlDbType.UniqueIdentifier, 0, MATContext.CurrentVendedor.VendedorId)
+                        DBHelper.MakeParam("@IsPublicWeb", SqlDbType.Bit, 0, Viaje.IsPublicWeb),
+                        DBHelper.MakeParam("@VendedorID", SqlDbType.UniqueIdentifier, 0, MATContext.CurrentVendedor.VendedorId),
+                        
                     };
                     SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_NewViaje", dbParams);
 
@@ -193,7 +196,8 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@FechaPromocion", SqlDbType.DateTime, 0, Viaje.FechaPromocion),
                         DBHelper.MakeParam("@nDias", SqlDbType.Int, 0, Viaje.nDias),
                         DBHelper.MakeParam("@nNoches", SqlDbType.Int, 0, Viaje.nNoches),
-                        DBHelper.MakeParam("@Observaciones", SqlDbType.VarChar, 500, Viaje.Observaciones)
+                        DBHelper.MakeParam("@Observaciones", SqlDbType.VarChar, 500, Viaje.Observaciones),
+                        DBHelper.MakeParam("@IsPublicWeb", SqlDbType.Bit, 0, Viaje.IsPublicWeb),
                     };
                     SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_Update", dbParams);
 
@@ -272,7 +276,7 @@ namespace MAT.MVC.Models
                                         
                     Item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
 
-                    //Item.DeleteOn = _reader["DeleteOn"].ToString();
+                    Item.IsPublicWeb = Convert.ToBoolean(_reader["IsPublicWeb"]);
 
                     ListViajes.Add(Item);
 
@@ -343,6 +347,7 @@ namespace MAT.MVC.Models
                     }
 
                     Item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
+                    Item.IsPublicWeb = Convert.ToBoolean(_reader["IsPublicWeb"]);
 
 
                 }

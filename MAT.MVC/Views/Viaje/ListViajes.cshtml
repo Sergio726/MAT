@@ -1,25 +1,26 @@
 ﻿@model List<MAT.MVC.Models.ViajeModel>
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
 
-<table id="tblViajes" class="mat-customtable">
+<table id="tblviajes" class="mat-customtable">
     <thead>
         <tr>
             <th style="width:150px">
                 Paquete
             </th>
             <th style="width:150px">
-                Descripción
+                Pescripción
             </th>
             <th>
-               Salida
+                Fecha de Salida
             </th>
             <th>
-                Hr de Salida
+                HR de salida
             </th>
             <th>
                 Pais Destino
             </th>
             <th>
-                Moneda Tipo
+                Moneda
             </th>
             <th>
                 Precio
@@ -34,10 +35,13 @@
                 Paso
             </th>
             <th>
-               Medio
+                Medio
+            </th>
+            <th>
+                Publicado en WEB
             </th>
             <th style="width:250px;"></th>
-           
+
         </tr>
     </thead>
     <tbody>
@@ -48,7 +52,7 @@
                     @item.PaqueteNombre
                 </td>
                 <td>
-                    @item.Descripcion.ToUpper()
+                    @item.Descripcion
                 </td>
                 <td>
                     @item.FechaSalida
@@ -66,7 +70,7 @@
                     @("$ ") @item.PrecioSemicama
                 </td>
                 <td>
-                   @("$ ") @item.PrecioPromocional
+                    @("$ ") @item.PrecioPromocional
                 </td>
                 <td>
                     @item.FechaPromocion
@@ -77,13 +81,13 @@
                 <td>
                     @if (item.Medio == "TERRESTRE")
                     {
-                        <div class="iconBus_35px" title="@item.Medio"></div>
+                        <div class="iconbus_35px" title="@item.Medio"></div>
                     }
                     else
                     {
                         if (item.Medio == "AEREO")
                         {
-                            <div class="iconAvion_35px" title="@item.Medio"></div>
+                            <div class="iconavion_35px" title="@item.Medio"></div>
                         }
                         else
                         {
@@ -92,27 +96,24 @@
                     }
                 </td>
                 <td>
-                    <a href="/Viaje/Edit/?sAction=edit&sViajeID=@item.ViajeID" class="button_edit" title="Editar" >
-                    @*    <img src="/Images/pencil.png" width="32" height="32" title="Editar" />*@
-                    </a>
-               
-                    <a href="/Viaje/Edit/?sAction=detail&sViajeID=@item.ViajeID" class="button_detail" title="Ver Detalles">
-                    @*    <img src="/Images/notepad.png" width="32" height="32" title="Detalles" />*@
-                    </a>
-                    <a href="/Viaje/Hoteles/@item.ViajeID" class="button_hotel" title="Ver Hoteles">
-                        @*<img src="/Images/hotel.png" width="32" height="32" title="Hoteles" />*@
-                    </a>
-               
-                    <a href="/PasajeroViaje/Index/@item.ViajeID" class="button_pasajero" title="Ver pasajeros" >
-                        @*<img src="/Images/pasajero.png" width="32" height="32" title="Ver pasajeros" />*@
-                    </a>
-               
-                    <a id="btn-eliminar-viaje" data-id="@item.ViajeID" class="button_delete" title="Eliminar Viaje (mal cargado o sin uso)">
-                    @*    <img src="/Images/cross.png" width="32" height="32" title="Eliminar" />*@
+                    <input type="checkbox" value="@item.IsPublicWeb" @(item.IsPublicWeb==true? "checked" : "")/>
+                </td>
+                <td>
+                    <a href="/viaje/edit/?saction=edit&sviajeid=@item.ViajeID" class="button_edit" title="editar">
                     </a>
 
-                    <a id="btn-cancelar-viaje" onclick="javascript: fnCancelViaje('@item.ViajeID');" class="button_cancel" title="Dar de baja el Viaje (fuerza mayor)">
-                        @*    <img src="/Images/cross.png" width="32" height="32" title="Eliminar" />*@
+                    <a href="/viaje/edit/?saction=detail&sviajeid=@item.ViajeID" class="button_detail" title="ver detalles">
+                    </a>
+                    <a href="/viaje/hoteles/@item.ViajeID" class="button_hotel" title="ver hoteles">
+                    </a>
+
+                    <a href="/pasajeroviaje/index/@item.ViajeID" class="button_pasajero" title="ver pasajeros">
+                    </a>
+
+                    <a id="btn-eliminar-viaje" data-id="@item.ViajeID" class="button_delete" title="eliminar viaje (mal cargado o sin uso)">
+                    </a>
+
+                    <a id="btn-cancelar-viaje" onclick="javascript: fncancelviaje('@item.ViajeID');" class="button_cancel" title="dar de baja el viaje (fuerza mayor)">
                     </a>
                 </td>
             </tr>
@@ -120,23 +121,34 @@
     </tbody>
 </table>
 
-<script src="//cdn.datatables.net/plug-ins/1.10.15/sorting/date-uk.js" ></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.15/sorting/date-uk.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
 <script type="text/javascript">
     $(document).ready(function () {
-
-        $("#tblViajes").DataTable({
+        $("#tblviajes").DataTable({
             "columnDefs": [
-                            { type: 'date-uk', targets: 2 },
-                            { type: 'date-uk', targets: 7 },
-                            { targets: 9, "orderable": false },
-                            { targets: 10, "orderable": false },
+                { type: 'date-uk', targets: [2, 9] },  // Corrige el índice de FechaSalida (2) y FechaPromocion (8)
+                { targets: [10, 11, 12], "orderable": false } // Desactiva ordenación en "Paso", "Medio" y "Acciones"
             ],
-            "pageLength": 25,
-            //"order": [[1, "desc"]]
+            "pageLength": 25, // Muestra 25 registros por página
+            "order": [[2, "asc"]], // Ordena por FechaSalida de manera ascendente
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "No hay registros disponibles",
+                "infoFiltered": "(filtrado de _MAX_ registros en total)",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
         });
-
-        function fnCancelViaje(ViajeID) {
-
-        };
     });
 </script>
+
