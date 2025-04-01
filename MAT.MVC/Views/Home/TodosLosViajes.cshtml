@@ -1,27 +1,28 @@
-﻿@model List<MAT.MVC.Models.PaqueteModel>
+﻿@*@model List<MAT.MVC.Models.PaqueteModel>*@
+@model List<MAT.MVC.Models.ViajeModel>
 
 <section id="Viajes" class="Viajes-Default">
     <ul class="viajes-lista">
         @foreach (var item in Model)
-        {            
-            <li data-image="@item.Paquete.Foto">
-                <a href='#' class='btn_viaje' data-id="@item.Viaje.ViajeId">
+        {
+            <li data-image="">
+                <a href='#' class='btn_viaje' data-id="@item.ViajeID">
                     <div class="viaje-container">
-                        <h4>@item.Paquete.Descripcion</h4>
-                        @if (!string.IsNullOrEmpty(item.Viaje.Descripcion))
+                        <h4>@item.PaqueteNombre</h4>
+                        @if (!string.IsNullOrEmpty(item.Descripcion))
                         {
-                            <h5>@item.Viaje.Descripcion</h5>
+                            <h5>@item.Descripcion</h5>
                         }
                         else
                         {
                             <h5>-</h5>
                         }
-                        <h5>Destino: @item.Destino.Nombre</h5>
-                        <h5>Salida: @item.Viaje.FechaSalida.Value.ToString("dd-MMMM-yyyy")</h5>
+                        <h5>Destino: @item.Descripcion</h5>
+                        <h5>Salida: @item.FechaSalida.ToString()</h5>
                     </div>
                 </a>
             </li>
-            
+
         }
     </ul>
 </section>

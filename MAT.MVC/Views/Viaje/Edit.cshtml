@@ -164,6 +164,12 @@
         <div class="form-field">
             <input type="text" id="Observaciones" name="Observaciones" value="@Model.Observaciones" title="Agregar observacines. Use la coma (,) para separar los items" />
         </div>
+        <div class="form-label">
+            <label>Publicar en Pag. Web</label>
+        </div>
+        <div class="form-field" style="background-color: #888888 "> 
+            <input id="IsPublicWeb" value="@Model.IsPublicWeb" @(Model.IsPublicWeb == true? "checked" : "") type="checkbox" />
+        </div>
         <input type="hidden" class="field-id" value="@Model.ViajeID" />
         <p>
             <a id="a_editar_viaje" style="display:none" href="/Viaje/Edit/?sAction=edit&sViajeID=@Model.ViajeID" class="btn btn-small btn-inverse">Editar</a>

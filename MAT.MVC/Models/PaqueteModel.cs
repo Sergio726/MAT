@@ -19,6 +19,17 @@ namespace MAT.MVC.Models
         public double Monto { get; set; }
         public string Descripcion { get; set; }
     }
+    public class PaqueteViculosModel
+    {
+        public string PaqueteID { get; set; }
+        public string ID { get; set; }
+        public bool? IsOpcional { get; set; }
+        public string Tipo { get; set; }
+        public string Precio { get; set; }
+        public string Descripcion { get; set; }
+
+
+    }
     public class PaqueteModel
     {
         ViajeService vServ;
@@ -161,8 +172,6 @@ namespace MAT.MVC.Models
         public string Foto { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime LastUpdate { get; set; }
-        public bool PublicWeb { get; set; }
-        public bool ModePublicity { get; set; }
         public string MonedaDescripcion { get; set; }
         public string MonedaCodigo { get; set; }
         
@@ -178,7 +187,7 @@ namespace MAT.MVC.Models
         public string Destino { get; set; }
     }
 
-    public class PaqueteMethod
+    public class PaqueteVinculos
     {
         public static List<PaqueteStandard> ListPaqueteByYear(string sDateYear = "")
         {
@@ -229,14 +238,7 @@ namespace MAT.MVC.Models
                     {
                         Item.LastUpdate = Convert.ToDateTime(_reader["LastUpdate"]);
                     }
-                    if (_reader["PublicWeb"].ToString() != "")
-                    {
-                        Item.PublicWeb = Convert.ToBoolean(_reader["PublicWeb"]);
-                    }
-                    if (_reader["ModePublicity"].ToString() != "")
-                    {
-                        Item.ModePublicity = Convert.ToBoolean(_reader["ModePublicity"]);
-                    }
+                    
                     Item.MonedaCodigo = _reader["MonedaCodigo"].ToString();
                     LResult.Add(Item);
                 }
@@ -291,15 +293,6 @@ namespace MAT.MVC.Models
                 {
                     Paquete.FechaCreacion = Convert.ToDateTime(_reader["FechaCreacion"]);
                 }
-                if (_reader["PublicWeb"].ToString() != "")
-                {
-                    Paquete.PublicWeb = Convert.ToBoolean(_reader["PublicWeb"]);
-                }
-                if (_reader["ModePublicity"].ToString() != "")
-                    Paquete.ModePublicity = Convert.ToBoolean(_reader["ModePublicity"]);
-                {
-                    
-                }
 
             }
 
@@ -323,8 +316,6 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@Codigo", SqlDbType.VarChar, 0, Paquete.Codigo),
                         DBHelper.MakeParam("@DestinoID", SqlDbType.Int, 0, Paquete.DestinoID),
                         DBHelper.MakeParam("@Foto", SqlDbType.VarChar, 0, Paquete.Foto),
-                        DBHelper.MakeParam("@PublicWeb", SqlDbType.Bit, 0, Paquete.PublicWeb),
-                        DBHelper.MakeParam("@ModePublicity", SqlDbType.Bit, 0, Paquete.ModePublicity)
                        
                     };
                 SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Paquete_NewPaquete", dbParams);
@@ -365,8 +356,6 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@Codigo", SqlDbType.VarChar, 0, Paquete.Codigo),
                         DBHelper.MakeParam("@DestinoID", SqlDbType.Int, 0, Paquete.DestinoID),
                         DBHelper.MakeParam("@Foto", SqlDbType.VarChar, 0, Paquete.Foto),
-                        DBHelper.MakeParam("@PublicWeb", SqlDbType.Bit, 0, Paquete.PublicWeb),
-                        DBHelper.MakeParam("@ModePublicity", SqlDbType.Bit, 0, Paquete.ModePublicity)
                        
                     };
                 SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Paquete_Update", dbParams);
@@ -457,5 +446,7 @@ namespace MAT.MVC.Models
         }
 
     }
+
+    
 
 }

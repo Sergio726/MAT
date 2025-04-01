@@ -573,7 +573,7 @@
     <Content Include="Images\woman.png" />
     <Content Include="MAT.MVC.snk" />
     <Content Include="entlib.config">
-      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\common.js" />
