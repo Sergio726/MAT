@@ -138,7 +138,7 @@ namespace MAT.MVC.Controllers.Viaje
                 ViewBag.Action = sAction;
                 PaqueteStandard Paquete = new PaqueteStandard();
                 List<PaqueteStandard> ListPaquete = new List<PaqueteStandard>();
-                ListPaquete = PaqueteMethod.ListPaqueteByYear();
+                ListPaquete = PaqueteVinculos.ListPaqueteByYear();
                 
                 var json = "";
                 var jsonSerialiser = new JavaScriptSerializer();

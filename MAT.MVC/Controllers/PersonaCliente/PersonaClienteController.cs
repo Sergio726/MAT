@@ -1248,7 +1248,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             List<MAT.MVC.Models.PaquetePrecio> lPaquetePrecio = new List<MAT.MVC.Models.PaquetePrecio>();
             try
             {
-                lPaquetePrecio = MAT.MVC.Models.PaqueteMethod.GetPaquetePrecioByFacturaId(FacturaId);
+                lPaquetePrecio = MAT.MVC.Models.PaqueteVinculos.GetPaquetePrecioByFacturaId(FacturaId);
                 ViewBag.DetalleFacturaId = DetalleFacturaId;
             }
             catch (Exception e)
@@ -1267,7 +1267,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             {
                 sResult[0] = "Done.";
                 sResult[1] = "";
-                Models.PaqueteMethod.DetalleFacturaSetPrecio(Convert.ToInt32(DetalleFacturaId),PrecioId);
+                Models.PaqueteVinculos.DetalleFacturaSetPrecio(Convert.ToInt32(DetalleFacturaId),PrecioId);
             }
             catch (Exception e)
             {

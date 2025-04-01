@@ -65,7 +65,7 @@ namespace MAT.MVC.Controllers.PasajeroViaje
             {
                 LPasajeroViaje = MAT.MVC.Models.PasajeroViajeMethod.GetPasajeroViajeByViajeID(Id.ToString());
 
-                ViewBag.Paquete = MAT.MVC.Models.PaqueteMethod.GetPaqueteByID(Id.ToString());
+                ViewBag.Paquete = MAT.MVC.Models.PaqueteVinculos.GetPaqueteByID(Id.ToString());
 
                 return PartialView(LPasajeroViaje);
             }

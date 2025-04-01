@@ -5,48 +5,88 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<!-- En el head -->
+<link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
+
+<!-- Al final del body, después de jQuery -->
+<script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
+
 <h2 class="title">Adicionales</h2>
 
 <p class="botonera-form">
     <input type="button" value="+ Agregar Adicional" class="btn btn-small btn-inverse" onclick="location.href='@Url.Action("Create", "Adicional")'" />
 </p>
 
-<table class="mat-customtable">
+<table class="mat-customtable" id="tblAdicionales">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Monto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descripcion)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Monto)</th>
+            <th>@Html.DisplayNameFor(model => model.Descripcion)</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Monto)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Descripcion)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.Monto)</td>
+                <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
                 <td>
                     <a href="/Adicional/Edit/@item.AdicionalId">
-                        <img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
-                    @*<a href="/Adicional/Details/@item.AdicionalId">
-                        <img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a>*@
+                        <img src="/Images/pencil.png" width="32" height="32" title="Editar" />
+                    </a>
                     <a href="#" id="btn-eliminar-adicional" data-id="@item.AdicionalId">
-                        <img src="/Images/cross.png" width="32" height="32" title="Eliminar" /></a>
+                        <img src="/Images/cross.png" width="32" height="32" title="Eliminar" />
+                    </a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
-    });
-</script>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var table = $('#tblAdicionales').DataTable({
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar:",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    }
+                },
+                "order": [[1, "asc"]], // Ordenar por descripción por defecto
+                "pageLength": 10,
+                "columnDefs": [
+                    {
+                        "targets": 2, // Columna de acciones
+                        "orderable": false // No permitir ordenar por la columna de acciones
+                    }
+                ]
+            });
+
+            // Manejador del evento para eliminar adicional
+            $('#tblAdicionales').on('click', '.btn-eliminar-adicional', function (e) {
+                e.preventDefault();
+                var adicionalId = $(this).data('id');
+                if (confirm('¿Está seguro que desea eliminar este adicional?')) {
+                    // Aquí puedes agregar la lógica para eliminar el adicional
+                    // Por ejemplo, hacer una llamada AJAX al controlador
+                }
+            });
+        });
+    </script>
+}

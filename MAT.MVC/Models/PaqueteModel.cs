@@ -19,6 +19,17 @@ namespace MAT.MVC.Models
         public double Monto { get; set; }
         public string Descripcion { get; set; }
     }
+    public class PaqueteViculosModel
+    {
+        public string PaqueteID { get; set; }
+        public string ID { get; set; }
+        public bool? IsOpcional { get; set; }
+        public string Tipo { get; set; }
+        public string Precio { get; set; }
+        public string Descripcion { get; set; }
+
+
+    }
     public class PaqueteModel
     {
         ViajeService vServ;
@@ -176,7 +187,7 @@ namespace MAT.MVC.Models
         public string Destino { get; set; }
     }
 
-    public class PaqueteMethod
+    public class PaqueteVinculos
     {
         public static List<PaqueteStandard> ListPaqueteByYear(string sDateYear = "")
         {
@@ -435,5 +446,7 @@ namespace MAT.MVC.Models
         }
 
     }
+
+    
 
 }

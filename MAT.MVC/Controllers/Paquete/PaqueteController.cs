@@ -24,7 +24,7 @@ namespace MAT.MVC.Controllers.Paquete
             List<PaqueteStandard> LResult = new List<PaqueteStandard>();
             try
             {
-                LResult = PaqueteMethod.ListPaqueteByYear();
+                LResult = PaqueteVinculos.ListPaqueteByYear();
             }
             catch (Exception e)
             {
@@ -52,11 +52,11 @@ namespace MAT.MVC.Controllers.Paquete
                 PaqueteStandard Paquete = new PaqueteStandard();
                 switch (sAction)
                 {
-                    case "detail": Paquete = PaqueteMethod.GetPaqueteByID(sPaqueteID);
-                        ViewBag.InfoDestino = PaqueteMethod.GetPaqueteDestino(sPaqueteID);
+                    case "detail": Paquete = PaqueteVinculos.GetPaqueteByID(sPaqueteID);
+                        ViewBag.InfoDestino = PaqueteVinculos.GetPaqueteDestino(sPaqueteID);
                         break;
-                    case "edit": Paquete = PaqueteMethod.GetPaqueteByID(sPaqueteID);
-                        ViewBag.InfoDestino = PaqueteMethod.GetPaqueteDestino(sPaqueteID);
+                    case "edit": Paquete = PaqueteVinculos.GetPaqueteByID(sPaqueteID);
+                        ViewBag.InfoDestino = PaqueteVinculos.GetPaqueteDestino(sPaqueteID);
                         break;
                     case "new": 
                         Paquete = new PaqueteStandard();
@@ -117,7 +117,7 @@ namespace MAT.MVC.Controllers.Paquete
             string[] sResult = new string[2];
             try
             {
-                sResult = PaqueteMethod.PaqueteInsert(Paquete);
+                sResult = PaqueteVinculos.PaqueteInsert(Paquete);
             }
             catch (Exception e)
             {
@@ -137,7 +137,7 @@ namespace MAT.MVC.Controllers.Paquete
             string[] sResult = new string[2];
             try
             {
-                sResult = PaqueteMethod.PaqueteUpdate(Paquete);
+                sResult = PaqueteVinculos.PaqueteUpdate(Paquete);
             }
             catch (Exception e)
             {
@@ -225,8 +225,7 @@ namespace MAT.MVC.Controllers.Paquete
             ViewBag.Excursiones = lPaqueteExcursion;
             #endregion
 
-
-            PaqueteVinculos vinculosModel = new PaqueteVinculos(id);
+            List<PaqueteViculosModel> vinculosModel = ClassPaqueteVinculos.GetVinculosByPaqueteID(id);
             return View(vinculosModel);
         }
 

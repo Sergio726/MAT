@@ -13,11 +13,19 @@ using System.Web.Security;
 using System.Data.SqlClient;
 using System.Data;
 using MAT.Utilities;
+using System.Configuration;
 
 namespace MAT.MVC.Controllers.Home
 {
     public class HomeController : Controller
     {
+        //private readonly PaqueteDetalleService _paqueteDetalleService;
+
+        //public HomeController()
+        //{
+        //    _paqueteDetalleService = new PaqueteDetalleService(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+        //}
+
         //
         // GET: /Home/
 
@@ -98,34 +106,34 @@ namespace MAT.MVC.Controllers.Home
         {
             try
             {
-                ViajeService vServ = new ViajeService();
+                
                 DateTime datefecha = Convert.ToDateTime(fecha);
-                List<Entities.Viaje> viajesdefecha = vServ.GetAll().Where(v => v.FechaSalida.Value == datefecha).ToList();
-                List<PaqueteModel> paquetes = new List<PaqueteModel>();
-                foreach (Entities.Viaje viaje in viajesdefecha)
-                {
-                    paquetes.Add(new PaqueteModel(viaje.ViajeId));
-                }
+
+                // Creamos una lista simulada de viajes
+                List<ViajeModel> Viajes = new List<ViajeModel>();
+
+                Viajes = MVC.Models.ViajeMethod.ViajeByDate(fecha);
+                                 
+                // Generamos el HTML
                 StringBuilder htmlstring = new StringBuilder();
                 htmlstring.Append("<ul class='viajes-lista'>");
-                foreach (PaqueteModel item in paquetes)
+                foreach (var item in Viajes)
                 {
-                    htmlstring.Append("<li data-image='" + item.Paquete.Foto + "' style='background-image:url(" + item.Paquete.Foto + ");'>");
-                    htmlstring.Append("<a href='#' class='btn_viaje' data-id=" + item.Viaje.ViajeId + ">");
+                    htmlstring.Append("<li data-image='" + "fotoviaje" + "' style='background-image:url(" + "foto" + ");'>");
+                    htmlstring.Append("<a href='#' class='btn_viaje' data-id=" + item.ViajeID + ">");
                     htmlstring.Append("<div class='viaje-container'>");
-                    htmlstring.Append("<h3>"); htmlstring.Append(item.Paquete.Descripcion); htmlstring.Append("</h3>");
-                    if (!String.IsNullOrEmpty(item.Viaje.Descripcion)) htmlstring.Append("<h5>" + item.Viaje.Descripcion + "</h5>");
+                    htmlstring.Append("<h3>"); htmlstring.Append(item.Descripcion); htmlstring.Append("</h3>");
+                    if (!String.IsNullOrEmpty(item.Descripcion)) htmlstring.Append("<h5>" + item.Descripcion + "</h5>");
 
-                    htmlstring.Append("<h5>"); htmlstring.Append(String.Format("Destino: {0}", item.Destino.Nombre)); htmlstring.Append("</h5>");
-                    htmlstring.Append("<h6>"); htmlstring.Append(String.Format("Salida: {0}", item.Viaje.FechaSalida.Value.ToString("dd-MMMM-yyyy"))); htmlstring.Append("</h6>");
+                    htmlstring.Append("<h5>"); htmlstring.Append(String.Format("Destino: {0}", item.PaqueteNombre)); htmlstring.Append("</h5>");
+                    htmlstring.Append("<h6>"); htmlstring.Append(String.Format("Salida: {0}", item.FechaSalida.ToString())); htmlstring.Append("</h6>");
                     htmlstring.Append("</div></a></li>");
                 }
-                //if (paquetes.Count % 2 != 0) htmlstring.Append("<a class='last-element'><li></li></a>");
+
                 htmlstring.Append("</ul>");
-                //htmlstring.Append("<script>$('ul.viajes-lista').quickPagination({pageSize:'4'})</script>");
-                //htmlstring.Append("<script>$('.viajes-lista li').each(function () {$(this).css('background-image', 'url($(this).data('image'))');});</script>");    
                 return htmlstring.ToString();
             }
+            
             catch (Exception ex)
             {
                 StringBuilder excepcion = new StringBuilder();
@@ -171,6 +179,6 @@ namespace MAT.MVC.Controllers.Home
             return PartialView(historialModel.ToPagedList(pageNumber,pageSize));
         }
 
-        
+       
     }
 }
