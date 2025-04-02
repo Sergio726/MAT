@@ -22,40 +22,41 @@
     <div id="divEncabezadoViaje" class="EncabezadoViaje headMAT">
         <div class="custom_padding_4">
             @*@foreach (var item in Model)
-            {
-                ViajeService VS = new ViajeService();
-                Guid ViajeId = new Guid(item.ViajeId.ToString());
-                Viaje V = VS.GetByViajeId(ViajeId);
+        {
+            ViajeService VS = new ViajeService();
+            Guid ViajeId = new Guid(item.ViajeId.ToString());
+            Viaje V = VS.GetByViajeId(ViajeId);
 
-                PaqueteService PS = new PaqueteService();
-                Paquete P = PS.GetByPaqueteId(V.PaqueteId.Value);
+            PaqueteService PS = new PaqueteService();
+            Paquete P = PS.GetByPaqueteId(V.PaqueteId.Value);
 
-                @Html.Label("  " + P.Descripcion.ToString());
-                <br />
-            
-                @Html.Label("SALIDA: " + V.FechaSalida.Value.ToShortDateString());
-                @Html.Label(" - REGRESO: " + V.FechaRegreso.Value.ToShortDateString());
+            @Html.Label("  " + P.Descripcion.ToString());
+            <br />
 
-                // @Html.Label(" REGRESO: " + V.FECHA.Value.ToShortDateString());
-                break;
-            }*@
-            @{ 
+            @Html.Label("SALIDA: " + V.FechaSalida.Value.ToShortDateString());
+            @Html.Label(" - REGRESO: " + V.FechaRegreso.Value.ToShortDateString());
+
+            // @Html.Label(" REGRESO: " + V.FECHA.Value.ToShortDateString());
+            break;
+        }*@
+            @{
                 ViajeService VS = new ViajeService();
                 Guid ViajeId = new Guid(Model.First().ViajeID);
                 Viaje V = VS.GetByViajeId(ViajeId);
 
-                PaqueteService PS = new PaqueteService();
+                @*PaqueteService PS = new PaqueteService();
                 Paquete P = PS.GetByPaqueteId(V.PaqueteId.Value);
 
-                @Html.Label("  " + P.Descripcion.ToString());
+                @Html.Label("  " + P.Descripcion.ToString());*@
+                @Html.Label("  " + V.Descripcion);
                 <br />
 
                 @Html.Label("SALIDA: " + V.FechaSalida.Value.ToShortDateString());
                 @Html.Label(" - REGRESO: " + V.FechaRegreso.Value.ToShortDateString());
 
-                }
-           
-          </div>
+            }
+
+        </div>
     </div>
     <div id="tablaPasajeros" class="backMAT">
         <table style="width: 100%;" class="tabla">
