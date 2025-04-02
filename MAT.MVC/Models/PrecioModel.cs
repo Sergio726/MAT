@@ -41,6 +41,41 @@ namespace MAT.MVC.Models
             return DBHelper.ExecuteDataSet("dbo.usp_Precio_GetById", dbParams);
         }
 
+        public static SqlDataReader GetByIds(List<Guid> precioIds)
+        {
+            // Contar la cantidad de veces que aparece cada precioId
+            var cantidadPorId = precioIds
+                .GroupBy(id => id)
+                .Select(g => new { Id = g.Key, Cantidad = g.Count() })
+                .ToList();
+
+            // Crear un DataTable para pasar los datos como parámetro estructurado
+            DataTable precioIdsTable = new DataTable();
+            precioIdsTable.Columns.Add("Id", typeof(Guid));
+            precioIdsTable.Columns.Add("Cantidad", typeof(int));
+
+            foreach (var item in cantidadPorId)
+            {
+                precioIdsTable.Rows.Add(item.Id, item.Cantidad);
+            }
+
+            // Crear el parámetro para SQL Server
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+        new SqlParameter
+        {
+            ParameterName = "@PrecioIDs",
+            SqlDbType = SqlDbType.Structured,
+            TypeName = "dbo.tvp_PrecioIDTableType", // Debe coincidir con el tipo de tabla en SQL Server
+            Value = precioIdsTable
+        }
+            };
+
+            // Ejecutar la consulta
+            return DBHelper.ExecuteDataReader("dbo.usp_MAT_Precio_GetByIds", dbParams);
+        }
+
+
         public static void Insert(PrecioModel Precio)
         {
             SqlParameter[] dbParams = new SqlParameter[]

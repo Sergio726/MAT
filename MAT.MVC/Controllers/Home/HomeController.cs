@@ -80,21 +80,11 @@ namespace MAT.MVC.Controllers.Home
         [Authorize]
         public ActionResult TodosLosViajes(string yearfilter)
         {
-            //ViajeService vServ = new ViajeService();
-            //int year = Convert.ToInt32(yearfilter);
-            //List<Entities.Viaje> viajesdefecha = vServ.GetAll().Where(vf => vf.FechaSalida.Value.Year==year).OrderByDescending(v => v.FechaSalida).ToList();
-            //List<PaqueteModel> paquetes = new List<PaqueteModel>();
-            //foreach (Entities.Viaje viaje in viajesdefecha)
-            //{
-            //    paquetes.Add(new PaqueteModel(viaje.ViajeId));
-            //}
-
+       
             List<ViajeModel> Viajes = new List<ViajeModel>();
 
             Viajes = MVC.Models.ViajeMethod.ViajeByDate(null, Convert.ToInt32(yearfilter));
 
-
-            //return PartialView(paquetes);
             return PartialView(Viajes);
         }
 

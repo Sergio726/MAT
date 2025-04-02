@@ -337,6 +337,7 @@
     <Compile Include="Integration\IApiClient.cs" />
     <Compile Include="Integration\MappingProfile.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\AdicionalModel.cs" />
     <Compile Include="Models\AuditModel.cs" />
     <Compile Include="Models\ClienteModel.cs" />
     <Compile Include="Models\CuentaCorrienteModel.cs" />
@@ -904,7 +905,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>63133</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:64313/</IISUrl>
+          <IISUrl>http://localhost:64315/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -86,18 +86,28 @@ namespace MAT.MVC.Models
         }
 
         #region Metodos Publicos
-        public double CalcularMontoTotal()
+        public static double CalcularMontoTotal(List<Guid> precioIds, List<System.Guid> adicionalIds)
         {
             double MontoFactura = 0;
             try
             {
                 double totalfactura = 0;
-                foreach (PasajeModel pasaje in Pasajes)
+                double totalprecio = 0;
+                double totaladicional = 0;
+
+                SqlDataReader _readerP = PrecioMethod.GetByIds(precioIds);
+                while (_readerP.Read())
                 {
-                    double importepasaje = 0;
-                    importepasaje = pasaje.Precio + pasaje.Adicionales;
-                    totalfactura += importepasaje;
+                    totalprecio = totalprecio + Convert.ToDouble(_readerP["MontoTotal"]);
                 }
+
+                SqlDataReader _readerA = AdicionalMethod.GetByIds(adicionalIds);
+                while (_readerA.Read())
+                {
+                    totaladicional = totaladicional + Convert.ToDouble(_readerA["MontoTotal"]);
+                }
+
+                totalfactura = totalprecio + totaladicional;
                 MontoFactura = totalfactura;
             }
             catch (Exception ex)

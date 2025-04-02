@@ -121,9 +121,7 @@ namespace MAT.Entities
 			this.Foto = _foto;
 			this.ServiciosParticulares = _serviciosParticulares;
 			this.FechaCreacion = _fechaCreacion;
-			this.PublicWeb = _publicWeb;
 			this.LastUpdate = _lastUpdate;
-			this.ModePublicity = _modePublicity;
 		}
 		
 		///<summary>

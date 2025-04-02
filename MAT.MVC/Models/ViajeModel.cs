@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Web;
 using System.Web.Helpers;
@@ -83,6 +84,11 @@ namespace MAT.MVC.Models
         public string PasajeroNombre { get; set; }
         public string PasajeroApellido { get; set; }
         public string PasajeroDocumento { get; set; }
+        public string PasajeroTipoDocumento { get; set; }
+        public string PasajeroFechaNacimiento { get; set; }
+        public string PasajeroTelefono { get; set; }
+        public string PasajeroEmail { get; set; }
+        public string PasajeroSexo { get; set; }
     }
    
     public class ViajeMethod { 
@@ -599,7 +605,12 @@ namespace MAT.MVC.Models
                 item.PasajeroApellido = _reader["Apellido"].ToString();
                 item.PasajeroNombre = _reader["Nombre"].ToString();
                 item.PasajeroDocumento = _reader["NroDocumento"].ToString();
-                
+                item.PasajeroTipoDocumento = _reader["TipoDocumento"].ToString();
+                item.PasajeroFechaNacimiento = _reader["FechaNacimiento"].ToString();
+                item.PasajeroTelefono = _reader["Telefono"].ToString();
+                item.PasajeroEmail = _reader["Email"].ToString();
+                item.PasajeroSexo = _reader["Sexo"].ToString();
+
                 EPasajeroViaje.Add(item);
 
             }

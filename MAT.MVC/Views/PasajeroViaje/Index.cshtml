@@ -1,4 +1,4 @@
-﻿@model List<MAT.Entities.PasajeroViaje>
+﻿@model List<MAT.MVC.Models.PasajeroViaje>
 @using MAT.Enums
 @using MAT.Utilities 
 @{
@@ -47,28 +47,28 @@
     <tr>
         
         <td>
-            @Html.DisplayFor(modelItem => item.Apellido)
+            @Html.DisplayFor(modelItem => item.PasajeroApellido)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Nombre)
+            @Html.DisplayFor(modelItem => item.PasajeroNombre)
         </td>
         <td>
-            @((eTipoDocumento)(item.TipoDocumento.Value))
+            @((eTipoDocumento)(Convert.ToInt32(item.PasajeroTipoDocumento)))
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.NroDocumento)
+            @Html.DisplayFor(modelItem => item.PasajeroDocumento)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Telefono)
+            @Html.DisplayFor(modelItem => item.PasajeroTelefono)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Email)
+            @Html.DisplayFor(modelItem => item.PasajeroEmail)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.FechaNacimiento)
+            @Html.DisplayFor(modelItem => item.PasajeroFechaNacimiento)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Sexo)
+            @Html.DisplayFor(modelItem => item.PasajeroSexo)
         </td>
                 
     </tr>
@@ -79,7 +79,7 @@
 @if (Model.Count > 0)
 {
 <p class="botonera-form">
-         @Html.ActionLink("Imprimir Manifiesto", "Manifiesto", new { id = Model.First().ViajeId }, new {@class="btn btn-inverse btn-small"})
-        @Html.ActionLink("Imprimir CNRT", "CNRT", new { id = Model.First().ViajeId }, new {@class="btn btn-inverse btn-small"})
+         @Html.ActionLink("Imprimir Manifiesto", "Manifiesto", new { id = Model.First().ViajeID }, new {@class="btn btn-inverse btn-small"})
+        @Html.ActionLink("Imprimir CNRT", "CNRT", new { id = Model.First().ViajeID }, new {@class="btn btn-inverse btn-small"})
 </p>    
 }

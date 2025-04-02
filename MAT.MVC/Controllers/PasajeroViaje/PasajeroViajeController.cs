@@ -20,9 +20,12 @@ namespace MAT.MVC.Controllers.PasajeroViaje
         public ActionResult Index(Guid Id)
         {
             //int totalCount;
-            MAT.Services.PasajeroViajeService Servicio = new PasajeroViajeService();
-            List<MAT.Entities.PasajeroViaje> EPasajeroViaje = Servicio.GetAll().Where(p => p.ViajeId == Id).ToList();
-            return View(EPasajeroViaje);
+            //MAT.Services.PasajeroViajeService Servicio = new PasajeroViajeService();
+            //List<MAT.Entities.PasajeroViaje> EPasajeroViaje = Servicio.GetAll().Where(p => p.ViajeId == Id).ToList();
+            //load Lista Pasajeros
+            List<MAT.MVC.Models.PasajeroViaje> ListPasajeros = ViajeMethod.GetListPasajerosByViajeID(Id);
+
+            return View(ListPasajeros);
         }
 
         public ActionResult Manifiesto(Guid Id)
