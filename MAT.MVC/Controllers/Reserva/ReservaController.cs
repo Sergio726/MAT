@@ -168,15 +168,33 @@ namespace MAT.MVC.Controllers.Reserva
             try
             {
                 string jsonobject = JsonConvert.SerializeObject(pasajes);
-                //var _pasajes = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<PasajeInputModel>>(jsonobject);
                 ViewBag.Pasajes = jsonobject;
+                ViewBag.CantPasajes = pasajes.Count();
+
+                
+                //MATContext.Reserva = new ReservaModel(pasajes);
+                //MontoFactura = MATContext.Reserva.CalcularMontoTotal();
+
+                List<Guid> precioIds = pasajes
+                    .Where(p => Guid.TryParse(p.precioid, out _)) // Filtra los valores válidos
+                    .Select(p => Guid.Parse(p.precioid)) // Convierte los valores a Guid
+                    .ToList();
+
+                //List<Guid> adicionalesIds = pasajes
+                //    .Where(p => !string.IsNullOrWhiteSpace(p.adicionalesid ?? "") && Guid.TryParse(p.adicionalesid, out _))
+                //    .Select(p => Guid.Parse(p.adicionalesid))
+                //    .ToList();
+
+                List<Guid> adicionalesIds = pasajes
+                            .Select(p => string.IsNullOrWhiteSpace(p.adicionalesid) ? Guid.Empty : Guid.Parse(p.adicionalesid))
+                            .ToList();
+
 
                 double MontoFactura = 0;
-                MATContext.Reserva = new ReservaModel(pasajes);
-                MontoFactura = MATContext.Reserva.CalcularMontoTotal();
-
+                MontoFactura = ReservaModel.CalcularMontoTotal(precioIds, adicionalesIds);
                 ViewBag.MontoFactura = MontoFactura;
-                return PartialView("FormReserva", MATContext.Reserva);
+                //return PartialView("FormReserva", MATContext.Reserva);
+                return PartialView("FormReserva");
             }
             catch (Exception ex)
             {
