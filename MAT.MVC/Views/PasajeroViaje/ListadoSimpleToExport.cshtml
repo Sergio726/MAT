@@ -26,10 +26,8 @@
                 Guid ViajeId = new Guid(item.ViajeId.ToString());
                 Viaje V = VS.GetByViajeId(ViajeId);
 
-                PaqueteService PS = new PaqueteService();
-                Paquete P = PS.GetByPaqueteId(V.PaqueteId.Value);
 
-                @Html.Label("  " + P.Descripcion.ToString());
+                @Html.Label("  " + V.Descripcion.ToString());
                 <br />
             
                 @Html.Label("SALIDA: " + V.FechaSalida.Value.ToShortDateString());
