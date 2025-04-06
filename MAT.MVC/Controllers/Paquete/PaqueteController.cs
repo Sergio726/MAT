@@ -209,6 +209,7 @@ namespace MAT.MVC.Controllers.Paquete
 
         public ActionResult Vinculos(Guid id)
         {
+            ViewBag.PaqueteID = id;
             #region excursiones
             List<MAT.MVC.Models.PaqueteExcursionCustomModel> lPaqueteExcursion = new List<PaqueteExcursionCustomModel>();
             DataSet ds = PaqueteExcursionMethod.GetByPaqueteID(id);
