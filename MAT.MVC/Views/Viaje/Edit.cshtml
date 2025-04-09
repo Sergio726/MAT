@@ -168,7 +168,7 @@
             <label>Publicar en Pag. Web</label>
         </div>
         <div class="form-field" style="background-color: #888888 "> 
-            <input id="IsPublicWeb" value="@Model.IsPublicWeb" @(Model.IsPublicWeb == true? "checked" : "") type="checkbox" />
+            <input id="IsPublicWeb" name="IsPublicWeb" value="@Model.IsPublicWeb" @(Model.IsPublicWeb == true? "checked" : "") type="checkbox" />
         </div>
         <input type="hidden" class="field-id" value="@Model.ViajeID" />
         <p>
@@ -309,6 +309,16 @@
         var PaqueteID = $("#DDPaqueteId").attr("data-id");
         $("#PaqueteId").val(PaqueteID);
         var _data = $("#formViaje").serialize();
+
+        const params = new URLSearchParams(_data);
+        if (params.get('IsPublicWeb') === 'on') {
+            params.set('IsPublicWeb', true);
+        } else {
+            params.set('IsPublicWeb', false);
+        }
+
+        _data = params.toString();
+        
         
         if ("@ViewBag.Action" == "edit") {
             $.ajax({
