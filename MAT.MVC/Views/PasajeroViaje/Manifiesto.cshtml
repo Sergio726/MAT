@@ -971,88 +971,105 @@ EXCEL -->
             <col width="73" style='mso-width-source: userset; mso-width-alt: 2669; width: 55pt'>
             <col width="44" style='mso-width-source: userset; mso-width-alt: 1609; width: 33pt'>
             <col width="95" span="2" style='mso-width-source: userset; mso-width-alt: 3474; width: 71pt'>
-           
+
             <tr style='height: 10pt;border-top:solid 1px;'>
-               
+
                 <td colspan="8" style="border-left:solid 1px;border-right:solid 1px; border-bottom:solid 1px; font-family:Arial; font-size:8pt;">
                     <div>
                         <span style="font-weight:bold">DEL OMNIBUS MATRICULA N°: </span> <input type="text" style='border: none' placeholder="MATRICULA">
-                        <span style="font-weight:bold">SALIDO DE SALTA-ARGENTINA, ENTRANDO A: </span> <input type="text" placeholder="PAIS ENTRADA"  style='border: none'>
+                        <span style="font-weight:bold">SALIDO DE SALTA-ARGENTINA, ENTRANDO A: </span> <input type="text" placeholder="PAIS ENTRADA" style='border: none'>
                     </div>
                 </td>
             </tr>
-           
+
             <tr style='height: 10pt;border-top:solid 1px;'>
                 <td colspan="8" style="border-left:solid 1px;border-right:solid 1px; border-bottom:solid 1px; font-family:Arial; font-size:8pt;">
                     <span style="font-weight:bold;">MEDIO TRANS: </span>
-                    <input type="text" placeholder="MEDIO TRANS."  style='border: none;width:126px;'>
+                    <input type="text" placeholder="MEDIO TRANS." style='border: none;width:126px;'>
                     <span style="font-weight:bold;padding-left:1px;">NACION: </span>
-                    <input type="text" placeholder="NACION"  style='border: none;width:100px;'>
+                    <input type="text" placeholder="NACION" style='border: none;width:100px;'>
                     <span style="font-weight:bold">PAIS SEDE: </span>
-                    <input type="text" placeholder="PAIS SEDE"  style='border: none; width:120px;'>
+                    <input type="text" placeholder="PAIS SEDE" style='border: none; width:120px;'>
                     <span style="font-weight:bold">PAIS LIMITROFE: </span>
-                    <input type="text" placeholder="PAIS LIMITROFE"  style='border: none;width:120px;'>
+                    <input type="text" placeholder="PAIS LIMITROFE" style='border: none;width:120px;'>
                 </td>
-               
+
             <tr style='height: 10pt'>
                 <td class="xl772107" colspan="2">CON FECHA</td>
                 <td class="xl772107">POR</td>
                 <td class="xl842107">PASO INTERNACIONAL</td>
                 <td class="xl792107">CON</td>
-                <td class="xl812107"><input type="text" placeholder="CANT" class="xl812107"  style='border: none; width:100%'></td>
+                <td class="xl812107"><input type="text" placeholder="CANT" class="xl812107" style='border: none; width:100%'></td>
                 <td class="xl862107">@Model.Count()</td>
                 <td class="xl872107">PASAJEROS</td>
             </tr>
             <tr style='height: 10pt'>
                 <td colspan="2" class="xl1202107" style='border-right: 1.0pt solid black; '><input type="text" placeholder="FECHA" style='border: none'></td>
                 <td class="xl882107" style='border-left: none'>&nbsp;</td>
-                <td class="xl892107"><input type="text" placeholder="PASO INTERNACIONAL"  style='border: none; width:100%'></td>
+                <td class="xl892107"><input type="text" placeholder="PASO INTERNACIONAL" style='border: none; width:100%'></td>
                 <td class="xl902107">&nbsp;</td>
                 <td class="xl872107">&nbsp;</td>
-                <td class="xl912107" style='border-top: none; border-left: none'><input type="text" class="xl912107" placeholder="NRO TRIPULANTES"  style='border: none;width:100%'></td>
+                <td class="xl912107" style='border-top: none; border-left: none'><input type="text" class="xl912107" placeholder="NRO TRIPULANTES" style='border: none;width:100%'></td>
                 <td class="xl872107">TRIPULANTES</td>
             </tr>
             <tr style='height: 10pt'>
-                <td colspan="8" class="xl1122107"  style='border-right: 1.0pt solid black;'>CONSIGNADO A:<span style='mso-spacerun: yes'>           
-                </span><font class="font82107">MARCO ANTONIO TOURS -<span
-  style='mso-spacerun:yes'>  </span>Deán Funes nº 29 - SALTA - ARGENTINA<span
-  style='mso-spacerun:yes'>  </span></font><font class="font62107"><span
-  style='mso-spacerun:yes'> </span></font></td>
+                <td colspan="8" class="xl1122107" style='border-right: 1.0pt solid black;'>
+                    CONSIGNADO A:<span style='mso-spacerun: yes'>
+                    </span><font class="font82107">
+                        MARCO ANTONIO TOURS -<span style='mso-spacerun:yes'>  </span>Deán Funes nº 29 - SALTA - ARGENTINA<span style='mso-spacerun:yes'>  </span>
+                    </font><font class="font62107">
+                        <span style='mso-spacerun:yes'> </span>
+                    </font>
+                </td>
             </tr>
-           
+
             <tr style='height: 10pt'>
                 <td colspan="8" class="xl1092107" style='border-right: 1.0pt solid black; '>TRIPULANTES<font class="font52107"></font></td>
             </tr>
-            <tr style='height: 10pt'>
-                <td class="xl792107" colspan="2" ><input type="text" placeholder="1- APELLIDO/NOMBRE DNI" class="xl792107" style='border: none;width:228px;'></td>
-                <td class="xl802107" ><input type="text" placeholder="2- APELLIDO/NOMBRE  DNI" class="xl792107" style='border: none;width:228px;'></td>
-                <td class="xl922107" >&nbsp;</td>
-                <td class="xl802107" colspan="2"><input type="text" placeholder="3- APELLIDO/NOMBRE DNI" class="xl792107" style='border: none;width:228px;'></td>
-                <td class="xl932107" >&nbsp;</td>
-                <td class="xl942107" >&nbsp;</td>
+            <tr style='height: 30pt'>
+                <!-- aumentamos altura -->
+                <td class="xl792107" colspan="2">
+                    <textarea placeholder="1- APELLIDO/NOMBRE DNI" class="xl792107"
+                              style="border: none; width: 228px; height: 40px; resize: none;"></textarea>
+                </td>
+                <td class="xl802107">
+                    <textarea placeholder="2- APELLIDO/NOMBRE DNI" class="xl792107"
+                              style="border: none; width: 228px; height: 40px; resize: none;"></textarea>
+                </td>
+                <td class="xl922107">&nbsp;</td>
+                <td class="xl802107" colspan="2">
+                    <textarea placeholder="3- APELLIDO/NOMBRE DNI" class="xl792107"
+                              style="border: none; width: 228px; height: 40px; resize: none;"></textarea>
+                </td>
+                <td class="xl932107">&nbsp;</td>
+                <td class="xl942107">&nbsp;</td>
             </tr>
+
             <tr style='height: 10pt'>
                 <td colspan="8" class="xl1062107" style='border-right: 1.0pt solid black;'><span style='mso-spacerun: yes'></span><font>PASAJEROS</font></td>
             </tr>
-           
+
             <tr style='height: 10pt; width: 100%; border-bottom:solid 1px;'>
                 <td class="xl642107 nro">N°</td>
-                <td class="xl642107 apeynom" style='border-top: none; border-left: none'>APELLIDO Y NOMBRE<span
-                    style='mso-spacerun: yes'> </span></td>
-                <td class="xl672107 fecha" style='border-top: none'>FECHA NAC<span
-                    style='mso-spacerun: yes'> </span></td>
+                <td class="xl642107 apeynom" style='border-top: none; border-left: none'>
+                    APELLIDO Y NOMBRE<span style='mso-spacerun: yes'> </span>
+                </td>
+                <td class="xl672107 fecha" style='border-top: none'>
+                    FECHA NAC<span style='mso-spacerun: yes'> </span>
+                </td>
                 <td class="xl642107 dni" style='border-top: none'>DOC. TIPO N°</td>
                 <td class="xl642107 ocupacion" style='border-top: none; border-left: none'>OCUPACION</td>
                 <td class="xl642107 sexo" style='border-top: none; border-left: none'>SEXO</td>
                 <td class="xl672107 nacionalidad" style='border-top: none'>NACIONALIDAD</td>
-                <td class="xl642107 pais" style='border-top: none'>PAIS RESID<span
-                    style='mso-spacerun: yes'> </span></td>
+                <td class="xl642107 pais" style='border-top: none'>
+                    PAIS RESID<span style='mso-spacerun: yes'> </span>
+                </td>
             </tr>
 
             @foreach (var item in Model)
             {
-                
-                
+
+
                 <tr style='height: 17px; width: 100%'>
 
                     <td class="xl692107 nro">
@@ -1064,29 +1081,31 @@ EXCEL -->
                     <td class="xl732107" style="text-align:center;">
                         @if (item.FechaNacimiento.HasValue)
                         {
-                            @Html.Label(item.FechaNacimiento.Value.ToShortDateString())    
-                        }                        
+                            @Html.Label(item.FechaNacimiento.Value.ToShortDateString())
+                        }
                     </td>
                     <td class="xl732107">
                         @((eTipoDocumento)item.TipoDocumento.Value) @Html.DisplayFor(model => item.NroDocumento)
                     </td>
                     <td class="xl732107">
-                        @if(!string.IsNullOrEmpty(item.Ocupacion)){
-                            @Html.Label(item.Ocupacion.ToString().Substring(0,7).ToUpper())
+                        @if (!string.IsNullOrEmpty(item.Ocupacion))
+                        {
+                            @Html.Label(item.Ocupacion.ToString().Substring(0, 7).ToUpper())
                             if (item.Ocupacion.Length > 7)
                             {
-                               <span>.</span>
+                                <span>.</span>
                             }
-                            }
+                        }
                     </td>
                     <td class="xl732107 sexo">
-                        @Html.Label(((eSexo)item.Sexo).ToString().Substring(0,1))
+                        @Html.Label(((eSexo)item.Sexo).ToString().Substring(0, 1))
                     </td>
                     <td class="xl732107">
                         @Html.DisplayFor(model => item.Nacionalidad)
                     </td>
                     <td class="xl732107">
-                        @Html.DisplayFor(model => item.PaisResidencia)</td>
+                        @Html.DisplayFor(model => item.PaisResidencia)
+                    </td>
 
 
                 </tr>
@@ -1094,16 +1113,16 @@ EXCEL -->
             }
 
             <![if supportMisalignedColumns]>
- <tr height="0" style='display: none'>
-     <td width="23" style='width: 17pt'></td>
-     <td width="222" style='width: 167pt'></td>
-     <td width="85" style='width: 64pt'></td>
-     <td width="150" style='width: 113pt'></td>
-     <td width="73" style='width: 55pt'></td>
-     <td width="44" style='width: 33pt'></td>
-     <td width="95" style='width: 71pt'></td>
-     <td width="95" style='width: 71pt'></td>
- </tr>
+            <tr height="0" style='display: none'>
+                <td width="23" style='width: 17pt'></td>
+                <td width="222" style='width: 167pt'></td>
+                <td width="85" style='width: 64pt'></td>
+                <td width="150" style='width: 113pt'></td>
+                <td width="73" style='width: 55pt'></td>
+                <td width="44" style='width: 33pt'></td>
+                <td width="95" style='width: 71pt'></td>
+                <td width="95" style='width: 71pt'></td>
+            </tr>
             <![endif]>
         </table>
 
