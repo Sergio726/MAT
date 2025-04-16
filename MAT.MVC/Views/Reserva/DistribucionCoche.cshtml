@@ -155,19 +155,40 @@
         </div>
         <div>
             <div class="grupo1">
+
                 @*@foreach (var item in Model.Where(bt => bt.Butaca.NroButaca.Value < 45 && (bt.Butaca.Posicion=="C" || bt.Butaca.Posicion=="D") ).OrderBy(bt => bt.Butaca.NroButaca))*@
-                @foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                @if (ViewBag.NroCoche == "101")
                 {
-                    <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
-                        <span class="spnCodB">@item.ButacaCodigo </span>
-                    
-                        @if (item.PasajeroID != null && item.PasajeroID != "")
-                        {
-                            <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                        }
-                    
-                    </div>
-                }                        
+                    foreach (var item in Model.Where(bt => bt.ButacaNro < 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                    {
+                        <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
+                            <span class="spnCodB">@item.ButacaCodigo </span>
+
+                            @if (item.PasajeroID != null && item.PasajeroID != "")
+                            {
+                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                            }
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                    {
+                        <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
+                            <span class="spnCodB">@item.ButacaCodigo </span>
+
+                            @if (item.PasajeroID != null && item.PasajeroID != "")
+                            {
+                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                            }
+
+                        </div>
+                    }
+                }
+
+
             </div>
             <div class="pasillo">
                 <div class="tv tv1">TV</div>
@@ -176,73 +197,122 @@
                 <div class="tv tv4">TV</div>
             </div>
             <div class="grupo2">
-                 @{
-                var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
-                var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
-                
-                  }
+                @{
+                    var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
+                    var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
+
+                }
                 <div class="asiento_parabrisa posicion_@ItemPasajero3.ButacaPosicion" id="@(ItemPasajero3 != null ? ItemPasajero3.PasajeroID : "")">
-                  <span class="spnCodB">@ItemPasajero3.ButacaCodigo </span> 
-                
+                    <span class="spnCodB">@ItemPasajero3.ButacaCodigo </span>
+
                     @*@if (ItemPasajero3.PersonaPasajero != null)*@
-                     @if (ItemPasajero3.PasajeroID != null)
-                     {
-                       <span class="spnB"> @ItemPasajero3.PasajeroNombre.ToUpper() @ItemPasajero3.PasajeroApellido.ToUpper()</span>
-                     }
+                    @if (ItemPasajero3.PasajeroID != null)
+                    {
+                        <span class="spnB"> @ItemPasajero3.PasajeroNombre.ToUpper() @ItemPasajero3.PasajeroApellido.ToUpper()</span>
+                    }
                 </div>
                 <div class="asiento_parabrisa posicion_@ItemPasajero4.ButacaPosicion" id="@(ItemPasajero4 != null ? ItemPasajero4.PasajeroID : "")">
                     <span class="spnCodB"> @ItemPasajero4.ButacaCodigo</span>
-                
-                     @if (ItemPasajero4.PasajeroID != null)
-                     {
+
+                    @if (ItemPasajero4.PasajeroID != null)
+                    {
                         <span class="spnB">@ItemPasajero4.PasajeroNombre.ToUpper() @ItemPasajero4.PasajeroApellido.ToUpper()</span>
-                     }
-                </div>     
-                
+                    }
+                </div>
+
                 @if (ViewBag.NroCoche == "81")
                 {
                     var ItemPasajero59 = Model.Where(bt => bt.ButacaNro == 59).First();
                     var ItemPasajero60 = Model.Where(bt => bt.ButacaNro == 60).First();
-                    
-                    <div class="asiento_invertido posicion_@ItemPasajero59.ButacaPosicion" id="@(ItemPasajero59.PasajeroID != null && ItemPasajero59.PasajeroID != "" ? ItemPasajero59.PasajeroID : "")">
-                       <span class="spnCodB">@ItemPasajero59.ButacaCodigo</span> 
-                   
-                         @if (ItemPasajero59.PasajeroID != null && ItemPasajero59.PasajeroID != "")
-                         {
-                            <span class="spnB">@ItemPasajero59.PasajeroNombre.ToUpper() @ItemPasajero59.PasajeroApellido.ToUpper()</span>
-                         }
-                    </div>
-                    
-                     <div class="asiento_invertido posicion_@ItemPasajero60.ButacaPosicion" id="@(ItemPasajero60.PasajeroID != null && ItemPasajero60.PasajeroID != "" ? ItemPasajero60.PasajeroID : "")">
-                       <span class="spnCodB">@ItemPasajero60.ButacaCodigo</span> 
-                   
-                         @if (ItemPasajero60.PasajeroID != null && ItemPasajero60.PasajeroID != "")
-                         {
-                            <span class="spnB">@ItemPasajero60.PasajeroNombre.ToUpper() @ItemPasajero60.PasajeroApellido.ToUpper()</span>
-                         }
-                    </div>
-                }
-                
 
-          
-                <div class="asiento_largo vacio" style="padding-top:5px">
-                    <span>ESCALERA</span>
-                </div>
-                <div class="asiento_largo bold">
-                    BAR
-                </div>
-                @foreach (var item in Model.Where(bt => bt.ButacaNro > 4 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
-                {
-                    <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                       <span class="spnCodB">@item.ButacaCodigo</span> 
-                   
-                         @if (item.PasajeroID != null && item.PasajeroID != "")
-                         {
-                        <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                         }
+                    <div class="asiento_invertido posicion_@ItemPasajero59.ButacaPosicion" id="@(ItemPasajero59.PasajeroID != null && ItemPasajero59.PasajeroID != "" ? ItemPasajero59.PasajeroID : "")">
+                        <span class="spnCodB">@ItemPasajero59.ButacaCodigo</span>
+
+                        @if (ItemPasajero59.PasajeroID != null && ItemPasajero59.PasajeroID != "")
+                        {
+                            <span class="spnB">@ItemPasajero59.PasajeroNombre.ToUpper() @ItemPasajero59.PasajeroApellido.ToUpper()</span>
+                        }
+                    </div>
+
+                    <div class="asiento_invertido posicion_@ItemPasajero60.ButacaPosicion" id="@(ItemPasajero60.PasajeroID != null && ItemPasajero60.PasajeroID != "" ? ItemPasajero60.PasajeroID : "")">
+                        <span class="spnCodB">@ItemPasajero60.ButacaCodigo</span>
+
+                        @if (ItemPasajero60.PasajeroID != null && ItemPasajero60.PasajeroID != "")
+                        {
+                            <span class="spnB">@ItemPasajero60.PasajeroNombre.ToUpper() @ItemPasajero60.PasajeroApellido.ToUpper()</span>
+                        }
                     </div>
                 }
-            
+
+                @if (ViewBag.NroCoche == "101")
+                {
+                    var ItemPasajero7 = Model.Where(bt => bt.ButacaNro == 7).First();
+                    var ItemPasajero8 = Model.Where(bt => bt.ButacaNro == 8).First();
+
+                    <div class="asiento_invertido posicion_@ItemPasajero7.ButacaPosicion" id="@(ItemPasajero7.PasajeroID != null && ItemPasajero7.PasajeroID != "" ? ItemPasajero7.PasajeroID : "")">
+                        <span class="spnCodB">@ItemPasajero7.ButacaCodigo</span>
+
+                        @if (ItemPasajero7.PasajeroID != null && ItemPasajero7.PasajeroID != "")
+                        {
+                            <span class="spnB">@ItemPasajero7.PasajeroNombre.ToUpper() @ItemPasajero7.PasajeroApellido.ToUpper()</span>
+                        }
+                    </div>
+
+                    <div class="asiento_invertido posicion_@ItemPasajero8.ButacaPosicion" id="@(ItemPasajero8.PasajeroID != null && ItemPasajero8.PasajeroID != "" ? ItemPasajero8.PasajeroID : "")">
+                        <span class="spnCodB">@ItemPasajero8.ButacaCodigo</span>
+
+                        @if (ItemPasajero8.PasajeroID != null && ItemPasajero8.PasajeroID != "")
+                        {
+                            <span class="spnB">@ItemPasajero8.PasajeroNombre.ToUpper() @ItemPasajero8.PasajeroApellido.ToUpper()</span>
+                        }
+                    </div>
+
+
+                    <div class="asiento_largo vacio" style="padding-top:5px">
+                        <span>ESCALERA</span>
+                    </div>
+                    <div class="asiento_largo bold">
+                        BAR
+                    </div>
+
+                    foreach (var item in Model.Where(bt => bt.ButacaNro > 8 && bt.ButacaNro < 49 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                    {
+                        <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                            <span class="spnCodB">@item.ButacaCodigo</span>
+
+                            @if (item.PasajeroID != null && item.PasajeroID != "")
+                            {
+                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    foreach (var item in Model.Where(bt => bt.ButacaNro > 4 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                    {
+                        <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                            <span class="spnCodB">@item.ButacaCodigo</span>
+
+                            @if (item.PasajeroID != null && item.PasajeroID != "")
+                            {
+                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                            }
+                        </div>
+                    }
+
+                    <div class="asiento_largo vacio" style="padding-top:5px">
+                        <span>ESCALERA</span>
+                    </div>
+                    <div class="asiento_largo bold">
+                        BAR
+                    </div>
+                }
+
+
+
+
+
             </div>
         </div>
         <div class="clear"></div>
@@ -257,17 +327,35 @@
                 <div class="asiento vacio">
                     <span>BAR</span>
                 </div>
-                    @foreach (var item in Model.Where(bt => bt.ButacaNro >= 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                @if (ViewBag.NroCoche == "101")
+                {
+                    foreach (var item in Model.Where(bt => bt.ButacaNro >= 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
                     {
-                    <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                        <span class="spnCodB">@item.ButacaCodigo</span>
-                    
-                         @if (item.PasajeroID != null && item.PasajeroID != "")
-                         {
-                       <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                         }
-                    </div>
-                            }      
+                        <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                            <span class="spnCodB">@item.ButacaCodigo</span>
+
+                            @if (item.PasajeroID != null && item.PasajeroID != "")
+                            {
+                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                            }
+                        </div>
+                    }
+                }
+                else
+                {
+                    foreach (var item in Model.Where(bt => bt.ButacaNro >= 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                    {
+                        <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                            <span class="spnCodB">@item.ButacaCodigo</span>
+
+                            @if (item.PasajeroID != null && item.PasajeroID != "")
+                            {
+                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
+                            }
+                        </div>
+                    }
+                }
+
             </div>
             <div class="pasillo">
                 <div class="tv tv5">TV</div>
@@ -277,18 +365,35 @@
                 <div class="asiento_largo vacio" style="margin-bottom:12px;">
                     <span>ESCALERA</span>
                 </div>
-            
-                @foreach (var item in Model.Where(bt => bt.ButacaNro > 46 && bt.ButacaNro < 59 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                @if (ViewBag.NroCoche == "101")
                 {
-                    <div class="asiento_largo" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                        <span class="spnCodB"> @item.ButacaCodigo</span> 
-                   
+                    foreach (var item in Model.Where(bt => bt.ButacaNro > 48 && bt.ButacaNro < 61 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                    {
+                        <div class="asiento_largo" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                            <span class="spnCodB"> @item.ButacaCodigo</span>
+
                             @if (item.PasajeroID != null && item.PasajeroID != "")
                             {
-                            @item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()
+                                @item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()
                             }
-                    </div>
-                }      
+                        </div>
+                    }
+                }
+                else
+                {
+                    foreach (var item in Model.Where(bt => bt.ButacaNro > 46 && bt.ButacaNro < 59 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                    {
+                        <div class="asiento_largo" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
+                            <span class="spnCodB"> @item.ButacaCodigo</span>
+
+                            @if (item.PasajeroID != null && item.PasajeroID != "")
+                            {
+                                @item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()
+                            }
+                        </div>
+                    }
+                }
+
             </div>
         </div>
     }
