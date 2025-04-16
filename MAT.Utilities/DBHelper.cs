@@ -24,94 +24,71 @@ namespace MAT.Utilities
             DataSet ds = new DataSet();
             string sParams = "";
             bool bLogSpSpeed = false;
+
             if (ConfigurationManager.AppSettings.Get("LogSpSpeed").ToString() == "YES")
             {
                 bLogSpSpeed = true;
                 LogFollowSpName(sqlSpName, "-----------------------------------------------------------------------------------------------", "");
             }
-            bool bRunUsingEntityFramework = true;
-            if (ConfigurationManager.AppSettings.Get("UseEntityFramework").ToString() == "NO")
-                bRunUsingEntityFramework = false;
+
+            bool bRunUsingEntityFramework = ConfigurationManager.AppSettings.Get("UseEntityFramework").ToString() != "NO";
 
             if (bRunUsingEntityFramework)
             {
-                //using (EDMContainer db = new EDMContainer())
-                //{
-                //    // In V1 of the EF, the context connection is always an EntityConnection
-                //    EntityConnection entityConnection = (EntityConnection)db.Connection;
-
-                //    // The EntityConnection exposes the underlying store connection
-                //    DbConnection storeConnection = entityConnection.StoreConnection;
-                //    DbCommand command = storeConnection.CreateCommand();
-                //    command.CommandText = sqlSpName;
-                //    command.CommandType = CommandType.StoredProcedure;
-                //    command.CommandTimeout = SpTimeout(sqlSpName);
-                //    if (dbParams != null)
-                //    {
-                //        foreach (SqlParameter dbParam in dbParams)
-                //        {
-                //            if (dbParam.Value != null)
-                //                sValue = dbParam.Value.ToString();
-                //            else
-                //                sValue = "";
-                //            command.Parameters.Add(new SqlParameter(dbParam.ParameterName.Replace("@", ""), sValue));
-                //            sParams += dbParam.ParameterName + " = " + sValue + ",";
-                //        }
-                //    }
-                //    try
-                //    {
-                //        db.Connection.Open();
-                //        if (bLogSpSpeed)
-                //            LogFollowSpName(sqlSpName, "EntityFramework ExecuteReader Starts ", "");
-                //        // Run the sproc 
-                //        IDataReader reader = command.ExecuteReader();
-                //        if (bLogSpSpeed)
-                //            LogFollowSpName(sqlSpName, "EntityFramework ExecuteReader Ends ", sqlSpName + " " + sParams);
-
-                //        string tableName = "t";
-                //        int i = 0;
-                //        // Move to second result set and read Posts
-                //        while (!reader.IsClosed)
-                //        {
-                //            ds.Load(reader, LoadOption.PreserveChanges, tableName + i.ToString());
-                //            i++;
-                //        }
-                //        if (bLogSpSpeed)
-                //            LogFollowSpName(sqlSpName, "EntityFramework - ds.Load", "");
-
-                //        reader.Close();
-                //    }
-                //    finally
-                //    {
-                //        db.Connection.Close();
-                //    }
-                //}
+                // ... (Bloque de Entity Framework comentado) ...
             }
             else
             {
-                SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString());
-                SqlCommand cmd = new SqlCommand(sqlSpName, cn);
-                cmd.CommandTimeout = SpTimeout(sqlSpName);
-                cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                if (dbParams != null)
+                try
                 {
-                    foreach (SqlParameter dbParam in dbParams)
+                    using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString()))
                     {
-                        if (dbParam.Value != null)
-                            sValue = dbParam.Value.ToString();
-                        else
-                            sValue = "";
-                        da.SelectCommand.Parameters.Add(dbParam);
-                        sParams += dbParam.ParameterName + " = " + sValue + ",";
+                        using (SqlCommand cmd = new SqlCommand(sqlSpName, cn))
+                        {
+                            cmd.CommandTimeout = SpTimeout(sqlSpName);
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                            {
+                                if (dbParams != null)
+                                {
+                                    foreach (SqlParameter dbParam in dbParams)
+                                    {
+                                        sValue = dbParam.Value?.ToString() ?? ""; // Usando el operador null-coalescing
+                                        da.SelectCommand.Parameters.Add(dbParam);
+                                        sParams += dbParam.ParameterName + " = " + sValue + ",";
+                                    }
+                                }
+
+                                if (bLogSpSpeed)
+                                {
+                                    LogFollowSpName(sqlSpName, "SqlDataAdapter Starts ", "");
+                                }
+
+                                da.Fill(ds);
+
+                                if (bLogSpSpeed)
+                                {
+                                    LogFollowSpName(sqlSpName, "SqlDataAdapter Ends ", sqlSpName + " " + sParams);
+                                }
+                            }
+                        }
                     }
                 }
-                if (bLogSpSpeed)
-                    LogFollowSpName(sqlSpName, "SqlDataAdapter Starts ", "");
-                da.Fill(ds);
-                if (bLogSpSpeed)
-                    LogFollowSpName(sqlSpName, "SqlDataAdapter Ends ", sqlSpName + " " + sParams);
+                catch (SqlException ex)
+                {
+                    // Manejar la excepción (registrar, lanzar una excepción personalizada, etc.)
+                    // Por ejemplo, registrar el error:
+                    LogFollowSpName(sqlSpName, "Error SQL: " + ex.Message, "");
+                    throw; // Relanzar la excepción para que se maneje en una capa superior
+                }
+                catch (Exception ex)
+                {
+                    //manejo de otras excepciones.
+                    LogFollowSpName(sqlSpName, "Error General: " + ex.Message, "");
+                    throw;
+                }
             }
+
             return ds;
         }
 
