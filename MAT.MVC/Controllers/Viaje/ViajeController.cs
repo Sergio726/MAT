@@ -432,7 +432,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
             }
 
             return Json(new
@@ -453,7 +453,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
             }
 
             return Json(new
@@ -475,7 +475,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
             }
 
             return Json(new
@@ -497,7 +497,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
             }
 
             return Json(new
@@ -507,25 +507,27 @@ namespace MAT.MVC.Controllers.Viaje
             }, JsonRequestBehavior.AllowGet);
         }
 
-        public  JsonResult GetViajesPorVencer()
+        public JsonResult GetViajesPorVencer()
         {
-            string[] sResult = new string[2];
+            string sJsonResult = "";
+            string sMensaje = "";
+
             try
             {
-                sResult[0] = ViajeMethod.GetViajesPorVencer();
+                sJsonResult = ViajeMethod.GetViajesPorVencer();
             }
             catch (Exception e)
             {
-                sResult[0] = "";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sMensaje = "Error: " + e.Message + " StackTrace: " + e.StackTrace;
             }
 
             return Json(new
             {
-                sJsonResult = sResult[0],
-                sMensaje = sResult[1]
+                sJsonResult,
+                sMensaje
             }, JsonRequestBehavior.AllowGet);
         }
+
 
     }
 }

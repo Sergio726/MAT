@@ -620,18 +620,27 @@ namespace MAT.MVC.Models
 
         public static string GetViajesPorVencer()
         {
-            SqlParameter[] dbParams = new SqlParameter[]
+            try
+            {
+                SqlParameter[] dbParams = new SqlParameter[] { };
+
+                DataSet dataSet = DBHelper.ExecuteDataSet("dbo.usp_MAT_Dashboard_Viajes_LugaresDisponibles", dbParams);
+
+                // Validar que tenga al menos una tabla y filas
+                if (dataSet == null || dataSet.Tables.Count == 0 || dataSet.Tables[0].Rows.Count == 0)
                 {
-                    // Agregar parámetros si es necesario
-                };
+                    return JsonConvert.SerializeObject(new { message = "No se encontraron datos." });
+                }
 
-            // Ejecutar el procedimiento almacenado y obtener el DataSet
-            DataSet dataSet = DBHelper.ExecuteDataSet("dbo.usp_MAT_Dashboard_Viajes_LugaresDisponibles", dbParams);
-
-            // Convertir el DataSet a JSON
-            string sJson = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-
-            return sJson;
+                string sJson = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
+                return sJson;
+            }
+            catch (Exception ex)
+            {
+                // Podés loguearlo o manejarlo como prefieras
+                return JsonConvert.SerializeObject(new { error = ex.Message });
+            }
         }
+
     }
 }

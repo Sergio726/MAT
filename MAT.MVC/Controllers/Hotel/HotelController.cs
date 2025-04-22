@@ -181,31 +181,39 @@ namespace MAT.MVC.Controllers.Hotel
             return PartialView();
         }
 
-        public ActionResult EsquemaDistribucion(Guid hotelid, Guid viajeid, string fecha)
+        public ActionResult EsquemaDistribucion(Guid? hotelid, Guid? viajeid, string fecha)
         {
             List<EsquemaDistribucion> ListDistribucion = new List<EsquemaDistribucion>();
+
+            if (!hotelid.HasValue || !viajeid.HasValue)
+            {
+                return new HttpStatusCodeResult(400, "Faltan parámetros requeridos: hotelid y/o viajeid.");
+            }
+
             try
             {
-                ViewData["viajeid"] = viajeid;
-                ListDistribucion = MVC.Models.HotelMethod.GetEsquemaDistribucion(viajeid, hotelid, fecha);
+                ViewData["viajeid"] = viajeid.Value;
+
+                ListDistribucion = MVC.Models.HotelMethod.GetEsquemaDistribucion(viajeid.Value, hotelid.Value, fecha);
 
                 SqlParameter[] dbParams = new SqlParameter[]
-                    { 
-                          DBHelper.MakeParam("@ViajeId", SqlDbType.UniqueIdentifier, 0, viajeid),
-                          DBHelper.MakeParam("@HotelId", SqlDbType.UniqueIdentifier, 0, hotelid),
-                          DBHelper.MakeParam("@Fecha", SqlDbType.Date, 0, Convert.ToDateTime(fecha))
-                    };
+                {
+                    DBHelper.MakeParam("@ViajeId", SqlDbType.UniqueIdentifier, 0, viajeid.Value),
+                    DBHelper.MakeParam("@HotelId", SqlDbType.UniqueIdentifier, 0, hotelid.Value),
+                    DBHelper.MakeParam("@Fecha", SqlDbType.Date, 0, Convert.ToDateTime(fecha))
+                };
+
                 Int32 iCantPax = Convert.ToInt32(DBHelper.ExecuteScalar("dbo.usp_MAT_Hotel_EsquemaDistribucion_CantPax", dbParams));
 
                 ViewBag.CantPax = iCantPax;
                 return PartialView(ListDistribucion);
             }
-            catch (Exception e){
-
+            catch (Exception e)
+            {
                 ViewBag.Error = e.Message + e.StackTrace;
                 return PartialView(ListDistribucion);
             }
-           
         }
+
     }
 }

@@ -48,17 +48,36 @@ namespace MAT.MVC.Controllers.Home
 
         public string GetFechasDeViajes()
         {
-            ViajeService vServ = new ViajeService();
-            List<Entities.Viaje> viajesdefecha = vServ.GetAll().OrderByDescending(v => v.FechaSalida).ToList();
-            StringBuilder arrayfechas = new StringBuilder();
-            foreach (var item in viajesdefecha)
+            try
             {
-                arrayfechas.Append(item.FechaSalida.Value.ToString("yyyy-MM-dd"));
-                arrayfechas.Append(",");
+                ViajeService vServ = new ViajeService();
+                List<Entities.Viaje> viajesdefecha = vServ.GetAll()
+                    .OrderByDescending(v => v.FechaSalida)
+                    .ToList();
+
+                StringBuilder arrayfechas = new StringBuilder();
+
+                foreach (var item in viajesdefecha)
+                {
+                    if (item.FechaSalida.HasValue)
+                    {
+                        arrayfechas.Append(item.FechaSalida.Value.ToString("yyyy-MM-dd"));
+                        arrayfechas.Append(",");
+                    }
+                }
+
+                if (arrayfechas.Length > 0)
+                    arrayfechas.Remove(arrayfechas.Length - 1, 1); // Remover la última coma
+
+                return arrayfechas.ToString();
             }
-            arrayfechas.Remove(arrayfechas.Length - 1, 1);
-            return arrayfechas.ToString();
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Error en GetFechasDeViajes: " + ex.Message);
+                return string.Empty; // o devolver un mensaje como "Error" si preferís
+            }
         }
+
 
         [Authorize]
         public ActionResult TodosLosViajesIndex()
