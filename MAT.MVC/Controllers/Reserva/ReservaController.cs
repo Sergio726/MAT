@@ -122,10 +122,20 @@ namespace MAT.MVC.Controllers.Reserva
         }
         public ActionResult SeleccionarPasajero(Guid paqueteid, string piso)
         {
-            if (!string.IsNullOrEmpty(piso)) ViewData["piso"] = piso;
-            SeleccionarPasajeroModel seleccionarpasajeromodel = new SeleccionarPasajeroModel(paqueteid);
-            return PartialView(seleccionarpasajeromodel);
+            try
+            {
+                if (!string.IsNullOrEmpty(piso))
+                    ViewData["piso"] = piso;
+
+                SeleccionarPasajeroModel seleccionarpasajeromodel = new SeleccionarPasajeroModel(paqueteid);
+                return PartialView(seleccionarpasajeromodel);
+            }
+            catch (Exception ex)
+            {
+                return PartialView();
+            }
         }
+
 
         public ActionResult RenderGridPasajeros(Guid viajeid, string filter)
         {

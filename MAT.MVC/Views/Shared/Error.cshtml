@@ -1,22 +1,192 @@
-﻿@model Exception
-@{
-    Layout = null;
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿@*@model Exception
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="viewport" content="width=device-width" />
+        <title>Error</title>
+    </head>
+    <body>
+        <hgroup>
+            <h1>@Model.Message</h1>
+            <h2>@Model.StackTrace</h2>
+            <h3>@Model.HelpLink</h3>
+            <h3>Contacte con su Administrador de Sistema</h3>
+        </hgroup>
+        <a href="/Home/Index">Volver al inicio</a>
+    </body>
+    </html>*@
+@model Exception
 
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Error</title>
+    <title>Error - Sistema MAT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .error-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .error-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .error-title {
+            color: #e74c3c;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #e74c3c;
+            border-radius: 4px;
+        }
+
+        .error-details {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .error-detail-item {
+            margin-bottom: 15px;
+        }
+
+        .error-detail-label {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .error-detail-value {
+            font-family: 'Consolas', monospace;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .error-actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: unset;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+            .btn:hover {
+                background-color: #2980b9;
+            }
+
+        .error-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .error-time {
+            color: #95a5a6;
+            font-size: 0.9em;
+            text-align: right;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <hgroup>
-        <h1>@Model.Message</h1>
-        <h3>@Model.HelpLink</h3>
-        <h3>Contacte con su Administrador de Sistema</h3>
-    </hgroup>
-    <a href="/Home/Login">Volver al inicio</a>
+    <div class="error-container">
+        <div class="error-header">
+            <h1 class="error-title">¡Ups! Algo salió mal</h1>
+        </div>
+
+        <div class="error-message">
+            @Model.Message
+        </div>
+
+        <div class="error-details">
+            <div class="error-detail-item">
+                <div class="error-detail-label">Tipo de Error:</div>
+                <div class="error-detail-value">@Model.GetType().Name</div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.StackTrace))
+            {
+                <div class="error-detail-item">
+                    <div class="error-detail-label">Stack Trace:</div>
+                    <div class="error-detail-value">@Model.StackTrace</div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.HelpLink))
+            {
+                <div class="error-detail-item">
+                    <div class="error-detail-label">Enlace de Ayuda:</div>
+                    <div class="error-detail-value">@Model.HelpLink</div>
+                </div>
+            }
+
+            @if (Model.InnerException != null)
+            {
+                <div class="error-detail-item">
+                    <div class="error-detail-label">Error Interno:</div>
+                    <div class="error-detail-value">@Model.InnerException.Message</div>
+                </div>
+            }
+        </div>
+
+        <div class="error-actions">
+            <a href="/Home/Index" class="btn">Volver al inicio</a>
+        </div>
+
+        <div class="error-footer">
+            <p>Si el problema persiste, por favor contacte con su Administrador de Sistema</p>
+            <p>ID de Error: @Guid.NewGuid()</p>
+        </div>
+
+        <div class="error-time">
+            @DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+        </div>
+    </div>
 </body>
 </html>
