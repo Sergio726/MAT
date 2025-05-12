@@ -190,7 +190,6 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 // Aquí podrías usar tu sistema de logging preferido
 
                 // Retornamos a la vista de error compartida
-                //return RedirectToAction("Edit", "PersonaCliente", new { msj = "No se pudo actualizar el pasajero al sistema. Disculpe las molestias." + e.Message });
                 return View("Error", e);
                 
             }
@@ -363,23 +362,26 @@ namespace MAT.MVC.Controllers.PersonaCliente
 
         public ActionResult DetalleFactura(Guid facturaid)
         {
-            FacturaStandard factura = new FacturaStandard();
-            List<FacturaDetalle> facturaDetalle = new List<FacturaDetalle>();
-            ViewBag.Error = "";
             try
             {
+                FacturaStandard factura = new FacturaStandard();
+                List<FacturaDetalle> facturaDetalle = new List<FacturaDetalle>();
+                ViewBag.Error = "";
+
                 factura = FacturaMetod.FacturaStandardByID(facturaid);
                 facturaDetalle = FacturaMetod.FacturaDetalleByID(facturaid);
                 ViewBag.FacturaDetalle = facturaDetalle;
                 ViewBag.ListMenores = GetPasajeroMenorByFacturaID(facturaid);
                 ViewBag.ExtendFacturaDetalle = FacturaMetod.GetDetalleByFacturaID(facturaid);
+                return PartialView(factura);
             }
             catch (Exception e)
             {
+
                 ViewBag.Error = e.Message;
+                return PartialView("Error", e);
             }
-           
-            return PartialView(factura);
+            
         }
 
         public static List<PasajeroMenorModel> GetPasajeroMenorByFacturaID(Guid facturaid)
