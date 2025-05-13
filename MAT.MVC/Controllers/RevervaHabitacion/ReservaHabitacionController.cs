@@ -23,11 +23,20 @@ namespace MAT.MVC.Controllers.RevervaHabitacion
 
         public ActionResult Index(Guid id, string PasajeID, string PasajeroID)
         {
-            ViewData["viajeid"] = id;
-            ViewBag.PasajeID = PasajeID;
-            ViewBag.PasajeroID = PasajeroID;
-            ViewBag.ListaHoteles = MAT.MVC.Models.HotelMethod.GetHotelByViaje(id.ToString());
-            return PartialView();
+            try
+            {
+                ViewData["viajeid"] = id;
+                ViewBag.PasajeID = PasajeID;
+                ViewBag.PasajeroID = PasajeroID;
+                ViewBag.ListaHoteles = MAT.MVC.Models.HotelMethod.GetHotelByViaje(id.ToString());
+                return PartialView();
+            }
+            catch (Exception e)
+            {
+
+                return PartialView("Error", e);
+            }
+           
         }
 
         public ActionResult GridHotelHabitacion(string HotelID, string viajeid = "", string PasajeroID = "", string Fecha = "")
