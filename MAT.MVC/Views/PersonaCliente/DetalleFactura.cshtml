@@ -13,8 +13,7 @@
 
 }
 
-@if (ViewBag.Error != "")
-{
+
     <div class="form-modal">
         @{
             string sUSD = "";
@@ -214,10 +213,7 @@
     <input type="hidden" id="hdnTotalPagos" value="@dTotalPagos" />
     <input type="hidden" id="hdnViajeMonedaTipo" value="@Model.MonedaTipo" />
 
-    }
-    else {
-        @ViewBag.Error;
-    }
+   
 
 
 <script type="text/javascript">

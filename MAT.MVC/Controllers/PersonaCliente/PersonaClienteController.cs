@@ -379,7 +379,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             {
 
                 ViewBag.Error = e.Message;
-                return PartialView("Error", e);
+                return View("Error", e);
             }
             
         }
