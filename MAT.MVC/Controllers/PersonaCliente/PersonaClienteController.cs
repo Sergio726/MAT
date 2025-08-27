@@ -195,6 +195,93 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
         }
 
+        [HttpPost]
+        [Authorize]
+        public ActionResult Edit(Guid Id, FormCollection collection)
+        {
+            PersonaClienteService SPersonaCliente = new PersonaClienteService();
+            PersonaService SPersona = new PersonaService();
+            ClienteService SCliente = new ClienteService();
+
+            MAT.Entities.PersonaCliente PersonaCliente = new MAT.Entities.PersonaCliente();
+            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
+            MAT.Entities.Cliente Cliente = SCliente.Get(new ClienteKey(Id));
+
+
+            #region comentada
+            try
+            {
+
+                #region Actualizar Persona
+                if (!string.IsNullOrEmpty(collection.Get("Apellido"))) Persona.Apellido = collection.Get("Apellido").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Nombre"))) Persona.Nombre = collection.Get("Nombre").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("TipoDocumento"))) Persona.TipoDocumento = Convert.ToInt32(collection.Get("TipoDocumento").ToString());
+                if (!string.IsNullOrEmpty(collection.Get("NroDocumento"))) Persona.NroDocumento = collection.Get("NroDocumento").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("LocalidadId"))) Persona.LocalidadId = Convert.ToInt16(collection.Get("LocalidadId").ToString());
+                if (!string.IsNullOrEmpty(collection.Get("Provincia"))) Persona.Provincia = Convert.ToInt32(collection.Get("Provincia"));
+                if (!string.IsNullOrEmpty(collection.Get("Domicilio"))) Persona.Domicilio = collection.Get("Domicilio").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Telefono"))) Persona.Telefono = collection.Get("Telefono").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Celular"))) Persona.Celular = collection.Get("Celular").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Email"))) Persona.Email = collection.Get("Email").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Ocupacion"))) Persona.Ocupacion = collection.Get("Ocupacion").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("FechaNacimiento"))) Persona.FechaNacimiento = Convert.ToDateTime(collection.Get("FechaNacimiento"));
+                if (!string.IsNullOrEmpty(collection.Get("Sexo"))) Persona.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
+                if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) Persona.Nacionalidad = collection.Get("Nacionalidad").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) Persona.PaisResidencia = collection.Get("PaisResidencia").ToString();
+                SPersona.Update(Persona);
+                #endregion
+
+                #region Actualizar Cliente
+                if (!string.IsNullOrEmpty(collection.Get("RazonSocial"))) Cliente.RazonSocial = collection.Get("RazonSocial").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Cuit"))) Cliente.Cuit = collection.Get("Cuit").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Moneda"))) Cliente.Moneda = collection.Get("Moneda").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Empresa"))) Cliente.Empresa = collection.Get("Empresa").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("FormaPago"))) Cliente.FormaPago = Convert.ToInt32(collection.Get("FormaPago"));
+                if (!string.IsNullOrEmpty(collection.Get("CondicionIva"))) Cliente.CondicionIva = Convert.ToInt32(collection.Get("CondicionIva"));
+                if (!string.IsNullOrEmpty(collection.Get("Fax"))) Cliente.Fax = collection.Get("Fax").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Web"))) Cliente.Web = collection.Get("Web").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Idioma"))) Cliente.Idioma = collection.Get("Idioma").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Promotor"))) Cliente.Promotor = collection.Get("Promotor").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Observacion"))) Cliente.Observacion = collection.Get("Observacion").ToString();
+
+                SCliente.Update(Cliente);
+
+                #endregion
+
+                #region Actualizar PersonaCliente
+                PersonaCliente.Apellido = Persona.Apellido;
+                PersonaCliente.Nombre = Persona.Nombre;
+                PersonaCliente.TipoDocumento = Persona.TipoDocumento;
+                PersonaCliente.NroDocumento = Persona.NroDocumento;
+                PersonaCliente.LocalidadId = Persona.LocalidadId;
+                PersonaCliente.Telefono = Persona.Telefono;
+                PersonaCliente.Email = Persona.Email;
+                PersonaCliente.FechaNacimiento = Persona.FechaNacimiento;
+                PersonaCliente.Sexo = Persona.Sexo;
+                PersonaCliente.RazonSocial = Cliente.RazonSocial;
+                PersonaCliente.Cuit = Cliente.Cuit;
+                PersonaCliente.Moneda = Cliente.Moneda;
+                PersonaCliente.Empresa = Cliente.Empresa;
+                PersonaCliente.FormaPago = Cliente.FormaPago;
+                PersonaCliente.CondicionIva = Cliente.CondicionIva;
+                PersonaCliente.VendedorId = Cliente.VendedorId;
+                PersonaCliente.Fax = Cliente.Fax;
+                PersonaCliente.Web = Cliente.Web;
+                PersonaCliente.Idioma = Cliente.Idioma;
+                PersonaCliente.Promotor = Cliente.Promotor;
+
+
+                #endregion
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+            }
+            #endregion
+
+            return RedirectToAction("Details/" + (Persona.PersonaId) + "/", "PersonaCliente");
+        }
+
         [Authorize]
         public ActionResult Details(Guid Id)
         {
