@@ -22,7 +22,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
 {
     public class PersonaClienteController : Controller
     {
-        const string Code = "2015";
+        private static readonly string Code = System.Configuration.ConfigurationManager.AppSettings["PersonaClienteCode"];
         public ActionResult RenderGridClientes()
         {
             List<PersonaClienteModel> LPersonaCliente = new List<PersonaClienteModel>();
