@@ -22,7 +22,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
 {
     public class PersonaClienteController : Controller
     {
-        private static readonly string Code = System.Configuration.ConfigurationManager.AppSettings["PersonaClienteCode"];
+       
         public ActionResult RenderGridClientes()
         {
             List<PersonaClienteModel> LPersonaCliente = new List<PersonaClienteModel>();
@@ -969,8 +969,11 @@ namespace MAT.MVC.Controllers.PersonaCliente
         [HttpPost]
         public bool EliminarVenta(Guid facturaid, Guid clienteid, string code)
         {
-            if (!code.Equals(Code)) return false;
+            string Code1 = System.Configuration.ConfigurationManager.AppSettings["PersonaClienteCode"];
+            string Code2 = System.Configuration.ConfigurationManager.AppSettings["PersonaClienteCode2"];
 
+            if (!(code.Equals(Code1) || code.Equals(Code2))) return false;
+                    
             bool result = false;
             try
             {
