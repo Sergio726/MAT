@@ -128,47 +128,37 @@ namespace MAT.Utilities
 
         public static bool ExecuteXml(string sqlSpName, SqlParameter[] dbParams, System.Xml.XmlDocument dXml)
         {
-            SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString());
-            SqlCommand cmd = new SqlCommand(sqlSpName, cn);
-            cmd.CommandTimeout = Convert.ToInt16(ConfigurationManager.AppSettings.Get("connectionCommandTimeout"));
-            cmd.CommandType = CommandType.StoredProcedure;
+            bool bReturn = false;
+            // Envolver la conexión en un using garantiza el cierre automático
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString()))
+            {
+                using (SqlCommand cmd = new SqlCommand(sqlSpName, cn))
+                {
+                    cmd.CommandTimeout = Convert.ToInt16(ConfigurationManager.AppSettings.Get("connectionCommandTimeout"));
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-            if (dbParams != null)
-            {
-                foreach (SqlParameter dbParam in dbParams)
-                {
-                    cmd.Parameters.Add(dbParam);
-                }
-            }
-            cn.Open();
-            bool bReturn;
-            try
-            {
-                //dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-                using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection))
-                {
-                    if (dr.Read())
+                    if (dbParams != null)
                     {
-                        System.Data.SqlTypes.SqlXml oXml = dr.GetSqlXml(dr.GetOrdinal("Xml"));
-                        dXml.LoadXml(oXml.Value);
-                        bReturn = true;
+                        foreach (SqlParameter dbParam in dbParams) cmd.Parameters.Add(dbParam);
                     }
-                    else
+
+                    cn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                     {
-                        bReturn = false;
+                        if (dr.Read())
+                        {
+                            System.Data.SqlTypes.SqlXml oXml = dr.GetSqlXml(dr.GetOrdinal("Xml"));
+                            dXml.LoadXml(oXml.Value);
+                            bReturn = true;
+                        }
                     }
                 }
-            }
-            catch (Exception)
-            {
-                throw;
             }
             return bReturn;
         }
         public static SqlDataReader ExecuteDataReader(string sqlSpName, SqlParameter[] dbParams)
         {
-            SqlDataReader dr;
-
+            // Usamos una variable para la conexión fuera del try para poder cerrarla en el catch si falla
             SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString());
             SqlCommand cmd = new SqlCommand(sqlSpName, cn);
             cmd.CommandTimeout = Convert.ToInt16(ConfigurationManager.AppSettings.Get("connectionCommandTimeout"));
@@ -181,17 +171,21 @@ namespace MAT.Utilities
                     cmd.Parameters.Add(dbParam);
                 }
             }
-            cn.Open();
 
             try
             {
-                dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                cn.Open();
+                // CommandBehavior.CloseConnection asegura que cuando se cierre el DataReader, 
+                // se cierre también la conexión física.
+                return cmd.ExecuteReader(CommandBehavior.CloseConnection);
             }
             catch (Exception)
             {
+                // Si hay un error ANTES de entregar el Reader, debemos cerrar la conexión
+                if (cn.State == ConnectionState.Open) cn.Close();
+                cn.Dispose();
                 throw;
             }
-            return dr;
         }
 
         public static void ExecuteNonQuery(string sqlSpName, SqlParameter[] dbParams)
