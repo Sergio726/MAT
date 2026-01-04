@@ -1372,7 +1372,7 @@ $(document).on("click", "#btn-eliminar-viaje", function () {
 
 
 $(document).on("click", ".ui-dialog-titlebar-close", function () {
-    windows.reload();
+    window.location.reload();
 });
 
 $(document).on("click", "#btn-cancelar-seleccion", function () {

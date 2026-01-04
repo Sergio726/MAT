@@ -1,49 +1,137 @@
 ﻿@model MAT.MVC.Models.DetalleViaje
 @using MAT.Entities
 
-<h4>@Model.Descripcion</h4>
-<h5>Destino: @Model.Destino</h5>
-<h5>Salida: @(Convert.ToDateTime(Model.FechaSalida).ToShortDateString()) - @Model.HoraSalida hs.</h5>
-<h5>Regreso: @(Convert.ToDateTime(Model.FechaRegreso).ToShortDateString()) - @Model.HoraRegreso hs. </h5>
-<h5>Concentración: @(DateTime.ParseExact(Model.HoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, Model.TiempoConsentracion, 0)).ToString().Substring(0,5)) hs.</h5>
-<h5>
-@if (Model.NroCoche != null)
-{
-    @("Coche: " + Model.NroCoche.ToString());
-}
-</h5>
+<div class="viaje-detalle-container">
+    <!-- Título del viaje -->
+    <div class="viaje-detalle-title">
+        <h3>@Model.Descripcion</h3>
+    </div>
 
-<u><span class="custom_font_weigh_bold">Servicios Incluídos</span></u>
-<ul>
-    @foreach (var item in Model.PaqueteServicios.ToString().Split(','))
+    <!-- Información principal del viaje -->
+    <div class="viaje-detalle-info">
+        <div class="viaje-info-item">
+            <i class="bi bi-geo-alt-fill"></i>
+            <div class="viaje-info-content">
+                <span class="viaje-info-label">Destino</span>
+                <span class="viaje-info-value">@Model.Destino</span>
+            </div>
+        </div>
+
+        <div class="viaje-info-item">
+            <i class="bi bi-calendar-event"></i>
+            <div class="viaje-info-content">
+                <span class="viaje-info-label">Salida</span>
+                <span class="viaje-info-value">@(Convert.ToDateTime(Model.FechaSalida).ToShortDateString()) - @Model.HoraSalida hs.</span>
+            </div>
+        </div>
+
+        <div class="viaje-info-item">
+            <i class="bi bi-calendar-check"></i>
+            <div class="viaje-info-content">
+                <span class="viaje-info-label">Regreso</span>
+                <span class="viaje-info-value">@(Convert.ToDateTime(Model.FechaRegreso).ToShortDateString()) - @Model.HoraRegreso hs.</span>
+            </div>
+        </div>
+
+        <div class="viaje-info-item">
+            <i class="bi bi-clock"></i>
+            <div class="viaje-info-content">
+                <span class="viaje-info-label">Concentración</span>
+                <span class="viaje-info-value">@(DateTime.ParseExact(Model.HoraSalida, "HH:mm", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay.Subtract(new TimeSpan(0, Model.TiempoConsentracion, 0)).ToString().Substring(0,5)) hs.</span>
+            </div>
+        </div>
+
+        @if (Model.NroCoche != null)
+        {
+            <div class="viaje-info-item">
+                <i class="bi bi-bus-front"></i>
+                <div class="viaje-info-content">
+                    <span class="viaje-info-label">Coche</span>
+                    <span class="viaje-info-value">@Model.NroCoche.ToString()</span>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Servicios Incluidos -->
+    @if (!string.IsNullOrWhiteSpace(Model.PaqueteServicios))
     {
-        <li>@item</li>
+        <div class="viaje-detalle-section">
+            <h4 class="viaje-section-title">
+                <i class="bi bi-check-circle"></i>
+                <span>Servicios Incluídos</span>
+            </h4>
+            <ul class="viaje-section-list">
+                @foreach (var item in Model.PaqueteServicios.ToString().Split(','))
+                {
+                    if (!string.IsNullOrWhiteSpace(item))
+                    {
+                        <li>@item.Trim()</li>
+                    }
+                }
+            </ul>
+        </div>
     }
-</ul>
-<u><span class="custom_font_weigh_bold">Excursiones Incluidas</span></u>
-<ul>
-    @foreach (var item in Model.PaqueteExcusionesIncluidas.ToString().Split(','))
+
+    <!-- Excursiones Incluidas -->
+    @if (!string.IsNullOrWhiteSpace(Model.PaqueteExcusionesIncluidas))
     {
-        <li>@item</li>
+        <div class="viaje-detalle-section">
+            <h4 class="viaje-section-title">
+                <i class="bi bi-map"></i>
+                <span>Excursiones Incluidas</span>
+            </h4>
+            <ul class="viaje-section-list">
+                @foreach (var item in Model.PaqueteExcusionesIncluidas.ToString().Split(','))
+                {
+                    if (!string.IsNullOrWhiteSpace(item))
+                    {
+                        <li>@item.Trim()</li>
+                    }
+                }
+            </ul>
+        </div>
     }
-</ul>
 
-<u><span class="custom_font_weigh_bold">Excursiones Opcionales</span></u>
-<ul>
-    @foreach (var item in Model.PaqueteExcusionesOpcionales.ToString().Split(','))
+    <!-- Excursiones Opcionales -->
+    @if (!string.IsNullOrWhiteSpace(Model.PaqueteExcusionesOpcionales))
     {
-        <li>@item</li>
+        <div class="viaje-detalle-section">
+            <h4 class="viaje-section-title">
+                <i class="bi bi-map-fill"></i>
+                <span>Excursiones Opcionales</span>
+            </h4>
+            <ul class="viaje-section-list">
+                @foreach (var item in Model.PaqueteExcusionesOpcionales.ToString().Split(','))
+                {
+                    if (!string.IsNullOrWhiteSpace(item))
+                    {
+                        <li>@item.Trim()</li>
+                    }
+                }
+            </ul>
+        </div>
     }
-</ul>
 
-<u><span class="custom_font_weigh_bold">Observaciones del viaje</span></u>
-<ul>
-    @foreach (var item in Model.Observaciones.ToString().Split(','))
+    <!-- Observaciones del viaje -->
+    @if (!string.IsNullOrWhiteSpace(Model.Observaciones))
     {
-        <li>@item</li>
+        <div class="viaje-detalle-section">
+            <h4 class="viaje-section-title">
+                <i class="bi bi-info-circle"></i>
+                <span>Observaciones del viaje</span>
+            </h4>
+            <ul class="viaje-section-list">
+                @foreach (var item in Model.Observaciones.ToString().Split(','))
+                {
+                    if (!string.IsNullOrWhiteSpace(item))
+                    {
+                        <li>@item.Trim()</li>
+                    }
+                }
+            </ul>
+        </div>
     }
-</ul>
-
-
+</div>
 
 <input type="hidden" id="hdnPaqueteDesctripcion" value="@Model.Descripcion" />

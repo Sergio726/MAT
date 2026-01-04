@@ -54,34 +54,15 @@
             <div class="row g-4">
                 <div class="col-lg-4 col-md-5">
                     <section id="panel-detalle">
-
-                        <div class="modern-card widget" data-toggle="collapse-widget" data-collapse-closed="false">
-                            <div class="modern-card-header widget-head" style="cursor: pointer;">
+                        <div class="modern-card">
+                            <div class="modern-card-header">
                                 <div class="modern-card-header-content">
                                     <i class="bi bi-info-circle"></i>
                                     <h4>Detalle de Viaje</h4>
                                 </div>
-                                <span class="collapse-toggle"><i class="bi bi-chevron-down"></i></span>
                             </div>
-                            <div id="divDetalleViaje" class="modern-card-content widget-body collapse show" style="height: auto;">
+                            <div id="divDetalleViaje" class="modern-card-content">
                                 <div class="iconLoading" style="height: 60px;"></div>
-                            </div>
-                        </div>
-
-                        <div class="modern-card widget" data-toggle="collapse-widget" data-collapse-closed="true" style="margin-top: 1.5rem;">
-                            <div class="modern-card-header widget-head" style="cursor: pointer;">
-                                <div class="modern-card-header-content">
-                                    <i class="bi bi-gear"></i>
-                                    <h4>Opciones</h4>
-                                </div>
-                                <span class="collapse-toggle"><i class="bi bi-chevron-down"></i></span>
-                            </div>
-                            <div class="modern-card-content widget-body collapse" style="height: 0px;">
-                                <div style="display: flex; gap: 1rem; padding: 1rem 0;">
-                                    <input type="button" class="btnBaby_balck" title="Vinculación de menores" onclick="showVinculosMenor();" />
-                                    <input type="button" class="btnsearchFactura" title="Ver lista de facturas de este viaje" onclick="javascript:goFacturas('@(ViajeID.ToString())');" />
-                                    <input type="button" class="btnaddtoWaitingList" title="Lista de Espera" onclick="openWaitingList();" />
-                                </div>
                             </div>
                         </div>
                     </section>
@@ -379,13 +360,43 @@
         <div class="container-fluid" style="margin-top: 2rem;">
             <div class="modern-card">
                 <div class="modern-card-content" style="padding: 1.5rem;">
-                    <div class="botonera-form" style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: flex-start;">
-                        <input id="btn-reservar" type="button" title="Reservar" value="Reservar" class="btn btn-sm btn-danger" />
-                        <input id="btn-nomina" data-id="@ViajeID" type="button" title="Lista Completa" value="Manifiesto" class="btn btn-sm btn-secondary" />
-                        <input id="btn-listasimple" data-id="@ViajeID" type="button" title="Lista de Pasajero" value="Lista de Pasajeros" class="btn btn-sm btn-secondary" />
-                        <input id="btn-distribucion-habitaciones" data-viaje="@ViajeID" type="button" title="Distribución de Habitaciones" value="Distribución de Habitaciones" class="btn btn-sm btn-secondary" />
-                        <input id="btn-distribucion-coche" data-viaje="@ViajeID" type="button" title="Distribución de Butacas" value="Distribución de Butacas" class="btn btn-sm btn-secondary" />
-                        <input id="btn-ObservacionViaje" type="button" title="Observaciones del Viaje" value="Observaciones" class="btn btn-sm btn-secondary" onclick="javascript: showObservacion();" />
+                    <div class="botonera-form">
+                        <button id="btn-reservar" type="button" class="btn btn-modern btn-primary" title="Reservar">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Reservar</span>
+                        </button>
+                        <button id="btn-nomina" data-id="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Lista Completa">
+                            <i class="bi bi-file-text"></i>
+                            <span>Manifiesto</span>
+                        </button>
+                        <button id="btn-listasimple" data-id="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Lista de Pasajero">
+                            <i class="bi bi-people"></i>
+                            <span>Lista de Pasajeros</span>
+                        </button>
+                        <button id="btn-distribucion-habitaciones" data-viaje="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Distribución de Habitaciones">
+                            <i class="bi bi-house-door"></i>
+                            <span>Distribución de Habitaciones</span>
+                        </button>
+                        <button id="btn-distribucion-coche" data-viaje="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Distribución de Butacas">
+                            <i class="bi bi-grid-3x3-gap"></i>
+                            <span>Distribución de Butacas</span>
+                        </button>
+                        <button id="btn-ObservacionViaje" type="button" class="btn btn-modern btn-secondary" title="Observaciones del Viaje" onclick="javascript: showObservacion();">
+                            <i class="bi bi-chat-left-text"></i>
+                            <span>Observaciones</span>
+                        </button>
+                        <button type="button" class="btn btn-modern btn-secondary" title="Vinculación de menores" onclick="showVinculosMenor();">
+                            <i class="bi bi-person-heart"></i>
+                            <span>Vinculación de Menores</span>
+                        </button>
+                        <button type="button" class="btn btn-modern btn-secondary" title="Ver lista de facturas de este viaje" onclick="javascript:goFacturas('@(ViajeID.ToString())');">
+                            <i class="bi bi-receipt-cutoff"></i>
+                            <span>Facturas</span>
+                        </button>
+                        <button type="button" class="btn btn-modern btn-secondary" title="Lista de Espera" onclick="openWaitingList();">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Lista de Espera</span>
+                        </button>
                     </div>
                 </div>
             </div>
