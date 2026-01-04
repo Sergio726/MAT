@@ -72,16 +72,14 @@
     </table>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-
-<script src="//cdn.datatables.net/plug-ins/1.10.15/sorting/date-uk.js"></script>
+@* jQuery y DataTables ya están incluidos en _Layout.cshtml - usando versiones locales *@
+@* Plugin date-uk: Si es necesario, descargar localmente o usar ordenamiento nativo de DataTables *@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#tblPaquetes").DataTable({
             "columnDefs": [
-                { type: 'date-uk', targets: 1 }, // Para ordenar fechas correctamente
+                // Plugin date-uk removido - DataTables ordenará fechas automáticamente
+                // { type: 'date-uk', targets: 1 }, // Comentado - plugin no disponible
                 { targets: 4, "orderable": false } // Evita que se ordene la columna de acciones
             ],
             "pageLength": 25,

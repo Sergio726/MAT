@@ -1,76 +1,171 @@
 ﻿@model IEnumerable<MAT.Entities.Persona>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Personas";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2 class="title">Personas</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
+<p class="botonera-form">
+    <a href="@Url.Action("Create", "Persona")" class="btn btn-small btn-inverse">
+        <i class="icon-plus"></i> Nueva Persona
+    </a>
 </p>
-<table>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Apellido)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Nombre)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TipoDocumento)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.NroDocumento)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Pais)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Telefono)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Apellido)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nombre)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TipoDocumento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NroDocumento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Pais)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Telefono)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FechaNacimiento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Sexo)
-        </td>
-        <td>
-            @Html.ActionLink("Editar", "Edit", new { id=item.PersonaId }) |
-            @Html.ActionLink("Detalle", "Details", new { id=item.PersonaId }) |
-            @Html.ActionLink("Eliminar", "Delete", new { id=item.PersonaId })
-        </td>
-    </tr>
+<div class="table-responsive">
+    <table class="mat-customtable" id="tblPersonas" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Documento</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>País</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(item.Apellido ?? "-")</td>
+                            <td>@(item.Nombre ?? "-")</td>
+                            <td>
+                                @if (item.TipoDocumento.HasValue)
+                                {
+                                    @item.TipoDocumento.Value
+                                }
+                                @if (!string.IsNullOrEmpty(item.NroDocumento))
+                                {
+                                    <text> - @item.NroDocumento</text>
+                                }
+                                @if (!item.TipoDocumento.HasValue && string.IsNullOrEmpty(item.NroDocumento))
+                                {
+                                    <text>-</text>
+                                }
+                            </td>
+                            <td>@(item.Telefono ?? item.Celular ?? "-")</td>
+                            <td>@(item.Email ?? "-")</td>
+                            <td>
+                                @if (item.FechaNacimiento.HasValue)
+                                {
+                                    @item.FechaNacimiento.Value.ToString("dd/MM/yyyy")
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
+                            </td>
+                            <td>@(item.PaisResidencia ?? "-")</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Persona", new { id = item.PersonaId })" 
+                                   title="Ver Detalles">
+                                    <img src="/Images/notepad.png" width="32" height="32" title="Ver Detalles" />
+                                </a>
+                                <a href="@Url.Action("Edit", "Persona", new { id = item.PersonaId })" 
+                                   title="Editar">
+                                    <img src="/Images/pencil.png" width="32" height="32" title="Editar" />
+                                </a>
+                                <a href="@Url.Action("Delete", "Persona", new { id = item.PersonaId })" 
+                                   class="btn-delete" 
+                                   data-id="@item.PersonaId"
+                                   data-nombre="@(item.Nombre + " " + item.Apellido)"
+                                   title="Eliminar"
+                                   onclick="return confirm('¿Está seguro que desea eliminar a @(item.Nombre + " " + item.Apellido)?');">
+                                    <img src="/Images/cross.png" width="32" height="32" title="Eliminar" />
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var table = $('#tblPersonas').DataTable({
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar:",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                },
+                "order": [[0, "asc"]], // Ordenar por Apellido por defecto
+                "pageLength": 25,
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
+                "columnDefs": [
+                    {
+                        "targets": 7, // Columna de acciones
+                        "orderable": false, // No permitir ordenar por la columna de acciones
+                        "searchable": false // No permitir buscar en la columna de acciones
+                    }
+                ],
+                "dom": '<"row"<"col-sm-6"l><"col-sm-6"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
+                "responsive": true,
+                "stateSave": true, // Guardar el estado de la tabla (página, orden, búsqueda)
+                "autoWidth": false,
+                "processing": true,
+                "deferRender": true // Mejora el rendimiento con grandes cantidades de datos
+            });
+
+            // Manejar confirmación de eliminación
+            $('#tblPersonas').on('click', '.btn-delete', function (e) {
+                var nombre = $(this).data('nombre');
+                if (!confirm('¿Está seguro que desea eliminar a ' + nombre + '?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+
+    <style>
+        #tblPersonas_wrapper {
+            margin-top: 10px;
+        }
+        
+        #tblPersonas thead th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        #tblPersonas tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        #tblPersonas td a {
+            margin-right: 5px;
+        }
+        
+        #tblPersonas td a:last-child {
+            margin-right: 0;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+    </style>
 }
-
-</table>

@@ -121,15 +121,14 @@
     </tbody>
 </table>
 
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/plug-ins/1.10.15/sorting/date-uk.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+@* DataTables ya está incluido en _Layout.cshtml - usando versión local *@
 
 <script type="text/javascript">
     $(document).ready(function () {
         $("#tblviajes").DataTable({
             "columnDefs": [
-                { type: 'date-uk', targets: [2, 9] },  // Corrige el índice de FechaSalida (2) y FechaPromocion (8)
+                // Plugin date-uk removido - DataTables ordenará fechas en formato dd/MM/yyyy automáticamente
+                // { type: 'date-uk', targets: [2, 9] },  // Comentado - plugin no disponible
                 { targets: [10, 11, 12], "orderable": false } // Desactiva ordenación en "Paso", "Medio" y "Acciones"
             ],
             "pageLength": 25, // Muestra 25 registros por página

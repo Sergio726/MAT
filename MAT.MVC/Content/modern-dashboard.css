@@ -1,0 +1,201 @@
+/* Estilos modernos para el dashboard */
+.modern-dashboard {
+    padding: 2rem 0;
+}
+
+.modern-dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.modern-dashboard-header h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 0.5rem;
+}
+
+.modern-dashboard-header h2 > span {
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.modern-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: #fff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    height: 100%;
+    overflow: hidden;
+}
+
+.modern-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.modern-card-header {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+}
+
+.modern-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    letter-spacing: 0.025em;
+    margin: 0;
+}
+
+.modern-card-icon-small {
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #9ca3af;
+    font-family: "bootstrap-icons" !important;
+    font-style: normal;
+    font-weight: normal !important;
+    display: inline-block;
+}
+
+.modern-card-content {
+    padding: 1.5rem;
+    padding-top: 0;
+}
+
+.modern-card-value {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.modern-card-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: #6b7280;
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.modern-card-link:hover {
+    color: #111827;
+    text-decoration: underline;
+}
+
+.modern-card-link i {
+    font-size: 0.75rem;
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+/* Variantes de color para diferentes cards */
+.modern-card-primary .modern-card-icon-small {
+    color: #3b82f6;
+}
+
+.modern-card-primary .modern-card-link {
+    color: #3b82f6;
+}
+
+.modern-card-primary .modern-card-link:hover {
+    color: #2563eb;
+}
+
+.modern-card-success .modern-card-icon-small {
+    color: #10b981;
+}
+
+.modern-card-success .modern-card-link {
+    color: #10b981;
+}
+
+.modern-card-success .modern-card-link:hover {
+    color: #059669;
+}
+
+.modern-card-warning .modern-card-icon-small {
+    color: #f59e0b;
+}
+
+.modern-card-warning .modern-card-link {
+    color: #f59e0b;
+}
+
+.modern-card-warning .modern-card-link:hover {
+    color: #d97706;
+}
+
+.modern-card-info .modern-card-icon-small {
+    color: #06b6d4;
+}
+
+.modern-card-info .modern-card-link {
+    color: #06b6d4;
+}
+
+.modern-card-info .modern-card-link:hover {
+    color: #0891b2;
+}
+
+.modern-card-danger .modern-card-icon-small {
+    color: #ef4444;
+}
+
+.modern-card-danger .modern-card-link {
+    color: #ef4444;
+}
+
+.modern-card-danger .modern-card-link:hover {
+    color: #dc2626;
+}
+
+.modern-card-secondary .modern-card-icon-small {
+    color: #6b7280;
+}
+
+.modern-card-secondary .modern-card-link {
+    color: #6b7280;
+}
+
+.modern-card-secondary .modern-card-link:hover {
+    color: #4b5563;
+}
+
+.modern-card-dark .modern-card-icon-small {
+    color: #374151;
+}
+
+.modern-card-dark .modern-card-link {
+    color: #374151;
+}
+
+.modern-card-dark .modern-card-link:hover {
+    color: #1f2937;
+}
+
+.modern-card-light .modern-card-icon-small {
+    color: #f3f4f6;
+}
+
+.modern-card-light .modern-card-link {
+    color: #f3f4f6;
+}
+
+.modern-card-light .modern-card-link:hover {
+    color: #e5e7eb;
+}
