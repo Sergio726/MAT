@@ -480,6 +480,126 @@ div.bnn_floating-banner.hidden {
     overflow: hidden !important;
 }
 
+/* Estilos para cards con collapse (compatibilidad con sistema de widgets) */
+.modern-card-header[data-toggle="collapse-widget"] {
+    user-select: none;
+}
+
+.modern-card-header .collapse-toggle {
+    transition: transform 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--text-secondary);
+}
+
+.modern-card-header[data-collapse-closed="true"] .collapse-toggle i {
+    transform: rotate(-90deg);
+}
+
+.modern-card-header[data-collapse-closed="false"] .collapse-toggle i {
+    transform: rotate(0deg);
+}
+
+.modern-card-header .modern-card-header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.modern-card-header .modern-card-header-content i {
+    font-size: 1.25rem;
+    color: var(--brand-primary);
+}
+
+.modern-card-header .modern-card-header-content h4 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Estilos para mensajes de error */
+.MsgError {
+    padding: 1rem;
+    margin: 1rem;
+    background-color: #fee;
+    border-left: 4px solid #f00;
+    border-radius: 4px;
+    color: #c00;
+}
+
+.MsgError span {
+    display: block;
+}
+
+/* Asegurar que el contenido del plano de bus se vea correctamente */
+#panel-bus .modern-card-content {
+    padding: 2rem;
+}
+
+#panel-bus #container {
+    width: 100%;
+}
+
+/* Estilos para botonera form moderna */
+.modern-dashboard .botonera-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: flex-start;
+}
+
+.modern-dashboard .botonera-form .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.modern-dashboard .botonera-form .btn-danger {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+
+.modern-dashboard .botonera-form .btn-danger:hover {
+    background-color: #d12a5c;
+    border-color: #d12a5c;
+}
+
+.modern-dashboard .botonera-form .btn-secondary {
+    background-color: var(--white);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.modern-dashboard .botonera-form .btn-secondary:hover {
+    background-color: var(--bg-main);
+    border-color: var(--text-secondary);
+}
+
+/* Asegurar que los widgets con collapse funcionen correctamente */
+.modern-card.widget .collapse-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.modern-card.widget[data-collapse-closed="true"] .collapse-toggle i {
+    transform: rotate(-90deg);
+}
+
+.modern-card.widget[data-collapse-closed="false"] .collapse-toggle i {
+    transform: rotate(0deg);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .modern-dashboard-header h2 {

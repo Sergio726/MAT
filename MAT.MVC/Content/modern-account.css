@@ -1,0 +1,398 @@
+/* Estilos modernos para páginas de Account - Marco Antonio Tours */
+
+/* Variables específicas para Account */
+:root {
+    --account-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --account-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    --account-input-border: #e5e7eb;
+    --account-input-focus: var(--brand-primary);
+}
+
+/* Reset para body y html en páginas de account */
+body.account-page-body,
+html.account-page-body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+}
+
+body.account-page-body {
+    overflow-x: hidden;
+}
+
+/* Animación para aparición gradual del formulario */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Contenedor principal de Account */
+.account-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: var(--account-bg);
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+}
+
+.account-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/Images/loginFondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.15;
+    z-index: 0;
+}
+
+.account-page > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Card de formulario */
+.account-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--account-card-shadow);
+    width: 100%;
+    max-width: 440px;
+    padding: 3rem;
+    margin: 0 auto;
+    animation: fadeInUp 0.6s ease-out;
+    opacity: 1;
+}
+
+/* Header del card */
+.account-card-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.account-card-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.account-card-header h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.account-card-header .logo {
+    margin-bottom: 1.5rem;
+}
+
+.account-card-header .logo img {
+    max-width: 180px;
+    height: auto;
+}
+
+/* Banner de entorno de prueba */
+.dev-banner {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+}
+
+/* Formulario */
+.account-form {
+    width: 100%;
+}
+
+.account-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.account-form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.account-form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: var(--white);
+    border: 2px solid var(--account-input-border);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+}
+
+.account-form-input:focus {
+    outline: none;
+    border-color: var(--account-input-focus);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+.account-form-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Botón principal */
+.account-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--brand-primary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.3);
+}
+
+.account-btn:hover {
+    background: #d12a5c;
+    box-shadow: 0 6px 20px rgba(230, 51, 117, 0.4);
+    transform: translateY(-1px);
+}
+
+.account-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.3);
+}
+
+.account-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Mensaje de enlace */
+.account-message {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.account-message a {
+    color: var(--brand-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.account-message a:hover {
+    color: #d12a5c;
+    text-decoration: underline;
+}
+
+/* Validación */
+.field-validation-error {
+    display: block;
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.validation-summary-errors {
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.validation-summary-errors ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.validation-summary-errors ul li {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.validation-summary-errors ul li:last-child {
+    margin-bottom: 0;
+}
+
+/* Estilos específicos para formularios de contraseña (Manage) */
+.account-form .fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.account-form .legend {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding: 0;
+}
+
+.account-form ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.account-form ol li {
+    margin-bottom: 1.5rem;
+}
+
+.account-form ol li:last-child {
+    margin-bottom: 0;
+}
+
+.account-form ol li label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.account-form ol li input[type="password"],
+.account-form ol li input[type="text"] {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: var(--white);
+    border: 2px solid var(--account-input-border);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+}
+
+.account-form ol li input[type="password"]:focus,
+.account-form ol li input[type="text"]:focus {
+    outline: none;
+    border-color: var(--account-input-focus);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+/* Mensaje de éxito */
+.message-success {
+    background: #f0fdf4;
+    border: 2px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    color: #166534;
+    font-size: 0.875rem;
+}
+
+/* Estilos para Register (formulario más largo) */
+.account-card.register {
+    max-width: 520px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .account-page {
+        padding: 1rem;
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+
+    .account-card {
+        padding: 2rem 1.5rem;
+        border-radius: 12px;
+    }
+
+    .account-card-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .account-card-header h2 {
+        font-size: 0.9375rem;
+    }
+
+    .dev-banner {
+        padding: 0.625rem 1rem;
+        font-size: 0.8125rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .account-card-header {
+        margin-bottom: 2rem;
+    }
+
+    .account-card-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .account-form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .account-form-input {
+        padding: 0.75rem 0.875rem;
+        font-size: 16px; /* Previene zoom en iOS */
+    }
+
+    .account-btn {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.9375rem;
+    }
+}
+
+/* Override para páginas que no usan account-page */
+body:not(.account-page-body) .account-card {
+    margin: 2rem auto;
+}
+
+/* Clase account-card-content para compatibilidad con modern-dashboard */
+.account-card-content {
+    padding: 2rem;
+}
+
+/* Estilos para account-card dentro de modern-dashboard */
+.modern-dashboard .account-card {
+    box-shadow: var(--card-shadow);
+    margin-bottom: 0;
+}
+

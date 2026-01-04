@@ -5,50 +5,42 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<hgroup class="title">
-    <h1>@ViewBag.Title.</h1>
-    <h2>Cree una cuenta nueva.</h2>
-</hgroup>
+<link href="~/Content/modern-account.css" rel="stylesheet" />
+<link href="~/Content/saas-variables.css" rel="stylesheet" />
 
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
-
-    <fieldset>
-        <legend>Formulario de Registro</legend>
-
-        <div class="editor-label">
-            @Html.LabelFor(model => model.UserName)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.UserName)
-            @Html.ValidationMessageFor(model => model.UserName)
+<div style="padding: 3rem 1rem;">
+    <div class="account-card" style="max-width: 440px;">
+        <div class="account-card-header">
+            <h1>Crear Cuenta</h1>
+            <h2>Cree una cuenta nueva</h2>
         </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Password)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Password)
-            @Html.ValidationMessageFor(model => model.Password)
-        </div>
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "account-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.ConfirmPassword)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.ConfirmPassword)
-            @Html.ValidationMessageFor(model => model.ConfirmPassword)
-        </div>
+            <div class="account-form-group">
+                @Html.LabelFor(model => model.UserName, new { @class = "account-form-label" })
+                @Html.TextBoxFor(model => model.UserName, new { @class = "account-form-input", placeholder = "Usuario", autocomplete = "username" })
+                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "field-validation-error" })
+            </div>
 
-        <p>
-            <input type="submit" value="Registrarse" class="ui-button ui-widget ui-state-default ui-corner-all" />
-        </p>
-    </fieldset>
-}
+            <div class="account-form-group">
+                @Html.LabelFor(model => model.Password, new { @class = "account-form-label" })
+                @Html.PasswordFor(model => model.Password, new { @class = "account-form-input", placeholder = "Mínimo 6 caracteres", autocomplete = "new-password" })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "field-validation-error" })
+            </div>
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
+            <div class="account-form-group">
+                @Html.LabelFor(model => model.ConfirmPassword, new { @class = "account-form-label" })
+                @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "account-form-input", placeholder = "Repite la contraseña", autocomplete = "new-password" })
+                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "field-validation-error" })
+            </div>
+
+            <button type="submit" class="account-btn">Registrarse</button>
+        }
+    </div>
 </div>
 
 @section Scripts {

@@ -1,26 +1,47 @@
 ﻿@model MAT.MVC.Models.LocalPasswordModel
 
 @{
-    ViewBag.Title = "Manage";
+    ViewBag.Title = "Administrar Cuenta";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<hgroup class="title">
-    <h1>@ViewBag.Title.</h1>
-</hgroup>
+<link href="~/Content/modern-account.css" rel="stylesheet" />
+<link href="~/Content/saas-variables.css" rel="stylesheet" />
 
-<p class="message-success">@ViewBag.StatusMessage</p>
+<div class="modern-dashboard">
+    <div class="modern-dashboard-header">
+        <h2>Administrar Cuenta <span>Gestiona tu cuenta y contraseña</span></h2>
+    </div>
 
-<p>Ha iniciado sesión como <strong>@User.Identity.Name</strong>.</p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6 col-md-8 col-sm-12">
+                <div class="account-card">
+                    <div class="account-card-content" style="padding: 2rem;">
+                        @if (!string.IsNullOrEmpty(ViewBag.StatusMessage as string))
+                        {
+                            <div class="message-success">@ViewBag.StatusMessage</div>
+                        }
 
-@if (ViewBag.HasLocalPassword)
-{
-    @Html.Partial("_ChangePasswordPartial")
-}
-else
-{ 
-    @Html.Partial("_SetPasswordPartial")
-}
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                            Ha iniciado sesión como <strong style="color: var(--text-primary);">@User.Identity.Name</strong>.
+                        </p>
+
+                        @if (ViewBag.HasLocalPassword)
+                        {
+                            @Html.Partial("_ChangePasswordPartial")
+                        }
+                        else
+                        {
+                            @Html.Partial("_SetPasswordPartial")
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

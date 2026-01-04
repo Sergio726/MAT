@@ -1,82 +1,73 @@
 ﻿@model MAT.MVC.Models.LoginModel
 
-@*@{
-    ViewBag.Title = "Inicie Sesión";
-    Layout = "~/Views/Shared/_LayoutSplash.cshtml";
+@{
+    ViewBag.Title = "Iniciar Sesión";
+    Layout = null;
 }
 
-<section id="loginForm">
-<h2>Utilice una cuenta local para iniciar sesión.</h2>
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+<!DOCTYPE html>
+<html lang="es" class="account-page-body">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Marco Antonio Tours</title>
+    <link href="~/Content/modern-account.css" rel="stylesheet" />
+    <link href="~/Content/saas-variables.css" rel="stylesheet" />
+    <style>
+        html.account-page-body,
+        body.account-page-body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body class="account-page-body">
+    <div class="account-page">
+        <div class="account-card">
+            @if (ViewBag.IsDev == "true")
+            {
+                <div class="dev-banner">
+                    Entorno de Prueba
+                </div>
+            }
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.UserName)
+            <div class="account-card-header">
+                <div class="logo">
+                    <img src="~/Images/mat header.png" alt="Marco Antonio Tours" />
+                </div>
+                <h1>Iniciar Sesión</h1>
+                <h2>Ingresa tus credenciales para continuar</h2>
+            </div>
+
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "account-form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
+
+                <div class="account-form-group">
+                    @Html.LabelFor(m => m.UserName, new { @class = "account-form-label" })
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "account-form-input", placeholder = "Usuario", autocomplete = "username" })
+                    @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "field-validation-error" })
+                </div>
+
+                <div class="account-form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = "account-form-label" })
+                    @Html.PasswordFor(m => m.Password, new { @class = "account-form-input", placeholder = "Contraseña", autocomplete = "current-password" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "field-validation-error" })
+                </div>
+
+                <button type="submit" class="account-btn">Iniciar Sesión</button>
+
+                <p class="account-message">
+                    ¿Aún no estás registrado? <a href="@Url.Action("RegistrarVendedor", "Account")">Regístrate ahora</a>
+                </p>
+            }
         </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.UserName)
-            @Html.ValidationMessageFor(model => model.UserName)
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.Password)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Password)
-            @Html.ValidationMessageFor(model => model.Password)
-        </div>
-
-        <p>
-            <input type="submit" value="Iniciar Sesión" class="ui-button ui-widget ui-state-default ui-corner-all" />
-        </p>
-    <p>
-        @Html.ActionLink("Regístrese", "RegistrarVendedor") si no tiene ninguna cuenta.
-    </p>
-}
-    </section>
-
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}*@
-
-<link href="~/Content/mat.loguin.css" rel="stylesheet" />
-
-    <div class="login-page">
-          @if (ViewBag.IsDev == "true")
-          {
-            <h1 style="text-align:center;font-weight:bold">Entorno de Prueba</h1>    
-          }
-      <div class="form">
-        @*<form class="register-form">
-          <input type="text" placeholder="name"/>
-          <input type="password" placeholder="password"/>
-          <input type="text" placeholder="email address"/>
-          <button>create</button>
-          <p class="message">Already registered? <a href="#">Sign In</a></p>
-        </form>*@
-    @using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
-
-         @*<form action="/Account/Login?ReturnUrl=%2f" method="post" novalidate="novalidate" class="login-form">
-            </form>*@
-         @* <form class="login-form">*@
-          <input type="text" id="UserName" name="UserName" placeholder="Usuario"/>
-          <input type="password" id="Password" name="Password" placeholder="Contraseña"/>
-          <button onclick="javascript: login();">Entrar</button>
-          <p class="message">Aun no estas registrado? <a href="@Url.Action("RegistrarVendedor", "Account")">Regístrate ahora</a></p>
-        
-   }
-      </div>
     </div>
 
-<script type="text/ecmascript">
-    $('.message a').click(function () {
-        $('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
-    });
-
-    function login() {
-        $(".login-form").submit();
-    }
-</script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+</body>
+</html>
