@@ -1,7 +1,29 @@
 ﻿@{
-    ViewBag.Title = "ViajesPorFecha";
+    ViewBag.Title = "Viajes por Fecha";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<div class="modern-dashboard">
+    <div class="modern-dashboard-header">
+        <h2>Viajes por Fecha <span>Selecciona una fecha en el calendario para ver los viajes disponibles</span></h2>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-5">
+                <div class="modern-calendar-container">
+                    <div id="calendar_vendedor"></div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-7">
+                <div class="modern-viajes-container">
+                    <section id="Viajes" class="Viajes-Fecha">
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     $(function () {
@@ -23,10 +45,6 @@
                 var url = "/Home/GetViajes?fecha=" + date;
                 $("#Viajes").load(url);
                 $("ul.viajes-lista").quickPagination({ pageSize: '4' });
-                //$(".viajes-lista li").each(function () {
-                //    console.log($(this).data("image"));
-                //    $(this).css("background-image", "url(" + $(this).data("image") + ")");
-                //});
             },
             beforeShowDay: function (date) {
                 console.log(fechas);
@@ -37,19 +55,7 @@
                     arr = [false, '', "Disponible"];
                 }
                 return arr;
-                
             }
         });
-
     });
-</script>
-<section id="Calendario">
-    <div id="calendar_vendedor"></div>
-</section>
-
-<section id="Viajes" class="Viajes-Fecha">
-</section>
-
-<script>
-    
 </script>

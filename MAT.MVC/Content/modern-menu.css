@@ -1,9 +1,11 @@
-/* Estilos modernos para el menú lateral */
+/* Estilos modernos para el menú lateral SaaS - Marco Antonio Tours - Flat Design */
 #menu {
-    width: 240px !important; /* Aumentar ancho del menú */
-    margin-left: 15px !important; /* Agregar margen izquierdo */
-    background: linear-gradient(180deg, #343a40 0%, #212529 100%);
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    width: 260px !important;
+    margin-left: 0 !important;
+    background: #2b2d42 !important;
+    box-shadow: none !important;
+    border-right: none !important;
+    float: none !important;
 }
 
 /* Contenedor con scrollbar automático cuando sea necesario */
@@ -41,51 +43,63 @@
 }
 
 #menu .appbrand {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem;
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-bottom: none !important;
+    padding: 1.5rem 1rem;
     font-weight: 600;
     font-size: 1.25rem;
-    transition: background 0.3s ease;
+    transition: background 0.2s ease;
+    box-shadow: none !important;
 }
 
 #menu .appbrand:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08) !important;
     text-decoration: none;
-    color: #fff;
+    color: #fff !important;
 }
 
 #menu .appbrand > span {
     font-weight: 400;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 #menu .profile {
-    background: rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem;
+    background: transparent !important;
+    border-bottom: none !important;
+    padding: 1.5rem 1rem;
+    box-shadow: none !important;
 }
 
 #menu .menu-0 {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    list-style: none !important;
+    padding: 0.5rem 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
 }
 
 #menu .menu-0 > li {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 #menu .menu-0 > li > a {
-    display: flex;
-    align-items: center;
-    padding: 0.875rem 1rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: all 0.3s ease;
+    display: flex !important;
+    align-items: center !important;
+    padding: 12px 20px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
     font-size: 0.95rem;
-    min-width: 0; /* Permite que el contenido se contraiga */
+    min-width: 0;
+    border-radius: 8px !important;
+    margin: 4px 10px !important;
+    background: transparent !important;
+    border: none !important;
+    position: relative;
+    box-shadow: none !important;
 }
 
 #menu .menu-0 > li > a > span {
@@ -93,27 +107,51 @@
     min-width: 0;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    line-height: 1.3;
+    line-height: 1.4;
 }
 
 #menu .menu-0 > li > a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    padding-left: 1.25rem;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: none !important;
 }
 
 #menu .menu-0 > li.active > a {
-    background: linear-gradient(90deg, rgba(142, 198, 87, 0.2) 0%, rgba(142, 198, 87, 0.1) 100%);
-    color: #8ec657;
-    border-left: 3px solid #8ec657;
-    padding-left: calc(1rem - 3px);
+    background: rgba(230, 51, 117, 0.1) !important;
+    color: #e63375 !important;
+    font-weight: 500;
+    box-shadow: none !important;
+}
+
+#menu .menu-0 > li.active > a::before {
+    content: "" !important;
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: calc(100% - 16px);
+    background: #e63375;
+    border-radius: 2px;
+}
+
+#menu .menu-0 > li.active > a i {
+    color: #e63375 !important;
 }
 
 #menu .menu-0 > li > a i {
-    margin-right: 0.75rem;
-    font-size: 1.1rem;
+    margin-right: 0.875rem;
+    font-size: 1.125rem;
     width: 20px;
     text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: "bootstrap-icons" !important;
+    font-style: normal;
+    font-weight: normal !important;
+}
+
+#menu .menu-0 > li > a:hover i {
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 #menu .menu-0 > li.hasSubmenu > a::after {
@@ -123,6 +161,7 @@
     transition: transform 0.3s ease;
     font-size: 0.8rem;
     opacity: 0.7;
+    color: inherit;
 }
 
 #menu .menu-0 > li.hasSubmenu.active > a::after,
@@ -132,8 +171,10 @@
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse {
-    background: rgba(0, 0, 0, 0.2);
+    background: transparent !important;
     display: none;
+    padding: 0 !important;
+    box-shadow: none !important;
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse.show {
@@ -145,14 +186,24 @@
     display: block !important;
 }
 
+#menu .menu-0 > li.hasSubmenu > ul.collapse > li {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li > a {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-decoration: none;
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px 20px 10px 3rem !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    text-decoration: none !important;
     font-size: 0.9rem;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    border-radius: 8px !important;
+    margin: 2px 10px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li > a i {
@@ -164,12 +215,17 @@
     font-style: normal;
     font-weight: normal !important;
     display: inline-block;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li > a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    padding-left: 2.75rem;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: none !important;
+}
+
+#menu .menu-0 > li.hasSubmenu > ul.collapse > li > a:hover i {
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > a::after {
@@ -178,6 +234,7 @@
     margin-left: auto;
     transition: transform 0.3s ease;
     font-size: 0.75rem;
+    color: inherit;
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu.active > a::after {
@@ -185,29 +242,43 @@
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > ul.collapse {
-    background: rgba(0, 0, 0, 0.3);
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+#menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > ul.collapse > li {
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > ul.collapse > li > a {
-    padding-left: 3.5rem;
+    padding-left: 4rem !important;
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.55) !important;
+    border-radius: 8px !important;
+    margin: 2px 10px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > ul.collapse > li > a:hover {
-    padding-left: 3.75rem;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: none !important;
 }
 
 /* Ocultar iconos glyphicons antiguos */
 #menu .menu-0 > li.glyphicons > a > i {
-    display: none;
+    display: none !important;
 }
 
 /* Asegurar que los iconos de Bootstrap Icons se muestren correctamente */
 #menu .menu-0 > li > a i.bi,
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li > a i.bi {
     font-family: "bootstrap-icons" !important;
-    font-style: normal;
+    font-style: normal !important;
     font-weight: normal !important;
     font-variant: normal;
     text-transform: none;
@@ -217,4 +288,3 @@
     -moz-osx-font-smoothing: grayscale;
     display: inline-block;
 }
-

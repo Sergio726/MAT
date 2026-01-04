@@ -1,14 +1,22 @@
-﻿@if (Request.IsAuthenticated) {
-    <text>
-        ¡Hola, @Html.ActionLink(User.Identity.Name, "Manage", "Account", routeValues: null, htmlAttributes: new { @class = "username", title = "Administrar" })!
-        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
+﻿@if (Request.IsAuthenticated)
+{
+    <div class="user-profile-wrapper">
+        <div class="user-profile-info">
+            <span class="user-profile-greeting">Hola,</span>
+            @Html.ActionLink(User.Identity.Name, "Manage", "Account", routeValues: null, htmlAttributes: new { @class = "user-profile-name", title = "Administrar" })
+        </div>
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
             @Html.AntiForgeryToken()
-            <a href="javascript:document.getElementById('logoutForm').submit()">Cerrar sesión</a>
+            <a href="javascript:document.getElementById('logoutForm').submit()" class="user-profile-logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Cerrar sesión</span>
+            </a>
         }
-    </text>
-} else {
-    
-        @Html.ActionLink("Registrarse", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })<br />
-        @Html.ActionLink("Iniciar sesión", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })<br />
-    
+    </div>
+}
+else
+{
+    @Html.ActionLink("Registrarse", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })<br />
+    @Html.ActionLink("Iniciar sesión", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })<br />
 }

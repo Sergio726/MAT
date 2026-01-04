@@ -1,17 +1,21 @@
-/* Estilos modernos para el dashboard */
+/* Estilos modernos para el dashboard SaaS - Marco Antonio Tours */
 .modern-dashboard {
-    padding: 2rem 0;
+    padding: 3rem 0;
+    background-color: var(--bg-main);
+    min-height: calc(100vh - 120px);
 }
 
 .modern-dashboard-header {
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
 }
 
 .modern-dashboard-header h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    color: #212529;
-    margin-bottom: 0.5rem;
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
 }
 
 .modern-dashboard-header h2 > span {
@@ -19,88 +23,92 @@
     font-size: 1rem;
     font-weight: 400;
     color: #6c757d;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
+    letter-spacing: 0;
 }
 
 .modern-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    background: #fff;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
+    border: none;
+    border-radius: var(--border-radius-lg);
+    background: var(--white);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     height: 100%;
     overflow: hidden;
+    position: relative;
 }
 
 .modern-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
 }
 
 .modern-card-header {
-    padding: 1.5rem;
+    padding: 2rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 0.5rem;
+    padding-bottom: 1rem;
 }
 
 .modern-card-title {
-    font-size: 1rem;
+    font-size: 1.125rem;
     font-weight: 600;
-    color: #111827;
-    letter-spacing: 0.025em;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
     margin: 0;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
 }
 
 .modern-card-icon-small {
-    font-size: 1.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    color: #9ca3af;
+    font-size: 1.75rem;
+    width: 1.75rem;
+    height: 1.75rem;
     font-family: "bootstrap-icons" !important;
     font-style: normal;
     font-weight: normal !important;
     display: inline-block;
+    flex-shrink: 0;
 }
 
 .modern-card-content {
-    padding: 1.5rem;
-    padding-top: 0;
-}
-
-.modern-card-value {
-    font-size: 1.875rem;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 0.5rem;
+    padding: 0 2rem 2rem 2rem;
 }
 
 .modern-card-link {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.5rem;
     white-space: nowrap;
-    border-radius: 0.375rem;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
-    color: #6b7280;
-    padding: 0.5rem 0;
+    padding: 0.625rem 1rem;
     margin-top: 0.5rem;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    background: var(--white);
+    border: 1px solid var(--border-color);
 }
 
 .modern-card-link:hover {
-    color: #111827;
-    text-decoration: underline;
+    text-decoration: none;
+    border-color: currentColor;
 }
 
 .modern-card-link i {
-    font-size: 0.75rem;
-    width: 0.75rem;
-    height: 0.75rem;
+    font-size: 0.875rem;
+    width: 0.875rem;
+    height: 0.875rem;
+    transition: transform 0.2s ease;
+}
+
+.modern-card-link:hover i {
+    transform: translateX(2px);
 }
 
 /* Variantes de color para diferentes cards */
@@ -197,5 +205,293 @@
 }
 
 .modern-card-light .modern-card-link:hover {
-    color: #e5e7eb;
+    color: var(--text-primary);
+}
+
+/* Estilos para el calendario moderno */
+.modern-dashboard .row.g-4 {
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+.modern-dashboard .row.g-4 > [class*="col-"] {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.modern-calendar-container {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    margin-bottom: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modern-calendar-container #calendar_vendedor {
+    width: 100%;
+}
+
+/* Estilos personalizados para jQuery UI Datepicker dentro del contenedor moderno */
+.modern-calendar-container .ui-datepicker {
+    width: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+.modern-calendar-container .ui-datepicker-header {
+    background: var(--brand-primary) !important;
+    border: none !important;
+    border-radius: 8px 8px 0 0 !important;
+    color: white !important;
+    padding: 0.75rem !important;
+}
+
+.modern-calendar-container .ui-datepicker-title {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+.modern-calendar-container .ui-datepicker-prev,
+.modern-calendar-container .ui-datepicker-next {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    width: 2em !important;
+    height: 2em !important;
+    display: block !important;
+    position: absolute !important;
+    top: 0.5em !important;
+}
+
+.modern-calendar-container .ui-datepicker-prev {
+    left: 0.5em !important;
+}
+
+.modern-calendar-container .ui-datepicker-next {
+    right: 0.5em !important;
+}
+
+.modern-calendar-container .ui-datepicker-prev:hover,
+.modern-calendar-container .ui-datepicker-next:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.modern-calendar-container .ui-datepicker-prev span,
+.modern-calendar-container .ui-datepicker-next span {
+    display: block !important;
+    position: absolute !important;
+    left: 50% !important;
+    margin-left: -5px !important;
+    top: 50% !important;
+    margin-top: -5px !important;
+    text-indent: -9999px !important;
+    overflow: visible !important;
+    width: 0 !important;
+    height: 0 !important;
+    border-style: solid !important;
+    background: none !important;
+    background-image: none !important;
+}
+
+.modern-calendar-container .ui-datepicker-prev span {
+    border-width: 6px 10px 6px 0 !important;
+    border-color: transparent white transparent transparent !important;
+}
+
+.modern-calendar-container .ui-datepicker-next span {
+    border-width: 6px 0 6px 10px !important;
+    border-color: transparent transparent transparent white !important;
+}
+
+.modern-calendar-container .ui-datepicker-calendar {
+    width: 100% !important;
+    border-collapse: collapse !important;
+}
+
+.modern-calendar-container .ui-datepicker-calendar th {
+    background: var(--bg-main) !important;
+    border: none !important;
+    padding: 0.75rem 0.5rem !important;
+    font-weight: 600 !important;
+    color: var(--text-secondary) !important;
+    font-size: 0.875rem !important;
+}
+
+.modern-calendar-container .ui-datepicker-calendar td {
+    border: none !important;
+    padding: 0.25rem !important;
+}
+
+.modern-calendar-container .ui-datepicker-calendar td a {
+    border: none !important;
+    background: transparent !important;
+    text-align: center !important;
+    padding: 0.75rem !important;
+    border-radius: 6px !important;
+    color: var(--text-primary) !important;
+    transition: all 0.2s ease !important;
+}
+
+.modern-calendar-container .ui-datepicker-calendar td a:hover {
+    background: var(--bg-main) !important;
+    color: var(--brand-primary) !important;
+}
+
+.modern-calendar-container .ui-datepicker-calendar td.ui-datepicker-today a {
+    background: rgba(230, 51, 117, 0.1) !important;
+    color: var(--brand-primary) !important;
+    font-weight: 600 !important;
+}
+
+.modern-calendar-container .ui-datepicker-calendar td.ui-datepicker-current-day a,
+.modern-calendar-container .ui-datepicker-calendar td.ui-state-active a {
+    background: var(--brand-primary) !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Estilos para la sección de viajes */
+.modern-viajes-container {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modern-viajes-container #Viajes {
+    width: 100% !important;
+}
+
+.modern-viajes-container .Viajes-Fecha {
+    width: 100% !important;
+    margin-top: 0 !important;
+}
+
+/* Estilos para la lista de viajes - Sobrescribir estilos antiguos */
+.modern-viajes-container ul.viajes-lista,
+ul.viajes-lista {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 1.5rem !important;
+    float: none !important;
+}
+
+.modern-viajes-container ul.viajes-lista li,
+ul.viajes-lista li {
+    background: var(--white) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    transition: all 0.3s ease !important;
+    border: 1px solid var(--border-color) !important;
+    position: relative !important;
+    overflow: visible !important;
+    float: none !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.modern-viajes-container ul.viajes-lista li:hover,
+ul.viajes-lista li:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px) !important;
+    border-color: var(--brand-primary) !important;
+    opacity: 1 !important;
+}
+
+.modern-viajes-container ul.viajes-lista li a.btn_viaje,
+ul.viajes-lista li a.btn_viaje {
+    text-decoration: none !important;
+    color: inherit !important;
+    display: block !important;
+    position: relative !important;
+}
+
+.modern-viajes-container ul.viajes-lista li .viaje-container,
+ul.viajes-lista li .viaje-container {
+    padding: 0 !important;
+    background-color: transparent !important;
+    opacity: 1 !important;
+    top: auto !important;
+    position: relative !important;
+    width: 100% !important;
+    color: var(--text-primary) !important;
+}
+
+.modern-viajes-container ul.viajes-lista li .viaje-container h3,
+ul.viajes-lista li .viaje-container h3,
+.modern-viajes-container ul.viajes-lista li h3,
+ul.viajes-lista li h3 {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 0.75rem !important;
+    line-height: 1.4 !important;
+    opacity: 1 !important;
+}
+
+.modern-viajes-container ul.viajes-lista li .viaje-container h5,
+ul.viajes-lista li .viaje-container h5,
+.modern-viajes-container ul.viajes-lista li h5,
+ul.viajes-lista li h5 {
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.5 !important;
+    opacity: 1 !important;
+}
+
+.modern-viajes-container ul.viajes-lista li .viaje-container h6,
+ul.viajes-lista li .viaje-container h6,
+.modern-viajes-container ul.viajes-lista li h6,
+ul.viajes-lista li h6 {
+    font-size: 0.875rem !important;
+    font-weight: 400 !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 0 !important;
+    line-height: 1.5 !important;
+    opacity: 1 !important;
+}
+
+/* Ocultar banner flotante cuando tiene clase hidden */
+.bnn_floating-banner.hidden,
+#banner.hidden,
+div.bnn_floating-banner.hidden {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modern-dashboard-header h2 {
+        font-size: 1.75rem;
+    }
+    
+    .modern-calendar-container,
+    .modern-viajes-container {
+        padding: 1.5rem;
+    }
+    
+    ul.viajes-lista {
+        grid-template-columns: 1fr !important;
+    }
 }

@@ -1,0 +1,28 @@
+/* Estilos para el layout principal - Flexbox */
+#wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    min-height: calc(100vh - 60px);
+    float: none !important;
+    position: relative !important;
+    overflow: visible !important;
+}
+
+#menu {
+    flex-shrink: 0 !important;
+    width: 260px !important;
+    margin-left: 0 !important;
+    float: none !important;
+    position: relative !important;
+}
+
+#content {
+    flex: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    padding: 0;
+    position: relative !important;
+    overflow: visible !important;
+}

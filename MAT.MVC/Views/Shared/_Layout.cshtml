@@ -7,7 +7,6 @@
     <!-- Meta -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
-    @*<meta name="apple-mobile-web-app-capable" content="yes">*@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
@@ -16,44 +15,32 @@
 
     @Scripts.Render("~/bundles/modernizr")
     @{string fecha = "22122016";}
-    @* jQuery UI CSS - Actualizado a 1.13.2 *@
     <link href="~/Content/themes/base/jquery-ui-1.13.2.css" rel="stylesheet" />
-    @* Versión antigua comentada: <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" /> *@
-    @*<link href="~/Content/mat.styles.css" rel="stylesheet" />*@
     <link href="~/Content/mat.busplugin.css?t=@fecha" rel="stylesheet" />
     <link href="~/Content/preset.css" rel="stylesheet" />
     <link href="~/Content/tabla.css" rel="stylesheet" />
     <link href="~/Content/mat.perfiles.css" rel="stylesheet" />
-    @* Bootstrap CSS - Actualizado a 5.3.2 (CAMBIO MAYOR - puede requerir ajustes en estilos) *@
-    @* IMPORTANTE: Bootstrap 5 tiene cambios importantes. Si hay problemas, descomentar la línea de abajo *@
     <link href="~/Content/bootstrap-5.3.2.min.css" rel="stylesheet" />
-    @* Versión antigua comentada (Bootstrap 2.3.1): <link href="~/Content/bootstrap.css" rel="stylesheet" /> *@
-    @* Bootstrap Icons - Iconos minimalistas modernos *@
     <link href="~/Content/bootstrap-icons.css" rel="stylesheet" />
-
-    <link href="~/Content/glyphicons.css" rel="stylesheet" />
-    <link href="~/Content/style-light.css?1415025778" rel="stylesheet" />
     <link href="~/Content/mat.forms.css" rel="stylesheet" />
-    <link href="~/Content/mat.metroui.css" rel="stylesheet" />
     <link href="~/Content/voucher.css?t=@fecha" rel="stylesheet" />
     <link href="~/Scripts/jquery.timepicker/jquery.timepicker.css" rel="stylesheet" />
     <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+    @* Variables CSS para diseño SaaS moderno *@
+    <link href="~/Content/saas-variables.css" rel="stylesheet" />
+    @* Estilos para layout flexbox *@
+    <link href="~/Content/modern-layout.css" rel="stylesheet" />
     @* Estilos modernos para menú y dashboard *@
     <link href="~/Content/modern-menu.css" rel="stylesheet" />
     <link href="~/Content/modern-dashboard.css" rel="stylesheet" />
+    <link href="~/Content/modern-topbar.css" rel="stylesheet" />
 
     <script src="~/Scripts/preset.js"></script>
-    @* jQuery - Actualizado a 3.7.1 *@
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
-    @* jQuery Migrate - Temporal para compatibilidad. Remover después de pruebas *@
     <script src="~/Scripts/jquery-migrate-3.4.1.min.js"></script>
-    @* Versión antigua comentada: <script src="~/Scripts/jquery-1.8.2.min.js"></script> *@
     <script src="~/Scripts/jquery.validate.min.js"></script>
-
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-    @* jQuery UI - Actualizado a 1.13.2 *@
     <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>
-    @* Versión antigua comentada: <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script> *@
     <script src="~/Scripts/javascript.core.js"></script>
     <script src="~/Scripts/mat.jquery.binding.js"></script>
     <script src="~/Scripts/mat.jquery.functions.js"></script>
@@ -61,10 +48,7 @@
     <script src="~/Scripts/jquery.quick.pagination.min.js"></script>
     <script src="~/Scripts/global.js"></script>
     <script src="~/Scripts/mat.jquery.hashtable.js"></script>
-    @* Bootstrap JS - Actualizado a 5.3.2 (Bundle incluye Popper) *@
     <script src="~/Scripts/bootstrap-5.3.2.bundle.min.js"></script>
-    @* Versión antigua comentada (Bootstrap 2.3.1): <script src="~/Scripts/bootstrap.min.js"></script> *@
-    @*<script src="~/Scripts/jquery.maskedinput.min.js"></script>*@
     <script src="~/Scripts/jquery.mask.js"></script>
     <script src="~/Scripts/common.js"></script>
     <script src="~/Scripts/jquery.timepicker/jquery.timepicker.min.js"></script>
@@ -87,19 +71,19 @@
         <!-- Top navbar (note: add class "navbar-hidden" to close the navbar by default) -->
         <div class="navbar main hidden-print">
 
-            @*<a href="#" id="btn-document-help" ><img src="/Images/document_info.png" title="Manual de Usuario"/></a>*@
-
             <!-- Wrapper -->
             <div class="wrapper">
-
-
+                <!-- User Profile -->
+                <div class="user-profile-container">
+                    <img src="~/Images/mat header.png" alt="Marco Antonio Tours" class="user-profile-logo" />
+                    @Html.Partial("_LoginPartial")
+                </div>
                 <!-- Menu Toggle Button -->
                 <ul class="topnav pull-right">
                 </ul>
             </div>
             <!-- // Wrapper END -->
 
-            <!-- <span class="toggle-navbar"></span> -->
         </div>
         <!-- Top navbar END -->
 
@@ -110,20 +94,9 @@
             <div id="menu" class="hidden-phone hidden-print">
 
                 <!-- Brand -->
-                <a href="/Home/Index" class="appbrand">MAT <span>Sys</span>
-                </a>
-
+                
                 <!-- Scrollable menu wrapper with Maximum height -->
                 <div class="slim-scroll" data-scroll-height="800px">
-
-                    <!-- Sidebar Profile -->
-                    <span class="profile">
-                        <p>
-                            @Html.Partial("_LoginPartial")
-                        </p>                        
-                    </span>
-                    <!-- // Sidebar Profile END -->
-
                     <!-- Regular Size Menu -->
                     <ul class="menu-0">
                         <!-- Menu Regular Item -->
@@ -243,7 +216,7 @@
                                     </a>
                                     <ul class="collapse" id="menu_precios">
                                         <li>
-                                            <a href="/Precio/Index" title="Ver listado de precios o agregar nuevo Precio">
+                                            <a href="/Precio/Index">
                                                 <i class="bi bi-eye"></i>
                                                 <span>Ver o Agregar</span>
                                             </a>
@@ -289,42 +262,26 @@
             </div>
 
         </div>
-        <div class="clearfix"></div>
-        <!-- // Sidebar menu & content wrapper END -->
-
-        <div id="footer" class="hidden-print">
-        </div>
-        <!-- // Footer END -->
+        <!-- // Wrapper END -->
 
     </div>
-    <!-- // Main Container Fluid END -->
+    <!-- // Container END -->
 
-
-
-
-
-    <div id="modal-gallery" class="modal modal-gallery hide fade hidden-print" tabindex="-1">
-        <div class="modal-header">
-            <a class="close" data-dismiss="modal">&times;</a>
-            <h3 class="modal-title"></h3>
-        </div>
-        <div class="modal-body">
-            <div class="modal-image"></div>
-        </div>
-        <div class="modal-footer">
-            <a class="btn btn-primary modal-next">Next <i class="icon-arrow-right icon-white"></i></a>
-            <a class="btn btn-info modal-prev"><i class="icon-arrow-left icon-white"></i>Previous</a>
-            <a class="btn btn-success modal-play modal-slideshow" data-slideshow="5000"><i class="icon-play icon-white"></i>Slideshow</a>
-            <a class="btn modal-download" target="_blank"><i class="icon-download"></i>Download</a>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a class="close" data-dismiss="modal">&times;</a>
+                    <h3 class="modal-title"></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image"></div>
+                </div>
+            </div>
         </div>
     </div>
-    <script>
-        var primaryColor = '#8ec657',
-			dangerColor = '#b55151',
-			successColor = '#609450',
-			warningColor = '#ab7a4b',
-			inverseColor = '#45484d';
-        
+
+    <script type="text/javascript">
         // Inicializar tooltips de Bootstrap 5 después de que el DOM esté listo
         $(document).ready(function() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -333,6 +290,7 @@
             });
         });
     </script>
-    <script src="/Scripts/common.js?1414014545"></script>
+
+    @RenderSection("scripts", required: false)
 </body>
 </html>
