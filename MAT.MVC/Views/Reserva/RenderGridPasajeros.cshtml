@@ -9,8 +9,17 @@
 <script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $("#grid-seleccionar-pasajero").DataTable();
+    // NO inicializar DataTables aquí - se inicializa desde SeleccionarPasajero.cshtml
+    // Esto evita la doble inicialización cuando se carga el contenido via .load()
+    $(function () {
+        $("table tbody tr:odd").addClass("odd");
+
+        $("#panel-bus a.selected").each(function () {
+            var pasajeroid = $(this).data("pasajero");
+            if (pasajeroid) {
+                $("tr.row-pasajero[data-id=" + pasajeroid + "]").hide();
+            }
+        });
     });
 </script>
 

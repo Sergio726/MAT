@@ -738,7 +738,7 @@ div.bnn_floating-banner.hidden {
 }
 
 #panel-bus .modern-card-content {
-    padding: 2rem;
+    padding: 1.5rem;
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
@@ -747,6 +747,890 @@ div.bnn_floating-banner.hidden {
 
 #panel-bus #container {
     width: 100%;
+    max-width: 100%;
+    background: #f8f9fa;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos modernos para las tabs de jQuery UI en el panel del bus */
+#panel-bus #bus-tabs {
+    margin-bottom: 1.5rem;
+}
+
+#panel-bus #bus-tabs .ui-tabs-nav {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding: 0 !important;
+    margin: 0 0 1.5rem 0 !important;
+}
+
+#panel-bus #bus-tabs .ui-tabs-nav li {
+    margin: 0 0.5rem 0 0 !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+#panel-bus #bus-tabs .ui-tabs-nav li a {
+    padding: 0.875rem 1.5rem !important;
+    background: var(--bg-main) !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-bottom: none !important;
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 500 !important;
+    font-size: 0.9375rem !important;
+    transition: all 0.2s ease !important;
+    background-image: none !important;
+}
+
+#panel-bus #bus-tabs .ui-tabs-nav li.ui-state-active a,
+#panel-bus #bus-tabs .ui-tabs-nav li.ui-tabs-active a,
+#panel-bus #bus-tabs .ui-tabs-nav li.ui-state-active .ui-tabs-anchor,
+#panel-bus #bus-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
+    background: var(--brand-primary) !important;
+    background-image: none !important;
+    color: var(--white) !important;
+    border-color: var(--brand-primary) !important;
+    font-weight: 600 !important;
+}
+
+#panel-bus #bus-tabs .ui-tabs-nav li a:hover {
+    background: rgba(230, 51, 117, 0.1) !important;
+    background-image: none !important;
+    color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+}
+
+#panel-bus #bus-tabs .ui-tabs-nav li.ui-state-active a:hover,
+#panel-bus #bus-tabs .ui-tabs-nav li.ui-tabs-active a:hover,
+#panel-bus #bus-tabs .ui-tabs-nav li.ui-state-active .ui-tabs-anchor:hover,
+#panel-bus #bus-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor:hover {
+    background: var(--brand-primary) !important;
+    background-image: none !important;
+    color: var(--white) !important;
+}
+
+#panel-bus #bus-tabs .ui-tabs-panel {
+    padding: 1.5rem 0 0 0;
+    border: none;
+    background: transparent;
+}
+
+#panel-bus #bus-tabs .ui-tabs-panel h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 1.25rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Contenedor de butacas centrado */
+#panel-bus .piso_superior,
+#panel-bus .piso_inferior {
+    margin: 0 auto;
+}
+
+/* ============================================
+   ESTILOS BASE PARA TODOS LOS ESTADOS DE BUTACAS
+   Mejora de fuentes SIN interferir con imágenes de fondo
+   ============================================ */
+
+/* Estilos base comunes - aplicados a TODOS los estados */
+/* Solo mejoramos la fuente, NO tocamos el background-image del sprite */
+#panel-bus .piso_superior a,
+#panel-bus .piso_inferior a,
+#panel-bus .piso_superior_edicion a,
+#panel-bus .piso_inferior_edicion a,
+#panel-bus .new_piso_superior a,
+#panel-bus .new_piso_inferior a {
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif !important;
+    font-weight: 600 !important;
+    font-size: 0.6875rem !important; /* 11px - un poco más chico */
+    letter-spacing: 0.2px !important;
+    color: var(--brand-primary) !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9), 0 0 4px rgba(255, 255, 255, 0.7) !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    position: relative !important;
+    transition: all 0.25s ease !important;
+    text-indent: 0 !important;
+    z-index: 1 !important;
+}
+
+/* Fondo redondeado detrás del texto - Más opaco para mejor visibilidad */
+#panel-bus .piso_superior a::before,
+#panel-bus .piso_inferior a::before,
+#panel-bus .piso_superior_edicion a::before,
+#panel-bus .piso_inferior_edicion a::before,
+#panel-bus .new_piso_superior a::before,
+#panel-bus .new_piso_inferior a::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100% - 10px) !important;
+    height: calc(100% - 10px) !important;
+    background: rgba(255, 255, 255, 0.92) !important; /* Más opaco para mejor contraste */
+    border-radius: 12px !important;
+    border: 2px solid var(--brand-primary) !important;
+    opacity: 0.95 !important;
+    transition: all 0.25s ease !important;
+    z-index: -1 !important;
+    box-shadow: 0 2px 4px rgba(230, 51, 117, 0.3) !important;
+    pointer-events: none !important; /* No interfiere con los clics */
+}
+
+/* Efecto hover mejorado - solo para disponibles */
+#panel-bus .piso_superior a.disponible:hover,
+#panel-bus .piso_inferior a.disponible:hover,
+#panel-bus .piso_superior_edicion a.disponible:hover,
+#panel-bus .piso_inferior_edicion a.disponible:hover,
+#panel-bus .new_piso_superior a.disponible:hover,
+#panel-bus .new_piso_inferior a.disponible:hover {
+    color: var(--white) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    transform: translateY(-1px) scale(1.05) !important;
+}
+
+#panel-bus .piso_superior a.disponible:hover::before,
+#panel-bus .piso_inferior a.disponible:hover::before,
+#panel-bus .piso_superior_edicion a.disponible:hover::before,
+#panel-bus .piso_inferior_edicion a.disponible:hover::before,
+#panel-bus .new_piso_superior a.disponible:hover::before,
+#panel-bus .new_piso_inferior a.disponible:hover::before {
+    background: rgba(230, 51, 117, 0.9) !important;
+    border-color: var(--brand-primary) !important;
+    opacity: 1 !important;
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.5) !important;
+    width: calc(100% - 6px) !important;
+    height: calc(100% - 6px) !important;
+}
+
+/* ============================================
+   ESTADOS ESPECÍFICOS - Colores diferenciados
+   ============================================ */
+
+/* Estado: Disponible (1) - Fucsia, interactivo */
+#panel-bus .piso_superior a.disponible,
+#panel-bus .piso_inferior a.disponible,
+#panel-bus .piso_superior_edicion a.disponible,
+#panel-bus .piso_inferior_edicion a.disponible,
+#panel-bus .new_piso_superior a.disponible,
+#panel-bus .new_piso_inferior a.disponible {
+    color: var(--brand-primary) !important;
+    cursor: pointer !important;
+}
+
+/* Estado: Seleccionado - Fucsia sólido, igual que hover de disponible */
+#panel-bus .piso_superior a.selected,
+#panel-bus .piso_inferior a.selected,
+#panel-bus .piso_superior_edicion a.selected,
+#panel-bus .piso_inferior_edicion a.selected,
+#panel-bus .new_piso_superior a.selected,
+#panel-bus .new_piso_inferior a.selected,
+#panel-bus .piso_superior a.seleccionado,
+#panel-bus .piso_inferior a.seleccionado,
+#panel-bus .piso_superior_edicion a.seleccionado,
+#panel-bus .piso_inferior_edicion a.seleccionado,
+#panel-bus .new_piso_superior a.seleccionado,
+#panel-bus .new_piso_inferior a.seleccionado {
+    color: var(--white) !important;
+    cursor: pointer !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    font-weight: 700 !important;
+}
+
+#panel-bus .piso_superior a.selected::before,
+#panel-bus .piso_inferior a.selected::before,
+#panel-bus .piso_superior_edicion a.selected::before,
+#panel-bus .piso_inferior_edicion a.selected::before,
+#panel-bus .new_piso_superior a.selected::before,
+#panel-bus .new_piso_inferior a.selected::before,
+#panel-bus .piso_superior a.seleccionado::before,
+#panel-bus .piso_inferior a.seleccionado::before,
+#panel-bus .piso_superior_edicion a.seleccionado::before,
+#panel-bus .piso_inferior_edicion a.seleccionado::before,
+#panel-bus .new_piso_superior a.seleccionado::before,
+#panel-bus .new_piso_inferior a.seleccionado::before {
+    border-color: var(--brand-primary) !important;
+    background: var(--brand-primary) !important; /* Fondo fucsia sólido */
+    opacity: 1 !important;
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.5) !important;
+}
+
+/* Estado: Reservado (4) - Verde oscuro, fondo completamente pintado */
+#panel-bus .piso_superior a.reservado,
+#panel-bus .piso_inferior a.reservado,
+#panel-bus .piso_superior_edicion a.reservado,
+#panel-bus .piso_inferior_edicion a.reservado,
+#panel-bus .new_piso_superior a.reservado,
+#panel-bus .new_piso_inferior a.reservado {
+    color: var(--white) !important;
+    cursor: default !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    font-weight: 700 !important;
+}
+
+#panel-bus .piso_superior a.reservado::before,
+#panel-bus .piso_inferior a.reservado::before,
+#panel-bus .piso_superior_edicion a.reservado::before,
+#panel-bus .piso_inferior_edicion a.reservado::before,
+#panel-bus .new_piso_superior a.reservado::before,
+#panel-bus .new_piso_inferior a.reservado::before {
+    border-color: #059669 !important;
+    background: #059669 !important; /* Fondo completamente pintado en verde oscuro */
+    opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.4) !important;
+}
+
+/* Estado: Señado (3) - Violeta, fondo completamente pintado */
+#panel-bus .piso_superior a.señado,
+#panel-bus .piso_inferior a.señado,
+#panel-bus .piso_superior_edicion a.señado,
+#panel-bus .piso_inferior_edicion a.señado,
+#panel-bus .new_piso_superior a.señado,
+#panel-bus .new_piso_inferior a.señado {
+    color: var(--white) !important;
+    cursor: default !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    font-weight: 700 !important;
+}
+
+#panel-bus .piso_superior a.señado::before,
+#panel-bus .piso_inferior a.señado::before,
+#panel-bus .piso_superior_edicion a.señado::before,
+#panel-bus .piso_inferior_edicion a.señado::before,
+#panel-bus .new_piso_superior a.señado::before,
+#panel-bus .new_piso_inferior a.señado::before {
+    border-color: #8b5cf6 !important;
+    background: #8b5cf6 !important; /* Fondo completamente pintado en violeta */
+    opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.4) !important;
+}
+
+/* Estado: Prereserva (5) - Amarillo/Naranja, fondo completamente pintado */
+#panel-bus .piso_superior a.prereserva,
+#panel-bus .piso_inferior a.prereserva,
+#panel-bus .piso_superior_edicion a.prereserva,
+#panel-bus .piso_inferior_edicion a.prereserva,
+#panel-bus .new_piso_superior a.prereserva,
+#panel-bus .new_piso_inferior a.prereserva {
+    color: #78350f !important; /* Texto oscuro sobre fondo amarillo */
+    cursor: default !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+    font-weight: 700 !important;
+}
+
+#panel-bus .piso_superior a.prereserva::before,
+#panel-bus .piso_inferior a.prereserva::before,
+#panel-bus .piso_superior_edicion a.prereserva::before,
+#panel-bus .piso_inferior_edicion a.prereserva::before,
+#panel-bus .new_piso_superior a.prereserva::before,
+#panel-bus .new_piso_inferior a.prereserva::before {
+    border-color: #ca8a04 !important;
+    background: #fbbf24 !important; /* Fondo completamente pintado en amarillo */
+    opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(202, 138, 4, 0.4) !important;
+}
+
+/* Estado: PrereservaHotel (9) - Amarillo con fondo pintado y badge H */
+#panel-bus .piso_superior a.prereservahotel,
+#panel-bus .piso_inferior a.prereservahotel,
+#panel-bus .piso_superior_edicion a.prereservahotel,
+#panel-bus .piso_inferior_edicion a.prereservahotel,
+#panel-bus .new_piso_superior a.prereservahotel,
+#panel-bus .new_piso_inferior a.prereservahotel {
+    color: #78350f !important; /* Texto oscuro sobre fondo amarillo */
+    cursor: default !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+    font-weight: 700 !important;
+}
+
+#panel-bus .piso_superior a.prereservahotel::before,
+#panel-bus .piso_inferior a.prereservahotel::before,
+#panel-bus .piso_superior_edicion a.prereservahotel::before,
+#panel-bus .piso_inferior_edicion a.prereservahotel::before,
+#panel-bus .new_piso_superior a.prereservahotel::before,
+#panel-bus .new_piso_inferior a.prereservahotel::before {
+    border-color: #ca8a04 !important;
+    background: #fbbf24 !important; /* Fondo completamente pintado en amarillo */
+    opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(202, 138, 4, 0.4) !important;
+}
+
+/* Estado: Anulado (7) - Color oscuro pintado, sin interactividad */
+#panel-bus .piso_superior a[data-estado="7"],
+#panel-bus .piso_inferior a[data-estado="7"],
+#panel-bus .piso_superior_edicion a[data-estado="7"],
+#panel-bus .piso_inferior_edicion a[data-estado="7"],
+#panel-bus .new_piso_superior a[data-estado="7"],
+#panel-bus .new_piso_inferior a[data-estado="7"] {
+    color: rgba(255, 255, 255, 0.7) !important;
+    cursor: not-allowed !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    font-weight: 600 !important;
+}
+
+#panel-bus .piso_superior a[data-estado="7"]::before,
+#panel-bus .piso_inferior a[data-estado="7"]::before,
+#panel-bus .piso_superior_edicion a[data-estado="7"]::before,
+#panel-bus .piso_inferior_edicion a[data-estado="7"]::before,
+#panel-bus .new_piso_superior a[data-estado="7"]::before,
+#panel-bus .new_piso_inferior a[data-estado="7"]::before {
+    background: #2b2d42 !important; /* Fondo completamente pintado en oscuro */
+    border-color: #1a1b2e !important;
+    opacity: 0.85 !important;
+    box-shadow: 0 2px 4px rgba(43, 45, 66, 0.3) !important;
+}
+
+/* Estado: ReservaHotel (6) - Pasaje Pagado con Hotel, fondo verde oscuro pintado */
+#panel-bus .piso_superior a.reservahotel,
+#panel-bus .piso_inferior a.reservahotel,
+#panel-bus .piso_superior_edicion a.reservahotel,
+#panel-bus .piso_inferior_edicion a.reservahotel,
+#panel-bus .new_piso_superior a.reservahotel,
+#panel-bus .new_piso_inferior a.reservahotel {
+    color: var(--white) !important;
+    cursor: default !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    font-weight: 700 !important;
+}
+
+#panel-bus .piso_superior a.reservahotel::before,
+#panel-bus .piso_inferior a.reservahotel::before,
+#panel-bus .piso_superior_edicion a.reservahotel::before,
+#panel-bus .piso_inferior_edicion a.reservahotel::before,
+#panel-bus .new_piso_superior a.reservahotel::before,
+#panel-bus .new_piso_inferior a.reservahotel::before {
+    border-color: #059669 !important;
+    background: #059669 !important; /* Fondo verde oscuro pintado (pasaje pagado) */
+    opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.4) !important;
+}
+
+/* Estado: ReservaPasajeHotel (8) - Pasaje Señado con Hotel, fondo violeta pintado */
+#panel-bus .piso_superior a.reservapasajehotel,
+#panel-bus .piso_inferior a.reservapasajehotel,
+#panel-bus .piso_superior_edicion a.reservapasajehotel,
+#panel-bus .piso_inferior_edicion a.reservapasajehotel,
+#panel-bus .new_piso_superior a.reservapasajehotel,
+#panel-bus .new_piso_inferior a.reservapasajehotel {
+    color: var(--white) !important;
+    cursor: default !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    font-weight: 700 !important;
+}
+
+#panel-bus .piso_superior a.reservapasajehotel::before,
+#panel-bus .piso_inferior a.reservapasajehotel::before,
+#panel-bus .piso_superior_edicion a.reservapasajehotel::before,
+#panel-bus .piso_inferior_edicion a.reservapasajehotel::before,
+#panel-bus .new_piso_superior a.reservapasajehotel::before,
+#panel-bus .new_piso_inferior a.reservapasajehotel::before {
+    border-color: #8b5cf6 !important;
+    background: #8b5cf6 !important; /* Fondo violeta pintado (pasaje señado) */
+    opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.4) !important;
+}
+
+/* ============================================
+   INDICADOR DE HOTEL - Badge "H" CENTRADO Y GRANDE (x2)
+   Para estados: reservahotel (6), reservapasajehotel (8), prereservahotel (9)
+   ============================================ */
+
+#panel-bus .piso_superior a.reservahotel::after,
+#panel-bus .piso_inferior a.reservahotel::after,
+#panel-bus .piso_superior_edicion a.reservahotel::after,
+#panel-bus .piso_inferior_edicion a.reservahotel::after,
+#panel-bus .new_piso_superior a.reservahotel::after,
+#panel-bus .new_piso_inferior a.reservahotel::after,
+#panel-bus .piso_superior a.reservapasajehotel::after,
+#panel-bus .piso_inferior a.reservapasajehotel::after,
+#panel-bus .piso_superior_edicion a.reservapasajehotel::after,
+#panel-bus .piso_inferior_edicion a.reservapasajehotel::after,
+#panel-bus .new_piso_superior a.reservapasajehotel::after,
+#panel-bus .new_piso_inferior a.reservapasajehotel::after,
+#panel-bus .piso_superior a.prereservahotel::after,
+#panel-bus .piso_inferior a.prereservahotel::after,
+#panel-bus .piso_superior_edicion a.prereservahotel::after,
+#panel-bus .piso_inferior_edicion a.prereservahotel::after,
+#panel-bus .new_piso_superior a.prereservahotel::after,
+#panel-bus .new_piso_inferior a.prereservahotel::after {
+    content: 'H' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Centrado */
+    background: var(--brand-primary) !important;
+    color: var(--white) !important;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif !important;
+    font-size: 0.875rem !important; /* 14px - más grande */
+    font-weight: 700 !important;
+    width: 28px !important; /* x2 del tamaño original */
+    height: 28px !important; /* x2 del tamaño original */
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Badge "H" en hover - se mantiene centrado */
+#panel-bus .piso_superior a.reservahotel:hover::after,
+#panel-bus .piso_inferior a.reservahotel:hover::after,
+#panel-bus .piso_superior_edicion a.reservahotel:hover::after,
+#panel-bus .piso_inferior_edicion a.reservahotel:hover::after,
+#panel-bus .new_piso_superior a.reservahotel:hover::after,
+#panel-bus .new_piso_inferior a.reservahotel:hover::after,
+#panel-bus .piso_superior a.reservapasajehotel:hover::after,
+#panel-bus .piso_inferior a.reservapasajehotel:hover::after,
+#panel-bus .piso_superior_edicion a.reservapasajehotel:hover::after,
+#panel-bus .piso_inferior_edicion a.reservapasajehotel:hover::after,
+#panel-bus .new_piso_superior a.reservapasajehotel:hover::after,
+#panel-bus .new_piso_inferior a.reservapasajehotel:hover::after,
+#panel-bus .piso_superior a.prereservahotel:hover::after,
+#panel-bus .piso_inferior a.prereservahotel:hover::after,
+#panel-bus .piso_superior_edicion a.prereservahotel:hover::after,
+#panel-bus .piso_inferior_edicion a.prereservahotel:hover::after,
+#panel-bus .new_piso_superior a.prereservahotel:hover::after,
+#panel-bus .new_piso_inferior a.prereservahotel:hover::after {
+    background: var(--white) !important;
+    color: var(--brand-primary) !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ============================================
+   INDICADOR SENA INCOMPLETA
+   Se superpone sobre cualquier estado con seña incompleta
+   Maneja ambas variantes: SenaIncompleta (mayúscula) y señaIncompleta (minúscula)
+   ============================================ */
+#panel-bus .piso_superior a.SenaIncompleta,
+#panel-bus .piso_inferior a.SenaIncompleta,
+#panel-bus .piso_superior_edicion a.SenaIncompleta,
+#panel-bus .piso_inferior_edicion a.SenaIncompleta,
+#panel-bus .new_piso_superior a.SenaIncompleta,
+#panel-bus .new_piso_inferior a.SenaIncompleta,
+#panel-bus .piso_superior a.señaIncompleta,
+#panel-bus .piso_inferior a.señaIncompleta,
+#panel-bus .piso_superior_edicion a.señaIncompleta,
+#panel-bus .piso_inferior_edicion a.señaIncompleta,
+#panel-bus .new_piso_superior a.señaIncompleta,
+#panel-bus .new_piso_inferior a.señaIncompleta {
+    position: relative !important;
+}
+
+/* Fondo violeta para SenaIncompleta (igual que señado) - SIN borde amarillo */
+#panel-bus .piso_superior a.SenaIncompleta::before,
+#panel-bus .piso_inferior a.SenaIncompleta::before,
+#panel-bus .piso_superior_edicion a.SenaIncompleta::before,
+#panel-bus .piso_inferior_edicion a.SenaIncompleta::before,
+#panel-bus .new_piso_superior a.SenaIncompleta::before,
+#panel-bus .new_piso_inferior a.SenaIncompleta::before,
+#panel-bus .piso_superior a.señaIncompleta::before,
+#panel-bus .piso_inferior a.señaIncompleta::before,
+#panel-bus .piso_superior_edicion a.señaIncompleta::before,
+#panel-bus .piso_inferior_edicion a.señaIncompleta::before,
+#panel-bus .new_piso_superior a.señaIncompleta::before,
+#panel-bus .new_piso_inferior a.señaIncompleta::before {
+    border-color: #8b5cf6 !important;
+    background: #8b5cf6 !important; /* Fondo violeta igual que señado */
+    opacity: 1 !important;
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.4) !important;
+}
+
+#panel-bus .piso_superior a.SenaIncompleta,
+#panel-bus .piso_inferior a.SenaIncompleta,
+#panel-bus .piso_superior_edicion a.SenaIncompleta,
+#panel-bus .piso_inferior_edicion a.SenaIncompleta,
+#panel-bus .new_piso_superior a.SenaIncompleta,
+#panel-bus .new_piso_inferior a.SenaIncompleta,
+#panel-bus .piso_superior a.señaIncompleta,
+#panel-bus .piso_inferior a.señaIncompleta,
+#panel-bus .piso_superior_edicion a.señaIncompleta,
+#panel-bus .piso_inferior_edicion a.señaIncompleta,
+#panel-bus .new_piso_superior a.señaIncompleta,
+#panel-bus .new_piso_inferior a.señaIncompleta {
+    color: var(--white) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    font-weight: 700 !important;
+}
+
+/* Badge "!" para SenaIncompleta - Esquina superior derecha, pequeño */
+/* NOTA: Si la butaca también tiene hotel, el badge "H" se muestra centrado y el "!" en esquina */
+/* Ambos pueden coexistir porque el "H" está centrado y el "!" en esquina */
+#panel-bus .piso_superior a.SenaIncompleta::after,
+#panel-bus .piso_inferior a.SenaIncompleta::after,
+#panel-bus .piso_superior_edicion a.SenaIncompleta::after,
+#panel-bus .piso_inferior_edicion a.SenaIncompleta::after,
+#panel-bus .new_piso_superior a.SenaIncompleta::after,
+#panel-bus .new_piso_inferior a.SenaIncompleta::after,
+#panel-bus .piso_superior a.señaIncompleta::after,
+#panel-bus .piso_inferior a.señaIncompleta::after,
+#panel-bus .piso_superior_edicion a.señaIncompleta::after,
+#panel-bus .piso_inferior_edicion a.señaIncompleta::after,
+#panel-bus .new_piso_superior a.señaIncompleta::after,
+#panel-bus .new_piso_inferior a.señaIncompleta::after {
+    content: '!' !important;
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background: #facc15 !important; /* Fondo amarillo */
+    color: #dc2626 !important; /* Texto rojo */
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif !important;
+    font-size: 0.625rem !important; /* 10px - más chico que "H" */
+    font-weight: 700 !important;
+    width: 10px !important; /* Más chico que badge "H" */
+    height: 10px !important; /* Más chico que badge "H" */
+    border: 2px solid #dc2626 !important; /* Borde rojo */
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 15 !important; /* Por encima del badge "H" si existe */
+    box-shadow: 0 1px 3px rgba(220, 38, 38, 0.5) !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Si SenaIncompleta tiene hotel, el badge "H" debe estar centrado (ya definido arriba) */
+/* El badge "!" se mantiene en esquina con z-index más alto */
+
+/* ============================================
+   TABLA DE REFERENCIAS - Diseño Compacto y Moderno
+   ============================================ */
+
+#panel-bus #tabla-referencia {
+    margin-top: 1.5rem;
+}
+
+.referencias-compact {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.referencias-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.referencias-title i {
+    font-size: 1rem;
+    color: var(--brand-primary);
+}
+
+.referencias-title span {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.referencias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.referencia-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    min-height: 48px;
+}
+
+.referencia-item:hover {
+    background: var(--bg-main);
+}
+
+.referencia-item a {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+    position: relative;
+    background-image: url(/Images/estados_butacas.png);
+    background-repeat: no-repeat;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--brand-primary);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9), 0 0 4px rgba(255, 255, 255, 0.7);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: default;
+    padding: 2px;
+}
+
+/* Aplicar estilos de fondo redondeado también a la tabla de referencias */
+.referencia-item a::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100% - 6px) !important;
+    height: calc(100% - 6px) !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-radius: 8px !important;
+    border: 2px solid var(--brand-primary) !important;
+    opacity: 0.95 !important;
+    z-index: -1 !important;
+    box-shadow: 0 2px 4px rgba(230, 51, 117, 0.25) !important;
+}
+
+.referencia-item a.disponible::before {
+    border-color: var(--brand-primary) !important;
+}
+
+.referencia-item a.seleccionado::before {
+    border-color: var(--brand-primary) !important;
+    background: var(--brand-primary) !important; /* Fondo fucsia sólido */
+}
+
+.referencia-item a.seleccionado {
+    color: var(--white) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.referencia-item a.señado::before {
+    border-color: #8b5cf6 !important;
+    background: #8b5cf6 !important; /* Fondo violeta pintado */
+}
+
+.referencia-item a.señado {
+    color: var(--white) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.referencia-item a.reservado_ref::before,
+.referencia-item a.reservado::before {
+    border-color: #059669 !important;
+    background: #059669 !important; /* Fondo verde oscuro pintado */
+}
+
+.referencia-item a.reservado_ref,
+.referencia-item a.reservado {
+    color: var(--white) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.referencia-item a.prereserva::before {
+    border-color: #ca8a04 !important;
+    background: #fbbf24 !important; /* Fondo completamente pintado */
+}
+
+.referencia-item a.prereserva {
+    color: #78350f !important; /* Texto oscuro sobre fondo amarillo */
+    font-weight: 700 !important;
+}
+
+.referencia-item a.prereservapasajehotel_ref {
+    color: #78350f !important; /* Texto oscuro sobre fondo amarillo */
+    font-weight: 700 !important;
+}
+
+.referencia-item a.prereservapasajehotel_ref::before {
+    border-color: #ca8a04 !important;
+    background: #fbbf24 !important; /* Fondo completamente pintado */
+}
+
+.referencia-item a.reservahotel::before {
+    border-color: #059669 !important;
+    background: #059669 !important; /* Fondo verde oscuro pintado */
+}
+
+.referencia-item a.reservahotel {
+    color: var(--white) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.referencia-item a.reservapasajehotel_ref::before {
+    border-color: #8b5cf6 !important;
+    background: #8b5cf6 !important; /* Fondo violeta pintado */
+}
+
+.referencia-item a.reservapasajehotel_ref {
+    color: var(--white) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Butacas asignadas */
+#panel-bus a.butaca-asignada {
+    position: relative;
+}
+
+#panel-bus a.butaca-asignada::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    background: var(--brand-primary);
+    border-radius: 50%;
+    border: 2px solid var(--white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#panel-bus a.butaca-asignada .badge-pasajero-nombre {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--brand-primary);
+    color: var(--white);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-bottom: 0.25rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#panel-bus a.butaca-asignada:hover .badge-pasajero-nombre {
+    opacity: 1;
+}
+
+/* Badge "H" en referencias - CENTRADO Y GRANDE (x2) */
+.referencia-item a.reservahotel::after,
+.referencia-item a.reservapasajehotel_ref::after,
+.referencia-item a.prereservapasajehotel_ref::after {
+    content: 'H' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Centrado */
+    background: var(--brand-primary) !important;
+    color: var(--white) !important;
+    font-size: 0.75rem !important; /* Más grande */
+    font-weight: 700 !important;
+    width: 20px !important; /* x2 del tamaño original */
+    height: 20px !important; /* x2 del tamaño original */
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+}
+
+/* Fondo violeta para SenaIncompleta en referencias (igual que señado) */
+.referencia-item a.SenaIncompleta::before,
+.referencia-item a.señaIncompleta::before {
+    border-color: #8b5cf6 !important;
+    background: #8b5cf6 !important; /* Fondo violeta igual que señado */
+    border-style: solid !important;
+}
+
+.referencia-item a.SenaIncompleta,
+.referencia-item a.señaIncompleta {
+    color: var(--white) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 2px 4px rgba(139, 92, 246, 0.4) !important;
+}
+
+/* Badge "!" en referencias - Esquina superior derecha, pequeño */
+.referencia-item a.SenaIncompleta::after,
+.referencia-item a.señaIncompleta::after {
+    content: '!' !important;
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background: #facc15 !important; /* Fondo amarillo */
+    color: #dc2626 !important; /* Texto rojo */
+    font-size: 0.5rem !important; /* 8px - más chico que "H" */
+    font-weight: 700 !important;
+    width: 8px !important; /* Más chico que badge "H" */
+    height: 8px !important; /* Más chico que badge "H" */
+    border: 1.5px solid #dc2626 !important; /* Borde rojo */
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 15 !important;
+    box-shadow: 0 1px 3px rgba(220, 38, 38, 0.5) !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+}
+
+.referencia-item span {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+    flex: 1;
+    padding: 0.25rem 0;
+}
+
+.referencia-item-hotel span {
+    color: var(--brand-primary);
+    font-weight: 600;
+}
+
+.referencia-item-alert span {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+    .referencias-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .referencia-item {
+        padding: 0.375rem;
+    }
+    
+    .referencia-item a {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .referencia-item span {
+        font-size: 0.75rem;
+    }
 }
 
 /* Estilos para botonera form moderna */
@@ -841,6 +1725,882 @@ div.bnn_floating-banner.hidden {
     transform: rotate(0deg);
 }
 
+/* Sobrescribir colores naranjas de jQuery UI para que usen el tema fucsia */
+.ui-widget-header {
+    background: var(--white) !important;
+    background-image: none !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active {
+    background: var(--brand-primary) !important;
+    background-image: none !important;
+    border-color: var(--brand-primary) !important;
+    color: var(--white) !important;
+}
+
+.ui-state-active a,
+.ui-state-active a:link,
+.ui-state-active a:visited {
+    color: var(--white) !important;
+}
+
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover {
+    background: rgba(230, 51, 117, 0.1) !important;
+    background-image: none !important;
+    border-color: var(--brand-primary) !important;
+    color: var(--brand-primary) !important;
+}
+
+.ui-state-hover a,
+.ui-state-hover a:hover,
+.ui-state-hover a:link,
+.ui-state-hover a:visited {
+    color: var(--brand-primary) !important;
+}
+
+/* Botón Reservar destacado */
+.modern-dashboard .botonera-form #btn-reservar.btn-modern.btn-primary {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.3);
+}
+
+.modern-dashboard .botonera-form #btn-reservar.btn-modern.btn-primary:hover {
+    box-shadow: 0 6px 16px rgba(230, 51, 117, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Estilos modernos para modales jQuery UI (Seleccionar Pasajero y otros) */
+.ui-dialog {
+    border-radius: var(--border-radius-lg) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+    border: none !important;
+    overflow: hidden;
+}
+
+.ui-dialog .ui-dialog-titlebar,
+.ui-dialog .ui-widget-header {
+    background: var(--white) !important;
+    background-image: none !important;
+    border: none !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 1.25rem 1.5rem !important;
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
+    color: var(--text-primary) !important;
+}
+
+.ui-dialog .ui-dialog-title {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    margin: 0 !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+    background: transparent !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    transition: all 0.2s ease !important;
+    top: 50% !important;
+    margin-top: -16px !important;
+    right: 1rem !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close:hover {
+    background: var(--bg-main) !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick {
+    background: none !important;
+    text-indent: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick::before {
+    content: "×";
+    font-size: 24px;
+    color: var(--text-secondary);
+    line-height: 1;
+}
+
+.ui-dialog .ui-dialog-titlebar-close:hover .ui-icon-closethick::before {
+    color: var(--text-primary);
+}
+
+.ui-dialog .ui-dialog-content {
+    background: var(--white) !important;
+    padding: 1.5rem !important;
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg) !important;
+}
+
+/* Estilos para el modal de Seleccionar Pasajero */
+/* ============================================
+   NUEVO DISEÑO MODERNO PARA SELECCIONAR PASAJERO
+   ============================================ */
+
+.seleccionar-pasajero-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding: 0;
+}
+
+.seleccionar-pasajero-section {
+    background: var(--white);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, var(--bg-main) 0%, rgba(230, 51, 117, 0.05) 100%);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-header i {
+    font-size: 1rem;
+    color: var(--brand-primary);
+}
+
+.section-header h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Lista de Precios */
+.precios-list {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.precio-item {
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--white);
+}
+
+.precio-item:hover {
+    border-color: var(--brand-primary);
+    background: rgba(230, 51, 117, 0.02);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.1);
+}
+
+.precio-item input[type="radio"] {
+    margin-right: 0.625rem;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--brand-primary);
+}
+
+.precio-item input[type="radio"]:checked + .precio-content {
+    color: var(--brand-primary);
+}
+
+/* Estado seleccionado - usar :has() si está disponible, sino usar clase .selected */
+.precio-item:has(input[type="radio"]:checked),
+.precio-item.selected {
+    border-color: var(--brand-primary);
+    background: rgba(230, 51, 117, 0.05);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+.precio-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    gap: 0.625rem;
+}
+
+.precio-descripcion {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+/* Badge de Precio */
+.precio-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.625rem;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.precio-badge.badge-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Moneda Pesos (Verde) */
+.precio-badge.moneda-pesos {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: var(--white);
+    border: 1px solid #047857;
+}
+
+/* Moneda Dólar (Azul) */
+.precio-badge.moneda-dolar {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: var(--white);
+    border: 1px solid #1e40af;
+}
+
+.precio-simbolo {
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.precio-monto {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.precio-codigo {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    font-weight: 500;
+    margin-left: 0.25rem;
+}
+
+/* Lista de Adicionales */
+.adicionales-list {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.adicional-item {
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--white);
+}
+
+.adicional-item:hover {
+    border-color: var(--brand-primary);
+    background: rgba(230, 51, 117, 0.02);
+}
+
+.adicional-item input[type="checkbox"] {
+    margin-right: 0.625rem;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--brand-primary);
+}
+
+/* Estado seleccionado para adicionales */
+.adicional-item input[type="checkbox"]:checked ~ .adicional-content {
+    color: var(--brand-primary);
+}
+
+.adicional-item:has(input[type="checkbox"]:checked),
+.adicional-item.selected {
+    border-color: var(--brand-primary) !important;
+    background: rgba(230, 51, 117, 0.05) !important;
+}
+
+.adicional-item.especial {
+    border: 2px dashed var(--border-color);
+    background: rgba(230, 51, 117, 0.02);
+}
+
+.adicional-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    gap: 0.625rem;
+}
+
+.adicional-descripcion {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.adicional-control {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    flex: 1;
+}
+
+.adicional-control input[type="number"] {
+    width: 60px;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.adicional-control input[type="number"]:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+.btn-link-menor {
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    padding: 0.5rem;
+}
+
+.btn-link-menor:hover {
+    color: var(--brand-primary);
+}
+
+/* Compatibilidad con estilos antiguos */
+#SeleccionPasajero.custom_padding_4,
+#SeleccionPasajero .custom_padding_4 {
+    padding: 0;
+}
+
+#SeleccionPasajero #precios,
+#SeleccionPasajero #adicionales {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-main);
+    border-radius: 8px;
+}
+
+#SeleccionPasajero #precios h3,
+#SeleccionPasajero #adicionales h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem 0;
+}
+
+#SeleccionPasajero #precios p,
+#SeleccionPasajero #adicionales p {
+    margin: 0.5rem 0;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#SeleccionPasajero #precios p strong {
+    color: var(--brand-primary);
+    font-weight: 600;
+    margin-left: auto;
+}
+
+#SeleccionPasajero #precios input[type="radio"],
+#SeleccionPasajero #adicionales input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+/* Buscador de pasajeros moderno */
+#SeleccionPasajero #busqueda-pasajero {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+#SeleccionPasajero #txt-filter-pasajero {
+    width: 100%;
+    padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background: var(--white);
+}
+
+#SeleccionPasajero #txt-filter-pasajero:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+#SeleccionPasajero #busqueda-pasajero::before {
+    content: "\f52a";
+    font-family: "bootstrap-icons";
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Autocomplete suggestions */
+#SeleccionPasajero #autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: -1px;
+}
+
+#SeleccionPasajero .autocomplete-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#SeleccionPasajero .autocomplete-item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+    font-size: 0.875rem;
+}
+
+#SeleccionPasajero .autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+#SeleccionPasajero .autocomplete-item:hover {
+    background: rgba(230, 51, 117, 0.05);
+}
+
+#SeleccionPasajero .autocomplete-item {
+    position: relative;
+    padding-left: 2.5rem;
+}
+
+#SeleccionPasajero .autocomplete-item .checkbox-pasajero {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--brand-primary);
+    margin: 0;
+}
+
+#SeleccionPasajero .autocomplete-item .autocomplete-label {
+    cursor: pointer;
+    display: block;
+    width: 100%;
+}
+
+#SeleccionPasajero .autocomplete-item strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+#SeleccionPasajero .autocomplete-no-results {
+    padding: 0.5rem 0.75rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+#SeleccionPasajero #mensaje-inicial {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--text-secondary);
+}
+
+#SeleccionPasajero #mensaje-inicial i {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+    color: var(--brand-primary);
+    opacity: 0.5;
+}
+
+#SeleccionPasajero #mensaje-inicial p {
+    font-size: 0.875rem;
+}
+
+/* Lista de Pasajeros Seleccionados */
+#SeleccionPasajero #pasajeros-seleccionados {
+    margin-top: 1rem;
+}
+
+#SeleccionPasajero .badge-contador {
+    background: var(--brand-primary);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+#SeleccionPasajero .lista-pasajeros-container {
+    padding: 0.75rem 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#SeleccionPasajero .mensaje-sin-pasajeros {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--text-secondary);
+}
+
+#SeleccionPasajero .mensaje-sin-pasajeros i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: var(--brand-primary);
+    opacity: 0.5;
+}
+
+#SeleccionPasajero .mensaje-sin-pasajeros p {
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+#SeleccionPasajero .pasajero-seleccionado-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+#SeleccionPasajero .pasajero-seleccionado-item:hover {
+    border-color: var(--brand-primary);
+    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.1);
+}
+
+#SeleccionPasajero .pasajero-info {
+    flex: 1;
+}
+
+#SeleccionPasajero .pasajero-nombre {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+#SeleccionPasajero .pasajero-detalles {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+#SeleccionPasajero .pasajero-detalles span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+#SeleccionPasajero .pasajero-detalles i {
+    font-size: 0.875rem;
+}
+
+#SeleccionPasajero .btn-eliminar-pasajero {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#SeleccionPasajero .btn-eliminar-pasajero:hover {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.1);
+}
+
+#SeleccionPasajero .btn-continuar-reserva {
+    background: var(--brand-primary);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#SeleccionPasajero .btn-continuar-reserva:hover {
+    background: #c92a5f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.3);
+}
+
+#SeleccionPasajero .botonera-form {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Panel de butaca asignada */
+.panel-butaca-asignada {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 250px;
+    max-width: 350px;
+}
+
+.panel-butaca-asignada .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 8px 8px 0 0;
+}
+
+.panel-butaca-asignada .panel-header h4 {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.panel-butaca-asignada .btn-cerrar-panel {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-butaca-asignada .btn-cerrar-panel:hover {
+    color: var(--text-primary);
+}
+
+.panel-butaca-asignada .panel-content {
+    padding: 1rem;
+}
+
+.panel-butaca-asignada .panel-content p {
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.panel-butaca-asignada .panel-acciones {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.panel-butaca-asignada .btn-cambiar-pasajero,
+.panel-butaca-asignada .btn-liberar-butaca {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.panel-butaca-asignada .btn-cambiar-pasajero {
+    background: var(--brand-primary);
+    color: var(--white);
+    border-color: var(--brand-primary);
+}
+
+.panel-butaca-asignada .btn-cambiar-pasajero:hover {
+    background: #c92a5f;
+}
+
+.panel-butaca-asignada .btn-liberar-butaca:hover {
+    background: var(--bg-main);
+    border-color: #dc2626;
+    color: #dc2626;
+}
+
+/* Tabla de pasajeros moderna */
+#SeleccionPasajero #grid-pasajeros {
+    margin-bottom: 1.5rem;
+}
+
+#SeleccionPasajero table.mat-customtable,
+#SeleccionPasajero table.grid {
+    width: 100% !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--white);
+}
+
+#SeleccionPasajero table.mat-customtable thead,
+#SeleccionPasajero table.grid thead {
+    background: var(--bg-main);
+}
+
+#SeleccionPasajero table.mat-customtable thead th,
+#SeleccionPasajero table.grid thead th {
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+}
+
+#SeleccionPasajero table.mat-customtable thead th:last-child,
+#SeleccionPasajero table.grid thead th:last-child {
+    border-right: none;
+}
+
+#SeleccionPasajero table.mat-customtable tbody tr,
+#SeleccionPasajero table.grid tbody tr {
+    background: var(--white);
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+#SeleccionPasajero table.mat-customtable tbody tr:nth-child(even),
+#SeleccionPasajero table.grid tbody tr:nth-child(even),
+#SeleccionPasajero table.mat-customtable tbody tr.odd,
+#SeleccionPasajero table.grid tbody tr.odd {
+    background: #fafbfc;
+}
+
+#SeleccionPasajero table.mat-customtable tbody tr:hover,
+#SeleccionPasajero table.grid tbody tr:hover,
+#SeleccionPasajero table.mat-customtable tbody tr.row-pasajero:hover,
+#SeleccionPasajero table.grid tbody tr.row-pasajero:hover {
+    background: rgba(230, 51, 117, 0.05) !important;
+}
+
+#SeleccionPasajero table.mat-customtable tbody td,
+#SeleccionPasajero table.grid tbody td {
+    padding: 1rem;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+}
+
+#SeleccionPasajero table.mat-customtable tbody td:last-child,
+#SeleccionPasajero table.grid tbody td:last-child {
+    border-right: none;
+}
+
+#SeleccionPasajero table.mat-customtable tbody tr:last-child td,
+#SeleccionPasajero table.grid tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Botón cancelar - Ghost button */
+#SeleccionPasajero .botonera-form {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+#SeleccionPasajero .botonera-form a.btn,
+#SeleccionPasajero .botonera-form button.btn {
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#SeleccionPasajero .botonera-form a.btn:hover,
+#SeleccionPasajero .botonera-form button.btn:hover {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background: rgba(230, 51, 117, 0.05);
+    transform: translateY(-1px);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .modern-dashboard-header h2 {
@@ -854,5 +2614,14 @@ div.bnn_floating-banner.hidden {
     
     ul.viajes-lista {
         grid-template-columns: 1fr !important;
+    }
+
+    #panel-bus #container {
+        padding: 1rem;
+    }
+
+    .ui-dialog {
+        width: 95% !important;
+        max-width: 95% !important;
     }
 }

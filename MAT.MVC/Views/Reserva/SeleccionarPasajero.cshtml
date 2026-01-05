@@ -9,13 +9,10 @@
     });
 
     $('div#SeleccionPasajero').on('dialogclose', function (event) {
-        var eListMenor = $("#hdnListMenor").data("complete");
-        if (!eListMenor) {
-            $("#hdnListMenor").val("");
-            $("#hdnListMenor").data("tutor", $(this).data("id"));
-            $("#hdnListMenor").data("complete", true);
+        // Limpiar pasajeros seleccionados al cerrar sin confirmar
+        if (typeof window.pasajerosSeleccionadosModal !== 'undefined') {
+            window.pasajerosSeleccionadosModal = [];
         }
-        
     });
 
     function validarMenores() {
@@ -23,70 +20,377 @@
             return alert("Por favor defina la cantidad de seguros para menores.");
         }
         showFormListaMenor();
-
     };
 </script>
 
 <input id="input-piso" type="hidden" value="@ViewData["piso"]" />
-<div class="custom_padding_4">
-    <div id="precios">
-    <p>
-        <h3>Precios</h3>
-    </p>
-    @foreach (var item in @Model.Precios)
-    {
-        <p><input type="radio" name="radio_precio" value="@item.Descripcion.ToString().ToUpper()" data-monto="@item.Monto" data-id="@item.PrecioId" /> @item.Descripcion</p>
-    }
-
-    </div>
-    <div id="adicionales">
-        <p>
-            <h3>Adicionales</h3>
-        </p>
-   
-        @foreach (var item in @Model.Adicionales)
-        {
-            if (item.Descripcion.ToString().Contains("SEGURO MENOR"))
+<input id="input-moneda-tipo" type="hidden" value="@(Model.MonedaTipo ?? 1)" />
+<div class="custom_padding_4 seleccionar-pasajero-container">
+    <div class="seleccionar-pasajero-section">
+        <div class="section-header">
+            <i class="bi bi-tag"></i>
+            <h3>Precios</h3>
+        </div>
+        <div class="precios-list">
+            @foreach (var item in @Model.Precios)
             {
-                <div id="divSeguroMenor">
-                    <input id="numMenor" type="number" step="1" max="5" min="0" style="width: 30px" value="0" data-monto="@item.Monto" data-id="@item.AdicionalId" /> 
-                    <a href="javascript:validarMenores();" style="color: black;"><span>@item.Descripcion</span></a> 
-                </div>
-            
-            
+                var monedaTipo = Model.MonedaTipo ?? 1;
+                var esPesos = monedaTipo == 1;
+                var simboloMoneda = esPesos ? "$" : "U$S";
+                var claseMoneda = esPesos ? "moneda-pesos" : "moneda-dolar";
+                var textoMoneda = esPesos ? "ARS" : "USD";
+                
+                <label class="precio-item">
+                    <input type="radio" name="radio_precio" value="@item.Descripcion.ToString().ToUpper()" data-monto="@item.Monto" data-id="@item.PrecioId" />
+                    <div class="precio-content">
+                        <span class="precio-descripcion">@item.Descripcion</span>
+                        <span class="precio-badge @claseMoneda" data-moneda="@monedaTipo">
+                            <span class="precio-simbolo">@simboloMoneda</span>
+                            <span class="precio-monto">@item.Monto.ToString("N2")</span>
+                            <span class="precio-codigo">@textoMoneda</span>
+                        </span>
+                    </div>
+                </label>
             }
-            else
-            {
-                <p><input type="checkbox" name="check_adicional" value="@item.Descripcion" data-monto="@item.Monto" data-id="@item.AdicionalId" style="margin-left:31px;" /> @item.Descripcion</p>
-            }
-        
-        }
-    </div>
-    <br />
-    <div id="search-pasajero" style="display:none;">
-        <div id="busqueda-pasajero">
-            <input id="txt-filter-pasajero" type="text" placeholder="Ingrese Nombre o DNI" />
         </div>
     </div>
-    <div id="grid-pasajeros">
-        <div class="iconLoading"></div>
+
+    <div class="seleccionar-pasajero-section">
+        <div class="section-header">
+            <i class="bi bi-plus-circle"></i>
+            <h3>Adicionales</h3>
+        </div>
+        <div class="adicionales-list">
+            @foreach (var item in @Model.Adicionales)
+            {
+                var monedaTipo = Model.MonedaTipo ?? 1;
+                var esPesos = monedaTipo == 1;
+                var simboloMoneda = esPesos ? "$" : "U$S";
+                var claseMoneda = esPesos ? "moneda-pesos" : "moneda-dolar";
+                var textoMoneda = esPesos ? "ARS" : "USD";
+                
+                if (item.Descripcion.ToString().Contains("SEGURO MENOR"))
+                {
+                    <div class="adicional-item especial" id="divSeguroMenor">
+                        <div class="adicional-control">
+                            <input id="numMenor" type="number" step="1" max="5" min="0" value="0" data-monto="@item.Monto" data-id="@item.AdicionalId" />
+                            <label for="numMenor">
+                                <span class="adicional-descripcion">@item.Descripcion</span>
+                                <span class="precio-badge @claseMoneda badge-small">
+                                    <span class="precio-simbolo">@simboloMoneda</span>
+                                    <span class="precio-monto">@item.Monto.ToString("N2")</span>
+                                </span>
+                            </label>
+                        </div>
+                        <a href="javascript:validarMenores();" class="btn-link-menor">
+                            <i class="bi bi-info-circle"></i>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <label class="adicional-item">
+                        <input type="checkbox" name="check_adicional" value="@item.Descripcion" data-monto="@item.Monto" data-id="@item.AdicionalId" />
+                        <div class="adicional-content">
+                            <span class="adicional-descripcion">@item.Descripcion</span>
+                            <span class="precio-badge @claseMoneda badge-small">
+                                <span class="precio-simbolo">@simboloMoneda</span>
+                                <span class="precio-monto">@item.Monto.ToString("N2")</span>
+                            </span>
+                        </div>
+                    </label>
+                }
+            }
+        </div>
     </div>
 
-    <p class="botonera-form">
-        <a class="btn btn-small btn-inverse" id="btn-cancelar-seleccion">Cancelar Selección de Pasajero</a>
-    </p>
+    <div id="search-pasajero" style="display:block;">
+        <div id="busqueda-pasajero">
+            <input id="txt-filter-pasajero" type="text" placeholder="Buscar por nombre, apellido o DNI (mínimo 2 caracteres)..." autocomplete="off" />
+            <div id="autocomplete-suggestions" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Lista de Pasajeros Seleccionados -->
+    <div id="pasajeros-seleccionados" class="seleccionar-pasajero-section">
+        <div class="section-header">
+            <i class="bi bi-people"></i>
+            <h3>Pasajeros Seleccionados <span id="contador-pasajeros" class="badge-contador">0</span></h3>
+        </div>
+        <div id="lista-pasajeros-seleccionados" class="lista-pasajeros-container">
+            <div id="mensaje-sin-pasajeros" class="mensaje-sin-pasajeros">
+                <i class="bi bi-info-circle"></i>
+                <p>No hay pasajeros seleccionados. Busque y seleccione pasajeros usando los checkboxes.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="botonera-form">
+        <button type="button" class="btn btn-primary" id="btn-continuar-reserva">
+            <i class="bi bi-check-circle"></i> Continuar Reserva
+        </button>
+        <a class="btn btn-small btn-inverse" id="btn-cancelar-seleccion">Cancelar</a>
+    </div>
 </div>
 
 <script type="text/javascript">
     jQuery(function ($) {
-        $("div#grid-pasajeros").load("/Reserva/RenderGridPasajeros?viajeid=" + $("#id_viaje").val());
+        var viajeid = $("#id_viaje").val();
+        var autocompleteTimeout;
+        
+        // Inicializar array global de pasajeros seleccionados
+        if (typeof window.pasajerosSeleccionadosModal === 'undefined') {
+            window.pasajerosSeleccionadosModal = [];
+        }
+
         var piso = $("#input-piso").val();
         if (piso == "2") {
-            //$("#adicionales input[type=checkbox][value*=Cama]").attr("checked", true);
-            $("#adicionales input[type=checkbox][value*=CAMA]").attr("checked", true);
-            //$("#adicionales input[type=checkbox][value*=Cama]").parent().css("color", "red");
-            $("#adicionales input[type=checkbox][value*=CAMA]").parent().css("color", "red");
+            $(".adicionales-list input[type=checkbox][value*=CAMA]").attr("checked", true);
+            $(".adicionales-list input[type=checkbox][value*=CAMA]").closest(".adicional-item").addClass("selected");
         }
-    });
 
+        // Agregar clase 'selected' cuando se selecciona un precio o adicional
+        $(document).on("change", "input[name='radio_precio']", function () {
+            $(".precio-item").removeClass("selected");
+            $(this).closest(".precio-item").addClass("selected");
+        });
+
+        $(document).on("change", "input[name='check_adicional']", function () {
+            $(this).closest(".adicional-item").toggleClass("selected", $(this).is(":checked"));
+        });
+
+        // Autocomplete con búsqueda en servidor
+        $("#txt-filter-pasajero").on("input", function () {
+            var term = $(this).val().trim();
+            var suggestionsDiv = $("#autocomplete-suggestions");
+
+            clearTimeout(autocompleteTimeout);
+
+            if (term.length < 2) {
+                suggestionsDiv.hide().empty();
+                return;
+            }
+
+            autocompleteTimeout = setTimeout(function () {
+                $.ajax({
+                    url: "/Reserva/BuscarPasajerosAutocomplete",
+                    type: "POST",
+                    data: {
+                        viajeid: viajeid,
+                        term: term
+                    },
+                    success: function (data) {
+                        if (data && data.length > 0) {
+                            var html = '<ul class="autocomplete-list">';
+                            $.each(data, function (index, item) {
+                                var pasajeroId = item.id;
+                                var yaSeleccionado = verificarPasajeroDuplicado(pasajeroId);
+                                var checkedAttr = yaSeleccionado ? 'checked="checked"' : '';
+                                
+                                html += '<li class="autocomplete-item">' +
+                                        '<input type="checkbox" class="checkbox-pasajero" data-id="' + pasajeroId + '" ' +
+                                        'data-apellido="' + (item.apellido || '') + '" ' +
+                                        'data-nombre="' + (item.nombre || '') + '" ' +
+                                        'data-nrodoc="' + (item.nroDocumento || '') + '" ' +
+                                        'data-telefono="' + (item.telefono || '') + '" ' +
+                                        'data-tipodoc="' + (item.tipoDocumento || '') + '" ' +
+                                        checkedAttr + ' />' +
+                                        '<label class="autocomplete-label">' +
+                                        '<strong>' + (item.label || item.apellido + ', ' + item.nombre) + '</strong>' +
+                                        '</label>' +
+                                        '</li>';
+                            });
+                            html += '</ul>';
+                            suggestionsDiv.html(html).show();
+                        } else {
+                            suggestionsDiv.html('<ul class="autocomplete-list"><li class="autocomplete-no-results">No se encontraron resultados</li></ul>').show();
+                        }
+                    },
+                    error: function () {
+                        suggestionsDiv.hide();
+                    }
+                });
+            }, 300);
+        });
+
+        // Manejar cambio en checkbox de autocomplete
+        $(document).on("change", ".checkbox-pasajero", function () {
+            var checkbox = $(this);
+            var pasajero = {
+                id: checkbox.data("id"),
+                apellido: checkbox.data("apellido"),
+                nombre: checkbox.data("nombre"),
+                nrodoc: checkbox.data("nrodoc"),
+                telefono: checkbox.data("telefono"),
+                tipodoc: checkbox.data("tipodoc")
+            };
+
+            if (checkbox.is(":checked")) {
+                agregarPasajero(pasajero);
+            } else {
+                eliminarPasajero(pasajero.id);
+            }
+        });
+
+        // Manejar clic en label del autocomplete (marcar/desmarcar checkbox)
+        $(document).on("click", ".autocomplete-label", function (e) {
+            e.stopPropagation();
+            var checkbox = $(this).siblings(".checkbox-pasajero");
+            checkbox.prop("checked", !checkbox.prop("checked")).trigger("change");
+        });
+
+        // Manejar clic en el item completo (excepto checkbox y label)
+        $(document).on("click", ".autocomplete-item", function (e) {
+            if (!$(e.target).is("input, label, .autocomplete-label")) {
+                var checkbox = $(this).find(".checkbox-pasajero");
+                checkbox.prop("checked", !checkbox.prop("checked")).trigger("change");
+            }
+        });
+
+        // Ocultar sugerencias al hacer clic fuera
+        $(document).on("click", function (e) {
+            if (!$(e.target).closest("#busqueda-pasajero").length) {
+                $("#autocomplete-suggestions").hide();
+            }
+        });
+
+        // Función para verificar si un pasajero ya está seleccionado
+        function verificarPasajeroDuplicado(pasajeroId) {
+            return window.pasajerosSeleccionadosModal.some(function(p) {
+                return p.id === pasajeroId;
+            });
+        }
+
+        // Función para agregar pasajero a la lista
+        function agregarPasajero(pasajero) {
+            if (!verificarPasajeroDuplicado(pasajero.id)) {
+                window.pasajerosSeleccionadosModal.push(pasajero);
+                renderizarPasajerosSeleccionados();
+                actualizarContador();
+            }
+        }
+
+        // Función para eliminar pasajero de la lista
+        function eliminarPasajero(pasajeroId) {
+            window.pasajerosSeleccionadosModal = window.pasajerosSeleccionadosModal.filter(function(p) {
+                return p.id !== pasajeroId;
+            });
+            renderizarPasajerosSeleccionados();
+            actualizarContador();
+            
+            // Actualizar checkbox en autocomplete si está visible
+            $("#autocomplete-suggestions .checkbox-pasajero[data-id='" + pasajeroId + "']").prop("checked", false);
+        }
+
+        // Función para renderizar la lista de pasajeros seleccionados
+        function renderizarPasajerosSeleccionados() {
+            var container = $("#lista-pasajeros-seleccionados");
+            var mensaje = $("#mensaje-sin-pasajeros");
+            
+            if (window.pasajerosSeleccionadosModal.length === 0) {
+                mensaje.show();
+                container.find(".pasajero-seleccionado-item").remove();
+                return;
+            }
+
+            mensaje.hide();
+            container.find(".pasajero-seleccionado-item").remove();
+
+            $.each(window.pasajerosSeleccionadosModal, function(index, pasajero) {
+                var item = $('<div class="pasajero-seleccionado-item"></div>');
+                item.html(
+                    '<div class="pasajero-info">' +
+                        '<div class="pasajero-nombre">' +
+                            '<strong>' + (pasajero.apellido || '') + ', ' + (pasajero.nombre || '') + '</strong>' +
+                        '</div>' +
+                        '<div class="pasajero-detalles">' +
+                            '<span class="pasajero-dni"><i class="bi bi-card-text"></i> DNI: ' + (pasajero.nrodoc || 'N/A') + '</span>' +
+                            '<span class="pasajero-telefono"><i class="bi bi-telephone"></i> ' + (pasajero.telefono || 'Sin teléfono') + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button type="button" class="btn-eliminar-pasajero" data-id="' + pasajero.id + '" title="Eliminar">' +
+                        '<i class="bi bi-x-circle"></i>' +
+                    '</button>'
+                );
+                container.append(item);
+            });
+        }
+
+        // Función para actualizar contador
+        function actualizarContador() {
+            var count = window.pasajerosSeleccionadosModal.length;
+            $("#contador-pasajeros").text(count);
+        }
+
+        // Eliminar pasajero al hacer clic en botón eliminar
+        $(document).on("click", ".btn-eliminar-pasajero", function () {
+            var pasajeroId = $(this).data("id");
+            eliminarPasajero(pasajeroId);
+        });
+
+        // Botón Continuar Reserva
+        $("#btn-continuar-reserva").on("click", function () {
+            // Validar que haya pasajeros seleccionados
+            if (window.pasajerosSeleccionadosModal.length === 0) {
+                alert("Por favor seleccione al menos un pasajero.");
+                return false;
+            }
+
+            // Validar que haya un precio seleccionado
+            if ($("input[name='radio_precio']:checked").length === 0) {
+                alert("Por favor seleccione un precio.");
+                return false;
+            }
+
+            // Guardar información de precio y adicionales
+            var precioId = $("input[name='radio_precio']:checked").data("id");
+            var precioMonto = $("input[name='radio_precio']:checked").data("monto");
+            var adicionales = [];
+            
+            $("input[name='check_adicional']:checked").each(function () {
+                adicionales.push($(this).data("id"));
+            });
+
+            var nroMenores = parseInt($("#numMenor").val() || 0);
+            for (var i = 0; i < nroMenores; i++) {
+                adicionales.push($("#numMenor").data("id"));
+            }
+
+            // Guardar información global para usar en la asignación de butacas
+            window.infoReservaModal = {
+                pasajeros: window.pasajerosSeleccionadosModal,
+                precioId: precioId,
+                precioMonto: precioMonto,
+                adicionales: adicionales.join(";"),
+                nroMenores: nroMenores
+            };
+
+            // Si hay una butaca seleccionada, asignar el primer pasajero automáticamente
+            if (window.butacaActualSeleccionada) {
+                var primerPasajero = window.pasajerosSeleccionadosModal[0];
+                if (primerPasajero && typeof asignarPasajeroAButaca === 'function') {
+                    asignarPasajeroAButaca(window.butacaActualSeleccionada, primerPasajero.id, precioId, adicionales.join(";"));
+                    
+                    // Si hay más pasajeros, mostrar mensaje
+                    if (window.pasajerosSeleccionadosModal.length > 1) {
+                        setTimeout(function() {
+                            alert('Pasajero asignado a la butaca. ' + (window.pasajerosSeleccionadosModal.length - 1) + ' pasajero(s) disponible(s) para asignar a otras butacas.');
+                        }, 300);
+                    }
+                }
+            }
+
+            // Cerrar el modal
+            $("#SeleccionPasajero").dialog("close");
+        });
+
+        // Botón Cancelar
+        $("#btn-cancelar-seleccion").on("click", function () {
+            window.pasajerosSeleccionadosModal = [];
+            $("#SeleccionPasajero").dialog("close");
+        });
+
+        // Inicializar contador
+        actualizarContador();
+    });
 </script>

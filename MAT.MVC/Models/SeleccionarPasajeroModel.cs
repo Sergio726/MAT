@@ -14,27 +14,72 @@ namespace MAT.MVC.Models
 
         public List<Entities.Precio> Precios { get; set; }
         public List<Entities.Adicional> Adicionales { get; set; }
+        public int? MonedaTipo { get; set; } // 1 = Pesos, 3 = Dólar
 
 
         public SeleccionarPasajeroModel(Guid paqueteid)
         {
-            precioService = new PrecioService();
-            adicionalService = new AdicionalService();
+            // Inicializar listas por defecto
+            Precios = new List<Entities.Precio>();
+            Adicionales = new List<Entities.Adicional>();
+            MonedaTipo = 1; // Default a pesos si no se puede obtener
 
-            List<Entities.PaquetePrecio> _paqueteprecios = new PaquetePrecioService().GetByPaqueteId(paqueteid).ToList();
-            List<Entities.PaqueteAdicional> _paqueteadicionales = new PaqueteAdicionalService().GetByPaqueteId(paqueteid).ToList();
-            List<Entities.Precio> _precios = new List<Precio>();
-            foreach (var item in _paqueteprecios)
+            try
             {
-                _precios.Add(precioService.GetByPrecioId(item.PrecioId.Value));
+                precioService = new PrecioService();
+                adicionalService = new AdicionalService();
+
+                // Obtener información del Paquete para la moneda
+                try
+                {
+                    PaqueteService paqueteService = new PaqueteService();
+                    Entities.Paquete paquete = paqueteService.GetByPaqueteId(paqueteid);
+                    if (paquete != null && paquete.Moneda.HasValue)
+                    {
+                        MonedaTipo = paquete.Moneda.Value;
+                    }
+                }
+                catch
+                {
+                    // Si hay error obteniendo el paquete, usar default (pesos)
+                    MonedaTipo = 1;
+                }
+
+                List<Entities.PaquetePrecio> _paqueteprecios = new PaquetePrecioService().GetByPaqueteId(paqueteid).ToList();
+                List<Entities.PaqueteAdicional> _paqueteadicionales = new PaqueteAdicionalService().GetByPaqueteId(paqueteid).ToList();
+                List<Entities.Precio> _precios = new List<Precio>();
+                foreach (var item in _paqueteprecios)
+                {
+                    if (item.PrecioId.HasValue)
+                    {
+                        var precio = precioService.GetByPrecioId(item.PrecioId.Value);
+                        if (precio != null)
+                        {
+                            _precios.Add(precio);
+                        }
+                    }
+                }
+                Precios = _precios;
+                List<Entities.Adicional> _adicionales = new List<Adicional>();
+                foreach (var item in _paqueteadicionales)
+                {
+                    if (item.AdicionalId.HasValue)
+                    {
+                        var adicional = adicionalService.GetByAdicionalId(item.AdicionalId.Value);
+                        if (adicional != null)
+                        {
+                            _adicionales.Add(adicional);
+                        }
+                    }
+                }
+                Adicionales = _adicionales;
             }
-            Precios = _precios;
-            List<Entities.Adicional> _adicionales = new List<Adicional>();
-            foreach (var item in _paqueteadicionales)
+            catch
             {
-                _adicionales.Add(adicionalService.GetByAdicionalId(item.AdicionalId.Value));
+                // Si hay cualquier error, mantener las listas vacías pero inicializadas
+                Precios = Precios ?? new List<Entities.Precio>();
+                Adicionales = Adicionales ?? new List<Entities.Adicional>();
             }
-            Adicionales = _adicionales;
         }
     }
 }

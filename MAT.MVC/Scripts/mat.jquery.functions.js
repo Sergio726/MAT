@@ -19,7 +19,7 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
 
-    var divLoading = "<div class='iconLoading'></div>";
+    var divLoading = "<div class='d-flex justify-content-center align-items-center' style='min-height: 200px;'><div class='spinner-border text-primary' role='status'><span class='visually-hidden'>Cargando...</span></div></div>";
     $("#" + dialogid).html(divLoading);
     $.ajax({
         url: url,

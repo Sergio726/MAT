@@ -137,7 +137,7 @@ namespace MAT.MVC.Controllers.Reserva
         }
 
 
-        public ActionResult RenderGridPasajeros(Guid viajeid, string filter)
+        public ActionResult RenderGridPasajeros(Guid viajeid, string filter = "", int pageSize = 50, int pageIndex = 0)
         {
             List<MAT.Entities.PersonaCliente> LPersonaCliente = new List<MAT.Entities.PersonaCliente>();
             try
@@ -148,9 +148,37 @@ namespace MAT.MVC.Controllers.Reserva
                     };
                 SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetClientesDisponibles", dbParams);
 
+                int currentIndex = 0;
+                int skipCount = pageIndex * pageSize;
+                int takeCount = 0;
 
                 while (_reader.Read())
                 {
+                    // Aplicar filtro si existe
+                    string apellido = _reader["Apellido"].ToString().ToLower();
+                    string nombre = _reader["Nombre"].ToString().ToLower();
+                    string nroDoc = _reader["NroDocumento"].ToString().ToLower();
+                    string searchTerm = string.IsNullOrEmpty(filter) ? "" : filter.ToLower();
+
+                    bool matchesFilter = string.IsNullOrEmpty(filter) || 
+                                        apellido.Contains(searchTerm) || 
+                                        nombre.Contains(searchTerm) || 
+                                        nroDoc.Contains(searchTerm);
+
+                    if (!matchesFilter)
+                        continue;
+
+                    // Paginación: saltar registros hasta llegar a la página solicitada
+                    if (currentIndex < skipCount)
+                    {
+                        currentIndex++;
+                        continue;
+                    }
+
+                    // Tomar solo los registros de la página actual
+                    if (takeCount >= pageSize)
+                        break;
+
                     MAT.Entities.PersonaCliente item = new MAT.Entities.PersonaCliente();
                     item.ClienteId = new Guid(_reader["ClienteID"].ToString());
                     item.Apellido = _reader["Apellido"].ToString();
@@ -161,6 +189,8 @@ namespace MAT.MVC.Controllers.Reserva
                     item.Email = _reader["Email"].ToString();
                     LPersonaCliente.Add(item);
 
+                    currentIndex++;
+                    takeCount++;
                 }
             }
             catch
@@ -169,6 +199,65 @@ namespace MAT.MVC.Controllers.Reserva
             }
 
             return PartialView(LPersonaCliente);
+        }
+
+        // Endpoint para autocomplete - devuelve solo sugerencias (máximo 20)
+        [HttpPost]
+        public JsonResult BuscarPasajerosAutocomplete(Guid viajeid, string term)
+        {
+            List<object> sugerencias = new List<object>();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(term) || term.Length < 2)
+                {
+                    return Json(sugerencias, JsonRequestBehavior.AllowGet);
+                }
+
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(viajeid)),
+                };
+                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetClientesDisponibles", dbParams);
+
+                string searchTerm = term.ToLower();
+                int count = 0;
+                int maxResults = 20;
+
+                while (_reader.Read() && count < maxResults)
+                {
+                    string apellido = _reader["Apellido"].ToString().ToLower();
+                    string nombre = _reader["Nombre"].ToString().ToLower();
+                    string nroDoc = _reader["NroDocumento"].ToString().ToLower();
+                    string nombreCompleto = _reader["Apellido"].ToString() + ", " + _reader["Nombre"].ToString();
+
+                    // Buscar en apellido, nombre o documento
+                    if (apellido.Contains(searchTerm) || 
+                        nombre.Contains(searchTerm) || 
+                        nroDoc.Contains(searchTerm) ||
+                        nombreCompleto.ToLower().Contains(searchTerm))
+                    {
+                        sugerencias.Add(new
+                        {
+                            id = _reader["ClienteID"].ToString(),
+                            label = nombreCompleto + " - DNI: " + _reader["NroDocumento"].ToString(),
+                            value = nombreCompleto,
+                            apellido = _reader["Apellido"].ToString(),
+                            nombre = _reader["Nombre"].ToString(),
+                            nroDocumento = _reader["NroDocumento"].ToString(),
+                            tipoDocumento = _reader["TipoDocumento"].ToString(),
+                            telefono = _reader["Telefono"].ToString(),
+                            email = _reader["Email"].ToString()
+                        });
+                        count++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error si es necesario
+            }
+
+            return Json(sugerencias, JsonRequestBehavior.AllowGet);
         }
 
         

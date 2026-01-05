@@ -52,7 +52,7 @@
 
         <div class="container-fluid">
             <div class="row g-4">
-                <div class="col-lg-4 col-md-5">
+                <div class="col-lg-3 col-md-5">
                     <section id="panel-detalle">
                         <div class="modern-card">
                             <div class="modern-card-header">
@@ -67,7 +67,7 @@
                         </div>
                     </section>
                 </div>
-                <div class="col-lg-8 col-md-7">
+                <div class="col-lg-9 col-md-7">
                     <section id="panel-bus">
                         <div class="modern-card">
                             <div class="modern-card-content" style="padding: 2rem;">
@@ -272,81 +272,98 @@
                                 <script type="text/javascript">
                                     $(function () {
                                         $("#bus-tabs").tabs();
+                                        // Función para inicializar los estados de las butacas
                                         $("#panel-bus a").each(function () {
-                                            var estado = parseInt($(this).data("estado"));
-                                            if (estado == 1) {
-                                                $(this).addClass("disponible");
-                                            } else if (estado == 3) {
-                                                $(this).removeClass("disponible");
-                                                $(this).addClass("señado");
-                                            } else if (estado == 4) {
-                                                $(this).removeClass("disponible");
-                                                $(this).addClass("reservado");
-                                            } else if (estado == 5) {
-                                                $(this).removeClass("disponible");
-                                                $(this).addClass("prereserva");
-                                            } else if (estado == 6) {
-                                                $(this).removeClass("disponible");
-                                                $(this).addClass("reservahotel");
-                                            } else if (estado == 8) {
-                                                $(this).removeClass("disponible");
-                                                $(this).addClass("reservapasajehotel");
-                                            } else if (estado == 9) {
-                                                $(this).removeClass("disponible");
-                                                $(this).addClass("prereservahotel");
+                                            var $butaca = $(this);
+                                            var estado = parseInt($butaca.data("estado"));
+                                            
+                                            // Remover todas las clases de estado previas
+                                            $butaca.removeClass("disponible señado reservado prereserva reservahotel reservapasajehotel prereservahotel");
+                                            
+                                            // Aplicar clase según el estado
+                                            switch (estado) {
+                                                case 1:
+                                                    $butaca.addClass("disponible");
+                                                    break;
+                                                case 2:
+                                                    // Estado 2 (Reservado sin pagar) - Similar a señado
+                                                    $butaca.addClass("señado");
+                                                    break;
+                                                case 3:
+                                                    $butaca.addClass("señado");
+                                                    break;
+                                                case 4:
+                                                    $butaca.addClass("reservado");
+                                                    break;
+                                                case 5:
+                                                    $butaca.addClass("prereserva");
+                                                    break;
+                                                case 6:
+                                                    $butaca.addClass("reservahotel");
+                                                    break;
+                                                case 7:
+                                                    // Estado 7 (Anulado) - Se mantiene sin clase específica, se maneja por data-estado en CSS
+                                                    break;
+                                                case 8:
+                                                    $butaca.addClass("reservapasajehotel");
+                                                    break;
+                                                case 9:
+                                                    $butaca.addClass("prereservahotel");
+                                                    break;
+                                                default:
+                                                    // Si no tiene estado definido, asumir disponible
+                                                    if (!estado || estado === 0) {
+                                                        $butaca.addClass("disponible");
+                                                    }
+                                                    break;
                                             }
                                         });
                                     });
                                 </script>
 
-                                <div id="tabla-referencia" style="margin-top: 2rem;">
-                                    <div class="modern-card widget" data-toggle="collapse-widget" data-collapse-closed="false">
-                                        <div class="modern-card-header widget-head" style="cursor: pointer;">
-                                            <div class="modern-card-header-content">
-                                                <i class="bi bi-list-ul"></i>
-                                                <h4>Tabla de Referencias</h4>
-                                            </div>
-                                            <span class="collapse-toggle"><i class="bi bi-chevron-down"></i></span>
+                                <div id="tabla-referencia">
+                                    <div class="referencias-compact">
+                                        <div class="referencias-title">
+                                            <i class="bi bi-info-circle"></i>
+                                            <span>Referencia de Estados</span>
                                         </div>
-                                        <div class="modern-card-content widget-body collapse show scroll_x" style="height: auto; max-height: 150px;">
-                                            <ul class="referencias" style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 1.5rem;">
-                                                <li style="display: flex; align-items: center; gap: 0.5rem;">
-                                                    <a class="disponible" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0;">Disponible</p>
-                                                </li>
-                                                <li style="display: flex; align-items: center; gap: 0.5rem;">
-                                                    <a class="seleccionado" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0;">Seleccionado</p>
-                                                </li>
-                                                <li style="display: flex; align-items: center; gap: 0.5rem;">
-                                                    <a class="señado" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0;">Señado</p>
-                                                </li>
-                                                <li style="display: flex; align-items: center; gap: 0.5rem;">
-                                                    <a class="reservado_ref" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0;">Pagado</p>
-                                                </li>
-                                                <li style="display: flex; align-items: center; gap: 0.5rem;">
-                                                    <a class="prereserva" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0;">Pre-reserva</p>
-                                                </li>
-                                                <li style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px;">
-                                                    <a class="reservahotel" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0; font-size: 0.875rem;">Pasaje Pagado y Hotel Reservado</p>
-                                                </li>
-                                                <li style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px;">
-                                                    <a class="reservapasajehotel_ref" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0; font-size: 0.875rem;">Pasaje Señado y Hotel Reservado</p>
-                                                </li>
-                                                <li style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px;">
-                                                    <a class="prereservapasajehotel_ref" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0; font-size: 0.875rem;">Pasaje Pre-Reserva y Hotel Pre-Reservado</p>
-                                                </li>
-                                                <li style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px;">
-                                                    <a class="SenaIncompleta" style="width: 20px; height: 20px; display: inline-block; border-radius: 4px;"></a>
-                                                    <p style="margin: 0; font-size: 0.875rem;">No cumple con el mínimo de Seña</p>
-                                                </li>
-                                            </ul>
+                                        <div class="referencias-grid">
+                                            <div class="referencia-item">
+                                                <a class="disponible" title="Disponible"></a>
+                                                <span>Disponible</span>
+                                            </div>
+                                            <div class="referencia-item">
+                                                <a class="seleccionado" title="Seleccionado"></a>
+                                                <span>Seleccionado</span>
+                                            </div>
+                                            <div class="referencia-item">
+                                                <a class="señado" title="Señado"></a>
+                                                <span>Señado</span>
+                                            </div>
+                                            <div class="referencia-item">
+                                                <a class="reservado_ref" title="Pagado"></a>
+                                                <span>Pagado</span>
+                                            </div>
+                                            <div class="referencia-item">
+                                                <a class="prereserva" title="Pre-reserva"></a>
+                                                <span>Pre-reserva</span>
+                                            </div>
+                                            <div class="referencia-item referencia-item-hotel">
+                                                <a class="reservahotel" title="Pasaje Pagado y Hotel Reservado"></a>
+                                                <span>Pagado + Hotel</span>
+                                            </div>
+                                            <div class="referencia-item referencia-item-hotel">
+                                                <a class="reservapasajehotel_ref" title="Pasaje Señado y Hotel Reservado"></a>
+                                                <span>Señado + Hotel</span>
+                                            </div>
+                                            <div class="referencia-item referencia-item-hotel">
+                                                <a class="prereservapasajehotel_ref" title="Pasaje Pre-Reserva y Hotel Pre-Reservado"></a>
+                                                <span>Pre-reserva + Hotel</span>
+                                            </div>
+                                            <div class="referencia-item referencia-item-alert">
+                                                <a class="SenaIncompleta" title="No cumple con el mínimo de Seña"></a>
+                                                <span>Seña Incompleta</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

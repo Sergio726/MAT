@@ -209,12 +209,14 @@ $(document).on("click", "#btnReservarPasaje", function () {
     });
 });
 
-$(document).on("keypress", "#txt-filter-pasajero", function () {
-    var filter = $(this).val();
-    var viajeid = $("#id_viaje").val();
-    var url = "/Reserva/RenderGridPasajeros?viajeid=" + viajeid + "&filter=" + filter;
-    $("div#grid-pasajeros").load(url);
-});
+// El filtrado ahora se maneja en SeleccionarPasajero.cshtml con autocomplete
+// Este evento se mantiene por compatibilidad pero ya no se usa
+// $(document).on("keypress", "#txt-filter-pasajero", function () {
+//     var filter = $(this).val();
+//     var viajeid = $("#id_viaje").val();
+//     var url = "/Reserva/RenderGridPasajeros?viajeid=" + viajeid + "&filter=" + filter;
+//     $("div#grid-pasajeros").load(url);
+// });
 
 $(document).on("keypress", "#txt-filter-cliente", function () {
     var filter = $(this).val();
@@ -222,52 +224,8 @@ $(document).on("keypress", "#txt-filter-cliente", function () {
     $("div#grid-clientes").load(url);
 });
 
-$(document).on("click", "#grid-seleccionar-pasajero tr.row-pasajero", function () {
- 
-    var nroMenores = $("#numMenor").val();
-
-    
-    var listMenores = $("#hdnListMenor").val();
-
-    if (nroMenores > 0 && listMenores == "") {
-        return alert("Ud tiene seleccionado uno o mas seguros para menores, por favor seleccione los menores correspondientes.");
-    }
-
-    if ($("input[name=radio_precio]:checked").size() > 0) {
-        $("#" + $("#id_pasaje").attr("value").trim()).data("pasajero", $(this).find("td:eq(0)").text());
-        $("#" + $("#id_pasaje").attr("value").trim()).data("precio", $("input[name=radio_precio]:checked").data("id"));
-        var adicionales = new Array();
-        
-        $("input[name=check_adicional]:checked").each(function () {
-            adicionales.push($(this).data("id"));
-        });
-
-        var nroMenores = parseInt($("#numMenor").val());
-        for (var i = 0; i < nroMenores; i++) {
-            adicionales.push($("#numMenor").data("id"));
-        }
-       
-        $("#" + $("#id_pasaje").attr("value").trim()).data("adicionales", adicionales.join(";"));
-        $("#" + $("#id_pasaje").attr("value").trim()).removeClass("disponible");
-
-        //solo se pueden vincular los menores a un solo adulto de la factura
-        if (nroMenores != undefined) {
-            var eListMenor = $("#hdnListMenor").data("complete");
-            var monto = $("#numMenor").val() * $("#numMenor").data("monto");
-
-            if (!eListMenor) {
-                $("#hdnListMenor").data("tutor", $(this).data("id"));
-                $("#hdnListMenor").data("monto", monto);
-                $("#hdnListMenor").data("complete", true);
-            }
-        }
-       
-        
-        $("#SeleccionPasajero").dialog("close");
-    } else {
-        alert("Seleccione al menos una opción de precio de la lista de precios por favor.");
-    }
-});
+// Handler de DataTable eliminado - ahora se usa sistema de checkboxes en autocomplete
+// $(document).on("click", "#grid-seleccionar-pasajero tbody tr.row-pasajero", function (e) { ... });
 
 /*
 $(document).on("click", "#btn-reservar", function () {
@@ -309,18 +267,70 @@ $(document).on("click", "#btn-reservar", function () {
 $(document).on("click", "#btn-reservar", function () {
     if ($("#panel-bus a.selected").size() > 0) {
         var pasajesList = new Hashtable();
-
         var pasajes = [];
+        var butacasSinPasajero = [];
+
+        // Validar que todas las butacas seleccionadas tengan pasajero asignado
         $("#panel-bus a.selected").each(function () {
+            var pasajeroid = $(this).data("pasajero");
+            var precioid = $(this).data("precio");
+            
+            if (!pasajeroid || pasajeroid.toString().trim() === "") {
+                butacasSinPasajero.push($(this).attr("id"));
+            }
+        });
+
+        if (butacasSinPasajero.length > 0) {
+            alert("Hay " + butacasSinPasajero.length + " butaca(s) seleccionada(s) sin pasajero asignado. Por favor asigne un pasajero a cada butaca antes de reservar.");
+            return;
+        }
+
+        // Recopilar información de todas las butacas seleccionadas
+        $("#panel-bus a.selected").each(function () {
+            var pasajeroid = $(this).data("pasajero");
+            var precioid = $(this).data("precio");
+            var adicionalesid = $(this).data("adicionales") || "";
+            
+            // Si no tiene precio, usar el del modal si está disponible
+            if (!precioid && window.infoReservaModal && window.infoReservaModal.precioId) {
+                precioid = window.infoReservaModal.precioId;
+            }
+            
+            // Si no tiene adicionales, usar los del modal si está disponible
+            if (!adicionalesid && window.infoReservaModal && window.infoReservaModal.adicionales) {
+                adicionalesid = window.infoReservaModal.adicionales;
+            }
+
             var pasaje = {
                 "pasajeid": $(this).attr("id").trim(),
-                "pasajeroid": $(this).data("pasajero").trim(),
-                "precioid": $(this).data("precio").trim(),
-                "adicionalesid": $(this).data("adicionales").trim()
-            }
+                "pasajeroid": pasajeroid.toString().trim(),
+                "precioid": precioid ? precioid.toString().trim() : "",
+                "adicionalesid": adicionalesid.toString().trim()
+            };
+            
             pasajes.push(pasaje);
-            pasajesList.put($(this).attr("id").trim(), $(this).data("pasajero").trim());
+            pasajesList.put($(this).attr("id").trim(), pasajeroid.toString().trim());
         });
+
+        if (pasajes.length === 0) {
+            alert("No hay pasajes válidos para reservar.");
+            return;
+        }
+
+        // Manejar lógica de menores si aplica
+        var nroMenores = window.infoReservaModal ? window.infoReservaModal.nroMenores : 0;
+        if (nroMenores > 0) {
+            var eListMenor = $("#hdnListMenor").data("complete");
+            var montoSeguroMenor = $("#hdnListMenor").data("monto");
+            
+            if (!eListMenor && pasajes.length > 0) {
+                // Asignar tutor al primer pasajero
+                var primerPasajeroId = pasajes[0].pasajeroid;
+                $("#hdnListMenor").data("tutor", primerPasajeroId);
+                $("#hdnListMenor").data("monto", montoSeguroMenor || (nroMenores * ($("#numMenor").data("monto") || 0)));
+                $("#hdnListMenor").data("complete", true);
+            }
+        }
 
         var _data = {"pasajes": pasajes};
         $.ajax({
@@ -333,24 +343,15 @@ $(document).on("click", "#btn-reservar", function () {
                 var dialogid = "FormReserva";
                 var dialogtitle = "Reserva de Pasajes";
                 ShowFormDialogHTML(result, dialogid, dialogtitle, "min");
-
+            },
+            error: function(xhr, status, error) {
+                alert("Error al procesar la reserva: " + error);
             }
         });
-        //var url = "/Reserva/FormReserva?jsonobject=" + JSON.stringify(pasajes);
-
-        //var eListMenor = $("#hdnListMenor").data("complete");
-        //var montoSeguroMenor = $("#hdnListMenor").data("monto");
-
-        //if (eListMenor) {
-        //    url = url + "&montoSeguroMenor=" + montoSeguroMenor;
-        //}
-
-       
 
     } else {
         alert("Sr. Usuario debe seleccionar al menos una butaca para la reserva.");
     }
-
 });
 
 $(function () {
