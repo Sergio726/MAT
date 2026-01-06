@@ -273,7 +273,8 @@
                                     $(function () {
                                         $("#bus-tabs").tabs();
                                         // Función para inicializar los estados de las butacas
-                                        $("#panel-bus a").each(function () {
+                                        // Solo afectar a las butacas reales (dentro de .piso_superior, .piso_inferior), no a la tabla de referencias
+                                        $("#panel-bus .piso_superior a, #panel-bus .piso_inferior a").each(function () {
                                             var $butaca = $(this);
                                             var estado = parseInt($butaca.data("estado"));
                                             
@@ -321,7 +322,47 @@
                                     });
                                 </script>
 
-                                <div id="tabla-referencia">
+                                <!-- Botonera -->
+                                <div class="botonera-form" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                                    <button id="btn-reservar" type="button" class="btn btn-modern btn-primary" title="Reservar">
+                                        <i class="bi bi-check-circle"></i>
+                                        <span>Reservar</span>
+                                    </button>
+                                    <button id="btn-nomina" data-id="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Lista Completa">
+                                        <i class="bi bi-file-text"></i>
+                                        <span>Manifiesto</span>
+                                    </button>
+                                    <button id="btn-listasimple" data-id="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Lista de Pasajero">
+                                        <i class="bi bi-people"></i>
+                                        <span>Lista de Pasajeros</span>
+                                    </button>
+                                    <button id="btn-distribucion-habitaciones" data-viaje="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Distribución de Habitaciones">
+                                        <i class="bi bi-house-door"></i>
+                                        <span>Distribución de Habitaciones</span>
+                                    </button>
+                                    <button id="btn-distribucion-coche" data-viaje="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Distribución de Butacas">
+                                        <i class="bi bi-grid-3x3-gap"></i>
+                                        <span>Distribución de Butacas</span>
+                                    </button>
+                                    <button id="btn-ObservacionViaje" type="button" class="btn btn-modern btn-secondary" title="Observaciones del Viaje" onclick="javascript: showObservacion();">
+                                        <i class="bi bi-chat-left-text"></i>
+                                        <span>Observaciones</span>
+                                    </button>
+                                    <button type="button" class="btn btn-modern btn-secondary" title="Vinculación de menores" onclick="showVinculosMenor();">
+                                        <i class="bi bi-person-heart"></i>
+                                        <span>Vinculación de Menores</span>
+                                    </button>
+                                    <button type="button" class="btn btn-modern btn-secondary" title="Ver lista de facturas de este viaje" onclick="javascript:goFacturas('@(ViajeID.ToString())');">
+                                        <i class="bi bi-receipt-cutoff"></i>
+                                        <span>Facturas</span>
+                                    </button>
+                                    <button type="button" class="btn btn-modern btn-secondary" title="Lista de Espera" onclick="openWaitingList();">
+                                        <i class="bi bi-clock-history"></i>
+                                        <span>Lista de Espera</span>
+                                    </button>
+                                </div>
+
+                                <div id="tabla-referencia" style="margin-top: 1.5rem;">
                                     <div class="referencias-compact">
                                         <div class="referencias-title">
                                             <i class="bi bi-info-circle"></i>
@@ -373,99 +414,80 @@
                 </div>
             </div>
         </div>
-        
-        <div class="container-fluid" style="margin-top: 2rem;">
-            <div class="modern-card">
-                <div class="modern-card-content" style="padding: 1.5rem;">
-                    <div class="botonera-form">
-                        <button id="btn-reservar" type="button" class="btn btn-modern btn-primary" title="Reservar">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Reservar</span>
-                        </button>
-                        <button id="btn-nomina" data-id="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Lista Completa">
-                            <i class="bi bi-file-text"></i>
-                            <span>Manifiesto</span>
-                        </button>
-                        <button id="btn-listasimple" data-id="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Lista de Pasajero">
-                            <i class="bi bi-people"></i>
-                            <span>Lista de Pasajeros</span>
-                        </button>
-                        <button id="btn-distribucion-habitaciones" data-viaje="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Distribución de Habitaciones">
-                            <i class="bi bi-house-door"></i>
-                            <span>Distribución de Habitaciones</span>
-                        </button>
-                        <button id="btn-distribucion-coche" data-viaje="@ViajeID" type="button" class="btn btn-modern btn-secondary" title="Distribución de Butacas">
-                            <i class="bi bi-grid-3x3-gap"></i>
-                            <span>Distribución de Butacas</span>
-                        </button>
-                        <button id="btn-ObservacionViaje" type="button" class="btn btn-modern btn-secondary" title="Observaciones del Viaje" onclick="javascript: showObservacion();">
-                            <i class="bi bi-chat-left-text"></i>
-                            <span>Observaciones</span>
-                        </button>
-                        <button type="button" class="btn btn-modern btn-secondary" title="Vinculación de menores" onclick="showVinculosMenor();">
-                            <i class="bi bi-person-heart"></i>
-                            <span>Vinculación de Menores</span>
-                        </button>
-                        <button type="button" class="btn btn-modern btn-secondary" title="Ver lista de facturas de este viaje" onclick="javascript:goFacturas('@(ViajeID.ToString())');">
-                            <i class="bi bi-receipt-cutoff"></i>
-                            <span>Facturas</span>
-                        </button>
-                        <button type="button" class="btn btn-modern btn-secondary" title="Lista de Espera" onclick="openWaitingList();">
-                            <i class="bi bi-clock-history"></i>
-                            <span>Lista de Espera</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <input type="hidden" id="hdnPasajeroID" value="" />
         <input type="hidden" id="hdnListMenor" value="" data-tutor="" data-complete="false" data-monto=""/>
         <input type="hidden" id="hdnViajeID" value="@ViajeID" />
         <input type="hidden" id="hdnViajeMonedaTipo" value="@Model.First().MonedaTipo.ToString()" />
 
-        <div class="float-rigth">
+        <div class="modern-alerts-container">
 
-            
             @if (ViewBag.ListaEspera != null && ViewBag.ListaEspera > 0)
             {
-            <div class="divEmergentInfo" style=" width 280px;height 35px;">
-                <div class="wait"><a title="Hay clientes en lista de espera" href="javascript: openWaitingList();">HAY CLIENTES ESPERANDO</a></div>
+            <div class="modern-alert modern-alert-info">
+                <div class="modern-alert-content">
+                    <i class="bi bi-clock-history"></i>
+                    <a href="javascript: openWaitingList();" class="modern-alert-link" title="Hay clientes en lista de espera">
+                        HAY CLIENTES ESPERANDO
+                    </a>
+                </div>
             </div>
             }
 
-
             @if (ViewBag.PreReservas != null && ViewBag.PreReservas.Count > 0)
             {
-            <div class="divEmergent" style=" width 280px;height 35px;">
-                <div class="attention"><a title="Ver Pre Reservas Vencidas" href="javascript: showPreReservas();" >EXISTEN PRE-RESERVAS VENCIDAS</a></div>
+            <div class="modern-alert modern-alert-warning">
+                <div class="modern-alert-content">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <a href="javascript: showPreReservas();" class="modern-alert-link" title="Ver Pre Reservas Vencidas">
+                        EXISTEN PRE-RESERVAS VENCIDAS (@ViewBag.PreReservas.Count)
+                    </a>
+                </div>
             </div>
 
-            <div id="divPreReservas" title="Pre Reservas Vencidas" style="display:none;max-height: 428px; overflow-y: auto;">
-                <table class="mat-customtable" style="width:95%;">
-                    <thead>
-                        <tr>
-                            <th>Butaca</th>
-                            <th>Pasajero</th>
-                            <th>Fecha de Pre Reserva</th>
-                            <th>Vencimiento de Pre Reserva</th>
-                            <th style="width:65px;"></th>
-                        </tr>
-                    </thead>
-                    @foreach (PreReserva item in ViewBag.PreReservas)
-                    {
-                    <tr>
-                        <td>@item.NroButaca</td>
-                        <td>@item.FullName</td>
-                        <td>@item.FechaPreReserva.ToShortDateString()</td>
-                        <td>@item.VencimientoPreReserva.ToShortDateString()</td>
-                        <td style="display:flex;">
-                            <a href="javascript: reNewReserva('@item.FacturaID');"><div class="divContinuous" title="Renovar Pre Reserva"></div></a>
-                            <a href="javascript: deleteReserva('@item.FacturaID','@item.ClienteID')"><div class="divDelete" title="Baja de Pre Reserva"></div></a>
-                        </td>
-                    </tr>
-                    }
-                </table>
+            <div id="divPreReservas" title="Pre Reservas Vencidas" style="display:none;">
+                <div class="modern-prereservas-container">
+                    <div class="modern-prereservas-header">
+                        <h3><i class="bi bi-exclamation-triangle"></i> Pre Reservas Vencidas</h3>
+                        <p class="modern-prereservas-subtitle">Seleccione una acción para cada pre-reserva vencida</p>
+                    </div>
+                    <div class="modern-prereservas-table-container">
+                        <table class="modern-prereservas-table">
+                            <thead>
+                                <tr>
+                                    <th>Butaca</th>
+                                    <th>Pasajero</th>
+                                    <th>Fecha de Pre Reserva</th>
+                                    <th>Vencimiento</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (PreReserva item in ViewBag.PreReservas)
+                                {
+                                <tr>
+                                    <td><span class="badge-buttaca">@item.NroButaca</span></td>
+                                    <td><strong>@item.FullName</strong></td>
+                                    <td>@item.FechaPreReserva.ToShortDateString()</td>
+                                    <td><span class="text-danger">@item.VencimientoPreReserva.ToShortDateString()</span></td>
+                                    <td class="text-center">
+                                        <div class="modern-prereservas-actions">
+                                            <button type="button" class="btn-action btn-action-renew" onclick="reNewReserva('@item.FacturaID');" title="Renovar Pre Reserva">
+                                                <i class="bi bi-arrow-clockwise"></i>
+                                                <span>Renovar</span>
+                                            </button>
+                                            <button type="button" class="btn-action btn-action-delete" onclick="deleteReserva('@item.FacturaID','@item.ClienteID');" title="Baja de Pre Reserva">
+                                                <i class="bi bi-trash"></i>
+                                                <span>Eliminar</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             }
 
@@ -564,12 +586,17 @@
         $("#divPreReservas").dialog({
             autoOpen: false,
             modal: true,
-            width: "65%",
-            position: { my: 'top', at: 'top', of: window },
+            width: "70%",
+            maxWidth: 1000,
+            minWidth: 600,
+            height: "auto",
+            position: { my: 'center', at: 'center', of: window },
             closeOnEscape: true,
-            //close: function () {
-            //    $("#divPreReservas").remove();
-            //}
+            resizable: true,
+            draggable: true,
+            classes: {
+                "ui-dialog": "modern-dialog-prereservas"
+            }
         });
         $("#divPreReservas").dialog("open");
     }

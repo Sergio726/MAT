@@ -1376,8 +1376,7 @@ div.bnn_floating-banner.hidden {
     border-radius: 8px;
     flex-shrink: 0;
     position: relative;
-    background-image: url(/Images/estados_butacas.png);
-    background-repeat: no-repeat;
+    background: transparent !important;
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--brand-primary);
@@ -1385,102 +1384,133 @@ div.bnn_floating-banner.hidden {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     cursor: default;
-    padding: 2px;
+    padding: 0;
+    z-index: 1;
 }
 
 /* Aplicar estilos de fondo redondeado también a la tabla de referencias */
-.referencia-item a::before {
+#tabla-referencia .referencia-item a::before {
     content: '' !important;
     position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: calc(100% - 6px) !important;
-    height: calc(100% - 6px) !important;
-    background: rgba(255, 255, 255, 0.92) !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(255, 255, 255, 0.98) !important;
     border-radius: 8px !important;
     border: 2px solid var(--brand-primary) !important;
-    opacity: 0.95 !important;
-    z-index: -1 !important;
-    box-shadow: 0 2px 4px rgba(230, 51, 117, 0.25) !important;
+    opacity: 1 !important;
+    z-index: 0 !important;
+    box-shadow: 0 2px 4px rgba(230, 51, 117, 0.2) !important;
+    box-sizing: border-box !important;
 }
 
-.referencia-item a.disponible::before {
+/* Estado Disponible - fondo blanco con borde fucsia */
+#tabla-referencia .referencia-item a.disponible::before {
+    background: #ffffff !important;
     border-color: var(--brand-primary) !important;
+    border-width: 2px !important;
+    border-style: solid !important;
 }
 
-.referencia-item a.seleccionado::before {
+#tabla-referencia .referencia-item a.disponible {
+    color: var(--brand-primary) !important;
+    font-weight: 600 !important;
+    z-index: 2 !important;
+}
+
+#tabla-referencia .referencia-item a.seleccionado::before {
     border-color: var(--brand-primary) !important;
     background: var(--brand-primary) !important; /* Fondo fucsia sólido */
+    border-width: 2px !important;
+    border-style: solid !important;
 }
 
-.referencia-item a.seleccionado {
+#tabla-referencia .referencia-item a.seleccionado {
     color: var(--white) !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    z-index: 2 !important;
 }
 
-.referencia-item a.señado::before {
+#tabla-referencia .referencia-item a.señado::before {
     border-color: #8b5cf6 !important;
     background: #8b5cf6 !important; /* Fondo violeta pintado */
+    border-width: 2px !important;
+    border-style: solid !important;
 }
 
-.referencia-item a.señado {
+#tabla-referencia .referencia-item a.señado {
     color: var(--white) !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    z-index: 2 !important;
 }
 
-.referencia-item a.reservado_ref::before,
-.referencia-item a.reservado::before {
+#tabla-referencia .referencia-item a.reservado_ref::before,
+#tabla-referencia .referencia-item a.reservado::before {
     border-color: #059669 !important;
     background: #059669 !important; /* Fondo verde oscuro pintado */
+    border-width: 2px !important;
+    border-style: solid !important;
 }
 
-.referencia-item a.reservado_ref,
-.referencia-item a.reservado {
+#tabla-referencia .referencia-item a.reservado_ref,
+#tabla-referencia .referencia-item a.reservado {
     color: var(--white) !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    z-index: 2 !important;
 }
 
-.referencia-item a.prereserva::before {
+#tabla-referencia .referencia-item a.prereserva::before {
     border-color: #ca8a04 !important;
     background: #fbbf24 !important; /* Fondo completamente pintado */
+    border-width: 2px !important;
+    border-style: solid !important;
 }
 
-.referencia-item a.prereserva {
+#tabla-referencia .referencia-item a.prereserva {
+    color: #78350f !important; /* Texto oscuro sobre fondo amarillo */
+    font-weight: 700 !important;
+    z-index: 2 !important;
+}
+
+#tabla-referencia .referencia-item a.prereservapasajehotel_ref {
     color: #78350f !important; /* Texto oscuro sobre fondo amarillo */
     font-weight: 700 !important;
 }
 
-.referencia-item a.prereservapasajehotel_ref {
-    color: #78350f !important; /* Texto oscuro sobre fondo amarillo */
-    font-weight: 700 !important;
-}
-
-.referencia-item a.prereservapasajehotel_ref::before {
+#tabla-referencia .referencia-item a.prereservapasajehotel_ref::before {
     border-color: #ca8a04 !important;
     background: #fbbf24 !important; /* Fondo completamente pintado */
+    border-width: 2px !important;
+    border-style: solid !important;
 }
 
-.referencia-item a.reservahotel::before {
+#tabla-referencia .referencia-item a.reservahotel::before {
     border-color: #059669 !important;
     background: #059669 !important; /* Fondo verde oscuro pintado */
+    border-width: 2px !important;
+    border-style: solid !important;
 }
 
-.referencia-item a.reservahotel {
+#tabla-referencia .referencia-item a.reservahotel {
     color: var(--white) !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
 }
 
-.referencia-item a.reservapasajehotel_ref::before {
+#tabla-referencia .referencia-item a.reservapasajehotel_ref::before {
     border-color: #8b5cf6 !important;
     background: #8b5cf6 !important; /* Fondo violeta pintado */
+    border-width: 2px !important;
+    border-style: solid !important;
 }
 
-.referencia-item a.reservapasajehotel_ref {
+#tabla-referencia .referencia-item a.reservapasajehotel_ref {
     color: var(--white) !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
@@ -1529,9 +1559,9 @@ div.bnn_floating-banner.hidden {
 }
 
 /* Badge "H" en referencias - CENTRADO Y GRANDE (x2) */
-.referencia-item a.reservahotel::after,
-.referencia-item a.reservapasajehotel_ref::after,
-.referencia-item a.prereservapasajehotel_ref::after {
+#tabla-referencia .referencia-item a.reservahotel::after,
+#tabla-referencia .referencia-item a.reservapasajehotel_ref::after,
+#tabla-referencia .referencia-item a.prereservapasajehotel_ref::after {
     content: 'H' !important;
     position: absolute !important;
     top: 50% !important;
@@ -1554,15 +1584,16 @@ div.bnn_floating-banner.hidden {
 }
 
 /* Fondo violeta para SenaIncompleta en referencias (igual que señado) */
-.referencia-item a.SenaIncompleta::before,
-.referencia-item a.señaIncompleta::before {
+#tabla-referencia .referencia-item a.SenaIncompleta::before,
+#tabla-referencia .referencia-item a.señaIncompleta::before {
     border-color: #8b5cf6 !important;
     background: #8b5cf6 !important; /* Fondo violeta igual que señado */
+    border-width: 2px !important;
     border-style: solid !important;
 }
 
-.referencia-item a.SenaIncompleta,
-.referencia-item a.señaIncompleta {
+#tabla-referencia .referencia-item a.SenaIncompleta,
+#tabla-referencia .referencia-item a.señaIncompleta {
     color: var(--white) !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
@@ -1570,8 +1601,8 @@ div.bnn_floating-banner.hidden {
 }
 
 /* Badge "!" en referencias - Esquina superior derecha, pequeño */
-.referencia-item a.SenaIncompleta::after,
-.referencia-item a.señaIncompleta::after {
+#tabla-referencia .referencia-item a.SenaIncompleta::after,
+#tabla-referencia .referencia-item a.señaIncompleta::after {
     content: '!' !important;
     position: absolute !important;
     top: 2px !important;
@@ -1805,39 +1836,59 @@ div.bnn_floating-banner.hidden {
 
 .ui-dialog .ui-dialog-titlebar-close {
     background: transparent !important;
-    border: none !important;
-    width: 32px !important;
-    height: 32px !important;
+    border: 2px solid var(--border-color) !important;
+    width: 36px !important;
+    height: 36px !important;
     border-radius: 50% !important;
     transition: all 0.2s ease !important;
     top: 50% !important;
-    margin-top: -16px !important;
+    margin-top: -18px !important;
     right: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .ui-dialog .ui-dialog-titlebar-close:hover {
-    background: var(--bg-main) !important;
+    background: rgba(220, 38, 38, 0.1) !important;
+    border-color: #dc2626 !important;
+    transform: scale(1.1);
+}
+
+.ui-dialog .ui-dialog-titlebar-close:active {
+    transform: scale(0.95);
 }
 
 .ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick {
     background: none !important;
+    background-image: none !important;
     text-indent: 0 !important;
     width: 100% !important;
     height: 100% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    position: relative !important;
 }
 
 .ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick::before {
-    content: "×";
-    font-size: 24px;
-    color: var(--text-secondary);
-    line-height: 1;
+    content: "×" !important;
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    color: var(--text-secondary) !important;
+    line-height: 1 !important;
+    display: block !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
 }
 
 .ui-dialog .ui-dialog-titlebar-close:hover .ui-icon-closethick::before {
-    color: var(--text-primary);
+    color: #dc2626 !important;
 }
 
 .ui-dialog .ui-dialog-content {
@@ -1885,6 +1936,19 @@ div.bnn_floating-banner.hidden {
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
+    flex: 1;
+}
+
+.section-header .icon-info-tooltip {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    cursor: help;
+    margin-left: auto;
+    transition: color 0.2s ease;
+}
+
+.section-header .icon-info-tooltip:hover {
+    color: var(--brand-primary);
 }
 
 /* Lista de Precios */
@@ -2144,18 +2208,33 @@ div.bnn_floating-banner.hidden {
 
 #SeleccionPasajero #txt-filter-pasajero {
     width: 100%;
-    padding: 0.625rem 0.875rem 0.625rem 2.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    transition: all 0.3s ease;
     background: var(--white);
+    color: var(--text-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#SeleccionPasajero #txt-filter-pasajero:hover {
+    border-color: var(--brand-primary);
+    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.15);
 }
 
 #SeleccionPasajero #txt-filter-pasajero:focus {
     outline: none;
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+    border-width: 2px;
+    box-shadow: 0 0 0 4px rgba(230, 51, 117, 0.2), 0 4px 12px rgba(230, 51, 117, 0.15);
+    background: var(--white);
+    transform: translateY(-1px);
+}
+
+#SeleccionPasajero #txt-filter-pasajero::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
 }
 
 #SeleccionPasajero #busqueda-pasajero::before {
@@ -2166,9 +2245,15 @@ div.bnn_floating-banner.hidden {
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-secondary);
-    font-size: 1rem;
+    font-size: 1.125rem;
     pointer-events: none;
-    z-index: 1;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+/* Cambiar color del icono cuando el input tiene focus */
+#SeleccionPasajero #busqueda-pasajero.focused::before {
+    color: var(--brand-primary);
 }
 
 /* Autocomplete suggestions */
@@ -2385,8 +2470,990 @@ div.bnn_floating-banner.hidden {
 
 #SeleccionPasajero .btn-continuar-reserva:hover {
     background: #c92a5f;
+}
+
+/* ============================================
+   ALERTAS MODERNAS (Pre-Reservas Vencidas y Lista de Espera)
+   ============================================ */
+
+.modern-alerts-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 320px;
+}
+
+.modern-alert {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid;
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modern-alert:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.modern-alert-warning {
+    border-left-color: #f59e0b;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+}
+
+.modern-alert-info {
+    border-left-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.modern-alert-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+}
+
+.modern-alert-content i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.modern-alert-warning .modern-alert-content i {
+    color: #f59e0b;
+}
+
+.modern-alert-info .modern-alert-content i {
+    color: #3b82f6;
+}
+
+.modern-alert-link {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.modern-alert-warning .modern-alert-link {
+    color: #92400e;
+}
+
+.modern-alert-info .modern-alert-link {
+    color: #1e40af;
+}
+
+.modern-alert-link:hover {
+    color: var(--brand-primary);
+    text-decoration: none;
+}
+
+/* ============================================
+   MODAL DE PRE-RESERVAS VENCIDAS
+   ============================================ */
+
+#divPreReservas {
+    padding: 0 !important;
+}
+
+.modern-prereservas-container {
+    padding: 0;
+}
+
+.modern-prereservas-header {
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+    border-bottom: 2px solid #f59e0b;
+}
+
+.modern-prereservas-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modern-prereservas-header h3 i {
+    color: #f59e0b;
+    font-size: 1.75rem;
+}
+
+.modern-prereservas-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.modern-prereservas-table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 1.5rem 2rem;
+}
+
+.modern-prereservas-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+}
+
+.modern-prereservas-table thead {
+    background: var(--bg-main);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.modern-prereservas-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.modern-prereservas-table th.text-center {
+    text-align: center;
+}
+
+.modern-prereservas-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.modern-prereservas-table tbody tr:hover {
+    background-color: rgba(230, 51, 117, 0.03);
+}
+
+.modern-prereservas-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.modern-prereservas-table .badge-buttaca {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 32px;
+    padding: 0 0.75rem;
+    background: var(--brand-primary);
+    color: var(--white);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.modern-prereservas-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-action i {
+    font-size: 1rem;
+}
+
+.btn-action-renew {
+    background: #10b981;
+    color: var(--white);
+}
+
+.btn-action-renew:hover {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-action-delete {
+    background: #ef4444;
+    color: var(--white);
+}
+
+.btn-action-delete:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Estilos específicos para el dialog de pre-reservas */
+.modern-dialog-prereservas {
+    border-radius: var(--border-radius-lg) !important;
+}
+
+.modern-dialog-prereservas .ui-dialog-titlebar {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%) !important;
+    border-bottom: 2px solid #f59e0b !important;
+    padding: 1.25rem 1.5rem !important;
+}
+
+.modern-dialog-prereservas .ui-dialog-title {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+}
+
+.modern-dialog-prereservas .ui-dialog-title::before {
+    content: "\f071";
+    font-family: "bootstrap-icons";
+    color: #f59e0b;
+    font-size: 1.75rem;
+}
+
+/* Responsive para alertas */
+@media (max-width: 768px) {
+    .modern-alerts-container {
+        right: 10px;
+        bottom: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    .modern-alert-content {
+        padding: 0.875rem 1rem;
+    }
+
+    .modern-alert-link {
+        font-size: 0.8125rem;
+    }
+
+    .modern-prereservas-header {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modern-prereservas-table-container {
+        padding: 1rem;
+        overflow-x: auto;
+    }
+
+    .modern-prereservas-table {
+        min-width: 600px;
+    }
+
+    .btn-action span {
+        display: none;
+    }
+
+    .btn-action {
+        padding: 0.5rem;
+        min-width: 36px;
+        justify-content: center;
+    }
+
+    .modern-dialog-prereservas {
+        width: 95% !important;
+        max-width: 95% !important;
+    }
+}
+
+/* ============================================
+   MODAL DE OBSERVACIONES DEL VIAJE
+   ============================================ */
+
+.modern-observaciones-container {
+    padding: 0;
+}
+
+.modern-observaciones-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+    border-bottom: 2px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.modern-observaciones-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modern-observaciones-title i {
+    font-size: 1.75rem;
+    color: var(--brand-primary);
+}
+
+.modern-observaciones-title h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.modern-observaciones-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn-modern-observacion {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-modern-observacion i {
+    font-size: 1rem;
+}
+
+.btn-modern-observacion-primary {
+    background: var(--brand-primary);
+    color: var(--white);
+}
+
+.btn-modern-observacion-primary:hover {
+    background: #c92a5f;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(230, 51, 117, 0.3);
+}
+
+.btn-modern-observacion-secondary {
+    background: var(--white);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-modern-observacion-secondary:hover {
+    background: var(--bg-main);
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    transform: translateY(-1px);
+}
+
+.modern-observaciones-content {
+    padding: 1.5rem 2rem;
+}
+
+.modern-observaciones-table-wrapper {
+    min-height: 200px;
+}
+
+/* Estilos modernos para la tabla de observaciones - REFACTORIZADA */
+.modern-table-observaciones {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+}
+
+.modern-table-observaciones thead th {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.25rem;
+    border-bottom: 2px solid var(--border-color);
+    text-align: left;
+}
+
+.modern-table-observaciones tbody td {
+    padding: 1.25rem 1.25rem;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
+.modern-table-observaciones tbody tr {
+    transition: all 0.2s ease;
+    background-color: var(--white);
+}
+
+.modern-table-observaciones tbody tr:hover {
+    background-color: var(--bg-main);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Wrapper de DataTables */
+#tblObservaciones_wrapper {
+    margin-top: 0;
+}
+
+#tblObservaciones_wrapper .dataTables_wrapper {
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+}
+
+/* Badge de categoría - Fucsia */
+.badge-categoria {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.875rem;
+    background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%);
+    color: var(--white);
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(230, 51, 117, 0.25);
+    transition: all 0.2s ease;
+}
+
+.badge-categoria:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(230, 51, 117, 0.35);
+}
+
+.badge-categoria::before {
+    content: "\f3fd";
+    font-family: "bootstrap-icons";
+    font-size: 0.875rem;
+}
+
+/* Detalle de observación */
+.modern-observaciones-detalle {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-weight: 400;
+    max-width: 500px;
+}
+
+/* Fecha de observación */
+.modern-observaciones-fecha {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.modern-observaciones-fecha i {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Vendedor */
+.modern-observaciones-vendedor {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.modern-observaciones-vendedor i {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+/* Info de actualización */
+.modern-observaciones-update-info {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.modern-observaciones-update-info small {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.modern-observaciones-update-info i {
+    font-size: 0.75rem;
+}
+
+/* Acciones inline */
+.modern-observaciones-actions-inline {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+.modern-observaciones-actions-inline .btn-action-observacion {
+    padding: 0.5rem;
+    min-width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modern-observaciones-actions-inline .btn-action-observacion span {
+    display: none;
+}
+
+/* Badge de pasajeros */
+.badge-pasajero {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+.badge-pasajero i {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Mensaje de error moderno */
+.modern-alert-error {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    border-radius: 8px;
+    color: #991b1b;
+    font-size: 0.9375rem;
+    margin-bottom: 1rem;
+}
+
+.modern-alert-error i {
+    font-size: 1.25rem;
+    color: #ef4444;
+}
+
+/* ============================================
+   FORMULARIO DE OBSERVACIONES (Agregar/Editar)
+   ============================================ */
+
+.modern-observacion-form-container {
+    padding: 1.5rem 2rem;
+}
+
+.modern-observacion-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.modern-form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.modern-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.modern-form-group-full {
+    grid-column: 1 / -1;
+}
+
+.modern-form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.modern-form-label i {
+    font-size: 1rem;
+    color: var(--brand-primary);
+}
+
+.modern-form-input,
+.modern-form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    color: var(--text-primary);
+    background: var(--white);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.modern-form-input:focus,
+.modern-form-textarea:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+.modern-form-input::placeholder,
+.modern-form-textarea::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.modern-form-input-disabled {
+    background: var(--bg-main) !important;
+    color: var(--text-secondary) !important;
+    cursor: not-allowed;
+    border-color: var(--border-color) !important;
+}
+
+.modern-form-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+}
+
+/* MagicSearch inputs modernos */
+.modern-magicsearch {
+    width: 100% !important;
+}
+
+.modern-magicsearch-wrapper {
+    width: 100% !important;
+}
+
+/* Acciones del formulario */
+.modern-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-modern-observacion-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-modern-observacion-form i {
+    font-size: 1rem;
+}
+
+.btn-modern-primary {
+    background: var(--brand-primary);
+    color: var(--white);
+}
+
+.btn-modern-primary:hover {
+    background: #c92a5f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.3);
+}
+
+.btn-modern-primary:active {
+    transform: translateY(0);
+}
+
+/* Estilos específicos para el dialog de observación */
+#popup_Observacion.ui-dialog {
+    border-radius: var(--border-radius-lg) !important;
+}
+
+#popup_Observacion.ui-dialog .ui-dialog-titlebar {
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%) !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding: 1.25rem 1.5rem !important;
+}
+
+#popup_Observacion.ui-dialog .ui-dialog-title {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+}
+
+#popup_Observacion.ui-dialog .ui-dialog-title::before {
+    content: "\f4ad";
+    font-family: "bootstrap-icons";
+    color: var(--brand-primary);
+    font-size: 1.75rem;
+}
+
+#popup_Observacion.ui-dialog .ui-dialog-content {
+    padding: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modern-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .modern-form-group-full {
+        grid-column: 1;
+    }
+
+    .modern-observacion-form-container {
+        padding: 1rem 1.5rem;
+    }
+
+    .modern-form-actions {
+        flex-direction: column;
+    }
+
+    .btn-modern-observacion-form {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #popup_Observacion.ui-dialog {
+        width: 95% !important;
+        max-width: 95% !important;
+    }
+}
+
+
+.btn-action-observacion {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-action-observacion i {
+    font-size: 0.9375rem;
+}
+
+.btn-action-edit {
+    background: #3b82f6;
+    color: var(--white);
+}
+
+.btn-action-edit:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-action-delete {
+    background: #ef4444;
+    color: var(--white);
+}
+
+.btn-action-delete:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* DataTables controls modernos */
+#tblObservaciones_wrapper .dataTables_length,
+#tblObservaciones_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+#tblObservaciones_wrapper .dataTables_length label,
+#tblObservaciones_wrapper .dataTables_filter label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+#tblObservaciones_wrapper .dataTables_length select,
+#tblObservaciones_wrapper .dataTables_filter input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    margin: 0 0.5rem;
+    transition: all 0.2s ease;
+}
+
+#tblObservaciones_wrapper .dataTables_length select:focus,
+#tblObservaciones_wrapper .dataTables_filter input:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+#tblObservaciones_wrapper .dataTables_info {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    padding: 1rem 0;
+}
+
+#tblObservaciones_wrapper .dataTables_paginate {
+    padding: 1rem 0;
+}
+
+#tblObservaciones_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary) !important;
+    background: var(--white) !important;
+    transition: all 0.2s ease;
+}
+
+#tblObservaciones_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--bg-main) !important;
+    border-color: var(--brand-primary) !important;
+    color: var(--brand-primary) !important;
+}
+
+#tblObservaciones_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: var(--white) !important;
+}
+
+#tblObservaciones_wrapper .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Estilos específicos para el dialog de observaciones */
+#divObservaciones.ui-dialog {
+    border-radius: var(--border-radius-lg) !important;
+}
+
+#divObservaciones.ui-dialog .ui-dialog-titlebar {
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%) !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding: 1.25rem 1.5rem !important;
+}
+
+#divObservaciones.ui-dialog .ui-dialog-title {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: var(--text-primary) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+}
+
+#divObservaciones.ui-dialog .ui-dialog-title::before {
+    content: "\f4ad";
+    font-family: "bootstrap-icons";
+    color: var(--brand-primary);
+    font-size: 1.75rem;
+}
+
+#divObservaciones.ui-dialog .ui-dialog-content {
+    padding: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modern-observaciones-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modern-observaciones-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .btn-modern-observacion {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .btn-modern-observacion span {
+        display: none;
+    }
+
+    .modern-observaciones-content {
+        padding: 1rem;
+    }
+
+    #tblObservaciones_wrapper {
+        overflow-x: auto;
+    }
+
+    .modern-observaciones-row-actions {
+        flex-direction: column;
+    }
+
+    .btn-action-observacion {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #divObservaciones.ui-dialog {
+        width: 95% !important;
+        max-width: 95% !important;
+    }
 }
 
 #SeleccionPasajero .botonera-form {
@@ -2489,6 +3556,152 @@ div.bnn_floating-banner.hidden {
     background: var(--bg-main);
     border-color: #dc2626;
     color: #dc2626;
+}
+
+/* Panel de selección de pasajeros pendientes */
+.panel-seleccion-pasajero-pendiente {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 300px;
+    max-width: 400px;
+    max-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-seleccion-pasajero-pendiente .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 8px 8px 0 0;
+}
+
+.panel-seleccion-pasajero-pendiente .panel-header h4 {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.panel-seleccion-pasajero-pendiente .btn-cerrar-panel {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.panel-seleccion-pasajero-pendiente .btn-cerrar-panel:hover {
+    color: var(--text-primary);
+}
+
+.panel-seleccion-pasajero-pendiente .panel-content {
+    padding: 1rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.panel-seleccion-pasajero-pendiente .panel-subtitle {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.panel-seleccion-pasajero-pendiente .lista-pasajeros-pendientes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.panel-seleccion-pasajero-pendiente .pasajero-pendiente-item {
+    padding: 0.75rem;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.panel-seleccion-pasajero-pendiente .pasajero-pendiente-item:hover {
+    background: var(--white);
+    border-color: var(--brand-primary);
+    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.15);
+    transform: translateY(-1px);
+}
+
+.panel-seleccion-pasajero-pendiente .pasajero-pendiente-item .pasajero-nombre {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.panel-seleccion-pasajero-pendiente .pasajero-pendiente-item .pasajero-detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+.panel-seleccion-pasajero-pendiente .pasajero-pendiente-item .pasajero-detalles span {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.panel-seleccion-pasajero-pendiente .pasajero-pendiente-item .pasajero-detalles i {
+    font-size: 0.875rem;
+}
+
+.panel-seleccion-pasajero-pendiente .panel-footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0 0 8px 8px;
+    background: var(--bg-main);
+}
+
+.panel-seleccion-pasajero-pendiente .btn-agregar-pasajero-nuevo {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.panel-seleccion-pasajero-pendiente .btn-agregar-pasajero-nuevo:hover {
+    background: var(--brand-primary);
+    color: var(--white);
+    border-color: var(--brand-primary);
+}
+
+.panel-seleccion-pasajero-pendiente .btn-agregar-pasajero-nuevo::before {
+    content: '+';
+    font-size: 1.25rem;
+    font-weight: 700;
 }
 
 /* Tabla de pasajeros moderna */

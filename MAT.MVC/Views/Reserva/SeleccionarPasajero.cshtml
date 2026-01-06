@@ -29,11 +29,11 @@
     <div class="seleccionar-pasajero-section">
         <div class="section-header">
             <i class="bi bi-tag"></i>
-            <h3>Precios</h3>
+        <h3>Precios</h3>
         </div>
         <div class="precios-list">
-            @foreach (var item in @Model.Precios)
-            {
+    @foreach (var item in @Model.Precios)
+    {
                 var monedaTipo = Model.MonedaTipo ?? 1;
                 var esPesos = monedaTipo == 1;
                 var simboloMoneda = esPesos ? "$" : "U$S";
@@ -61,16 +61,16 @@
             <h3>Adicionales</h3>
         </div>
         <div class="adicionales-list">
-            @foreach (var item in @Model.Adicionales)
-            {
+        @foreach (var item in @Model.Adicionales)
+        {
                 var monedaTipo = Model.MonedaTipo ?? 1;
                 var esPesos = monedaTipo == 1;
                 var simboloMoneda = esPesos ? "$" : "U$S";
                 var claseMoneda = esPesos ? "moneda-pesos" : "moneda-dolar";
                 var textoMoneda = esPesos ? "ARS" : "USD";
                 
-                if (item.Descripcion.ToString().Contains("SEGURO MENOR"))
-                {
+            if (item.Descripcion.ToString().Contains("SEGURO MENOR"))
+            {
                     <div class="adicional-item especial" id="divSeguroMenor">
                         <div class="adicional-control">
                             <input id="numMenor" type="number" step="1" max="5" min="0" value="0" data-monto="@item.Monto" data-id="@item.AdicionalId" />
@@ -85,10 +85,10 @@
                         <a href="javascript:validarMenores();" class="btn-link-menor">
                             <i class="bi bi-info-circle"></i>
                         </a>
-                    </div>
-                }
-                else
-                {
+                </div>
+            }
+            else
+            {
                     <label class="adicional-item">
                         <input type="checkbox" name="check_adicional" value="@item.Descripcion" data-monto="@item.Monto" data-id="@item.AdicionalId" />
                         <div class="adicional-content">
@@ -116,6 +116,10 @@
         <div class="section-header">
             <i class="bi bi-people"></i>
             <h3>Pasajeros Seleccionados <span id="contador-pasajeros" class="badge-contador">0</span></h3>
+            <i class="bi bi-info-circle icon-info-tooltip" 
+               data-bs-toggle="tooltip" 
+               data-bs-placement="top" 
+               title="Puede seleccionar uno o varios pasajeros desde el buscador utilizando los checkboxes en cada sugerencia."></i>
         </div>
         <div id="lista-pasajeros-seleccionados" class="lista-pasajeros-container">
             <div id="mensaje-sin-pasajeros" class="mensaje-sin-pasajeros">
@@ -157,6 +161,13 @@
 
         $(document).on("change", "input[name='check_adicional']", function () {
             $(this).closest(".adicional-item").toggleClass("selected", $(this).is(":checked"));
+        });
+
+        // Agregar clase focused cuando el input tiene focus
+        $("#txt-filter-pasajero").on("focus", function () {
+            $("#busqueda-pasajero").addClass("focused");
+        }).on("blur", function () {
+            $("#busqueda-pasajero").removeClass("focused");
         });
 
         // Autocomplete con búsqueda en servidor
@@ -392,5 +403,13 @@
 
         // Inicializar contador
         actualizarContador();
+        
+        // Inicializar tooltips de Bootstrap
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
     });
 </script>

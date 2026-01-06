@@ -22,7 +22,7 @@ div#container {
 .new_piso_superior a, .new_piso_inferior a
 {
 	color:#666 !important;
-	background-image: url(/Images/estados_butacas.png);
+	background: transparent;
 	background-repeat: no-repeat;
 	display: block;
 	overflow: hidden;
@@ -49,57 +49,15 @@ div#container {
 .referencias a
 {
 	color:#666 !important;
-	background-image: url(/Images/estados_butacas.png);
+	background: transparent;
 	background-repeat: no-repeat;
     display:block;
 	text-indent: 0px;
 	width: 50px;
 	height: 50px;
 }
-.referencias a.disponible
-{
-	background-position: 0px 0;
-}
-
-.referencias a.seleccionado
-{
-	background-position: -100px 0;
-}
-
-.referencias a.reservado_ref
-{
-	background-position: -50px 0;
-}
-
-.referencias a.señado
-{
-	background-position: -250px 0;
-}
-
-.referencias a.prereserva
-{
-	background-position: -150px 0;
-}
-
-.referencias a.prereservahotel
-{
-	background-position: -349px 0;
-}
-
-.referencias a.reservahotel
-{
-	background-position: -200px 0;
-}
-
-.referencias a.reservapasajehotel_ref
-{
-	background-position: -300px 0;
-}
-
-.referencias a.prereservapasajehotel_ref
-{
-	background-position: -349px 0;
-}
+/* Reglas de background-position removidas - ya no se usa el sprite estados_butacas.png */
+/* Los estilos modernos con colores sólidos están en modern-dashboard.css */
 
 .referencias a.SenaIncompleta
 {

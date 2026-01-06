@@ -1,20 +1,29 @@
-﻿<div class="divObservaciones">
-    <div class="row">
-        <div class="title"><h4>Observaciones Generales</h4></div>
-        <div class="element"><a href="javascript: fnPrintObservaciones();">
-                 <div class="iconPrint" style="margin-left: 94%;" title="Imprimir Obsevaciones."></div>
-            </a>
+﻿<div class="modern-observaciones-container">
+    <div class="modern-observaciones-header">
+        <div class="modern-observaciones-title">
+            <i class="bi bi-chat-left-text"></i>
+            <h3>Observaciones Generales</h3>
         </div>
-        <div class=""><input type="button" onclick="javascript: fnAddObsevacion();" class="buttonAdd_29px" title="Agregar una observacion" /></div>
-        
-    </div>
-    <div class="row">
-        <div id="divObsGeneral" class ="row custom_margin_5">
-            
+        <div class="modern-observaciones-actions">
+            <button type="button" class="btn-modern-observacion btn-modern-observacion-secondary" onclick="javascript: fnPrintObservaciones();" title="Imprimir Observaciones">
+                <i class="bi bi-printer"></i>
+                <span>Imprimir</span>
+            </button>
+            <button type="button" class="btn-modern-observacion btn-modern-observacion-primary" onclick="javascript: fnAddObsevacion();" title="Agregar una observación">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Observación</span>
+            </button>
         </div>
-        
     </div>
-
+    <div class="modern-observaciones-content">
+        <div id="divObsGeneral" class="modern-observaciones-table-wrapper">
+            <div class="text-center py-4">
+                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -25,7 +34,7 @@
     });
 
     function getObservacionesGenerales() {
-        var divLoading = "<div class='iconLoading'></div>";
+        var divLoading = '<div class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>';
         $("#divObsGeneral").html(divLoading);
         
         $.ajax({
@@ -41,7 +50,7 @@
     function fnAddObsevacion() {
         var url = "/Reserva/ObservacionABM?sViajeID=" + "@ViewBag.ViajeID";
         var dialogid = "popup_Observacion";
-        var dialogtitle = "Agragar Observacion";
+        var dialogtitle = "Agregar Observación";
         var widthsize = "min";
         ShowFormDialog(url, dialogid, dialogtitle, widthsize)
      

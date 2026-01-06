@@ -1,58 +1,67 @@
 ﻿@model MAT.MVC.Models.ObservacionViaje.ObsViaje
 
-<div class="custom_margin_left_20 custom_margin_top_5">
-    <form id="formObservaciones">
-        <div class="row">
-            <div class="column_3">
-                <div class="column">
-                    <div class="title">Fecha</div>
-                    <div class="element"> <input type="text" disabled value="@Model.Fecha"/></div>
-                    <input type="hidden" value="@Model.Fecha" name="Fecha" id="Fecha"/>
-                </div>
-                <div class="column">
-                     <div class="title">Vendedor</div>
-                     <div class="element"> <input type="text" disabled value="@Model.Vendedor" /></div>
-                    <input type="hidden" id="VendedorID" name="VendedorID" value="@Model.VendedorID" />
-                </div>
-                <div class="column">
-                     <div class="title">Categoria</div>
-                     <div class="element"> <input type="text"  id="ddCategorias" title="Categorias"  class="custom_magicsearch" value="@Model.Categoria" /></div>
-                     <input type="hidden" id="hdnCategoriasID" name="CategoriaID" />
-                     <input type="hidden" id="ViajeID" name="ViajeID" value="@Model.ViajeID" />
-                   
-                </div>
+<div class="modern-observacion-form-container">
+    <form id="formObservaciones" class="modern-observacion-form">
+        <input type="hidden" value="@Model.Id" name="Id" />
+        <input type="hidden" value="@Model.Fecha" name="Fecha" id="Fecha"/>
+        <input type="hidden" id="VendedorID" name="VendedorID" value="@Model.VendedorID" />
+        <input type="hidden" id="hdnCategoriasID" name="CategoriaID" />
+        <input type="hidden" id="ViajeID" name="ViajeID" value="@Model.ViajeID" />
+        <input type="hidden" id="PasajerosID" name="PasajerosID" value="" />
+
+        <div class="modern-form-row">
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-calendar3"></i>
+                    Fecha
+                </label>
+                <input type="text" class="modern-form-input modern-form-input-disabled" disabled value="@Model.Fecha" readonly />
             </div>
 
-        </div>
-
-        <div class="row">
-            <div class="column_3">
-                <div class="column">
-                    <div class="title">Pasajeros</div>
-                    <div class="element"> <input type="text" id="ddPasajeros" title="Buscar pasajero" class="custom_magicsearch"  /></div>
-                    <input type="hidden" id="PasajerosID" name="PasajerosID" value="" />
-                </div>
-                
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-person-badge"></i>
+                    Vendedor
+                </label>
+                <input type="text" class="modern-form-input modern-form-input-disabled" disabled value="@Model.Vendedor" readonly />
             </div>
-            
-        </div>
 
-        <div class="row">
-            <input type="hidden" value="@Model.Id" name="Id" />
-            <div class="title">Observaciones</div>
-            <div class="element"> <textarea name="Detalle" class="custom_width_95percent">@Model.Detalle</textarea></div>
-        </div>
-
-        <div class="row">
-            <div class="element custom_padding_top_10"> 
-                <input type="button" title="Guardar Cambios" value="Guardar" class="btn btn-small btn-inverse" onclick="javascript: ObservacionSave();">
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-tag"></i>
+                    Categoría
+                </label>
+                <input type="text" id="ddCategorias" title="Categorías" class="modern-form-input modern-magicsearch" value="@Model.Categoria" />
             </div>
         </div>
 
+        <div class="modern-form-row">
+            <div class="modern-form-group modern-form-group-full">
+                <label class="modern-form-label">
+                    <i class="bi bi-person"></i>
+                    Pasajeros
+                </label>
+                <input type="text" id="ddPasajeros" title="Buscar pasajero" class="modern-form-input modern-magicsearch" placeholder="Seleccione un pasajero (opcional)" />
+            </div>
+        </div>
 
+        <div class="modern-form-row">
+            <div class="modern-form-group modern-form-group-full">
+                <label class="modern-form-label">
+                    <i class="bi bi-chat-left-text"></i>
+                    Observaciones
+                </label>
+                <textarea name="Detalle" class="modern-form-textarea" rows="6" placeholder="Ingrese las observaciones...">@Model.Detalle</textarea>
+            </div>
+        </div>
+
+        <div class="modern-form-actions">
+            <button type="button" class="btn-modern-observacion-form btn-modern-primary" onclick="javascript: ObservacionSave();" title="Guardar Observación">
+                <i class="bi bi-check-circle"></i>
+                <span>Guardar</span>
+            </button>
+        </div>
     </form>
-    
-    
 
 </div>
 
@@ -97,6 +106,14 @@
         });
         $("#ddCategorias").removeClass('dropdown');
 
+        // Estilizar magicsearch inputs
+        $('.modern-magicsearch-wrapper').each(function() {
+            $(this).css({
+                'width': '100%',
+                'display': 'block'
+            });
+        });
+
         ObservacionLoad();
 
     });
@@ -119,6 +136,14 @@
     };
 
     function ObservacionSave(){
+        // Validación básica
+        var detalle = $('textarea[name="Detalle"]').val().trim();
+        if (!detalle) {
+            alert('Por favor ingrese una observación.');
+            $('textarea[name="Detalle"]').focus();
+            return;
+        }
+
         showLoading_div("popup_Observacion");
 
         var _data = $("#formObservaciones").serializeArray();
@@ -134,10 +159,13 @@
                     $("#popup_Observacion").dialog("close");
                 }
                 else{
-                    alert('Ocurrio un error al intentar agregar una observacion, por favor comuniquese con el administrador.')
+                    alert('Ocurrió un error al intentar guardar la observación, por favor comuníquese con el administrador.');
                     console.log(data.Msj);
                     $("#popup_Observacion").dialog("close");
                 }
+            },
+            error: function() {
+                alert('Ocurrió un error al intentar guardar la observación. Por favor intente nuevamente.');
             }
         });
 
