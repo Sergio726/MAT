@@ -5,125 +5,149 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@if (Model.HotelID == "")
-{
-    <h2 class="title">Hotel - Nuevo</h2>    
-}
-else
-{
-    <h2 class="title">HOTEL: @Model.Nombre</h2>
-}
-
-
-<div class="form">
-    <form id="formHotel">
-        <input type="hidden" id="HotelID" name="HotelID" value="@Model.HotelID"/>
-    <div class="form-label">
-        <label>Nombre</label>
-    </div>
-    <div class="form-field">
-        <input type="text" name="Nombre" id="Nombre" value="@Model.Nombre" />
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-building"></i>
+            <span>@(Model.HotelID == "" ? "Nuevo Hotel" : "Editar Hotel: " + Model.Nombre)</span>
+        </h2>
     </div>
 
-    <div class="form-label">
-        <label>Direccion</label>
-    </div>
-    <div class="form-field">
-        <input type="text" name="Direccion" id="Direccion" value="@Model.Direccion" />
-    </div>
+    <div class="modern-form-container">
+        <form id="formHotel" class="modern-form">
+            <input type="hidden" id="HotelID" name="HotelID" value="@Model.HotelID"/>
 
-    <div class="form-label">
-        <label>Código Postal</label>
-    </div>
-    <div class="form-field">
-        <input type="text" name="CP" id="CP" value="@Model.CP" />
-    </div>
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-building"></i>
+                        Nombre <span style="color: #ef4444;">*</span>
+                    </label>
+                    <input type="text" name="Nombre" id="Nombre" class="modern-form-input" value="@Model.Nombre" placeholder="Nombre del hotel" required />
+                </div>
 
-    <div class="form-label">
-        <label>Localidad</label>
-    </div>
-    <div class="form-field">
-        <input type="text" name="Localidad" id="Localidad" value="@Model.Localidad" />
-    </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-geo-alt"></i>
+                        Dirección
+                    </label>
+                    <input type="text" name="Direccion" id="Direccion" class="modern-form-input" value="@Model.Direccion" placeholder="Dirección del hotel" />
+                </div>
 
-    <div class="form-label">
-        <label>Telefono</label>
-    </div>
-    <div class="form-field">
-        <input type="text" name="Telefono" id="Telefono" value="@Model.Telefono" />
-    </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-mailbox"></i>
+                        Código Postal
+                    </label>
+                    <input type="text" name="CP" id="CP" class="modern-form-input" value="@Model.CP" placeholder="Código postal" />
+                </div>
 
-    <div class="form-label">
-        <label>Email</label>
-    </div>
-    <div class="form-field">
-        <input type="email" name="Email" id="Email" value="@Model.Email" />
-    </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        Localidad
+                    </label>
+                    <input type="text" name="Localidad" id="Localidad" class="modern-form-input" value="@Model.Localidad" placeholder="Localidad" />
+                </div>
 
-    <div class="form-label">
-        <label>Contacto</label>
-    </div>
-    <div class="form-field">
-        <input type="text" name="Contacto" id="Contacto" value="@Model.Contacto" />
-    </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-telephone"></i>
+                        Teléfono
+                    </label>
+                    <input type="text" name="Telefono" id="Telefono" class="modern-form-input" value="@Model.Telefono" placeholder="Teléfono" />
+                </div>
 
-    <div class="form-label">
-        <label>CantidadHabitaciones</label>
-    </div>
-    <div class="form-field">
-        <input type="number" name="CantidadHabitaciones" id="CantidadHabitaciones" value="@Model.CantidadHabitaciones" />
-    </div>
-               
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-envelope"></i>
+                        Email
+                    </label>
+                    <input type="email" name="Email" id="Email" class="modern-form-input" value="@Model.Email" placeholder="email@ejemplo.com" />
+                </div>
 
-    <div class="form-label">
-        @Html.Label("Categoria")
-    </div>
-    <div class="form-field">
-        <select name="Categoria" id="Categoria">
-            <option value="1" @(Model.Categoria == 1 ? "selected" : "")>1 Estrella</option>
-            <option value="2" @(Model.Categoria == 2 ? "selected" : "")>2 Estrellas</option>
-            <option value="3" @(Model.Categoria == 3 ? "selected" : "")>3 Estrellas</option>
-            <option value="4" @(Model.Categoria == 4 ? "selected" : "")>4 Estrellas</option>
-            <option value="5" @(Model.Categoria == 5 ? "selected" : "")>5 Estrellas</option>
-        </select>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-person"></i>
+                        Contacto
+                    </label>
+                    <input type="text" name="Contacto" id="Contacto" class="modern-form-input" value="@Model.Contacto" placeholder="Persona de contacto" />
+                </div>
 
-    </div>        
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-door-open"></i>
+                        Cantidad de Habitaciones
+                    </label>
+                    <input type="number" name="CantidadHabitaciones" id="CantidadHabitaciones" class="modern-form-input" value="@Model.CantidadHabitaciones" placeholder="0" min="0" />
+                </div>
 
-    <div class="form-label">
-        <label>CheckIn</label>
-    </div>
-    <div class="form-field">
-        <input type="text" name="CheckIn" id="CheckIn" value="@Model.CheckIn" />
-    </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-star"></i>
+                        Categoría
+                    </label>
+                    <div class="modern-select-wrapper">
+                        <select name="Categoria" id="Categoria" class="modern-form-select modern-select-stars">
+                            <option value="1" @(Model.Categoria == 1 ? "selected" : "") data-stars="1">1 Estrella</option>
+                            <option value="2" @(Model.Categoria == 2 ? "selected" : "") data-stars="2">2 Estrellas</option>
+                            <option value="3" @(Model.Categoria == 3 ? "selected" : "") data-stars="3">3 Estrellas</option>
+                            <option value="4" @(Model.Categoria == 4 ? "selected" : "") data-stars="4">4 Estrellas</option>
+                            <option value="5" @(Model.Categoria == 5 ? "selected" : "") data-stars="5">5 Estrellas</option>
+                        </select>
+                        <div class="modern-select-stars-display" id="starsDisplay">
+                            @{
+                                int categoriaValue = Model.Categoria > 0 ? Model.Categoria : 1;
+                            }
+                            @for (int i = 1; i <= categoriaValue; i++)
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                        </div>
+                    </div>
+                </div>
 
-    <div class="form-label">
-        <label>CheckOut</label>
-    </div>
-    <div class="form-field">
-        <input type="text" name="CheckOut" id="CheckOut" value="@Model.CheckOut" />
-    </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-clock"></i>
+                        Check-In
+                    </label>
+                    <input type="text" name="CheckIn" id="CheckIn" class="modern-form-input" value="@Model.CheckIn" placeholder="Horario de check-in" />
+                </div>
 
-    <div class="form-label">
-        <label>GoogleMapHtml</label>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-clock-history"></i>
+                        Check-Out
+                    </label>
+                    <input type="text" name="CheckOut" id="CheckOut" class="modern-form-input" value="@Model.CheckOut" placeholder="Horario de check-out" />
+                </div>
+
+                <div class="modern-form-group" style="grid-column: 1 / -1;">
+                    <label class="modern-form-label">
+                        <i class="bi bi-map"></i>
+                        Código HTML de Google Maps
+                    </label>
+                    <textarea name="GoogleMapHtml" id="GoogleMapHtml" class="modern-form-textarea" rows="4" placeholder="Código HTML del mapa de Google Maps">@Model.GoogleMapHtml</textarea>
+                </div>
+            </div>
+
+            <div class="modern-form-actions">
+                <button type="button" class="btn-modern btn-modern-secondary" onclick="location.href='/Hotel/Index';">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a la lista</span>
+                </button>
+                <button type="button" class="btn-modern btn-modern-primary" onclick="javascript: save();">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </form>
     </div>
-    <div class="form-field">
-        <input type="text" name="GoogleMapHtml" id="GoogleMapHtml" value="@Model.GoogleMapHtml" />
-    </div>
-    </form>
+</div>
     
-    <p>
-        <input type="button" value="Guardar" class="btn btn-small btn-inverse view-all hidden-phone" onclick="javascript: save();" />
-        
-            @Html.ActionLink("Volver a la lista", "Index",null, new {@class="btn btn-small btn-inverse view-all hidden-phone"})
-    </p>
-
-    </div>
-    
 
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
 <script type="text/javascript">
     function save() {
         if ($("#Nombre").val().replace(/ /g,'') == "") {
@@ -219,4 +243,25 @@ else
             }
         });
     }
+
+    // Actualizar visualización de estrellas cuando cambia el select
+    $(document).ready(function() {
+        function updateStarsDisplay() {
+            var selectedValue = parseInt($("#Categoria").val()) || 1;
+            var starsDisplay = $("#starsDisplay");
+            starsDisplay.empty();
+            
+            for (var i = 1; i <= selectedValue; i++) {
+                starsDisplay.append('<i class="bi bi-star-fill"></i>');
+            }
+        }
+
+        // Actualizar al cargar la página
+        updateStarsDisplay();
+
+        // Actualizar cuando cambia el select
+        $("#Categoria").on('change', function() {
+            updateStarsDisplay();
+        });
+    });
 </script>

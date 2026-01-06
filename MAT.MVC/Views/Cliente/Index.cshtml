@@ -5,186 +5,123 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-person-badge"></i>
+            <span>Clientes</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="/PersonaCliente/Create" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Cliente</span>
+            </a>
+        </div>
+    </div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.PersonaId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Apellido)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Nombre)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TipoDocumento)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.NroDocumento)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Pais)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Telefono)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FechaNacimiento)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Sexo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ClienteId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RazonSocial)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Cuit)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Moneda)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Empresa)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FormaPago)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CondicionIva)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.VendedorId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Fax)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Web)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Idioma)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Promotor)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SuppressEntityEvents)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsDeleted)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsDirty)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsNew)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ViewName)
-        </th>
-        <th></th>
-    </tr>
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblClientes">
+            <thead>
+                <tr>
+                    <th>Apellido</th>
+                    <th>Nombre</th>
+                    <th>Tipo Documento</th>
+                    <th>Nro. Documento</th>
+                    <th>Razón Social</th>
+                    <th>CUIT</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>Moneda</th>
+                    <th style="width: 100px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Apellido</strong></td>
+                        <td>@item.Nombre</td>
+                        <td>@item.TipoDocumento</td>
+                        <td>@item.NroDocumento</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.RazonSocial))
+                            {
+                                @item.RazonSocial
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Cuit))
+                            {
+                                @item.Cuit
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Telefono))
+                            {
+                                <i class="bi bi-telephone"></i> @item.Telefono
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Email))
+                            {
+                                <i class="bi bi-envelope"></i> @item.Email
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>@item.Moneda</td>
+                        <td>
+                            <div class="modern-table-actions">
+                                <a href="/PersonaCliente/Edit/@item.PersonaId" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/PersonaCliente/Details/@item.PersonaId" class="modern-btn-icon" title="Ver Detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.PersonaId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Apellido)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nombre)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TipoDocumento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NroDocumento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Pais)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Telefono)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FechaNacimiento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Sexo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ClienteId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RazonSocial)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Cuit)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Moneda)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Empresa)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FormaPago)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CondicionIva)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.VendedorId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Fax)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Web)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Idioma)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Promotor)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SuppressEntityEvents)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsDeleted)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsDirty)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsNew)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ViewName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
-
-</table>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tblClientes").DataTable({
+            pageLength: 25,
+            order: [[0, 'asc']],
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ clientes",
+                infoEmpty: "No hay clientes disponibles",
+                infoFiltered: "(filtrado de _MAX_ clientes totales)",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            },
+            columnDefs: [
+                { orderable: false, targets: 9 }
+            ]
+        });
+    });
+</script>

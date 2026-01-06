@@ -7,132 +7,107 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Butacas</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-grid-3x3-gap"></i>
+            <span>Butacas</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="/Butaca/Create" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Butaca</span>
+            </a>
+        </div>
+    </div>
 
-<p>
-    @Html.ActionLink("+ Agregar Butaca", "Create", null, new { @class = "btn btn-small btn-inverse" })
-</p>
-
-
-
-@using (Html.BeginForm())
-{
-    <p>
-        Coche    
-        @Html.DropDownList("SearchString", Helper.ToSelectEntities("Transporte"), new { @class = "btn btn-small btn-inverse" })
-        @*@Html.TextBox("SearchString")*@
-        <input type="submit" value="Filtrar" class="btn btn-small btn-inverse" />
-    </p>
-}
-
-<table class="mat-customtable">
-    <thead>
-        <tr>
-
-            <th>
-                @Html.DisplayNameFor(model => model.First().NroButaca)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Piso)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Ubicacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Tipo)
-            </th>
-            <th>
-                @Html.Label("Nro Coche")
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Fila)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Posicion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().CodigoButaca)
-            </th>
-
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.NroButaca)
-                </td>
-                <td>
-                    @Html.Label(((ePisoButaca)item.Piso).ToString())
-                </td>
-                <td>
-                    @Html.Label(((eUbicacionButaca)item.Ubicacion).ToString())
-                </td>
-                <td>
-                    @Html.Label(((eTipoButaca)item.Tipo).ToString())
-                </td>
-                <td>
-                    @Html.Label("Coche " + Helper.ToSelectItem("Transporte", item.TransporteId.ToString()))
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Fila)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Posicion)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CodigoButaca)
-                </td>
-
-                <td>
-                    <a href="/Butaca/Edit/@item.ButacaId">
-                        <img src="/Images/pencil.png" width="32" height="32" /></a>
-                    <a href="/Butaca/Details/@item.ButacaId">
-                        <img src="/Images/notepad.png" width="32" height="32" /></a>
-                    <a href="/Butaca/Delete/@item.ButacaId">
-                        <img src="/Images/cross.png" width="32" height="32" /></a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<div class="mat-custompaging">
-    Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
-    de @Model.PageCount
-
-    @if (Model.HasPreviousPage)
+    @using (Html.BeginForm(null, null, FormMethod.Get, new { @class = "modern-form-container", style = "margin-bottom: 1.5rem; padding: 1.5rem;" }))
     {
-        @Html.ActionLink("<<", "Index", new { page = 1, SearchString = Model.First().TransporteId }, new { @class = "btn-pager" })
-        @Html.Raw(" ");
-        @Html.ActionLink("< Atrás", "Index", new { page = Model.PageNumber - 1, SearchString = Model.First().TransporteId }, new { @class = "btn-pager" })
-    }
-    else
-    {
-        <a id="btn-pager-first" class="btn-pager"><<</a>
-        <a id="btn-pager-previous" class="btn-pager">< Atrás</a>
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <label style="font-weight: 600; margin: 0;">Coche:</label>
+            @Html.DropDownList("SearchString", Helper.ToSelectEntities("Transporte"), new { @class = "modern-form-select", style = "width: auto; min-width: 200px;" })
+            <button type="submit" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-funnel"></i>
+                <span>Filtrar</span>
+            </button>
+        </div>
     }
 
-    @if (Model.HasNextPage)
-    {
-        @Html.ActionLink("Siguiente >", "Index", new { page = Model.PageNumber + 1, SearchString = Model.First().TransporteId }, new { @class = "btn-pager" })
-        @Html.Raw(" ");
-        @Html.ActionLink(">>", "Index", new { page = Model.PageCount, SearchString = Model.First().TransporteId }, new { @class = "btn-pager" })
-    }
-    else
-    {
-        <a class="btn-pager">Siguiente ></a>
-        <a class="btn-pager">>></a>
-    }
-
-
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblButacas">
+            <thead>
+                <tr>
+                    <th>Nro. Butaca</th>
+                    <th>Piso</th>
+                    <th>Ubicación</th>
+                    <th>Tipo</th>
+                    <th>Coche</th>
+                    <th>Fila</th>
+                    <th>Posición</th>
+                    <th>Código</th>
+                    <th style="width: 120px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong style="color: var(--brand-primary);">@item.NroButaca</strong>
+                        </td>
+                        <td>@((ePisoButaca)item.Piso)</td>
+                        <td>@((eUbicacionButaca)item.Ubicacion)</td>
+                        <td>@((eTipoButaca)item.Tipo)</td>
+                        <td>
+                            <span class="badge-pasajero">
+                                <i class="bi bi-bus-front"></i>
+                                <span>@Helper.ToSelectItem("Transporte", item.TransporteId.ToString())</span>
+                            </span>
+                        </td>
+                        <td>@item.Fila</td>
+                        <td>@item.Posicion</td>
+                        <td><code>@item.CodigoButaca</code></td>
+                        <td>
+                            <div class="modern-table-actions">
+                                <a href="/Butaca/Edit/@item.ButacaId" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/Butaca/Details/@item.ButacaId" class="modern-btn-icon" title="Ver Detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="/Butaca/Delete/@item.ButacaId" class="modern-btn-icon btn-danger-icon" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
+    $(document).ready(function () {
+        $("#tblButacas").DataTable({
+            pageLength: 25,
+            order: [[0, 'asc']],
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ butacas",
+                infoEmpty: "No hay butacas disponibles",
+                infoFiltered: "(filtrado de _MAX_ butacas totales)",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            },
+            columnDefs: [
+                { orderable: false, targets: 8 }
+            ]
+        });
     });
 </script>

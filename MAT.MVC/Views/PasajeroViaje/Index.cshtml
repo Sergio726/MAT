@@ -6,80 +6,105 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Lista - Pasajeros</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-list-ul"></i>
+            <span>Lista de Pasajeros</span>
+        </h2>
+        @if (Model.Count > 0)
+        {
+            <div class="modern-page-actions">
+                <a href="/PasajeroViaje/Manifiesto/@Model.First().ViajeID" class="btn-modern btn-modern-secondary" target="_blank">
+                    <i class="bi bi-printer"></i>
+                    <span>Imprimir Manifiesto</span>
+                </a>
+                <a href="/PasajeroViaje/CNRT/@Model.First().ViajeID" class="btn-modern btn-modern-secondary" target="_blank">
+                    <i class="bi bi-file-pdf"></i>
+                    <span>Imprimir CNRT</span>
+                </a>
+            </div>
+        }
+    </div>
 
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblPasajerosViaje">
+            <thead>
+                <tr>
+                    <th>Apellido</th>
+                    <th>Nombre</th>
+                    <th>Tipo Documento</th>
+                    <th>Nro. Documento</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Sexo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.PasajeroApellido</strong></td>
+                        <td>@item.PasajeroNombre</td>
+                        <td>@((eTipoDocumento)(Convert.ToInt32(item.PasajeroTipoDocumento)))</td>
+                        <td>@item.PasajeroDocumento</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.PasajeroTelefono))
+                            {
+                                <i class="bi bi-telephone"></i> @item.PasajeroTelefono
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.PasajeroEmail))
+                            {
+                                <i class="bi bi-envelope"></i> @item.PasajeroEmail
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.PasajeroFechaNacimiento.HasValue)
+                            {
+                                @item.PasajeroFechaNacimiento.Value.ToString("dd/MM/yyyy")
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>@item.PasajeroSexo</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<table class="mat-customtable">
-    <thead>
-    <tr>
-        
-        <th>
-            Apellido
-        </th>
-        <th>
-            Nombre
-        </th>
-        <th>
-            Tipo Documento
-        </th>
-        <th>
-            Nro Documento
-        </th>
-        <th>
-            Telefono
-        </th>
-        <th>
-            Email
-        </th>
-        <th>
-            Fecha Nacimiento
-        </th>
-        <th>
-            Sexo
-        </th>
-        
-        
-        <th></th>
-    </tr>
-</thead>
-    <tbody>
-@foreach (var item in Model) {
-    <tr>
-        
-        <td>
-            @Html.DisplayFor(modelItem => item.PasajeroApellido)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PasajeroNombre)
-        </td>
-        <td>
-            @((eTipoDocumento)(Convert.ToInt32(item.PasajeroTipoDocumento)))
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PasajeroDocumento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PasajeroTelefono)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PasajeroEmail)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PasajeroFechaNacimiento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PasajeroSexo)
-        </td>
-                
-    </tr>
-}
-
-</table>
-</tbody>
-@if (Model.Count > 0)
-{
-<p class="botonera-form">
-         @Html.ActionLink("Imprimir Manifiesto", "Manifiesto", new { id = Model.First().ViajeID }, new {@class="btn btn-inverse btn-small"})
-        @Html.ActionLink("Imprimir CNRT", "CNRT", new { id = Model.First().ViajeID }, new {@class="btn btn-inverse btn-small"})
-</p>    
-}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tblPasajerosViaje").DataTable({
+            pageLength: 25,
+            order: [[0, 'asc']],
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ pasajeros",
+                infoEmpty: "No hay pasajeros disponibles",
+                infoFiltered: "(filtrado de _MAX_ pasajeros totales)",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            }
+        });
+    });
+</script>

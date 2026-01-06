@@ -6,84 +6,104 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Lista de Paquetes</h2>
-@if (ViewData["error"] != null)
-{
-    <label class="alert alert-error" id="lblError">@ViewData["error"].ToString()</label>
-}
-
-<p class="botonera-form">
-    <a type="button" class="btn btn-small btn-inverse" style="margin-bottom:9px;" href="/Paquete/Edit/?sAction=new">+ Agregar Paquete</a>
-    @*@Html.ActionLink("+ Agregar nuevo Paquete", "Create", null, new { @class="btn btn-inverse btn-small" })*@
-</p>
-<div style="margin-left:5px; margin-right:5px;">
-    <table class="mat-customtable" id="tblPaquetes">
-        <thead>
-            <tr>
-                <th>
-                    Paquete
-                </th>
-                <th>
-                    Fecha de Creación
-                </th>
-                <th>
-                    Moneda
-                </th>
-                <th>
-                    Temporada
-                </th>
-                <th style="width:200px;"></th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (MAT.MVC.Models.PaqueteStandard item in Model)
-            {
-
-                <tr>
-                    <td>
-                        @item.Descripcion
-                    </td>
-                    <td>
-                        @((item.FechaCreacion.Year != 1) ? item.FechaCreacion.ToShortDateString() : "")
-                    </td>
-                    <td>
-                        @item.MonedaCodigo
-                    </td>
-                    <td>
-                        @item.Temporada
-                    </td>
-                    <td>
-
-                        <a href="/Paquete/Vinculos/@item.PaqueteID" title="Vinculos" class="button_link">
-                        </a>
-                        <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" title="Editar" class="button_edit">
-                        </a>
-                        <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" title="Detalle" class="button_detail">
-                        </a>
-                        <a href="/Paquete/Delete/@item.PaqueteID" title="Eliminar Paquete" class="button_delete">
-                        </a>
-                    </td>
-                </tr>
-
-            }
-        </tbody>
-
-    </table>
-</div>
-
-@* jQuery y DataTables ya están incluidos en _Layout.cshtml - usando versiones locales *@
-@* Plugin date-uk: Si es necesario, descargar localmente o usar ordenamiento nativo de DataTables *@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#tblPaquetes").DataTable({
-            "columnDefs": [
-                // Plugin date-uk removido - DataTables ordenará fechas automáticamente
-                // { type: 'date-uk', targets: 1 }, // Comentado - plugin no disponible
-                { targets: 4, "orderable": false } // Evita que se ordene la columna de acciones
+            columnDefs: [
+                { targets: 4, orderable: false } // Evita que se ordene la columna de acciones
             ],
-            "pageLength": 25,
-            "order": [[1, "desc"]] // Ordenar por fecha de creación descendente
+            pageLength: 25,
+            order: [[1, "desc"]], // Ordenar por fecha de creación descendente
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ paquetes",
+                infoEmpty: "No hay paquetes disponibles",
+                infoFiltered: "(filtrado de _MAX_ paquetes totales)",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            }
         });
     });
 </script>
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-box-seam"></i>
+            <span>Lista de Paquetes</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="/Paquete/Edit/?sAction=new" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Paquete</span>
+            </a>
+        </div>
+    </div>
+
+    @if (ViewData["error"] != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewData["error"].ToString()</span>
+        </div>
+    }
+
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblPaquetes">
+            <thead>
+                <tr>
+                    <th>Paquete</th>
+                    <th>Fecha de Creación</th>
+                    <th>Moneda</th>
+                    <th>Temporada</th>
+                    <th style="width: 180px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (MAT.MVC.Models.PaqueteStandard item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Descripcion</strong></td>
+                        <td>
+                            @if (item.FechaCreacion.Year != 1)
+                            {
+                                <span>@item.FechaCreacion.ToShortDateString()</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge-categoria" style="font-size: 0.75rem;">
+                                @item.MonedaCodigo
+                            </span>
+                        </td>
+                        <td>@item.Temporada</td>
+                        <td>
+                            <div class="modern-table-actions">
+                                <a href="/Paquete/Vinculos/@item.PaqueteID" class="modern-btn-icon" title="Vínculos">
+                                    <i class="bi bi-link-45deg"></i>
+                                </a>
+                                <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" class="modern-btn-icon" title="Detalle">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="/Paquete/Delete/@item.PaqueteID" class="modern-btn-icon modern-btn-icon-delete" title="Eliminar" onclick="return confirm('¿Está seguro que desea eliminar este paquete?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -3270,6 +3270,395 @@ div.bnn_floating-banner.hidden {
     }
 }
 
+/* ============================================
+   ESTILOS REUTILIZABLES PARA FORMULARIOS MODERNOS
+   Aplicables a todas las vistas del sistema
+   ============================================ */
+
+.modern-page-container {
+    padding: 2rem;
+    background-color: var(--bg-main);
+    min-height: calc(100vh - 120px);
+}
+
+.modern-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.modern-page-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.modern-page-title i {
+    font-size: 2rem;
+    color: var(--brand-primary);
+}
+
+.modern-page-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Formularios modernos genéricos */
+.modern-form-container {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.modern-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.modern-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+}
+
+.modern-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.modern-form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.modern-form-label i {
+    font-size: 1rem;
+    color: var(--brand-primary);
+}
+
+.modern-form-input,
+.modern-form-select,
+.modern-form-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    color: var(--text-primary);
+    background: var(--white);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.modern-form-input:focus,
+.modern-form-select:focus,
+.modern-form-textarea:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+.modern-form-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+}
+
+/* Select mejorado con visualización de estrellas */
+.modern-select-wrapper {
+    position: relative;
+}
+
+.modern-select-stars {
+    padding-right: 3.5rem !important;
+}
+
+.modern-select-stars-display {
+    position: absolute;
+    right: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.modern-select-stars-display i {
+    font-size: 0.875rem;
+    color: #fbbf24;
+    line-height: 1;
+}
+
+.modern-select-stars option {
+    padding: 0.5rem;
+}
+
+/* Mejoras visuales para el select en general */
+.modern-form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--white);
+}
+
+.modern-form-select:hover {
+    border-color: var(--text-secondary);
+}
+
+.modern-form-select:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+.modern-form-select option {
+    padding: 0.75rem;
+    background: var(--white);
+    color: var(--text-primary);
+}
+
+.modern-form-select option:hover {
+    background: var(--bg-main);
+}
+
+.modern-form-select option:checked {
+    background: rgba(230, 51, 117, 0.1);
+    color: var(--brand-primary);
+    font-weight: 600;
+}
+
+.modern-form-textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+}
+
+.modern-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 1rem;
+}
+
+/* Tablas modernas genéricas */
+.modern-table-container {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    overflow-x: auto;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modern-table thead th {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+    border-bottom: 2px solid var(--border-color);
+    text-align: left;
+}
+
+.modern-table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+.modern-table tbody tr {
+    transition: all 0.2s ease;
+    background-color: var(--white);
+}
+
+.modern-table tbody tr:hover {
+    background-color: var(--bg-main);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.modern-table-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.modern-btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.modern-btn-icon:hover {
+    background: var(--bg-main);
+    color: var(--brand-primary);
+    transform: translateY(-1px);
+}
+
+.modern-btn-icon i {
+    font-size: 1.125rem;
+}
+
+.modern-btn-icon-edit:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.modern-btn-icon-delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Botones modernos genéricos */
+.btn-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-modern i {
+    font-size: 1rem;
+}
+
+.btn-modern-primary {
+    background: var(--brand-primary);
+    color: var(--white);
+}
+
+.btn-modern-primary:hover {
+    background: #c92a5f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.3);
+    color: var(--white);
+    text-decoration: none;
+}
+
+.btn-modern-secondary {
+    background: var(--white);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-modern-secondary:hover {
+    background: var(--bg-main);
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    text-decoration: none;
+}
+
+/* Mensajes de error modernos */
+.modern-alert-error {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    border-radius: 8px;
+    color: #991b1b;
+    font-size: 0.9375rem;
+    margin-bottom: 1.5rem;
+}
+
+.modern-alert-error i {
+    font-size: 1.25rem;
+    color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modern-page-container {
+        padding: 1rem;
+    }
+
+    .modern-page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modern-page-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .btn-modern {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .modern-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modern-form-container {
+        padding: 1.5rem;
+    }
+
+    .modern-form-actions {
+        flex-direction: column;
+    }
+
+    .modern-form-actions .btn-modern {
+        width: 100%;
+    }
+}
+
 
 .btn-action-observacion {
     display: inline-flex;

@@ -6,95 +6,97 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
 <link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
 <script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#tblResult").DataTable();
+        $("#tblHoteles").DataTable({
+            order: [[0, 'asc']],
+            pageLength: 25,
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ hoteles",
+                infoEmpty: "No hay hoteles disponibles",
+                infoFiltered: "(filtrado de _MAX_ hoteles totales)",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            }
+        });
     });
 </script>
-<h2 class="title">Hoteles</h2>
 
-<p class="custom_margin_top_10">
-    @Html.ActionLink("+ Agregar Hotel", "ABM", null , new {@class = "btn btn-small btn-inverse view-all hidden-phone" })
-</p>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-building"></i>
+            <span>Hoteles</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="/Hotel/ABM" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Hotel</span>
+            </a>
+        </div>
+    </div>
 
-@if (ViewBag.Error != null)
-{
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
-}
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
 
-<div class="divDataTable">
-    <table class="mat-customtable" id="tblResult">
-    <thead>
-    <tr>
-       
-        <th style="width:84px;">
-            Nombre
-        </th>
-        <th style="width:100px;">
-            Direccion
-        </th>
-        <th style="width:100px;">
-            CP
-        </th>
-        <th style="width:100px;">
-            Localidad
-        </th>
-        <th style="width:100px;">
-            Telefono
-        </th>
-        <th style="width:100px;">
-            Email
-        </th>
-        <th style="width:100px;">
-            Contacto
-        </th>
-        
-       
-        <th></th>
-    </tr>
-</thead>
-    <tbody>
-@foreach (var item in Model) {
-    <tr>
-        
-        <td>
-            @item.Nombre
-        </td>
-        <td>
-            @item.Direccion
-        </td>
-        <td>
-            @item.CP
-        </td>
-        <td>
-            @item.Localidad
-        </td>
-        <td>
-            @item.Telefono
-        </td>
-        <td>
-            @item.Email
-        </td>
-        <td>
-            @item.Contacto
-        </td>
-               
-        <td style="width:190px;">
-            <a href="/Hotel/ABM?Id=@item.HotelID"><img src="/Images/pencil.png" width="32" height="32" title="Ver y Editar" /></a>
-            @*<a href="/Hotel/Details/@item.HotelID"><img src="/Images/notepad.png" width="32" height="32" title="Detalles"/></a>*@
-            @*<a href="/Habitacion/Create/@item.HotelID"><img src="/Images/habitacion.png" width="32" height="32" title="Habitaciones"/></a>*@
-        </td>
-    </tr>
-}
-</tbody>
-</table>
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblHoteles">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Dirección</th>
+                    <th>CP</th>
+                    <th>Localidad</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>Contacto</th>
+                    <th style="width: 80px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Nombre</strong></td>
+                        <td>@item.Direccion</td>
+                        <td>@item.CP</td>
+                        <td>@item.Localidad</td>
+                        <td>@item.Telefono</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Email))
+                            {
+                                <a href="mailto:@item.Email" style="color: var(--brand-primary);">@item.Email</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>@item.Contacto</td>
+                        <td>
+                            <div class="modern-table-actions">
+                                <a href="/Hotel/ABM?Id=@item.HotelID" class="modern-btn-icon modern-btn-icon-edit" title="Editar Hotel">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
-<script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
-    });
-</script>

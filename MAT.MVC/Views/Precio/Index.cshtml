@@ -5,51 +5,54 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Precios de Butacas</h2>
-
-<p class="botonera-form">
-    <input type="button" value="+ Agregar Precio" class="btn btn-small btn-inverse" onclick="javascript: editPrecio('0');" />
-</p>
-   
-@if (ViewBag.Error != null)
-{
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
-    return;
-}
-<div class="custom_padding_10">
-    <table class="grid mat-customtable" id="tblPrecios">
-    <thead>
-    <tr>
-        
-        <th>
-           Monto
-        </th>
-        <th>
-           Vigencia
-        </th>
-        <th>
-           Descripcion
-        </th>
-        <th>
-           Descripcion para Voucher
-        </th>
-        <th>
-           Mes
-        </th>
-        <th></th>
-              
-    </tr>
-        </thead>
-    
-</table>
-
- <div id="divTools" style="display:none;">
-    <div class="text_align_rigth">
-        <a href="javascript: editPrecio('{{PrecioID}}');"><img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
-        <a href="javascript: deletePrecio('{{PrecioID}}');" class="deleteRow"><img src="/Images/cross.png" width="32" height="32" title="Eliminar" /></a>
-
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-tag"></i>
+            <span>Precios de Butacas</span>
+        </h2>
+        <div class="modern-page-actions">
+            <button type="button" class="btn-modern btn-modern-primary" onclick="javascript: editPrecio('0');">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Precio</span>
+            </button>
+        </div>
     </div>
-</div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
+
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblPrecios">
+            <thead>
+                <tr>
+                    <th>Monto</th>
+                    <th>Vigencia</th>
+                    <th>Descripción</th>
+                    <th>Descripción para Voucher</th>
+                    <th>Mes</th>
+                    <th style="width: 100px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div id="divTools" style="display:none;">
+            <div class="modern-table-actions">
+                <a href="javascript: editPrecio('{{PrecioID}}');" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <a href="javascript: deletePrecio('{{PrecioID}}');" class="modern-btn-icon btn-danger-icon deleteRow" title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -60,24 +63,45 @@
             var jt = jTables["Table"];
         
             var table = $("#tblPrecios").DataTable({
-                "aaData": jt,
-                "columns": [
-                { "data": "Monto" },
-                { "data": "Vigencia" },
-                { "data": "Descripcion" },
-                { "data": "DescripcionVoucher" },
-                { "data": "Mes" },
-                { "data": "PrecioID",
-                    "mRender": function (data, type, row) {
-                        var _data = {"PrecioID": row.PrecioID};
-                        var data = $("#divTools").html().trim().render(_data);
-                        return data;
+                aaData: jt,
+                columns: [
+                    { 
+                        data: "Monto",
+                        render: function(data, type, row) {
+                            return '<span class="badge badge-pesos">$' + parseFloat(data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</span>';
+                        }
+                    },
+                    { data: "Vigencia" },
+                    { data: "Descripcion" },
+                    { data: "DescripcionVoucher" },
+                    { data: "Mes" },
+                    { 
+                        data: "PrecioID",
+                        orderable: false,
+                        render: function (data, type, row) {
+                            var _data = {"PrecioID": row.PrecioID};
+                            var html = $("#divTools").html().trim();
+                            if (typeof html.render === 'function') {
+                                return html.render(_data);
+                            }
+                            return html.replace(/\{\{PrecioID\}\}/g, row.PrecioID);
+                        }
                     }
-                },
-            
                 ],
-                "bAutoWidth": false,
-                "pageLength": 25
+                pageLength: 25,
+                language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ precios",
+                    infoEmpty: "No hay precios disponibles",
+                    infoFiltered: "(filtrado de _MAX_ precios totales)",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                }
             });
 
             $('#tblPrecios a.deleteRow').on( 'click', function () {

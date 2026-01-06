@@ -6,70 +6,121 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Proveedores</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-building"></i>
+            <span>Proveedores</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="/PersonaProveedor/Create" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Proveedor</span>
+            </a>
+        </div>
+    </div>
 
-<p>
-    @Html.ActionLink("+ Agregar Proveedor", "Create", null, new {@class="btn btn-small btn-inverse view-all hidden-phone" })
-</p>
-<table class="mat-customtable">
-    <thead>
-    <tr>
-        
-        <th>
-            @Html.DisplayNameFor(model => model.RazonSocial)
-        </th>
-        <th>
-            @Html.Label("Localidad del Proveedor")
-        </th>
-        <th>
-            @Html.Label("Telefono")
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Fax)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Web)
-        </th>
-        <th>
-            @Html.Label("Email del proveedor")
-        </th>
-        
-        <th></th>
-    </tr>
-        </thead>
-    <tbody>
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblProveedores">
+            <thead>
+                <tr>
+                    <th>Razón Social</th>
+                    <th>Localidad</th>
+                    <th>Teléfono</th>
+                    <th>Fax</th>
+                    <th>Web</th>
+                    <th>Email</th>
+                    <th style="width: 100px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.RazonSocial</strong>
+                        </td>
+                        <td>@Helper.ToSelectItem("Localidad", item.ProveedorLocalidadId.ToString())</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ProveedorTelefono))
+                            {
+                                <i class="bi bi-telephone"></i> @item.ProveedorTelefono
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Fax))
+                            {
+                                @item.Fax
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Web))
+                            {
+                                <a href="@item.Web" target="_blank" title="Abrir sitio web">
+                                    <i class="bi bi-globe"></i> @item.Web
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ProveedorEmail))
+                            {
+                                <i class="bi bi-envelope"></i> @item.ProveedorEmail
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="modern-table-actions">
+                                <a href="/PersonaProveedor/Edit/@item.PersonaId" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/PersonaProveedor/Details/@item.PersonaId" class="modern-btn-icon" title="Ver Detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
-@foreach (var item in Model) {
-    <tr>
-       <td>
-            @Html.DisplayFor(modelItem => item.RazonSocial)
-        </td>
-        <td>
-            @Html.LabelFor(modelItem => item.ProveedorLocalidadId, Helper.ToSelectItem("Localidad", item.ProveedorLocalidadId.ToString()))
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProveedorTelefono)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Fax)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Web)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProveedorEmail)
-        </td>
-        
-        <td>
-            <a href="/PersonaProveedor/Edit/@item.PersonaId"><img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
-            <a href="/PersonaProveedor/Details/@item.PersonaId"><img src="/Images/notepad.png" width="32" height="32" title="Detalle"/></a>
-        </td>
-    </tr>
-}
-        </tbody>
-</table>
 <script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
+    $(document).ready(function () {
+        $("#tblProveedores").DataTable({
+            pageLength: 25,
+            order: [[0, 'asc']],
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ proveedores",
+                infoEmpty: "No hay proveedores disponibles",
+                infoFiltered: "(filtrado de _MAX_ proveedores totales)",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            },
+            columnDefs: [
+                { orderable: false, targets: 6 }
+            ]
+        });
     });
 </script>

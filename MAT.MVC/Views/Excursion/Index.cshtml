@@ -4,82 +4,104 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!-- En el head -->
-<link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
 
-<!-- Al final del body, después de jQuery -->
-<script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-geo-alt"></i>
+            <span>Excursiones</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="/Excursion/Create" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Excursión</span>
+            </a>
+        </div>
+    </div>
 
-<h2 class="title">Excursiones</h2>
-
-<p class="botonera-form">
-    <input type="button" value="+ Agregar Excursión" class="btn btn-small btn-inverse" onclick="location.href='@Url.Action("Create", "Excursion")'" />
-</p>
-
-<table id="tablaExcursiones" class="mat-customtable">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Descripcion)</th>
-            <th>@Html.DisplayNameFor(model => model.Costo)</th>
-            <th>@Html.DisplayNameFor(model => model.Observaciones)</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
-                <td>@Html.DisplayFor(modelItem => item.Costo)</td>
-                <td>@Html.DisplayFor(modelItem => item.Observaciones)</td>
-                <td>
-                    <a href="/Excursion/Edit/@item.ExcursionId">
-                        <img src="/Images/pencil.png" width="32" height="32" title="Editar" />
-                    </a>
-                    <a href="#" id="btn-eliminar-excursion"  data-id="@item.ExcursionId">
-                        <img src="/Images/cross.png" width="32" height="32" title="Eliminar" />
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="modern-table-container">
+        <table class="modern-table" id="tablaExcursiones">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Costo</th>
+                    <th>Observaciones</th>
+                    <th style="width: 100px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.Descripcion</strong>
+                        </td>
+                        <td>
+                            @if (item.Costo.HasValue)
+                            {
+                                <span class="badge badge-pesos">$@item.Costo.Value.ToString("N2")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Observaciones))
+                            {
+                                <span title="@item.Observaciones">@(item.Observaciones.Length > 50 ? item.Observaciones.Substring(0, 50) + "..." : item.Observaciones)</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="modern-table-actions">
+                                <a href="/Excursion/Edit/@item.ExcursionId" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="#" class="modern-btn-icon btn-danger-icon btn-eliminar-excursion" data-id="@item.ExcursionId" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
             $('#tablaExcursiones').DataTable({
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "Primero",
-                        "sLast": "Último",
-                        "sNext": "Siguiente",
-                        "sPrevious": "Anterior"
+                language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ excursiones",
+                    infoEmpty: "No hay excursiones disponibles",
+                    infoFiltered: "(filtrado de _MAX_ excursiones totales)",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
                     }
                 },
-                "order": [[0, "asc"]],
-                "pageLength": 10
+                order: [[0, "asc"]],
+                pageLength: 25,
+                columnDefs: [
+                    { orderable: false, targets: 3 }
+                ]
             });
 
-            // Manejador del evento para eliminar excursión
-            $('.btn-eliminar-excursion').on('click', function (e) {
+            $('#tablaExcursiones').on('click', '.btn-eliminar-excursion', function (e) {
                 e.preventDefault();
                 var excursionId = $(this).data('id');
                 if (confirm('¿Está seguro que desea eliminar esta excursión?')) {
                     // Aquí puedes agregar la lógica para eliminar la excursión
-                    // Por ejemplo, hacer una llamada AJAX al controlador
                 }
             });
         });

@@ -6,69 +6,101 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Pasajeros</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-people"></i>
+            <span>Pasajeros</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="/PersonaPasajero/Create" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Pasajero</span>
+            </a>
+        </div>
+    </div>
 
-<p>
-    @Html.ActionLink("+ Agregar Pasajero", "Create",null, new {@class="btn btn-small btn-inverse view-all hidden-phone" })
-</p>
-<table class="display mat-customtable">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Apellido)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Nombre)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TipoDocumento)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.NroDocumento)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Telefono)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        
-        <th></th>
-    </tr>
-        </thead>
-    <tbody>
-@foreach (var item in Model) {
-<tr>
-    
-        <td>
-            @Html.DisplayFor(modelItem => item.Apellido)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Nombre)
-        </td>
-        <td>
-            @Html.Label(((eTipoDocumento)item.TipoDocumento).ToString())
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.NroDocumento)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Telefono)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        
-        <td>
-            <a href="/PersonaPasajero/Edit/@item.PersonaId"><img src="/Images/pencil.png" width="32" height="32" /></a>
-            <a href="/PersonaPasajero/Details/@item.PersonaId"><img src="/Images/notepad.png" width="32" height="32" /></a>
-        </td>
-    </tr>
-}
-        </tbody>
-</table>
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblPasajeros">
+            <thead>
+                <tr>
+                    <th>Apellido</th>
+                    <th>Nombre</th>
+                    <th>Tipo Documento</th>
+                    <th>Nro. Documento</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th style="width: 100px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong>@item.Apellido</strong>
+                        </td>
+                        <td>@item.Nombre</td>
+                        <td>@((eTipoDocumento)item.TipoDocumento)</td>
+                        <td>@item.NroDocumento</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Telefono))
+                            {
+                                <i class="bi bi-telephone"></i> @item.Telefono
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Email))
+                            {
+                                <i class="bi bi-envelope"></i> @item.Email
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="modern-table-actions">
+                                <a href="/PersonaPasajero/Edit/@item.PersonaId" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/PersonaPasajero/Details/@item.PersonaId" class="modern-btn-icon" title="Ver Detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
+    $(document).ready(function () {
+        $("#tblPasajeros").DataTable({
+            pageLength: 25,
+            order: [[0, 'asc']],
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ pasajeros",
+                infoEmpty: "No hay pasajeros disponibles",
+                infoFiltered: "(filtrado de _MAX_ pasajeros totales)",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            },
+            columnDefs: [
+                { orderable: false, targets: 6 }
+            ]
+        });
     });
 </script>

@@ -5,70 +5,108 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Transportes</h2>
-
-
-<table class="mat-customtable">
-    <thead>
-    <tr>
-        
-        <th>
-            @Html.Label("NroCoche")
-        </th>
-        <th>
-            @Html.Label("MaxPasajeros")
-        </th>
-        <th>
-            @Html.Label("KmRecorridos")
-        </th>
-        <th>
-            @Html.Label("UltimoService")
-        </th>
-        <th>
-            @Html.Label("Matricula")
-        </th>
-
-        <th></th>
-    </tr>
-        </thead>
-    <tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-           
-            <td>
-                @Html.DisplayFor(modelItem => item.NroCoche)
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxPasajeros)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KmRecorridos)
-            </td>
-            <td>
-                @if (item.UltimoService.ToString() != "1/1/0001 12:00:00 a. m.")
-                {
-                    @item.UltimoService.ToShortDateString()
-                }
-                
-            </td>
-            
-            <td>
-                @Html.DisplayFor(modelItem => item.Matricula)
-            </td>
-
-
-            <td>
-            <a href="/Transporte/Details/@item.TransporteID" title="Ver Detalles" class="button_detail"></a>
-            <a href="/Transporte/Edit/@item.TransporteID" title="Editar" class="button_edit"></a>
-            </td>
-        </tr>
-    }
-        </tbody>
-</table>
 <script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
+    $(document).ready(function () {
+        $("#tblTransportes").DataTable({
+            order: [[0, 'asc']],
+            pageLength: 25,
+            language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ a _END_ de _TOTAL_ transportes",
+                infoEmpty: "No hay transportes disponibles",
+                infoFiltered: "(filtrado de _MAX_ transportes totales)",
+                paginate: {
+                    first: "Primero",
+                    last: "Último",
+                    next: "Siguiente",
+                    previous: "Anterior"
+                }
+            }
+        });
     });
 </script>
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-bus-front"></i>
+            <span>Transportes</span>
+        </h2>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
+
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblTransportes">
+            <thead>
+                <tr>
+                    <th>Nro. Coche</th>
+                    <th>Máx. Pasajeros</th>
+                    <th>Km Recorridos</th>
+                    <th>Último Service</th>
+                    <th>Matrícula</th>
+                    <th style="width: 100px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <strong style="color: var(--brand-primary);">@item.NroCoche</strong>
+                        </td>
+                        <td>
+                            <span class="badge-pasajero">
+                                <i class="bi bi-people"></i>
+                                <span>@item.MaxPasajeros</span>
+                            </span>
+                        </td>
+                        <td>
+                            @if (item.KmRecorridos > 0)
+                            {
+                                <span>@item.KmRecorridos.ToString("N0") km</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.UltimoService.ToString() != "1/1/0001 12:00:00 a. m.")
+                            {
+                                <div class="modern-observaciones-fecha">
+                                    <i class="bi bi-calendar3"></i>
+                                    <span>@item.UltimoService.ToShortDateString()</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <strong>@item.Matricula</strong>
+                        </td>
+                        <td>
+                            <div class="modern-table-actions">
+                                <a href="/Transporte/Details/@item.TransporteID" class="modern-btn-icon" title="Ver Detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="/Transporte/Edit/@item.TransporteID" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
