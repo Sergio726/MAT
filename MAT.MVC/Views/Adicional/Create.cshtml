@@ -5,68 +5,114 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-plus-square"></i>
+            <span>Nuevo Adicional</span>
+        </h2>
+    </div>
+
+    <div class="modern-form-container">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formCreate" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-currency-dollar"></i>
+                        Monto <span style="color: #ef4444;">*</span>
+                    </label>
+                    <input type="text" id="Monto" name="Monto" class="modern-form-input" placeholder="0.00" required />
+                    <span class="text-danger" id="error-monto" style="display: none;">El campo Monto no puede estar vacío.</span>
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-tag"></i>
+                        Descripción <span style="color: #ef4444;">*</span>
+                    </label>
+                    <input type="text" id="Descripcion" name="Descripcion" class="modern-form-input" placeholder="Descripción del adicional" required />
+                    <span class="text-danger" id="error-descripcion" style="display: none;">El campo Descripción no puede estar vacío.</span>
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Seguro Menor</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="chkSeguroMenor" style="width: 20px; height: 20px; cursor: pointer;" />
+                        <span>Agregar prefijo "SEGURO MENOR" a la descripción</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modern-form-actions">
+                <button type="button" class="btn-modern btn-modern-secondary" onclick="location.href='@Url.Action("Index", "Adicional")'">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a la Lista</span>
+                </button>
+                <button type="button" class="btn-modern btn-modern-primary" onclick="valFomr();">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Crear Adicional</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
 <script type="text/javascript">
-    function valFomr(){
+    function valFomr() {
         var Monto = $("#Monto");
         var Descripcion = $("#Descripcion");
+        var isValid = true;
+
+        // Limpiar errores previos
+        $("#error-monto").hide();
+        $("#error-descripcion").hide();
+        Monto.removeClass("error-input");
+        Descripcion.removeClass("error-input");
+
+        // Validar Monto
         if (Monto.val().replace(/^\s+|\s+$/g, "") === "") {
-            Monto.css("background-color", "#E83A61");
-            return alert("El campo Monto no puede estar vacio.");
+            Monto.addClass("error-input");
+            $("#error-monto").show();
+            isValid = false;
         }
-        else {
-            Monto.css("background-color", "#fff")
-        }
-        
+
+        // Validar Descripción
         if (Descripcion.val().replace(/^\s+|\s+$/g, "") === "") {
-            Descripcion.css("background-color", "#E83A61");
-            return alert("El campo Descripción no puede estar vacio.");
+            Descripcion.addClass("error-input");
+            $("#error-descripcion").show();
+            isValid = false;
         }
-        else {
-            Descripcion.css("background-color", "#fff")
+
+        if (!isValid) {
+            return false;
         }
+
+        // Agregar prefijo si está marcado el checkbox
         if ($("#chkSeguroMenor").is(":checked")) {
-            var newDesc = "SEGURO MENOR - " + Descripcion.val();
-            Descripcion.val(newDesc);
+            var currentDesc = Descripcion.val();
+            if (!currentDesc.startsWith("SEGURO MENOR - ")) {
+                Descripcion.val("SEGURO MENOR - " + currentDesc);
+            }
         }
 
         $("#formCreate").submit();
     }
 
+    // Agregar clase CSS para inputs con error
+    $(document).ready(function () {
+        if (!$("style:contains('error-input')").length) {
+            $("<style>").prop("type", "text/css").html(".error-input { border-color: #ef4444 !important; background-color: #fef2f2 !important; }").appendTo("head");
+        }
+    });
 </script>
-
-<h2 class="title">Nuevo Adicional</h2>
-
-@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formCreate" }))
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
-
-    <div style="margin-left:60px;margin-top: 20px;">                
-
-        <div style="display: flex;width: 60%;">
-            <label style="width:100px;">Monto</label>
-            <input type="text" id="Monto" name="Monto" style="width:100%;" />
-        </div>
-       
-        <div style="display: flex;width: 60%;">
-            <label style="width:100px;">Descripción</label>
-            <input type="text" id="Descripcion" name="Descripcion" style="width:100%;" />
-            @*<input type="text" id="txtPrefijoSeguroMenor" style="width: 15%;" value="SEGURO MENOR"/>
-            <input type="text" id="Descripcion" name="Descripcion" style="width:78%;" />*@
-        </div>
-        <div style="display: flex;width: 60%;margin-bottom:15px;">
-            <label style="width:100px;">Seguro Menor</label>
-            <input type="checkbox" id="chkSeguroMenor" />
-        </div>
-       
-        <p>
-            <input type="button" value="Crear" class="btn btn-inverse btn-small" onclick="javascript: valFomr();" />
-            <input type="button" value="Volver a la lista" class="btn btn-inverse btn-small" onclick="location.href='@Url.Action("Index", "Adicional")'" />
-        </p>
-    </div>
-}
-
-
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}

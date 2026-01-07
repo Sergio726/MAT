@@ -659,7 +659,6 @@
     <Content Include="Views\Transporte\Index.cshtml" />
     <Content Include="Views\Transporte\Create.cshtml" />
     <Content Include="Views\Transporte\Edit.cshtml" />
-    <Content Include="Views\Transporte\Details.cshtml" />
     <Content Include="Views\PersonaCliente\Create.cshtml" />
     <Content Include="Views\PersonaCliente\Edit.cshtml" />
     <Content Include="Views\PersonaCliente\Details.cshtml" />

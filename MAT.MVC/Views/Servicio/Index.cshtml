@@ -45,15 +45,15 @@
                             <strong>@item.Descripcion</strong>
                         </td>
                         <td>
-                            @if (item.Precio.HasValue)
+                            @if (item.Precio > 0)
                             {
                                 if (item.Moneda == "PES" || item.Moneda == "ARS")
                                 {
-                                    <span class="badge badge-pesos">$@item.Precio.Value.ToString("N2")</span>
+                                    <span class="badge badge-pesos">$@item.Precio.ToString("N2")</span>
                                 }
                                 else
                                 {
-                                    <span class="badge badge-dolares">U$S@item.Precio.Value.ToString("N2")</span>
+                                    <span class="badge badge-dolares">U$S@item.Precio.ToString("N2")</span>
                                 }
                             }
                             else

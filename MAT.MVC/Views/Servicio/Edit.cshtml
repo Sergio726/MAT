@@ -7,75 +7,117 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Editar Servicio</h2>
-
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
-
-    <div class="form">    
-        <div class="form-label">
-            @Html.LabelFor(model => model.Descripcion)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Descripcion)
-            @Html.ValidationMessageFor(model => model.Descripcion)
-        </div>        
-
-        <div class="form-label">
-            Proveedor
-        </div>
-        <div class="form-field">
-            @if (Model.ProveedorId.HasValue)
-            {
-              @Html.DropDownListFor(model => model.ProveedorId, Helper.ToSelectEntities("Proveedor",Model.ProveedorId.Value))  
-            } else {
-             @Html.DropDownListFor(model => model.ProveedorId, Helper.ToSelectEntities("Proveedor"))   
-            }
-            @Html.ValidationMessageFor(model => model.ProveedorId)
-        </div>
-
-        <div class="form-label">
-            @if (Model.TransporteId.HasValue)
-            {
-                @Html.CheckBox("chk_transporte", true) 
-            }  else{
-              @Html.CheckBox("chk_transporte", false)   
-            }
-            Coche
-        </div>
-        <div class="form-field">
-            @if (Model.TransporteId.HasValue)
-            {
-            @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte",Model.TransporteId.Value))    
-            } else {
-             @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"))   
-            }
-            
-            @Html.ValidationMessageFor(model => model.TransporteId)
-        </div>
-
-        <p class="botonera-form">
-            <input class="btn btn-inverse btn-small" type="submit" value="Guardar" />
-            <a class="btn btn-inverse btn-small" href="/Servicio/Index">Lista de Servicios</a>
-        </p>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-cone-striped"></i>
+            <span>Editar Servicio</span>
+        </h2>
     </div>
-}
+
+    <div class="modern-form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-tag"></i>
+                        @Html.LabelFor(model => model.Descripcion)
+                    </label>
+                    @Html.TextBoxFor(model => model.Descripcion, new { @class = "modern-form-input", placeholder = "Descripción del servicio" })
+                    @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-building"></i>
+                        Proveedor
+                    </label>
+                    @if (Model.ProveedorId.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.ProveedorId, Helper.ToSelectEntities("Proveedor", Model.ProveedorId.Value), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.ProveedorId, Helper.ToSelectEntities("Proveedor"), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.ProveedorId, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-check-square"></i>
+                        <span>Coche</span>
+                    </label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        @if (Model.TransporteId.HasValue)
+                        {
+                            @Html.CheckBox("chk_transporte", true, new { @style = "width: 20px; height: 20px; cursor: pointer;" })
+                        }
+                        else
+                        {
+                            @Html.CheckBox("chk_transporte", false, new { @style = "width: 20px; height: 20px; cursor: pointer;" })
+                        }
+                        <span>Asociar a transporte</span>
+                    </div>
+                </div>
+
+                <div class="modern-form-group" id="transporte-group" style="@(Model.TransporteId.HasValue ? "display: block;" : "display: none;")">
+                    <label class="modern-form-label">
+                        <i class="bi bi-bus-front"></i>
+                        Transporte
+                    </label>
+                    @if (Model.TransporteId.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte", Model.TransporteId.Value), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.TransporteId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="modern-form-actions">
+                <a href="/Servicio/Index" class="btn-modern btn-modern-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a la Lista</span>
+                </a>
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar Cambios</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
 
-<script>
-    if ($("input[name='chk_transporte']").is(":checked")) {
-        $("select[name='TransporteId']").attr("disabled", false);
-    } else {
-        $("select[name='TransporteId']").attr("disabled", true);
-    }
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Habilitar/deshabilitar select de transporte según checkbox
+        $("#chk_transporte").on("change", function () {
+            if ($(this).is(":checked")) {
+                $("#transporte-group").slideDown();
+                $("select[name='TransporteId']").prop("disabled", false);
+            } else {
+                $("#transporte-group").slideUp();
+                $("select[name='TransporteId']").prop("disabled", true).val("");
+            }
+        });
 
-    if ($("input[name='chk_hotel']").is(":checked")) {
-        $("select[name='HotelId']").attr("disabled", false);
-    } else {
-        $("select[name='HotelId']").attr("disabled", true);
-    }
+        // Inicializar estado según checkbox
+        if ($("#chk_transporte").is(":checked")) {
+            $("select[name='TransporteId']").prop("disabled", false);
+        } else {
+            $("select[name='TransporteId']").prop("disabled", true);
+        }
+    });
 </script>

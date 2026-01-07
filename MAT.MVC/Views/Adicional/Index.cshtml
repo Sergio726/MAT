@@ -33,9 +33,9 @@
                 {
                     <tr>
                         <td>
-                            @if (item.Monto.HasValue)
+                            @if (item.Monto > 0)
                             {
-                                <span class="badge badge-pesos">$@item.Monto.Value.ToString("N2")</span>
+                                <span class="badge badge-pesos">$@item.Monto.ToString("N2")</span>
                             }
                             else
                             {

@@ -5,67 +5,83 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="form">
-        
-<h2 class="title">Editar - Transporte</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-bus-front"></i>
+            <span>Editar Transporte</span>
+        </h2>
+    </div>
 
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
-       
+    <div class="modern-form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.NroCoche)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.NroCoche)
-            @Html.ValidationMessageFor(model => model.NroCoche)
-        </div>
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-hash"></i>
+                        @Html.LabelFor(model => model.NroCoche)
+                    </label>
+                    @Html.TextBoxFor(model => model.NroCoche, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Número de coche" })
+                    @Html.ValidationMessageFor(model => model.NroCoche, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.MaxPasajeros)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.MaxPasajeros)
-            @Html.ValidationMessageFor(model => model.MaxPasajeros)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-people"></i>
+                        @Html.LabelFor(model => model.MaxPasajeros)
+                    </label>
+                    @Html.TextBoxFor(model => model.MaxPasajeros, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Máximo de pasajeros" })
+                    @Html.ValidationMessageFor(model => model.MaxPasajeros, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.KmRecorridos)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.KmRecorridos)
-            @Html.ValidationMessageFor(model => model.KmRecorridos)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-speedometer2"></i>
+                        @Html.LabelFor(model => model.KmRecorridos)
+                    </label>
+                    @Html.TextBoxFor(model => model.KmRecorridos, new { @class = "modern-form-input", type = "number", min = "0", placeholder = "0" })
+                    @Html.ValidationMessageFor(model => model.KmRecorridos, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.UltimoService)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.UltimoService)
-            @Html.ValidationMessageFor(model => model.UltimoService)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-calendar3"></i>
+                        @Html.LabelFor(model => model.UltimoService)
+                    </label>
+                    @Html.TextBoxFor(model => model.UltimoService, "{0:yyyy-MM-dd}", new { @class = "modern-form-input", type = "date" })
+                    @Html.ValidationMessageFor(model => model.UltimoService, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Matricula)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Matricula)
-            @Html.ValidationMessageFor(model => model.Matricula)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-card-text"></i>
+                        @Html.LabelFor(model => model.Matricula)
+                    </label>
+                    @Html.TextBoxFor(model => model.Matricula, new { @class = "modern-form-input", placeholder = "Matrícula del vehículo" })
+                    @Html.ValidationMessageFor(model => model.Matricula, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
-        
-        <p>
-            <input type="submit" value="Guardar" class="btn btn-small btn-inverse" />
-             @Html.ActionLink("Volver a la Lista", "Index", null, new { @class = "btn btn-small btn-inverse" })
-        </p>
-   
-}
-
+            <div class="modern-form-actions">
+                @Html.ActionLink("Volver a la Lista", "Index", null, new { @class = "btn-modern btn-modern-secondary" })
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar Cambios</span>
+                </button>
+            </div>
+        }
+    </div>
 </div>
-<script type="text/javascript">
-    $("input[type=number]").attr("min", 0);
-</script>
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("input[type=number]").attr("min", 0);
+        });
+    </script>
 }

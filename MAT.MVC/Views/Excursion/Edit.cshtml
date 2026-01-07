@@ -5,62 +5,78 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Editar Excursión</h2>
-
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
-
-    <div class="form">
-        
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.Descripcion)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Descripcion)
-            @Html.ValidationMessageFor(model => model.Descripcion)
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.Costo)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Costo)
-            @Html.ValidationMessageFor(model => model.Costo)
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.Observaciones)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Observaciones)
-            @Html.ValidationMessageFor(model => model.Observaciones)
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.ProveedorId)
-        </div>
-        <div class="form-field">
-            @if (Model.ProveedorId.HasValue)
-            {
-                @Html.DropDownListFor(model => model.ProveedorId, MAT.Utilities.Helper.ToSelectEntities("Proveedor", Model.ProveedorId.Value))
-            }
-            else
-            {
-                @Html.DropDownListFor(model => model.ProveedorId, MAT.Utilities.Helper.ToSelectEntities("Proveedor"))
-            }
-            
-            @Html.ValidationMessageFor(model => model.ProveedorId)
-        </div>
-
-        <p class="botonera-form">
-            <input type="submit" value="Guardar" class="btn btn-inverse btn-small" />
-            <a href="/Excursion/Index" class="btn btn-inverse btn-small">Lista de Excursiones</a>
-        </p>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-geo-alt"></i>
+            <span>Editar Excursión</span>
+        </h2>
     </div>
-}
 
+    <div class="modern-form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-tag"></i>
+                        @Html.LabelFor(model => model.Descripcion)
+                    </label>
+                    @Html.TextBoxFor(model => model.Descripcion, new { @class = "modern-form-input", placeholder = "Descripción de la excursión" })
+                    @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-currency-dollar"></i>
+                        @Html.LabelFor(model => model.Costo)
+                    </label>
+                    @Html.TextBoxFor(model => model.Costo, new { @class = "modern-form-input", type = "number", step = "0.01", min = "0", placeholder = "0.00" })
+                    @Html.ValidationMessageFor(model => model.Costo, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-building"></i>
+                        @Html.LabelFor(model => model.ProveedorId)
+                    </label>
+                    @if (Model.ProveedorId.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.ProveedorId, MAT.Utilities.Helper.ToSelectEntities("Proveedor", Model.ProveedorId.Value), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.ProveedorId, MAT.Utilities.Helper.ToSelectEntities("Proveedor"), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.ProveedorId, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="modern-form-group" style="grid-column: 1 / -1;">
+                    <label class="modern-form-label">
+                        <i class="bi bi-chat-left-text"></i>
+                        @Html.LabelFor(model => model.Observaciones)
+                    </label>
+                    @Html.TextAreaFor(model => model.Observaciones, new { @class = "modern-form-textarea", rows = "4", placeholder = "Observaciones adicionales (opcional)" })
+                    @Html.ValidationMessageFor(model => model.Observaciones, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="modern-form-actions">
+                <a href="/Excursion/Index" class="btn-modern btn-modern-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a la Lista</span>
+                </a>
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar Cambios</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

@@ -7,50 +7,62 @@
 
 ## ✅ COMPLETADAS (25 vistas modernizadas):
 
-1. ✅ Home/Index.cshtml
-2. ✅ Home/ViajesPorFecha.cshtml
-3. ✅ Reserva/Index.cshtml
-4. ✅ Reserva/Observaciones.cshtml
-5. ✅ Reserva/ObservacionesGenerales.cshtml
-6. ✅ Reserva/ObservacionABM.cshtml
-7. ✅ Account/Login.cshtml
-8. ✅ Account/Register.cshtml
-9. ✅ Account/RegistrarVendedor.cshtml
-10. ✅ Account/Manage.cshtml
-11. ✅ Account/_ChangePasswordPartial.cshtml
-12. ✅ Account/_SetPasswordPartial.cshtml
-13. ✅ Hotel/ABM.cshtml
-14. ✅ Hotel/Index.cshtml
-15. ✅ Paquete/Index.cshtml
-16. ✅ Transporte/Index.cshtml
-17. ✅ Servicio/Index.cshtml
-18. ✅ Excursion/Index.cshtml
-19. ✅ Adicional/Index.cshtml
-20. ✅ Precio/Index.cshtml
-21. ✅ PersonaPasajero/Index.cshtml
-22. ✅ PersonaProveedor/Index.cshtml
-23. ✅ PasajeroViaje/Index.cshtml
-24. ✅ Cliente/Index.cshtml
-25. ✅ Butaca/Index.cshtml
+| # | Vista | Fecha | Mejoras Aplicadas |
+|---|-------|-------|-------------------|
+| 1 | Home/Index.cshtml | 2025-01-27 | Dashboard moderno con cards, iconos Bootstrap, tooltips |
+| 2 | Home/ViajesPorFecha.cshtml | 2025-01-27 | Calendario y lista de viajes con diseño moderno |
+| 3 | Reserva/Index.cshtml | 2025-01-27 | Distribución de butacas, modales modernos, badges de estado |
+| 4 | Reserva/Observaciones.cshtml | 2025-01-27 | Modal moderno con header y acciones estilizadas |
+| 5 | Reserva/ObservacionesGenerales.cshtml | 2025-01-27 | Tabla sin expand/collapse, badges fucsia, diseño limpio |
+| 6 | Reserva/ObservacionABM.cshtml | 2025-01-27 | Formulario con grid responsive, iconos en labels |
+| 7 | Account/Login.cshtml | 2025-01-27 | Diseño moderno, animación gradual, responsive |
+| 8 | Account/Register.cshtml | 2025-01-27 | Formulario moderno con validaciones visuales |
+| 9 | Account/RegistrarVendedor.cshtml | 2025-01-27 | Formulario moderno adaptado a móviles |
+| 10 | Account/Manage.cshtml | 2025-01-27 | Panel de gestión con diseño consistente |
+| 11 | Account/_ChangePasswordPartial.cshtml | 2025-01-27 | Formulario parcial modernizado |
+| 12 | Account/_SetPasswordPartial.cshtml | 2025-01-27 | Formulario parcial modernizado |
+| 13 | Hotel/ABM.cshtml | 2025-01-27 | Formulario con select de estrellas dinámico, grid responsive |
+| 14 | Hotel/Index.cshtml | 2025-01-27 | Tabla moderna con DataTables, botones de acción |
+| 15 | Paquete/Index.cshtml | 2025-01-27 | Tabla moderna con DataTables, iconos temáticos |
+| 16 | Transporte/Index.cshtml | 2025-01-27 | Tabla moderna, badges para pasajeros, formato de km |
+| 17 | Servicio/Index.cshtml | 2025-01-27 | Tabla moderna, badges de precios (pesos/dólares) |
+| 18 | Excursion/Index.cshtml | 2025-01-27 | Tabla moderna, observaciones truncadas, badges de costos |
+| 19 | Adicional/Index.cshtml | 2025-01-27 | Tabla moderna, badges de montos |
+| 20 | Precio/Index.cshtml | 2025-01-27 | Tabla con datos JSON, badges de precios formateados |
+| 21 | PersonaPasajero/Index.cshtml | 2025-01-27 | Tabla moderna, iconos de contacto, DataTables |
+| 22 | PersonaProveedor/Index.cshtml | 2025-01-27 | Tabla moderna, enlaces a sitios web, iconos informativos |
+| 23 | PasajeroViaje/Index.cshtml | 2025-01-27 | Tabla moderna, botones de impresión en header |
+| 24 | Cliente/Index.cshtml | 2025-01-27 | Tabla simplificada, solo campos relevantes |
+| 25 | Butaca/Index.cshtml | 2025-01-27 | Tabla moderna, filtro con dropdown, badges de coches |
+| 26 | Servicio/Create.cshtml | 2025-01-27 | Formulario moderno, checkbox para transporte, validaciones mejoradas |
+| 27 | Servicio/Edit.cshtml | 2025-01-27 | Formulario moderno, manejo de valores nullable, checkbox dinámico |
+| 28 | Excursion/Create.cshtml | 2025-01-27 | Formulario moderno, textarea para observaciones |
+| 29 | Excursion/Edit.cshtml | 2025-01-27 | Formulario moderno, manejo de valores nullable |
+| 30 | Adicional/Create.cshtml | 2025-01-27 | Formulario moderno, validaciones JavaScript mejoradas, checkbox seguro menor |
+| 31 | Adicional/Edit.cshtml | 2025-01-27 | Formulario moderno simplificado |
+| 32 | Transporte/Create.cshtml | 2025-01-27 | Formulario moderno, inputs numéricos y fecha |
+| 33 | Transporte/Edit.cshtml | 2025-01-27 | Formulario moderno, inputs numéricos y fecha |
+| 34 | Transporte/Details.cshtml | 2025-01-27 | Vista de solo lectura con badges e iconos informativos |
 
 ---
 
-## 📋 FASE 2: FORMULARIOS SIMPLES (9 vistas) - Costo: BAJO
+## 📋 FASE 2: FORMULARIOS SIMPLES (9 vistas) - Costo: BAJO ✅ COMPLETADA
 
 **Estimación:** 2-4 horas cada una  
-**Total estimado:** ~25 horas
+**Total estimado:** ~25 horas  
+**Estado:** ✅ Completada el 2025-01-27
 
 ### Formularios Create/Edit básicos:
 
-26. ⏳ **Servicio/Create.cshtml** - Formulario simple (3 campos)
-27. ⏳ **Servicio/Edit.cshtml** - Formulario simple
-28. ⏳ **Excursion/Create.cshtml** - Formulario simple (3 campos)
-29. ⏳ **Excursion/Edit.cshtml** - Formulario simple
-30. ⏳ **Adicional/Create.cshtml** - Formulario simple (2 campos)
-31. ⏳ **Adicional/Edit.cshtml** - Formulario simple
-32. ⏳ **Transporte/Create.cshtml** - Formulario simple
-33. ⏳ **Transporte/Edit.cshtml** - Formulario simple
-34. ⏳ **Transporte/Details.cshtml** - Vista de detalles
+26. ✅ **Servicio/Create.cshtml** - Formulario simple (3 campos) - Completado 2025-01-27
+27. ✅ **Servicio/Edit.cshtml** - Formulario simple - Completado 2025-01-27
+28. ✅ **Excursion/Create.cshtml** - Formulario simple (3 campos) - Completado 2025-01-27
+29. ✅ **Excursion/Edit.cshtml** - Formulario simple - Completado 2025-01-27
+30. ✅ **Adicional/Create.cshtml** - Formulario simple (2 campos) - Completado 2025-01-27
+31. ✅ **Adicional/Edit.cshtml** - Formulario simple - Completado 2025-01-27
+32. ✅ **Transporte/Create.cshtml** - Formulario simple - Completado 2025-01-27
+33. ✅ **Transporte/Edit.cshtml** - Formulario simple - Completado 2025-01-27
+34. ✅ **Transporte/Details.cshtml** - Vista de detalles - Completado 2025-01-27
 
 ---
 
@@ -245,15 +257,16 @@
 
 | Fase | Descripción | Vistas | Horas Estimadas | Prioridad |
 |------|-------------|--------|-----------------|-----------|
-| ✅ Completadas | Vistas modernizadas | 25 | - | ✅ |
-| ⏳ Fase 2 | Formularios Simples | 9 | ~25 horas | 🔴 Alta |
+| ✅ Completadas | Vistas modernizadas | 34 | - | ✅ |
+| ✅ Fase 2 | Formularios Simples | 9 | ~25 horas | ✅ Completada |
 | ⏳ Fase 3 | Formularios y Tablas Medios | 15 | ~60 horas | 🟠 Media |
 | ⏳ Fase 4 | Formularios Complejos | 9 | ~50 horas | 🟡 Media-Baja |
 | ⏳ Fase 5 | Vistas Muy Complejas | 9 | ~75 horas | 🟢 Baja |
 | ⏳ Fase 6 | Vistas Especializadas | ~60 | ~100 horas | ⚪ Muy Baja |
 
-**TOTAL PENDIENTES:** ~102 vistas  
-**TOTAL HORAS ESTIMADAS:** ~310 horas
+**TOTAL COMPLETADAS:** 34 vistas  
+**TOTAL PENDIENTES:** ~93 vistas  
+**TOTAL HORAS ESTIMADAS:** ~285 horas restantes
 
 ---
 
@@ -278,5 +291,282 @@
 
 ---
 
-**Última actualización:** 2025-01-27
+## 📐 PATRONES DE DISEÑO GENERALES
+
+### Variables CSS (`saas-variables.css`)
+
+Todas las vistas modernas utilizan variables CSS centralizadas para mantener consistencia:
+
+```css
+:root {
+    --brand-primary: #e63375;      /* Fucsia del logo */
+    --brand-dark: #2b2d42;         /* Azul/Gris oscuro */
+    --bg-main: #f4f7f6;            /* Fondo general */
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --border-radius-lg: 16px;
+    --text-primary: #2b2d42;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --border-color: #e5e7eb;
+    --white: #ffffff;
+}
+```
+
+### Estructura de Páginas Index
+
+Todas las páginas de listado (Index) siguen esta estructura estándar:
+
+```html
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-[icono-tematico]"></i>
+            <span>Título de la Página</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="/Controller/Create" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Nuevo</span>
+            </a>
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
+
+    <div class="modern-table-container">
+        <table class="modern-table" id="tblNombre">
+            <thead>
+                <tr>
+                    <th>Columna 1</th>
+                    <th>Columna 2</th>
+                    <th style="width: 100px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filas de datos -->
+            </tbody>
+        </table>
+    </div>
+</div>
+```
+
+### Estructura de Formularios (Create/Edit)
+
+Los formularios siguen esta estructura estándar:
+
+```html
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-[icono-tematico]"></i>
+            <span>@(Model.Id == null ? "Nuevo" : "Editar")</span>
+        </h2>
+    </div>
+
+    <div class="modern-form-container">
+        <form id="formNombre" class="modern-form">
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-[icono]"></i>
+                        Nombre del Campo
+                    </label>
+                    <input type="text" name="Campo" class="modern-form-input" 
+                           placeholder="Placeholder" required />
+                </div>
+                <!-- Más campos -->
+            </div>
+
+            <div class="modern-form-actions">
+                <button type="button" class="btn-modern btn-modern-secondary" 
+                        onclick="cancelar();">
+                    <i class="bi bi-x-circle"></i>
+                    <span>Cancelar</span>
+                </button>
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+```
+
+### Clases CSS Principales
+
+#### Contenedores
+- `.modern-page-container`: Contenedor principal de la página con fondo `--bg-main`
+- `.modern-form-container`: Contenedor de formularios con card styling
+- `.modern-table-container`: Contenedor de tablas con card styling
+
+#### Headers
+- `.modern-page-header`: Header con título y acciones
+- `.modern-page-title`: Título principal con icono
+- `.modern-page-actions`: Contenedor de botones de acción
+
+#### Formularios
+- `.modern-form-grid`: Grid responsive para campos (`grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))`)
+- `.modern-form-group`: Grupo de campo (label + input)
+- `.modern-form-label`: Label con icono opcional
+- `.modern-form-input`: Input estilizado
+- `.modern-form-select`: Select estilizado
+- `.modern-form-textarea`: Textarea estilizado
+- `.modern-form-actions`: Contenedor de botones del formulario
+
+#### Tablas
+- `.modern-table`: Tabla moderna sin bordes internos
+- `.modern-table-actions`: Contenedor de botones de acción en celdas
+- `.modern-btn-icon`: Botón circular con icono (36x36px)
+
+#### Botones
+- `.btn-modern`: Botón base moderno
+- `.btn-modern-primary`: Botón principal (fucsia `--brand-primary`)
+- `.btn-modern-secondary`: Botón secundario (blanco con borde)
+- `.modern-btn-icon-edit`: Variante azul para editar
+- `.btn-danger-icon`: Variante roja para eliminar
+
+#### Badges
+- `.badge-pesos`: Badge verde para montos en pesos ($)
+- `.badge-dolares`: Badge azul para montos en dólares (U$S)
+- `.badge-pasajero`: Badge para información de pasajeros
+- `.badge-categoria`: Badge fucsia para categorías
+
+### Configuración DataTables Estándar
+
+Todas las tablas utilizan esta configuración base:
+
+```javascript
+$(document).ready(function () {
+    $("#tblNombre").DataTable({
+        pageLength: 25,
+        order: [[0, 'asc']],
+        language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            infoEmpty: "No hay registros disponibles",
+            infoFiltered: "(filtrado de _MAX_ registros totales)",
+            paginate: {
+                first: "Primero",
+                last: "Último",
+                next: "Siguiente",
+                previous: "Anterior"
+            }
+        },
+        columnDefs: [
+            { orderable: false, targets: [indice-columna-acciones] }
+        ]
+    });
+});
+```
+
+### Iconos Bootstrap
+
+**Regla:** Siempre usar Bootstrap Icons (`bi bi-[nombre-icono]`)
+
+**Iconos comunes utilizados:**
+- `bi-building`: Hoteles, edificios
+- `bi-bus-front`: Transportes, coches
+- `bi-people`: Pasajeros, clientes
+- `bi-person-badge`: Clientes, personas
+- `bi-box-seam`: Paquetes
+- `bi-tag`: Precios
+- `bi-geo-alt`: Excursiones, ubicaciones
+- `bi-plus-circle`: Agregar nuevo
+- `bi-pencil`: Editar
+- `bi-eye`: Ver detalles
+- `bi-trash`: Eliminar
+- `bi-telephone`: Teléfono
+- `bi-envelope`: Email
+- `bi-globe`: Sitio web
+- `bi-calendar3`: Fechas
+- `bi-printer`: Imprimir
+
+### Manejo de Valores Nullable
+
+**Patrón para decimales nullable:**
+```csharp
+@if (item.Precio.HasValue)
+{
+    <span class="badge badge-pesos">$@item.Precio.Value.ToString("N2")</span>
+}
+else
+{
+    <span class="text-muted">-</span>
+}
+```
+
+**Patrón para enteros no nullable:**
+```csharp
+@if (item.KmRecorridos > 0)
+{
+    <span>@item.KmRecorridos.ToString("N0") km</span>
+}
+else
+{
+    <span class="text-muted">-</span>
+}
+```
+
+### Formato de Precios y Monedas
+
+**Badges de moneda:**
+- Pesos: `<span class="badge badge-pesos">$@precio.ToString("N2")</span>`
+- Dólares: `<span class="badge badge-dolares">U$S@precio.ToString("N2")</span>`
+
+**Detección de moneda:**
+```csharp
+@if (item.Moneda == "PES" || item.Moneda == "ARS")
+{
+    <span class="badge badge-pesos">$@item.Precio.Value.ToString("N2")</span>
+}
+else
+{
+    <span class="badge badge-dolares">U$S@item.Precio.Value.ToString("N2")</span>
+}
+```
+
+---
+
+## 📝 REGISTRO DE MEJORAS
+
+| Fecha | Vista | Tipo | Descripción | Patrones Aplicados |
+|-------|-------|------|-------------|-------------------|
+| 2025-01-27 | Servicio/Index.cshtml | Index | Modernización completa de tabla, badges de precios, botones de acción | `.modern-page-container`, `.modern-table`, `.badge-pesos`, `.badge-dolares`, DataTables |
+| 2025-01-27 | Excursion/Index.cshtml | Index | Modernización de tabla, observaciones truncadas, badges de costos | `.modern-page-container`, `.modern-table`, DataTables, tooltips |
+| 2025-01-27 | Adicional/Index.cshtml | Index | Modernización de tabla, badges de montos | `.modern-page-container`, `.modern-table`, DataTables |
+| 2025-01-27 | Precio/Index.cshtml | Index | Modernización de tabla con datos JSON, badges formateados | `.modern-page-container`, `.modern-table`, DataTables con `aaData` |
+| 2025-01-27 | PersonaPasajero/Index.cshtml | Index | Modernización de tabla, iconos de contacto | `.modern-page-container`, `.modern-table`, Bootstrap Icons, DataTables |
+| 2025-01-27 | PersonaProveedor/Index.cshtml | Index | Modernización de tabla, enlaces a sitios web | `.modern-page-container`, `.modern-table`, Bootstrap Icons, DataTables |
+| 2025-01-27 | PasajeroViaje/Index.cshtml | Index | Modernización de tabla, botones de impresión en header | `.modern-page-container`, `.modern-page-actions`, DataTables |
+| 2025-01-27 | Cliente/Index.cshtml | Index | Simplificación de tabla, solo campos relevantes | `.modern-page-container`, `.modern-table`, DataTables |
+| 2025-01-27 | Butaca/Index.cshtml | Index | Modernización de tabla, filtro con dropdown, badges de coches | `.modern-page-container`, `.modern-form-select`, DataTables |
+| 2025-01-27 | Transporte/Index.cshtml | Index | Modernización de tabla, formato de km, badges de pasajeros | `.modern-page-container`, `.modern-table`, manejo de int no nullable |
+| 2025-01-27 | Servicio/Index.cshtml | Corrección | Corrección de manejo de decimales nullable | Validación `.HasValue` para `decimal?` |
+| 2025-01-27 | Excursion/Index.cshtml | Corrección | Corrección de manejo de decimales nullable | Validación `.HasValue` para `decimal?` |
+| 2025-01-27 | Adicional/Index.cshtml | Corrección | Corrección de manejo de decimales nullable | Validación `.HasValue` para `decimal?` |
+| 2025-01-27 | Transporte/Index.cshtml | Corrección | Corrección de manejo de int no nullable | Validación `> 0` para `int` |
+| 2025-01-27 | Servicio/Create.cshtml | Formulario | Modernización completa, checkbox para transporte, validaciones | `.modern-page-container`, `.modern-form-grid`, `.modern-form-group`, Bootstrap Icons, JavaScript para checkbox |
+| 2025-01-27 | Servicio/Edit.cshtml | Formulario | Modernización completa, manejo de valores nullable, checkbox dinámico | `.modern-page-container`, `.modern-form-grid`, manejo de `HasValue`, JavaScript para checkbox |
+| 2025-01-27 | Excursion/Create.cshtml | Formulario | Modernización completa, textarea para observaciones | `.modern-page-container`, `.modern-form-grid`, `.modern-form-textarea`, Bootstrap Icons |
+| 2025-01-27 | Excursion/Edit.cshtml | Formulario | Modernización completa, manejo de valores nullable | `.modern-page-container`, `.modern-form-grid`, manejo de `HasValue` |
+| 2025-01-27 | Adicional/Create.cshtml | Formulario | Modernización completa, validaciones mejoradas, checkbox seguro menor | `.modern-page-container`, `.modern-form-grid`, validaciones JavaScript mejoradas, clases de error |
+| 2025-01-27 | Adicional/Edit.cshtml | Formulario | Modernización completa, formulario simplificado | `.modern-page-container`, `.modern-form-grid`, Bootstrap Icons |
+| 2025-01-27 | Transporte/Create.cshtml | Formulario | Modernización completa, inputs numéricos y fecha | `.modern-page-container`, `.modern-form-grid`, `type="number"`, `type="date"`, Bootstrap Icons |
+| 2025-01-27 | Transporte/Edit.cshtml | Formulario | Modernización completa, inputs numéricos y fecha | `.modern-page-container`, `.modern-form-grid`, `type="number"`, `type="date"`, Bootstrap Icons |
+| 2025-01-27 | Transporte/Details.cshtml | Vista Detalles | Modernización completa, vista de solo lectura con badges | `.modern-page-container`, `.modern-form-container`, badges, iconos informativos, botón de editar en header |
+
+**Total de mejoras registradas:** 23
+
+---
+
+**Última actualización:** 2025-01-27  
+**Fase 2 completada:** 2025-01-27
 

@@ -76,14 +76,6 @@ namespace MAT.MVC.Controllers.Transporte
 
         }
 
-        public ActionResult Details(Guid Id)
-        {
-            TransporteService Stransporte = new TransporteService();
-            MAT.Entities.Transporte Transporte = Stransporte.Get(new TransporteKey(Id));
-            return View(Transporte);
-            
-        }
-
         public ActionResult Delete(Guid Id)
         {
             try
