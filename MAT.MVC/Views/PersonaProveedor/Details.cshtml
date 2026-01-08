@@ -1,156 +1,376 @@
 ﻿@model MAT.Entities.PersonaProveedor
 @using MAT.Enums
 @using MAT.Utilities
+
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Detalles del Proveedor";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Proveedor - Detalle</h2>
-
-<div class="form">
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.PersonaId)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.PersonaId)
-    </div>
-
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.Apellido)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Apellido)
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-building-check"></i>
+            <span>Detalles del Proveedor</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="@Url.Action("Edit", "PersonaProveedor", new { id = Model.PersonaId })" class="btn-modern btn-modern-primary">
+                <i class="bi bi-pencil"></i>
+                <span>Editar</span>
+            </a>
+        </div>
     </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.Nombre)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Nombre)
-    </div>
+    <div class="modern-form-container">
+        <div class="modern-form-grid">
+            <div class="modern-form-group" style="grid-column: 1 / -1;">
+                <h4 style="margin: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); color: var(--brand-primary);">
+                    <i class="bi bi-person"></i> Datos Personales
+                </h4>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.TipoDocumento)
-    </div>
-    <div class="form-field">
-        @Html.LabelFor(model => model.TipoDocumento,(((eTipoDocumento)Model.TipoDocumento).ToString()))
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-hash"></i>
+                    ID
+                </label>
+                <div class="modern-detail-value">
+                    <span class="badge-categoria">@Model.PersonaId</span>
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.NroDocumento)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.NroDocumento)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-person"></i>
+                    @Html.DisplayNameFor(model => model.Apellido)
+                </label>
+                <div class="modern-detail-value">
+                    <strong>@Html.DisplayFor(model => model.Apellido)</strong>
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.Label("Localidad")
-    </div>
-    <div class="form-field">
-        @Html.Label(Helper.ToSelectItem("Localidad", Model.LocalidadId.ToString()))
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-person"></i>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </label>
+                <div class="modern-detail-value">
+                    <strong>@Html.DisplayFor(model => model.Nombre)</strong>
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.Telefono)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Telefono)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-card-text"></i>
+                    @Html.DisplayNameFor(model => model.TipoDocumento)
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.TipoDocumento.HasValue)
+                    {
+                        <span class="badge-categoria">@((eTipoDocumento)Model.TipoDocumento.Value)</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.Email)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Email)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-123"></i>
+                    @Html.DisplayNameFor(model => model.NroDocumento)
+                </label>
+                <div class="modern-detail-value">
+                    @Html.DisplayFor(model => model.NroDocumento)
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.FechaNacimiento)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.FechaNacimiento)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-geo-alt"></i>
+                    Localidad
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.LocalidadId.HasValue)
+                    {
+                        <span>@Helper.GetLocalidadName(Model.LocalidadId.Value)</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.Sexo)
-    </div>
-    <div class="form-field">
-        @Html.LabelFor(model => model.Sexo,(((eSexo)Model.Sexo).ToString()))
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-telephone"></i>
+                    @Html.DisplayNameFor(model => model.Telefono)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Telefono))
+                    {
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-telephone"></i>
+                            <span>@Model.Telefono</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.RazonSocial)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.RazonSocial)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-envelope"></i>
+                    @Html.DisplayNameFor(model => model.Email)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-envelope"></i>
+                            <span>@Model.Email</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.Label("Localidad de la empresa")
-    </div>
-    <div class="form-field">
-        @Html.Label(Helper.ToSelectItem("Localidad", Model.ProveedorLocalidadId.ToString()))
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-calendar3"></i>
+                    @Html.DisplayNameFor(model => model.FechaNacimiento)
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.FechaNacimiento.HasValue)
+                    {
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-calendar3"></i>
+                            <span>@Model.FechaNacimiento.Value.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.Label("Telefono de la empresa")
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.ProveedorTelefono)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-gender-ambiguous"></i>
+                    @Html.DisplayNameFor(model => model.Sexo)
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.Sexo.HasValue)
+                    {
+                        <span class="badge-categoria">@((eSexo)Model.Sexo.Value)</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.Label("Fax de la empresa")
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Fax)
-    </div>
+            <div class="modern-form-group" style="grid-column: 1 / -1; margin-top: 2rem;">
+                <h4 style="margin: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); color: var(--brand-primary);">
+                    <i class="bi bi-building"></i> Datos de la Empresa
+                </h4>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.Web)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Web)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-building"></i>
+                    @Html.DisplayNameFor(model => model.RazonSocial)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.RazonSocial))
+                    {
+                        <strong>@Model.RazonSocial</strong>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.Label("Email de la empresa")
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.ProveedorEmail)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-geo-alt"></i>
+                    Localidad de la Empresa
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.ProveedorLocalidadId.HasValue)
+                    {
+                        <span>@Helper.GetLocalidadName(Model.ProveedorLocalidadId.Value)</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.Idioma)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Idioma)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-telephone"></i>
+                    Teléfono de la Empresa
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.ProveedorTelefono))
+                    {
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-telephone"></i>
+                            <span>@Model.ProveedorTelefono</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.CondicionIva)
-    </div>
-    <div class="form-field">
-        @Html.Label(((eCondicionIVA)Model.CondicionIva).ToString())
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-printer"></i>
+                    Fax de la Empresa
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Fax))
+                    {
+                        <span>@Model.Fax</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.DisplayNameFor(model => model.Cuit)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Cuit)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-globe"></i>
+                    @Html.DisplayNameFor(model => model.Web)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Web))
+                    {
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-globe"></i>
+                            <a href="@Model.Web" target="_blank" style="color: var(--brand-primary);">@Model.Web</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-        @Html.Label("Forma de pago")
-    </div>
-    <div class="form-field">
-        @Html.Label(((eFormaPago)Model.FormaPago).ToString())
-    </div>
-    <p>
-        @Html.ActionLink("Editar", "Edit", new { id = Model.PersonaId }, new { @class = "btn btn-small btn-inverse view-all hidden-phone" })
-    @Html.ActionLink("volver a la lista", "Index", null, new { @class = "btn btn-small btn-inverse view-all hidden-phone" })
-    </p>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-envelope"></i>
+                    Email de la Empresa
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.ProveedorEmail))
+                    {
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-envelope"></i>
+                            <span>@Model.ProveedorEmail</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-translate"></i>
+                    @Html.DisplayNameFor(model => model.Idioma)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Idioma))
+                    {
+                        <span>@Model.Idioma</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-receipt"></i>
+                    @Html.DisplayNameFor(model => model.CondicionIva)
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.CondicionIva.HasValue)
+                    {
+                        <span class="badge-categoria">@((eCondicionIVA)Model.CondicionIva.Value)</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-file-earmark-text"></i>
+                    @Html.DisplayNameFor(model => model.Cuit)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Cuit))
+                    {
+                        <strong>@Model.Cuit</strong>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-cash-coin"></i>
+                    Forma de Pago
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.FormaPago.HasValue)
+                    {
+                        <span class="badge-categoria">@((eFormaPago)Model.FormaPago.Value)</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="modern-form-actions">
+            <a href="@Url.Action("Index", "PersonaProveedor")" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-arrow-left"></i>
+                <span>Volver a la Lista</span>
+            </a>
+        </div>
+    </div>
 </div>

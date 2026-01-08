@@ -3,94 +3,123 @@
 @using MAT.Utilities
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Nueva Butaca";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Crear - Butaca</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-plus-square"></i>
+            <span>Nueva Butaca</span>
+        </h2>
+    </div>
 
-<div class="form">
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
 
-   
-     
+    <div class="modern-form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.NroButaca)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.NroButaca)
-            @Html.ValidationMessageFor(model => model.NroButaca)
-        </div>
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-hash"></i>
+                        @Html.LabelFor(model => model.NroButaca)
+                    </label>
+                    @Html.TextBoxFor(model => model.NroButaca, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Número de butaca" })
+                    @Html.ValidationMessageFor(model => model.NroButaca, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Piso)
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.Piso, ePisoButaca.PlantaAlta.ToSelectList())
-            @Html.ValidationMessageFor(model => model.Piso)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-layers"></i>
+                        @Html.LabelFor(model => model.Piso)
+                    </label>
+                    @Html.DropDownListFor(model => model.Piso, ePisoButaca.PlantaAlta.ToSelectList(), new { @class = "modern-form-select" })
+                    @Html.ValidationMessageFor(model => model.Piso, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Ubicacion)
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList())
-            @Html.ValidationMessageFor(model => model.Ubicacion)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-compass"></i>
+                        @Html.LabelFor(model => model.Ubicacion)
+                    </label>
+                    @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList(), new { @class = "modern-form-select" })
+                    @Html.ValidationMessageFor(model => model.Ubicacion, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Tipo)
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList())
-            @Html.ValidationMessageFor(model => model.Tipo)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-stars"></i>
+                        @Html.LabelFor(model => model.Tipo)
+                    </label>
+                    @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList(), new { @class = "modern-form-select" })
+                    @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.TransporteId, "Nro Coche")
-        </div>
-        <div class="form-field">
-            @*@Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"))*@
-            @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"))
-            @Html.ValidationMessageFor(model => model.TransporteId)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-bus-front"></i>
+                        @Html.LabelFor(model => model.TransporteId, "Nro Coche")
+                    </label>
+                    @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"), new { @class = "modern-form-select" })
+                    @Html.ValidationMessageFor(model => model.TransporteId, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Fila)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Fila)
-            @Html.ValidationMessageFor(model => model.Fila)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-list-ol"></i>
+                        @Html.LabelFor(model => model.Fila)
+                    </label>
+                    @Html.TextBoxFor(model => model.Fila, new { @class = "modern-form-input", placeholder = "Fila", maxlength = "2" })
+                    @Html.ValidationMessageFor(model => model.Fila, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Posicion)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Posicion)
-            @Html.ValidationMessageFor(model => model.Posicion)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-arrow-right"></i>
+                        @Html.LabelFor(model => model.Posicion)
+                    </label>
+                    @Html.TextBoxFor(model => model.Posicion, new { @class = "modern-form-input", placeholder = "Posición", maxlength = "1" })
+                    @Html.ValidationMessageFor(model => model.Posicion, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.CodigoButaca)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.CodigoButaca)
-            @Html.ValidationMessageFor(model => model.CodigoButaca)
-        </div>
-               
-        <p class="botonera-form">
-            <input type="submit" value="Agregar" class="btn btn-small btn-inverse" />
-            @Html.ActionLink("Ir a Lista de Butacas", "Index", null, new {@class="btn btn-small btn-inverse" })
-            <a href="/Transporte/Index" class="btn btn-small btn-inverse">< Volver a Lista de Transportes</a>
-        </p>
-    
-}
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-upc"></i>
+                        @Html.LabelFor(model => model.CodigoButaca)
+                    </label>
+                    @Html.TextBoxFor(model => model.CodigoButaca, new { @class = "modern-form-input", placeholder = "Código de butaca", maxlength = "4" })
+                    @Html.ValidationMessageFor(model => model.CodigoButaca, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="modern-form-actions">
+                <a href="/Transporte/Index" class="btn-modern btn-modern-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a Lista de Transportes</span>
+                </a>
+                <a href="@Url.Action("Index", "Butaca")" class="btn-modern btn-modern-secondary">
+                    <i class="bi bi-list"></i>
+                    <span>Ir a Lista de Butacas</span>
+                </a>
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Agregar</span>
+                </button>
+            </div>
+        }
+    </div>
 </div>
-
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

@@ -3,74 +3,141 @@
 <script type="text/javascript">
     var divOk = "<div class='divOk' title='Habitación reservada para este pasajero.'><div>";
     var tblGrid;
+    
     $(document).ready(function () {
+        if ($.fn.DataTable.isDataTable("#GridHabitacion")) {
+            tblGrid = $("#GridHabitacion").DataTable();
+            tblGrid.destroy();
+        }
         
-       
         tblGrid = $("#GridHabitacion").DataTable({
             "searching": false,
-            "bLengthChange": false
-        })
-    })
-
-    
-
+            "bLengthChange": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+            },
+            "order": [[0, "asc"]],
+            "pageLength": 10,
+            "responsive": true
+        });
+    });
 </script>
 
 <input type="hidden" id="input-viaje-id" value="@ViewData["viajeid"]" />
 <input type="hidden" id="hdnHabitacionID" />
+
 @if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
+    <div class="modern-alert-error" style="margin-bottom: 1rem;">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>@ViewBag.Error</span>
+    </div>
 }
-<table id="GridHabitacion" class=" mat-customtable" style="width:96%; height:80%!">
-    <thead>
-        <tr>
-            <th>
-                N° - HAB
-            </th>
-            <th>
-                Hotel
-            </th>
-            <th>
-                Tipo
-            </th>
-            <th>
-                Disponibilidad
-            </th>
-            <th></th>
-        </tr>
-    </thead>
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @item.NroHabitacion @item.HabitacionNombre
-                </td>
-               <td>
-                    @item.HotelNombre
-                </td>                
-                 <td>
-                    @item.HabitacionTipo
-                </td>
-                <td>
-                    @item.Disponibilidad
-                </td>
-                <td id="td-@item.HabitacionID">
-                            
-                    @if (item.Disponibilidad > 0 && ViewBag.HabitacionSelected == null)
-                    {
-                       <a class="aReserva btn btn-inverse btn-small" data-viaje="@ViewData["viajeid"]" data-habitacionid="@item.HabitacionID" id="@item.HabitacionID" fecha="@ViewBag.Fecha">Reservar</a>    
-                    }
-                    else if (item.HabitacionID == ViewBag.HabitacionSelected)
-                    {
-                        <a href="javascript:eliminarReservaHotel('@ViewBag.PasajeroID','@ViewBag.HabitacionSelected','@ViewData["viajeid"].ToString()');"><div class='divDelete' title='Eliminar reserva de habitación.' ></div></a>
-                    }                              
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-
+@if (Model != null && Model.Any())
+{
+    <div class="modern-table-container">
+        <table id="GridHabitacion" class="modern-table">
+            <thead>
+                <tr>
+                    <th>
+                        <i class="bi bi-hash"></i>
+                        N° Habitación
+                    </th>
+                    <th>
+                        <i class="bi bi-building"></i>
+                        Hotel
+                    </th>
+                    <th>
+                        <i class="bi bi-door-open"></i>
+                        Tipo
+                    </th>
+                    <th>
+                        <i class="bi bi-check-circle"></i>
+                        Disponibilidad
+                    </th>
+                    <th style="width: 120px;">
+                        <i class="bi bi-gear"></i>
+                        Acciones
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="modern-habitacion-numero">
+                                <span class="badge-categoria">@item.NroHabitacion</span>
+                                @if (!string.IsNullOrEmpty(item.HabitacionNombre))
+                                {
+                                    <span class="text-muted">@item.HabitacionNombre</span>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="modern-habitacion-hotel">
+                                <i class="bi bi-building"></i>
+                                <span>@item.HotelNombre</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge-pasajero">@item.HabitacionTipo</span>
+                        </td>
+                        <td>
+                            @if (item.Disponibilidad > 0)
+                            {
+                                <span class="badge badge-success">
+                                    <i class="bi bi-check-circle"></i>
+                                    @item.Disponibilidad disponible@(item.Disponibilidad > 1 ? "s" : "")
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">
+                                    <i class="bi bi-x-circle"></i>
+                                    Sin disponibilidad
+                                </span>
+                            }
+                        </td>
+                        <td id="td-@item.HabitacionID">
+                            @if (item.Disponibilidad > 0 && ViewBag.HabitacionSelected == null)
+                            {
+                                <a class="aReserva btn-modern btn-modern-primary btn-modern-sm" 
+                                   data-viaje="@ViewData["viajeid"]" 
+                                   data-habitacionid="@item.HabitacionID" 
+                                   id="@item.HabitacionID" 
+                                   fecha="@ViewBag.Fecha"
+                                   title="Reservar habitación">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span>Reservar</span>
+                                </a>
+                            }
+                            else if (item.HabitacionID == ViewBag.HabitacionSelected)
+                            {
+                                <a href="javascript:eliminarReservaHotel('@ViewBag.PasajeroID','@ViewBag.HabitacionSelected','@ViewData["viajeid"].ToString()');" 
+                                   class="btn-modern btn-modern-danger btn-modern-sm"
+                                   title="Eliminar reserva de habitación">
+                                    <i class="bi bi-trash"></i>
+                                    <span>Eliminar</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="modern-empty-state">
+        <i class="bi bi-inbox"></i>
+        <h4>No hay habitaciones disponibles</h4>
+        <p class="text-muted">No se encontraron habitaciones para el hotel seleccionado.</p>
+    </div>
+}

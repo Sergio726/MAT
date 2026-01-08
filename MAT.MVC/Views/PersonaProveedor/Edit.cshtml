@@ -1,193 +1,293 @@
 ﻿@model MAT.Entities.PersonaProveedor
 @using MAT.Utilities
 @using MAT.Enums
+
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Editar Proveedor";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Proveedor - Editar</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-building-gear"></i>
+            <span>Editar Proveedor</span>
+        </h2>
+    </div>
 
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
 
-    <div class="form">
-        <div class="form-label">
-            @Html.LabelFor(model => model.Apellido)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Apellido)
-            @Html.ValidationMessageFor(model => model.Apellido)
-        </div>
+    <div class="modern-form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Nombre)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Nombre)
-            @Html.ValidationMessageFor(model => model.Nombre)
-        </div>
+            <div class="modern-form-grid">
+                <div class="modern-form-group" style="grid-column: 1 / -1;">
+                    <h4 style="margin: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); color: var(--brand-primary);">
+                        <i class="bi bi-person"></i> Datos Personales
+                    </h4>
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.TipoDocumento)
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(Model.TipoDocumento.ToString()))
-            @Html.ValidationMessageFor(model => model.TipoDocumento)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-person"></i>
+                        @Html.LabelFor(model => model.Apellido)
+                    </label>
+                    @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido" })
+                    @Html.ValidationMessageFor(model => model.Apellido, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.NroDocumento)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.NroDocumento)
-            @Html.ValidationMessageFor(model => model.NroDocumento)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-person"></i>
+                        @Html.LabelFor(model => model.Nombre)
+                    </label>
+                    @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre" })
+                    @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.LocalidadId, "Localidad")
-        </div>
-        <div class="form-field">
-            <input type="text" id="txt-busqueda-localidad" value="@Helper.GetLocalidadName(Model.LocalidadId.Value)" />
-            <input type="hidden" id="Localidad" name="LocalidadId" value="@Model.LocalidadId" />
-            @Html.ValidationMessageFor(model => model.LocalidadId)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-card-text"></i>
+                        @Html.LabelFor(model => model.TipoDocumento)
+                    </label>
+                    @if (Model.TipoDocumento.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(Model.TipoDocumento.ToString()), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.TipoDocumento, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Telefono)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Telefono)
-            @Html.ValidationMessageFor(model => model.Telefono)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-123"></i>
+                        @Html.LabelFor(model => model.NroDocumento)
+                    </label>
+                    @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "XX.XXX.XXX", id = "NroDocumento" })
+                    @Html.ValidationMessageFor(model => model.NroDocumento, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Email)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Email)
-            @Html.ValidationMessageFor(model => model.Email)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-geo-alt"></i>
+                        @Html.LabelFor(model => model.LocalidadId, "Localidad")
+                    </label>
+                    @if (Model.LocalidadId.HasValue)
+                    {
+                        <input type="text" id="txt-busqueda-localidad" class="modern-form-input" value="@Helper.GetLocalidadName(Model.LocalidadId.Value)" placeholder="Buscar localidad..." />
+                        <input type="hidden" id="Localidad" name="LocalidadId" value="@Model.LocalidadId" />
+                    }
+                    else
+                    {
+                        <input type="text" id="txt-busqueda-localidad" class="modern-form-input" placeholder="Buscar localidad..." />
+                        <input type="hidden" id="Localidad" name="LocalidadId" />
+                    }
+                    @Html.ValidationMessageFor(model => model.LocalidadId, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.FechaNacimiento)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.FechaNacimiento)
-            @Html.ValidationMessageFor(model => model.FechaNacimiento)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-telephone"></i>
+                        @Html.LabelFor(model => model.Telefono)
+                    </label>
+                    @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Teléfono" })
+                    @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Sexo)
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.Sexo,eSexo.Femenino.ToSelectList())
-            @Html.ValidationMessageFor(model => model.Sexo)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-envelope"></i>
+                        @Html.LabelFor(model => model.Email)
+                    </label>
+                    @Html.TextBoxFor(model => model.Email, new { @class = "modern-form-input", type = "email", placeholder = "email@ejemplo.com" })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.RazonSocial)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.RazonSocial)
-            @Html.ValidationMessageFor(model => model.RazonSocial)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-calendar3"></i>
+                        @Html.LabelFor(model => model.FechaNacimiento)
+                    </label>
+                    @if (Model.FechaNacimiento.HasValue)
+                    {
+                        @Html.TextBoxFor(model => model.FechaNacimiento, "{0:yyyy-MM-dd}", new { @class = "modern-form-input", type = "date" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(model => model.FechaNacimiento, "", new { @class = "modern-form-input", type = "date" })
+                    }
+                    @Html.ValidationMessageFor(model => model.FechaNacimiento, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.ProveedorLocalidadId, "Localidad de la empresa")
-        </div>
-        <div class="form-field">
-            <input type="text" id="txt-busqueda-localidad-empresa" value="@Helper.GetLocalidadName(Model.ProveedorLocalidadId.Value)"/>
-            <input type="hidden" id="LocalidadEmpresa" name="LocalidadEmpresa" value="@Model.ProveedorLocalidadId.Value" />
-            @Html.ValidationMessageFor(model => model.ProveedorLocalidadId)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-gender-ambiguous"></i>
+                        @Html.LabelFor(model => model.Sexo)
+                    </label>
+                    @if (Model.Sexo.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.Sexo, eSexo.Femenino.ToSelectList(Model.Sexo.ToString()), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.Sexo, eSexo.Femenino.ToSelectList(), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.Sexo, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.ProveedorTelefono, "Telefono de la empresa")
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.ProveedorTelefono)
-            @Html.ValidationMessageFor(model => model.ProveedorTelefono)
-        </div>
+                <div class="modern-form-group" style="grid-column: 1 / -1; margin-top: 2rem;">
+                    <h4 style="margin: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); color: var(--brand-primary);">
+                        <i class="bi bi-building"></i> Datos de la Empresa
+                    </h4>
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Fax, "Fax de la empresa")
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Fax)
-            @Html.ValidationMessageFor(model => model.Fax)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-building"></i>
+                        @Html.LabelFor(model => model.RazonSocial)
+                    </label>
+                    @Html.TextBoxFor(model => model.RazonSocial, new { @class = "modern-form-input", placeholder = "Razón social" })
+                    @Html.ValidationMessageFor(model => model.RazonSocial, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Web)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Web)
-            @Html.ValidationMessageFor(model => model.Web)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-geo-alt"></i>
+                        @Html.LabelFor(model => model.ProveedorLocalidadId, "Localidad de la Empresa")
+                    </label>
+                    @if (Model.ProveedorLocalidadId.HasValue)
+                    {
+                        <input type="text" id="txt-busqueda-localidad-empresa" class="modern-form-input" value="@Helper.GetLocalidadName(Model.ProveedorLocalidadId.Value)" placeholder="Buscar localidad..." />
+                        <input type="hidden" id="LocalidadEmpresa" name="LocalidadEmpresa" value="@Model.ProveedorLocalidadId.Value" />
+                    }
+                    else
+                    {
+                        <input type="text" id="txt-busqueda-localidad-empresa" class="modern-form-input" placeholder="Buscar localidad..." />
+                        <input type="hidden" id="LocalidadEmpresa" name="LocalidadEmpresa" />
+                    }
+                    @Html.ValidationMessageFor(model => model.ProveedorLocalidadId, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.ProveedorEmail)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.ProveedorEmail)
-            @Html.ValidationMessageFor(model => model.ProveedorEmail)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-telephone"></i>
+                        @Html.LabelFor(model => model.ProveedorTelefono, "Teléfono de la Empresa")
+                    </label>
+                    @Html.TextBoxFor(model => model.ProveedorTelefono, new { @class = "modern-form-input", placeholder = "Teléfono" })
+                    @Html.ValidationMessageFor(model => model.ProveedorTelefono, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Idioma)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Idioma)
-            @Html.ValidationMessageFor(model => model.Idioma)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-printer"></i>
+                        @Html.LabelFor(model => model.Fax, "Fax de la Empresa")
+                    </label>
+                    @Html.TextBoxFor(model => model.Fax, new { @class = "modern-form-input", placeholder = "Fax" })
+                    @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.CondicionIva)
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.CondicionIva, eCondicionIVA.IVA_Responsable_Inscripto.ToSelectList(Model.CondicionIva.ToString()))
-            @Html.ValidationMessageFor(model => model.CondicionIva)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-globe"></i>
+                        @Html.LabelFor(model => model.Web)
+                    </label>
+                    @Html.TextBoxFor(model => model.Web, new { @class = "modern-form-input", type = "url", placeholder = "https://ejemplo.com" })
+                    @Html.ValidationMessageFor(model => model.Web, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Cuit)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Cuit)
-            @Html.ValidationMessageFor(model => model.Cuit)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-envelope"></i>
+                        @Html.LabelFor(model => model.ProveedorEmail)
+                    </label>
+                    @Html.TextBoxFor(model => model.ProveedorEmail, new { @class = "modern-form-input", type = "email", placeholder = "email@empresa.com" })
+                    @Html.ValidationMessageFor(model => model.ProveedorEmail, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.FormaPago, "Forma de pago")
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.FormaPago, eFormaPago.Contado.ToSelectList(Model.FormaPago.ToString()))
-            @Html.ValidationMessageFor(model => model.FormaPago)
-        </div>
-                
-        <p>
-            <input type="submit" value="Guardar" class="btn btn-small btn-inverse view-all hidden-phone" />
-            @Html.ActionLink("Volver a la lista", "Index", null, new {@class="btn btn-small btn-inverse view-all hidden-phone" })
-        </p>
-    </div> 
-}
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-translate"></i>
+                        @Html.LabelFor(model => model.Idioma)
+                    </label>
+                    @Html.TextBoxFor(model => model.Idioma, new { @class = "modern-form-input", placeholder = "Idioma" })
+                    @Html.ValidationMessageFor(model => model.Idioma, "", new { @class = "text-danger" })
+                </div>
 
-<script>
-    $(function() {       
-        $("input[type='datetime']").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            yearRange: '-100:+2'
-        });
-        $("#NroDocumento").mask("99.999.999");
-        $("#Cuit").mask("99-99999999-9");
-    });
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-receipt"></i>
+                        @Html.LabelFor(model => model.CondicionIva)
+                    </label>
+                    @if (Model.CondicionIva.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.CondicionIva, eCondicionIVA.IVA_Responsable_Inscripto.ToSelectList(Model.CondicionIva.ToString()), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.CondicionIva, eCondicionIVA.IVA_Responsable_Inscripto.ToSelectList(), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.CondicionIva, "", new { @class = "text-danger" })
+                </div>
 
-    
-  </script>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-file-earmark-text"></i>
+                        @Html.LabelFor(model => model.Cuit)
+                    </label>
+                    @Html.TextBoxFor(model => model.Cuit, new { @class = "modern-form-input", placeholder = "XX-XXXXXXXX-X", id = "Cuit" })
+                    @Html.ValidationMessageFor(model => model.Cuit, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-cash-coin"></i>
+                        @Html.LabelFor(model => model.FormaPago, "Forma de Pago")
+                    </label>
+                    @if (Model.FormaPago.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.FormaPago, eFormaPago.Contado.ToSelectList(Model.FormaPago.ToString()), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.FormaPago, eFormaPago.Contado.ToSelectList(), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.FormaPago, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="modern-form-actions">
+                <button type="button" class="btn-modern btn-modern-secondary" onclick="location.href='@Url.Action("Index", "PersonaProveedor")'">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a la Lista</span>
+                </button>
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar Cambios</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/jquery.mask.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#NroDocumento").mask("99.999.999");
+            $("#Cuit").mask("99-99999999-9");
+        });
+    </script>
 }

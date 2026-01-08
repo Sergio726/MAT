@@ -1,10 +1,74 @@
 ﻿@using MAT.Enums
 @using MAT.Utilities
 
+@{
+    ViewBag.Title = "Nueva Localidad";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-geo-alt"></i>
+            <span>Nueva Localidad</span>
+        </h2>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
+
+    <div class="modern-form-container">
+        <div class="modern-form-grid">
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-map"></i>
+                    <span>Provincia</span>
+                </label>
+                <select id="ddProvincia" class="modern-form-select" onchange="fn_Unsubscribe();">
+                    <option value="0">SELECCIONE UNA PROVINCIA</option>
+                    @foreach (var item in Helper.ToSelectEntitiesLocalidades("Provincia", null))
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-building"></i>
+                    <span>Departamento</span>
+                </label>
+                <select id="popin_ddDepartamento" class="modern-form-select">
+                    <option value="0">SELECCIONE UN DEPARTAMENTO</option>
+                </select>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Localidad</span>
+                </label>
+                <input id="txtLocalidad" type="text" class="modern-form-input" placeholder="INGRESE UNA NUEVA LOCALIDAD" />
+            </div>
+
+            <div class="modern-form-group" style="grid-column: 1 / -1;">
+                <button type="button" class="btn-modern btn-modern-primary" onclick="AddLocalidad();" title="Agregar una nueva localidad.">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Agregar Localidad</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     function fn_Unsubscribe() {
         if (parseInt($("#ddProvincia").val()) > 0) {
-            
             var IdProvincia = $("#ddProvincia").val();
 
             $.ajax({
@@ -13,32 +77,26 @@
                 data: { "sIdProvincia": IdProvincia },
                 dataType: "json",
                 success: function (response) {
-             
                     if (response.Result == "Done.") {
-                        
                         var list = eval(response.LDepartamento);
-                       
                         $('#popin_ddDepartamento option').remove();
                         document.getElementById("popin_ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
                         for (var i = 0; i < list.length; i++) {
                             var sValue = list[i].IdDepartamento;
                             var sName = list[i].Nombre;
                             document.getElementById("popin_ddDepartamento").options[document.getElementById("popin_ddDepartamento").options.length] = new Option(sName, sValue);
-                           
                         }
-                        
                     }
                     else {
                         alert(response.data);
                     }
-
                 }
             });
         }
     }
 
     function AddLocalidad() {
-        if ($("#ddProvincia").val()=="0") {
+        if ($("#ddProvincia").val() == "0") {
             return alert("Por favor seleccione una provincia.");
         }
         if ($("#popin_ddDepartamento").val() == "0") {
@@ -60,54 +118,14 @@
             },
             dataType: "json",
             success: function (response) {
-                
                 if (response.Result == "Done.") {
                     alert("Se agrego una localidad.", "Operacion Exitosa");
                     $("#AgregarLocalidad").dialog("close");
-
                 }
                 else {
                     alert(response.data);
                 }
-
             }
         });
-        
     }
-
 </script>
-<div  class="custom_width_80percent">
-    <div class="form-label custom_padding_top_4">
-        <label>Provincia: </label>
-    </div>
-    <div class="form-field">
-        <select id="ddProvincia" onchange="javascript: fn_Unsubscribe();">
-            <option value="0">SELECCIONE UNA PROVINCIA</option>
-
-            @foreach (var item in Helper.ToSelectEntitiesLocalidades("Provincia", null))
-            {
-                <option value="@item.Value">@item.Text</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-label custom_padding_top_4">
-        <label>Departamento: </label>
-    </div>
-    <div class="form-field">
-        <select id="popin_ddDepartamento">
-            <option value="0">SELECCIONE UN DEPARTAMENTO</option>
-        </select>
-    </div>
-    <div class="form-label custom_padding_top_4">
-        <label>Localidad: </label>
-    </div>
-    <div class="form-field">
-        <input id="txtLocalidad" type="text" class="text-box" size="200" placeholder="INGRESE UNA NUEVA LOCALIDAD" />
-    </div>
-    <div class="form-label custom_padding_top_4">
-    </div>
-    <div class="form-field custom_padding_top_5">
-        <input class="btn btn-small btn-inverse view-all hidden-phone" type="button" value="Agregar Localidad" title="Agregar una nueva localidad." onclick="javascript: AddLocalidad();"/>
-    </div>
-</div>

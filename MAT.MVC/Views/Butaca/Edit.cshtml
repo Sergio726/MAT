@@ -1,94 +1,156 @@
 ﻿@model MAT.Entities.Butaca
 @using MAT.Enums
 @using MAT.Utilities
+
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Editar Butaca";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Editar</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-pencil-square"></i>
+            <span>Editar Butaca</span>
+        </h2>
+    </div>
 
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
 
-    <fieldset>
-        <legend>Butaca</legend>
+    <div class="modern-form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        
-        <div class="editor-label">
-            @Html.LabelFor(model => model.NroButaca)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.NroButaca)
-            @Html.ValidationMessageFor(model => model.NroButaca)
-        </div>
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-hash"></i>
+                        @Html.LabelFor(model => model.NroButaca)
+                    </label>
+                    @if (Model.NroButaca.HasValue)
+                    {
+                        @Html.TextBoxFor(model => model.NroButaca, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Número de butaca" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(model => model.NroButaca, "", new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Número de butaca" })
+                    }
+                    @Html.ValidationMessageFor(model => model.NroButaca, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Piso)
-        </div>
-        <div class="editor-field">
-            @Html.DropDownListFor(model => model.Piso,ePisoButaca.PlantaAlta.ToSelectList(Model.Piso.ToString()))
-            @Html.ValidationMessageFor(model => model.Piso)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-layers"></i>
+                        @Html.LabelFor(model => model.Piso)
+                    </label>
+                    @if (Model.Piso.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.Piso, ePisoButaca.PlantaAlta.ToSelectList(Model.Piso.ToString()), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.Piso, ePisoButaca.PlantaAlta.ToSelectList(), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.Piso, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Ubicacion)
-        </div>
-        <div class="editor-field">
-            @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList(Model.Ubicacion.ToString()))
-            @Html.ValidationMessageFor(model => model.Ubicacion)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-compass"></i>
+                        @Html.LabelFor(model => model.Ubicacion)
+                    </label>
+                    @if (Model.Ubicacion.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList(Model.Ubicacion.ToString()), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList(), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.Ubicacion, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Tipo)
-        </div>
-        <div class="editor-field">
-            @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList(Model.Tipo.ToString()))
-            @Html.ValidationMessageFor(model => model.Tipo)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-stars"></i>
+                        @Html.LabelFor(model => model.Tipo)
+                    </label>
+                    @if (Model.Tipo.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList(Model.Tipo.ToString()), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList(), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.TransporteId, "Nro Coche")
-        </div>
-        <div class="editor-field">
-            @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"))
-            @Html.ValidationMessageFor(model => model.TransporteId)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-bus-front"></i>
+                        @Html.LabelFor(model => model.TransporteId, "Nro Coche")
+                    </label>
+                    @if (Model.TransporteId.HasValue)
+                    {
+                        @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte", Model.TransporteId.Value), new { @class = "modern-form-select" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"), new { @class = "modern-form-select" })
+                    }
+                    @Html.ValidationMessageFor(model => model.TransporteId, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Fila)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Fila)
-            @Html.ValidationMessageFor(model => model.Fila)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-list-ol"></i>
+                        @Html.LabelFor(model => model.Fila)
+                    </label>
+                    @Html.TextBoxFor(model => model.Fila, new { @class = "modern-form-input", placeholder = "Fila", maxlength = "2" })
+                    @Html.ValidationMessageFor(model => model.Fila, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Posicion)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Posicion)
-            @Html.ValidationMessageFor(model => model.Posicion)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-arrow-right"></i>
+                        @Html.LabelFor(model => model.Posicion)
+                    </label>
+                    @Html.TextBoxFor(model => model.Posicion, new { @class = "modern-form-input", placeholder = "Posición", maxlength = "1" })
+                    @Html.ValidationMessageFor(model => model.Posicion, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.CodigoButaca)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.CodigoButaca)
-            @Html.ValidationMessageFor(model => model.CodigoButaca)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-upc"></i>
+                        @Html.LabelFor(model => model.CodigoButaca)
+                    </label>
+                    @Html.TextBoxFor(model => model.CodigoButaca, new { @class = "modern-form-input", placeholder = "Código de butaca", maxlength = "4" })
+                    @Html.ValidationMessageFor(model => model.CodigoButaca, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
-        <p>
-            <input type="submit" value="Guardar" class="ui-button ui-widget ui-state-default ui-corner-all" />
-        </p>
-    </fieldset>
-}
-
-<p class="botonera-form">
-    @Html.ActionLink("< Volver a lista de butacas", "Index", null, new {@class="btn btn-small btn-inverse"})
-</p>
+            <div class="modern-form-actions">
+                <a href="@Url.Action("Index", "Butaca")" class="btn-modern btn-modern-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a Lista de Butacas</span>
+                </a>
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar Cambios</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

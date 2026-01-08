@@ -2,126 +2,159 @@
 @using MAT.Entities
 @using MAT.Services
 @using MAT.Utilities
+@using MAT.Enums
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Nuevo Hotel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Hotel - Nuevo</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-building-add"></i>
+            <span>Nuevo Hotel</span>
+        </h2>
+    </div>
 
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
 
-    <div class="form">
-           
-        <div class="form-label">
-            @Html.LabelFor(model => model.Nombre)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Nombre)
-            @Html.ValidationMessageFor(model => model.Nombre)
-        </div>
+    <div class="modern-form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Direccion)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Direccion)
-            @Html.ValidationMessageFor(model => model.Direccion)
-        </div>
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-building"></i>
+                        @Html.LabelFor(model => model.Nombre)
+                    </label>
+                    @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre del hotel" })
+                    @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Cp)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Cp)
-            @Html.ValidationMessageFor(model => model.Cp)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-geo-alt"></i>
+                        @Html.LabelFor(model => model.LocalidadId, "Localidad")
+                    </label>
+                    <input type="text" id="txt-busqueda-localidad" class="modern-form-input" placeholder="Buscar localidad..." />
+                    <input type="hidden" id="LocalidadId" name="LocalidadId" />
+                    @Html.ValidationMessageFor(model => model.LocalidadId, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.Label("Localidad")
-        </div>
-        <div class="form-field">
-            <input type="text" id="txt-busqueda-localidad" />
-            <input type="hidden" id="LocalidadId" name="LocalidadId" />
-            @Html.ValidationMessageFor(model => model.LocalidadId)
-        </div>
+                <div class="modern-form-group" style="grid-column: 1 / -1;">
+                    <label class="modern-form-label">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        @Html.LabelFor(model => model.Direccion)
+                    </label>
+                    @Html.TextBoxFor(model => model.Direccion, new { @class = "modern-form-input", placeholder = "Dirección completa" })
+                    @Html.ValidationMessageFor(model => model.Direccion, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Telefono)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Telefono)
-            @Html.ValidationMessageFor(model => model.Telefono)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-envelope-at"></i>
+                        @Html.LabelFor(model => model.Cp)
+                    </label>
+                    @Html.TextBoxFor(model => model.Cp, new { @class = "modern-form-input", placeholder = "Código postal", maxlength = "10" })
+                    @Html.ValidationMessageFor(model => model.Cp, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Email)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Email)
-            @Html.ValidationMessageFor(model => model.Email)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-telephone"></i>
+                        @Html.LabelFor(model => model.Telefono)
+                    </label>
+                    @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Teléfono" })
+                    @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.Contacto)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Contacto)
-            @Html.ValidationMessageFor(model => model.Contacto)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-envelope"></i>
+                        @Html.LabelFor(model => model.Email)
+                    </label>
+                    @Html.TextBoxFor(model => model.Email, new { @class = "modern-form-input", type = "email", placeholder = "email@hotel.com" })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.CantidadHabitaciones)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.CantidadHabitaciones)
-            @Html.ValidationMessageFor(model => model.CantidadHabitaciones)
-        </div>
-               
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-person-badge"></i>
+                        @Html.LabelFor(model => model.Contacto)
+                    </label>
+                    @Html.TextBoxFor(model => model.Contacto, new { @class = "modern-form-input", placeholder = "Nombre de contacto" })
+                    @Html.ValidationMessageFor(model => model.Contacto, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.Label("Categoria")
-        </div>
-        <div class="form-field">
-            @Html.DropDownList("cmbCategoria",MAT.Enums.eCategoriaHotel.Una_Estrella.ToSelectList())
-            @Html.ValidationMessageFor(model => model.Categoria)
-        </div>        
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-door-open"></i>
+                        @Html.LabelFor(model => model.CantidadHabitaciones)
+                    </label>
+                    @Html.TextBoxFor(model => model.CantidadHabitaciones, new { @class = "modern-form-input", type = "number", min = "0", placeholder = "Cantidad" })
+                    @Html.ValidationMessageFor(model => model.CantidadHabitaciones, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.CheckIn)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.CheckIn)
-            @Html.ValidationMessageFor(model => model.CheckIn)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-star"></i>
+                        @Html.LabelFor(model => model.Categoria, "Categoría")
+                    </label>
+                    @Html.DropDownListFor(model => model.Categoria, eCategoriaHotel.Una_Estrella.ToSelectList(), new { @class = "modern-form-select", id = "cmbCategoria" })
+                    @Html.ValidationMessageFor(model => model.Categoria, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.CheckOut)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.CheckOut)
-            @Html.ValidationMessageFor(model => model.CheckOut)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-clock"></i>
+                        @Html.LabelFor(model => model.CheckIn)
+                    </label>
+                    @Html.TextBoxFor(model => model.CheckIn, new { @class = "modern-form-input", placeholder = "Ej: 14:00", maxlength = "10" })
+                    @Html.ValidationMessageFor(model => model.CheckIn, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="form-label">
-            @Html.LabelFor(model => model.GoogleMapHtml)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.GoogleMapHtml)
-            @Html.ValidationMessageFor(model => model.GoogleMapHtml)
-        </div>
-        
-        <p>
-            <input type="submit" value="Guardar" class="btn btn-small btn-inverse view-all hidden-phone" />
-        
-             @Html.ActionLink("Volver a la lista", "Index",null, new {@class="btn btn-small btn-inverse view-all hidden-phone"})
-        </p>
-        </div>
-    
-}
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-clock-history"></i>
+                        @Html.LabelFor(model => model.CheckOut)
+                    </label>
+                    @Html.TextBoxFor(model => model.CheckOut, new { @class = "modern-form-input", placeholder = "Ej: 11:00", maxlength = "10" })
+                    @Html.ValidationMessageFor(model => model.CheckOut, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="modern-form-group" style="grid-column: 1 / -1;">
+                    <label class="modern-form-label">
+                        <i class="bi bi-map"></i>
+                        @Html.LabelFor(model => model.GoogleMapHtml)
+                    </label>
+                    @Html.TextAreaFor(model => model.GoogleMapHtml, new { @class = "modern-form-textarea", rows = "4", placeholder = "Código HTML del mapa de Google Maps" })
+                    @Html.ValidationMessageFor(model => model.GoogleMapHtml, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="modern-form-actions">
+                <button type="button" class="btn-modern btn-modern-secondary" onclick="location.href='@Url.Action("Index", "Hotel")'">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a la Lista</span>
+                </button>
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

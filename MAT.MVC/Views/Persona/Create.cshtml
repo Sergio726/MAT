@@ -1,94 +1,120 @@
 ﻿@model MAT.Entities.Persona
 @using MAT.Utilities
+@using MAT.Enums
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Nueva Persona";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-person-plus"></i>
+            <span>Nueva Persona</span>
+        </h2>
+    </div>
 
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
 
-    <fieldset>
-        <legend>Persona</legend>
-        
+    <div class="modern-form-container">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Apellido)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Apellido)
-            @Html.ValidationMessageFor(model => model.Apellido)
-        </div>
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-person"></i>
+                        @Html.LabelFor(model => model.Apellido)
+                    </label>
+                    @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido" })
+                    @Html.ValidationMessageFor(model => model.Apellido, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Nombre)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Nombre)
-            @Html.ValidationMessageFor(model => model.Nombre)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-person"></i>
+                        @Html.LabelFor(model => model.Nombre)
+                    </label>
+                    @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre" })
+                    @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.TipoDocumento)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.TipoDocumento)
-            @Html.ValidationMessageFor(model => model.TipoDocumento)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-card-text"></i>
+                        @Html.LabelFor(model => model.TipoDocumento)
+                    </label>
+                    @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(), new { @class = "modern-form-select" })
+                    @Html.ValidationMessageFor(model => model.TipoDocumento, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.NroDocumento)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.NroDocumento)
-            @Html.ValidationMessageFor(model => model.NroDocumento)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-123"></i>
+                        @Html.LabelFor(model => model.NroDocumento)
+                    </label>
+                    @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "Número de documento" })
+                    @Html.ValidationMessageFor(model => model.NroDocumento, "", new { @class = "text-danger" })
+                </div>
 
-       
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Telefono)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Telefono)
-            @Html.ValidationMessageFor(model => model.Telefono)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-telephone"></i>
+                        @Html.LabelFor(model => model.Telefono)
+                    </label>
+                    @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Teléfono" })
+                    @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Email)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Email)
-            @Html.ValidationMessageFor(model => model.Email)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-envelope"></i>
+                        @Html.LabelFor(model => model.Email)
+                    </label>
+                    @Html.TextBoxFor(model => model.Email, new { @class = "modern-form-input", type = "email", placeholder = "email@ejemplo.com" })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.FechaNacimiento)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.FechaNacimiento)
-            @Html.ValidationMessageFor(model => model.FechaNacimiento)
-        </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-calendar3"></i>
+                        @Html.LabelFor(model => model.FechaNacimiento)
+                    </label>
+                    @Html.TextBoxFor(model => model.FechaNacimiento, "{0:yyyy-MM-dd}", new { @class = "modern-form-input", type = "date" })
+                    @Html.ValidationMessageFor(model => model.FechaNacimiento, "", new { @class = "text-danger" })
+                </div>
 
-        <div class="editor-label">
-            @Html.LabelFor(model => model.Sexo)
-        </div>
-        <div class="editor-field">
-            @Html.EditorFor(model => model.Sexo)
-            @Html.ValidationMessageFor(model => model.Sexo)
-        </div>        
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-gender-ambiguous"></i>
+                        @Html.LabelFor(model => model.Sexo)
+                    </label>
+                    @Html.TextBoxFor(model => model.Sexo, new { @class = "modern-form-input", placeholder = "Sexo" })
+                    @Html.ValidationMessageFor(model => model.Sexo, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
-        <p>
-            <input type="submit" value="Crear" class="ui-button ui-widget ui-state-default ui-corner-all" />
-        </p>
-    </fieldset>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
+            <div class="modern-form-actions">
+                <button type="button" class="btn-modern btn-modern-secondary" onclick="location.href='@Url.Action("Index", "Persona")'">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a la Lista</span>
+                </button>
+                <button type="submit" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Crear Persona</span>
+                </button>
+            </div>
+        }
+    </div>
 </div>
 
 @section Scripts {

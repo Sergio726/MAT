@@ -90,7 +90,17 @@ namespace MAT.MVC.Models
                 HotelDropDown Hotel = new HotelDropDown();
                 Hotel.HotelID = _reader["HotelID"].ToString();
                 Hotel.Nombre = _reader["Nombre"].ToString();
-                Hotel.Fecha = Convert.ToDateTime(_reader["Fecha"]);
+                
+                // Validar si el campo Fecha es NULL antes de convertir
+                object fechaValue = _reader["Fecha"];
+                if (fechaValue != null && fechaValue != DBNull.Value)
+                {
+                    Hotel.Fecha = Convert.ToDateTime(fechaValue);
+                }
+                else
+                {
+                    Hotel.Fecha = DateTime.MinValue; // Valor por defecto si es NULL
+                }
                 
                 ListHotel.Add(Hotel);
             }

@@ -1,129 +1,299 @@
 ﻿@model MAT.Entities.Hotel
 @using MAT.Enums
 @using MAT.Utilities
+
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Detalles del Hotel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Detalles - Hotel</h2>
-
-<div class="form">
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.HotelId)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.HotelId)
-    </div>
-        
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Nombre)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Nombre)
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-building-check"></i>
+            <span>Detalles del Hotel</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="@Url.Action("Edit", "Hotel", new { id = Model.HotelId })" class="btn-modern btn-modern-primary">
+                <i class="bi bi-pencil"></i>
+                <span>Editar</span>
+            </a>
+        </div>
     </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Direccion)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Direccion)
-    </div>
+    <div class="modern-form-container">
+        <div class="modern-form-grid">
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-hash"></i>
+                    ID
+                </label>
+                <div class="modern-detail-value">
+                    <span class="badge-categoria">@Model.HotelId</span>
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Cp)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Cp)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-building"></i>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </label>
+                <div class="modern-detail-value">
+                    <strong>@Html.DisplayFor(model => model.Nombre)</strong>
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Telefono)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Telefono)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-geo-alt"></i>
+                    Localidad
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.LocalidadId.HasValue)
+                    {
+                        <span>@Helper.ToSelectItem("Localidad", Model.LocalidadId.ToString())</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Email)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Email)
-    </div>
+            <div class="modern-form-group" style="grid-column: 1 / -1;">
+                <label class="modern-form-label">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    @Html.DisplayNameFor(model => model.Direccion)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Direccion))
+                    {
+                        <span>@Model.Direccion</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Contacto)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Contacto)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-envelope-at"></i>
+                    @Html.DisplayNameFor(model => model.Cp)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Cp))
+                    {
+                        <span>@Model.Cp</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayName("Cantidad de Habitaciones")
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.CantidadHabitaciones)
-    </div>
-    
-    <div class="form-label">
-         @Html.DisplayName("Categoria")
-    </div>
-    <div class="form-field">
-        @Html.Label(((eCategoriaHotel)Model.Categoria).ToString())
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-telephone"></i>
+                    @Html.DisplayNameFor(model => model.Telefono)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Telefono))
+                    {
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-telephone"></i>
+                            <span>@Model.Telefono</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Child1)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Child1)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-envelope"></i>
+                    @Html.DisplayNameFor(model => model.Email)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-envelope"></i>
+                            <span>@Model.Email</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Child2)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Child2)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-person-badge"></i>
+                    @Html.DisplayNameFor(model => model.Contacto)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Contacto))
+                    {
+                        <span>@Model.Contacto</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.ChildHabitacion)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.ChildHabitacion)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-door-open"></i>
+                    Cantidad de Habitaciones
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.CantidadHabitaciones.HasValue)
+                    {
+                        <span class="badge-pasajero">
+                            <i class="bi bi-door-open"></i>
+                            <span>@Model.CantidadHabitaciones.Value</span>
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.CheckIn)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.CheckIn)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-star"></i>
+                    Categoría
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.Categoria.HasValue)
+                    {
+                        <span class="badge-categoria">@((eCategoriaHotel)Model.Categoria.Value)</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.CheckOut)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.CheckOut)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-clock"></i>
+                    @Html.DisplayNameFor(model => model.CheckIn)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.CheckIn))
+                    {
+                        <span>@Model.CheckIn</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.GoogleMapHtml)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.GoogleMapHtml)
-    </div>
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-clock-history"></i>
+                    @Html.DisplayNameFor(model => model.CheckOut)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.CheckOut))
+                    {
+                        <span>@Model.CheckOut</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
 
-    <div class="form-label">
-         @Html.DisplayName("Localidad")
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-person"></i>
+                    @Html.DisplayNameFor(model => model.Child1)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Child1))
+                    {
+                        <span>@Model.Child1</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-person"></i>
+                    @Html.DisplayNameFor(model => model.Child2)
+                </label>
+                <div class="modern-detail-value">
+                    @if (!string.IsNullOrEmpty(Model.Child2))
+                    {
+                        <span>@Model.Child2</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-door-open"></i>
+                    @Html.DisplayNameFor(model => model.ChildHabitacion)
+                </label>
+                <div class="modern-detail-value">
+                    @if (Model.ChildHabitacion.HasValue)
+                    {
+                        <span>@Model.ChildHabitacion.Value</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.GoogleMapHtml))
+            {
+                <div class="modern-form-group" style="grid-column: 1 / -1;">
+                    <label class="modern-form-label">
+                        <i class="bi bi-map"></i>
+                        @Html.DisplayNameFor(model => model.GoogleMapHtml)
+                    </label>
+                    <div class="modern-detail-value">
+                        <div style="width: 100%; max-width: 600px; height: 400px; border-radius: var(--border-radius-lg); overflow: hidden;">
+                            @Html.Raw(Model.GoogleMapHtml)
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="modern-form-actions">
+            <a href="@Url.Action("Index", "Hotel")" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-arrow-left"></i>
+                <span>Volver a la Lista</span>
+            </a>
+        </div>
     </div>
-    <div class="form-field">
-        @Html.Label(Helper.ToSelectItem("Localidad",Model.LocalidadId.ToString()))
-    </div>
-    <p>
-        @Html.ActionLink("Editar", "Edit", new { id=Model.HotelId },new {@class = "btn btn-small btn-inverse view-all hidden-phone" })
-        @Html.ActionLink("< Volver a la lista", "Index",null ,new {@class = "btn btn-small btn-inverse view-all hidden-phone" })
-    </p>
 </div>
-    
-
