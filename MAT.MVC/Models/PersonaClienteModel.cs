@@ -113,6 +113,47 @@ namespace MAT.MVC.Models
             return _List;
         }
 
+        /// <summary>
+        /// Obtiene los TOP N clientes con búsqueda optimizada
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda (puede estar vacío)</param>
+        /// <param name="topCount">Cantidad de resultados a devolver (default: 10, máximo: 100)</param>
+        /// <returns>Lista de clientes</returns>
+        public static List<PersonaClienteModel> PersonaClienteGetTop(string searchTerm = "", int topCount = 10)
+        {
+            List<PersonaClienteModel> _List = new List<PersonaClienteModel>();
+            
+            // Validar topCount
+            if (topCount <= 0 || topCount > 100)
+                topCount = 10;
+
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@SearchTerm", SqlDbType.NVarChar, 200, searchTerm ?? ""),
+                DBHelper.MakeParam("@TopCount", SqlDbType.Int, 0, topCount)
+            };
+            
+            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_GetTop", dbParams);
+
+            while (_reader.Read())
+            {
+                PersonaClienteModel _item = new PersonaClienteModel();
+                _item.PersonaId = _reader["PersonaID"].ToString();
+                _item.Apellido = _reader["Apellido"] != DBNull.Value ? _reader["Apellido"].ToString().Trim() : "";
+                _item.Nombre = _reader["Nombre"] != DBNull.Value ? _reader["Nombre"].ToString().Trim() : "";
+                _item.NroDocumento = _reader["NroDocumento"] != DBNull.Value ? _reader["NroDocumento"].ToString() : "";
+                _item.Telefono = _reader["Telefono"] != DBNull.Value ? _reader["Telefono"].ToString() : "";
+                _item.Celular = _reader["Celular"] != DBNull.Value ? _reader["Celular"].ToString() : "";
+                _item.LocalidadNombre = _reader["LocalidadNombre"] != DBNull.Value ? _reader["LocalidadNombre"].ToString() : "";
+                _item.Nacionalidad = _reader["Nacionalidad"] != DBNull.Value ? _reader["Nacionalidad"].ToString() : "";
+                _item.PaisResidencia = _reader["PaisResidencia"] != DBNull.Value ? _reader["PaisResidencia"].ToString() : "";
+                _item.IsTituarFactura = _reader["IsTituarFactura"] != DBNull.Value ? Convert.ToByte(_reader["IsTituarFactura"]) : (byte)0;
+                _List.Add(_item);
+            }
+
+            return _List;
+        }
+
         public static PersonaClienteModel PersonaClienteGetByPersonaID(Guid PeronsaID)
         {
             PersonaClienteModel _item = new PersonaClienteModel();

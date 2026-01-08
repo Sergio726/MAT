@@ -50,6 +50,43 @@ namespace MAT.MVC.Controllers.PersonaCliente
             return View();
         }
 
+        /// <summary>
+        /// Obtiene los TOP 10 clientes con búsqueda optimizada para mostrar en tarjetas
+        /// </summary>
+        /// <param name="searchTerm">Término de búsqueda (opcional)</param>
+        /// <returns>JSON con lista de clientes</returns>
+        [HttpPost]
+        [Authorize]
+        public JsonResult GetClientesTop(string searchTerm = "")
+        {
+            try
+            {
+                // Limpiar término de búsqueda
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                    searchTerm = "";
+
+                // Obtener top 10 clientes
+                List<PersonaClienteModel> clientes = PersonaClienteMethod.PersonaClienteGetTop(searchTerm, 10);
+
+                return Json(new
+                {
+                    success = true,
+                    data = clientes,
+                    count = clientes.Count
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message,
+                    data = new List<PersonaClienteModel>(),
+                    count = 0
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [Authorize]
         public ActionResult Create(string msj)
         {

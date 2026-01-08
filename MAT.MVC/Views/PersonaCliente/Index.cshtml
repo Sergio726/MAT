@@ -2,35 +2,223 @@
 @using MAT.Enums
 @using MAT.Utilities
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Clientes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Clientes</h2>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-people"></i>
+            <span>Clientes</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="@Url.Action("Create", "PersonaCliente")" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Agregar Cliente</span>
+            </a>
+        </div>
+    </div>
 
-<p class="botonera-form">
-    <input type="button" value="+ Agregar Cliente" class="btn btn-small btn-inverse" onclick="location.href='@Url.Action("Create", "PersonaCliente") ' " />
-</p>
+    <div class="modern-cliente-search-container">
+        <div class="modern-search-wrapper">
+            <i class="bi bi-search modern-search-icon"></i>
+            <input type="text" 
+                   id="searchClientes" 
+                   class="modern-search-input" 
+                   placeholder="Buscar por nombre, apellido, documento, teléfono..." 
+                   autocomplete="off" />
+            <div id="searchLoading" class="modern-search-loading" style="display: none;">
+                <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="visually-hidden">Buscando...</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div id="grid-clientes" style="width:99%;margin-left:5px;">
+    <div id="clientesContainer" class="modern-clientes-grid">
+        <div class="modern-loading-placeholder">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="text-muted">Cargando clientes...</p>
+        </div>
+    </div>
 
+    <div id="emptyState" class="modern-empty-state" style="display: none;">
+        <i class="bi bi-inbox"></i>
+        <h4>No se encontraron clientes</h4>
+        <p class="text-muted">Intenta con otro término de búsqueda.</p>
+    </div>
 </div>
 
 <script type="text/javascript">
+    var searchTimeout;
+    var isSearching = false;
 
-    $(document).ready(function(){
-        $("#grid-clientes").append(divLoading);
+    $(document).ready(function () {
+        // Cargar top 10 clientes inicialmente
+        loadClientes("");
 
-        $.ajax({
-            url: "/PersonaCliente/RenderGridClientes",
-            data: { },
-            dataType: "html",
-            success: function (data) {
-                $("#grid-clientes").html(data);
+        // Búsqueda en tiempo real con debounce
+        $("#searchClientes").on("input", function () {
+            var searchTerm = $(this).val().trim();
 
+            // Limpiar timeout anterior
+            clearTimeout(searchTimeout);
+
+            // Mostrar loading
+            if (!isSearching) {
+                $("#searchLoading").show();
+                isSearching = true;
             }
+
+            // Debounce: esperar 300ms después de que el usuario deje de escribir
+            searchTimeout = setTimeout(function () {
+                loadClientes(searchTerm);
+            }, 300);
+        });
+
+        // Limpiar búsqueda al hacer clic en el ícono
+        $("#searchClientes").on("focus", function () {
+            $(this).select();
         });
     });
-   
-       
+
+    function loadClientes(searchTerm) {
+        $.ajax({
+            url: "@Url.Action("GetClientesTop", "PersonaCliente")",
+            type: "POST",
+            data: { searchTerm: searchTerm },
+            dataType: "json",
+            success: function (response) {
+                $("#searchLoading").hide();
+                isSearching = false;
+
+                if (response.success && response.data && response.data.length > 0) {
+                    renderClientesCards(response.data);
+                    $("#emptyState").hide();
+                    $("#clientesContainer").show();
+                } else {
+                    $("#clientesContainer").hide();
+                    $("#emptyState").show();
+                }
+            },
+            error: function (xhr, status, error) {
+                $("#searchLoading").hide();
+                isSearching = false;
+                console.error("Error al cargar clientes:", error);
+                
+                // Mostrar mensaje de error
+                $("#clientesContainer").html(
+                    '<div class="modern-alert-error">' +
+                    '<i class="bi bi-exclamation-circle"></i>' +
+                    '<span>Error al cargar los clientes. Por favor, intenta nuevamente.</span>' +
+                    '</div>'
+                );
+            }
+        });
+    }
+
+    function renderClientesCards(clientes) {
+        var html = '<div class="modern-clientes-cards">';
+
+        $.each(clientes, function (index, cliente) {
+            var apellido = cliente.Apellido || "";
+            var nombre = cliente.Nombre || "";
+            var fullName = apellido + (apellido && nombre ? ", " : "") + nombre;
+            if (!fullName.trim()) fullName = "Sin nombre";
+            
+            var documento = cliente.NroDocumento || "-";
+            var telefono = cliente.Telefono || cliente.Celular || "-";
+            var localidad = cliente.LocalidadNombre || "-";
+            var nacionalidad = cliente.Nacionalidad || "-";
+            var isTitular = cliente.IsTituarFactura == 1 || cliente.IsTituarFactura === true;
+
+            html += '<div class="modern-cliente-card">';
+            html += '<div class="modern-cliente-card-header">';
+            html += '<div class="modern-cliente-card-avatar">';
+            html += '<i class="bi bi-person-circle"></i>';
+            html += '</div>';
+            html += '<div class="modern-cliente-card-info">';
+            html += '<h4 class="modern-cliente-card-name">' + escapeHtml(fullName) + '</h4>';
+            if (isTitular) {
+                html += '<span class="badge badge-info" title="Titular de Facturas">';
+                html += '<i class="bi bi-receipt"></i> Titular de Facturas';
+                html += '</span>';
+            }
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div class="modern-cliente-card-body">';
+            html += '<div class="modern-cliente-card-field">';
+            html += '<i class="bi bi-card-text"></i>';
+            html += '<span class="field-label">Documento:</span>';
+            html += '<span class="field-value">' + escapeHtml(documento) + '</span>';
+            html += '</div>';
+
+            if (telefono !== "-") {
+                html += '<div class="modern-cliente-card-field">';
+                html += '<i class="bi bi-telephone"></i>';
+                html += '<span class="field-label">Teléfono:</span>';
+                html += '<span class="field-value">' + escapeHtml(telefono) + '</span>';
+                html += '</div>';
+            }
+
+            if (localidad !== "-") {
+                html += '<div class="modern-cliente-card-field">';
+                html += '<i class="bi bi-geo-alt"></i>';
+                html += '<span class="field-label">Localidad:</span>';
+                html += '<span class="field-value">' + escapeHtml(localidad) + '</span>';
+                html += '</div>';
+            }
+
+            if (nacionalidad !== "-") {
+                html += '<div class="modern-cliente-card-field">';
+                html += '<i class="bi bi-flag"></i>';
+                html += '<span class="field-label">Nacionalidad:</span>';
+                html += '<span class="field-value">' + escapeHtml(nacionalidad) + '</span>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+
+            html += '<div class="modern-cliente-card-actions">';
+            html += '<a href="/PersonaCliente/Edit/' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Editar Cliente">';
+            html += '<i class="bi bi-pencil"></i>';
+            html += '</a>';
+            html += '<a href="/PersonaCliente/Details/' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Ver Detalles">';
+            html += '<i class="bi bi-eye"></i>';
+            html += '</a>';
+            html += '<a href="/PersonaCliente/HistorialdePagos?clienteid=' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Historial de Pagos">';
+            html += '<i class="bi bi-clock-history"></i>';
+            html += '</a>';
+            html += '<a href="/PersonaCliente/CuentaCorriente?clienteid=' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Movimientos Nota de Crédito">';
+            html += '<i class="bi bi-credit-card"></i>';
+            html += '</a>';
+            if (isTitular) {
+                html += '<a href="/PersonaCliente/Facturas?clienteid=' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Titular de Facturas">';
+                html += '<i class="bi bi-receipt"></i>';
+                html += '</a>';
+            }
+            html += '</div>';
+
+            html += '</div>';
+        });
+
+        html += '</div>';
+        $("#clientesContainer").html(html);
+    }
+
+    function escapeHtml(text) {
+        if (!text) return "";
+        var map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return String(text).replace(/[&<>"']/g, function (m) { return map[m]; });
+    }
 </script>

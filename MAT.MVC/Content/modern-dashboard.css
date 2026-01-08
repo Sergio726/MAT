@@ -4539,3 +4539,325 @@ div.bnn_floating-banner.hidden {
         justify-content: center;
     }
 }
+
+/* ============================================
+   ESTILOS PARA GESTIÓN DE CLIENTES
+   ============================================ */
+
+/* Contenedor de búsqueda */
+.modern-cliente-search-container {
+    margin-bottom: 2rem;
+}
+
+.modern-search-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.modern-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.modern-search-input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 3rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    color: var(--text-primary);
+    background: var(--white);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.modern-search-input:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+.modern-search-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.modern-search-loading {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* Grid de tarjetas de clientes */
+.modern-clientes-grid {
+    min-height: 300px;
+}
+
+.modern-clientes-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Tarjeta individual de cliente */
+.modern-cliente-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.modern-cliente-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.modern-cliente-card-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(230, 51, 117, 0.05) 0%, rgba(230, 51, 117, 0.02) 100%);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.modern-cliente-card-avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modern-cliente-card-avatar i {
+    font-size: 2rem;
+    color: white;
+}
+
+.modern-cliente-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.modern-cliente-card-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.modern-cliente-card-body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modern-cliente-card-field {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+}
+
+.modern-cliente-card-field i {
+    font-size: 1.125rem;
+    color: var(--brand-primary);
+    flex-shrink: 0;
+    width: 1.25rem;
+}
+
+.modern-cliente-card-field .field-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 90px;
+}
+
+.modern-cliente-card-field .field-value {
+    color: var(--text-primary);
+    word-wrap: break-word;
+    flex: 1;
+}
+
+/* Acciones de la tarjeta */
+.modern-cliente-card-actions {
+    padding: 1rem 1.5rem;
+    background: var(--bg-main);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-modern-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-modern-icon:hover {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background: rgba(230, 51, 117, 0.05);
+    transform: translateY(-1px);
+}
+
+.btn-modern-icon i {
+    font-size: 1rem;
+}
+
+/* Badge para titular de facturas */
+.badge-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.badge-info i {
+    font-size: 0.75rem;
+}
+
+/* Badges de estado */
+.badge-success,
+.badge-danger,
+.badge-info {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* Loading placeholder */
+.modern-loading-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    gap: 1rem;
+    text-align: center;
+}
+
+.modern-loading-placeholder .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.25rem;
+}
+
+.modern-loading-placeholder p {
+    margin: 0;
+    font-size: 0.9375rem;
+}
+
+/* Estado vacío mejorado */
+.modern-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    background: var(--bg-main);
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+    margin-top: 2rem;
+}
+
+.modern-empty-state i {
+    font-size: 4rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+}
+
+.modern-empty-state h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+}
+
+.modern-empty-state p {
+    margin: 0;
+    font-size: 0.9375rem;
+}
+
+/* Responsive para tarjetas de clientes */
+@media (max-width: 768px) {
+    .modern-clientes-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .modern-search-wrapper {
+        max-width: 100%;
+    }
+
+    .modern-cliente-card-header {
+        padding: 1rem;
+    }
+
+    .modern-cliente-card-body {
+        padding: 1rem;
+    }
+
+    .modern-cliente-card-actions {
+        padding: 0.75rem 1rem;
+        justify-content: center;
+    }
+
+    .btn-modern-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.125rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modern-cliente-card-field {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .modern-cliente-card-field .field-label {
+        min-width: auto;
+    }
+}
