@@ -1,72 +1,340 @@
-﻿@model MAT.Entities.Viaje
+@model MAT.Entities.Viaje
 @using MAT.Utilities
 @{
     ViewBag.Title = "Detalle de Viaje";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Detalle - Viaje</h2>
-<div class="form">
-    
-    <div class="form-label">
-         @Html.LabelFor(model => model.PaqueteId, "Paquete")
-    </div>
-    <div class="form-field">
-        @Html.Label(Helper.ToSelectItem("Paquete",Model.PaqueteId.ToString()))
+<style>
+    .detail-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .detail-section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 1rem;
+    }
+    .detail-section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .detail-section-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    .detail-grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+    @@media (max-width: 992px) {
+        .detail-grid, .detail-grid-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @@media (max-width: 576px) {
+        .detail-grid, .detail-grid-4 {
+            grid-template-columns: 1fr;
+        }
+    }
+    .detail-item {
+        background: var(--bg-secondary, #f8f9fa);
+        border-radius: 0.5rem;
+        padding: 0.875rem;
+    }
+    .detail-item-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .detail-item-label i {
+        color: var(--primary-color, #e91e63);
+        font-size: 0.875rem;
+    }
+    .detail-item-value {
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: var(--text-primary, #1f2937);
+    }
+    .detail-item-value.price {
+        color: var(--primary-color, #e91e63);
+        font-weight: 600;
+    }
+</style>
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-airplane"></i>
+            <span>Detalle del Viaje</span>
+        </h2>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="@Url.Action("Edit", new { id = Model.ViajeId })" class="btn-modern btn-modern-primary">
+                <i class="bi bi-pencil"></i>
+                <span>Editar</span>
+            </a>
+            <a href="@Url.Action("Index")" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-arrow-left"></i>
+                <span>Lista de Viajes</span>
+            </a>
+        </div>
     </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Origen)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Origen)
-    </div>
+    <div class="modern-form-container">
+        <!-- Seccion: Informacion Basica -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <i class="bi bi-info-circle"></i>
+                <span>Informacion Basica</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-box"></i>
+                        <span>Paquete</span>
+                    </div>
+                    <div class="detail-item-value">@Helper.ToSelectItem("Paquete", Model.PaqueteId.ToString())</div>
+                </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.FechaSalida)
-    </div>
-    <div class="form-field">
-        @Html.LabelFor(model => model.FechaSalida, Model.FechaSalida.ToString().Substring(0,10))
-    </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-card-text"></i>
+                        <span>Descripcion</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.Descripcion) ? "-" : Model.Descripcion)</div>
+                </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.HoraSalida)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.HoraSalida)
-    </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-toggle-on"></i>
+                        <span>Estado</span>
+                    </div>
+                    <div class="detail-item-value">
+                        @if (Model.Estado)
+                        {
+                            <span style="color: #22c55e;"><i class="bi bi-check-circle-fill"></i> Activo</span>
+                        }
+                        else
+                        {
+                            <span style="color: #ef4444;"><i class="bi bi-x-circle-fill"></i> Inactivo</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.PaisOrigen)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.PaisOrigen)
-    </div>
+        <!-- Seccion: Fechas y Horarios -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <i class="bi bi-calendar-event"></i>
+                <span>Fechas y Horarios</span>
+            </div>
+            <div class="detail-grid-4">
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Fecha Salida</span>
+                    </div>
+                    <div class="detail-item-value">@(Model.FechaSalida.HasValue ? Model.FechaSalida.Value.ToString("dd/MM/yyyy") : "-")</div>
+                </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.PaisDestino)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.PaisDestino)
-    </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-clock"></i>
+                        <span>Hora Salida</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.HoraSalida) ? "-" : Model.HoraSalida)</div>
+                </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Paso)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Paso)
-    </div>
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-calendar-x"></i>
+                        <span>Fecha Regreso</span>
+                    </div>
+                    <div class="detail-item-value">@(Model.FechaRegreso.HasValue ? Model.FechaRegreso.Value.ToString("dd/MM/yyyy") : "-")</div>
+                </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Medio)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Medio)
-    </div>
-    
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Hora Regreso</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.HoraRegreso) ? "-" : Model.HoraRegreso)</div>
+                </div>
+            </div>
+        </div>
 
-<p>
-    @Html.ActionLink("Editar", "Edit", new { id=Model.ViajeId },new { @class = "btn btn-small btn-inverse" })
-    @Html.ActionLink("< Lista de Viajes", "Index", null ,new { @class = "btn btn-small btn-inverse" })
-</p>
+        <!-- Seccion: Ubicacion -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <i class="bi bi-geo-alt"></i>
+                <span>Ubicacion y Transporte</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-geo"></i>
+                        <span>Origen</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.Origen) ? "-" : Model.Origen)</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-flag"></i>
+                        <span>Pais Origen</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.PaisOrigen) ? "-" : Model.PaisOrigen)</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-geo-fill"></i>
+                        <span>Destino</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.Destino) ? "-" : Model.Destino)</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-flag-fill"></i>
+                        <span>Pais Destino</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.PaisDestino) ? "-" : Model.PaisDestino)</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-sign-turn-right"></i>
+                        <span>Paso</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.Paso) ? "-" : Model.Paso)</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-bus-front"></i>
+                        <span>Medio de Transporte</span>
+                    </div>
+                    <div class="detail-item-value">@(string.IsNullOrEmpty(Model.Medio) ? "-" : Model.Medio)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seccion: Precios -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <i class="bi bi-currency-dollar"></i>
+                <span>Precios</span>
+            </div>
+            <div class="detail-grid-4">
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-cash"></i>
+                        <span>Precio Viaje</span>
+                    </div>
+                    <div class="detail-item-value price">$@Model.PrecioViaje.ToString("N2")</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-credit-card"></i>
+                        <span>Precio Tarjeta</span>
+                    </div>
+                    <div class="detail-item-value price">$@Model.PrecioTarjeta.ToString("N2")</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-people"></i>
+                        <span>Precio Mayor</span>
+                    </div>
+                    <div class="detail-item-value price">$@Model.PrecioMayor.ToString("N2")</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Precio Adicional</span>
+                    </div>
+                    <div class="detail-item-value price">$@Model.PrecioAdicional.ToString("N2")</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-person"></i>
+                        <span>Precio Menor 1</span>
+                    </div>
+                    <div class="detail-item-value price">$@Model.PrecioMenor1.ToString("N2")</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-person-dash"></i>
+                        <span>Precio Menor 2</span>
+                    </div>
+                    <div class="detail-item-value price">$@Model.PrecioMenor2.ToString("N2")</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-emoji-smile"></i>
+                        <span>Precio Infante</span>
+                    </div>
+                    <div class="detail-item-value price">$@Model.PrecioInfante.ToString("N2")</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seccion: Capacidad -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <i class="bi bi-people-fill"></i>
+                <span>Capacidad</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Capacidad Total</span>
+                    </div>
+                    <div class="detail-item-value">@Model.Capacidad personas</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-ticket-perforated"></i>
+                        <span>Cupos Vendidos</span>
+                    </div>
+                    <div class="detail-item-value">@Model.CupoVendido</div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-item-label">
+                        <i class="bi bi-check2-square"></i>
+                        <span>Disponibles</span>
+                    </div>
+                    <div class="detail-item-value" style="color: @(Model.Capacidad - Model.CupoVendido > 0 ? "#22c55e" : "#ef4444");">
+                        @(Model.Capacidad - Model.CupoVendido) disponibles
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
