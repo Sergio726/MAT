@@ -255,6 +255,10 @@
 .modern-calendar-container .ui-datepicker-title {
     color: white !important;
     font-weight: 600 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
 }
 
 .modern-calendar-container .ui-datepicker-prev,
@@ -319,10 +323,11 @@
 .modern-calendar-container .ui-datepicker-calendar th {
     background: var(--bg-main) !important;
     border: none !important;
-    padding: 0.75rem 0.5rem !important;
+    padding: 0.5rem 0.25rem !important;
     font-weight: 600 !important;
     color: var(--text-secondary) !important;
-    font-size: 0.875rem !important;
+    font-size: 0.75rem !important;
+    text-align: center !important;
 }
 
 .modern-calendar-container .ui-datepicker-calendar td {
@@ -4998,7 +5003,7 @@ ul.viajes-lista li .viaje-container h4 {
     padding: 0 !important;
     font-family: inherit !important;
     z-index: 1000 !important;
-    min-width: 300px !important;
+    min-width: 320px !important;
 }
 
 /* Header del calendario */
@@ -5015,6 +5020,10 @@ ul.viajes-lista li .viaje-container h4 {
     color: white !important;
     font-weight: 600 !important;
     font-size: 1rem !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
 }
 
 .ui-datepicker-title select {
@@ -5097,11 +5106,12 @@ ul.viajes-lista li .viaje-container h4 {
 .ui-datepicker-calendar th {
     background: var(--bg-secondary, #f8f9fa) !important;
     border: none !important;
-    padding: 0.75rem 0.5rem !important;
+    padding: 0.5rem 0.25rem !important;
     color: var(--text-secondary, #6b7280) !important;
     font-weight: 600 !important;
-    font-size: 0.8125rem !important;
+    font-size: 0.75rem !important;
     text-transform: uppercase !important;
+    text-align: center !important;
 }
 
 /* Celdas de los dias */
