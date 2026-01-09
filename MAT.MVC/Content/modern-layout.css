@@ -1,4 +1,22 @@
 /* Estilos para el layout principal - Flexbox */
+
+/* Eliminar padding del container-fluid de Bootstrap */
+.container-fluid.fixed.menu-left {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Navbar sin padding izquierdo */
+.navbar.main {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+}
+
 #wrapper {
     display: flex !important;
     flex-direction: row !important;
