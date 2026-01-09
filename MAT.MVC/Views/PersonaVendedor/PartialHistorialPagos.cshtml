@@ -1,24 +1,107 @@
-﻿@model IList<MAT.Entities.Pago>
+@model IList<MAT.Entities.Pago>
 @using MAT.Enums
-<table class="mat-customtable">
-    <thead>
-        <tr>
-            <th>Fecha de Pago</th>
-            <th>Monto Abonado</th>
-            <th>Estado de Rendición</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.FechaPago.Value.Date.ToShortDateString()</td>
-                <td>@string.Format("{0:C}",item.Monto)</td>
-                <td>@((eEstadoRendicion)(item.EstadoRendicion.Value))</td>
-                <td><a href="#" id="btn-detallepago" data-pagoid="@item.PagoId"><img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a></td>
-            </tr>    
-        }
 
-    </tbody>
-</table>
+<style>
+    .historial-pagos-table-container {
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    .historial-pagos-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .historial-pagos-table thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        text-align: left;
+    }
+    .historial-pagos-table tbody td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .historial-pagos-table tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .historial-pagos-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    .monto-cell {
+        font-weight: 500;
+        color: #059669;
+    }
+    .estado-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    .estado-pendiente {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    .estado-rendido {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    .btn-details {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: #dbeafe;
+        color: #2563eb;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-details:hover {
+        background: #2563eb;
+        color: white;
+    }
+</style>
+
+<div class="historial-pagos-table-container">
+    <table class="historial-pagos-table">
+        <thead>
+            <tr>
+                <th>Fecha de Pago</th>
+                <th>Monto Abonado</th>
+                <th>Estado de Rendición</th>
+                <th style="width: 50px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var estadoRendicion = (eEstadoRendicion)(item.EstadoRendicion.Value);
+                var estadoClass = estadoRendicion == eEstadoRendicion.Rendido ? "estado-rendido" : "estado-pendiente";
+                <tr>
+                    <td>@item.FechaPago.Value.Date.ToShortDateString()</td>
+                    <td class="monto-cell">@string.Format("{0:C}", item.Monto)</td>
+                    <td>
+                        <span class="estado-badge @estadoClass">@estadoRendicion</span>
+                    </td>
+                    <td>
+                        <a href="#" id="btn-detallepago" data-pagoid="@item.PagoId" class="btn-details" title="Ver detalles">
+                            <i class="bi bi-file-text"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

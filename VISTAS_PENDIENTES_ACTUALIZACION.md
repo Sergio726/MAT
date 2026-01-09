@@ -5,7 +5,7 @@
 
 ---
 
-## COMPLETADAS (88 vistas modernizadas):
+## COMPLETADAS (98 vistas modernizadas):
 
 ### Fase 1 - Completadas anteriormente:
 1. Home/Index.cshtml
@@ -228,7 +228,7 @@ Se verificaron las siguientes vistas y se encontro que:
 #### Hoteles:
 - Hotel/Distribucion.cshtml
 - Hotel/EsquemaDistribucion.cshtml
-- Habitacion/PartialListHabitacion.cshtml
+- ~~Habitacion/PartialListHabitacion.cshtml~~ - **COMPLETADA**
 
 #### Admin:
 - Admin/ServiciosAdminList.cshtml
@@ -239,8 +239,8 @@ Se verificaron las siguientes vistas y se encontro que:
 - Admin/ServiciosAdminPrecioEdit.cshtml
 - ~~Admin/ResumenPagos.cshtml~~ - **COMPLETADA**
 - ~~Admin/ResumenPagosPorFecha.cshtml~~ - **COMPLETADA**
-- Admin/GridResumenPagos.cshtml
-- Admin/GridResumenPagosFecha.cshtml
+- ~~Admin/GridResumenPagos.cshtml~~ - **COMPLETADA**
+- ~~Admin/GridResumenPagosFecha.cshtml~~ - **COMPLETADA**
 - Admin/PlanillaServicios.cshtml
 - Admin/EditarPlanilla.cshtml
 - Admin/HistorialPrecios.cshtml
@@ -248,7 +248,7 @@ Se verificaron las siguientes vistas y se encontro que:
 - Admin/ImprimirPlanilla.cshtml
 - Admin/ImprimirPlanillaDetalle.cshtml
 - Admin/GridPlanillasGeneradas.cshtml
-- Admin/PartialGridServiciosAdmin.cshtml
+- ~~Admin/PartialGridServiciosAdmin.cshtml~~ - **COMPLETADA**
 - Admin/GridPlanillaServicioItemContext.cshtml
 - Admin/GridPlanillaServiciosItemEdit.cshtml
 - Admin/GridPlanillaServiciosItemPrint.cshtml
@@ -257,15 +257,15 @@ Se verificaron las siguientes vistas y se encontro que:
 - Admin/GridPlanillaHotelDetalleEdit.cshtml
 - Admin/PartialGridResumenPlanillaHotelPrint.cshtml
 - Admin/PartialGridPlanillaHotelPrint.cshtml
-- Admin/PartialDropDownHotel.cshtml
+- ~~Admin/PartialDropDownHotel.cshtml~~ - **COMPLETADA**
 
 #### Herramientas y Otros:
 - Herramientas/Cotizador.cshtml
-- Busqueda/Card.cshtml
-- Busqueda/Perfil.cshtml
+- ~~Busqueda/Card.cshtml~~ - **COMPLETADA**
+- ~~Busqueda/Perfil.cshtml~~ - **COMPLETADA**
 - ~~NotaCredito/partialNotaCredito.cshtml~~ - **COMPLETADA**
 - ~~NotaCredito/partialMovimientoNotaCredito.cshtml~~ - **COMPLETADA**
-- CuentaCorriente/DetalleComprobante.cshtml
+- ~~CuentaCorriente/DetalleComprobante.cshtml~~ - **COMPLETADA**
 - Home/HistorialPagos.cshtml
 - Home/TodosLosViajes.cshtml
 - Home/TodosLosViajesIndex.cshtml
@@ -277,7 +277,7 @@ Se verificaron las siguientes vistas y se encontro que:
 - Shared/Error.cshtml
 - Shared/_LayoutAdmin.cshtml
 - Shared/_LayoutSplash.cshtml
-- PersonaVendedor/PartialHistorialPagos.cshtml
+- ~~PersonaVendedor/PartialHistorialPagos.cshtml~~ - **COMPLETADA**
 
 ---
 
@@ -290,10 +290,10 @@ Se verificaron las siguientes vistas y se encontro que:
 | Fase 3 | Formularios y Tablas Medios | 11 | **COMPLETADA** |
 | Fase 4 | Formularios Complejos | 10 | **COMPLETADA** |
 | Fase 5 | Vistas Muy Complejas | 9 | **COMPLETADA** (NuevaReserva excluida por riesgo) |
-| Fase 6 | Vistas Especializadas | ~56 | En progreso (25 completadas + 3 especiales) |
+| Fase 6 | Vistas Especializadas | ~56 | En progreso (35 completadas + 3 especiales) |
 
-**TOTAL COMPLETADAS:** 88 vistas (+9 en esta sesion)
-**TOTAL PENDIENTES:** ~35 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
+**TOTAL COMPLETADAS:** 98 vistas (+10 en esta sesion)
+**TOTAL PENDIENTES:** ~25 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
 **ESPECIALES:** 3 vistas (2 documentos de impresión, 1 mínima)
 
 ---
@@ -341,6 +341,18 @@ Se verificaron las siguientes vistas y se encontro que:
 ### Vistas mínimas (ya funcionales):
 - **Reserva/QuickSearch.cshtml** - Solo 3 líneas, renderiza HTML del modelo
 
+### Completadas adicionales (batch 4 - baja complejidad):
+26. ~~**Busqueda/Card.cshtml**~~ - **COMPLETADA** - Tarjeta de perfil con acciones
+27. ~~**Busqueda/Perfil.cshtml**~~ - **COMPLETADA** - Página de búsqueda de perfil
+28. ~~**CuentaCorriente/DetalleComprobante.cshtml**~~ - **COMPLETADA** - Detalle de comprobante
+29. ~~**Habitacion/PartialListHabitacion.cshtml**~~ - **COMPLETADA** - Lista de habitaciones DataTables
+30. ~~**Persona/Details.cshtml**~~ - **COMPLETADA** - Detalles de persona
+31. ~~**PersonaVendedor/PartialHistorialPagos.cshtml**~~ - **COMPLETADA** - Historial de pagos vendedor
+32. ~~**Admin/GridResumenPagos.cshtml**~~ - **COMPLETADA** - Grid resumen pagos DataTables
+33. ~~**Admin/GridResumenPagosFecha.cshtml**~~ - **COMPLETADA** - Grid pagos por fecha
+34. ~~**Admin/PartialDropDownHotel.cshtml**~~ - **COMPLETADA** - Dropdown de hoteles
+35. ~~**Admin/PartialGridServiciosAdmin.cshtml**~~ - **COMPLETADA** - Grid servicios admin
+
 ---
 
 ## NOTAS:
@@ -357,4 +369,4 @@ Se verificaron las siguientes vistas y se encontro que:
 
 ---
 
-**Ultima actualizacion:** 2026-01-09 (Sesion 7: +9 vistas Fase 6 modernizadas - Total 88 vistas)
+**Ultima actualizacion:** 2026-01-09 (Sesion 8: +10 vistas baja complejidad - Total 98 vistas)

@@ -1,80 +1,157 @@
-﻿
+<style>
+    .habitacion-list-container {
+        padding: 0.5rem;
+    }
+    .error-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .table-container {
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    #tblHabitaciones {
+        width: 100% !important;
+    }
+    #tblHabitaciones thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblHabitaciones tbody td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblHabitaciones tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .action-buttons {
+        display: flex;
+        gap: 0.375rem;
+    }
+    .btn-action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 0.375rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-edit {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    .btn-edit:hover {
+        background: #d97706;
+        color: white;
+    }
+    .btn-details {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+    .btn-details:hover {
+        background: #2563eb;
+        color: white;
+    }
+    .btn-delete {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+    .btn-delete:hover {
+        background: #dc2626;
+        color: white;
+    }
+</style>
+
+@if (ViewBag.Error != null)
+{
+    <div class="error-message">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>@ViewBag.Error</span>
+    </div>
+}
+
+<div id="divTools" class="hide">
+    <div class="action-buttons">
+        <a href="/Habitacion/Edit/{{HabitacionID}}" class="btn-action-icon btn-edit" title="Editar">
+            <i class="bi bi-pencil"></i>
+        </a>
+        <a href="/Habitacion/Details/{{HabitacionID}}" class="btn-action-icon btn-details" title="Detalles">
+            <i class="bi bi-file-text"></i>
+        </a>
+        <a href="/Habitacion/Delete?HotelID={{HotelID}}&HabitacionID={{HabitacionID}}" class="btn-action-icon btn-delete" title="Eliminar">
+            <i class="bi bi-trash"></i>
+        </a>
+    </div>
+</div>
+
+<div class="habitacion-list-container">
+    <div class="table-container">
+        <table id="tblHabitaciones" class="display">
+            <thead>
+                <tr>
+                    <th>Nro Habitación</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Hotel</th>
+                    <th>Estado</th>
+                    <th>Capacidad</th>
+                    <th>Ocupación</th>
+                    <th style="width: 100px;"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         var jResult = @Html.Raw(ViewBag.jResult);
         var jTables = eval(jResult);
         var jt = jTables["Table"];
-        
+
         var table = $("#tblHabitaciones").DataTable({
             "aaData": jt,
             "columns": [
-        	{ "data": "nrohabitacion" },
-            { "data": "nombre" },
-            { "data": "tipo" },
-            { "data": "Hotel" },
-            { "data": "estado" },
-            { "data": "capacidad" },
-            { "data": "ocupacion" },
-            { "data": "habitacionid",
-                "mRender": function (data, type, row) {
-                    var _data = {"HabitacionID": row.habitacionid, "HotelID": row.hotelid};
-                    var data = $("#divTools").html().trim().render(_data);
-                    return data;
-                }
-            },
-            
+                { "data": "nrohabitacion" },
+                { "data": "nombre" },
+                { "data": "tipo" },
+                { "data": "Hotel" },
+                { "data": "estado" },
+                { "data": "capacidad" },
+                { "data": "ocupacion" },
+                {
+                    "data": "habitacionid",
+                    "mRender": function (data, type, row) {
+                        var _data = { "HabitacionID": row.habitacionid, "HotelID": row.hotelid };
+                        var data = $("#divTools").html().trim().render(_data);
+                        return data;
+                    }
+                },
             ],
             "bAutoWidth": false,
-            "pageLength": 25
+            "pageLength": 25,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+            }
         });
     });
 </script>
-
-
-@if (ViewBag.Error != null)
-{
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
-}
-
-<div id="divTools" class="hide">
-    <a href="/Habitacion/Edit/{{HabitacionID}}">
-        <img src="/Images/pencil.png" width="32" height="32" title="Editar" /></a>
-    <a href="/Habitacion/Details/{{HabitacionID}}">
-        <img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a>
-    <a href="/Habitacion/Delete?HotelID={{HotelID}}&HabitacionID={{HabitacionID}}">
-        <img src="/Images/cross.png" width="32" height="32" title="Eliminar" /></a>
-</div>
-
-<div>
-     <table class="mat-customtable" id="tblHabitaciones">
-    <thead>
-        <tr>
-
-            <th>
-                Nro Habitacion
-            </th>
-            <th>
-                Nombre
-            </th>
-            <th>
-                Tipo
-            </th>
-            <th>
-                Hotel
-            </th>
-            <th>
-                Estado
-            </th>
-            <th>
-                Capacidad
-            </th>
-            <th>
-                Ocupacion
-            </th>
-
-            <th></th>
-        </tr>
-    </thead>
-
-</table>
-</div>

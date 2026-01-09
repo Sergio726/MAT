@@ -1,52 +1,149 @@
-﻿@if (ViewBag.Error != null)
+@if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div>   
+    <div class="error-message">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>@ViewBag.Error</span>
+    </div>
     return;
 }
 
 @model List<MAT.MVC.Models.PagoModel>
+
+<style>
+    .grid-pagos-fecha-container {
+        padding: 0.5rem;
+    }
+    .error-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .table-container {
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    #tblPagos {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    #tblPagos thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        text-align: left;
+    }
+    #tblPagos thead th:first-child {
+        width: 40px;
+        text-align: center;
+    }
+    #tblPagos tbody td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblPagos tbody td:first-child {
+        text-align: center;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+    }
+    #tblPagos tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .monto-cell {
+        font-weight: 500;
+        color: #059669;
+    }
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-cancel:hover {
+        background: #dc2626;
+        color: white;
+    }
+    #tblPagos tfoot th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        border-top: 2px solid var(--border-color, #e5e7eb);
+        text-align: left;
+    }
+    .total-value {
+        color: var(--primary-color, #e91e63);
+    }
+</style>
+
 @{int iCount = 0;
   decimal dSum = 0;}
-<table id="tblPagos" style="width:98%;" class="mat-customtable">
-    <thead> 
-        <tr>
-            <th></th>
-            <th>Fecha</th>
-            <th>Ciente</th>
-            <th>Nro de Recibo</th>
-            <th>Transacción</th>
-            <th>Medio de Pago</th>
-            <th>Vendedor</th>
-            <th>Monto</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody >
-        @foreach (MAT.MVC.Models.PagoModel item in Model)
-        {
-            iCount += 1;
-            dSum += item.Monto;
-        <tr>
-            <td>@iCount</td>
-            <td>@item.FechaPago.ToShortDateString() @item.FechaPago.ToShortTimeString()</td>
-            <td>@item.Cliente</td>
-            <td>@item.NroRecibo</td>
-            <td>@item.TransaccionID</td>
-            <td>@item.TipoPagoDescripcion</td>
-            <td>@item.Vendedor</td>
-            <td>@String.Format("{0:C}",item.Monto)</td>
-            <td><a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');" id="lnkCancelarPago"><div class="divDelete" title="Cancelar Pago"></div></a></td>
-        </tr>    
-        }
-        
-    </tbody>
-    <tfoot>
-        <tr>
-            <th>Total</th>
-            <th colspan="6"></th>
-            <th colspan="2">@String.Format("{0:C}", dSum)</th>
-        </tr>
-    </tfoot>
-    
-</table>
 
+<div class="grid-pagos-fecha-container">
+    <div class="table-container">
+        <table id="tblPagos">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Nro de Recibo</th>
+                    <th>Transacción</th>
+                    <th>Medio de Pago</th>
+                    <th>Vendedor</th>
+                    <th>Monto</th>
+                    <th style="width: 50px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (MAT.MVC.Models.PagoModel item in Model)
+                {
+                    iCount += 1;
+                    dSum += item.Monto;
+                    <tr>
+                        <td>@iCount</td>
+                        <td>@item.FechaPago.ToShortDateString() @item.FechaPago.ToShortTimeString()</td>
+                        <td>@item.Cliente</td>
+                        <td>@item.NroRecibo</td>
+                        <td>@item.TransaccionID</td>
+                        <td>@item.TipoPagoDescripcion</td>
+                        <td>@item.Vendedor</td>
+                        <td class="monto-cell">@String.Format("{0:C}", item.Monto)</td>
+                        <td>
+                            <button type="button" class="btn-cancel" onclick="cancelarPago('@item.PagoID','@ViewBag.FacturaID');" title="Cancelar Pago">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th colspan="6"></th>
+                    <th colspan="2" class="total-value">@String.Format("{0:C}", dSum)</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
