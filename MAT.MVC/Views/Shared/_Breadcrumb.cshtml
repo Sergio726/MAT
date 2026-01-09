@@ -1,7 +1,11 @@
 @{
-    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
-    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
-    var id = ViewContext.RouteData.Values["id"]?.ToString();
+    var controllerObj = ViewContext.RouteData.Values["controller"];
+    var actionObj = ViewContext.RouteData.Values["action"];
+    var idObj = ViewContext.RouteData.Values["id"];
+
+    var controller = controllerObj != null ? controllerObj.ToString() : "";
+    var action = actionObj != null ? actionObj.ToString() : "";
+    var id = idObj != null ? idObj.ToString() : "";
 
     // Mapeo de controladores a nombres legibles
     var controllerNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
