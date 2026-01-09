@@ -1,11 +1,11 @@
 # LISTADO DE VISTAS PENDIENTES DE ACTUALIZAR
 
 **Fecha de creacion:** 2025-01-27
-**Estado:** En progreso - Fase 5 avanzada
+**Estado:** En progreso - Fase 6 avanzada
 
 ---
 
-## COMPLETADAS (63 vistas modernizadas):
+## COMPLETADAS (67 vistas modernizadas):
 
 ### Fase 1 - Completadas anteriormente:
 1. Home/Index.cshtml
@@ -145,6 +145,12 @@ Se verificaron las siguientes vistas y se encontro que:
 - ~~ReservaHabitacion/Index.cshtml~~ - **YA ESTABA ACTUALIZADA** (verificada 2026-01-09)
 - ~~Admin/Index.cshtml~~ - **COMPLETADA** (Panel con cards interactivas, secciones)
 
+### Fase 6 - Vistas Especializadas (Completadas - 2026-01-09):
+62. **Paquete/Edit.cshtml** - Formulario de paquete con upload de imagen, selector de destino con cascada Pais/Provincia/Departamento/Localidad, secciones modernas
+63. **PersonaCliente/RegistrarPago.cshtml** - Modal de pago con grid layout, badge de saldo, integración con cotizador USD
+64. **Admin/ResumenPagos.cshtml** - Página de resumen de pagos con búsqueda magicsearch, placeholder de resultados
+65. **Reserva/FormReserva.cshtml** - Formulario de reserva con búsqueda de cliente, opciones de pago, card de total, integración cotizador
+
 ---
 
 ## FASE 6: VISTAS ESPECIALIZADAS/PRINT (Resto) - Costo: VARIABLE
@@ -152,7 +158,7 @@ Se verificaron las siguientes vistas y se encontro que:
 ### Vistas parciales y especializadas (menor prioridad):
 
 #### Paquetes:
-- Paquete/Edit.cshtml
+- ~~Paquete/Edit.cshtml~~ - **COMPLETADA**
 - Paquete/Vinculos.cshtml
 - Paquete/Servicios.cshtml
 - Paquete/Precios.cshtml
@@ -160,7 +166,7 @@ Se verificaron las siguientes vistas y se encontro que:
 - Paquete/Adicionales.cshtml
 
 #### Reservas:
-- Reserva/FormReserva.cshtml
+- ~~Reserva/FormReserva.cshtml~~ - **COMPLETADA**
 - Reserva/VinculacionMenor.cshtml
 - Reserva/QuickSearch.cshtml
 - Reserva/DistribucionCoche.cshtml
@@ -181,7 +187,7 @@ Se verificaron las siguientes vistas y se encontro que:
 - PersonaCliente/CuentaCorriente.cshtml
 - PersonaCliente/HistorialdePagos.cshtml
 - PersonaCliente/HistorialCuenta.cshtml
-- PersonaCliente/RegistrarPago.cshtml
+- ~~PersonaCliente/RegistrarPago.cshtml~~ - **COMPLETADA**
 - PersonaCliente/RegistrarPagoTotal.cshtml
 - PersonaCliente/RegistrarNotaCredito.cshtml
 - PersonaCliente/NotaCreditoList.cshtml
@@ -217,7 +223,7 @@ Se verificaron las siguientes vistas y se encontro que:
 - Admin/ServiciosAdminPrecioHistorialGrid.cshtml
 - Admin/ServiciosAdminPrecioCreate.cshtml
 - Admin/ServiciosAdminPrecioEdit.cshtml
-- Admin/ResumenPagos.cshtml
+- ~~Admin/ResumenPagos.cshtml~~ - **COMPLETADA**
 - Admin/ResumenPagosPorFecha.cshtml
 - Admin/GridResumenPagos.cshtml
 - Admin/GridResumenPagosFecha.cshtml
@@ -270,19 +276,25 @@ Se verificaron las siguientes vistas y se encontro que:
 | Fase 3 | Formularios y Tablas Medios | 11 | **COMPLETADA** |
 | Fase 4 | Formularios Complejos | 10 | **COMPLETADA** |
 | Fase 5 | Vistas Muy Complejas | 9 | **COMPLETADA** (NuevaReserva excluida por riesgo) |
-| Fase 6 | Vistas Especializadas | ~60 | Pendiente |
+| Fase 6 | Vistas Especializadas | ~56 | En progreso (4 completadas) |
 
-**TOTAL COMPLETADAS:** 63 vistas (+4 en esta sesion: DetalleFactura, Admin/Index + 2 ya estaban modernizadas)
-**TOTAL PENDIENTES:** ~60 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
+**TOTAL COMPLETADAS:** 67 vistas (+4 en esta sesion: Paquete/Edit, RegistrarPago, ResumenPagos, FormReserva)
+**TOTAL PENDIENTES:** ~56 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
 
 ---
 
 ## PROXIMAS PRIORIDADES SUGERIDAS (Fase 6):
 
-1. **Paquete/Edit.cshtml** - Edicion de paquetes
-2. **PersonaCliente/RegistrarPago.cshtml** - Registro de pagos
-3. **Admin/ResumenPagos.cshtml** - Resumen de pagos por viaje
-4. **Reserva/FormReserva.cshtml** - Formulario de reserva
+1. ~~**Paquete/Edit.cshtml**~~ - **COMPLETADA**
+2. ~~**PersonaCliente/RegistrarPago.cshtml**~~ - **COMPLETADA**
+3. ~~**Admin/ResumenPagos.cshtml**~~ - **COMPLETADA**
+4. ~~**Reserva/FormReserva.cshtml**~~ - **COMPLETADA**
+
+### Nuevas prioridades:
+5. **PersonaCliente/RegistrarPagoTotal.cshtml** - Registro de pago total
+6. **Admin/ResumenPagosPorFecha.cshtml** - Resumen de pagos por fecha
+7. **Paquete/Vinculos.cshtml** - Vinculos de paquete
+8. **PersonaCliente/CuentaCorriente.cshtml** - Cuenta corriente de cliente
 
 ---
 
@@ -300,4 +312,4 @@ Se verificaron las siguientes vistas y se encontro que:
 
 ---
 
-**Ultima actualizacion:** 2026-01-09 (Sesion 4: +2 vistas modernizadas, +2 verificadas como ya modernas - Total 63 vistas)
+**Ultima actualizacion:** 2026-01-09 (Sesion 5: +4 vistas Fase 6 modernizadas - Total 67 vistas)
