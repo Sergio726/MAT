@@ -238,29 +238,30 @@ namespace MAT.MVC.Controllers.Viaje
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(id)),
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_ViajeHotel_GetByViajeID", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_ViajeHotel_GetByViajeID", dbParams))
             {
-                MAT.MVC.Models.ViajeHotel item = new MAT.MVC.Models.ViajeHotel();
-                item.ViajeHotelID = _reader["ViajeHotelID"].ToString();
-                item.ViajeID = _reader["ViajeID"].ToString();
-                item.HotelID = _reader["HotelID"].ToString();
-                if (_reader["Desde"].ToString() != "")
+                while (_reader.Read())
                 {
-                    item.Desde = _reader["Desde"].ToString();    
+                    MAT.MVC.Models.ViajeHotel item = new MAT.MVC.Models.ViajeHotel();
+                    item.ViajeHotelID = _reader["ViajeHotelID"].ToString();
+                    item.ViajeID = _reader["ViajeID"].ToString();
+                    item.HotelID = _reader["HotelID"].ToString();
+                    if (_reader["Desde"].ToString() != "")
+                    {
+                        item.Desde = _reader["Desde"].ToString();    
+                    }
+                    if (_reader["Hasta"].ToString() != "")
+                    {
+                        item.Hasta = _reader["Hasta"].ToString();    
+                    }
+                    
+                    item.HoraIngreso = _reader["HoraIngreso"].ToString();
+                    item.HoraSalida = _reader["HoraSalida"].ToString();
+                    item.Nombre = _reader["Nombre"].ToString();
+                    item.ViajeNombre = _reader["ViajeNombre"].ToString();
+                    item.Comentario = _reader["Comentario"].ToString();
+                    ViajeH.Add(item);
                 }
-                if (_reader["Hasta"].ToString() != "")
-                {
-                    item.Hasta = _reader["Hasta"].ToString();    
-                }
-                
-                item.HoraIngreso = _reader["HoraIngreso"].ToString();
-                item.HoraSalida = _reader["HoraSalida"].ToString();
-                item.Nombre = _reader["Nombre"].ToString();
-                item.ViajeNombre = _reader["ViajeNombre"].ToString();
-                item.Comentario = _reader["Comentario"].ToString();
-                ViajeH.Add(item);
             }
             return View(ViajeH);
         }
@@ -295,18 +296,18 @@ namespace MAT.MVC.Controllers.Viaje
                     DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, viajeid.ToString()),
                     DBHelper.MakeParam("@HotelID", SqlDbType.VarChar, 0, hotelid.ToString())
                 };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_VincularHotelViaje", dbParams);
-
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_VincularHotelViaje", dbParams))
                 {
-                    if (_reader["Result"].ToString() == "Done.")
+                    while (_reader.Read())
                     {
-                        result = true;
-                    }
-                    else
-                    {
-                        result = false;
+                        if (_reader["Result"].ToString() == "Done.")
+                        {
+                            result = true;
+                        }
+                        else
+                        {
+                            result = false;
+                        }
                     }
                 }
                
@@ -349,28 +350,27 @@ namespace MAT.MVC.Controllers.Viaje
                         DBHelper.MakeParam("@ViajeHotelID", SqlDbType.VarChar, 0, ViajeHotelID),
                         DBHelper.MakeParam("@Fecha", SqlDbType.VarChar, 10, Fecha),
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_ViajeHotel_GetAll", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_ViajeHotel_GetAll", dbParams))
             {
-
-                ViajeH.ViajeHotelID = _reader["ViajeHotelID"].ToString();
-                ViajeH.ViajeID = _reader["ViajeID"].ToString();
-                ViajeH.HotelID = _reader["HotelID"].ToString();
-                if (_reader["Desde"].ToString() != "")
+                while (_reader.Read())
                 {
-                    ViajeH.Desde = _reader["Desde"].ToString();
-                }
-                if (_reader["Hasta"].ToString() != "")
-                {
-                    ViajeH.Hasta = _reader["Hasta"].ToString();
-                }
+                    ViajeH.ViajeHotelID = _reader["ViajeHotelID"].ToString();
+                    ViajeH.ViajeID = _reader["ViajeID"].ToString();
+                    ViajeH.HotelID = _reader["HotelID"].ToString();
+                    if (_reader["Desde"].ToString() != "")
+                    {
+                        ViajeH.Desde = _reader["Desde"].ToString();
+                    }
+                    if (_reader["Hasta"].ToString() != "")
+                    {
+                        ViajeH.Hasta = _reader["Hasta"].ToString();
+                    }
 
-                ViajeH.HoraIngreso = _reader["HoraIngreso"].ToString();
-                ViajeH.HoraSalida = _reader["HoraSalida"].ToString();
-                ViajeH.Nombre = _reader["Nombre"].ToString();
-                ViajeH.Comentario = _reader["Comentario"].ToString();
-
+                    ViajeH.HoraIngreso = _reader["HoraIngreso"].ToString();
+                    ViajeH.HoraSalida = _reader["HoraSalida"].ToString();
+                    ViajeH.Nombre = _reader["Nombre"].ToString();
+                    ViajeH.Comentario = _reader["Comentario"].ToString();
+                }
             }
 
 

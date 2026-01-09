@@ -53,20 +53,20 @@ namespace MAT.MVC.Models
                     DBHelper.MakeParam("@Price1", SqlDbType.Float, 0, Price1),
                     DBHelper.MakeParam("@Price2", SqlDbType.Float, 0, Price2)
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_External_Packages_GetAll", dbParams);
-
-             while (_reader.Read())
-             {
-                 ExternalModel.PaqueteInfo item = new ExternalModel.PaqueteInfo();
-                 item.paqueteid = _reader["paqueteid"].ToString();
-                 item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
-                 item.ViajePrecioSemiCama = _reader["ViajePrecioSemiCama"].ToString();
-                 item.ViajePrecioCama = _reader["ViajePrecioCama"].ToString();
-                 item.ViajePrecioPromocional = _reader["ViajePrecioPromocional"].ToString();
-                 item.PaqueteServicios = _reader["PaqueteServicios"].ToString();
-                 item.PaqueteDestino = _reader["PaqueteDestino"].ToString();
-                 item.ViajeFechaSalida = _reader["ViajeFechaSalida"].ToString();
-                 item.ViajeHoraSalida = _reader["ViajeHoraSalida"].ToString();
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_External_Packages_GetAll", dbParams))
+            {
+                while (_reader.Read())
+                {
+                    ExternalModel.PaqueteInfo item = new ExternalModel.PaqueteInfo();
+                    item.paqueteid = _reader["paqueteid"].ToString();
+                    item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
+                    item.ViajePrecioSemiCama = _reader["ViajePrecioSemiCama"].ToString();
+                    item.ViajePrecioCama = _reader["ViajePrecioCama"].ToString();
+                    item.ViajePrecioPromocional = _reader["ViajePrecioPromocional"].ToString();
+                    item.PaqueteServicios = _reader["PaqueteServicios"].ToString();
+                    item.PaqueteDestino = _reader["PaqueteDestino"].ToString();
+                    item.ViajeFechaSalida = _reader["ViajeFechaSalida"].ToString();
+                    item.ViajeHoraSalida = _reader["ViajeHoraSalida"].ToString();
                  item.ViajeFechaRegreso = _reader["ViajeFechaRegreso"].ToString();
                  item.ViajeHoraRegreso = _reader["ViajeHoraRegreso"].ToString();
                  item.ViajeMedio = _reader["ViajeMedio"].ToString();
@@ -74,16 +74,17 @@ namespace MAT.MVC.Models
                  item.PaqueteHoteles = _reader["PaqueteHoteles"].ToString();
                  item.PaqueteHotelesId = _reader["PaqueteHotelesId"].ToString();
                  item.ViajeVencimientoPromocion = _reader["ViajeVencimientoPromocion"].ToString();
-                 item.ViajeNroDias = _reader["ViajeNroDias"].ToString();
-                 item.ViajeNroNoches = _reader["ViajeNroNoches"].ToString();
-                 item.PaquetePublicWeb = _reader["PaquetePublicWeb"].ToString();
-                 item.PaqueteModePublicity = _reader["PaqueteModePublicity"].ToString();
-                 item.PaqueteLastUpdate = String.Format("{0:yyyy-MM-dd HH:mm:ss}", Convert.ToDateTime(_reader["PaqueteLastUpdate"]));
-                 item.PaqueteExcusionesIncluidas = _reader["PaqueteExcusionesIncluidas"].ToString();
-                 item.PaqueteExcusionesOpcionales = _reader["PaqueteExcusionesOpcionales"].ToString();
-                 item.MonedaTipoId = Convert.ToInt32(_reader["MonedaTipoId"]);
-                 listPaquete.Add(item);
-             }
+                    item.ViajeNroDias = _reader["ViajeNroDias"].ToString();
+                    item.ViajeNroNoches = _reader["ViajeNroNoches"].ToString();
+                    item.PaquetePublicWeb = _reader["PaquetePublicWeb"].ToString();
+                    item.PaqueteModePublicity = _reader["PaqueteModePublicity"].ToString();
+                    item.PaqueteLastUpdate = String.Format("{0:yyyy-MM-dd HH:mm:ss}", Convert.ToDateTime(_reader["PaqueteLastUpdate"]));
+                    item.PaqueteExcusionesIncluidas = _reader["PaqueteExcusionesIncluidas"].ToString();
+                    item.PaqueteExcusionesOpcionales = _reader["PaqueteExcusionesOpcionales"].ToString();
+                    item.MonedaTipoId = Convert.ToInt32(_reader["MonedaTipoId"]);
+                    listPaquete.Add(item);
+                }
+            }
             return listPaquete;
         }
     }

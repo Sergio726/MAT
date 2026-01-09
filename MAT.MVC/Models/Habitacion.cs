@@ -50,19 +50,20 @@ namespace MAT.MVC.Models
                     DBHelper.MakeParam("@Ocupacion", SqlDbType.Int, 0, Hab.Ocupacion),
                     DBHelper.MakeParam("@Nombre", SqlDbType.VarChar, 50, Hab.Nombre)
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_NewHabitacion", dbParams);
-
-            if (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_NewHabitacion", dbParams))
             {
-                if (_reader["Result"].ToString() == "Done.")
+                if (_reader.Read())
                 {
-                    sResult[0] = "Done.";
-                    sResult[1] = "";
-                }
-                else
-                {
-                    sResult[0] = "";
-                    sResult[1] = _reader["Result"].ToString();
+                    if (_reader["Result"].ToString() == "Done.")
+                    {
+                        sResult[0] = "Done.";
+                        sResult[1] = "";
+                    }
+                    else
+                    {
+                        sResult[0] = "";
+                        sResult[1] = _reader["Result"].ToString();
+                    }
                 }
             }
 
@@ -83,19 +84,20 @@ namespace MAT.MVC.Models
                     DBHelper.MakeParam("@HabitacionPrecio", SqlDbType.Decimal, 0, Hab.HabitacionPrecio),
                     DBHelper.MakeParam("@HabitacionDescripcion", SqlDbType.VarChar, 100, Hab.HabitacionDescripcion),
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_EditHabitacion", dbParams);
-
-            if (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_EditHabitacion", dbParams))
             {
-                if (_reader["Result"].ToString() == "Done.")
+                if (_reader.Read())
                 {
-                    sResult[0] = "Done.";
-                    sResult[1] = "";
-                }
-                else
-                {
-                    sResult[0] = "";
-                    sResult[1] = _reader["Result"].ToString();
+                    if (_reader["Result"].ToString() == "Done.")
+                    {
+                        sResult[0] = "Done.";
+                        sResult[1] = "";
+                    }
+                    else
+                    {
+                        sResult[0] = "";
+                        sResult[1] = _reader["Result"].ToString();
+                    }
                 }
             }
 
@@ -118,23 +120,25 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@HabitacionID", SqlDbType.UniqueIdentifier, 0, new Guid(sHabitacionId))
                        
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_GetById", dbParams);
-
             HabitacionStandard Hab = new HabitacionStandard();
-            if (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_GetById", dbParams))
             {
-                Hab.HabitacionID = _reader["habitacionid"].ToString();
-                Hab.NroHabitacion = Convert.ToInt32(_reader["nrohabitacion"]);
-                Hab.Tipo = Convert.ToInt32(_reader["tipo"]);
-                Hab.HabitacionTipo = _reader["HabitacionTipo"].ToString();
-                //Hab.HotelID = _reader["hotelid"].ToString();
-                //Hab.Estado = Convert.ToInt32(_reader["estado"]);
-                Hab.Capacidad = Convert.ToInt32(_reader["capacidad"]);
-                //Hab.Ocupacion = Convert.ToInt32(_reader["ocupacion"]);
-                Hab.Nombre = _reader["nombre"].ToString();
-                //Hab.Hotel = _reader["Hotel"].ToString();
-                Hab.HabitacionPrecio = Convert.ToDecimal(_reader["HabPrecio"]);
-                Hab.HabitacionDescripcion = _reader["HabDescripcion"].ToString();
+                if (_reader.Read())
+                {
+                    Hab.HabitacionID = _reader["habitacionid"].ToString();
+                    Hab.NroHabitacion = Convert.ToInt32(_reader["nrohabitacion"]);
+                    Hab.Tipo = Convert.ToInt32(_reader["tipo"]);
+                    Hab.HabitacionTipo = _reader["HabitacionTipo"].ToString();
+                    //Hab.HotelID = _reader["hotelid"].ToString();
+                    //Hab.Estado = Convert.ToInt32(_reader["estado"]);
+                    Hab.Capacidad = Convert.ToInt32(_reader["capacidad"]);
+                    //Hab.Ocupacion = Convert.ToInt32(_reader["ocupacion"]);
+                    Hab.Nombre = _reader["nombre"].ToString();
+                    //Hab.Hotel = _reader["Hotel"].ToString();
+                    Hab.HabitacionPrecio = Convert.ToDecimal(_reader["HabPrecio"]);
+                    Hab.HabitacionDescripcion = _reader["HabDescripcion"].ToString();
+                }
             }
             return Hab;
         }
@@ -176,20 +180,22 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@Fecha", SqlDbType.Date, 0, Convert.ToDateTime(Fecha))
                        
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_GetHabitacionDisponibilidad", dbParams);
-
             List<HabitacionDisponibilidad> ListHab = new List<HabitacionDisponibilidad>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Habitacion_GetHabitacionDisponibilidad", dbParams))
             {
-                HabitacionDisponibilidad Hab = new HabitacionDisponibilidad();
-                Hab.HabitacionID = _reader["HabitacionID"].ToString();
-                Hab.NroHabitacion = Convert.ToInt32(_reader["NroHabitacion"]);
-                Hab.Tipo = Convert.ToInt32(_reader["Tipo"]);
-                Hab.HabitacionTipo = _reader["HabitacionTipo"].ToString();
-                Hab.HabitacionNombre = _reader["HabitacionNombre"].ToString();
-                Hab.HotelNombre = _reader["HotelNombre"].ToString();
-                Hab.Disponibilidad = Convert.ToInt16(_reader["Disponibilidad"]);
-                ListHab.Add(Hab);
+                while (_reader.Read())
+                {
+                    HabitacionDisponibilidad Hab = new HabitacionDisponibilidad();
+                    Hab.HabitacionID = _reader["HabitacionID"].ToString();
+                    Hab.NroHabitacion = Convert.ToInt32(_reader["NroHabitacion"]);
+                    Hab.Tipo = Convert.ToInt32(_reader["Tipo"]);
+                    Hab.HabitacionTipo = _reader["HabitacionTipo"].ToString();
+                    Hab.HabitacionNombre = _reader["HabitacionNombre"].ToString();
+                    Hab.HotelNombre = _reader["HotelNombre"].ToString();
+                    Hab.Disponibilidad = Convert.ToInt16(_reader["Disponibilidad"]);
+                    ListHab.Add(Hab);
+                }
             }
             return ListHab;
         }
@@ -209,14 +215,13 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@Fecha", SqlDbType.Date, 0, Convert.ToDateTime(sFecha)),
 
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ReservaHabitacion_GetByPasajeroID", dbParams);
-
-                    while (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ReservaHabitacion_GetByPasajeroID", dbParams))
                     {
-
-                        sResult[0] = _reader["HabitacionID"].ToString();
-                        sResult[1] = _reader["hotelid"].ToString();
-
+                        while (_reader.Read())
+                        {
+                            sResult[0] = _reader["HabitacionID"].ToString();
+                            sResult[1] = _reader["hotelid"].ToString();
+                        }
                     }
                     sResult[2] = "Done.";
 

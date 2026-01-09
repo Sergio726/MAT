@@ -514,22 +514,22 @@ namespace MAT.MVC.Controllers.PersonaCliente
                     {                    
                         DBHelper.MakeParam("@FacturaID", SqlDbType.VarChar, 0, Convert.ToString(facturaid)),
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_PersonaCliente_GetPasajeroMenorByFactura", dbParams);
-
             List<PasajeroMenorModel> model = new List<PasajeroMenorModel>();
 
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_PersonaCliente_GetPasajeroMenorByFactura", dbParams))
             {
-                PasajeroMenorModel item = new PasajeroMenorModel();
-                item.PasajeroMenorID = Convert.ToInt32(_reader["id"]);
-                item.ApellidoMayor = _reader["ApellidoMayor"].ToString();
-                item.NombreMayor = _reader["NombreMayor"].ToString();
-                item.DocMayor = _reader["DocMayor"].ToString();
-                item.ApellidoMenor = _reader["ApellidoMenor"].ToString();
-                item.NomreMenor = _reader["NomreMenor"].ToString();
-                item.DocMenor = _reader["DocMenor"].ToString();
-                model.Add(item);
-
+                while (_reader.Read())
+                {
+                    PasajeroMenorModel item = new PasajeroMenorModel();
+                    item.PasajeroMenorID = Convert.ToInt32(_reader["id"]);
+                    item.ApellidoMayor = _reader["ApellidoMayor"].ToString();
+                    item.NombreMayor = _reader["NombreMayor"].ToString();
+                    item.DocMayor = _reader["DocMayor"].ToString();
+                    item.ApellidoMenor = _reader["ApellidoMenor"].ToString();
+                    item.NomreMenor = _reader["NomreMenor"].ToString();
+                    item.DocMenor = _reader["DocMenor"].ToString();
+                    model.Add(item);
+                }
             }
 
             return model;
@@ -545,10 +545,12 @@ namespace MAT.MVC.Controllers.PersonaCliente
                         DBHelper.MakeParam("@FacturaID", SqlDbType.VarChar, 0, Convert.ToString(facturaid)),
                     };
 
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_PersonaCliente_DesvincularMenor", dbParams);
-                if (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_PersonaCliente_DesvincularMenor", dbParams))
                 {
-                    iResult = Convert.ToInt16(_reader["Id"]);
+                    if (_reader.Read())
+                    {
+                        iResult = Convert.ToInt16(_reader["Id"]);
+                    }
                 }
 
             }
@@ -569,10 +571,12 @@ namespace MAT.MVC.Controllers.PersonaCliente
                         DBHelper.MakeParam("@FacturaID", SqlDbType.VarChar, 0, Convert.ToString(facturaid)),
                     };
 
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_EliminarVenta_LiberarHabitaciones", dbParams);
-                if (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_EliminarVenta_LiberarHabitaciones", dbParams))
                 {
-                    iResult = Convert.ToInt16(_reader["ID"]);
+                    if (_reader.Read())
+                    {
+                        iResult = Convert.ToInt16(_reader["ID"]);
+                    }
                 }
 
             }
@@ -607,10 +611,12 @@ namespace MAT.MVC.Controllers.PersonaCliente
                         DBHelper.MakeParam("@VendedorID", SqlDbType.VarChar, 0, MATContext.CurrentVendedor.VendedorId.ToString()),
                     };
 
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Factura_DeleteFactura", dbParams);
-                if (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Factura_DeleteFactura", dbParams))
                 {
-                    sResult = _reader["Result"].ToString(); ;
+                    if (_reader.Read())
+                    {
+                        sResult = _reader["Result"].ToString(); ;
+                    }
                 }
 
             }
@@ -1203,13 +1209,16 @@ namespace MAT.MVC.Controllers.PersonaCliente
 
         public static List<string> GetAllOcupacion()
         {
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_GetAllOcupacion", null);
             List<string> List = new List<string>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_GetAllOcupacion", null))
             {
-                string item;
-                item = _reader["Ocupacion"].ToString();
-                List.Add(item);
+                while (_reader.Read())
+                {
+                    string item;
+                    item = _reader["Ocupacion"].ToString();
+                    List.Add(item);
+                }
             }
 
             return List;
@@ -1232,13 +1241,14 @@ namespace MAT.MVC.Controllers.PersonaCliente
                         DBHelper.MakeParam("@UserID", SqlDbType.UniqueIdentifier, 0, MATContext.CurrentVendedor.VendedorId),
                     };
 
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_DeleteReservaHotel", dbParams);
-
-                    if (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_DeleteReservaHotel", dbParams))
                     {
-                        if (_reader["Result"].ToString() == "Done.")
+                        if (_reader.Read())
                         {
-                            sResult = "Done.";
+                            if (_reader["Result"].ToString() == "Done.")
+                            {
+                                sResult = "Done.";
+                            }
                         }
                     }
 

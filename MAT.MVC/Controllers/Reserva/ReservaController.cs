@@ -63,29 +63,29 @@ namespace MAT.MVC.Controllers.Reserva
                 {                    
                     DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, ViajeID),
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_DistribucionCoche_GetByViajeID", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_DistribucionCoche_GetByViajeID", dbParams))
             {
-                Models.DistribucionCoche Item = new Models.DistribucionCoche();
-                if (_reader["ButacaNro"].ToString() != "")
+                while (_reader.Read())
                 {
-                    Item.ButacaNro = Convert.ToInt32(_reader["ButacaNro"].ToString());
-                    Item.ButacaPosicion = _reader["ButacaPosicion"].ToString();
-                    Item.ButacaCodigo = _reader["ButacaCodigo"].ToString();
-                    Item.PasajeroID = _reader["PasajeroID"].ToString();
-                    Item.PasajeroApellido = _reader["PasajeroApellido"].ToString();
-                    Item.PasajeroNombre = _reader["PasajeroNombre"].ToString();
-                    DistCoche.Add(Item);
+                    Models.DistribucionCoche Item = new Models.DistribucionCoche();
+                    if (_reader["ButacaNro"].ToString() != "")
+                    {
+                        Item.ButacaNro = Convert.ToInt32(_reader["ButacaNro"].ToString());
+                        Item.ButacaPosicion = _reader["ButacaPosicion"].ToString();
+                        Item.ButacaCodigo = _reader["ButacaCodigo"].ToString();
+                        Item.PasajeroID = _reader["PasajeroID"].ToString();
+                        Item.PasajeroApellido = _reader["PasajeroApellido"].ToString();
+                        Item.PasajeroNombre = _reader["PasajeroNombre"].ToString();
+                        DistCoche.Add(Item);
+                    }
                 }
 
-            }
-
-            _reader.NextResult();
-            while (_reader.Read())
-            {
-                ViewBag.NroCoche = _reader["NroCoche"].ToString();
-                ViewBag.TransporteTipo = _reader["TransporteTipo"].ToString();
+                _reader.NextResult();
+                while (_reader.Read())
+                {
+                    ViewBag.NroCoche = _reader["NroCoche"].ToString();
+                    ViewBag.TransporteTipo = _reader["TransporteTipo"].ToString();
+                }
             }
 
             return PartialView(DistCoche);
@@ -146,51 +146,52 @@ namespace MAT.MVC.Controllers.Reserva
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(viajeid)),
                     };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetClientesDisponibles", dbParams);
-
-                int currentIndex = 0;
-                int skipCount = pageIndex * pageSize;
-                int takeCount = 0;
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetClientesDisponibles", dbParams))
                 {
-                    // Aplicar filtro si existe
-                    string apellido = _reader["Apellido"].ToString().ToLower();
-                    string nombre = _reader["Nombre"].ToString().ToLower();
-                    string nroDoc = _reader["NroDocumento"].ToString().ToLower();
-                    string searchTerm = string.IsNullOrEmpty(filter) ? "" : filter.ToLower();
+                    int currentIndex = 0;
+                    int skipCount = pageIndex * pageSize;
+                    int takeCount = 0;
 
-                    bool matchesFilter = string.IsNullOrEmpty(filter) || 
-                                        apellido.Contains(searchTerm) || 
-                                        nombre.Contains(searchTerm) || 
-                                        nroDoc.Contains(searchTerm);
-
-                    if (!matchesFilter)
-                        continue;
-
-                    // Paginación: saltar registros hasta llegar a la página solicitada
-                    if (currentIndex < skipCount)
+                    while (_reader.Read())
                     {
+                        // Aplicar filtro si existe
+                        string apellido = _reader["Apellido"].ToString().ToLower();
+                        string nombre = _reader["Nombre"].ToString().ToLower();
+                        string nroDoc = _reader["NroDocumento"].ToString().ToLower();
+                        string searchTerm = string.IsNullOrEmpty(filter) ? "" : filter.ToLower();
+
+                        bool matchesFilter = string.IsNullOrEmpty(filter) || 
+                                            apellido.Contains(searchTerm) || 
+                                            nombre.Contains(searchTerm) || 
+                                            nroDoc.Contains(searchTerm);
+
+                        if (!matchesFilter)
+                            continue;
+
+                        // Paginación: saltar registros hasta llegar a la página solicitada
+                        if (currentIndex < skipCount)
+                        {
+                            currentIndex++;
+                            continue;
+                        }
+
+                        // Tomar solo los registros de la página actual
+                        if (takeCount >= pageSize)
+                            break;
+
+                        MAT.Entities.PersonaCliente item = new MAT.Entities.PersonaCliente();
+                        item.ClienteId = new Guid(_reader["ClienteID"].ToString());
+                        item.Apellido = _reader["Apellido"].ToString();
+                        item.Nombre = _reader["Nombre"].ToString();
+                        item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"].ToString());
+                        item.NroDocumento = _reader["NroDocumento"].ToString();
+                        item.Telefono = _reader["Telefono"].ToString();
+                        item.Email = _reader["Email"].ToString();
+                        LPersonaCliente.Add(item);
+
                         currentIndex++;
-                        continue;
+                        takeCount++;
                     }
-
-                    // Tomar solo los registros de la página actual
-                    if (takeCount >= pageSize)
-                        break;
-
-                    MAT.Entities.PersonaCliente item = new MAT.Entities.PersonaCliente();
-                    item.ClienteId = new Guid(_reader["ClienteID"].ToString());
-                    item.Apellido = _reader["Apellido"].ToString();
-                    item.Nombre = _reader["Nombre"].ToString();
-                    item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"].ToString());
-                    item.NroDocumento = _reader["NroDocumento"].ToString();
-                    item.Telefono = _reader["Telefono"].ToString();
-                    item.Email = _reader["Email"].ToString();
-                    LPersonaCliente.Add(item);
-
-                    currentIndex++;
-                    takeCount++;
                 }
             }
             catch
@@ -217,38 +218,39 @@ namespace MAT.MVC.Controllers.Reserva
                 {
                     DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(viajeid)),
                 };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetClientesDisponibles", dbParams);
-
-                string searchTerm = term.ToLower();
-                int count = 0;
-                int maxResults = 20;
-
-                while (_reader.Read() && count < maxResults)
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetClientesDisponibles", dbParams))
                 {
-                    string apellido = _reader["Apellido"].ToString().ToLower();
-                    string nombre = _reader["Nombre"].ToString().ToLower();
-                    string nroDoc = _reader["NroDocumento"].ToString().ToLower();
-                    string nombreCompleto = _reader["Apellido"].ToString() + ", " + _reader["Nombre"].ToString();
+                    string searchTerm = term.ToLower();
+                    int count = 0;
+                    int maxResults = 20;
 
-                    // Buscar en apellido, nombre o documento
-                    if (apellido.Contains(searchTerm) || 
-                        nombre.Contains(searchTerm) || 
-                        nroDoc.Contains(searchTerm) ||
-                        nombreCompleto.ToLower().Contains(searchTerm))
+                    while (_reader.Read() && count < maxResults)
                     {
-                        sugerencias.Add(new
+                        string apellido = _reader["Apellido"].ToString().ToLower();
+                        string nombre = _reader["Nombre"].ToString().ToLower();
+                        string nroDoc = _reader["NroDocumento"].ToString().ToLower();
+                        string nombreCompleto = _reader["Apellido"].ToString() + ", " + _reader["Nombre"].ToString();
+
+                        // Buscar en apellido, nombre o documento
+                        if (apellido.Contains(searchTerm) || 
+                            nombre.Contains(searchTerm) || 
+                            nroDoc.Contains(searchTerm) ||
+                            nombreCompleto.ToLower().Contains(searchTerm))
                         {
-                            id = _reader["ClienteID"].ToString(),
-                            label = nombreCompleto + " - DNI: " + _reader["NroDocumento"].ToString(),
-                            value = nombreCompleto,
-                            apellido = _reader["Apellido"].ToString(),
-                            nombre = _reader["Nombre"].ToString(),
-                            nroDocumento = _reader["NroDocumento"].ToString(),
-                            tipoDocumento = _reader["TipoDocumento"].ToString(),
-                            telefono = _reader["Telefono"].ToString(),
-                            email = _reader["Email"].ToString()
-                        });
-                        count++;
+                            sugerencias.Add(new
+                            {
+                                id = _reader["ClienteID"].ToString(),
+                                label = nombreCompleto + " - DNI: " + _reader["NroDocumento"].ToString(),
+                                value = nombreCompleto,
+                                apellido = _reader["Apellido"].ToString(),
+                                nombre = _reader["Nombre"].ToString(),
+                                nroDocumento = _reader["NroDocumento"].ToString(),
+                                tipoDocumento = _reader["TipoDocumento"].ToString(),
+                                telefono = _reader["Telefono"].ToString(),
+                                email = _reader["Email"].ToString()
+                            });
+                            count++;
+                        }
                     }
                 }
             }
@@ -401,17 +403,18 @@ namespace MAT.MVC.Controllers.Reserva
                 {                    
                     DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(sViajeId)),
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPasajeroMenor", dbParams);
-
             List<string> listTutores = new List<string>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPasajeroMenor", dbParams))
             {
-                string item = _reader["MayorID"].ToString();
-                if (!listTutores.Contains(item))
+                while (_reader.Read())
                 {
-                    listTutores.Add(item);
+                    string item = _reader["MayorID"].ToString();
+                    if (!listTutores.Contains(item))
+                    {
+                        listTutores.Add(item);
+                    }
                 }
-                
             }
 
             var jsonPatientList = JsonConvert.SerializeObject(listTutores);
@@ -433,29 +436,28 @@ namespace MAT.MVC.Controllers.Reserva
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(sViajeId)),
                     };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPasajeroMenor", dbParams);
-
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPasajeroMenor", dbParams))
                 {
-                    PasajeroMenorModel item = new PasajeroMenorModel();
-                    item.PasajeroMenorID = Convert.ToInt32(_reader["id"]);
-                    item.ApellidoMayor = _reader["ApellidoMayor"].ToString();
-                    item.NombreMayor = _reader["NombreMayor"].ToString();
-                    item.DocMayor = _reader["DocMayor"].ToString();
-                    item.ApellidoMenor = _reader["ApellidoMenor"].ToString();
-                    item.NomreMenor = _reader["NomreMenor"].ToString();
-                    item.DocMenor = _reader["DocMenor"].ToString();
-                    model.Add(item);
+                    while (_reader.Read())
+                    {
+                        PasajeroMenorModel item = new PasajeroMenorModel();
+                        item.PasajeroMenorID = Convert.ToInt32(_reader["id"]);
+                        item.ApellidoMayor = _reader["ApellidoMayor"].ToString();
+                        item.NombreMayor = _reader["NombreMayor"].ToString();
+                        item.DocMayor = _reader["DocMayor"].ToString();
+                        item.ApellidoMenor = _reader["ApellidoMenor"].ToString();
+                        item.NomreMenor = _reader["NomreMenor"].ToString();
+                        item.DocMenor = _reader["DocMenor"].ToString();
+                        model.Add(item);
+                    }
 
-                }
-
-                _reader.NextResult();
-                if (_reader.Read())
-                {
-                    ViewBag.NombrePaquete = _reader["NombrePaquete"].ToString();
-                    ViewBag.FechaSalida = Convert.ToDateTime(_reader["FechaSalida"]).ToShortDateString();
-                    ViewBag.FechaRegreso = Convert.ToDateTime(_reader["FechaRegreso"]).ToShortDateString();
+                    _reader.NextResult();
+                    if (_reader.Read())
+                    {
+                        ViewBag.NombrePaquete = _reader["NombrePaquete"].ToString();
+                        ViewBag.FechaSalida = Convert.ToDateTime(_reader["FechaSalida"]).ToShortDateString();
+                        ViewBag.FechaRegreso = Convert.ToDateTime(_reader["FechaRegreso"]).ToShortDateString();
+                    }
                 }
 
 
@@ -649,22 +651,21 @@ namespace MAT.MVC.Controllers.Reserva
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, sViajeID),
                     };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetMayoresDisponibles", dbParams);
-
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetMayoresDisponibles", dbParams))
                 {
-                    PasajeroMayor item = new PasajeroMayor();
-                    item.PasajeID = _reader["PasajeID"].ToString();
-                    item.ClienteId = _reader["ClienteID"].ToString();
-                    item.Apellido = _reader["Apellido"].ToString();
-                    item.Nombre = _reader["Nombre"].ToString();
-                    item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"].ToString());
-                    item.NroDocumento = _reader["NroDocumento"].ToString();
-                    item.Telefono = _reader["Telefono"].ToString();
-                    item.Email = _reader["Email"].ToString();
-                    LPersonaMayor.Add(item);
-
+                    while (_reader.Read())
+                    {
+                        PasajeroMayor item = new PasajeroMayor();
+                        item.PasajeID = _reader["PasajeID"].ToString();
+                        item.ClienteId = _reader["ClienteID"].ToString();
+                        item.Apellido = _reader["Apellido"].ToString();
+                        item.Nombre = _reader["Nombre"].ToString();
+                        item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"].ToString());
+                        item.NroDocumento = _reader["NroDocumento"].ToString();
+                        item.Telefono = _reader["Telefono"].ToString();
+                        item.Email = _reader["Email"].ToString();
+                        LPersonaMayor.Add(item);
+                    }
                 }
             }
             catch (Exception e)
@@ -683,21 +684,20 @@ namespace MAT.MVC.Controllers.Reserva
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, sViajeID),
                     };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetMenoresDisponibles", dbParams);
-
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetMenoresDisponibles", dbParams))
                 {
-                    MAT.Entities.PersonaCliente item = new MAT.Entities.PersonaCliente();
-                    item.ClienteId = new Guid(_reader["PersonaID"].ToString());
-                    item.Apellido = _reader["Apellido"].ToString();
-                    item.Nombre = _reader["Nombre"].ToString();
-                    //item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"].ToString());
-                    item.NroDocumento = _reader["NroDocumento"].ToString();
-                    //item.Telefono = _reader["Telefono"].ToString();
-                    //item.Email = _reader["Email"].ToString();
-                    LPersonaCliente.Add(item);
-
+                    while (_reader.Read())
+                    {
+                        MAT.Entities.PersonaCliente item = new MAT.Entities.PersonaCliente();
+                        item.ClienteId = new Guid(_reader["PersonaID"].ToString());
+                        item.Apellido = _reader["Apellido"].ToString();
+                        item.Nombre = _reader["Nombre"].ToString();
+                        //item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"].ToString());
+                        item.NroDocumento = _reader["NroDocumento"].ToString();
+                        //item.Telefono = _reader["Telefono"].ToString();
+                        //item.Email = _reader["Email"].ToString();
+                        LPersonaCliente.Add(item);
+                    }
                 }
             }
             catch (Exception e)
@@ -761,14 +761,13 @@ namespace MAT.MVC.Controllers.Reserva
                         DBHelper.MakeParam("@PasajeroID", SqlDbType.VarChar, 0, sMayorID),
                         DBHelper.MakeParam("@MenorID", SqlDbType.VarChar, 0, sMenorID)
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_VincularMenorByViajeID", dbParams);
-
-
-                    if (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_VincularMenorByViajeID", dbParams))
                     {
-                        sResult[0] = _reader["Id"].ToString();
-                        sResult[1] = _reader["ErrorMsg"].ToString();
-
+                        if (_reader.Read())
+                        {
+                            sResult[0] = _reader["Id"].ToString();
+                            sResult[1] = _reader["ErrorMsg"].ToString();
+                        }
                     }
                 }
 

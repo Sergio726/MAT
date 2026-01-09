@@ -231,65 +231,66 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@PasajeID", SqlDbType.VarChar, 0, PasajeID),
                 };
-             SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Voucher_GetHotelByPasajeID", dbParams);
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Voucher_GetHotelByPasajeID", dbParams))
+            {
+                while (_reader.Read())
+                {
+                    HotelStandard item = new HotelStandard();
+                    item.Nombre = _reader["nombre"].ToString();
+                    item.Telefono = _reader["telefono"].ToString();
+                    item.Direccion = _reader["direccion"].ToString();
+                    item.NroHabitacion = _reader["nrohabitacion"].ToString();
+                    item.NombreHabitacion = _reader["NombreHabitacion"].ToString();
+                    item.Desde = _reader["Desde"].ToString();
+                    item.Hasta = _reader["Hasta"].ToString();
 
-              while (_reader.Read())
-              {
-                  HotelStandard item = new HotelStandard();
-                  item.Nombre = _reader["nombre"].ToString();
-                  item.Telefono = _reader["telefono"].ToString();
-                  item.Direccion = _reader["direccion"].ToString();
-                  item.NroHabitacion = _reader["nrohabitacion"].ToString();
-                  item.NombreHabitacion = _reader["NombreHabitacion"].ToString();
-                  item.Desde = _reader["Desde"].ToString();
-                  item.Hasta = _reader["Hasta"].ToString();
 
+                    StringBuilder arrayfechas = new StringBuilder();
+                    //DateTime date2 =  Convert.ToDateTime(item.Hasta);
+                    //string mes = "";
+                    //mes = "de " + date2.ToString("Y", CultureInfo.CreateSpecificCulture("es-ES"));
 
-                  StringBuilder arrayfechas = new StringBuilder();
-                  //DateTime date2 =  Convert.ToDateTime(item.Hasta);
-                  //string mes = "";
-                  //mes = "de " + date2.ToString("Y", CultureInfo.CreateSpecificCulture("es-ES"));
+                    string mes = "";
+                    if (Convert.ToDateTime(item.Hasta).Day > 1)
+                    {
+                        mes = "de " + Convert.ToDateTime(item.Hasta).ToString("Y", CultureInfo.CreateSpecificCulture("es-ES"));
+                    }
+                    else
+                    {
+                        mes = "de " + Convert.ToDateTime(item.Desde).ToString("Y", CultureInfo.CreateSpecificCulture("es-ES"));
+                    }
+                    DateTime fecha_ = Convert.ToDateTime(item.Desde);
+                    DateTime fecha_desde = Convert.ToDateTime(item.Desde);
+                    DateTime fecha_hasta = Convert.ToDateTime(item.Hasta);
+                    arrayfechas.Append(fecha_desde.Day);
+                    arrayfechas.Append(",");
+                    int rango = Convert.ToInt32((fecha_hasta - fecha_desde).TotalDays);
+                    for (int i = 0; i < (rango - 1); i++)
+                    {
+                        fecha_desde = fecha_desde.AddDays(1);
+                        if (fecha_desde.Month > fecha_.Month)
+                        {
+                            string mm = "de " + fecha_.ToString("Y", CultureInfo.CreateSpecificCulture("es-ES"));
+                            arrayfechas.Remove(arrayfechas.Length - 1, 1);
+                            item.DiasEstadia = arrayfechas.Append(" " + mm + "; ").ToString();
+                            fecha_ = fecha_desde;
 
-                  string mes = "";
-                  if (Convert.ToDateTime(item.Hasta).Day > 1)
-                  {
-                      mes = "de " + Convert.ToDateTime(item.Hasta).ToString("Y", CultureInfo.CreateSpecificCulture("es-ES"));
-                  }
-                  else
-                  {
-                      mes = "de " + Convert.ToDateTime(item.Desde).ToString("Y", CultureInfo.CreateSpecificCulture("es-ES"));
-                  }
-                  DateTime fecha_ = Convert.ToDateTime(item.Desde);
-                  DateTime fecha_desde = Convert.ToDateTime(item.Desde);
-                  DateTime fecha_hasta = Convert.ToDateTime(item.Hasta);
-                  arrayfechas.Append(fecha_desde.Day);
-                  arrayfechas.Append(",");
-                  int rango = Convert.ToInt32((fecha_hasta - fecha_desde).TotalDays);
-                  for (int i = 0; i < (rango - 1); i++)
-                  {
-                      fecha_desde = fecha_desde.AddDays(1);
-                      if (fecha_desde.Month > fecha_.Month)
-                      {
-                          string mm = "de " + fecha_.ToString("Y", CultureInfo.CreateSpecificCulture("es-ES"));
-                          arrayfechas.Remove(arrayfechas.Length - 1, 1);
-                          item.DiasEstadia = arrayfechas.Append(" " + mm + "; ").ToString();
-                          fecha_ = fecha_desde;
+                            arrayfechas.Append(fecha_desde.Day);
+                            arrayfechas.Append(",");
+                        }
+                        else
+                        {
+                            arrayfechas.Append(fecha_desde.Day);
+                            arrayfechas.Append(",");
+                        }
+                    }
 
-                          arrayfechas.Append(fecha_desde.Day);
-                          arrayfechas.Append(",");
-                      }
-                      else
-                      {
-                          arrayfechas.Append(fecha_desde.Day);
-                          arrayfechas.Append(",");
-                      }
-                  }
+                    arrayfechas.Remove(arrayfechas.Length - 1, 1);
+                    item.DiasEstadia = arrayfechas.Append(" " + mes).ToString();
 
-                  arrayfechas.Remove(arrayfechas.Length - 1, 1);
-                  item.DiasEstadia = arrayfechas.Append(" " + mes).ToString();
-
-                  ListHoteles.Add(item);
-              }
+                    ListHoteles.Add(item);
+                }
+            }
             return ListHoteles;
         }
 
@@ -300,43 +301,44 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@FacturaID", SqlDbType.VarChar, 0, FacturaID),
                 };
-             SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Voucher_GetVoucherByFacturaID", dbParams);
-
-             while (_reader.Read())
-             {
-                 Models.VoucherStandard item = new VoucherStandard();
-                 item.PasajePasajeroID = _reader["PasajePasajeroID"].ToString();
-                 item.PasajePasajeID = _reader["PasajePasajeID"].ToString();
-                 item.VoucherNroVoucher = _reader["VoucherNroVoucher"].ToString();
-                 item.VoucherFechaEmision = _reader["VoucherFechaEmision"].ToString();
-                 item.ButacaNroButaca = _reader["ButacaNroButaca"].ToString();
-                 if (_reader["ButacaTipo"].ToString() != "")
-	             {
-		            item.ButacaTipo = Convert.ToInt32(_reader["ButacaTipo"].ToString());
-	             }
-                 item.PersonaApellido = _reader["PersonaApellido"].ToString();
-                 item.PersonaNombre = _reader["PersonaNombre"].ToString();
-                 item.PersonaNroDocumento = _reader["PersonaNroDocumento"].ToString();
-                 item.PersonaLocalidad = _reader["PersonaLocalidad"].ToString();
-                 item.PersonaEmail = _reader["PersonaEmail"].ToString();
-                 item.PersonaTelefono = _reader["PersonaTelefono"].ToString();
-                 item.PersonaCelular = _reader["PersonaCelular"].ToString();
-                 item.PersonaDomicilio = _reader["PersonaDomicilio"].ToString();
-                 item.DestinoNombre = _reader["DestinoNombre"].ToString();
-                 item.ViajeHoraSalida = _reader["ViajeHoraSalida"].ToString();
-                 item.ViajeHoraRegreso = _reader["ViajeHoraRegreso"].ToString();
-                 item.TiempoConsentracion = Convert.ToInt32(_reader["TiempoConsentracion"]);
-                 item.ViajeFechaSalida = _reader["ViajeFechaSalida"].ToString();
-                 item.ViajeSalidaL = Convert.ToDateTime(_reader["ViajeFechaSalida"].ToString()).ToString("D", CultureInfo.CreateSpecificCulture("es-ES"));
-                 item.ViajeFechaRegreso = _reader["ViajeFechaRegreso"].ToString();
-                 item.ViajeRegresoL = Convert.ToDateTime(_reader["ViajeFechaRegreso"].ToString()).ToString("D", CultureInfo.CreateSpecificCulture("es-ES"));
-                 item.ViajeMedio = _reader["ViajeMedio"].ToString();
-                 item.ViajeObservaciones = _reader["Observaciones"].ToString();
-                 item.PaqueteServicios = _reader["PaqueteServicios"].ToString();
-                 item.PaqueteExcusiones = _reader["PaqueteExcusiones"].ToString();
-                 item.PaqueteExcusionesOpcionales = _reader["PaqueteExcusionesOpcionales"].ToString();
-                 ListVoucher.Add(item);
-             }
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Voucher_GetVoucherByFacturaID", dbParams))
+            {
+                while (_reader.Read())
+                {
+                    Models.VoucherStandard item = new VoucherStandard();
+                    item.PasajePasajeroID = _reader["PasajePasajeroID"].ToString();
+                    item.PasajePasajeID = _reader["PasajePasajeID"].ToString();
+                    item.VoucherNroVoucher = _reader["VoucherNroVoucher"].ToString();
+                    item.VoucherFechaEmision = _reader["VoucherFechaEmision"].ToString();
+                    item.ButacaNroButaca = _reader["ButacaNroButaca"].ToString();
+                    if (_reader["ButacaTipo"].ToString() != "")
+                    {
+                        item.ButacaTipo = Convert.ToInt32(_reader["ButacaTipo"].ToString());
+                    }
+                    item.PersonaApellido = _reader["PersonaApellido"].ToString();
+                    item.PersonaNombre = _reader["PersonaNombre"].ToString();
+                    item.PersonaNroDocumento = _reader["PersonaNroDocumento"].ToString();
+                    item.PersonaLocalidad = _reader["PersonaLocalidad"].ToString();
+                    item.PersonaEmail = _reader["PersonaEmail"].ToString();
+                    item.PersonaTelefono = _reader["PersonaTelefono"].ToString();
+                    item.PersonaCelular = _reader["PersonaCelular"].ToString();
+                    item.PersonaDomicilio = _reader["PersonaDomicilio"].ToString();
+                    item.DestinoNombre = _reader["DestinoNombre"].ToString();
+                    item.ViajeHoraSalida = _reader["ViajeHoraSalida"].ToString();
+                    item.ViajeHoraRegreso = _reader["ViajeHoraRegreso"].ToString();
+                    item.TiempoConsentracion = Convert.ToInt32(_reader["TiempoConsentracion"]);
+                    item.ViajeFechaSalida = _reader["ViajeFechaSalida"].ToString();
+                    item.ViajeSalidaL = Convert.ToDateTime(_reader["ViajeFechaSalida"].ToString()).ToString("D", CultureInfo.CreateSpecificCulture("es-ES"));
+                    item.ViajeFechaRegreso = _reader["ViajeFechaRegreso"].ToString();
+                    item.ViajeRegresoL = Convert.ToDateTime(_reader["ViajeFechaRegreso"].ToString()).ToString("D", CultureInfo.CreateSpecificCulture("es-ES"));
+                    item.ViajeMedio = _reader["ViajeMedio"].ToString();
+                    item.ViajeObservaciones = _reader["Observaciones"].ToString();
+                    item.PaqueteServicios = _reader["PaqueteServicios"].ToString();
+                    item.PaqueteExcusiones = _reader["PaqueteExcusiones"].ToString();
+                    item.PaqueteExcusionesOpcionales = _reader["PaqueteExcusionesOpcionales"].ToString();
+                    ListVoucher.Add(item);
+                }
+            }
 
             foreach (Models.VoucherStandard item in ListVoucher)
 	        {

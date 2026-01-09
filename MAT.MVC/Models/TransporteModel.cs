@@ -30,29 +30,29 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@TransporteID", SqlDbType.VarChar, 0, TrasnporteID)
                         
                     };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Transporte_GetListTransporte", dbParams);
-
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Transporte_GetListTransporte", dbParams))
                 {
-                    TransporteModel Transporte = new TransporteModel();
-                    Transporte.TransporteID = _reader["TransporteID"].ToString();
-                    Transporte.NroCoche = _reader["NroCoche"].ToString();
-                    if (_reader["MaxPasajeros"].ToString() != "")
+                    while (_reader.Read())
                     {
-                        Transporte.MaxPasajeros = Convert.ToInt32(_reader["MaxPasajeros"]);
-                    }
-                    if (_reader["KmRecorridos"].ToString() != "")
-                    {
-                        Transporte.KmRecorridos = Convert.ToInt32(_reader["KmRecorridos"]);
-                    }
-                    if (_reader["UltimoService"].ToString() != "")
-                    {
-                        Transporte.UltimoService = Convert.ToDateTime(_reader["UltimoService"]);
-                    }
-                    Transporte.Matricula = _reader["Matricula"].ToString();
+                        TransporteModel Transporte = new TransporteModel();
+                        Transporte.TransporteID = _reader["TransporteID"].ToString();
+                        Transporte.NroCoche = _reader["NroCoche"].ToString();
+                        if (_reader["MaxPasajeros"].ToString() != "")
+                        {
+                            Transporte.MaxPasajeros = Convert.ToInt32(_reader["MaxPasajeros"]);
+                        }
+                        if (_reader["KmRecorridos"].ToString() != "")
+                        {
+                            Transporte.KmRecorridos = Convert.ToInt32(_reader["KmRecorridos"]);
+                        }
+                        if (_reader["UltimoService"].ToString() != "")
+                        {
+                            Transporte.UltimoService = Convert.ToDateTime(_reader["UltimoService"]);
+                        }
+                        Transporte.Matricula = _reader["Matricula"].ToString();
 
-                    List.Add(Transporte);
+                        List.Add(Transporte);
+                    }
                 }
 
                 return List;

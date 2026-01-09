@@ -61,12 +61,13 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@Observacion", SqlDbType.VarChar, 300, Obj.Observacion),
                         DBHelper.MakeParam("@PasajeroTemporal", SqlDbType.VarChar, 100, Obj.PasajeroTemporal),
                             };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_InsertNew", dbParams);
-
-                    while (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_InsertNew", dbParams))
                     {
-                        sResult[0] = _reader["ID"].ToString();
-                        sResult[1] = _reader["Result"].ToString();
+                        while (_reader.Read())
+                        {
+                            sResult[0] = _reader["ID"].ToString();
+                            sResult[1] = _reader["Result"].ToString();
+                        }
                     }
                 }
                 catch (Exception e)
@@ -91,12 +92,13 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@ID", SqlDbType.Int, 0, ID),
                         DBHelper.MakeParam("@UsuarioID", SqlDbType.Int, 0,UsuarioID)
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_Delete", dbParams);
-
-                    while (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_Delete", dbParams))
                     {
-                        sResult[0] = "Done";
-                        sResult[1] = _reader["Result"].ToString();
+                        while (_reader.Read())
+                        {
+                            sResult[0] = "Done";
+                            sResult[1] = _reader["Result"].ToString();
+                        }
                     }
                 }
                 catch (Exception e)
@@ -138,17 +140,17 @@ namespace MAT.MVC.Models
                  DBHelper.MakeParam("@param", SqlDbType.VarChar, 0, sParam),
                  DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, new Guid(sViajeID)),
                 };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_SearchCliente", dbParams);
-
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_SearchCliente", dbParams))
                 {
-                    ResultSearchCliente _item = new ResultSearchCliente();
-                    _item.PersonaID = _reader["PersonaID"].ToString();
-                    _item.Apellido = _reader["Apellido"].ToString().Trim();
-                    _item.Nombre = _reader["Nombre"].ToString().Trim();
-                    _item.NroDocumento = _reader["NroDocumento"].ToString();
-                    _List.Add(_item);
+                    while (_reader.Read())
+                    {
+                        ResultSearchCliente _item = new ResultSearchCliente();
+                        _item.PersonaID = _reader["PersonaID"].ToString();
+                        _item.Apellido = _reader["Apellido"].ToString().Trim();
+                        _item.Nombre = _reader["Nombre"].ToString().Trim();
+                        _item.NroDocumento = _reader["NroDocumento"].ToString();
+                        _List.Add(_item);
+                    }
                 }
 
                 return _List;

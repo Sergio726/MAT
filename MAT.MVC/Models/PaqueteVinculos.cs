@@ -85,28 +85,26 @@ namespace MAT.MVC.Models
                             DBHelper.MakeParam("@PaqueteID", SqlDbType.UniqueIdentifier, 0, paqueteId)
 
                   };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Paquetes_VinculosByPaqueteID", dbParams);
-
-
-
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Paquetes_VinculosByPaqueteID", dbParams))
                 {
-                    PaqueteViculosModel item = new PaqueteViculosModel();
-                    item.PaqueteID = _reader["PaqueteID"].ToString();
-                    item.ID = _reader["ID"].ToString();
-                    if (_reader["IsOpcional"].ToString() == "")
+                    while (_reader.Read())
                     {
-                        item.IsOpcional = null;
+                        PaqueteViculosModel item = new PaqueteViculosModel();
+                        item.PaqueteID = _reader["PaqueteID"].ToString();
+                        item.ID = _reader["ID"].ToString();
+                        if (_reader["IsOpcional"].ToString() == "")
+                        {
+                            item.IsOpcional = null;
+                        }
+                        else
+                        {
+                            item.IsOpcional = Convert.ToBoolean(_reader["IsOpcional"]);
+                        }
+                        item.Tipo = _reader["Tipo"].ToString();
+                        item.Descripcion = _reader["Descripcion"].ToString();
+                        item.Precio = _reader["Precio"].ToString();
+                        vinculos.Add(item);
                     }
-                    else
-                    {
-                        item.IsOpcional = Convert.ToBoolean(_reader["IsOpcional"]);
-                    }
-                    item.Tipo = _reader["Tipo"].ToString();
-                    item.Descripcion = _reader["Descripcion"].ToString();
-                    item.Precio = _reader["Precio"].ToString();
-                    vinculos.Add(item);
                 }
 
             }

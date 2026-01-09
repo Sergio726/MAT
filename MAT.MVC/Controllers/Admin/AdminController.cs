@@ -677,18 +677,19 @@ namespace MAT.MVC.Controllers.Admin
                             DBHelper.MakeParam("@dateFrom", SqlDbType.VarChar, 0, dateFrom),
                             DBHelper.MakeParam("@dateTo", SqlDbType.VarChar, 0, dateTo)
                         };
-            SqlDataReader _Reader = DBHelper.ExecuteDataReader("usp_MAT_Admin_AuditoriaFacturas", _dbParams);
-            while (_Reader.Read())
+            using (SqlDataReader _Reader = DBHelper.ExecuteDataReader("usp_MAT_Admin_AuditoriaFacturas", _dbParams))
             {
-                AuditFactura _item = new Models.AuditFactura();
-                _item.ID = _Reader["ID"].ToString();
-                _item.Accion = _Reader["Accion"].ToString();
-                _item.Descripcion = _Reader["Descripcion"].ToString();
-                _item.Fecha = _Reader["Fecha"].ToString();
-                _item.Cliente = _Reader["Cliente"].ToString();
-                _item.Vendedor = _Reader["Vendedor"].ToString();
-                listFactura.Add(_item);
-
+                while (_Reader.Read())
+                {
+                    AuditFactura _item = new Models.AuditFactura();
+                    _item.ID = _Reader["ID"].ToString();
+                    _item.Accion = _Reader["Accion"].ToString();
+                    _item.Descripcion = _Reader["Descripcion"].ToString();
+                    _item.Fecha = _Reader["Fecha"].ToString();
+                    _item.Cliente = _Reader["Cliente"].ToString();
+                    _item.Vendedor = _Reader["Vendedor"].ToString();
+                    listFactura.Add(_item);
+                }
             }
 
             

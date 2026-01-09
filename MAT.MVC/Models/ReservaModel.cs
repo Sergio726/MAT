@@ -439,25 +439,26 @@ namespace MAT.MVC.Models
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, ViajeID),
                     };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetReservasVencidas", dbParams);
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetReservasVencidas", dbParams))
                 {
-                    PreReserva PreReserva = new PreReserva();
-                    PreReserva.FacturaID = _reader["FacturaID"].ToString();
-                    PreReserva.ClienteID = _reader["ClienteID"].ToString();
-                    PreReserva.FullName = _reader["FullName"].ToString();
-                    if (_reader["FechaPreReserva"].ToString() != "")
+                    while (_reader.Read())
                     {
-                        PreReserva.FechaPreReserva = Convert.ToDateTime(_reader["FechaPreReserva"]);
-                    }
+                        PreReserva PreReserva = new PreReserva();
+                        PreReserva.FacturaID = _reader["FacturaID"].ToString();
+                        PreReserva.ClienteID = _reader["ClienteID"].ToString();
+                        PreReserva.FullName = _reader["FullName"].ToString();
+                        if (_reader["FechaPreReserva"].ToString() != "")
+                        {
+                            PreReserva.FechaPreReserva = Convert.ToDateTime(_reader["FechaPreReserva"]);
+                        }
 
-                    if (_reader["VencimientoPreReserva"].ToString() != "")
-                    {
-                        PreReserva.VencimientoPreReserva = Convert.ToDateTime(_reader["VencimientoPreReserva"]);
+                        if (_reader["VencimientoPreReserva"].ToString() != "")
+                        {
+                            PreReserva.VencimientoPreReserva = Convert.ToDateTime(_reader["VencimientoPreReserva"]);
+                        }
+                        PreReserva.NroButaca = _reader["NroButaca"].ToString();
+                        ListPreReserva.Add(PreReserva);
                     }
-                    PreReserva.NroButaca = _reader["NroButaca"].ToString();
-                    ListPreReserva.Add(PreReserva);
                 }
                 return ListPreReserva;
         }
@@ -476,13 +477,12 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@VendedorID", SqlDbType.VarChar, 0, MATContext.CurrentVendedor.VendedorId.ToString()),
                         DBHelper.MakeParam("@CantDias", SqlDbType.Int, 0, Dias),
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_ExtenderPreReserva", dbParams);
-
-
-                    if (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_ExtenderPreReserva", dbParams))
                     {
-                        sResult = _reader["Result"].ToString();
-
+                        if (_reader.Read())
+                        {
+                            sResult = _reader["Result"].ToString();
+                        }
                     }
                 }
 
@@ -502,9 +502,9 @@ namespace MAT.MVC.Models
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, ViajeID),
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reserva_GetPasajeByViajeID", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reserva_GetPasajeByViajeID", dbParams))
+            {
+                while (_reader.Read())
             {
                 ReservaStandard Item = new ReservaStandard();
 
@@ -590,6 +590,7 @@ namespace MAT.MVC.Models
                 }
                 Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
                 Model.Add(Item);
+                }
             }
 
             return Model;

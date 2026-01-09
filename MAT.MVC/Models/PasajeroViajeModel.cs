@@ -31,21 +31,22 @@ namespace MAT.MVC.Models
                   {
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, ViajeID),
                   };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_PasajeroViaje_GetByViajeID", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_PasajeroViaje_GetByViajeID", dbParams))
             {
-                PasajeroViajeModel Item = new PasajeroViajeModel();
-                Item.ViajeID = _reader["ViajeID"].ToString();
-                Item.Apellido = _reader["Apellido"].ToString();
-                Item.Nombre = _reader["Nombre"].ToString();
-                Item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"]);
-                Item.NroDocumento = _reader["NroDocumento"].ToString();
-                Item.CUIT = _reader["CUIT"].ToString();
-                Item.Telefono = _reader["Telefono"].ToString();
-                Item.FechaNacimiento = _reader["FechaNacimiento"].ToString();
+                while (_reader.Read())
+                {
+                    PasajeroViajeModel Item = new PasajeroViajeModel();
+                    Item.ViajeID = _reader["ViajeID"].ToString();
+                    Item.Apellido = _reader["Apellido"].ToString();
+                    Item.Nombre = _reader["Nombre"].ToString();
+                    Item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"]);
+                    Item.NroDocumento = _reader["NroDocumento"].ToString();
+                    Item.CUIT = _reader["CUIT"].ToString();
+                    Item.Telefono = _reader["Telefono"].ToString();
+                    Item.FechaNacimiento = _reader["FechaNacimiento"].ToString();
 
-                ListPasajeroViaje.Add(Item);
+                    ListPasajeroViaje.Add(Item);
+                }
             }
             return ListPasajeroViaje;
         }

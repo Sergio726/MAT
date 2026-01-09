@@ -134,65 +134,65 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@FacturaId", SqlDbType.UniqueIdentifier, 0, FacturaID),
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Factura_GetFacturaClienteByFacturaID", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Factura_GetFacturaClienteByFacturaID", dbParams))
             {
-                ReservaStandard Item = new ReservaStandard();
+                while (_reader.Read())
+                {
+                    ReservaStandard Item = new ReservaStandard();
 
-                if (_reader["FacturaID"].ToString() != "")
-                {
-                    Factura.FacturaID = new Guid(_reader["FacturaID"].ToString());
-                }
-                if (_reader["NroFactura"].ToString() != "")
-                {
-                    Factura.NroFactura = _reader["NroFactura"].ToString();
-                }
-                if (_reader["Monto"].ToString() != "")
-                {
-                    Factura.Monto = Convert.ToDouble(_reader["Monto"]);
-                }
-                if (_reader["Fecha"].ToString() != "")
-                {
-                    Factura.Fecha = Convert.ToDateTime(_reader["Fecha"].ToString());
-                }
-                if (_reader["Tipo"].ToString() != "")
-                {
-                    Factura.Tipo = Convert.ToInt32(_reader["Tipo"]);
-                }
-                if (_reader["Estado"].ToString() != "")
-                {
-                    Factura.Estado = Convert.ToInt32(_reader["Estado"]);
-                }
-                if (_reader["ClienteID"].ToString() != "")
-                {
-                    Factura.ClienteID = new Guid(_reader["ClienteID"].ToString());
-                }
-                if (_reader["VendedorID"].ToString() != "")
-                {
-                    Factura.VendedorID = new Guid(_reader["VendedorID"].ToString());
-                }
+                    if (_reader["FacturaID"].ToString() != "")
+                    {
+                        Factura.FacturaID = new Guid(_reader["FacturaID"].ToString());
+                    }
+                    if (_reader["NroFactura"].ToString() != "")
+                    {
+                        Factura.NroFactura = _reader["NroFactura"].ToString();
+                    }
+                    if (_reader["Monto"].ToString() != "")
+                    {
+                        Factura.Monto = Convert.ToDouble(_reader["Monto"]);
+                    }
+                    if (_reader["Fecha"].ToString() != "")
+                    {
+                        Factura.Fecha = Convert.ToDateTime(_reader["Fecha"].ToString());
+                    }
+                    if (_reader["Tipo"].ToString() != "")
+                    {
+                        Factura.Tipo = Convert.ToInt32(_reader["Tipo"]);
+                    }
+                    if (_reader["Estado"].ToString() != "")
+                    {
+                        Factura.Estado = Convert.ToInt32(_reader["Estado"]);
+                    }
+                    if (_reader["ClienteID"].ToString() != "")
+                    {
+                        Factura.ClienteID = new Guid(_reader["ClienteID"].ToString());
+                    }
+                    if (_reader["VendedorID"].ToString() != "")
+                    {
+                        Factura.VendedorID = new Guid(_reader["VendedorID"].ToString());
+                    }
 
-                //if (_reader["DescuentoAplicado"].ToString() != "")
-                //{
-                //    Factura.DescuentoAplicado = Convert.ToDouble(_reader["DescuentoAplicado"]);
-                //}
-                Factura.Observaciones = _reader["Observaciones"].ToString();
-                Factura.ClienteNombre = _reader["Nombre"].ToString();
-                Factura.ClienteApellido = _reader["Apellido"].ToString();
-                Factura.VendedorNombre = _reader["VendedorNombre"].ToString();
-                Factura.VendedorApellido = _reader["VendedorApellido"].ToString();
-                if (_reader["Saldo"].ToString() != "")
-                {
-                    Factura.Saldo = Convert.ToDouble(_reader["Saldo"]);
+                    //if (_reader["DescuentoAplicado"].ToString() != "")
+                    //{
+                    //    Factura.DescuentoAplicado = Convert.ToDouble(_reader["DescuentoAplicado"]);
+                    //}
+                    Factura.Observaciones = _reader["Observaciones"].ToString();
+                    Factura.ClienteNombre = _reader["Nombre"].ToString();
+                    Factura.ClienteApellido = _reader["Apellido"].ToString();
+                    Factura.VendedorNombre = _reader["VendedorNombre"].ToString();
+                    Factura.VendedorApellido = _reader["VendedorApellido"].ToString();
+                    if (_reader["Saldo"].ToString() != "")
+                    {
+                        Factura.Saldo = Convert.ToDouble(_reader["Saldo"]);
+                    }
                 }
-                
-            }
-            _reader.NextResult();
-            if (_reader.Read())
-            {
-                Factura.PaqueteDescripcion = _reader["PaqueteDescripcion"].ToString();
-                Factura.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
+                _reader.NextResult();
+                if (_reader.Read())
+                {
+                    Factura.PaqueteDescripcion = _reader["PaqueteDescripcion"].ToString();
+                    Factura.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
+                }
             }
             return Factura;
         }
@@ -205,83 +205,84 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@FacturaId", SqlDbType.UniqueIdentifier, 0, FacturaID),
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_Factura_DetalleFacturaByFacturaID", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_Factura_DetalleFacturaByFacturaID", dbParams))
             {
-                FacturaDetalle Item = new FacturaDetalle();
-                if (_reader["pasajeid"].ToString() != "")
+                while (_reader.Read())
                 {
-                    Item.PasajeID = new Guid(_reader["pasajeid"].ToString());
-                }
-                if (_reader["pasajeroid"].ToString() != "")
-                {
-                    Item.PasajeroID = new Guid(_reader["pasajeroid"].ToString());
-                }
-                if (_reader["butacaid"].ToString() != "")
-                {
-                    Item.ButacaID = new Guid(_reader["butacaid"].ToString());
-                }
-                if (_reader["fechareserva"].ToString() != "")
-                {
-                    Item.FechaReserva = Convert.ToDateTime(_reader["fechareserva"]);
-                }
-                if (_reader["fechacompra"].ToString() != "")
-                {
-                    Item.FechaCompra = Convert.ToDateTime(_reader["fechacompra"]);
-                }
-                if (_reader["viajeid"].ToString() != "")
-                {
-                    Item.ViajeID = new Guid(_reader["viajeid"].ToString());
-                }
-                if (_reader["facturaid"].ToString() != "")
-                {
-                    Item.FacturaID = new Guid(_reader["facturaid"].ToString());
-                }
-                if (_reader["estadopasaje"].ToString() != "")
-                {
-                    Item.EstadoPasaje = Convert.ToInt32(_reader["estadopasaje"]);
-                }
-                if (_reader["voucherid"].ToString() != "")
-                {
-                    Item.VoucherID = new Guid(_reader["voucherid"].ToString());
-                }
-                //if (_reader["precioid"].ToString() != "")
-                //{
-                //    Item.PrecioID = new Guid(_reader["precioid"].ToString());
-                //}
-                if (_reader["ButacaNro"].ToString() != "")
-                {
-                    Item.ButacaNro = Convert.ToInt32(_reader["ButacaNro"]);
-                }
-                if (_reader["ButacaPiso"].ToString() != "")
-                {
-                    Item.ButacaPiso = Convert.ToInt32(_reader["ButacaPiso"]);
-                }
-                if (_reader["ButacaFila"].ToString() != "")
-                {
-                    Item.ButacaFila = _reader["ButacaFila"].ToString();
-                }
-                if (_reader["ButacaPosicion"].ToString() != "")
-                {
-                    Item.ButacaPosicion = _reader["ButacaPosicion"].ToString();
-                }
-                if (_reader["ButacaCodigoButaca"].ToString() != "")
-                {
-                    Item.ButacaCodigoButaca = _reader["ButacaCodigoButaca"].ToString();
-                }
-                if (_reader["PaqueteID"].ToString() != "")
-                {
-                    Item.PaqueteID = new Guid(_reader["PaqueteID"].ToString());
-                }
-                Item.PasajeroNombre = _reader["PasajeroNombre"].ToString();
-                Item.PasajeroApellido = _reader["PasajeroApellido"].ToString();
-                if (_reader["HabitacionID"].ToString() != "")
-                {
-                    Item.HabitacionID = new Guid(_reader["HabitacionID"].ToString());
-                }
+                    FacturaDetalle Item = new FacturaDetalle();
+                    if (_reader["pasajeid"].ToString() != "")
+                    {
+                        Item.PasajeID = new Guid(_reader["pasajeid"].ToString());
+                    }
+                    if (_reader["pasajeroid"].ToString() != "")
+                    {
+                        Item.PasajeroID = new Guid(_reader["pasajeroid"].ToString());
+                    }
+                    if (_reader["butacaid"].ToString() != "")
+                    {
+                        Item.ButacaID = new Guid(_reader["butacaid"].ToString());
+                    }
+                    if (_reader["fechareserva"].ToString() != "")
+                    {
+                        Item.FechaReserva = Convert.ToDateTime(_reader["fechareserva"]);
+                    }
+                    if (_reader["fechacompra"].ToString() != "")
+                    {
+                        Item.FechaCompra = Convert.ToDateTime(_reader["fechacompra"]);
+                    }
+                    if (_reader["viajeid"].ToString() != "")
+                    {
+                        Item.ViajeID = new Guid(_reader["viajeid"].ToString());
+                    }
+                    if (_reader["facturaid"].ToString() != "")
+                    {
+                        Item.FacturaID = new Guid(_reader["facturaid"].ToString());
+                    }
+                    if (_reader["estadopasaje"].ToString() != "")
+                    {
+                        Item.EstadoPasaje = Convert.ToInt32(_reader["estadopasaje"]);
+                    }
+                    if (_reader["voucherid"].ToString() != "")
+                    {
+                        Item.VoucherID = new Guid(_reader["voucherid"].ToString());
+                    }
+                    //if (_reader["precioid"].ToString() != "")
+                    //{
+                    //    Item.PrecioID = new Guid(_reader["precioid"].ToString());
+                    //}
+                    if (_reader["ButacaNro"].ToString() != "")
+                    {
+                        Item.ButacaNro = Convert.ToInt32(_reader["ButacaNro"]);
+                    }
+                    if (_reader["ButacaPiso"].ToString() != "")
+                    {
+                        Item.ButacaPiso = Convert.ToInt32(_reader["ButacaPiso"]);
+                    }
+                    if (_reader["ButacaFila"].ToString() != "")
+                    {
+                        Item.ButacaFila = _reader["ButacaFila"].ToString();
+                    }
+                    if (_reader["ButacaPosicion"].ToString() != "")
+                    {
+                        Item.ButacaPosicion = _reader["ButacaPosicion"].ToString();
+                    }
+                    if (_reader["ButacaCodigoButaca"].ToString() != "")
+                    {
+                        Item.ButacaCodigoButaca = _reader["ButacaCodigoButaca"].ToString();
+                    }
+                    if (_reader["PaqueteID"].ToString() != "")
+                    {
+                        Item.PaqueteID = new Guid(_reader["PaqueteID"].ToString());
+                    }
+                    Item.PasajeroNombre = _reader["PasajeroNombre"].ToString();
+                    Item.PasajeroApellido = _reader["PasajeroApellido"].ToString();
+                    if (_reader["HabitacionID"].ToString() != "")
+                    {
+                        Item.HabitacionID = new Guid(_reader["HabitacionID"].ToString());
+                    }
 
-                DetalleFactura.Add(Item);
+                    DetalleFactura.Add(Item);
+                }
             }
 
             return DetalleFactura;
@@ -294,52 +295,53 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@ClienteID", SqlDbType.UniqueIdentifier, 0, ClienteID),
                 };
-              SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Factura_GetFacturaByClienteID", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Factura_GetFacturaByClienteID", dbParams))
             {
-                FacturaStandard Factura = new FacturaStandard();
-                if (_reader["facturaid"].ToString() != "")
+                while (_reader.Read())
                 {
-                    Factura.FacturaID = new Guid(_reader["facturaid"].ToString());
+                    FacturaStandard Factura = new FacturaStandard();
+                    if (_reader["facturaid"].ToString() != "")
+                    {
+                        Factura.FacturaID = new Guid(_reader["facturaid"].ToString());
+                    }
+                     if (_reader["nrofactura"].ToString() != "")
+                    {
+                        Factura.NroFactura = _reader["nrofactura"].ToString();
+                    }
+                     if (_reader["monto"].ToString() != "")
+                    {
+                        Factura.Monto = Convert.ToDouble(_reader["monto"].ToString());
+                    }
+                     if (_reader["fecha"].ToString() != "")
+                    {
+                        Factura.Fecha = Convert.ToDateTime(_reader["fecha"].ToString());
+                    }
+                     if (_reader["EstadoFactura"].ToString() != "")
+                    {
+                        Factura.EstadoDescripcion = _reader["EstadoFactura"].ToString();
+                    }
+                     if (_reader["estado"].ToString() != "")
+                    {
+                        Factura.Estado = Convert.ToInt32(_reader["estado"].ToString());
+                    }
+                     if (_reader["clienteid"].ToString() != "")
+                    {
+                        Factura.ClienteID = new Guid(_reader["clienteid"].ToString());
+                    }
+                     if (_reader["PersonaNombre"].ToString() != "")
+                    {
+                        Factura.ClienteNombre = _reader["PersonaNombre"].ToString();
+                    }
+                     if (_reader["PersonaApellido"].ToString() != "")
+                    {
+                        Factura.ClienteApellido = _reader["PersonaApellido"].ToString();
+                    }
+                     if (_reader["PaqueteDescripcion"].ToString() != "")
+                    {
+                        Factura.PaqueteDescripcion = _reader["PaqueteDescripcion"].ToString();
+                    }
+                     ListFactura.Add(Factura);
                 }
-                 if (_reader["nrofactura"].ToString() != "")
-                {
-                    Factura.NroFactura = _reader["nrofactura"].ToString();
-                }
-                 if (_reader["monto"].ToString() != "")
-                {
-                    Factura.Monto = Convert.ToDouble(_reader["monto"].ToString());
-                }
-                 if (_reader["fecha"].ToString() != "")
-                {
-                    Factura.Fecha = Convert.ToDateTime(_reader["fecha"].ToString());
-                }
-                 if (_reader["EstadoFactura"].ToString() != "")
-                {
-                    Factura.EstadoDescripcion = _reader["EstadoFactura"].ToString();
-                }
-                 if (_reader["estado"].ToString() != "")
-                {
-                    Factura.Estado = Convert.ToInt32(_reader["estado"].ToString());
-                }
-                 if (_reader["clienteid"].ToString() != "")
-                {
-                    Factura.ClienteID = new Guid(_reader["clienteid"].ToString());
-                }
-                 if (_reader["PersonaNombre"].ToString() != "")
-                {
-                    Factura.ClienteNombre = _reader["PersonaNombre"].ToString();
-                }
-                 if (_reader["PersonaApellido"].ToString() != "")
-                {
-                    Factura.ClienteApellido = _reader["PersonaApellido"].ToString();
-                }
-                 if (_reader["PaqueteDescripcion"].ToString() != "")
-                {
-                    Factura.PaqueteDescripcion = _reader["PaqueteDescripcion"].ToString();
-                }
-                 ListFactura.Add(Factura);
             }
 
             return ListFactura;
@@ -355,13 +357,14 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@MovimientoID", SqlDbType.UniqueIdentifier, 0, MovimientoID),
                 };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Factura_ActualizarEstadosByMovimientoID", dbParams);
-
-                if (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Factura_ActualizarEstadosByMovimientoID", dbParams))
                 {
-                    if (_reader["Result"].ToString() == "Done.")
+                    if (_reader.Read())
                     {
-                        bResult = true;
+                        if (_reader["Result"].ToString() == "Done.")
+                        {
+                            bResult = true;
+                        }
                     }
                 }
 
@@ -386,13 +389,14 @@ namespace MAT.MVC.Models
                     DBHelper.MakeParam("@MovimientoID", SqlDbType.UniqueIdentifier, 0, MovimientoID),
                     DBHelper.MakeParam("@VendedorID", SqlDbType.UniqueIdentifier, 0, VendedorID)
                 };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Factura_BorrarUnPago", dbParams);
-
-                if (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Factura_BorrarUnPago", dbParams))
                 {
-                    if (_reader["Result"].ToString() == "Done.")
+                    if (_reader.Read())
                     {
-                        bResult = true;
+                        if (_reader["Result"].ToString() == "Done.")
+                        {
+                            bResult = true;
+                        }
                     }
                 }
 

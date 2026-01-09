@@ -29,19 +29,19 @@ namespace MAT.MVC.Controllers.Localidad
                             {                    
                                 DBHelper.MakeParam("@PaisID", SqlDbType.VarChar, 0, sIdPais),
                             };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_Provincia_GetAllByPaisID", dbParams);
-
-                    while (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_Provincia_GetAllByPaisID", dbParams))
                     {
-                        MAT.MVC.Models.Provincia _Item = new MAT.MVC.Models.Provincia();
-                        if (_reader["ID"].ToString() != "")
+                        while (_reader.Read())
                         {
-                            _Item.ID = Convert.ToInt32(_reader["ID"]);
+                            MAT.MVC.Models.Provincia _Item = new MAT.MVC.Models.Provincia();
+                            if (_reader["ID"].ToString() != "")
+                            {
+                                _Item.ID = Convert.ToInt32(_reader["ID"]);
+                            }
+                            _Item.IdPais = _reader["IdPais"].ToString();
+                            _Item.Nombre = _reader["Nombre"].ToString();
+                            ListProvincia.Add(_Item);
                         }
-                        _Item.IdPais = _reader["IdPais"].ToString();
-                        _Item.Nombre = _reader["Nombre"].ToString();
-                        ListProvincia.Add(_Item);
-                        
                     }
 
                     var jsonSerialiser = new JavaScriptSerializer();
@@ -209,14 +209,15 @@ namespace MAT.MVC.Controllers.Localidad
                     {                    
                         DBHelper.MakeParam("@IdDepartamento", SqlDbType.Int, 0, Convert.ToInt32(sIdDepartamento)),
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_Localidad_GetByIdDepartamento", dbParams);
-
-                    while (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_Localidad_GetByIdDepartamento", dbParams))
                     {
-                        VLocalidad item = new VLocalidad();
-                        item.Id = Convert.ToInt32(_reader["ID"].ToString());
-                        item.Nombre = _reader["Nombre"].ToString();
-                        ListLlocalidades.Add(item);
+                        while (_reader.Read())
+                        {
+                            VLocalidad item = new VLocalidad();
+                            item.Id = Convert.ToInt32(_reader["ID"].ToString());
+                            item.Nombre = _reader["Nombre"].ToString();
+                            ListLlocalidades.Add(item);
+                        }
                     }
 
                     var jsonSerialiser = new JavaScriptSerializer();
@@ -252,15 +253,15 @@ namespace MAT.MVC.Controllers.Localidad
                     {                    
                         DBHelper.MakeParam("@idLocalidad", SqlDbType.Int, 0, Convert.ToInt32(sLocalidaId)),
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_GetInfoByLocalidadId", dbParams);
-
-                    while (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_GetInfoByLocalidadId", dbParams))
                     {
-
-                        sResult[1] = _reader["IdLocalidad"].ToString();
-                        sResult[2] = _reader["IdDepartamento"].ToString();
-                        sResult[3] = _reader["IdProvincia"].ToString();
-                        sResult[4] = _reader["IdPais"].ToString();
+                        while (_reader.Read())
+                        {
+                            sResult[1] = _reader["IdLocalidad"].ToString();
+                            sResult[2] = _reader["IdDepartamento"].ToString();
+                            sResult[3] = _reader["IdProvincia"].ToString();
+                            sResult[4] = _reader["IdPais"].ToString();
+                        }
                     }
 
                    

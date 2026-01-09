@@ -127,20 +127,19 @@ namespace MAT.MVC.Controllers.RevervaHabitacion
                         DBHelper.MakeParam("@HabitacionID", SqlDbType.VarChar, 0, Convert.ToString(HabitacionId)),
                         DBHelper.MakeParam("@Fecha", SqlDbType.VarChar, 0, fecha)
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_ViajeHotel_GetAll", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_ViajeHotel_GetAll", dbParams))
             {
-                
-                ViajeH.ViajeHotelID = _reader["ViajeHotelID"].ToString() ?? "";
-                ViajeH.ViajeID = _reader["ViajeID"].ToString() ?? "";
-                ViajeH.HotelID = _reader["HotelID"].ToString() ?? "";
-                ViajeH.Desde = _reader["Desde"].ToString() ?? "";  
-                ViajeH.Hasta = _reader["Hasta"].ToString() ?? "";
-                ViajeH.HoraIngreso = _reader["HoraIngreso"].ToString() ?? "";
-                ViajeH.HoraSalida = _reader["HoraSalida"].ToString() ?? "";
-                ViajeH.Nombre = _reader["Nombre"].ToString() ?? "";
-                
+                while (_reader.Read())
+                {
+                    ViajeH.ViajeHotelID = _reader["ViajeHotelID"].ToString() ?? "";
+                    ViajeH.ViajeID = _reader["ViajeID"].ToString() ?? "";
+                    ViajeH.HotelID = _reader["HotelID"].ToString() ?? "";
+                    ViajeH.Desde = _reader["Desde"].ToString() ?? "";  
+                    ViajeH.Hasta = _reader["Hasta"].ToString() ?? "";
+                    ViajeH.HoraIngreso = _reader["HoraIngreso"].ToString() ?? "";
+                    ViajeH.HoraSalida = _reader["HoraSalida"].ToString() ?? "";
+                    ViajeH.Nombre = _reader["Nombre"].ToString() ?? "";
+                }
             }
 
 
@@ -163,15 +162,16 @@ namespace MAT.MVC.Controllers.RevervaHabitacion
                     DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, viajeid.ToString()),
                     DBHelper.MakeParam("@UserID", SqlDbType.UniqueIdentifier, 0, MATContext.CurrentVendedor.VendedorId )
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ReservaHabitacion_NuevaReserva", dbParams);
-
-              while (_reader.Read())
-              {
-                  if (_reader["Result"].ToString() == "Done.")
-                  {
-                      sResult = "true, ";
-                  }
-              }
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ReservaHabitacion_NuevaReserva", dbParams))
+            {
+                while (_reader.Read())
+                {
+                    if (_reader["Result"].ToString() == "Done.")
+                    {
+                        sResult = "true, ";
+                    }
+                }
+            }
 
               return sResult + PasajeID.ToString();
         }

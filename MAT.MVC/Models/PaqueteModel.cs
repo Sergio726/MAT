@@ -197,9 +197,8 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@DateYear", SqlDbType.VarChar, 0, sDateYear)
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Paquete_GetPaquetes", dbParams);
-
-
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Paquete_GetPaquetes", dbParams))
+            {
                 while (_reader.Read())
                 {
                     PaqueteStandard Item = new PaqueteStandard();
@@ -242,6 +241,7 @@ namespace MAT.MVC.Models
                     Item.MonedaCodigo = _reader["MonedaCodigo"].ToString();
                     LResult.Add(Item);
                 }
+            }
 
             return LResult;
         }
@@ -254,46 +254,45 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@PaqueteID", SqlDbType.VarChar, 0, PaqueteID)
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPaqueteByPaqueteID", dbParams);
-
-
-            if (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPaqueteByPaqueteID", dbParams))
             {
-                Paquete.PaqueteID = _reader["PaqueteID"].ToString();
-                Paquete.Descripcion = _reader["Descripcion"].ToString();
-                if (_reader["Moneda"].ToString() != "")
+                if (_reader.Read())
                 {
-                    Paquete.Moneda = Convert.ToInt32(_reader["Moneda"]);
-                }
-                if (_reader["Iva"].ToString() != "")
-                {
-                    Paquete.Iva = Convert.ToInt32(_reader["Iva"]);    
-                }
+                    Paquete.PaqueteID = _reader["PaqueteID"].ToString();
+                    Paquete.Descripcion = _reader["Descripcion"].ToString();
+                    if (_reader["Moneda"].ToString() != "")
+                    {
+                        Paquete.Moneda = Convert.ToInt32(_reader["Moneda"]);
+                    }
+                    if (_reader["Iva"].ToString() != "")
+                    {
+                        Paquete.Iva = Convert.ToInt32(_reader["Iva"]);    
+                    }
 
-                if (_reader["Alicuota"].ToString() != "")
-                {
-                    Paquete.Alicuota = Convert.ToInt32(_reader["Alicuota"]);    
+                    if (_reader["Alicuota"].ToString() != "")
+                    {
+                        Paquete.Alicuota = Convert.ToInt32(_reader["Alicuota"]);    
+                    }
+                    
+                    if (_reader["Temporada"].ToString() != "")
+                    {
+                        Paquete.Temporada = _reader["Temporada"].ToString();
+                    }
+                    if (_reader["Cotizacion"].ToString() != "")
+                    {
+                        Paquete.Cotizacion = Convert.ToDouble(_reader["Cotizacion"]);
+                    }
+                    Paquete.Codigo = _reader["Codigo"].ToString();
+                    if (_reader["DestinoID"].ToString() != "")
+                    {
+                        Paquete.DestinoID = Convert.ToInt32(_reader["DestinoID"]);
+                    }
+                    Paquete.Foto = _reader["Foto"].ToString();
+                    if (_reader["FechaCreacion"].ToString() != "")
+                    {
+                        Paquete.FechaCreacion = Convert.ToDateTime(_reader["FechaCreacion"]);
+                    }
                 }
-                
-                if (_reader["Temporada"].ToString() != "")
-                {
-                    Paquete.Temporada = _reader["Temporada"].ToString();
-                }
-                if (_reader["Cotizacion"].ToString() != "")
-                {
-                    Paquete.Cotizacion = Convert.ToDouble(_reader["Cotizacion"]);
-                }
-                Paquete.Codigo = _reader["Codigo"].ToString();
-                if (_reader["DestinoID"].ToString() != "")
-                {
-                    Paquete.DestinoID = Convert.ToInt32(_reader["DestinoID"]);
-                }
-                Paquete.Foto = _reader["Foto"].ToString();
-                if (_reader["FechaCreacion"].ToString() != "")
-                {
-                    Paquete.FechaCreacion = Convert.ToDateTime(_reader["FechaCreacion"]);
-                }
-
             }
 
             return Paquete;
@@ -358,14 +357,13 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@Foto", SqlDbType.VarChar, 0, Paquete.Foto),
                        
                     };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Paquete_Update", dbParams);
-
-
-                if (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Paquete_Update", dbParams))
                 {
-                    sResult[0] = _reader["PaqueteID"].ToString();
-                    sResult[1] = _reader["Result"].ToString();//Done.
-
+                    if (_reader.Read())
+                    {
+                        sResult[0] = _reader["PaqueteID"].ToString();
+                        sResult[1] = _reader["Result"].ToString();//Done.
+                    }
                 }
 
             }
@@ -386,28 +384,28 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@PaqueteID", SqlDbType.VarChar, 0, PaqueteID)
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_Paquete_GetDestinoByPaqueteID", dbParams);
-
-
-            if (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_Paquete_GetDestinoByPaqueteID", dbParams))
             {
-                PaqDestino.PaqueteID = _reader["PaqueteID"].ToString();
-                if (_reader["LocalidadID"].ToString() != "")
+                if (_reader.Read())
                 {
-                    PaqDestino.LocalidadID = Convert.ToInt32(_reader["LocalidadID"].ToString());    
-                }
-                if (_reader["DepartamentoID"].ToString() != "")
-                {
-                    PaqDestino.DepartamentoID = Convert.ToInt32(_reader["DepartamentoID"].ToString());    
-                }
+                    PaqDestino.PaqueteID = _reader["PaqueteID"].ToString();
+                    if (_reader["LocalidadID"].ToString() != "")
+                    {
+                        PaqDestino.LocalidadID = Convert.ToInt32(_reader["LocalidadID"].ToString());    
+                    }
+                    if (_reader["DepartamentoID"].ToString() != "")
+                    {
+                        PaqDestino.DepartamentoID = Convert.ToInt32(_reader["DepartamentoID"].ToString());    
+                    }
 
-                if (_reader["ProvinciaID"].ToString() != "")
-                {
-                    PaqDestino.ProvinciaID = Convert.ToInt32(_reader["ProvinciaID"].ToString());
+                    if (_reader["ProvinciaID"].ToString() != "")
+                    {
+                        PaqDestino.ProvinciaID = Convert.ToInt32(_reader["ProvinciaID"].ToString());
+                    }
+                    
+                    PaqDestino.PaisID = _reader["PaisID"].ToString();
+                    PaqDestino.Destino = _reader["Destino"].ToString();
                 }
-                
-                PaqDestino.PaisID = _reader["PaisID"].ToString();
-                PaqDestino.Destino = _reader["Destino"].ToString();
             }
 
             return PaqDestino;

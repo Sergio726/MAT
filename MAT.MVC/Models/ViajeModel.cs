@@ -128,14 +128,13 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@VendedorID", SqlDbType.UniqueIdentifier, 0, MATContext.CurrentVendedor.VendedorId),
                         
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_NewViaje", dbParams);
-
-
-                    if (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_NewViaje", dbParams))
                     {
-                        sResult[0] = _reader["ViajeID"].ToString();
-                        sResult[1] = _reader["Result"].ToString();//Done.
-
+                        if (_reader.Read())
+                        {
+                            sResult[0] = _reader["ViajeID"].ToString();
+                            sResult[1] = _reader["Result"].ToString();//Done.
+                        }
                     }
                 }
                 
@@ -205,14 +204,13 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@Observaciones", SqlDbType.VarChar, 500, Viaje.Observaciones),
                         DBHelper.MakeParam("@IsPublicWeb", SqlDbType.Bit, 0, Viaje.IsPublicWeb),
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_Update", dbParams);
-
-
-                    if (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_Update", dbParams))
                     {
-                        sResult[0] = _reader["ViajeID"].ToString();
-                        sResult[1] = _reader["Result"].ToString();//Done.
-
+                        if (_reader.Read())
+                        {
+                            sResult[0] = _reader["ViajeID"].ToString();
+                            sResult[1] = _reader["Result"].ToString();//Done.
+                        }
                     }
                 }
 
@@ -236,63 +234,61 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@DateYear", SqlDbType.VarChar, 0, sDateYear)
                 };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetViajesByDateYear", dbParams);
-
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetViajesByDateYear", dbParams))
                 {
-                    ViajeModel Item = new ViajeModel();
-                    Item.ViajeID = _reader["ViajeID"].ToString();
-                    Item.PaqueteID = _reader["PaqueteID"].ToString();
-                    Item.Origen = _reader["Origen"].ToString();
-                    Item.FechaSalida = _reader["FechaSalida"].ToString();
-                    Item.HoraSalida = _reader["HoraSalida"].ToString();
-                    Item.PaisOrigen = _reader["PaisOrigen"].ToString();
-                    Item.PaisDestino = _reader["PaisDestino"].ToString();
-                    Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
-                    Item.Paso = _reader["Paso"].ToString();
-                    Item.Medio = _reader["Medio"].ToString();
-                    Item.BusID = _reader["BusID"].ToString();
-                    Item.FechaRegreso = _reader["FechaRegreso"].ToString();
-                    Item.HoraRegreso = _reader["HoraRegreso"].ToString();
-                    Item.Descripcion = _reader["Descripcion"].ToString();
-                    if (_reader["PrecioSemicama"].ToString() != "")
+                    while (_reader.Read())
                     {
-                        Item.PrecioSemicama = Convert.ToDouble(_reader["PrecioSemicama"]);    
+                        ViajeModel Item = new ViajeModel();
+                        Item.ViajeID = _reader["ViajeID"].ToString();
+                        Item.PaqueteID = _reader["PaqueteID"].ToString();
+                        Item.Origen = _reader["Origen"].ToString();
+                        Item.FechaSalida = _reader["FechaSalida"].ToString();
+                        Item.HoraSalida = _reader["HoraSalida"].ToString();
+                        Item.PaisOrigen = _reader["PaisOrigen"].ToString();
+                        Item.PaisDestino = _reader["PaisDestino"].ToString();
+                        Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
+                        Item.Paso = _reader["Paso"].ToString();
+                        Item.Medio = _reader["Medio"].ToString();
+                        Item.BusID = _reader["BusID"].ToString();
+                        Item.FechaRegreso = _reader["FechaRegreso"].ToString();
+                        Item.HoraRegreso = _reader["HoraRegreso"].ToString();
+                        Item.Descripcion = _reader["Descripcion"].ToString();
+                        if (_reader["PrecioSemicama"].ToString() != "")
+                        {
+                            Item.PrecioSemicama = Convert.ToDouble(_reader["PrecioSemicama"]);    
+                        }
+
+                        if (_reader["PrecioCama"].ToString() != "")
+                        {
+                            Item.PrecioCama = Convert.ToDouble(_reader["PrecioCama"]);    
+                        }
+
+                        if (_reader["PrecioPromocional"].ToString() != "")
+                        {
+                            Item.PrecioPromocional = Convert.ToDouble(_reader["PrecioPromocional"]);    
+                        }
+                        Item.FechaPromocion = _reader["FechaPromocion"].ToString();
+                        if (_reader["nDias"].ToString() != "")
+                        {
+                            Item.nDias = Convert.ToInt32(_reader["nDias"]);    
+                        }
+                        if (_reader["nNoches"].ToString() != "")
+                        {
+                            Item.nNoches = Convert.ToInt32(_reader["nNoches"]);    
+                        }
+                                            
+                        Item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
+
+                        Item.IsPublicWeb = Convert.ToBoolean(_reader["IsPublicWeb"]);
+
+                        ListViajes.Add(Item);
                     }
-
-                    if (_reader["PrecioCama"].ToString() != "")
-                    {
-                        Item.PrecioCama = Convert.ToDouble(_reader["PrecioCama"]);    
-                    }
-
-                    if (_reader["PrecioPromocional"].ToString() != "")
-                    {
-                        Item.PrecioPromocional = Convert.ToDouble(_reader["PrecioPromocional"]);    
-                    }
-                    Item.FechaPromocion = _reader["FechaPromocion"].ToString();
-                    if (_reader["nDias"].ToString() != "")
-                    {
-                        Item.nDias = Convert.ToInt32(_reader["nDias"]);    
-                    }
-                    if (_reader["nNoches"].ToString() != "")
-                    {
-                        Item.nNoches = Convert.ToInt32(_reader["nNoches"]);    
-                    }
-                                        
-                    Item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
-
-                    Item.IsPublicWeb = Convert.ToBoolean(_reader["IsPublicWeb"]);
-
-                    ListViajes.Add(Item);
-
-
                 }
+
                 return ListViajes;
             }
             catch (Exception e)
             {
-
                 return ListViajes;
             }
         }
@@ -307,55 +303,53 @@ namespace MAT.MVC.Models
                 {                    
                     DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, sViajeID)
                 };
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetViajeByViajeID", dbParams);
-
-
-                if (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetViajeByViajeID", dbParams))
                 {
-                    Item.ViajeID = _reader["ViajeID"].ToString();
-                    Item.PaqueteID = _reader["PaqueteID"].ToString();
-                    Item.Origen = _reader["Origen"].ToString();
-                    Item.FechaSalida = _reader["FechaSalida"].ToString();
-                    Item.HoraSalida = _reader["HoraSalida"].ToString();
-                    Item.PaisOrigen = _reader["PaisOrigen"].ToString();
-                    Item.PaisDestino = _reader["PaisDestino"].ToString();
-                    Item.Paso = _reader["Paso"].ToString();
-                    Item.Medio = _reader["Medio"].ToString();
-                    Item.BusID = _reader["BusID"].ToString();
-                    Item.FechaRegreso = _reader["FechaRegreso"].ToString();
-                    Item.HoraRegreso = _reader["HoraRegreso"].ToString();
-                    Item.TiempoConsentracion = Convert.ToInt32(_reader["TiempoConsentracion"]);
-                    Item.Descripcion = _reader["Descripcion"].ToString();
-                    Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
-                    if (_reader["PrecioSemicama"].ToString() != "")
+                    if (_reader.Read())
                     {
-                        Item.PrecioSemicama = Convert.ToDouble(_reader["PrecioSemicama"]);
-                    }
+                        Item.ViajeID = _reader["ViajeID"].ToString();
+                        Item.PaqueteID = _reader["PaqueteID"].ToString();
+                        Item.Origen = _reader["Origen"].ToString();
+                        Item.FechaSalida = _reader["FechaSalida"].ToString();
+                        Item.HoraSalida = _reader["HoraSalida"].ToString();
+                        Item.PaisOrigen = _reader["PaisOrigen"].ToString();
+                        Item.PaisDestino = _reader["PaisDestino"].ToString();
+                        Item.Paso = _reader["Paso"].ToString();
+                        Item.Medio = _reader["Medio"].ToString();
+                        Item.BusID = _reader["BusID"].ToString();
+                        Item.FechaRegreso = _reader["FechaRegreso"].ToString();
+                        Item.HoraRegreso = _reader["HoraRegreso"].ToString();
+                        Item.TiempoConsentracion = Convert.ToInt32(_reader["TiempoConsentracion"]);
+                        Item.Descripcion = _reader["Descripcion"].ToString();
+                        Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
+                        if (_reader["PrecioSemicama"].ToString() != "")
+                        {
+                            Item.PrecioSemicama = Convert.ToDouble(_reader["PrecioSemicama"]);
+                        }
 
-                    if (_reader["PrecioCama"].ToString() != "")
-                    {
-                        Item.PrecioCama = Convert.ToDouble(_reader["PrecioCama"]);
-                    }
+                        if (_reader["PrecioCama"].ToString() != "")
+                        {
+                            Item.PrecioCama = Convert.ToDouble(_reader["PrecioCama"]);
+                        }
 
-                    if (_reader["PrecioPromocional"].ToString() != "")
-                    {
-                        Item.PrecioPromocional = Convert.ToDouble(_reader["PrecioPromocional"]);
+                        if (_reader["PrecioPromocional"].ToString() != "")
+                        {
+                            Item.PrecioPromocional = Convert.ToDouble(_reader["PrecioPromocional"]);
+                        }
+                        Item.FechaPromocion = _reader["FechaPromocion"].ToString();
+                        Item.Observaciones = _reader["Observaciones"].ToString();
+                        if (_reader["nDias"].ToString() != "")
+                        {
+                            Item.nDias = Convert.ToInt32(_reader["nDias"]);
+                        }
+                        if (_reader["nNoches"].ToString() != "")
+                        {
+                            Item.nNoches = Convert.ToInt32(_reader["nNoches"]);
+                        }
+                                            
+                        Item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
+                        Item.IsPublicWeb = Convert.ToBoolean(_reader["IsPublicWeb"]);
                     }
-                    Item.FechaPromocion = _reader["FechaPromocion"].ToString();
-                    Item.Observaciones = _reader["Observaciones"].ToString();
-                    if (_reader["nDias"].ToString() != "")
-                    {
-                        Item.nDias = Convert.ToInt32(_reader["nDias"]);
-                    }
-                    if (_reader["nNoches"].ToString() != "")
-                    {
-                        Item.nNoches = Convert.ToInt32(_reader["nNoches"]);
-                    }
-
-                    Item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
-                    Item.IsPublicWeb = Convert.ToBoolean(_reader["IsPublicWeb"]);
-
-
                 }
                 return Item;
             }
@@ -459,58 +453,59 @@ namespace MAT.MVC.Models
                     parameters.Add(DBHelper.MakeParam("@Year", SqlDbType.Int, 4, DBNull.Value));
                 }
 
-                SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetViajeByDate", parameters.ToArray());
-
-                while (_reader.Read())
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetViajeByDate", parameters.ToArray()))
                 {
-                    ViajeModel Item = new ViajeModel();
-                    Item.ViajeID = _reader["ViajeID"].ToString();
-                    Item.PaqueteID = _reader["PaqueteID"].ToString();
-                    Item.Origen = _reader["Origen"].ToString();
-                    Item.FechaSalida = _reader["FechaSalida"].ToString();
-                    Item.HoraSalida = _reader["HoraSalida"].ToString();
-                    Item.PaisOrigen = _reader["PaisOrigen"].ToString();
-                    Item.PaisDestino = _reader["PaisDestino"].ToString();
-                    Item.Paso = _reader["Paso"].ToString();
-                    Item.Medio = _reader["Medio"].ToString();
-                    Item.BusID = _reader["BusID"].ToString();
-                    Item.FechaRegreso = _reader["FechaRegreso"].ToString();
-                    Item.HoraRegreso = _reader["HoraRegreso"].ToString();
-                    Item.TiempoConsentracion = Convert.ToInt32(_reader["TiempoConsentracion"]);
-                    Item.Descripcion = _reader["Descripcion"].ToString();
-                    Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
-
-                    if (!string.IsNullOrEmpty(_reader["PrecioSemicama"].ToString()))
+                    while (_reader.Read())
                     {
-                        Item.PrecioSemicama = Convert.ToDouble(_reader["PrecioSemicama"]);
+                        ViajeModel Item = new ViajeModel();
+                        Item.ViajeID = _reader["ViajeID"].ToString();
+                        Item.PaqueteID = _reader["PaqueteID"].ToString();
+                        Item.Origen = _reader["Origen"].ToString();
+                        Item.FechaSalida = _reader["FechaSalida"].ToString();
+                        Item.HoraSalida = _reader["HoraSalida"].ToString();
+                        Item.PaisOrigen = _reader["PaisOrigen"].ToString();
+                        Item.PaisDestino = _reader["PaisDestino"].ToString();
+                        Item.Paso = _reader["Paso"].ToString();
+                        Item.Medio = _reader["Medio"].ToString();
+                        Item.BusID = _reader["BusID"].ToString();
+                        Item.FechaRegreso = _reader["FechaRegreso"].ToString();
+                        Item.HoraRegreso = _reader["HoraRegreso"].ToString();
+                        Item.TiempoConsentracion = Convert.ToInt32(_reader["TiempoConsentracion"]);
+                        Item.Descripcion = _reader["Descripcion"].ToString();
+                        Item.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
+
+                        if (!string.IsNullOrEmpty(_reader["PrecioSemicama"].ToString()))
+                        {
+                            Item.PrecioSemicama = Convert.ToDouble(_reader["PrecioSemicama"]);
+                        }
+
+                        if (!string.IsNullOrEmpty(_reader["PrecioCama"].ToString()))
+                        {
+                            Item.PrecioCama = Convert.ToDouble(_reader["PrecioCama"]);
+                        }
+
+                        if (!string.IsNullOrEmpty(_reader["PrecioPromocional"].ToString()))
+                        {
+                            Item.PrecioPromocional = Convert.ToDouble(_reader["PrecioPromocional"]);
+                        }
+
+                        Item.FechaPromocion = _reader["FechaPromocion"].ToString();
+                        Item.Observaciones = _reader["Observaciones"].ToString();
+
+                        if (!string.IsNullOrEmpty(_reader["nDias"].ToString()))
+                        {
+                            Item.nDias = Convert.ToInt32(_reader["nDias"]);
+                        }
+
+                        if (!string.IsNullOrEmpty(_reader["nNoches"].ToString()))
+                        {
+                            Item.nNoches = Convert.ToInt32(_reader["nNoches"]);
+                        }
+
+                        Item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
+                        Item.IsPublicWeb = Convert.ToBoolean(_reader["IsPublicWeb"]);
+                        ListViajes.Add(Item);
                     }
-
-                    if (!string.IsNullOrEmpty(_reader["PrecioCama"].ToString()))
-                    {
-                        Item.PrecioCama = Convert.ToDouble(_reader["PrecioCama"]);
-                    }
-
-                    if (!string.IsNullOrEmpty(_reader["PrecioPromocional"].ToString()))
-                    {
-                        Item.PrecioPromocional = Convert.ToDouble(_reader["PrecioPromocional"]);
-                    }
-
-                    Item.FechaPromocion = _reader["FechaPromocion"].ToString();
-                    Item.Observaciones = _reader["Observaciones"].ToString();
-
-                    if (!string.IsNullOrEmpty(_reader["nDias"].ToString()))
-                    {
-                        Item.nDias = Convert.ToInt32(_reader["nDias"]);
-                    }
-
-                    if (!string.IsNullOrEmpty(_reader["nNoches"].ToString()))
-                    {
-                        Item.nNoches = Convert.ToInt32(_reader["nNoches"]);
-                    }
-
-                    Item.PaqueteNombre = _reader["PaqueteNombre"].ToString();
-                    Item.IsPublicWeb = Convert.ToBoolean(_reader["IsPublicWeb"]);
-                    ListViajes.Add(Item);
                 }
                 return ListViajes;
             }
@@ -523,15 +518,18 @@ namespace MAT.MVC.Models
         public static List<DDViaje> DDViaje()
         {
             SqlParameter[] dbParams = new SqlParameter[] { };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_DDViaje", dbParams);
-
+            
             List<DDViaje> lViaje = new List<DDViaje>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_DDViaje", dbParams))
             {
-                DDViaje _item = new DDViaje();
-                _item.ViajeID = _reader["ViajeID"].ToString();
-                _item.Descripcion = _reader["Paquete"].ToString() + " - " + _reader["Descripcion"].ToString() + " - " + _reader["FechaSalida"].ToString();
-                lViaje.Add(_item);
+                while (_reader.Read())
+                {
+                    DDViaje _item = new DDViaje();
+                    _item.ViajeID = _reader["ViajeID"].ToString();
+                    _item.Descripcion = _reader["Paquete"].ToString() + " - " + _reader["Descripcion"].ToString() + " - " + _reader["FechaSalida"].ToString();
+                    lViaje.Add(_item);
+                }
             }
 
             return lViaje;
@@ -544,13 +542,15 @@ namespace MAT.MVC.Models
                 DBHelper.MakeParam("@FacturaID", SqlDbType.UniqueIdentifier, 0, FacturaID)
                         
             };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetFechaViajeByFacturaID", dbParams);
-
             DateTime dFecha = new DateTime();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetFechaViajeByFacturaID", dbParams))
             {
-                dFecha = Convert.ToDateTime(_reader["FechaSalida"]);
-                break;
+                while (_reader.Read())
+                {
+                    dFecha = Convert.ToDateTime(_reader["FechaSalida"]);
+                    break;
+                }
             }
             return dFecha;
         }
@@ -593,26 +593,26 @@ namespace MAT.MVC.Models
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(ViajeID)),
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_PasajeroViaje_GetByViajeID", dbParams);
-
-
             List<PasajeroViaje> EPasajeroViaje = new List<PasajeroViaje>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_PasajeroViaje_GetByViajeID", dbParams))
             {
-                PasajeroViaje item = new PasajeroViaje();
-                item.ViajeID =  _reader["ViajeID"].ToString();
-                item.PasajeroID = _reader["PersonaID"].ToString();
-                item.PasajeroApellido = _reader["Apellido"].ToString();
-                item.PasajeroNombre = _reader["Nombre"].ToString();
-                item.PasajeroDocumento = _reader["NroDocumento"].ToString();
-                item.PasajeroTipoDocumento = _reader["TipoDocumento"].ToString();
-                item.PasajeroFechaNacimiento = _reader["FechaNacimiento"].ToString();
-                item.PasajeroTelefono = _reader["Telefono"].ToString();
-                item.PasajeroEmail = _reader["Email"].ToString();
-                item.PasajeroSexo = _reader["Sexo"].ToString();
+                while (_reader.Read())
+                {
+                    PasajeroViaje item = new PasajeroViaje();
+                    item.ViajeID =  _reader["ViajeID"].ToString();
+                    item.PasajeroID = _reader["PersonaID"].ToString();
+                    item.PasajeroApellido = _reader["Apellido"].ToString();
+                    item.PasajeroNombre = _reader["Nombre"].ToString();
+                    item.PasajeroDocumento = _reader["NroDocumento"].ToString();
+                    item.PasajeroTipoDocumento = _reader["TipoDocumento"].ToString();
+                    item.PasajeroFechaNacimiento = _reader["FechaNacimiento"].ToString();
+                    item.PasajeroTelefono = _reader["Telefono"].ToString();
+                    item.PasajeroEmail = _reader["Email"].ToString();
+                    item.PasajeroSexo = _reader["Sexo"].ToString();
 
-                EPasajeroViaje.Add(item);
-
+                    EPasajeroViaje.Add(item);
+                }
             }
 
             return EPasajeroViaje;

@@ -25,16 +25,16 @@ namespace MAT.MVC.Models
             SqlParameter[] dbParams = new SqlParameter[]
                 {                    
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_HabitacionTipo_GetAll", dbParams);
-
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_HabitacionTipo_GetAll", dbParams))
             {
-                HabitacionTipo Item = new HabitacionTipo();
-                Item.Id = Convert.ToInt32(_reader["Id"].ToString());
-                Item.Descripcion = _reader["Descripcion"].ToString();
-                Item.CapacidadNormal = Convert.ToInt32(_reader["CapacidadNormal"]);
-                ListHabTipo.Add(Item);
+                while (_reader.Read())
+                {
+                    HabitacionTipo Item = new HabitacionTipo();
+                    Item.Id = Convert.ToInt32(_reader["Id"].ToString());
+                    Item.Descripcion = _reader["Descripcion"].ToString();
+                    Item.CapacidadNormal = Convert.ToInt32(_reader["CapacidadNormal"]);
+                    ListHabTipo.Add(Item);
+                }
             }
 
             return ListHabTipo;
@@ -48,13 +48,13 @@ namespace MAT.MVC.Models
                 {               
                     DBHelper.MakeParam("@TipoId", SqlDbType.Int, 0, idTipoId)
                 };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_HabitacionTipo_GetByTipoId", dbParams);
-
-
-            if (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_HabitacionTipo_GetByTipoId", dbParams))
             {
-                HabTipo.Id = Convert.ToInt32(_reader["Id"].ToString());
-                HabTipo.Descripcion = _reader["Descripcion"].ToString();
+                if (_reader.Read())
+                {
+                    HabTipo.Id = Convert.ToInt32(_reader["Id"].ToString());
+                    HabTipo.Descripcion = _reader["Descripcion"].ToString();
+                }
             }
 
             return HabTipo;

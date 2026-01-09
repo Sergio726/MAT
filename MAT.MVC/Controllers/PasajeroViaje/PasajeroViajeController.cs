@@ -104,27 +104,27 @@ namespace MAT.MVC.Controllers.PasajeroViaje
                     {                    
                         DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(Id)),
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_PasajeroViaje_GetByViajeID", dbParams);
-
-
             List<MAT.Entities.PasajeroViaje> EPasajeroViaje = new List<MAT.Entities.PasajeroViaje>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_PasajeroViaje_GetByViajeID", dbParams))
             {
-                MAT.Entities.PasajeroViaje item = new MAT.Entities.PasajeroViaje();
-                item.ViajeId = new Guid(_reader["ViajeID"].ToString());
-                item.PersonaId = new Guid(_reader["PersonaID"].ToString());
-                item.Apellido = _reader["Apellido"].ToString();
-                item.Nombre = _reader["Nombre"].ToString();
-                item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"].ToString());
-                item.NroDocumento = _reader["NroDocumento"].ToString();
-                item.FechaNacimiento = Convert.ToDateTime(_reader["FechaNacimiento"].ToString());
-                item.Telefono = _reader["Telefono"].ToString();
-                item.Sexo = Convert.ToInt32(_reader["Sexo"]);
-                item.Nacionalidad = _reader["Nacionalidad"].ToString();
-                item.PaisResidencia = _reader["PaisResidencia"].ToString();
-                item.Ocupacion = _reader["Ocupacion"].ToString();
-                EPasajeroViaje.Add(item);
-
+                while (_reader.Read())
+                {
+                    MAT.Entities.PasajeroViaje item = new MAT.Entities.PasajeroViaje();
+                    item.ViajeId = new Guid(_reader["ViajeID"].ToString());
+                    item.PersonaId = new Guid(_reader["PersonaID"].ToString());
+                    item.Apellido = _reader["Apellido"].ToString();
+                    item.Nombre = _reader["Nombre"].ToString();
+                    item.TipoDocumento = Convert.ToInt32(_reader["TipoDocumento"].ToString());
+                    item.NroDocumento = _reader["NroDocumento"].ToString();
+                    item.FechaNacimiento = Convert.ToDateTime(_reader["FechaNacimiento"].ToString());
+                    item.Telefono = _reader["Telefono"].ToString();
+                    item.Sexo = Convert.ToInt32(_reader["Sexo"]);
+                    item.Nacionalidad = _reader["Nacionalidad"].ToString();
+                    item.PaisResidencia = _reader["PaisResidencia"].ToString();
+                    item.Ocupacion = _reader["Ocupacion"].ToString();
+                    EPasajeroViaje.Add(item);
+                }
             }
 
             return EPasajeroViaje;

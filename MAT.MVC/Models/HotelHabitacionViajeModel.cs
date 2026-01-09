@@ -28,17 +28,19 @@ namespace MAT.MVC.Models
                     {             
                           DBHelper.MakeParam("@ViajeHotelID", SqlDbType.UniqueIdentifier, 0, ViajeHotelID)
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_ViajeHotel_GetById", dbParams);
-
             HotelHabitacionViajeModel item = new HotelHabitacionViajeModel();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Viaje_ViajeHotel_GetById", dbParams))
             {
-                item.HotelID = _reader["HotelID"].ToString();
-                item.ViajeID = _reader["ViajeID"].ToString();
-                item.ViajeNombre = _reader["ViajeNombre"].ToString();
-                item.HotelNombre = _reader["HotelNombre"].ToString();
-                item.Fecha = Convert.ToDateTime(_reader["Desde"]);
-                item.Comentario = _reader["Comentario"].ToString();
+                while (_reader.Read())
+                {
+                    item.HotelID = _reader["HotelID"].ToString();
+                    item.ViajeID = _reader["ViajeID"].ToString();
+                    item.ViajeNombre = _reader["ViajeNombre"].ToString();
+                    item.HotelNombre = _reader["HotelNombre"].ToString();
+                    item.Fecha = Convert.ToDateTime(_reader["Desde"]);
+                    item.Comentario = _reader["Comentario"].ToString();
+                }
             }
             return item;
         }

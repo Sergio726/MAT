@@ -62,16 +62,18 @@ namespace MAT.MVC.Models
             SqlParameter[] dbParams = new SqlParameter[]
                     {                    
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Hotel_DropDown", dbParams);
-
             List<HotelDropDown> ListHotel = new List<HotelDropDown>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Hotel_DropDown", dbParams))
             {
-                HotelDropDown Hotel = new HotelDropDown();
-                Hotel.HotelID = _reader["HotelID"].ToString();
-                Hotel.Nombre = _reader["Nombre"].ToString();
-               
-                ListHotel.Add(Hotel);
+                while (_reader.Read())
+                {
+                    HotelDropDown Hotel = new HotelDropDown();
+                    Hotel.HotelID = _reader["HotelID"].ToString();
+                    Hotel.Nombre = _reader["Nombre"].ToString();
+                   
+                    ListHotel.Add(Hotel);
+                }
             }
             return ListHotel;
         }
@@ -82,27 +84,29 @@ namespace MAT.MVC.Models
                     { 
                           DBHelper.MakeParam("@ViajeId", SqlDbType.UniqueIdentifier, 0, new Guid(sViajeId))
                     };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Hotel_GetByViajeID", dbParams);
-
             List<HotelDropDown> ListHotel = new List<HotelDropDown>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Hotel_GetByViajeID", dbParams))
             {
-                HotelDropDown Hotel = new HotelDropDown();
-                Hotel.HotelID = _reader["HotelID"].ToString();
-                Hotel.Nombre = _reader["Nombre"].ToString();
-                
-                // Validar si el campo Fecha es NULL antes de convertir
-                object fechaValue = _reader["Fecha"];
-                if (fechaValue != null && fechaValue != DBNull.Value)
+                while (_reader.Read())
                 {
-                    Hotel.Fecha = Convert.ToDateTime(fechaValue);
+                    HotelDropDown Hotel = new HotelDropDown();
+                    Hotel.HotelID = _reader["HotelID"].ToString();
+                    Hotel.Nombre = _reader["Nombre"].ToString();
+                    
+                    // Validar si el campo Fecha es NULL antes de convertir
+                    object fechaValue = _reader["Fecha"];
+                    if (fechaValue != null && fechaValue != DBNull.Value)
+                    {
+                        Hotel.Fecha = Convert.ToDateTime(fechaValue);
+                    }
+                    else
+                    {
+                        Hotel.Fecha = DateTime.MinValue; // Valor por defecto si es NULL
+                    }
+                    
+                    ListHotel.Add(Hotel);
                 }
-                else
-                {
-                    Hotel.Fecha = DateTime.MinValue; // Valor por defecto si es NULL
-                }
-                
-                ListHotel.Add(Hotel);
             }
             return ListHotel;
         }
@@ -110,22 +114,25 @@ namespace MAT.MVC.Models
         public static List<HotelStandard> GetHotelAll()
         {
             SqlParameter[] dbParams = new SqlParameter[] {};
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Hotel_GetAll", dbParams);
-
+            
             List<HotelStandard> ListHotel = new List<HotelStandard>();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Hotel_GetAll", dbParams))
             {
-                HotelStandard Hotel = new HotelStandard();
-                Hotel.HotelID = _reader["HotelID"].ToString();
-                Hotel.Nombre = _reader["Nombre"].ToString();
-                Hotel.Direccion = _reader["Direccion"].ToString();
-                Hotel.CP = _reader["CP"].ToString();
-                Hotel.Localidad = _reader["Localidad"].ToString();
-                Hotel.Telefono = _reader["Telefono"].ToString();
-                Hotel.Email = _reader["Email"].ToString();
-                Hotel.Contacto = _reader["Contacto"].ToString();
+                while (_reader.Read())
+                {
+                    HotelStandard Hotel = new HotelStandard();
+                    Hotel.HotelID = _reader["HotelID"].ToString();
+                    Hotel.Nombre = _reader["Nombre"].ToString();
+                    Hotel.Direccion = _reader["Direccion"].ToString();
+                    Hotel.CP = _reader["CP"].ToString();
+                    Hotel.Localidad = _reader["Localidad"].ToString();
+                    Hotel.Telefono = _reader["Telefono"].ToString();
+                    Hotel.Email = _reader["Email"].ToString();
+                    Hotel.Contacto = _reader["Contacto"].ToString();
 
-                ListHotel.Add(Hotel);
+                    ListHotel.Add(Hotel);
+                }
             }
             return ListHotel;
         }
@@ -135,34 +142,34 @@ namespace MAT.MVC.Models
             SqlParameter[] dbParams = new SqlParameter[] { 
                 DBHelper.MakeParam("@HotelID", SqlDbType.UniqueIdentifier, 0, HotelID)
             };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Hotel_GetById", dbParams);
-
             tblHotel Hotel = new tblHotel();
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Hotel_GetById", dbParams))
             {
-                
-                Hotel.HotelID = _reader["HotelID"].ToString();
-                Hotel.Nombre = _reader["Nombre"].ToString();
-                Hotel.Direccion = _reader["Direccion"].ToString();
-                Hotel.CP = _reader["CP"].ToString();
-                Hotel.Localidad = _reader["Localidad"].ToString();
-                Hotel.Telefono = _reader["Telefono"].ToString();
-                Hotel.Email = _reader["Email"].ToString();
-                Hotel.Contacto = _reader["Contacto"].ToString();
+                while (_reader.Read())
+                {
+                    Hotel.HotelID = _reader["HotelID"].ToString();
+                    Hotel.Nombre = _reader["Nombre"].ToString();
+                    Hotel.Direccion = _reader["Direccion"].ToString();
+                    Hotel.CP = _reader["CP"].ToString();
+                    Hotel.Localidad = _reader["Localidad"].ToString();
+                    Hotel.Telefono = _reader["Telefono"].ToString();
+                    Hotel.Email = _reader["Email"].ToString();
+                    Hotel.Contacto = _reader["Contacto"].ToString();
 
-                if (_reader["CantidadHabitaciones"].ToString() != "")
-                {
-                    Hotel.CantidadHabitaciones = Convert.ToInt32(_reader["CantidadHabitaciones"]);    
+                    if (_reader["CantidadHabitaciones"].ToString() != "")
+                    {
+                        Hotel.CantidadHabitaciones = Convert.ToInt32(_reader["CantidadHabitaciones"]);    
+                    }
+                    if (_reader["Categoria"].ToString() != "")
+                    {
+                        Hotel.Categoria = Convert.ToInt32(_reader["Categoria"]);    
+                    }
+                    
+                    Hotel.CheckIn = _reader["CheckIn"].ToString();
+                    Hotel.CheckOut = _reader["CheckOut"].ToString();
+                    Hotel.GoogleMapHtml = _reader["GoogleMapHtml"].ToString();
                 }
-                if (_reader["Categoria"].ToString() != "")
-                {
-                    Hotel.Categoria = Convert.ToInt32(_reader["Categoria"]);    
-                }
-                
-                Hotel.CheckIn = _reader["CheckIn"].ToString();
-                Hotel.CheckOut = _reader["CheckOut"].ToString();
-                Hotel.GoogleMapHtml = _reader["GoogleMapHtml"].ToString();
-                
             }
             return Hotel;
         }
