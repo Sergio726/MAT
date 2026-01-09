@@ -222,46 +222,46 @@ namespace MAT.Data
 			Configuration config = null;
 			String path = null;
 
-			// Get an instance of the currently running Visual Studio IDE.
-			EnvDTE80.DTE2 dte = (EnvDTE80.DTE2) System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE.10.0");
-			
-			if ( dte != null )
+#if DEBUG
+			try
 			{
-				dte.SuppressUI = true;
+				// Get an instance of the currently running Visual Studio IDE.
+				// This only works when running inside Visual Studio
+				dynamic dte = System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE.10.0");
 
-				EnvDTE.ProjectItem item = dte.Solution.FindProjectItem("web.config");
-				if ( item != null )
+				if ( dte != null )
 				{
-					if (!item.ContainingProject.FullName.ToLower().StartsWith("http:"))
-               {
-                  System.IO.FileInfo info = new System.IO.FileInfo(item.ContainingProject.FullName);
-                  path = String.Format("{0}\\{1}", info.Directory.FullName, item.Name);
-                  configMap = new ExeConfigurationFileMap();
-                  configMap.ExeConfigFilename = path;
-               }
-               else
-               {
-                  configMap = new ExeConfigurationFileMap();
-                  configMap.ExeConfigFilename = item.get_FileNames(0);
-               }}
+					dte.SuppressUI = true;
 
-				/*
-				Array projects = (Array) dte2.ActiveSolutionProjects;
-				EnvDTE.Project project = (EnvDTE.Project) projects.GetValue(0);
-				System.IO.FileInfo info;
-
-				foreach ( EnvDTE.ProjectItem item in project.ProjectItems )
-				{
-					if ( String.Compare(item.Name, "web.config", true) == 0 )
+					dynamic item = dte.Solution.FindProjectItem("web.config");
+					if ( item != null )
 					{
-						info = new System.IO.FileInfo(project.FullName);
-						path = String.Format("{0}\\{1}", info.Directory.FullName, item.Name);
-						configMap = new ExeConfigurationFileMap();
-						configMap.ExeConfigFilename = path;
-						break;
+						string fullName = item.ContainingProject.FullName;
+						if (!fullName.ToLower().StartsWith("http:"))
+						{
+							System.IO.FileInfo info = new System.IO.FileInfo(fullName);
+							path = String.Format("{0}\\{1}", info.Directory.FullName, item.Name);
+							configMap = new ExeConfigurationFileMap();
+							configMap.ExeConfigFilename = path;
+						}
+						else
+						{
+							configMap = new ExeConfigurationFileMap();
+							configMap.ExeConfigFilename = item.FileNames[0];
+						}
 					}
 				}
-				*/
+			}
+			catch
+			{
+				// Visual Studio not available (e.g., running in Docker or outside VS)
+				return null;
+			}
+#endif
+
+			if (configMap == null)
+			{
+				return null;
 			}
 
 			config = ConfigurationManager.OpenMappedExeConfiguration(configMap, ConfigurationUserLevel.None);

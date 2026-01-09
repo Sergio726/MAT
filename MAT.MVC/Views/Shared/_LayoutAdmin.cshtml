@@ -53,7 +53,7 @@
 </head>
 <body>
     <section id="script_section">
-        @RenderSection("scripts", required: false)
+        @RenderSection("Scripts", required: false)
     </section>
     <!-- Main Container Fluid -->
     <div class="container-fluid fixed menu-left">
@@ -240,5 +240,39 @@
 			inverseColor = '#45484d';
     </script>
     <script src="/Scripts/common.js?1414014545"></script>
+
+    <script>
+        // Sidebar menu: Auto-detect active submenu item based on current URL
+        $(document).ready(function() {
+            var currentPath = window.location.pathname.toLowerCase();
+
+            // Find matching menu item and mark as active
+            $('#menu .menu-0 ul li a').each(function() {
+                var href = $(this).attr('href');
+                if (href) {
+                    var menuPath = href.toLowerCase();
+                    if (currentPath === menuPath || currentPath.indexOf(menuPath) === 0) {
+                        // Mark this item as active
+                        $(this).parent('li').addClass('submenu-active');
+
+                        // Expand parent collapse menus and mark them as parent-active
+                        $(this).parents('.collapse').each(function() {
+                            $(this).addClass('in').css('height', 'auto');
+                            $(this).parent('li.hasSubmenu').addClass('parent-active active');
+                            // Update aria-expanded on the toggle link
+                            $(this).siblings('a[data-toggle="collapse"]').attr('aria-expanded', 'true');
+                        });
+                    }
+                }
+            });
+
+            // Handle collapse show/hide events for chevron animation
+            $('#menu .collapse').on('show.bs.collapse', function() {
+                $(this).siblings('a[data-toggle="collapse"]').attr('aria-expanded', 'true');
+            }).on('hide.bs.collapse', function() {
+                $(this).siblings('a[data-toggle="collapse"]').attr('aria-expanded', 'false');
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,9 +1,9 @@
-﻿@model MAT.Entities.PersonaPasajero
+@model MAT.Entities.PersonaPasajero
 @using MAT.Utilities
 @using MAT.Enums
 
 @{
-    ViewBag.Title = "Detalles del Pasajero";
+    ViewBag.Title = "Detalle del Pasajero";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,84 +11,61 @@
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-person-badge"></i>
-            <span>Detalles del Pasajero</span>
+            <span>Detalle del Pasajero</span>
         </h2>
-        <div class="modern-page-actions">
-            <a href="@Url.Action("Edit", "PersonaPasajero", new { id = Model.PersonaId })" class="btn-modern btn-modern-primary">
-                <i class="bi bi-pencil"></i>
-                <span>Editar</span>
-            </a>
-        </div>
     </div>
 
     <div class="modern-form-container">
-        <div class="modern-form-grid">
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+        <div class="modern-details-grid">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-hash"></i>
                     ID
                 </label>
-                <div class="modern-detail-value">
-                    <span class="badge-categoria">@Model.PersonaId</span>
-                </div>
+                <div class="modern-details-value">@Model.PersonaId</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-person"></i>
-                    @Html.DisplayNameFor(model => model.Apellido)
+                    Apellido
                 </label>
-                <div class="modern-detail-value">
-                    <strong>@Html.DisplayFor(model => model.Apellido)</strong>
-                </div>
+                <div class="modern-details-value"><strong>@Model.Apellido</strong></div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-person"></i>
-                    @Html.DisplayNameFor(model => model.Nombre)
+                    Nombre
                 </label>
-                <div class="modern-detail-value">
-                    <strong>@Html.DisplayFor(model => model.Nombre)</strong>
-                </div>
+                <div class="modern-details-value"><strong>@Model.Nombre</strong></div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-card-text"></i>
-                    @Html.DisplayNameFor(model => model.TipoDocumento)
+                    Tipo Documento
                 </label>
-                <div class="modern-detail-value">
-                    @if (Model.TipoDocumento.HasValue)
-                    {
-                        <span class="badge-categoria">@((eTipoDocumento)Model.TipoDocumento.Value)</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@((eTipoDocumento)Model.TipoDocumento)</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-123"></i>
-                    @Html.DisplayNameFor(model => model.NroDocumento)
+                    Nro. Documento
                 </label>
-                <div class="modern-detail-value">
-                    @Html.DisplayFor(model => model.NroDocumento)
-                </div>
+                <div class="modern-details-value">@(Model.NroDocumento ?? "-")</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-geo-alt"></i>
                     Localidad
                 </label>
-                <div class="modern-detail-value">
+                <div class="modern-details-value">
                     @if (Model.LocalidadId.HasValue)
                     {
-                        <span>@Helper.GetLocalidadName(Model.LocalidadId.Value)</span>
+                        @Helper.ToSelectItem("Localidad", Model.LocalidadId.ToString())
                     }
                     else
                     {
@@ -97,58 +74,31 @@
                 </div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-telephone"></i>
-                    @Html.DisplayNameFor(model => model.Telefono)
+                    Telefono
                 </label>
-                <div class="modern-detail-value">
-                    @if (!string.IsNullOrEmpty(Model.Telefono))
-                    {
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="bi bi-telephone"></i>
-                            <span>@Model.Telefono</span>
-                        </div>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@(Model.Telefono ?? "-")</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-envelope"></i>
-                    @Html.DisplayNameFor(model => model.Email)
+                    Email
                 </label>
-                <div class="modern-detail-value">
-                    @if (!string.IsNullOrEmpty(Model.Email))
-                    {
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="bi bi-envelope"></i>
-                            <span>@Model.Email</span>
-                        </div>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@(Model.Email ?? "-")</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-calendar3"></i>
-                    @Html.DisplayNameFor(model => model.FechaNacimiento)
+                    Fecha Nacimiento
                 </label>
-                <div class="modern-detail-value">
+                <div class="modern-details-value">
                     @if (Model.FechaNacimiento.HasValue)
                     {
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="bi bi-calendar3"></i>
-                            <span>@Model.FechaNacimiento.Value.ToString("dd/MM/yyyy")</span>
-                        </div>
+                        @Model.FechaNacimiento.Value.ToString("dd/MM/yyyy")
                     }
                     else
                     {
@@ -157,49 +107,31 @@
                 </div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-gender-ambiguous"></i>
-                    @Html.DisplayNameFor(model => model.Sexo)
+                    Sexo
                 </label>
-                <div class="modern-detail-value">
-                    @if (Model.Sexo.HasValue)
-                    {
-                        <span class="badge-categoria">@((eSexo)Model.Sexo.Value)</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@Model.Sexo</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-passport"></i>
-                    @Html.DisplayNameFor(model => model.Pasaporte)
+                    Pasaporte
                 </label>
-                <div class="modern-detail-value">
-                    @if (!string.IsNullOrEmpty(Model.Pasaporte))
-                    {
-                        <strong>@Model.Pasaporte</strong>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@(Model.Pasaporte ?? "-")</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
-                    <i class="bi bi-calendar-event"></i>
-                    @Html.DisplayNameFor(model => model.VencimientoPasaporte)
+            <div class="modern-details-group">
+                <label class="modern-details-label">
+                    <i class="bi bi-calendar-x"></i>
+                    Vencimiento Pasaporte
                 </label>
-                <div class="modern-detail-value">
+                <div class="modern-details-value">
                     @if (Model.VencimientoPasaporte.HasValue)
                     {
-                        <span>@Model.VencimientoPasaporte.Value.ToString("dd/MM/yyyy")</span>
+                        @Model.VencimientoPasaporte.Value.ToString("dd/MM/yyyy")
                     }
                     else
                     {
@@ -208,15 +140,15 @@
                 </div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-calendar-check"></i>
-                    @Html.DisplayNameFor(model => model.EmisionPasaporte)
+                    Emision Pasaporte
                 </label>
-                <div class="modern-detail-value">
+                <div class="modern-details-value">
                     @if (Model.EmisionPasaporte.HasValue)
                     {
-                        <span>@Model.EmisionPasaporte.Value.ToString("dd/MM/yyyy")</span>
+                        @Model.EmisionPasaporte.Value.ToString("dd/MM/yyyy")
                     }
                     else
                     {
@@ -225,21 +157,12 @@
                 </div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-globe"></i>
-                    @Html.DisplayNameFor(model => model.PaisOrigen)
+                    Pais de Origen
                 </label>
-                <div class="modern-detail-value">
-                    @if (!string.IsNullOrEmpty(Model.PaisOrigen))
-                    {
-                        <span>@Model.PaisOrigen</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@(Model.PaisOrigen ?? "-")</div>
             </div>
         </div>
 
@@ -248,6 +171,44 @@
                 <i class="bi bi-arrow-left"></i>
                 <span>Volver a la Lista</span>
             </a>
+            <a href="@Url.Action("Edit", "PersonaPasajero", new { id = Model.PersonaId })" class="btn-modern btn-modern-primary">
+                <i class="bi bi-pencil"></i>
+                <span>Editar</span>
+            </a>
         </div>
     </div>
 </div>
+
+<style>
+    .modern-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    .modern-details-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .modern-details-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary, #64748b);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modern-details-label i {
+        color: var(--primary-color, #e91e63);
+    }
+
+    .modern-details-value {
+        font-size: 1rem;
+        color: var(--text-primary, #1e293b);
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color, #e2e8f0);
+    }
+</style>
