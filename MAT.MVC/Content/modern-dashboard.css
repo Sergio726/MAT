@@ -4861,3 +4861,123 @@ div.bnn_floating-banner.hidden {
         min-width: auto;
     }
 }
+
+/* ============================================
+   ESTILOS PARA TODOS LOS VIAJES
+   ============================================ */
+
+/* Contenedor principal */
+#Viajes.Viajes-Default {
+    width: 100% !important;
+    margin-top: 1rem !important;
+    padding: 0 1rem !important;
+}
+
+/* Dropdown selector de año */
+#drop {
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+}
+
+#drop select,
+#dropyear {
+    padding: 0.625rem 2.5rem 0.625rem 1rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-primary, #1f2937);
+    background-color: var(--white, #ffffff);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 14px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+#drop select:hover,
+#dropyear:hover {
+    border-color: var(--text-secondary, #6b7280);
+}
+
+#drop select:focus,
+#dropyear:focus {
+    outline: none;
+    border-color: var(--brand-primary, #e63375);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+/* ============================================
+   ESTILOS PARA QUICKPAGINATION
+   ============================================ */
+
+/* Contenedor de paginacion */
+.simplePagerContainer {
+    width: 100%;
+}
+
+/* Lista de paginacion */
+ul.simplePagerNav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 0.375rem !important;
+    list-style: none !important;
+    padding: 1.5rem 0 !important;
+    margin: 0 !important;
+}
+
+ul.simplePagerNav li {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+ul.simplePagerNav li a {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    padding: 0 0.75rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: var(--text-secondary, #6b7280) !important;
+    background: var(--white, #ffffff) !important;
+    border: 1px solid var(--border-color, #e5e7eb) !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+ul.simplePagerNav li a:hover {
+    color: var(--text-primary, #1f2937) !important;
+    background: var(--bg-secondary, #f8f9fa) !important;
+    border-color: var(--text-secondary, #6b7280) !important;
+}
+
+/* Pagina actual */
+ul.simplePagerNav li.currentPage a,
+ul.simplePagerNav li.currentPage a:hover {
+    color: var(--white, #ffffff) !important;
+    background: var(--brand-primary, #e63375) !important;
+    border-color: var(--brand-primary, #e63375) !important;
+    font-weight: 600 !important;
+}
+
+/* Estilos para h4 en viajes (titulo del viaje) */
+ul.viajes-lista li h4,
+ul.viajes-lista li .viaje-container h4 {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary, #1f2937) !important;
+    margin: 0 0 0.75rem 0 !important;
+    line-height: 1.4 !important;
+}
