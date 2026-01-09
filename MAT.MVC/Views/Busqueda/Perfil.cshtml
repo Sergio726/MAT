@@ -1,20 +1,72 @@
-﻿@{
+@{
     ViewBag.Title = "Perfil";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="search-perfil" style="width:27%;">
-    <div id="busqueda-persona">
-        <input id="txt-filter-persona" type="text" placeholder="Ingrese Nombre o DNI" />
-    </div>
-    <div class="card-perfil">
-        
-    </div>
-</section>
-<section class="div70 content-perfil">
+<style>
+    .perfil-page-container {
+        display: flex;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        min-height: calc(100vh - 120px);
+    }
+    .perfil-sidebar {
+        width: 320px;
+        flex-shrink: 0;
+    }
+    .search-input-wrapper {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    .search-input-wrapper input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-left: 2.5rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+    .search-input-wrapper input:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .search-input-wrapper i {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary, #9ca3af);
+    }
+    .card-perfil {
+        min-height: 200px;
+    }
+    .perfil-content {
+        flex: 1;
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+    .resumen-perfil {
+        min-height: 300px;
+    }
+</style>
 
-    <div class="resumen-perfil"></div>
-</section>
+<div class="perfil-page-container">
+    <section class="perfil-sidebar">
+        <div id="busqueda-persona" class="search-input-wrapper">
+            <i class="bi bi-search"></i>
+            <input id="txt-filter-persona" type="text" placeholder="Ingrese Nombre o DNI" />
+        </div>
+        <div class="card-perfil"></div>
+    </section>
+    <section class="perfil-content">
+        <div class="resumen-perfil"></div>
+    </section>
+</div>
+
 <script type="text/javascript">
     $(".card").hide();
 </script>

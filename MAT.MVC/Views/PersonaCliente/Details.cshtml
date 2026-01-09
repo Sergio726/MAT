@@ -1,222 +1,407 @@
-﻿@model MAT.Entities.PersonaCliente
+@model MAT.Entities.PersonaCliente
 @using MAT.Enums
 @using MAT.Utilities
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Detalle de Cliente";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Cliente - Detalle</h2>
-
-<div class="form">
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.PersonaId)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.PersonaId)
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Apellido)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Apellido)
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Nombre)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Nombre)
-    </div>
-
-    <div class="form-label">
-         Tipo de Documento
-    </div>
-    <div class="form-field">
-       
-        @Html.LabelFor(model => model.TipoDocumento,(((eTipoDocumento)Model.TipoDocumento).ToString()))
-       
-    </div>
-
-    <div class="form-label">
-         N° de Documento
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.NroDocumento)
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Domicilio)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Domicilio)
-    </div>
-   
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Telefono)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Telefono)
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Celular)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Celular)
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Email)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Email)
-    </div>
-
-    <div class="form-label">
-         Fecha de Nacimiento
-    </div>
-    <div class="form-field">
-       @Model.FechaNacimiento.ToString().Substring(0,10).Trim()
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Sexo)
-    </div>
-    <div class="form-field">
-        @Html.LabelFor(model => model.Sexo,(((eSexo)Model.Sexo).ToString()))
-    </div>
-
-     <div class="form-label">
-         Localidad
-    </div>
-    <div class="form-field">
-        @Html.Label(Helper.ToSelectItem("Localidad",Model.LocalidadId.ToString()))
-    </div>
-
-     <div class="form-label">
-         @Html.DisplayNameFor(model => model.Provincia)
-    </div>
-    <div class="form-field">
-        @if (Model.Provincia.HasValue)
-        {
-            @Html.Label(Helper.ToSelectItem("Provincia",Model.Provincia.Value.ToString()))
+<style>
+    .details-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .details-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .details-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .details-title i {
+        color: var(--primary-color, #e91e63);
+        font-size: 1.75rem;
+    }
+    .details-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+    .details-section {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--primary-color, #e91e63);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .section-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .detail-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .detail-value {
+        font-size: 0.95rem;
+        color: var(--text-primary, #1f2937);
+        padding: 0.5rem 0.75rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 0.5rem;
+        min-height: 2.25rem;
+        display: flex;
+        align-items: center;
+    }
+    .detail-value.empty {
+        color: var(--text-secondary, #9ca3af);
+        font-style: italic;
+    }
+    .detail-value i {
+        margin-right: 0.5rem;
+        color: var(--primary-color, #e91e63);
+    }
+    .btn-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-primary {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .btn-primary:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+        text-decoration: none;
+    }
+    .btn-secondary {
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-secondary:hover {
+        background: var(--border-color, #e5e7eb);
+        color: var(--text-primary, #374151);
+        text-decoration: none;
+    }
+    .client-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    @@media (max-width: 768px) {
+        .details-header {
+            flex-direction: column;
+            align-items: flex-start;
         }
-        else
-        {
-            <p>Sin Definir</p>
+        .details-grid {
+            grid-template-columns: 1fr;
         }
-         
+    }
+</style>
+
+<div class="details-container">
+    <div class="details-header">
+        <h1 class="details-title">
+            <i class="bi bi-person-vcard"></i>
+            @Model.Apellido, @Model.Nombre
+            <span class="client-badge">
+                <i class="bi bi-tag-fill"></i>
+                @(((eTipoCliente)Model.TipoId).ToString())
+            </span>
+        </h1>
+        <div class="details-actions">
+            @Html.ActionLink("Editar", "Edit", new { id = Model.PersonaId }, new { @class = "btn-modern btn-primary" })
+            @Html.ActionLink("Volver", "Index", null, new { @class = "btn-modern btn-secondary" })
+        </div>
     </div>
 
-        <div class="form-label">
-         @Html.DisplayNameFor(model => model.Nacionalidad)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Nacionalidad)
-    </div>
-
-        <div class="form-label">
-         Pais de Residencia
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.PaisResidencia)
-    </div>
-    
-    <div class="form-label">
-         Razón Social
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.RazonSocial)
-    </div>
-
-    <div class="form-label">
-        CUIT/CUIL
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Cuit)
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Empresa)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Empresa)
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Ocupacion)
-    </div>
-    <div class="form-field">
-         @Html.DisplayFor(model => model.Ocupacion)
-    </div>
-
-    <div class="form-label">
-         @Html.LabelFor(model => model.FormaPago,"Forma de Pago")
-    </div>
-    <div class="form-field">
-        @Html.Label(((eFormaPago)Model.FormaPago).ToString())
-    </div>
-
-    <div class="form-label">
-         Condición de IVA
-    </div>
-    <div class="form-field">
-        @Html.Label(((eCondicionIVA)Model.CondicionIva).GetDescription())
+    <!-- Seccion: Datos Personales -->
+    <div class="details-section">
+        <h2 class="section-title">
+            <i class="bi bi-person-fill"></i>
+            Datos Personales
+        </h2>
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">ID Cliente</span>
+                <span class="detail-value">
+                    <i class="bi bi-hash"></i>
+                    @Model.PersonaId
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Apellido</span>
+                <span class="detail-value">@(string.IsNullOrEmpty(Model.Apellido) ? "Sin definir" : Model.Apellido)</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Nombre</span>
+                <span class="detail-value">@(string.IsNullOrEmpty(Model.Nombre) ? "Sin definir" : Model.Nombre)</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Tipo de Documento</span>
+                <span class="detail-value">@(((eTipoDocumento)Model.TipoDocumento).ToString())</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">N° de Documento</span>
+                <span class="detail-value">
+                    <i class="bi bi-card-text"></i>
+                    @(string.IsNullOrEmpty(Model.NroDocumento) ? "Sin definir" : Model.NroDocumento)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fecha de Nacimiento</span>
+                <span class="detail-value">
+                    <i class="bi bi-calendar-event"></i>
+                    @(Model.FechaNacimiento != DateTime.MinValue ? Model.FechaNacimiento.ToString("dd/MM/yyyy") : "Sin definir")
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Sexo</span>
+                <span class="detail-value">@(((eSexo)Model.Sexo).ToString())</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Nacionalidad</span>
+                <span class="detail-value">@(string.IsNullOrEmpty(Model.Nacionalidad) ? "Sin definir" : Model.Nacionalidad)</span>
+            </div>
+        </div>
     </div>
 
-    <div class="form-label">
-         Vendedor Asignado
-    </div>
-    <div class="form-field">
-        @Helper.GetVendedorName(Model.VendedorId.Value)
+    <!-- Seccion: Contacto -->
+    <div class="details-section">
+        <h2 class="section-title">
+            <i class="bi bi-telephone-fill"></i>
+            Informacion de Contacto
+        </h2>
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Telefono</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Telefono) ? "empty" : "")">
+                    @if (!string.IsNullOrEmpty(Model.Telefono))
+                    {
+                        <i class="bi bi-telephone"></i>
+                    }
+                    @(string.IsNullOrEmpty(Model.Telefono) ? "Sin definir" : Model.Telefono)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Celular</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Celular) ? "empty" : "")">
+                    @if (!string.IsNullOrEmpty(Model.Celular))
+                    {
+                        <i class="bi bi-phone"></i>
+                    }
+                    @(string.IsNullOrEmpty(Model.Celular) ? "Sin definir" : Model.Celular)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Email</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Email) ? "empty" : "")">
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <i class="bi bi-envelope"></i>
+                    }
+                    @(string.IsNullOrEmpty(Model.Email) ? "Sin definir" : Model.Email)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fax</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Fax) ? "empty" : "")">
+                    @(string.IsNullOrEmpty(Model.Fax) ? "Sin definir" : Model.Fax)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Web</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Web) ? "empty" : "")">
+                    @if (!string.IsNullOrEmpty(Model.Web))
+                    {
+                        <i class="bi bi-globe"></i>
+                    }
+                    @(string.IsNullOrEmpty(Model.Web) ? "Sin definir" : Model.Web)
+                </span>
+            </div>
+        </div>
     </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Fax)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Fax)
+    <!-- Seccion: Ubicacion -->
+    <div class="details-section">
+        <h2 class="section-title">
+            <i class="bi bi-geo-alt-fill"></i>
+            Ubicacion
+        </h2>
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Domicilio</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Domicilio) ? "empty" : "")">
+                    @if (!string.IsNullOrEmpty(Model.Domicilio))
+                    {
+                        <i class="bi bi-house"></i>
+                    }
+                    @(string.IsNullOrEmpty(Model.Domicilio) ? "Sin definir" : Model.Domicilio)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Localidad</span>
+                <span class="detail-value">@Helper.ToSelectItem("Localidad", Model.LocalidadId.ToString())</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Provincia</span>
+                <span class="detail-value">
+                    @if (Model.Provincia.HasValue)
+                    {
+                        @Helper.ToSelectItem("Provincia", Model.Provincia.Value.ToString())
+                    }
+                    else
+                    {
+                        <span class="empty">Sin definir</span>
+                    }
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Pais de Residencia</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.PaisResidencia) ? "empty" : "")">
+                    @(string.IsNullOrEmpty(Model.PaisResidencia) ? "Sin definir" : Model.PaisResidencia)
+                </span>
+            </div>
+        </div>
     </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Web)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Web)
+    <!-- Seccion: Datos Fiscales -->
+    <div class="details-section">
+        <h2 class="section-title">
+            <i class="bi bi-receipt"></i>
+            Datos Fiscales
+        </h2>
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Razon Social</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.RazonSocial) ? "empty" : "")">
+                    @(string.IsNullOrEmpty(Model.RazonSocial) ? "Sin definir" : Model.RazonSocial)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">CUIT/CUIL</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Cuit) ? "empty" : "")">
+                    @(string.IsNullOrEmpty(Model.Cuit) ? "Sin definir" : Model.Cuit)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Condicion de IVA</span>
+                <span class="detail-value">@(((eCondicionIVA)Model.CondicionIva).GetDescription())</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Forma de Pago</span>
+                <span class="detail-value">@(((eFormaPago)Model.FormaPago).ToString())</span>
+            </div>
+        </div>
     </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Idioma)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Idioma)
+    <!-- Seccion: Informacion Laboral -->
+    <div class="details-section">
+        <h2 class="section-title">
+            <i class="bi bi-briefcase-fill"></i>
+            Informacion Laboral
+        </h2>
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Empresa</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Empresa) ? "empty" : "")">
+                    @(string.IsNullOrEmpty(Model.Empresa) ? "Sin definir" : Model.Empresa)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Ocupacion</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Ocupacion) ? "empty" : "")">
+                    @(string.IsNullOrEmpty(Model.Ocupacion) ? "Sin definir" : Model.Ocupacion)
+                </span>
+            </div>
+        </div>
     </div>
 
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Promotor)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Promotor)
-    </div>
-
-    <div class="form-label">
-         @Html.DisplayNameFor(model => model.Observacion)
-    </div>
-    <div class="form-field">
-        @Html.DisplayFor(model => model.Observacion)
-    </div>
-
-    <div class="form-label">
-         @Html.Label("Tipo de Cliente")
-    </div>
-    <div class="form-field">
-         @Html.Label(((eTipoCliente)Model.TipoId).ToString())
+    <!-- Seccion: Informacion Adicional -->
+    <div class="details-section">
+        <h2 class="section-title">
+            <i class="bi bi-info-circle-fill"></i>
+            Informacion Adicional
+        </h2>
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Vendedor Asignado</span>
+                <span class="detail-value">
+                    <i class="bi bi-person-badge"></i>
+                    @(Model.VendedorId.HasValue ? Helper.GetVendedorName(Model.VendedorId.Value) : "Sin asignar")
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Tipo de Cliente</span>
+                <span class="detail-value">@(((eTipoCliente)Model.TipoId).ToString())</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Idioma</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Idioma) ? "empty" : "")">
+                    @(string.IsNullOrEmpty(Model.Idioma) ? "Sin definir" : Model.Idioma)
+                </span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Promotor</span>
+                <span class="detail-value @(string.IsNullOrEmpty(Model.Promotor) ? "empty" : "")">
+                    @(string.IsNullOrEmpty(Model.Promotor) ? "Sin definir" : Model.Promotor)
+                </span>
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Observacion))
+        {
+            <div class="detail-item" style="margin-top: 1rem;">
+                <span class="detail-label">Observaciones</span>
+                <span class="detail-value" style="white-space: pre-wrap;">@Model.Observacion</span>
+            </div>
+        }
     </div>
 </div>
-<p>
-    @Html.ActionLink("Editar", "Edit", new { id = Model.PersonaId }, new { @class="btn btn-small btn-inverse view-all hidden-phone" })
-    @Html.ActionLink("Volver a la Lista", "Index", null, new { @class="btn btn-small btn-inverse view-all hidden-phone" })
-</p>

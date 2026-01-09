@@ -1,44 +1,174 @@
-﻿@{
-    ViewBag.Title = "Index";
+@{
+    ViewBag.Title = "Facturas";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@if (ViewBag.Error != null)
-{
-    <div class="msgError"><span>Error al cargar página.</span></div>   
-      <script type="text/javascript">
-          console.log(@ViewBag.Error);
-      </script>
-    return;
-}
+<style>
+    .search-form-container {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    .search-form-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .search-form-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .search-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+    @@media (max-width: 768px) {
+        .search-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .search-results-container {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 200px;
+    }
+    .search-results-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--text-secondary, #6b7280);
+    }
+    .search-results-empty i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    .iconLoading {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+    }
+    .iconLoading::after {
+        content: "";
+        width: 40px;
+        height: 40px;
+        border: 4px solid var(--border-color, #e5e7eb);
+        border-top-color: var(--primary-color, #e91e63);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    /* Fix magicsearch dropdown styling */
+    .magicsearch-wrapper {
+        width: 100% !important;
+    }
+    .magicsearch-wrapper input {
+        width: 100% !important;
+        height: auto !important;
+        padding: 0.625rem 0.875rem !important;
+        border: 1px solid var(--border-color, #e5e7eb) !important;
+        border-radius: 0.5rem !important;
+        font-size: 0.875rem !important;
+    }
+    .magicsearch-wrapper input:focus {
+        outline: none !important;
+        border-color: var(--primary-color, #e91e63) !important;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1) !important;
+    }
+    .magicsearch-wrapper .magicsearch-btn {
+        height: 100% !important;
+        border-radius: 0 0.5rem 0.5rem 0 !important;
+    }
+</style>
 
-<h2 class="title">Facturas</h2>
-<div>
-    <form id="formFacturaFilter" class="custom_margin_5" novalidate>
-        <fieldset class="customborder">
-            <legend>Buscar por Persona, Doc y/o Viaje</legend>
-            <span class="custom_font_weigh_bold">Persona</span>
-            <input id="txtPersonaDNI" type="text" placeholder="Ingrese Nombre o DNI" class="custom_vertical_align_bottom" />
-            <span class="custom_font_weigh_bold">Viaje</span>
-            <input type="text" placeholder="Viaje, Paquete O Fecha" id="DDViaje" title="Escriba un viaje" class="custom_magicsearch" />
-            <input type="button" onclick="javascript: searchFactura();" value="Buscar" class="custom_magicsearch custom_margin_bottom_11">
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-receipt-cutoff"></i>
+            <span>Facturas</span>
+        </h2>
+    </div>
 
-        </fieldset>
-        <input type="hidden" id="hdnPersonID" name="PersonaID" />
-        <input type="hidden" id="hdnViajeID" name="ViajeID" />
-    </form>
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>Error al cargar la pagina. Por favor intente nuevamente.</span>
+        </div>
+        <script type="text/javascript">
+            console.log(@ViewBag.Error);
+        </script>
+        return;
+    }
 
-</div>
-<div id="divResultSearch" class="custom_margin_10">
+    <!-- Formulario de Busqueda -->
+    <div class="search-form-container">
+        <div class="search-form-title">
+            <i class="bi bi-search"></i>
+            <span>Buscar por Persona, Documento y/o Viaje</span>
+        </div>
 
+        <form id="formFacturaFilter" novalidate>
+            <div class="search-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-person"></i>
+                        <span>Persona</span>
+                    </label>
+                    <input id="txtPersonaDNI" type="text" placeholder="Ingrese Nombre o DNI" class="modern-form-input" />
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-airplane"></i>
+                        <span>Viaje</span>
+                    </label>
+                    <input type="text" placeholder="Viaje, Paquete o Fecha" id="DDViaje" title="Escriba un viaje" class="modern-form-input" />
+                </div>
+
+                <div class="modern-form-group">
+                    <button type="button" onclick="searchFactura();" class="btn-modern btn-modern-primary" style="height: 42px;">
+                        <i class="bi bi-search"></i>
+                        <span>Buscar</span>
+                    </button>
+                </div>
+            </div>
+            <input type="hidden" id="hdnPersonID" name="PersonaID" />
+            <input type="hidden" id="hdnViajeID" name="ViajeID" />
+        </form>
+    </div>
+
+    <!-- Resultados de Busqueda -->
+    <div class="search-results-container">
+        <div id="divResultSearch">
+            <div class="search-results-empty">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Ingrese los criterios de busqueda y presione "Buscar"</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <link href="~/Content/magicsearch/jquery.magicsearch.css" rel="stylesheet" />
 <link href="~/Content/magicsearch/normalize.css" rel="stylesheet" />
 <script src="~/Scripts/jquery.magicsearch.js"></script>
+
 <script type="text/javascript">
     $(document).ready(function () {
-
+        // Autocomplete para Persona
         $("#txtPersonaDNI").autocomplete({
             minLength: 3,
             source: function (request, response) {
@@ -46,16 +176,13 @@
                     url: "/Factura/PersonaAutocomplete",
                     data: { sParam: request.term },
                     success: function (data) {
-                        response($.map(data,
-                                    function (item) {
-                                        return {
-                                            label: item.Nombre + " " + item.Apellido + " - Doc: " + item.NroDocumento,
-                                            value: item.Nombre + " " + item.Apellido,
-                                            id: item.PersonaId,
-                                            //nrodocumento: item.NroDocumento,
-                                            //telefono: item.Telefono
-                                        }
-                                    }));
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.Nombre + " " + item.Apellido + " - Doc: " + item.NroDocumento,
+                                value: item.Nombre + " " + item.Apellido,
+                                id: item.PersonaId
+                            }
+                        }));
                     }
                 })
             },
@@ -64,7 +191,7 @@
             }
         });
 
-        //load viajes
+        // MagicSearch para Viajes
         var dataSource = @Html.Raw(ViewBag.jDDViaje);
         $('#DDViaje').magicsearch({
             dataSource: dataSource,
@@ -72,20 +199,16 @@
             id: 'ViajeID',
             format: '%Descripcion%',
             dropdownBtn: true,
-            success: function(i,data){
+            success: function (i, data) {
                 var ViajeID = data.ViajeID;
                 $("#hdnViajeID").val(ViajeID);
-                
             }
-
         });
-                
     });
 
-    function searchFactura()
-    {
+    function searchFactura() {
         if ($("#txtPersonaDNI").val() == "" && $("#DDViaje").val() == "") {
-              return alert("Por favor ingrese al menos un parámetro de búsqueda.")
+            return alert("Por favor ingrese al menos un parametro de busqueda.");
         }
 
         if ($("#txtPersonaDNI").val() == "") {
@@ -95,47 +218,22 @@
         if ($("#DDViaje").val() == "") {
             $("#hdnViajeID").val("");
         }
+
         var divLoading = "<div class='iconLoading'></div>";
         var PersonaID = $("#hdnPersonID").val();
-        var ViajeID =  $("#hdnViajeID").val();
+        var ViajeID = $("#hdnViajeID").val();
+
         $("#divResultSearch").html(divLoading);
+
         $.ajax({
             url: "/Factura/FacturaResultSearch",
-            data: { sPersonaID: PersonaID,
-                    sViajeID: ViajeID },
+            data: {
+                sPersonaID: PersonaID,
+                sViajeID: ViajeID
+            },
             success: function (data) {
                 $("#divResultSearch").html(data);
             }
-        })
+        });
     }
-   
-    //function formatNumberMoney(n)
-    //{
-    //    //activate format number
-    //    numeral.register('locale', 'fr', {
-    //        delimiters: {
-    //            thousands: '.',
-    //            decimal: ','
-    //        },
-    //        abbreviations: {
-    //            thousand: 'k',
-    //            million: 'm',
-    //            billion: 'b',
-    //            trillion: 't'
-    //        },
-    //        ordinal : function (number) {
-    //            return number === 1 ? 'er' : 'ème';
-    //        },
-    //        currency: {
-    //            symbol: '$'
-    //        }
-    //    });
-
-    //    numeral.locale('fr');
-
-        
-    //    var nReturn = numeral(n);
-    //    numeral.defaultFormat('$0,0.00');
-    //    return numeral.format();
-    //}
 </script>

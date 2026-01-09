@@ -1,9 +1,9 @@
-﻿@model MAT.Entities.Butaca
+@model MAT.Entities.Butaca
 @using MAT.Enums
 @using MAT.Utilities
 
 @{
-    ViewBag.Title = "Detalles de la Butaca";
+    ViewBag.Title = "Detalle de Butaca";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,170 +11,128 @@
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-grid-3x3-gap"></i>
-            <span>Detalles de la Butaca</span>
+            <span>Detalle de Butaca</span>
         </h2>
-        <div class="modern-page-actions">
-            <a href="@Url.Action("Edit", "Butaca", new { id = Model.ButacaId })" class="btn-modern btn-modern-primary">
-                <i class="bi bi-pencil"></i>
-                <span>Editar</span>
-            </a>
-        </div>
     </div>
 
     <div class="modern-form-container">
-        <div class="modern-form-grid">
-            <div class="modern-form-group">
-                <label class="modern-form-label">
-                    <i class="bi bi-hash"></i>
+        <div class="modern-details-grid">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
+                    <i class="bi bi-key"></i>
                     ID
                 </label>
-                <div class="modern-detail-value">
-                    <span class="badge-categoria">@Model.ButacaId</span>
-                </div>
+                <div class="modern-details-value">@Model.ButacaId</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-hash"></i>
-                    @Html.DisplayNameFor(model => model.NroButaca)
+                    Nro. Butaca
                 </label>
-                <div class="modern-detail-value">
-                    @if (Model.NroButaca.HasValue)
-                    {
-                        <strong style="color: var(--brand-primary);">@Model.NroButaca.Value</strong>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value"><strong>@Model.NroButaca</strong></div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-layers"></i>
-                    @Html.DisplayNameFor(model => model.Piso)
+                    Piso
                 </label>
-                <div class="modern-detail-value">
-                    @if (Model.Piso.HasValue)
-                    {
-                        <span class="badge-categoria">@((ePisoButaca)Model.Piso.Value)</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@((ePisoButaca)Model.Piso)</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
-                    <i class="bi bi-compass"></i>
-                    @Html.DisplayNameFor(model => model.Ubicacion)
+            <div class="modern-details-group">
+                <label class="modern-details-label">
+                    <i class="bi bi-geo"></i>
+                    Ubicacion
                 </label>
-                <div class="modern-detail-value">
-                    @if (Model.Ubicacion.HasValue)
-                    {
-                        <span class="badge-categoria">@((eUbicacionButaca)Model.Ubicacion.Value)</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@((eUbicacionButaca)Model.Ubicacion)</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
-                    <i class="bi bi-stars"></i>
-                    @Html.DisplayNameFor(model => model.Tipo)
+            <div class="modern-details-group">
+                <label class="modern-details-label">
+                    <i class="bi bi-box"></i>
+                    Tipo
                 </label>
-                <div class="modern-detail-value">
-                    @if (Model.Tipo.HasValue)
-                    {
-                        <span class="badge-categoria">@((eTipoButaca)Model.Tipo.Value)</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@((eTipoButaca)Model.Tipo)</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-bus-front"></i>
-                    Nro Coche
+                    Nro. Coche
                 </label>
-                <div class="modern-detail-value">
-                    @if (Model.TransporteId.HasValue)
-                    {
-                        <span class="badge-pasajero">@Helper.ToSelectItem("Transporte", Model.TransporteId.ToString())</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@Helper.ToSelectItem("Transporte", Model.TransporteId.ToString())</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
-                    <i class="bi bi-list-ol"></i>
-                    @Html.DisplayNameFor(model => model.Fila)
+            <div class="modern-details-group">
+                <label class="modern-details-label">
+                    <i class="bi bi-arrows-vertical"></i>
+                    Fila
                 </label>
-                <div class="modern-detail-value">
-                    @if (!string.IsNullOrEmpty(Model.Fila))
-                    {
-                        <strong>@Model.Fila</strong>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@Model.Fila</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
-                    <i class="bi bi-arrow-right"></i>
-                    @Html.DisplayNameFor(model => model.Posicion)
+            <div class="modern-details-group">
+                <label class="modern-details-label">
+                    <i class="bi bi-arrows-horizontal"></i>
+                    Posicion
                 </label>
-                <div class="modern-detail-value">
-                    @if (!string.IsNullOrEmpty(Model.Posicion))
-                    {
-                        <strong>@Model.Posicion</strong>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@Model.Posicion</div>
             </div>
 
-            <div class="modern-form-group">
-                <label class="modern-form-label">
+            <div class="modern-details-group">
+                <label class="modern-details-label">
                     <i class="bi bi-upc"></i>
-                    @Html.DisplayNameFor(model => model.CodigoButaca)
+                    Codigo Butaca
                 </label>
-                <div class="modern-detail-value">
-                    @if (!string.IsNullOrEmpty(Model.CodigoButaca))
-                    {
-                        <strong>@Model.CodigoButaca</strong>
-                    }
-                    else
-                    {
-                        <span class="text-muted">-</span>
-                    }
-                </div>
+                <div class="modern-details-value">@(Model.CodigoButaca ?? "-")</div>
             </div>
         </div>
 
         <div class="modern-form-actions">
             <a href="@Url.Action("Index", "Butaca")" class="btn-modern btn-modern-secondary">
                 <i class="bi bi-arrow-left"></i>
-                <span>Volver a Lista de Butacas</span>
+                <span>Volver a la Lista</span>
+            </a>
+            <a href="@Url.Action("Edit", "Butaca", new { id = Model.ButacaId })" class="btn-modern btn-modern-primary">
+                <i class="bi bi-pencil"></i>
+                <span>Editar</span>
             </a>
         </div>
     </div>
 </div>
+
+<style>
+    .modern-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    .modern-details-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .modern-details-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary, #64748b);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modern-details-label i {
+        color: var(--primary-color, #e91e63);
+    }
+
+    .modern-details-value {
+        font-size: 1rem;
+        color: var(--text-primary, #1e293b);
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color, #e2e8f0);
+    }
+</style>

@@ -1,102 +1,264 @@
-﻿@using MAT.MVC.Models
+@using MAT.MVC.Models
 @using MAT.Enums
 @using MAT.Utilities
 
-@{ 
+@{
     var vSaldo = MAT.MVC.Models.ReservaMethod.GetSaldoFactura(ViewBag.FacturaID);
 }
 
+<style>
+    .pago-container {
+        padding: 0.5rem;
+    }
+    .pago-layout {
+        display: flex;
+        gap: 1rem;
+    }
+    .pago-form {
+        flex: 1;
+    }
+    .pago-cotizador {
+        width: 280px;
+        display: none;
+    }
+    .pago-cotizador.visible {
+        display: block;
+    }
+    .pago-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    .pago-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .pago-form-group.full-width {
+        grid-column: span 2;
+    }
+    .pago-form-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .pago-form-label i {
+        color: var(--primary-color, #e91e63);
+        font-size: 0.8rem;
+    }
+    .pago-form-input,
+    .pago-form-select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        background: white;
+        transition: all 0.2s ease;
+    }
+    .pago-form-input:focus,
+    .pago-form-select:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .pago-form-input:disabled {
+        background: var(--bg-secondary, #f9fafb);
+        color: var(--text-secondary, #9ca3af);
+        cursor: not-allowed;
+    }
+    .saldo-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        color: #db2777;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    .pago-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-pago {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.375rem;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-pago-primary {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .btn-pago-primary:hover {
+        background: var(--primary-hover, #d81b60);
+    }
+    .cotizador-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+    .loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid var(--border-color, #e5e7eb);
+        border-top-color: var(--primary-color, #e91e63);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    @@media (max-width: 600px) {
+        .pago-layout {
+            flex-direction: column;
+        }
+        .pago-cotizador {
+            width: 100%;
+        }
+        .pago-form-grid {
+            grid-template-columns: 1fr;
+        }
+        .pago-form-group.full-width {
+            grid-column: span 1;
+        }
+    }
+</style>
+
 <input type="hidden" id="hdnSaldo" value="@vSaldo" />
-<div class="custom_display_box">
 
-    <div id="divPanel1" class="form-modal">
-        <div class="form-label">Forma de Pago</div>
-        <div class="form-field">
-            <select id="tipopago" name="tipopago">
-                @foreach (var item in  eFormaPago.Credito.ToSelectList())
-                {
-                    <option value="@item.Value">@item.Text</option>
-                }
-            </select>
-       
+<div class="pago-container">
+    <div class="pago-layout">
+        <div id="divPanel1" class="pago-form">
+            <div class="pago-form-grid">
+                <div class="pago-form-group">
+                    <label class="pago-form-label">
+                        <i class="bi bi-credit-card"></i>
+                        Forma de Pago
+                    </label>
+                    <select id="tipopago" name="tipopago" class="pago-form-select">
+                        @foreach (var item in eFormaPago.Credito.ToSelectList())
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="pago-form-group" id="transaccion-group" style="display: none;">
+                    <label class="pago-form-label">
+                        <i class="bi bi-hash"></i>
+                        N de Transaccion
+                    </label>
+                    <input type="text" name="TransaccionID" id="TransaccionID" class="pago-form-input" disabled="disabled" />
+                </div>
+
+                <div class="pago-form-group">
+                    <label class="pago-form-label">
+                        <i class="bi bi-cash"></i>
+                        Monto a Abonar
+                    </label>
+                    <input type="text" name="MontoPago" class="pago-form-input money" id="txtPago" placeholder="0,00" />
+                </div>
+
+                <div class="pago-form-group">
+                    <label class="pago-form-label">
+                        <i class="bi bi-currency-exchange"></i>
+                        Moneda
+                    </label>
+                    <select name="MonedaTipo" id="sMonedaTipo" class="pago-form-select" onchange="changeMonedaTipo(this);">
+                        @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
+                        {
+                            <option value="@item.Id" @(item.Id == 1 ? "selected" : "")>@item.Codigo</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="pago-form-group">
+                    <label class="pago-form-label">
+                        <i class="bi bi-receipt"></i>
+                        N de Recibo
+                    </label>
+                    <input type="text" name="Recibo" id="Recibo" class="pago-form-input" placeholder="Numero de recibo" />
+                </div>
+
+                <div class="pago-form-group">
+                    <label class="pago-form-label">
+                        <i class="bi bi-wallet2"></i>
+                        Saldo Actual
+                    </label>
+                    <div class="saldo-badge">
+                        <i class="bi bi-currency-dollar"></i>
+                        @String.Format("{0:C}", vSaldo)
+                    </div>
+                </div>
+            </div>
+
+            <div class="pago-actions">
+                <button type="button" name="btnRegistrarPago" id="btnRegistrarPago" class="btn-pago btn-pago-primary">
+                    <i class="bi bi-check-lg"></i>
+                    Registrar Pago
+                </button>
+            </div>
         </div>
 
-        <div id="transaccion-label" class="form-label">N° de Transacción</div>
-        <div id="transaccion-field" class="form-field">
-            <input type="text" name="TransaccionID" id="TransaccionID"  disabled="disabled"/>
+        <div id="divContentCotizador" class="pago-cotizador">
+            <div class="cotizador-loading">
+                <div class="loading-spinner"></div>
+            </div>
         </div>
-   
-        <div class="form-label">
-            Monto a abonar
-        </div>
-        <div class="form-field">
-            <input type="text" name="MontoPago" class="money" id="txtPago" />
-        </div>
-        <!--Moneda********-->
-        <div class="form-label">
-            Moneda
-        </div>
-        <div class="form-field">
-            <select name="MonedaTipo" id="sMonedaTipo" onchange="changeMonedaTipo(this);">
-                @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
-                {
-                    <option value="@item.Id" @(item.Id == 1 ? "selected" : "") >@item.Codigo</option>
-                }
-            </select>
-        </div>
-        <div class="form-label">
-            N° de Recibo
-        </div>
-        <div class="form-field">
-            <input type="text" name="Recibo" id="Recibo" />
-        </div>
-       
     </div>
+</div>
 
-    <div id="divContentCotizador" class="form-modal custom_width_37percent hide">
-        <div class="iconLoading"></div>
-    </div>
-   
-    
-    
-</div>
-<div class="form-modal">
-    <input type="button" name="btnRegistrarPago" id="btnRegistrarPago" title="Registrar" value="Aceptar" class="btn btn-small btn-inverse" />
-    
-</div>
-        
 <script type="text/javascript">
-    var ViajeMonedaTipo = parent.$("#hdnViajeMonedaTipo").val()
+    var ViajeMonedaTipo = parent.$("#hdnViajeMonedaTipo").val();
+
     $(document).ready(function () {
         $('.money').mask("#.##0,00", { reverse: true });
 
-        //show cotizador
+        // Show cotizador if needed
         if (ViajeMonedaTipo != "1") {
             loadCotizador();
         }
-    });
 
-    $(function () {
+        // Handle payment type change
         $("#tipopago").change(function () {
-            varTipoPago = $(this).val();
-            if (varTipoPago == "1") {
+            var tipoPago = $(this).val();
+            if (tipoPago == "1") {
+                $("#transaccion-group").hide();
                 $("#TransaccionID").attr("disabled", true);
-            }
-            else {
+            } else {
+                $("#transaccion-group").show();
                 $("#TransaccionID").attr("disabled", false);
             }
         });
+    });
 
+    $(function () {
         $("#btnRegistrarPago").click(function () {
             if (ViajeMonedaTipo != "1") {
                 if ($("#hdnCotizacion").val() == "") {
-                    $("#divError").html("Debe definir la cotizacion de la moneda para el pago de este viaje.")
-                    $("#divError").show().removeClass("hide");
-                    $("#divError").fadeOut(14000);
-                    
+                    alert("Debe definir la cotizacion de la moneda para el pago de este viaje.");
                     return;
                 }
-
             }
 
             var monto = $("#txtPago").val();
@@ -107,35 +269,31 @@
             var Saldo = "@vSaldo";
             var TransaccionID = $("#TransaccionID").val();
 
-            /*pago con cotizador*/
+            /* Pago con cotizador */
             var MontoRecibidoMonedaTipo = $("#sMonedaTipo").val();
             var MontoEquivalente = "";
             var MontoEquivalenteMonedaTipo = "";
-            var MontoEquivalenteCotizacion = ""
-            var ViajeMonedaTipo = $("#hdnViajeMonedaTipo").val();
+            var MontoEquivalenteCotizacion = "";
+            var ViajeMonedaTipo = parent.$("#hdnViajeMonedaTipo").val();
             var MontoRecibido = monto;
-                       
+
             if (parseFloat(monto.replace(/\./g, "")) > parseFloat(Saldo)) {
-                return alert("El monto ingresado no puede ser mayor al saldo de la factura. Saldo actual: $" + parseFloat(Saldo), "Atencion");
+                return alert("El monto ingresado no puede ser mayor al saldo de la factura. Saldo actual: $" + parseFloat(Saldo));
             }
 
             if ((ViajeMonedaTipo != "1") || (MontoRecibidoMonedaTipo != "1")) {
-
-
                 MontoEquivalenteCotizacion = $("#hdnCotizacion").val();
 
                 if (MontoRecibidoMonedaTipo == "1") {
-                    MontoEquivalenteMonedaTipo = "3"; //dolar
+                    MontoEquivalenteMonedaTipo = "3"; // dolar
                     MontoEquivalente = $("#MontoOut").val();
-
-                }
-                else {
-                    MontoEquivalenteMonedaTipo = "1"; //pesos
+                } else {
+                    MontoEquivalenteMonedaTipo = "1"; // pesos
                     MontoEquivalente = $("#MontoInt").val();
                 }
 
                 if (ViajeMonedaTipo != MontoRecibidoMonedaTipo) {
-                    monto = MontoEquivalente;//monto recibido, tabla pago
+                    monto = MontoEquivalente; // monto recibido, tabla pago
                 }
             }
 
@@ -172,24 +330,22 @@
     });
 
     function loadCotizador() {
-        $("#divContentCotizador").removeClass("hide");
-        $("#divPanel1").addClass("custom_width_55percent");
+        $("#divContentCotizador").addClass("visible");
         $.ajax({
             url: "/Herramientas/Cotizador",
             data: { "sMode": "1" },
             success: function (data) {
                 $("#divContentCotizador").html(data);
             }
-        })
+        });
     }
 
     function changeMonedaTipo(o) {
         var MonedaTipo = $(o).val();
-        if ($("#divContentCotizador").css("display") == "none") {
+        if (!$("#divContentCotizador").hasClass("visible")) {
             if (MonedaTipo != "1") {
                 loadCotizador();
             }
         }
     }
-
 </script>

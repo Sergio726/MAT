@@ -1,21 +1,144 @@
-﻿
 @{
-    ViewBag.Title = "ResumenPagosPorFecha";
+    ViewBag.Title = "Resumen de Pagos por Fecha";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h2 class="title">Resumen de Pagos por Fecha</h2>
+<style>
+    .resumen-fecha-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .resumen-fecha-header {
+        margin-bottom: 1.5rem;
+    }
+    .resumen-fecha-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .resumen-fecha-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .filter-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 300px;
+    }
+    .filter-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .filter-label i {
+        color: var(--primary-color, #e91e63);
+    }
+    .filter-input-wrapper {
+        position: relative;
+    }
+    .filter-input-wrapper input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-left: 2.5rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .filter-input-wrapper input:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .filter-input-wrapper i {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary, #9ca3af);
+    }
+    .results-container {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 200px;
+    }
+    .results-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--text-secondary, #9ca3af);
+        text-align: center;
+    }
+    .results-placeholder i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    .results-placeholder p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+    .loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid var(--border-color, #e5e7eb);
+        border-top-color: var(--primary-color, #e91e63);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 1rem;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
 
-<div class="form">
-    <div class="form-label">Fecha</div>
-    <div class="form-field">
-        <input id="filtro-fecha" class="datetime" type="datetime" />
-        @*<input id="btn-filtrar-pagos-fecha" type="button" class="btn btn-inverse btn-small" />*@
+<div class="resumen-fecha-container">
+    <div class="resumen-fecha-header">
+        <h1 class="resumen-fecha-title">
+            <i class="bi bi-calendar-check"></i>
+            Resumen de Pagos por Fecha
+        </h1>
     </div>
-</div>
 
-<div id="grid_pagos">
+    <div class="filter-card">
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-calendar-date"></i>
+                Seleccionar Fecha
+            </label>
+            <div class="filter-input-wrapper">
+                <i class="bi bi-calendar3"></i>
+                <input id="filtro-fecha" class="datetime" type="text" placeholder="Seleccione una fecha..." readonly />
+            </div>
+        </div>
+    </div>
 
+    <div id="grid_pagos" class="results-container">
+        <div class="results-placeholder">
+            <i class="bi bi-calendar-event"></i>
+            <p>Seleccione una fecha para ver el resumen de pagos</p>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -32,27 +155,21 @@
         }
         var date = year + "-" + month + "-" + day;
         return date;
-    }
+    };
+
     $(function () {
-        $("input[type='datetime']").datepicker({
+        $("#filtro-fecha").datepicker({
             changeMonth: true,
             changeYear: true,
             yearRange: '-100:+2',
             onSelect: function () {
                 var fechaseleccionada = escape($(this).datepicker().val());
                 var fechaconvertida = $.customDate(fechaseleccionada);
-                console.log(fechaconvertida);
-                var url = "/Admin/GridResumenPagosFecha?fecha=" + fechaconvertida;;
-                console.log(url);
-                $("#grid_pagos").load("<div class='iconLoading'></div>");
+                var url = "/Admin/GridResumenPagosFecha?fecha=" + fechaconvertida;
+
+                $("#grid_pagos").html('<div class="results-placeholder"><div class="loading-spinner"></div><p>Cargando pagos...</p></div>');
                 $("#grid_pagos").load(url);
             }
         });
-    });
-    $(document).on("click", "#btn-filtrar-pagos-fecha", function () {
-        var fecha = $("#filtro-fecha").val();
-        var url = "/Admin/GridResumenPagosFecha?fecha=" + fecha;;
-        console.log(url);
-        $("#grid_pagos").load(url);
     });
 </script>

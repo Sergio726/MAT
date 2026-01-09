@@ -1,43 +1,144 @@
-﻿@model MAT.MVC.Models.Comprobante
-<div class="form">
-    <div class="form-label">Fecha</div>
-    <div class="form-field">@Model.Movimiento.FechaRegistro.Value.Date.ToShortDateString()</div>
+@model MAT.MVC.Models.Comprobante
 
-    <div class="form-label">Hora</div>
-    <div class="form-field">@string.Format("{0}:{1}", Model.Movimiento.FechaRegistro.Value.TimeOfDay.Hours, Model.Movimiento.FechaRegistro.Value.TimeOfDay.Minutes)</div>
-
-    <div class="form-label">Tipo de Comprobante</div>
-    <div class="form-field">@Model.TipoComprobante</div>
-
-    @if (!Model.Movimiento.PagoId.HasValue && !Model.Movimiento.NotaId.HasValue)
-    {       
-        <div class="form-label">N° Factura</div>
-        <div class="form-field">@Model.Factura.NroFactura</div>
-        
-        <div class="form-label">Importe</div>
-        <div class="form-field">@string.Format("{0:C}", Model.Factura.Monto)</div>
+<style>
+    .comprobante-detail-container {
+        padding: 0.5rem;
     }
-    else if (Model.Movimiento.PagoId.HasValue)
-    {
-        <div class="form-label">N° Recibo</div>
-        <div class="form-field">@Model.Pago.NroRecibo</div>
-        
-        <div class="form-label">Importe</div>
-        <div class="form-field">@string.Format("{0:C}", Model.Pago.Monto)</div>
+    .comprobante-detail-grid {
+        display: grid;
+        gap: 0.75rem;
     }
-    
-    else if (Model.Movimiento.NotaId.HasValue)
-    {
-        <div class="form-label">N° Nota</div>
-        <div class="form-field">@Model.Nota.NroNota</div>
-        
-        <div class="form-label">Importe</div>
-        <div class="form-field">@string.Format("{0:C}", Model.Nota.MontoNota)</div>
-        
-        <div class="form-label">Monto Retenido</div>
-        <div class="form-field">@string.Format("{0:C}", Model.Nota.MontoRetencion)</div>
+    .comprobante-detail-item {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 0.5rem;
+        align-items: baseline;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
     }
+    .comprobante-detail-item:last-child {
+        border-bottom: none;
+    }
+    .comprobante-detail-label {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .comprobante-detail-label i {
+        color: var(--primary-color, #e91e63);
+    }
+    .comprobante-detail-value {
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+    }
+    .comprobante-detail-value.monto {
+        font-weight: 600;
+        color: #059669;
+    }
+    .comprobante-detail-value.retencion {
+        font-weight: 500;
+        color: #dc2626;
+    }
+</style>
 
-    <div class="form-label">Vendedor de Transacción</div>
-    <div class="form-field">@Model.Vendedor</div>
+<div class="comprobante-detail-container">
+    <div class="comprobante-detail-grid">
+        <div class="comprobante-detail-item">
+            <div class="comprobante-detail-label">
+                <i class="bi bi-calendar3"></i>
+                Fecha
+            </div>
+            <div class="comprobante-detail-value">@Model.Movimiento.FechaRegistro.Value.Date.ToShortDateString()</div>
+        </div>
+
+        <div class="comprobante-detail-item">
+            <div class="comprobante-detail-label">
+                <i class="bi bi-clock"></i>
+                Hora
+            </div>
+            <div class="comprobante-detail-value">@string.Format("{0:00}:{1:00}", Model.Movimiento.FechaRegistro.Value.TimeOfDay.Hours, Model.Movimiento.FechaRegistro.Value.TimeOfDay.Minutes)</div>
+        </div>
+
+        <div class="comprobante-detail-item">
+            <div class="comprobante-detail-label">
+                <i class="bi bi-file-earmark"></i>
+                Tipo de Comprobante
+            </div>
+            <div class="comprobante-detail-value">@Model.TipoComprobante</div>
+        </div>
+
+        @if (!Model.Movimiento.PagoId.HasValue && !Model.Movimiento.NotaId.HasValue)
+        {
+            <div class="comprobante-detail-item">
+                <div class="comprobante-detail-label">
+                    <i class="bi bi-hash"></i>
+                    N° Factura
+                </div>
+                <div class="comprobante-detail-value">@Model.Factura.NroFactura</div>
+            </div>
+
+            <div class="comprobante-detail-item">
+                <div class="comprobante-detail-label">
+                    <i class="bi bi-cash"></i>
+                    Importe
+                </div>
+                <div class="comprobante-detail-value monto">@string.Format("{0:C}", Model.Factura.Monto)</div>
+            </div>
+        }
+        else if (Model.Movimiento.PagoId.HasValue)
+        {
+            <div class="comprobante-detail-item">
+                <div class="comprobante-detail-label">
+                    <i class="bi bi-receipt"></i>
+                    N° Recibo
+                </div>
+                <div class="comprobante-detail-value">@Model.Pago.NroRecibo</div>
+            </div>
+
+            <div class="comprobante-detail-item">
+                <div class="comprobante-detail-label">
+                    <i class="bi bi-cash"></i>
+                    Importe
+                </div>
+                <div class="comprobante-detail-value monto">@string.Format("{0:C}", Model.Pago.Monto)</div>
+            </div>
+        }
+        else if (Model.Movimiento.NotaId.HasValue)
+        {
+            <div class="comprobante-detail-item">
+                <div class="comprobante-detail-label">
+                    <i class="bi bi-credit-card"></i>
+                    N° Nota
+                </div>
+                <div class="comprobante-detail-value">@Model.Nota.NroNota</div>
+            </div>
+
+            <div class="comprobante-detail-item">
+                <div class="comprobante-detail-label">
+                    <i class="bi bi-cash"></i>
+                    Importe
+                </div>
+                <div class="comprobante-detail-value monto">@string.Format("{0:C}", Model.Nota.MontoNota)</div>
+            </div>
+
+            <div class="comprobante-detail-item">
+                <div class="comprobante-detail-label">
+                    <i class="bi bi-dash-circle"></i>
+                    Monto Retenido
+                </div>
+                <div class="comprobante-detail-value retencion">@string.Format("{0:C}", Model.Nota.MontoRetencion)</div>
+            </div>
+        }
+
+        <div class="comprobante-detail-item">
+            <div class="comprobante-detail-label">
+                <i class="bi bi-person-badge"></i>
+                Vendedor de Transacción
+            </div>
+            <div class="comprobante-detail-value">@Model.Vendedor</div>
+        </div>
+    </div>
 </div>

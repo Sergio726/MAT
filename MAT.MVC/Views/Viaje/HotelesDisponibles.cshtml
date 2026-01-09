@@ -1,56 +1,101 @@
-﻿@model Guid
+@model Guid
+
+<style>
+    .hoteles-disponibles-container {
+        padding: 0.5rem;
+    }
+    #tblHoteles {
+        width: 100% !important;
+    }
+    #tblHoteles thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblHoteles tbody td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblHoteles tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .btn-vincular {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: #dbeafe;
+        color: #2563eb;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-vincular:hover {
+        background: #2563eb;
+        color: white;
+    }
+    #divTools {
+        display: none;
+    }
+</style>
 
 <input id="guid-viaje" type="hidden" value="@Model.ToString()" />
 
-<div class="custom_margin_top_10">
-    <table class="mat-customtable" id="tblHoteles">
-    <thead>
-        <tr>
-            <th>
-                Nombre
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-</table>
+<div class="hoteles-disponibles-container">
+    <table id="tblHoteles" class="display">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th style="width: 60px;"></th>
+            </tr>
+        </thead>
+    </table>
 </div>
 
 <div id="divTools">
-    <a id="btn-vincular-hotel" href="#" data-hotel="{{HotelID}}" data-viaje="@ViewBag.ViajeID"]">
-                        <img src="/Images/link.png" width="32" height="32" title="Vincular Hotel" /></a>
+    <a id="btn-vincular-hotel" href="#" data-hotel="{{HotelID}}" data-viaje="@ViewBag.ViajeID" class="btn-vincular" title="Vincular Hotel">
+        <i class="bi bi-link-45deg"></i>
+    </a>
 </div>
 
 <script type="text/javascript">
-    //jQuery(function ($) {
-    //    $("div#grid-hotel").load("/Viaje/RenderGridHoteles?id=" + $("#guid-viaje").val());
-    //});
-
-    $(document).ready(function(){
+    $(document).ready(function () {
         loadHoteles();
     });
-
 
     function loadHoteles() {
         var jResult = @Html.Raw(ViewBag.jResult);
         var jTables = eval(jResult);
         var jt = jTables["Table"];
 
-        var table = $("#tblHoteles").DataTable({
+        $("#tblHoteles").DataTable({
             "aaData": jt,
             "columns": [
-        	{ "data": "Nombre" },
-        	{ "data": "HotelID",
-        	    "mRender": function (data, type, row) {
-        	        var _data = { "HotelID": row.HotelID}
-        	        var data = $("#divTools").html().trim().render(_data);
-        	        return data;
-        	    }
-        	},
-            
+                { "data": "Nombre" },
+                {
+                    "data": "HotelID",
+                    "mRender": function (data, type, row) {
+                        var _data = { "HotelID": row.HotelID };
+                        return $("#divTools").html().trim().render(_data);
+                    },
+                    "className": "dt-center"
+                }
             ],
             "bAutoWidth": false,
-            "pageLength": 25
+            "pageLength": 25,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+            }
         });
     }
-
 </script>

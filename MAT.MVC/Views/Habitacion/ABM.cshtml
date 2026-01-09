@@ -1,128 +1,150 @@
-﻿@model MAT.MVC.Models.HabitacionStandard
+@model MAT.MVC.Models.HabitacionStandard
+
+<style>
+    .modal-habitacion-container {
+        padding: 1.5rem;
+    }
+    .modal-habitacion-container .modern-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .modal-habitacion-container .modern-form-group.full-width {
+        grid-column: 1 / -1;
+    }
+    @@media (max-width: 576px) {
+        .modal-habitacion-container .modern-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="modal-habitacion-container">
+    @if (ViewBag.Error != "")
+    {
+        <div class="modern-alert-error" style="margin-bottom: 1rem;">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
+
+    <form id="formHabitacion">
+        <input type="hidden" name="HabitacionID" value="@Model.HabitacionID" />
+
+        <div class="modern-form-grid">
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-hash"></i>
+                    <span>Nro de Habitacion</span>
+                </label>
+                <input type="number" id="NroHabitacion" name="NroHabitacion" min="0" value="@Model.NroHabitacion" class="modern-form-input" placeholder="0" />
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-door-open"></i>
+                    <span>Nombre</span>
+                </label>
+                <input type="text" id="Nombre" name="Nombre" maxlength="50" value="@Model.Nombre" class="modern-form-input" placeholder="Nombre de la habitacion" />
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-house-door"></i>
+                    <span>Tipo</span>
+                </label>
+                <select id="Tipo" name="Tipo" class="modern-form-select">
+                    @foreach (MAT.MVC.Models.HabitacionTipo item in ViewBag.HabitacionTipo)
+                    {
+                        <option value="@item.Id" @(item.Id == Model.Tipo ? "selected" : "")>@item.Descripcion</option>
+                    }
+                </select>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-toggle-on"></i>
+                    <span>Estado</span>
+                </label>
+                <select id="Estado" name="Estado" class="modern-form-select">
+                    <option value="0" @(Model.Estado == 0 ? "selected" : "")>Libre</option>
+                    <option value="1" @(Model.Estado == 1 ? "selected" : "")>Ocupado</option>
+                </select>
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-people"></i>
+                    <span>Capacidad</span>
+                </label>
+                <input type="number" value="@Model.Capacidad" id="Capacidad" name="Capacidad" min="0" class="modern-form-input" placeholder="0" />
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-currency-dollar"></i>
+                    <span>Precio</span>
+                </label>
+                <input type="text" value="@Model.HabitacionPrecio.ToString("N2")" id="HabitacionPrecio" name="HabitacionPrecio" class="modern-form-input" placeholder="0.00" />
+            </div>
+
+            <div class="modern-form-group full-width">
+                <label class="modern-form-label">
+                    <i class="bi bi-card-text"></i>
+                    <span>Descripcion</span>
+                </label>
+                <input type="text" value="@Model.HabitacionDescripcion" id="HabitacionDescripcion" name="HabitacionDescripcion" class="modern-form-input" placeholder="Descripcion de la habitacion" />
+            </div>
+        </div>
+
+        <div class="modern-form-actions" style="margin-top: 1.5rem;">
+            <button type="button" class="btn-modern btn-modern-secondary" onclick="$('#popup_HabitacionEdit').dialog('close');">
+                <i class="bi bi-x-circle"></i>
+                <span>Cancelar</span>
+            </button>
+            <button type="button" id="GuardarHabitacion" class="btn-modern btn-modern-primary" onclick="updateHabitacion();">
+                <i class="bi bi-check-circle"></i>
+                <span>Guardar</span>
+            </button>
+        </div>
+    </form>
+</div>
 
 <script type="text/javascript">
-   
+    $("input[type=number]").attr("min", 0);
+
     $(document).on('blur', '#Capacidad', function () {
         var capacidad = $('#Capacidad').val();
         $("#Ocupacion").attr("max", capacidad);
 
-        if (capacidad>0) {
-            $('#Capacidad').removeAttr('style');
+        if (capacidad > 0) {
+            $('#Capacidad').removeClass('input-validation-error');
             $('#GuardarHabitacion').attr('disabled', false);
-            //$('#lbl_error_hora').attr('hidden', true);
-        }
-        else {
-            $('#Capacidad').attr('class', 'input-validation-error');
+        } else {
+            $('#Capacidad').addClass('input-validation-error');
             $('#GuardarHabitacion').attr('disabled', true);
-            //$('#lbl_error_hora').attr('hidden', false);
-
         }
     });
 
-     $(document).on('blur', '#Ocupacion', function () {
-
-         var ocupacion = $('#Ocupacion').val();
+    $(document).on('blur', '#Ocupacion', function () {
+        var ocupacion = $('#Ocupacion').val();
         if (ocupacion >= '0') {
-            $('#Ocupacion').removeAttr('style');
+            $('#Ocupacion').removeClass('input-validation-error');
             $('#GuardarHabitacion').attr('disabled', false);
-            
-        }
-        else {
-            $('#Ocupacion').attr('class', 'input-validation-error');
+        } else {
+            $('#Ocupacion').addClass('input-validation-error');
             $('#GuardarHabitacion').attr('disabled', true);
-           
         }
     });
-</script>
-
-@if (ViewBag.Error != "")
-{
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
-}
-
-<div class ="form">
-         
-    <form id="formHabitacion">
-        <input type="hidden" name="HabitacionID" value="@Model.HabitacionID" />
-        <div class="form-label">
-            <label>Nro de Habitacion</label>
-        </div>
-        <div class="form-field">
-            <input type="number" id="NroHabitacion" name="NroHabitacion" min="0" value="@Model.NroHabitacion" />
-        </div>
-
-        <div class="form-label">
-            <label>Nombre</label>
-        </div>
-        <div class="form-field">
-            <input type="text" id="Nombre" name="Nombre" maxlength="50" />
-
-        </div>
-
-        <div class="form-label">
-            <label>Tipo</label>
-        </div>
-        <div class="form-field">
-            <select id="Tipo" name="Tipo" class="valid">
-                @foreach (MAT.MVC.Models.HabitacionTipo item in ViewBag.HabitacionTipo)
-                {
-                    <option value="@item.Id" @(item.Id == Model.Tipo ? "selected" : "")>@item.Descripcion</option>
-                }
-            </select>
-
-        </div>
-
-        <div class="form-label">
-            <label>Estado</label>
-        </div>
-        <div class="form-field">
-            <select id="Estado" name="Estado">
-                <option value="0" @(Model.Estado == 0 ? "selected" : "")>Libre</option>
-                <option value="1" @(Model.Estado == 1 ? "selected" : "")>Ocupado</option>
-            </select>
-        </div>
-
-        <div class="form-label">
-            <label>Capacidad</label>
-        </div>
-        <div class="form-field">
-            <input type="number" value="@Model.Capacidad" id="Capacidad" name="Capacidad" min="0" />
-        </div>
-
-        <div class="form-label">
-            <label>Precio</label>
-        </div>
-        <div class="form-field">
-            <input type="text" value="@Model.HabitacionPrecio.ToString("N2")" id="HabitacionPrecio" name="HabitacionPrecio" min="0" />
-        </div>
-        <div class="form-label">
-            <label>Descripción</label>
-        </div>
-        <div class="form-field">
-            <input type="text" value="@Model.HabitacionDescripcion" id="HabitacionDescripcion" name="HabitacionDescripcion" min="0" />
-        </div>
-
-    </form>  
-    
-        <p>
-            <input type="button"  value="Guardar" onclick="javascript: updateHabitacion();" class="btn btn-small btn-inverse view-all hidden-phone" />
-        </p>
-    
-
-    </div>
-<div>
-    
-</div>
-<script type="text/javascript">
-    $("input[type=number]").attr("min", 0);
 
     function updateHabitacion() {
         const _form = $("#formHabitacion").serializeArray();
         const _data = _form.map((x) => {
-                if (x.name == 'HabitacionPrecio')
-                    x.value = changeSeparatorDecimal(x.value);
-                return x;            
-            })
+            if (x.name == 'HabitacionPrecio')
+                x.value = changeSeparatorDecimal(x.value);
+            return x;
+        });
+
         $("#popup_HabitacionEdit").append(divLoading);
 
         $.ajax({
@@ -130,20 +152,16 @@
             data: _data,
             dataType: "json",
             success: function (data) {
-
                 if (data.Mensaje == "Done.") {
                     $("#divFullLoading").remove();
                     $("#popup_HabitacionEdit").dialog('close');
                     parent.getDistribucion();
-                }
-                else {
+                } else {
                     if (data.Mensaje == "Error.") {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        alert("Ha ocurrido un error, por favor intente nuevamente.");
                         console.log(data.Error);
                     }
-
                 }
-
             }
         });
     }

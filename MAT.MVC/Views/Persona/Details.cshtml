@@ -1,88 +1,180 @@
-﻿@model MAT.Entities.Persona
+@model MAT.Entities.Persona
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Detalles de Persona";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<style>
+    .persona-details-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .persona-details-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+    .persona-details-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .persona-details-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .persona-details-card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .persona-details-card-header {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .persona-details-card-body {
+        padding: 1.5rem;
+    }
+    .persona-details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .persona-detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .persona-detail-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .persona-detail-value {
+        font-size: 0.9375rem;
+        color: var(--text-primary, #1f2937);
+    }
+    .persona-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .btn-primary {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .btn-primary:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+    }
+    .btn-secondary {
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+    }
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        color: var(--text-primary, #374151);
+    }
+    @@media (max-width: 640px) {
+        .persona-details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
-<fieldset>
-    <legend>Persona</legend>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.PersonaId)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.PersonaId)
-    </div>
-    
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.Apellido)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Apellido)
+<div class="persona-details-container">
+    <div class="persona-details-header">
+        <h1 class="persona-details-title">
+            <i class="bi bi-person-vcard"></i>
+            Detalles de Persona
+        </h1>
     </div>
 
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.Nombre)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Nombre)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.TipoDocumento)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.TipoDocumento)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.NroDocumento)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.NroDocumento)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.Pais)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Pais)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.Telefono)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Telefono)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.Email)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Email)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.FechaNacimiento)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.FechaNacimiento)
-    </div>
-
-    <div class="display-label">
-         @Html.DisplayNameFor(model => model.Sexo)
-    </div>
-    <div class="display-field">
-        @Html.DisplayFor(model => model.Sexo)
+    <div class="persona-details-card">
+        <div class="persona-details-card-header">
+            <i class="bi bi-person"></i>
+            Información Personal
+        </div>
+        <div class="persona-details-card-body">
+            <div class="persona-details-grid">
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">ID</span>
+                    <span class="persona-detail-value">@Model.PersonaId</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">Apellido</span>
+                    <span class="persona-detail-value">@Model.Apellido</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">Nombre</span>
+                    <span class="persona-detail-value">@Model.Nombre</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">Tipo Documento</span>
+                    <span class="persona-detail-value">@Model.TipoDocumento</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">Nro Documento</span>
+                    <span class="persona-detail-value">@Model.NroDocumento</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">País</span>
+                    <span class="persona-detail-value">@Model.Pais</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">Teléfono</span>
+                    <span class="persona-detail-value">@Model.Telefono</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">Email</span>
+                    <span class="persona-detail-value">@Model.Email</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">Fecha Nacimiento</span>
+                    <span class="persona-detail-value">@(Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToShortDateString() : "-")</span>
+                </div>
+                <div class="persona-detail-item">
+                    <span class="persona-detail-label">Sexo</span>
+                    <span class="persona-detail-value">@(Model.Sexo.HasValue ? (Model.Sexo.Value == 0 ? "Masculino" : "Femenino") : "-")</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    
-</fieldset>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id=Model.PersonaId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+    <div class="persona-actions">
+        <a href="@Url.Action("Edit", new { id = Model.PersonaId })" class="btn-action btn-primary">
+            <i class="bi bi-pencil"></i>
+            Editar
+        </a>
+        <a href="@Url.Action("Index")" class="btn-action btn-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Volver a Lista
+        </a>
+    </div>
+</div>

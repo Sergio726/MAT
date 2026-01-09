@@ -1,126 +1,339 @@
-﻿@model MAT.MVC.Models.HabitacionStandard
+@model MAT.MVC.Models.HabitacionStandard
 @using MAT.Enums
 @using MAT.Utilities
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Editar Habitacion";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .form-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .form-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .form-section {
+        margin-bottom: 1.5rem;
+    }
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-color, #e91e63);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .section-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+    .form-group.full-width {
+        grid-column: span 2;
+    }
+    .form-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .form-label i {
+        color: var(--primary-color, #e91e63);
+        font-size: 0.875rem;
+    }
+    .form-input,
+    .form-select {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        background: white;
+        transition: all 0.2s ease;
+    }
+    .form-input:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .form-input.input-validation-error,
+    .form-select.input-validation-error {
+        border-color: #ef4444;
+    }
+    .field-validation-error {
+        color: #ef4444;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+    .validation-summary-errors {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        color: #dc2626;
+    }
+    .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 1.25rem;
+    }
+    .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-modern {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-primary {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .btn-primary:hover:not(:disabled) {
+        background: var(--primary-hover, #d81b60);
+    }
+    .btn-primary:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+    }
+    .btn-secondary {
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-secondary:hover {
+        background: var(--border-color, #e5e7eb);
+        text-decoration: none;
+        color: var(--text-primary, #374151);
+    }
+    .alert-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    @@media (max-width: 640px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        .form-group.full-width {
+            grid-column: span 1;
+        }
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <div class="form-header">
+        <h1 class="form-title">
+            <i class="bi bi-door-open"></i>
+            Editar Habitacion
+        </h1>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert-error">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            @ViewBag.Error
+        </div>
+    }
+
+    <div class="form-card">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            <input type="hidden" id="HabitacionID" name="HabitacionID" value="@Model.HabitacionID" />
+
+            <!-- Seccion: Informacion General -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="bi bi-info-circle-fill"></i>
+                    Informacion General
+                </h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="NroHabitacion">
+                            <i class="bi bi-hash"></i>
+                            Nro. Habitacion
+                        </label>
+                        @Html.TextBoxFor(model => model.NroHabitacion, new { @class = "form-input", placeholder = "Ej: 101" })
+                        @Html.ValidationMessageFor(model => model.NroHabitacion)
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Nombre">
+                            <i class="bi bi-tag"></i>
+                            Nombre
+                        </label>
+                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-input", placeholder = "Nombre de la habitacion" })
+                        @Html.ValidationMessageFor(model => model.Nombre)
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Tipo">
+                            <i class="bi bi-collection"></i>
+                            Tipo de Habitacion
+                        </label>
+                        <select id="Tipo" name="Tipo" class="form-select">
+                            @foreach (MAT.MVC.Models.HabitacionTipo item in MAT.MVC.Models.HabitacionTipoMethod.GetAllHabitacionTipo())
+                            {
+                                <option value="@item.Id" @(Model.Tipo == item.Id ? "selected" : "")>@item.Descripcion</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="HotelID">
+                            <i class="bi bi-building"></i>
+                            Hotel
+                        </label>
+                        @Html.DropDownListFor(model => model.HotelID, Helper.ToSelectEntities("Hotel"), new { @class = "form-select" })
+                        @Html.ValidationMessageFor(model => model.HotelID)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seccion: Capacidad y Estado -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="bi bi-people-fill"></i>
+                    Capacidad y Estado
+                </h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="Estado">
+                            <i class="bi bi-toggle-on"></i>
+                            Estado
+                        </label>
+                        @Html.DropDownListFor(model => model.Estado, eEstadoHabitacion.Libre.ToSelectList(Model.Estado.ToString()), new { @class = "form-select" })
+                        @Html.ValidationMessageFor(model => model.Estado)
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Capacidad">
+                            <i class="bi bi-people"></i>
+                            Capacidad
+                        </label>
+                        @Html.TextBoxFor(model => model.Capacidad, new { @class = "form-input", type = "number", min = "1", placeholder = "Cantidad de personas" })
+                        @Html.ValidationMessageFor(model => model.Capacidad)
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Ocupacion">
+                            <i class="bi bi-person-check"></i>
+                            Ocupacion Actual
+                        </label>
+                        @Html.TextBoxFor(model => model.Ocupacion, new { @class = "form-input", type = "number", min = "0", placeholder = "Personas actualmente" })
+                        @Html.ValidationMessageFor(model => model.Ocupacion)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="form-actions">
+                <button type="submit" class="btn-modern btn-primary" id="GuardarHabitacion">
+                    <i class="bi bi-check-lg"></i>
+                    Guardar Cambios
+                </button>
+                <a href="/Habitacion?searchString=@Model.HotelID" class="btn-modern btn-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    Volver a Habitaciones
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
 <script type="text/javascript">
-   
     $(document).on('blur', '#Capacidad', function () {
         var capacidad = $('#Capacidad').val();
-        
-        if (capacidad>0) {
-            $('#Capacidad').removeAttr('style');
+
+        if (capacidad > 0) {
+            $('#Capacidad').removeClass('input-validation-error');
             $('#GuardarHabitacion').attr('disabled', false);
-            //$('#lbl_error_hora').attr('hidden', true);
         }
         else {
-            $('#Capacidad').attr('class', 'input-validation-error');
+            $('#Capacidad').addClass('input-validation-error');
             $('#GuardarHabitacion').attr('disabled', true);
-            //$('#lbl_error_hora').attr('hidden', false);
-
         }
     });
 
-     $(document).on('blur', '#Ocupacion', function () {
-
-         var ocupacion = $('#Ocupacion').val();
-        if (ocupacion >= '0') {
-            $('#Ocupacion').removeAttr('style');
+    $(document).on('blur', '#Ocupacion', function () {
+        var ocupacion = $('#Ocupacion').val();
+        if (ocupacion >= 0) {
+            $('#Ocupacion').removeClass('input-validation-error');
             $('#GuardarHabitacion').attr('disabled', false);
-            
         }
         else {
-            $('#Ocupacion').attr('class', 'input-validation-error');
+            $('#Ocupacion').addClass('input-validation-error');
             $('#GuardarHabitacion').attr('disabled', true);
-           
         }
     });
 </script>
-
-<h2 class ="title">Editar - Habitacion</h2>
-@if (ViewBag.Error != null)
-{
-    <div class="msgError">@ViewBag.Error</div>    
-}
-<div class="form">
-@using (Html.BeginForm()) {
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
-            
-        <input type="hidden" id="HabitacionID" name="HabitacionID" value="@Model.HabitacionID" />
-        <div class="form-label">
-            @Html.LabelFor(model => model.NroHabitacion)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.NroHabitacion)
-            @Html.ValidationMessageFor(model => model.NroHabitacion)
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.Nombre)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Nombre)
-            @Html.ValidationMessageFor(model => model.Nombre)
-        </div>
-        <div class="form-label">
-            @Html.LabelFor(model => model.Tipo)
-        </div>
-        <div class="form-field">
-            <select id="Tipo" name="Tipo">
-                @foreach (MAT.MVC.Models.HabitacionTipo item in MAT.MVC.Models.HabitacionTipoMethod.GetAllHabitacionTipo())
-                {
-                    <option value="@item.Id" @(Model.Tipo == item.Id ? "selected" : "") >@item.Descripcion </option>       
-                }
-            </select>
-            
-            @*@Html.DropDownListFor(model => model.Tipo, eTipoHabitacion.Doble.ToSelectList())
-            @Html.ValidationMessageFor(model => model.Tipo)*@
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.HotelID,"Hotel")
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.HotelID, Helper.ToSelectEntities("Hotel"))
-            @Html.ValidationMessageFor(model => model.HotelID)
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.Estado)
-        </div>
-        <div class="form-field">
-            @Html.DropDownListFor(model => model.Estado,eEstadoHabitacion.Libre .ToSelectList (Model.Estado.ToString()))
-            @Html.ValidationMessageFor(model => model.Estado)
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.Capacidad)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Capacidad)
-            @Html.ValidationMessageFor(model => model.Capacidad)
-        </div>
-
-        <div class="form-label">
-            @Html.LabelFor(model => model.Ocupacion)
-        </div>
-        <div class="form-field">
-            @Html.EditorFor(model => model.Ocupacion)
-            @Html.ValidationMessageFor(model => model.Ocupacion)
-        </div>
-        <p>
-            <input type="submit" value="Guardar" class="btn btn-small btn-inverse view-all hidden-phone" id="GuardarHabitacion"/>
-            <a href="/Habitacion?searchString=@Model.HotelID" class="btn btn-small btn-inverse view-all hidden-phone">< Habitaciones</a>
-             
-        </p>
-    
-}
-</div>
-
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

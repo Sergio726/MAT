@@ -1,4 +1,4 @@
-﻿@model MAT.Entities.Butaca
+@model MAT.Entities.Butaca
 @using MAT.Enums
 @using MAT.Utilities
 
@@ -10,18 +10,10 @@
 <div class="modern-page-container">
     <div class="modern-page-header">
         <h2 class="modern-page-title">
-            <i class="bi bi-pencil-square"></i>
+            <i class="bi bi-grid-3x3-gap"></i>
             <span>Editar Butaca</span>
         </h2>
     </div>
-
-    @if (ViewBag.Error != null)
-    {
-        <div class="modern-alert-error">
-            <i class="bi bi-exclamation-circle"></i>
-            <span>@ViewBag.Error</span>
-        </div>
-    }
 
     <div class="modern-form-container">
         @using (Html.BeginForm())
@@ -35,14 +27,7 @@
                         <i class="bi bi-hash"></i>
                         @Html.LabelFor(model => model.NroButaca)
                     </label>
-                    @if (Model.NroButaca.HasValue)
-                    {
-                        @Html.TextBoxFor(model => model.NroButaca, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Número de butaca" })
-                    }
-                    else
-                    {
-                        @Html.TextBoxFor(model => model.NroButaca, "", new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Número de butaca" })
-                    }
+                    @Html.TextBoxFor(model => model.NroButaca, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Numero de butaca" })
                     @Html.ValidationMessageFor(model => model.NroButaca, "", new { @class = "text-danger" })
                 </div>
 
@@ -51,80 +36,52 @@
                         <i class="bi bi-layers"></i>
                         @Html.LabelFor(model => model.Piso)
                     </label>
-                    @if (Model.Piso.HasValue)
-                    {
-                        @Html.DropDownListFor(model => model.Piso, ePisoButaca.PlantaAlta.ToSelectList(Model.Piso.ToString()), new { @class = "modern-form-select" })
-                    }
-                    else
-                    {
-                        @Html.DropDownListFor(model => model.Piso, ePisoButaca.PlantaAlta.ToSelectList(), new { @class = "modern-form-select" })
-                    }
+                    @Html.DropDownListFor(model => model.Piso, ePisoButaca.PlantaAlta.ToSelectList(Model.Piso.ToString()), new { @class = "modern-form-select" })
                     @Html.ValidationMessageFor(model => model.Piso, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
-                        <i class="bi bi-compass"></i>
+                        <i class="bi bi-geo"></i>
                         @Html.LabelFor(model => model.Ubicacion)
                     </label>
-                    @if (Model.Ubicacion.HasValue)
-                    {
-                        @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList(Model.Ubicacion.ToString()), new { @class = "modern-form-select" })
-                    }
-                    else
-                    {
-                        @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList(), new { @class = "modern-form-select" })
-                    }
+                    @Html.DropDownListFor(model => model.Ubicacion, eUbicacionButaca.Pasillo.ToSelectList(Model.Ubicacion.ToString()), new { @class = "modern-form-select" })
                     @Html.ValidationMessageFor(model => model.Ubicacion, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
-                        <i class="bi bi-stars"></i>
+                        <i class="bi bi-box"></i>
                         @Html.LabelFor(model => model.Tipo)
                     </label>
-                    @if (Model.Tipo.HasValue)
-                    {
-                        @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList(Model.Tipo.ToString()), new { @class = "modern-form-select" })
-                    }
-                    else
-                    {
-                        @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList(), new { @class = "modern-form-select" })
-                    }
+                    @Html.DropDownListFor(model => model.Tipo, eTipoButaca.SemiCama.ToSelectList(Model.Tipo.ToString()), new { @class = "modern-form-select" })
                     @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
                         <i class="bi bi-bus-front"></i>
-                        @Html.LabelFor(model => model.TransporteId, "Nro Coche")
+                        @Html.LabelFor(model => model.TransporteId, "Nro. Coche")
                     </label>
-                    @if (Model.TransporteId.HasValue)
-                    {
-                        @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte", Model.TransporteId.Value), new { @class = "modern-form-select" })
-                    }
-                    else
-                    {
-                        @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"), new { @class = "modern-form-select" })
-                    }
+                    @Html.DropDownListFor(model => model.TransporteId, Helper.ToSelectEntities("Transporte"), new { @class = "modern-form-select" })
                     @Html.ValidationMessageFor(model => model.TransporteId, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
-                        <i class="bi bi-list-ol"></i>
+                        <i class="bi bi-arrows-vertical"></i>
                         @Html.LabelFor(model => model.Fila)
                     </label>
-                    @Html.TextBoxFor(model => model.Fila, new { @class = "modern-form-input", placeholder = "Fila", maxlength = "2" })
+                    @Html.TextBoxFor(model => model.Fila, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Fila" })
                     @Html.ValidationMessageFor(model => model.Fila, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
-                        <i class="bi bi-arrow-right"></i>
+                        <i class="bi bi-arrows-horizontal"></i>
                         @Html.LabelFor(model => model.Posicion)
                     </label>
-                    @Html.TextBoxFor(model => model.Posicion, new { @class = "modern-form-input", placeholder = "Posición", maxlength = "1" })
+                    @Html.TextBoxFor(model => model.Posicion, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Posicion" })
                     @Html.ValidationMessageFor(model => model.Posicion, "", new { @class = "text-danger" })
                 </div>
 
@@ -133,7 +90,7 @@
                         <i class="bi bi-upc"></i>
                         @Html.LabelFor(model => model.CodigoButaca)
                     </label>
-                    @Html.TextBoxFor(model => model.CodigoButaca, new { @class = "modern-form-input", placeholder = "Código de butaca", maxlength = "4" })
+                    @Html.TextBoxFor(model => model.CodigoButaca, new { @class = "modern-form-input", placeholder = "Codigo de butaca" })
                     @Html.ValidationMessageFor(model => model.CodigoButaca, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -141,7 +98,7 @@
             <div class="modern-form-actions">
                 <a href="@Url.Action("Index", "Butaca")" class="btn-modern btn-modern-secondary">
                     <i class="bi bi-arrow-left"></i>
-                    <span>Volver a Lista de Butacas</span>
+                    <span>Volver a la Lista</span>
                 </a>
                 <button type="submit" class="btn-modern btn-modern-primary">
                     <i class="bi bi-check-circle"></i>

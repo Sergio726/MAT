@@ -1,4 +1,76 @@
-﻿@model MAT.MVC.Models.NotaCreditoModel
+@model MAT.MVC.Models.NotaCreditoModel
+
+<style>
+    .nota-credito-detail-container {
+        padding: 0.5rem;
+    }
+    .print-action-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 1rem;
+    }
+    .btn-print {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-print:hover {
+        background: #e5e7eb;
+        color: var(--text-primary, #374151);
+    }
+    .nota-detail-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+    .nota-detail-item {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 0.5rem;
+        align-items: baseline;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .nota-detail-item:last-child {
+        border-bottom: none;
+    }
+    .nota-detail-label {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .nota-detail-label i {
+        color: var(--primary-color, #e91e63);
+        font-size: 0.875rem;
+    }
+    .nota-detail-value {
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+    }
+    .nota-detail-value.monto {
+        font-weight: 600;
+        color: #059669;
+    }
+    .nota-detail-value.retencion {
+        color: #dc2626;
+    }
+    .nota-detail-value.porcentaje {
+        color: var(--primary-color, #e91e63);
+    }
+</style>
+
 @if (ViewBag.Error != null)
 {
     <script type="text/javascript">
@@ -6,31 +78,70 @@
     </script>
     return;
 }
-<div>
-    <a href="javascript: printNota();">
-        <div class="iconPrint" style="margin-left: 94%;" title="Imprimir comprobate de Nota de Credito."></div>
-    </a>
-</div>
-<div >
-        <div class="form-label">Días a la salida del viaje</div>
-        <div class="form-field">@Model.Dias</div>
-       
-        <div class="form-label">Monto de Nota de Crédito</div>
-        <div class="form-field">@string.Format("{0:C}",Model.MontoNota)</div>
 
-        <div class="form-label">% Retención</div>
-        <div class="form-field">@(Math.Round((Model.PorcentajeRetencion * 100),2)) %</div>
-        
-
-        <div class="form-label">Monto retenido</div>
-        <div class="form-field">@string.Format("{0:C}",Model.MontoRetencion)</div>
-
-        <div class="form-label">N° de Nota</div>
-        <div class="form-field">@Model.NroNota</div>
-
-        <div class="form-label">Vendedor</div>
-        <div class="form-field">@Model.Vendedor</div>
-        
-        <div class="form-label">Detalle</div>
-        <div class="form-field">@Model.Detalle</div>
+<div class="nota-credito-detail-container">
+    <div class="print-action-row">
+        <a href="javascript: printNota();" class="btn-print" title="Imprimir comprobante de Nota de Crédito">
+            <i class="bi bi-printer"></i>
+            Imprimir
+        </a>
     </div>
+
+    <div class="nota-detail-grid">
+        <div class="nota-detail-item">
+            <div class="nota-detail-label">
+                <i class="bi bi-calendar3"></i>
+                Días a la salida del viaje
+            </div>
+            <div class="nota-detail-value">@Model.Dias días</div>
+        </div>
+
+        <div class="nota-detail-item">
+            <div class="nota-detail-label">
+                <i class="bi bi-cash"></i>
+                Monto de Nota de Crédito
+            </div>
+            <div class="nota-detail-value monto">@string.Format("{0:C}", Model.MontoNota)</div>
+        </div>
+
+        <div class="nota-detail-item">
+            <div class="nota-detail-label">
+                <i class="bi bi-percent"></i>
+                % Retención
+            </div>
+            <div class="nota-detail-value porcentaje">@(Math.Round((Model.PorcentajeRetencion * 100), 2)) %</div>
+        </div>
+
+        <div class="nota-detail-item">
+            <div class="nota-detail-label">
+                <i class="bi bi-dash-circle"></i>
+                Monto retenido
+            </div>
+            <div class="nota-detail-value retencion">@string.Format("{0:C}", Model.MontoRetencion)</div>
+        </div>
+
+        <div class="nota-detail-item">
+            <div class="nota-detail-label">
+                <i class="bi bi-hash"></i>
+                N° de Nota
+            </div>
+            <div class="nota-detail-value">@Model.NroNota</div>
+        </div>
+
+        <div class="nota-detail-item">
+            <div class="nota-detail-label">
+                <i class="bi bi-person-badge"></i>
+                Vendedor
+            </div>
+            <div class="nota-detail-value">@Model.Vendedor</div>
+        </div>
+
+        <div class="nota-detail-item">
+            <div class="nota-detail-label">
+                <i class="bi bi-chat-left-text"></i>
+                Detalle
+            </div>
+            <div class="nota-detail-value">@Model.Detalle</div>
+        </div>
+    </div>
+</div>

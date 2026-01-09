@@ -1,5 +1,4 @@
-﻿@model IEnumerable<MAT.Entities.Persona>
-@using MAT.Enums
+@model IEnumerable<MAT.Entities.Persona>
 
 @{
     ViewBag.Title = "Personas";
@@ -20,16 +19,8 @@
         </div>
     </div>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="modern-alert-error">
-            <i class="bi bi-exclamation-circle"></i>
-            <span>@ViewBag.Error</span>
-        </div>
-    }
-
     <div class="modern-table-container">
-        <table class="modern-table" id="tblPersonas">
+        <table class="modern-table" id="tblPersonas" style="width: 100%;">
             <thead>
                 <tr>
                     <th>Apellido</th>
@@ -46,71 +37,28 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>
-                            <strong>@(item.Apellido ?? "-")</strong>
-                        </td>
+                        <td><strong>@(item.Apellido ?? "-")</strong></td>
                         <td>@(item.Nombre ?? "-")</td>
                         <td>
-                            @{
-                                var tipoDoc = "";
-                                if (item.TipoDocumento.HasValue)
-                                {
-                                    tipoDoc = ((eTipoDocumento)item.TipoDocumento.Value).ToString();
-                                }
-                                var nroDoc = item.NroDocumento ?? "";
-                                
-                                if (!string.IsNullOrEmpty(tipoDoc) || !string.IsNullOrEmpty(nroDoc))
-                                {
-                                    <div style="display: flex; align-items: center; gap: 0.25rem;">
-                                        @if (!string.IsNullOrEmpty(tipoDoc))
-                                        {
-                                            <span class="badge-categoria" style="font-size: 0.75rem;">@tipoDoc</span>
-                                        }
-                                        @if (!string.IsNullOrEmpty(nroDoc))
-                                        {
-                                            <span>@nroDoc</span>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">-</span>
-                                }
-                            }
-                        </td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.Telefono) || !string.IsNullOrEmpty(item.Celular))
+                            @if (item.TipoDocumento.HasValue)
                             {
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="bi bi-telephone"></i>
-                                    <span>@(item.Telefono ?? item.Celular)</span>
-                                </div>
+                                @item.TipoDocumento.Value
                             }
-                            else
+                            @if (!string.IsNullOrEmpty(item.NroDocumento))
+                            {
+                                <text> - @item.NroDocumento</text>
+                            }
+                            @if (!item.TipoDocumento.HasValue && string.IsNullOrEmpty(item.NroDocumento))
                             {
                                 <span class="text-muted">-</span>
                             }
                         </td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.Email))
-                            {
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="bi bi-envelope"></i>
-                                    <span>@item.Email</span>
-                                </div>
-                            }
-                            else
-                            {
-                                <span class="text-muted">-</span>
-                            }
-                        </td>
+                        <td>@(item.Telefono ?? item.Celular ?? "-")</td>
+                        <td>@(item.Email ?? "-")</td>
                         <td>
                             @if (item.FechaNacimiento.HasValue)
                             {
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <i class="bi bi-calendar3"></i>
-                                    <span>@item.FechaNacimiento.Value.ToString("dd/MM/yyyy")</span>
-                                </div>
+                                @item.FechaNacimiento.Value.ToString("dd/MM/yyyy")
                             }
                             else
                             {
@@ -120,16 +68,16 @@
                         <td>@(item.PaisResidencia ?? "-")</td>
                         <td>
                             <div class="modern-table-actions">
-                                <a href="@Url.Action("Details", "Persona", new { id = item.PersonaId })" 
-                                   class="modern-btn-icon" title="Ver Detalles">
+                                <a href="@Url.Action("Details", "Persona", new { id = item.PersonaId })"
+                                   class="modern-btn-icon modern-btn-icon-view" title="Ver Detalles">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="@Url.Action("Edit", "Persona", new { id = item.PersonaId })" 
+                                <a href="@Url.Action("Edit", "Persona", new { id = item.PersonaId })"
                                    class="modern-btn-icon modern-btn-icon-edit" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="@Url.Action("Delete", "Persona", new { id = item.PersonaId })" 
-                                   class="modern-btn-icon btn-danger-icon btn-delete" 
+                                <a href="#"
+                                   class="modern-btn-icon btn-danger-icon btn-eliminar-persona"
                                    data-id="@item.PersonaId"
                                    data-nombre="@(item.Nombre + " " + item.Apellido)"
                                    title="Eliminar">
@@ -148,34 +96,43 @@
     <script type="text/javascript">
         $(document).ready(function () {
             var table = $('#tblPersonas').DataTable({
-                order: [[0, 'asc']],
                 pageLength: 25,
+                order: [[0, 'asc']],
                 language: {
                     search: "Buscar:",
                     lengthMenu: "Mostrar _MENU_ registros",
                     info: "Mostrando _START_ a _END_ de _TOTAL_ personas",
                     infoEmpty: "No hay personas disponibles",
                     infoFiltered: "(filtrado de _MAX_ personas totales)",
+                    zeroRecords: "No se encontraron resultados",
+                    emptyTable: "No hay datos disponibles",
+                    loadingRecords: "Cargando...",
+                    processing: "Procesando...",
                     paginate: {
                         first: "Primero",
-                        last: "Último",
+                        last: "Ultimo",
                         next: "Siguiente",
                         previous: "Anterior"
                     }
                 },
                 columnDefs: [
-                    { orderable: false, targets: 7 }
+                    { orderable: false, searchable: false, targets: 7 }
                 ],
+                responsive: true,
                 stateSave: true,
-                responsive: true
+                autoWidth: false,
+                processing: true,
+                deferRender: true
             });
 
-            // Manejar confirmación de eliminación
-            $('#tblPersonas').on('click', '.btn-delete', function (e) {
+            // Manejar confirmacion de eliminacion
+            $('#tblPersonas').on('click', '.btn-eliminar-persona', function (e) {
+                e.preventDefault();
+                var id = $(this).data('id');
                 var nombre = $(this).data('nombre');
-                if (!confirm('¿Está seguro que desea eliminar a ' + nombre + '?')) {
-                    e.preventDefault();
-                    return false;
+
+                if (confirm('¿Esta seguro que desea eliminar a ' + nombre + '?')) {
+                    window.location.href = '@Url.Action("Delete", "Persona")/' + id;
                 }
             });
         });

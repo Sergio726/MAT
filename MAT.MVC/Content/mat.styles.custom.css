@@ -1073,5 +1073,139 @@ input.buttonAdd_29px:hover {
 }
 
 .custom_margin_20 {
-    margin: 20px;    
+    margin: 20px;
+}
+
+/* =====================================================
+   SIDEBAR MENU IMPROVEMENTS
+   ===================================================== */
+
+/* Reset link styles for submenu items to prevent blue/underline flash */
+#menu .menu-0 ul li a,
+#menu .menu-0 .collapse a,
+#menu .menu-0 .collapsing a {
+    color: #e0e0e0 !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+}
+
+#menu .menu-0 ul li a:hover,
+#menu .menu-0 .collapse a:hover {
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+/* Submenu container smooth transition */
+#menu .menu-0 .collapse,
+#menu .menu-0 .collapsing {
+    transition: height 0.25s ease;
+}
+
+/* Submenu items styling - prevent initial render flash */
+#menu .menu-0 li.hasSubmenu ul {
+    background: #5a5a5a;
+}
+
+#menu .menu-0 li.hasSubmenu ul li {
+    padding-left: 15px;
+}
+
+#menu .menu-0 li.hasSubmenu ul li a {
+    padding-left: 20px !important;
+    position: relative;
+}
+
+/* Bullet point indicator for submenu items */
+#menu .menu-0 li.hasSubmenu ul li a::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 5px;
+    background: #999;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+}
+
+#menu .menu-0 li.hasSubmenu ul li a:hover::before,
+#menu .menu-0 li.hasSubmenu ul li.active a::before {
+    background: #8ec657;
+}
+
+/* Nested submenu (level 2) additional indentation */
+#menu .menu-0 li.hasSubmenu ul li.hasSubmenu ul li a {
+    padding-left: 35px !important;
+}
+
+#menu .menu-0 li.hasSubmenu ul li.hasSubmenu ul li a::before {
+    left: 23px;
+}
+
+/* =====================================================
+   CHEVRON ICON FOR EXPANDABLE MENUS
+   ===================================================== */
+
+/* Add chevron to parent menu items */
+#menu .menu-0 > li.hasSubmenu > a,
+#menu .menu-0 li.hasSubmenu > a[data-toggle="collapse"] {
+    position: relative;
+    padding-right: 30px !important;
+}
+
+#menu .menu-0 > li.hasSubmenu > a::after,
+#menu .menu-0 li.hasSubmenu > a[data-toggle="collapse"]::after {
+    content: '\e224'; /* Glyphicons chevron-right */
+    font-family: 'Glyphicons';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: #999;
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+/* Rotate chevron when expanded */
+#menu .menu-0 > li.hasSubmenu.active > a::after,
+#menu .menu-0 > li.hasSubmenu > a[aria-expanded="true"]::after,
+#menu .menu-0 li.hasSubmenu > a[data-toggle="collapse"][aria-expanded="true"]::after {
+    transform: translateY(-50%) rotate(90deg);
+    color: #fff;
+}
+
+/* Submenu level 2 chevron */
+#menu .menu-0 ul li.hasSubmenu > a::after {
+    right: 10px;
+    font-size: 9px;
+}
+
+/* =====================================================
+   ACTIVE SUBMENU ITEM STYLING
+   ===================================================== */
+
+/* Active submenu item */
+#menu .menu-0 ul li.submenu-active > a,
+#menu .menu-0 .collapse li.submenu-active > a {
+    background: rgba(142, 198, 87, 0.2) !important;
+    color: #fff !important;
+    font-weight: 600;
+    border-left: 3px solid #8ec657;
+}
+
+#menu .menu-0 ul li.submenu-active > a::before {
+    background: #8ec657 !important;
+    width: 6px;
+    height: 6px;
+}
+
+/* Ensure parent menu stays expanded when child is active */
+#menu .menu-0 li.hasSubmenu.parent-active {
+    height: auto !important;
+}
+
+#menu .menu-0 li.hasSubmenu.parent-active > .collapse {
+    display: block;
+    height: auto !important;
 }

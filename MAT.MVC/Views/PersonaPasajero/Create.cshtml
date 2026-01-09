@@ -1,4 +1,4 @@
-﻿@model MAT.Entities.PersonaPasajero
+@model MAT.Entities.PersonaPasajero
 @using MAT.Enums
 @using MAT.Utilities
 
@@ -15,14 +15,6 @@
         </h2>
     </div>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="modern-alert-error">
-            <i class="bi bi-exclamation-circle"></i>
-            <span>@ViewBag.Error</span>
-        </div>
-    }
-
     <div class="modern-form-container">
         @using (Html.BeginForm())
         {
@@ -33,18 +25,18 @@
                 <div class="modern-form-group">
                     <label class="modern-form-label">
                         <i class="bi bi-person"></i>
-                        @Html.LabelFor(model => model.Apellido)
+                        @Html.LabelFor(model => model.Apellido) <span style="color: #ef4444;">*</span>
                     </label>
-                    @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido" })
+                    @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido del pasajero" })
                     @Html.ValidationMessageFor(model => model.Apellido, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
                         <i class="bi bi-person"></i>
-                        @Html.LabelFor(model => model.Nombre)
+                        @Html.LabelFor(model => model.Nombre) <span style="color: #ef4444;">*</span>
                     </label>
-                    @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre" })
+                    @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre del pasajero" })
                     @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
                 </div>
 
@@ -59,10 +51,10 @@
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
-                        <i class="bi bi-123"></i>
+                        <i class="bi bi-hash"></i>
                         @Html.LabelFor(model => model.NroDocumento)
                     </label>
-                    @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "Número de documento" })
+                    @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "Numero de documento" })
                     @Html.ValidationMessageFor(model => model.NroDocumento, "", new { @class = "text-danger" })
                 </div>
 
@@ -81,7 +73,7 @@
                         <i class="bi bi-telephone"></i>
                         @Html.LabelFor(model => model.Telefono)
                     </label>
-                    @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Teléfono" })
+                    @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Telefono" })
                     @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
                 </div>
 
@@ -117,13 +109,13 @@
                         <i class="bi bi-passport"></i>
                         @Html.LabelFor(model => model.Pasaporte)
                     </label>
-                    @Html.TextBoxFor(model => model.Pasaporte, new { @class = "modern-form-input", placeholder = "Número de pasaporte" })
+                    @Html.TextBoxFor(model => model.Pasaporte, new { @class = "modern-form-input", placeholder = "Numero de pasaporte" })
                     @Html.ValidationMessageFor(model => model.Pasaporte, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
-                        <i class="bi bi-calendar-event"></i>
+                        <i class="bi bi-calendar-x"></i>
                         @Html.LabelFor(model => model.VencimientoPasaporte)
                     </label>
                     @Html.TextBoxFor(model => model.VencimientoPasaporte, "{0:yyyy-MM-dd}", new { @class = "modern-form-input", type = "date" })
@@ -144,30 +136,30 @@
                         <i class="bi bi-globe"></i>
                         @Html.LabelFor(model => model.PaisOrigen)
                     </label>
-                    @Html.TextBoxFor(model => model.PaisOrigen, new { @class = "modern-form-input", placeholder = "País de origen" })
+                    @Html.TextBoxFor(model => model.PaisOrigen, new { @class = "modern-form-input", placeholder = "Pais de origen" })
                     @Html.ValidationMessageFor(model => model.PaisOrigen, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="modern-form-group">
                     <label class="modern-form-label">
-                        <i class="bi bi-check-square"></i>
-                        <span>Es cliente</span>
+                        <i class="bi bi-person-check"></i>
+                        <span>Es Cliente</span>
                     </label>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        @Html.CheckBox("escliente", false, new { @style = "width: 20px; height: 20px; cursor: pointer;", id = "chk_escliente" })
-                        <span>Marcar si es cliente</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; padding-top: 0.5rem;">
+                        <input name="escliente" id="chk_escliente" type="checkbox" style="width: 20px; height: 20px; cursor: pointer;" />
+                        <span>Registrar tambien como cliente</span>
                     </div>
                 </div>
             </div>
 
             <div class="modern-form-actions">
-                <button type="button" class="btn-modern btn-modern-secondary" onclick="location.href='@Url.Action("Index", "PersonaPasajero")'">
+                <a href="@Url.Action("Index", "PersonaPasajero")" class="btn-modern btn-modern-secondary">
                     <i class="bi bi-arrow-left"></i>
                     <span>Volver a la Lista</span>
-                </button>
+                </a>
                 <button type="submit" class="btn-modern btn-modern-primary">
                     <i class="bi bi-check-circle"></i>
-                    <span>Guardar</span>
+                    <span>Guardar Pasajero</span>
                 </button>
             </div>
         }
@@ -176,4 +168,31 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Autocomplete para localidad
+            $("#txt-busqueda-localidad").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Localidad/Search",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.Nombre,
+                                    value: item.Nombre,
+                                    id: item.LocalidadId
+                                };
+                            }));
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    $("#Localidad").val(ui.item.id);
+                }
+            });
+        });
+    </script>
 }

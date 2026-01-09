@@ -1,125 +1,170 @@
-﻿@model MAT.MVC.Models.ViajeHotel
+@model MAT.MVC.Models.ViajeHotel
 @using MAT.Enums
 @using MAT.Utilities
 
-<script>
-   
+<style>
+    .ingreso-egreso-form {
+        padding: 1rem;
+    }
+    .ingreso-egreso-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+    .form-group label {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+    }
+    .form-group input {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .form-group input.error {
+        background-color: #fef2f2;
+        border-color: #dc2626;
+    }
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1.25rem;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-submit:hover {
+        background: #d81b60;
+    }
+</style>
 
+<input type="hidden" id="reserva-viaje-id" value="@ViewBag.ViajeID" />
+
+<div class="ingreso-egreso-form">
+    <form id="formData">
+        <input type="hidden" value="@ViewBag.ViajeHotelID" name="ViajeHotelID" />
+
+        <div class="ingreso-egreso-grid">
+            <div class="form-group">
+                <label for="txtFechaDesde">
+                    <i class="bi bi-calendar-event"></i> Fecha de Ingreso
+                </label>
+                <input type="text" id="txtFechaDesde" class="date" name="Desde" value="@(Model.Desde)" />
+            </div>
+
+            <div class="form-group">
+                <label for="txtHoraDesde">
+                    <i class="bi bi-clock"></i> Hora de Ingreso
+                </label>
+                <input type="text" id="txtHoraDesde" class="time" value="@Model.HoraIngreso" name="HoraIngreso" />
+            </div>
+
+            <div class="form-group">
+                <label for="txtFechaHasta">
+                    <i class="bi bi-calendar-event"></i> Fecha de Salida
+                </label>
+                <input type="text" id="txtFechaHasta" class="date" value="@(Model.Hasta)" name="Hasta" />
+            </div>
+
+            <div class="form-group">
+                <label for="txtHoraHasta">
+                    <i class="bi bi-clock"></i> Hora de Salida
+                </label>
+                <input type="text" id="txtHoraHasta" class="time" value="@Model.HoraSalida" name="HoraSalida" />
+            </div>
+
+            <div class="form-group full-width">
+                <label for="txtComentario">
+                    <i class="bi bi-chat-left-text"></i> Comentarios
+                </label>
+                <input type="text" id="txtComentario" value="@Model.Comentario" name="Comentario" placeholder="IDA O VUELTA?, ESCRIBIR COMENTARIO" />
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" id="btnSetIngresoEgreso" class="btn-submit" onclick="setForm();">
+                <i class="bi bi-check-lg"></i>
+                Aceptar
+            </button>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
     function setForm() {
-
-        //*************************************Validar campos  *************************************
-        $(".date").css("background-color", "#fff");
-        $(".time").css("background-color", "#fff");
+        $(".date").removeClass("error");
+        $(".time").removeClass("error");
         var iFecha = 0;
         $.each($(".date"), function (i, l) {
             if (!validarFecha($(this).val())) {
-                $(this).css("background-color", "#E83A61");
-                iFecha = iFecha + 1;
+                $(this).addClass("error");
+                iFecha++;
             }
-            
         });
         if (iFecha > 0) {
-            return alert("Por favor verifique que las fechas ingresadas no esten en blanco y sean correctas dd/mm/yyyy.", "Fecha Incorrecta")
-
+            return alert("Por favor verifique que las fechas ingresadas no estén en blanco y sean correctas dd/mm/yyyy.", "Fecha Incorrecta");
         }
 
         var iHora = 0;
         $.each($(".time"), function (i, l) {
             if (!validarHora($(this).val())) {
-                $(this).css("background-color", "#E83A61");
-                iHora = iHora + 1;
+                $(this).addClass("error");
+                iHora++;
             }
-
         });
         if (iHora > 0) {
-            return alert("Por favor verifique que las horas ingresadas no esten en blanco y sean correctas hh:mm.", "Hora Incorrecta")
-
+            return alert("Por favor verifique que las horas ingresadas no estén en blanco y sean correctas hh:mm.", "Hora Incorrecta");
         }
 
-        //************************************* fin Validar campos  *************************************
-
         var _data = $("#formData").serialize();
-        
         $.ajax({
             url: "/viaje/HotelIngresoEgreso_Set",
             data: _data,
             dataType: "json",
             success: function (data) {
-                
                 if (data.Estado == "Done.") {
-
                     if (data.ID > 0) {
                         var urlReload = "/Viaje/Hoteles/" + $("#reserva-viaje-id").val();
                         $("#setEgresoIngreso").dialog("close");
                         alert(data.Mensaje, "Operación Exitosa");
                         window.location.href = urlReload;
-                    }
-                    else {
+                    } else {
                         alert(data.Mensaje, "Error");
                     }
-
-
-                }
-                else {
+                } else {
                     alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
-
                 }
-
             }
         });
-
-    };
-    
-</script>
-<input type="hidden" id="reserva-viaje-id" value="@ViewBag.ViajeID" />
-<div id="vidReservaHabitacion">
-    <form id="formData">
-        
-        <input type="hidden" value="@ViewBag.ViajeHotelID" name="ViajeHotelID" />
-    <div class="form-label">
-        @Html.Label("Fecha de Ingreso")
-    </div>
-    <div class="form-field">
-        <input type="text" id="txtFechaDesde" class="date" name="Desde" value="@(Model.Desde) " />
-    </div>
-
-    <div class="form-label">
-        @Html.Label("Hora de Ingreso")
-    </div>
-    <div class="form-field">
-        <input type="text" id="txtHoraDesde" class="time" value="@Model.HoraIngreso" name="HoraIngreso" />
-    </div>
-
-    <div class="form-label">
-        @Html.Label("Fecha de Salida")
-    </div>
-    <div class="form-field">
-        <input type="text" id="txtFechaHasta" class="date" value="@(Model.Hasta)" name="Hasta"  />
-    </div>
-
-    <div class="form-label">
-        @Html.Label("Hora de Salida")
-    </div>
-    <div class="form-field">
-        <input type="text" id="txtHoraHasta" class="time" value="@Model.HoraSalida" name="HoraSalida" />
-    </div>
-    
-    <div class="form-label">
-        @Html.Label("Comentarios")
-    </div>
-    <div class="form-field">
-        <input type="text" id="txtComentario" value="@Model.Comentario" name="Comentario" placeholder="IDA O VUELTA?, ESCRIBIR COMENTARIO" />
-    </div>
-
-    </form>
-    
-
-    <div style="float:right;margin-top:15px;margin-right: 2px">
-        <input type="button" id="btnSetIngresoEgreso" value="Aceptar" title="Guardar Cambios" class="btn btn-small btn-inverse" onclick="javascript: setForm();" />
-    </div>
-</div>
-
-<script type="text/javascript">
+    }
 
     $(function () {
         $.date = function (dateObject) {
@@ -127,42 +172,22 @@
             var day = d.getDate();
             var month = d.getMonth() + 1;
             var year = d.getFullYear();
-            if (day < 10) {
-                day = "0" + day;
-            }
-            if (month < 10) {
-                month = "0" + month;
-            }
-            var date = year + "-" + month + "-" + day;
-
-            return date;
+            if (day < 10) day = "0" + day;
+            if (month < 10) month = "0" + month;
+            return year + "-" + month + "-" + day;
         };
         $.customDate = function (dateObject) {
             var arraydate = dateObject.split('/');
             var day = parseInt(arraydate[0]);
             var month = parseInt(arraydate[1]);
             var year = parseInt(arraydate[2]);
-            if (day < 10) {
-                day = "0" + day;
-            }
-            if (month < 10) {
-                month = "0" + month;
-            }
-            var date = year + "-" + month + "-" + day;
-            return date;
-        }
-        $("#txtFechaDesde").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            yearRange: '-100:+2'
-        });
-        $("#txtFechaHasta").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            yearRange: '-100:+2'
-        });
-
-        $("input[class='time']").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+            if (day < 10) day = "0" + day;
+            if (month < 10) month = "0" + month;
+            return year + "-" + month + "-" + day;
+        };
+        $("#txtFechaDesde").datepicker({ changeMonth: true, changeYear: true, yearRange: '-100:+2' });
+        $("#txtFechaHasta").datepicker({ changeMonth: true, changeYear: true, yearRange: '-100:+2' });
+        $("input.time").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
     });
 </script>
 

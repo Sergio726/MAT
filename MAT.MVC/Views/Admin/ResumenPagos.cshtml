@@ -1,4 +1,4 @@
-﻿@using MAT.Utilities
+@using MAT.Utilities
 @{
     ViewBag.Title = "Resumen de Pagos";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -6,18 +6,157 @@
 
 @if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>Error al cargar página.</span></div>   
-      <script type="text/javascript">
-          console.log(@ViewBag.Error);
-      </script>
+    <div class="alert-error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Error al cargar pagina.</span>
+    </div>
+    <script type="text/javascript">
+        console.log(@ViewBag.Error);
+    </script>
     return;
 }
 
 <link href="~/Content/magicsearch/jquery.magicsearch.css" rel="stylesheet" />
 <link href="~/Content/magicsearch/normalize.css" rel="stylesheet" />
 <script src="~/Scripts/jquery.magicsearch.js"></script>
+
+<style>
+    .resumen-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .resumen-header {
+        margin-bottom: 1.5rem;
+    }
+    .resumen-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .resumen-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .search-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    .search-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 500px;
+    }
+    .search-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .search-label i {
+        color: var(--primary-color, #e91e63);
+    }
+    .search-input-wrapper {
+        position: relative;
+    }
+    .search-input-wrapper input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        padding-left: 2.5rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+    .search-input-wrapper input:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .search-input-wrapper i {
+        position: absolute;
+        left: 0.875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary, #9ca3af);
+    }
+    .results-container {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 200px;
+    }
+    .results-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--text-secondary, #9ca3af);
+        text-align: center;
+    }
+    .results-placeholder i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    .results-placeholder p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+    .alert-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+
+<div class="resumen-container">
+    <div class="resumen-header">
+        <h1 class="resumen-title">
+            <i class="bi bi-cash-stack"></i>
+            Resumen de Pagos por Viaje
+        </h1>
+    </div>
+
+    <div class="search-card">
+        <div class="search-group">
+            <label class="search-label">
+                <i class="bi bi-bus-front"></i>
+                Seleccionar Viaje
+            </label>
+            <div class="search-input-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Buscar por viaje, paquete o fecha..." id="DDViaje" title="Escriba para buscar un viaje" />
+            </div>
+        </div>
+    </div>
+
+    <div id="grid_pagos" class="results-container">
+        <div class="results-placeholder">
+            <i class="bi bi-receipt"></i>
+            <p>Seleccione un viaje para ver el resumen de pagos</p>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
-    
     $(document).ready(function () {
         var dataSource = @Html.Raw(ViewBag.jDDViaje);
         $('#DDViaje').magicsearch({
@@ -26,43 +165,26 @@
             id: 'ViajeID',
             format: '%Descripcion%',
             dropdownBtn: true,
-            success: function(i,data){
-                //alert(data);
+            success: function(i, data) {
                 var ViajeID = data.ViajeID;
                 loagGridPagos(ViajeID);
-                
             }
-
         });
     });
 
-    function loagGridPagos(ViajeID){
-        $("#grid_pagos").html(divLoading);
+    function loagGridPagos(ViajeID) {
+        $("#grid_pagos").html('<div class="results-placeholder"><div class="loading-spinner"></div><p>Cargando pagos...</p></div>');
 
         $.ajax({
             url: "/Admin/GridResumenPagos",
-            data: {ViajeID:ViajeID },
+            data: { ViajeID: ViajeID },
             dataType: "html",
             success: function (data) {
                 $("#grid_pagos").html(data);
-
+            },
+            error: function() {
+                $("#grid_pagos").html('<div class="results-placeholder"><i class="bi bi-exclamation-triangle"></i><p>Error al cargar los pagos</p></div>');
             }
         });
     }
 </script>
-
-
-
-<h2 class="title">Resumen de Pagos</h2>
-
-<div class="form">
-    <div class="form-label">Viajes</div>
-    <div class="form-field">
-        @*@Html.DropDownList("Viajes", Helper.ToSelectEntities("Viaje"), new { @class = "ui-button ui-widget ui-corner-all" })*@
-        <input type="text" placeholder="BUSCAR POR VIAJE, PAQUETE O FECHA" id="DDViaje" title="ESCRIBA UN VIAJE PARA BUSCAR" />
-    </div>
-</div>
-
-<div id="grid_pagos" class="custom_padding_left_5 custom_padding_right_5">
-
-</div>

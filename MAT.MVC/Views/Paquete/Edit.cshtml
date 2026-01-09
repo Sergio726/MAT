@@ -1,188 +1,521 @@
-﻿@model  MAT.MVC.Models.PaqueteStandard
+@model MAT.MVC.Models.PaqueteStandard
 @using MAT.Utilities
 @using MAT.Enums
 @{
     ViewBag.Title = "Editar Paquete";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string PaisID = "0";
+    string LocalidadID = "0";
+    string DepartamentoID = "0";
+    string ProvinciaID = "0";
+    string Destino = null;
+
+    if (ViewBag.InfoDestino != null)
+    {
+        PaisID = ViewBag.InfoDestino.PaisID;
+        LocalidadID = ViewBag.InfoDestino.LocalidadID.ToString();
+        DepartamentoID = ViewBag.InfoDestino.DepartamentoID.ToString();
+        ProvinciaID = ViewBag.InfoDestino.ProvinciaID.ToString();
+        Destino = ViewBag.InfoDestino.Destino;
+    }
 }
- @{
-            string PaisID = "0";
-            string LocalidadID = "0";
-            string DepartamentoID = "0";
-            string ProvinciaID = "0";
-            string Destino = null;
 
-            if (ViewBag.InfoDestino != null)
-            {
-                PaisID = ViewBag.InfoDestino.PaisID;
-                LocalidadID = ViewBag.InfoDestino.LocalidadID.ToString();
-                DepartamentoID = ViewBag.InfoDestino.DepartamentoID.ToString();
-                ProvinciaID = ViewBag.InfoDestino.ProvinciaID.ToString();
-                Destino = ViewBag.InfoDestino.Destino;
-            }
+<style>
+    .paquete-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .paquete-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .paquete-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .paquete-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .paquete-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    .paquete-section {
+        margin-bottom: 1.5rem;
+    }
+    .paquete-section:last-child {
+        margin-bottom: 0;
+    }
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-color, #e91e63);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .section-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .paquete-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .paquete-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+    .paquete-form-group.full-width {
+        grid-column: span 2;
+    }
+    .paquete-form-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .paquete-form-label i {
+        color: var(--primary-color, #e91e63);
+        font-size: 0.875rem;
+    }
+    .paquete-form-label .required {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+    .paquete-form-input,
+    .paquete-form-select {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        background: white;
+        transition: all 0.2s ease;
+    }
+    .paquete-form-input:focus,
+    .paquete-form-select:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .paquete-form-input.fieldError,
+    .paquete-form-select.fieldError {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+    .paquete-form-input:disabled,
+    .paquete-form-select:disabled {
+        background: var(--bg-secondary, #f9fafb);
+        color: var(--text-secondary, #9ca3af);
+        border-color: transparent;
+    }
+    .destino-input-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .destino-input-group input {
+        flex: 1;
+    }
+    .btn-destino {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 0.5rem;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-destino:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+    }
+    .image-upload-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    .image-preview {
+        width: 200px;
+        height: 150px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        background: var(--bg-secondary, #f9fafb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .image-preview img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+    }
+    .image-preview-placeholder {
+        color: var(--text-secondary, #9ca3af);
+        text-align: center;
+        padding: 1rem;
+    }
+    .image-preview-placeholder i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    .image-upload-form {
+        flex: 1;
+        min-width: 250px;
+    }
+    .upload-input-group {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    .upload-input-group input[type="file"] {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+    }
+    .paquete-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-modern {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-primary {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .btn-primary:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+        text-decoration: none;
+    }
+    .btn-secondary {
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-secondary:hover {
+        background: var(--border-color, #e5e7eb);
+        color: var(--text-primary, #374151);
+        text-decoration: none;
+    }
+    /* Dialog Styles */
+    .dialog-form-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+    .dialog-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .dialog-form-label {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+    }
+    .dialog-form-label .required {
+        color: #ef4444;
+    }
+    .dialog-form-select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+    }
+    .dialog-form-select:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+    }
+    .dialog-form-select.fieldError {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+    .dialog-actions {
+        margin-top: 1rem;
+        text-align: right;
+    }
+    @@media (max-width: 640px) {
+        .paquete-form-grid {
+            grid-template-columns: 1fr;
         }
-<h2 class="title">Paquete - Editar</h2>
+        .paquete-form-group.full-width {
+            grid-column: span 1;
+        }
+        .image-upload-section {
+            flex-direction: column;
+        }
+        .image-preview {
+            width: 100%;
+        }
+        .paquete-actions {
+            flex-direction: column;
+        }
+    }
+</style>
 
-<div class="form">
-    <div class="form-label divUploadImage">
-        <label for="file">Imagen de Paquete</label>
+<div class="paquete-container">
+    <div class="paquete-header">
+        <h1 class="paquete-title">
+            <i class="bi bi-box-seam"></i>
+            Paquete - @(ViewBag.Action == "new" ? "Nuevo" : ViewBag.Action == "edit" ? "Editar" : "Detalle")
+        </h1>
     </div>
-    <div class="form-field divUploadImage">
-        @if (!string.IsNullOrEmpty(Model.Foto))
-        {
-            <img src="@Model.Foto" alt="Foto de Paquete" />
-        
-        }
 
-        @using (Html.BeginForm("UploadFile",
-                        "Paquete",
-                        FormMethod.Post,
-                        new { enctype = "multipart/form-data" }))
-        {             
+    <div class="paquete-card">
+        <!-- Seccion: Imagen -->
+        <div class="paquete-section divUploadImage">
+            <h2 class="section-title">
+                <i class="bi bi-image"></i>
+                Imagen del Paquete
+            </h2>
+            <div class="image-upload-section">
+                <div class="image-preview">
+                    @if (!string.IsNullOrEmpty(Model.Foto))
+                    {
+                        <img src="@Model.Foto" alt="Foto de Paquete" />
+                    }
+                    else
+                    {
+                        <div class="image-preview-placeholder">
+                            <i class="bi bi-image"></i>
+                            <span>Sin imagen</span>
+                        </div>
+                    }
+                </div>
+                <div class="image-upload-form">
+                    @using (Html.BeginForm("UploadFile", "Paquete", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="upload-input-group">
+                            <input type="file" name="file" id="file" accept="image/*" />
+                            <button type="submit" class="btn-modern btn-secondary">
+                                <i class="bi bi-upload"></i>
+                                Subir
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
 
-            <input type="file" name="file" id="file" /><input type="submit" value="Subir Imagen" class="btn btn-small btn-inverse" />
-        }
+        <!-- Formulario Principal -->
+        <form id="formPaquete">
+            <input type="hidden" value="@Model.PaqueteID" id="PaqueteID" name="PaqueteID" />
+            <input type="hidden" id="DestinoID" name="DestinoID" value="@Model.DestinoID" />
+
+            <!-- Seccion: Informacion General -->
+            <div class="paquete-section">
+                <h2 class="section-title">
+                    <i class="bi bi-info-circle"></i>
+                    Informacion General
+                </h2>
+                <div class="paquete-form-grid">
+                    <div class="paquete-form-group full-width">
+                        <label class="paquete-form-label" for="Descripcion">
+                            <i class="bi bi-tag"></i>
+                            Nombre del Paquete
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" id="Descripcion" name="Descripcion" class="paquete-form-input valtxt" value="@Model.Descripcion" placeholder="Ingrese el nombre del paquete" />
+                    </div>
+
+                    <div class="paquete-form-group">
+                        <label class="paquete-form-label" for="Codigo">
+                            <i class="bi bi-upc"></i>
+                            Codigo
+                        </label>
+                        <input type="text" maxlength="50" id="Codigo" name="Codigo" class="paquete-form-input" value="@Model.Codigo" placeholder="Codigo del paquete" />
+                    </div>
+
+                    <div class="paquete-form-group">
+                        <label class="paquete-form-label" for="Temporada">
+                            <i class="bi bi-sun"></i>
+                            Temporada
+                        </label>
+                        <select id="Temporada" name="Temporada" class="paquete-form-select">
+                            @foreach (var item in eTemporada.Alta.ToSelectList())
+                            {
+                                <option value="@item.Value.ToString()" @(Model.Temporada.ToString() == item.Value.ToString() ? "selected" : "")>@item.Text.ToUpper()</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="paquete-form-group full-width">
+                        <label class="paquete-form-label">
+                            <i class="bi bi-geo-alt"></i>
+                            Destino
+                            <span class="required">*</span>
+                        </label>
+                        <div class="destino-input-group">
+                            <input type="text" maxlength="50" id="txtDestino" name="txtDestino" class="paquete-form-input valtxt" readonly placeholder="Seleccionar destino..." value="@Destino" />
+                            <a href="javascript:void(0);" onclick="javascript:selectDestino();" title="Seleccionar Destino" class="btn-destino" id="divLocation">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seccion: Configuracion Financiera -->
+            <div class="paquete-section">
+                <h2 class="section-title">
+                    <i class="bi bi-currency-dollar"></i>
+                    Configuracion Financiera
+                </h2>
+                <div class="paquete-form-grid">
+                    <div class="paquete-form-group">
+                        <label class="paquete-form-label" for="Moneda">
+                            <i class="bi bi-coin"></i>
+                            Moneda
+                        </label>
+                        <select id="Moneda" name="Moneda" class="paquete-form-select">
+                            @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
+                            {
+                                <option value="@item.Id" @(Model.Moneda.ToString() == item.Id.ToString() ? "selected" : "")>@item.Descripcion.ToString().ToUpper() (@item.Codigo)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="paquete-form-group">
+                        <label class="paquete-form-label" for="Cotizacion">
+                            <i class="bi bi-currency-exchange"></i>
+                            Cotizacion
+                        </label>
+                        <input type="number" id="Cotizacion" name="Cotizacion" class="paquete-form-input" value="@Model.Cotizacion" placeholder="0.00" />
+                    </div>
+
+                    <div class="paquete-form-group">
+                        <label class="paquete-form-label" for="Iva">
+                            <i class="bi bi-percent"></i>
+                            IVA
+                        </label>
+                        <input id="Iva" name="Iva" type="number" class="paquete-form-input" value="@Model.Iva" placeholder="21" />
+                    </div>
+
+                    <div class="paquete-form-group">
+                        <label class="paquete-form-label" for="Alicuota">
+                            <i class="bi bi-calculator"></i>
+                            Alicuota
+                        </label>
+                        <input type="number" id="Alicuota" name="Alicuota" class="paquete-form-input" value="@Model.Alicuota" placeholder="0" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="paquete-actions">
+                <a id="a_editar_paquete" style="display:none" href="/Paquete/Edit/?sAction=edit&sPaqueteID=@Model.PaqueteID" class="btn-modern btn-primary">
+                    <i class="bi bi-pencil"></i>
+                    Editar
+                </a>
+                <button type="button" value="Guardar" id="btn_guardar_paquete" class="btn-modern btn-primary" onclick="javascript: UpdateForm();">
+                    <i class="bi bi-check-lg"></i>
+                    Guardar
+                </button>
+                @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn-modern btn-secondary" })
+            </div>
+        </form>
     </div>
 </div>
 
-<div class="form">
-    <form id="formPaquete">
-        <input type="hidden" value="@Model.PaqueteID" id="PaqueteID" name="PaqueteID" />
-        <div class="form-label">
-            <label>Nombre del Paquete <span class="required" title="Campo obligatorio">*</span></label>
-        </div>
-        <div class="form-field">
-            <input type="text" id="Descripcion" name="Descripcion" class="valtxt" value="@Model.Descripcion" />
-        </div>
-
-
-        <div class="form-label">
-            <label>Moneda</label>
-        </div>
-        <div class="form-field">
-            <select id="Moneda" name="Moneda">
-                @foreach (MAT.MVC.Models.MonedaTipo item in MAT.MVC.Models.MonedaMethod.GetMonedaTipoAll())
+<!-- Dialog para seleccionar destino -->
+<div id="divDestino" style="display:none;" title="Seleccionar Destino">
+    <div class="dialog-form-grid">
+        <div class="dialog-form-group">
+            <label class="dialog-form-label">
+                Pais <span class="required">*</span>
+            </label>
+            <select id="ddPais" name="Pais" class="dialog-form-select">
+                <option value="0">SELECCIONE UN PAIS</option>
+                @foreach (MAT.Entities.Pais Item in ViewBag.ListPais)
                 {
-                    <option value="@item.Id" @(Model.Moneda.ToString() == item.Id.ToString() ? "selected" : "") >@item.Descripcion.ToString().ToUpper() ( @(item.Codigo))</option>
+                    <option value="@Item.PaisId.ToString()" @(Item.Descripcion == "ARGENTINA" ? "selected" : "")>@Item.Descripcion</option>
                 }
             </select>
-          
         </div>
-
-        <div class="form-label">
-            <label>Iva</label>
-        </div>
-        <div class="form-field">
-            <input id="Iva" name="Iva" type="number" value="@Model.Iva" />
-        </div>
-
-        <div class="form-label">
-            <label>Alicuota</label>
-        </div>
-        <div class="form-field">
-            <input type="number" id="Alicuota" name="Alicuota" value="@Model.Alicuota" />
-        </div>
-
-        <div class="form-label">
-            <label>Temporada</label>
-        </div>
-        <div class="form-field">
-            <select id="Temporada" name="Temporada">
-                 @foreach (var item in eTemporada.Alta.ToSelectList())
-	            {
-		            <option value="@item.Value.ToString()" @(Model.Temporada.ToString() == item.Value.ToString() ? "selected" : "")>@item.Text.ToUpper()</option>
-	            }
+        <div class="dialog-form-group">
+            <label class="dialog-form-label">
+                Provincia <span class="required">*</span>
+            </label>
+            <select id="ddProvincia" name="Provincia" class="dialog-form-select">
+                <option value="0">SELECCIONE UNA PROVINCIA</option>
             </select>
-           
         </div>
-
-        <div class="form-label">
-            <label>Cotizacion</label>
+        <div class="dialog-form-group">
+            <label class="dialog-form-label">
+                Departamento <span class="required">*</span>
+            </label>
+            <select id="ddDepartamento" class="dialog-form-select" onchange="javascript: LoadLocalidad();">
+                <option value="0">SELECCIONE UN DEPARTAMENTO</option>
+            </select>
         </div>
-        <div class="form-field">
-           <input type="number" id="Cotizacion" name="Cotizacion" value="@Model.Cotizacion"/>
+        <div class="dialog-form-group">
+            <label class="dialog-form-label">
+                Localidad <span class="required">*</span>
+            </label>
+            <select id="ddLocalidad" class="dialog-form-select">
+                <option value="0">SELECCIONE UNA LOCALIDAD</option>
+            </select>
         </div>
-
-        <div class="form-label">
-            <label>Codigo</label>
+        <div class="dialog-actions">
+            <button type="button" class="btn-modern btn-primary" onclick="javascript: setDestino();">
+                <i class="bi bi-check-lg"></i>
+                Aceptar
+            </button>
         </div>
-        <div class="form-field">
-           <input type="text" maxlength="50" id="Codigo" name="Codigo"  value="@Model.Codigo"/>
-        </div>
-         <div class="form-label">
-            <label>Destino <span class="required" title="Campo obligatorio">*</span></label>
-        </div>
-        <div class="form-field" style="width: 55.4%;">
-            <div style="display: flex;">
-                <input type="text" maxlength="50" style="width:100%;" id="txtDestino" name="txtDestino" class="valtxt" readonly  placeholder="SELECCIONAR DESTINO" value="@Destino"/>
-                <div id="divLocation">
-                    <a href="javascript:void(0);" onclick="javascript:selectDestino();" title="Click Para Seleccionar Destino">
-                      <div class="iconLocation_30" ></div>
-                    </a>
-                </div>
-            </div>
-           
-        </div>
-      
-        
-        <div>
-            <a id="a_editar_paquete" style="display:none" href="/Paquete/Edit/?sAction=edit&sPaqueteID=@Model.PaqueteID" class="btn btn-small btn-inverse">Editar</a>
-            <input type="button" value="Guardar" id="btn_guardar_paquete" class="btn btn-small btn-inverse" onclick="javascript: UpdateForm();" />
-            @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn btn-small btn-inverse" })
-        </div>
-
-
-        <div id="divDestino" style="display:none;" title="Seleccionar Destino">
-            <div class="form-label">
-                <label>País <span class="required" title="Campo obligatorio">*</span></label>
-            </div>
-            <div class="form-field">
-                @*@Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntities("Provincia"))*@
-                <select id="ddPais" name="Pais">
-                    <option value="0">SELECCIONE UN PAÍS</option>
-                    @foreach (MAT.Entities.Pais Item in ViewBag.ListPais)
-                    {
-                        <option value="@Item.PaisId.ToString()" @(Item.Descripcion == "ARGENTINA" ? "selected" : "")>@Item.Descripcion</option>
-                    }
-                </select>
-            </div>
-            <div class="form-label">
-                <label>Provincia <span class="required" title="Campo obligatorio">*</span></label>
-            </div>
-            <div class="form-field">
-                <select id="ddProvincia" name="Provincia">
-                    <option value="0">SELECCIONE UNA PROVINCIA</option>
-                </select>
-            </div>
-            <div class="form-label">
-                <label>Departamento <span class="required" title="Campo obligatorio">*</span></label>
-            </div>
-            <div class="form-field">
-                <select id="ddDepartamento" onchange="javascript: LoadLocalidad();">
-                    <option value="0">SELECCIONE UN DEPARTAMENTO</option>
-                </select>
-            </div>
-            <div class="form-label">
-                <label>Localidad <span class="required" title="Campo obligatorio">*</span></label>
-            </div>
-            <div class="form-field">
-               <select id="ddLocalidad">
-                    <option value="0">SELECCIONE UNA LOCALIDAD</option>
-               </select>
-                
-            </div>
-            <div class="form-label custom_padding_top_4"></div>
-            <div class="form-field custom_padding_top_5">
-                <input class="btn btn-small btn-inverse view-all hidden-phone" type="button" value="Aceptar" title="Guardar Destino." onclick="javascript: setDestino();">
-            </div>
-        </div>
-        <input type="hidden" id="DestinoID" name="DestinoID" value="@Model.DestinoID" />
-  </form>  
+    </div>
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
 <script type="text/ecmascript">
     $(document).ready(function () {
         $("input[type='text']").keypress(function () {
@@ -195,8 +528,7 @@
         $("#chkPublicWeb").change(function () {
             if ($(this).is(":checked")) {
                 $("#PublicWeb").val(true);
-            }
-            else {
+            } else {
                 $("#PublicWeb").val(false);
             }
         });
@@ -204,8 +536,7 @@
         $("#chkModePublicity").change(function () {
             if ($(this).is(":checked")) {
                 $("#ModePublicity").val(true);
-            }
-            else {
+            } else {
                 $("#ModePublicity").val(false);
             }
         });
@@ -217,27 +548,20 @@
             data: { "sIdPais": IdPais },
             dataType: "json",
             success: function (response) {
-
                 if (response.Result == "Done.") {
-
                     var list = eval(response.LDepartamento);
-
                     $('#ddProvincia option').remove();
                     document.getElementById("ddProvincia").options[0] = new Option("SELECCIONE UNA PROVINCIA", "0");
                     for (var i = 0; i < list.length; i++) {
                         var sValue = list[i].ID;
                         var sName = list[i].Nombre;
                         document.getElementById("ddProvincia").options[document.getElementById("ddProvincia").options.length] = new Option(sName, sValue);
-
                     }
-                    $("#ddProvincia").val("@ProvinciaID").change();;
-
+                    $("#ddProvincia").val("@ProvinciaID").change();
                 }
             }
         });
 
-        
-    
         $("#ddPais").change(function () {
             var IdPais = $(this).val();
             LoadProvincia(IdPais);
@@ -246,16 +570,12 @@
             $('#ddLocalidad option').remove();
             document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
         });
-       
 
         $("#ddProvincia").change(function () {
             var IdProvincia = $("#ddProvincia").val();
             LoadDepartamento(IdProvincia);
-
         });
-        
-        
-       
+
         switch ("@ViewBag.Action") {
             case "detail":
                 $("input[type='text']").attr("disabled", "disabled");
@@ -279,14 +599,10 @@
             case "new":
                 $(".divUploadImage").hide()
                 break;
-
         }
-       
-        
     });
 
-    function LoadProvincia(IdPais)
-    {
+    function LoadProvincia(IdPais) {
         if (IdPais != "" && IdPais != undefined) {
             $.ajax({
                 type: "POST",
@@ -294,113 +610,87 @@
                 data: { "sIdPais": IdPais },
                 dataType: "json",
                 success: function (response) {
-
                     if (response.Result == "Done.") {
-
                         var list = eval(response.LDepartamento);
-
                         $('#ddProvincia option').remove();
                         document.getElementById("ddProvincia").options[0] = new Option("SELECCIONE UNA PROVINCIA", "0");
                         for (var i = 0; i < list.length; i++) {
                             var sValue = list[i].ID;
                             var sName = list[i].Nombre;
                             document.getElementById("ddProvincia").options[document.getElementById("ddProvincia").options.length] = new Option(sName, sValue);
-
                         }
-
-
                     }
                 }
             });
         }
-        
     }
-    function LoadDepartamento(IdProvincia) {
-        
-        if (parseInt(IdProvincia) > 0) {
 
+    function LoadDepartamento(IdProvincia) {
+        if (parseInt(IdProvincia) > 0) {
             $.ajax({
                 type: "POST",
                 url: "/Localidad/GetDepartamento",
                 data: { "sIdProvincia": IdProvincia },
                 dataType: "json",
                 success: function (response) {
-
                     if (response.Result == "Done.") {
-
                         var list = eval(response.LDepartamento);
-
                         $('#ddDepartamento option').remove();
                         document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
-
                         $('#ddLocalidad option').remove();
                         document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
-                        
                         for (var i = 0; i < list.length; i++) {
                             var sValue = list[i].IdDepartamento;
                             var sName = list[i].Nombre;
                             document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(sName, sValue);
-
                         }
-
                         $("#ddDepartamento").val("@DepartamentoID").change();
-
-                    }
-                    else {
+                    } else {
                         alert(response.data);
                     }
-
                 }
             });
-        };
+        }
     }
 
     function LoadLocalidad() {
         var IdDepartamento = $("#ddDepartamento").val();
         if (parseInt(IdDepartamento) > 0) {
-
             $.ajax({
                 type: "POST",
                 url: "/Localidad/GetLocalidad",
                 data: { "sIdDepartamento": IdDepartamento },
                 dataType: "json",
                 success: function (response) {
-
                     if (response.Result == "Done.") {
-
                         var list = eval(response.LLocalidad);
-
                         $('#ddLocalidad option').remove();
                         document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
                         for (var i = 0; i < list.length; i++) {
                             var sValue = list[i].Id;
                             var sName = list[i].Nombre;
                             document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(sName, sValue);
-
                         }
-
                         $("#ddLocalidad").val("@LocalidadID");
-                    }
-                    else {
+                    } else {
                         alert(response.data);
                     }
-
                 }
             });
-        };
+        }
     }
 
     function valForm() {
         var bResult = true;
         $.each($(".valtxt"), function (i, l) {
-            if ($(this).val().replace(/^\s+|\s+$/g, "")  == "") {
+            if ($(this).val().replace(/^\s+|\s+$/g, "") == "") {
                 $(this).addClass("fieldError");
                 bResult = false;
             }
         });
-
         return bResult;
     }
+
     function UpdateForm() {
         if (!valForm()) {
             return alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
@@ -409,20 +699,18 @@
         var _data = $("#formPaquete").serialize();
 
         if ("@ViewBag.Action" === "edit") {
-             $.ajax({
-                 url: "/Paquete/UpdatePaquete",
-                 data: _data,
-                 dataType: "json",
-                 success: function (data) {
-                     if (data.Mensaje === "Done.") {
-                         confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
-                         setTimeout(function () { location.href = "/Paquete/Edit/?sAction=detail&sPaqueteID=@Model.PaqueteID"; }, 1000);
-                    }
-                    else {
+            $.ajax({
+                url: "/Paquete/UpdatePaquete",
+                data: _data,
+                dataType: "json",
+                success: function (data) {
+                    if (data.Mensaje === "Done.") {
+                        confirm("Los datos se guardaron correctamente.", "Operacion Exitosa");
+                        setTimeout(function () { location.href = "/Paquete/Edit/?sAction=detail&sPaqueteID=@Model.PaqueteID"; }, 1000);
+                    } else {
                         alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
                 }
-
             });
         }
 
@@ -434,14 +722,12 @@
                 success: function (data) {
                     if (data.Mensaje === "Done.") {
                         var PaqueteID = data.ID;
-                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        confirm("Los datos se guardaron correctamente.", "Operacion Exitosa");
                         setTimeout(function () { location.href = "/Paquete/Edit/?sAction=detail&sPaqueteID=" + PaqueteID; }, 1000);
-                    }
-                    else {
+                    } else {
                         alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
                 }
-
             });
         }
     }
@@ -453,62 +739,22 @@
             width: "45%",
             position: { my: 'top', at: 'top', of: window },
             closeOnEscape: true,
-            
         });
         $("#divDestino").dialog("open");
-    }
-
-    function LoadLocalidad() {
-        var IdDepartamento = $("#ddDepartamento").val();
-        if (parseInt(IdDepartamento) > 0) {
-
-            $.ajax({
-                type: "POST",
-                url: "/Localidad/GetLocalidad",
-                data: { "sIdDepartamento": IdDepartamento },
-                dataType: "json",
-                success: function (response) {
-
-                    if (response.Result == "Done.") {
-
-                        var list = eval(response.LLocalidad);
-
-                        $('#ddLocalidad option').remove();
-                        document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
-                        for (var i = 0; i < list.length; i++) {
-                            var sValue = list[i].Id;
-                            var sName = list[i].Nombre;
-                            document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(sName, sValue);
-
-                        }
-
-                        $("#ddLocalidad").val("@LocalidadID");
-
-                    }
-                    else {
-                        alert(response.data);
-                    }
-
-                }
-            });
-        };
     }
 
     function setDestino() {
         var b = true;
         $.each($("#divDestino select"), function (i, l) {
             if ($(this).val().replace(/^\s+|\s+$/g, "") == "0") {
-                //$(this).css("background-color", "#E83A61");
                 $(this).addClass("fieldError");
                 b = false;
             }
         });
 
         if (!b) {
-            return alert("Los campos remarcados son obligatorios. Por favor complete la seleccón.")
-        }
-        else {
-            
+            return alert("Los campos remarcados son obligatorios. Por favor complete la seleccion.")
+        } else {
             var sPais = $("#ddPais option:selected").text();
             var sProvincia = $("#ddProvincia option:selected").text();
             var sDepartamento = $("#ddDepartamento option:selected").text();
