@@ -1,4 +1,137 @@
-﻿@model List<MAT.MVC.Models.PasajeroMenorModel>
+@model List<MAT.MVC.Models.PasajeroMenorModel>
+
+<style>
+    .vinculacion-menor-container {
+        padding: 0.5rem;
+        min-height: 400px;
+    }
+    .vinculacion-form-hidden {
+        display: none;
+    }
+    .vinculacion-form-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+    }
+    .vinculacion-input {
+        flex: 1;
+        min-width: 200px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        background: var(--bg-secondary, #f9fafb);
+        color: var(--text-primary, #374151);
+    }
+    .vinculacion-input:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        background: white;
+    }
+    .vinculacion-input::placeholder {
+        color: var(--text-secondary, #9ca3af);
+    }
+    .btn-select {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-select:hover {
+        background: var(--primary-hover, #d81b60);
+        transform: scale(1.05);
+    }
+    .btn-vincular {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 1rem;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-vincular:hover {
+        background: var(--primary-hover, #d81b60);
+    }
+    .btn-vincular i {
+        font-size: 0.75rem;
+    }
+    .content-area {
+        background: white;
+        border-radius: 0.5rem;
+        min-height: 300px;
+    }
+    .loading-state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--text-secondary, #9ca3af);
+    }
+    .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #e5e7eb;
+        border-top-color: #e91e63;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 0.5rem;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+<input type="hidden" id="hdnMayorId" value="" />
+<input type="hidden" id="hdnMenorId" value="" />
+<input type="hidden" id="hdnPasajeId" value="" />
+
+<div class="vinculacion-menor-container">
+    <div class="vinculacion-form-hidden">
+        <div class="vinculacion-form-row">
+            <input type="text" id="txtMayor" class="vinculacion-input" placeholder="Seleccione un tutor" readonly />
+            <button type="button" onclick="showFormListaMayor();" title="Click para seleccionar un tutor o responsable del menor" class="btn-select">
+                <i class="bi bi-plus"></i>
+            </button>
+        </div>
+        <div class="vinculacion-form-row">
+            <input type="text" id="txtMenor" class="vinculacion-input" placeholder="Seleccione un menor" readonly />
+            <button type="button" onclick="showFormListaMenor();" title="Click para seleccionar un menor" class="btn-select">
+                <i class="bi bi-plus"></i>
+            </button>
+        </div>
+        <div class="vinculacion-form-row">
+            <button type="button" onclick="valForm();" class="btn-vincular" title="Click para finalizar la vinculación">
+                <i class="bi bi-link-45deg"></i>
+                Vincular Menor
+            </button>
+        </div>
+    </div>
+
+    <div id="divContentPasajeroMenor" class="content-area">
+        <div class="loading-state">
+            <div class="loading-spinner"></div>
+            Cargando...
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -6,9 +139,8 @@
     });
 
     function addMayor(obj) {
-        
         var Apellido = $(obj).data("apellido");
-        var Nombre   = $(obj).data("nombre");
+        var Nombre = $(obj).data("nombre");
         var PersonID = $(obj).data("id");
         var PasajeID = $(obj).data("pasajeid");
 
@@ -17,11 +149,9 @@
         $("#hdnPasajeId").val(PasajeID);
 
         $("#divFormListaMayor").dialog("close");
-        
     }
 
     function addMenor(obj) {
-
         var Apellido = $(obj).data("apellido");
         var Nombre = $(obj).data("nombre");
         var PersonID = $(obj).data("id");
@@ -31,8 +161,7 @@
         $("#divFormListaMenor").dialog("close");
     }
 
-    function valForm()
-    {
+    function valForm() {
         var ViajeID = $("#id_viaje").val();
         if (ViajeID == "") {
             return alert("No hay un viaje seleccionado, por favor actualice la página.");
@@ -56,21 +185,23 @@
             },
             dataType: "json",
             success: function (data) {
-
                 if (data.Id == "1") {
                     loadPasajeroMenor();
                 }
                 else {
                     alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                 }
-
             }
         });
     }
 
     function loadPasajeroMenor() {
-
-        $("#divContentPasajeroMenor").append(divLoading);
+        $("#divContentPasajeroMenor").html(
+            '<div class="loading-state">' +
+            '<div class="loading-spinner"></div>' +
+            'Cargando...' +
+            '</div>'
+        );
 
         $.ajax({
             url: "/Reserva/PartialVinculacionMenor",
@@ -78,28 +209,7 @@
             dataType: "html",
             success: function (data) {
                 $("#divContentPasajeroMenor").html(data);
-
             }
         });
     }
 </script>
-<!--Ids -->
-<input type="hidden" id="hdnMayorId" value=""/>
-<input type="hidden" id="hdnMenorId" value=""/>
-<input type="hidden" id="hdnPasajeId" value="" />
-
-
-<div style="height:500px;">
-    <div style="display:none;">
-        <input type="text" id="txtMayor" placeholder="Seleccione un tutor" />
-        <input type="button" onclick="javascript: showFormListaMayor();" title="Click para seleccionar un tutor o responsable del menor." value="+" class="btn-small btn-inverse" style="font-size: 11px;margin-bottom: 10px;margin-right: 20px;"/>
-        <input type="text" id="txtMenor" placeholder="Seleccione un menor" />
-        <input type="button" onclick="javascript: showFormListaMenor();" value="+" class="btn-small btn-inverse" style="font-size: 11px;margin-bottom: 10px;" title="Click para seleccionar un menor."/>
-        <input type="button" onclick="javascript: valForm();" style="font-size: 11px;margin-bottom: 10px;" class="btn btn-small btn-inverse" value="+ Vincular Menor" title="Click para finalizar la vinculación." />
-       
-    </div>
-    <div id="divContentPasajeroMenor">
-       
-    </div>
-    
-</div>

@@ -5,7 +5,7 @@
 
 ---
 
-## COMPLETADAS (67 vistas modernizadas):
+## COMPLETADAS (88 vistas modernizadas):
 
 ### Fase 1 - Completadas anteriormente:
 1. Home/Index.cshtml
@@ -179,13 +179,15 @@ Se verificaron las siguientes vistas y se encontro que:
 
 #### Reservas:
 - ~~Reserva/FormReserva.cshtml~~ - **COMPLETADA**
-- Reserva/VinculacionMenor.cshtml
-- Reserva/QuickSearch.cshtml
+- ~~Reserva/VinculacionMenor.cshtml~~ - **COMPLETADA**
+- ~~Reserva/QuickSearch.cshtml~~ - **MINIMA** (3 líneas, solo renderiza modelo)
 - Reserva/DistribucionCoche.cshtml
-- Reserva/FormListaMayor.cshtml
-- Reserva/FormListaMenor.cshtml
-- Reserva/PartialVinculacionMenor.cshtml
-- Reserva/GetOffListPassengers.cshtml
+- ~~Reserva/FormListaMayor.cshtml~~ - **COMPLETADA**
+- ~~Reserva/FormListaMenor.cshtml~~ - **COMPLETADA**
+- ~~Reserva/PartialVinculacionMenor.cshtml~~ - **COMPLETADA**
+- ~~Reserva/GetOffListPassengers.cshtml~~ - **COMPLETADA**
+- ~~Reserva/RenderGridPasajeros.cshtml~~ - **COMPLETADA**
+- ~~Reserva/ObservacionesGeneralesEdit.cshtml~~ - **COMPLETADA**
 
 #### Pasajeros:
 - PasajeroViaje/Manifiesto.cshtml
@@ -194,8 +196,8 @@ Se verificaron las siguientes vistas y se encontro que:
 - PasajeroViaje/PartialPasajerosHistorial.cshtml
 
 #### PersonaCliente (Vistas adicionales):
-- PersonaCliente/Voucher.cshtml
-- PersonaCliente/VoucherGrupal.cshtml
+- PersonaCliente/Voucher.cshtml - **DOCUMENTO DE IMPRESION** (CSS externo)
+- PersonaCliente/VoucherGrupal.cshtml - **DOCUMENTO DE IMPRESION** (CSS externo)
 - ~~PersonaCliente/CuentaCorriente.cshtml~~ - **COMPLETADA**
 - ~~PersonaCliente/HistorialdePagos.cshtml~~ - **COMPLETADA**
 - ~~PersonaCliente/HistorialCuenta.cshtml~~ - **COMPLETADA**
@@ -261,8 +263,8 @@ Se verificaron las siguientes vistas y se encontro que:
 - Herramientas/Cotizador.cshtml
 - Busqueda/Card.cshtml
 - Busqueda/Perfil.cshtml
-- NotaCredito/partialNotaCredito.cshtml
-- NotaCredito/partialMovimientoNotaCredito.cshtml
+- ~~NotaCredito/partialNotaCredito.cshtml~~ - **COMPLETADA**
+- ~~NotaCredito/partialMovimientoNotaCredito.cshtml~~ - **COMPLETADA**
 - CuentaCorriente/DetalleComprobante.cshtml
 - Home/HistorialPagos.cshtml
 - Home/TodosLosViajes.cshtml
@@ -288,10 +290,11 @@ Se verificaron las siguientes vistas y se encontro que:
 | Fase 3 | Formularios y Tablas Medios | 11 | **COMPLETADA** |
 | Fase 4 | Formularios Complejos | 10 | **COMPLETADA** |
 | Fase 5 | Vistas Muy Complejas | 9 | **COMPLETADA** (NuevaReserva excluida por riesgo) |
-| Fase 6 | Vistas Especializadas | ~56 | En progreso (16 completadas) |
+| Fase 6 | Vistas Especializadas | ~56 | En progreso (25 completadas + 3 especiales) |
 
-**TOTAL COMPLETADAS:** 79 vistas (+16 en esta sesion)
-**TOTAL PENDIENTES:** ~44 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
+**TOTAL COMPLETADAS:** 88 vistas (+9 en esta sesion)
+**TOTAL PENDIENTES:** ~35 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
+**ESPECIALES:** 3 vistas (2 documentos de impresión, 1 mínima)
 
 ---
 
@@ -320,11 +323,23 @@ Se verificaron las siguientes vistas y se encontro que:
 15. ~~**PersonaCliente/HistorialCuenta.cshtml**~~ - **COMPLETADA**
 16. ~~**PersonaCliente/NotaCreditoList.cshtml**~~ - **COMPLETADA**
 
-### Nuevas prioridades:
-17. **PersonaCliente/Voucher.cshtml** - Voucher de cliente
-18. **PersonaCliente/VoucherGrupal.cshtml** - Voucher grupal
-19. **Reserva/VinculacionMenor.cshtml** - Vinculación de menores
-20. **Reserva/QuickSearch.cshtml** - Búsqueda rápida de reservas
+### Completadas adicionales (batch 3 - sesión 7):
+17. ~~**Reserva/VinculacionMenor.cshtml**~~ - **COMPLETADA** - Diálogo de vinculación de menores
+18. ~~**Reserva/FormListaMayor.cshtml**~~ - **COMPLETADA** - Lista de tutores con DataTables
+19. ~~**Reserva/FormListaMenor.cshtml**~~ - **COMPLETADA** - Lista de menores con selección múltiple
+20. ~~**Reserva/PartialVinculacionMenor.cshtml**~~ - **COMPLETADA** - Tabla de menores vinculados
+21. ~~**Reserva/ObservacionesGeneralesEdit.cshtml**~~ - **COMPLETADA** - Formulario de edición
+22. ~~**Reserva/GetOffListPassengers.cshtml**~~ - **COMPLETADA** - Lista de espera modernizada
+23. ~~**Reserva/RenderGridPasajeros.cshtml**~~ - **COMPLETADA** - Grid de pasajeros
+24. ~~**NotaCredito/partialMovimientoNotaCredito.cshtml**~~ - **COMPLETADA** - Movimientos nota crédito
+25. ~~**NotaCredito/partialNotaCredito.cshtml**~~ - **COMPLETADA** - Detalle nota crédito
+
+### Documentos de impresión (no requieren modernización CSS):
+- **PersonaCliente/Voucher.cshtml** - Documento de impresión con CSS externo (voucher.css)
+- **PersonaCliente/VoucherGrupal.cshtml** - Documento de impresión grupal con CSS externo
+
+### Vistas mínimas (ya funcionales):
+- **Reserva/QuickSearch.cshtml** - Solo 3 líneas, renderiza HTML del modelo
 
 ---
 
@@ -342,4 +357,4 @@ Se verificaron las siguientes vistas y se encontro que:
 
 ---
 
-**Ultima actualizacion:** 2026-01-09 (Sesion 6: +16 vistas Fase 6 modernizadas - Total 79 vistas)
+**Ultima actualizacion:** 2026-01-09 (Sesion 7: +9 vistas Fase 6 modernizadas - Total 88 vistas)

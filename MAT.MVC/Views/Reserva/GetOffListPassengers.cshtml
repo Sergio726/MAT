@@ -1,68 +1,211 @@
-﻿
-<fieldset class="customborder">
-    <legend class="custom_font_size_12">
-        Agregar persona a Lista de Espera
-    </legend>
+<style>
+    .waiting-list-container {
+        padding: 0.5rem;
+    }
+    .waiting-list-section {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    .section-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .section-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .tipo-pasajero-options {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    .tipo-pasajero-option {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        cursor: pointer;
+    }
+    .tipo-pasajero-option input[type="radio"] {
+        accent-color: var(--primary-color, #e91e63);
+    }
+    .tipo-pasajero-option label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-primary, #374151);
+        cursor: pointer;
+    }
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .form-input {
+        width: 100%;
+        max-width: 400px;
+        padding: 0.625rem 0.875rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .form-textarea {
+        width: 100%;
+        min-height: 80px;
+        resize: vertical;
+    }
+    .result-label {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--primary-color, #e91e63);
+        min-height: 1.25rem;
+    }
+    .btn-add-list {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 1rem;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-add-list:hover {
+        background: var(--primary-hover, #d81b60);
+    }
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .table-container {
+        overflow-x: auto;
+    }
+    #tblWaitingList {
+        width: 100% !important;
+    }
+    #tblWaitingList thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblWaitingList tbody td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblWaitingList tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .btn-delete-row {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-delete-row:hover {
+        background: #dc2626;
+        color: white;
+    }
+    .hide {
+        display: none !important;
+    }
+</style>
 
-    <section class="search-perfil custom_padding_4" style="width:60%;">
-        <div>
-            <div class="custom_display_inline_flex custom_padding_4 custom_font_weigh_bold">
-                <input type="radio" name="type_pasajero" value="Pasajero Temporal" id="op_pTemporal" checked/><label for="op_pTemporal">Pasajero Temporal</label>
+<div class="waiting-list-container">
+    <div class="waiting-list-section">
+        <div class="section-title">
+            <i class="bi bi-person-plus"></i>
+            Agregar persona a Lista de Espera
+        </div>
+
+        <div class="tipo-pasajero-options">
+            <div class="tipo-pasajero-option">
+                <input type="radio" name="type_pasajero" value="Pasajero Temporal" id="op_pTemporal" checked />
+                <label for="op_pTemporal">Pasajero Temporal</label>
             </div>
-            <div id="div_B" class="custom_display_inline_flex custom_padding_4 custom_font_weigh_bold">
-                <input type="radio" name="type_pasajero" value="Pasajero Frecuente" id="op_pFrecuante" /><label for="op_pFrecuante">Pasajero Frecuente</label>
+            <div class="tipo-pasajero-option">
+                <input type="radio" name="type_pasajero" value="Pasajero Frecuente" id="op_pFrecuante" />
+                <label for="op_pFrecuante">Pasajero Frecuente</label>
             </div>
-            
-            <div id="busqueda-persona" class="custom_display_flex_align_items hide">
-                @*<p>Lista de clientes que no se encuentran en viaje actual</p>*@
-                <input id="txt-filter-persona-toWaitingList" type="text" placeholder="Ingrese Nombre o DNI" />
+        </div>
+
+        <div class="form-row">
+            <div id="busqueda-persona" class="hide">
+                <input id="txt-filter-persona-toWaitingList" type="text" class="form-input" placeholder="Ingrese Nombre o DNI" />
                 <input type="hidden" id="hdnPassengerID" />
                 <input type="hidden" id="hdnViajeID" value="@ViewBag.ViajeID" />
-
             </div>
-            <div id="div-pasajero-temporal" class="custom_display_flex_align_items">
-                <input id="txt-pasajero-temporal" type="text" placeholder="Apellido y Nombre" />
+            <div id="div-pasajero-temporal">
+                <input id="txt-pasajero-temporal" type="text" class="form-input" placeholder="Apellido y Nombre" />
             </div>
         </div>
-        
-        <div>
-            <label id="lblResultPersona" class="custom_margin_bottom_10 custom_font_size_11 custom_font_weigh_bold"></label>
-            <textarea placeholder="Observaciones" id="txtObservacion" class="custom_width_100percent custom_padding_0"></textarea>
-        </div>
-        <div class="custom_text_aling_right">
-            <input type="button" id="btnAddToList" onclick="AddToList();" value="Agregar a Lista de Espera" class="btn btn-small btn-inverse custom_margin_left_5" />
+
+        <div class="form-row">
+            <label id="lblResultPersona" class="result-label"></label>
+            <textarea placeholder="Observaciones" id="txtObservacion" class="form-input form-textarea"></textarea>
         </div>
 
-
-
-    </section>
-</fieldset>
-
-
-
-<fieldset class="customborder">
-    <legend class="custom_font_size_12">
-        Lista de Espera
-    </legend>
-    <div id="divListOffListPassengers">
-        <table id="tblWaitingList" class="mat-customtable">
-            <thead>
-                <tr>
-                    <th>Cliente</th>
-                    <th>Vendedor</th>
-                    <th>Fecha</th>
-                    <th>Observaciones</th>
-                    <th></th>
-                </tr>
-                
-            </thead>
-        </table>
+        <div class="form-actions">
+            <button type="button" id="btnAddToList" onclick="AddToList();" class="btn-add-list">
+                <i class="bi bi-plus-circle"></i>
+                Agregar a Lista de Espera
+            </button>
+        </div>
     </div>
-</fieldset>
-    
+
+    <div class="waiting-list-section">
+        <div class="section-title">
+            <i class="bi bi-list-ul"></i>
+            Lista de Espera
+        </div>
+        <div id="divListOffListPassengers" class="table-container">
+            <table id="tblWaitingList" class="display">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Vendedor</th>
+                        <th>Fecha</th>
+                        <th>Observaciones</th>
+                        <th style="width: 50px;"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
-    
     $("#op_pTemporal").click(function () {
         $("#div-pasajero-temporal").removeClass("hide");
         $("#busqueda-persona").addClass("hide");
@@ -81,7 +224,6 @@
         $("#txt-filter-persona-toWaitingList").autocomplete({
             minLength: 3,
             source: function (request, response) {
-
                 $.ajax({
                     url: "/Reserva/PersonaAutocomplete",
                     data: {
@@ -89,22 +231,18 @@
                         sViajeID: $("#hdnViajeID").val()
                     },
                     success: function (data) {
-                        response($.map(data,
-                                    function (item) {
-                                        return {
-                                            label: item.Nombre + " " + item.Apellido + " - Doc: " + item.NroDocumento,
-                                            value: item.Nombre + " " + item.Apellido,
-                                            id: item.PersonaID,
-                                        }
-                                    }));
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.Nombre + " " + item.Apellido + " - Doc: " + item.NroDocumento,
+                                value: item.Nombre + " " + item.Apellido,
+                                id: item.PersonaID,
+                            }
+                        }));
                     }
                 })
-
             },
             select: function (event, ul) {
-
                 var sRestult = ul.item.label;
-
                 $("#lblResultPersona").text(sRestult);
                 $("#hdnPassengerID").val(ul.item.id);
             }
@@ -114,10 +252,6 @@
     });
 
     function AddToList() {
-        //alert("listo!");
-        //mosrtar loading
-
-
         $.ajax({
             url: "/Reserva/InsertPersonToWatingList",
             data: {
@@ -127,18 +261,14 @@
                 sPasajeroTemporal: $("#txt-pasajero-temporal").val()
             },
             success: function (data) {
-
                 console.log(data);
-
                 CleanDataInputs();
                 Load_tblWaitingList('@ViewBag.ViajeID');
             }
         })
-
     };
 
-  
-    function CleanDataInputs(){
+    function CleanDataInputs() {
         $("#txt-filter-persona-toWaitingList").val("");
         $("#lblResultPersona").text("");
         $("#hdnPassengerID").val("");
@@ -148,8 +278,6 @@
 
     var tblWaitingList;
     function Load_tblWaitingList(ViajeID) {
-
-
         if (tblWaitingList != undefined) {
             tblWaitingList.clear();
             tblWaitingList.draw();
@@ -158,26 +286,17 @@
 
         var jTables = '';
 
-
         $.ajax({
             url: "/Reserva/GetWatinList",
-            data: {
-                ViajeID: ViajeID
-            },
+            data: { ViajeID: ViajeID },
             dataType: "json",
             success: function (data) {
-                //debugger
                 if (data.Error == "") {
                     jTables = JSON.parse(data.jsTable);
-                    //console.log(jTables);
-                }
-                else {
+                } else {
                     alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     console.log(data.Error);
-
                 }
-
-                //load table
 
                 tblWaitingList = $("#tblWaitingList").DataTable({
                     "data": jTables.Table,
@@ -189,53 +308,40 @@
                         {
                             "data": "Opciones",
                             "mRender": function (data, type, row) {
-
-                                var data = "<a LinkId='" + row.Id + "' class='.delete-pas-link' href='#' onclick='deleteItemRow(this);'><img src='/Images/cross.png' width='32' height='32' title='Quitar'></a>";
-                                return data;
+                                return '<button type="button" class="btn-delete-row" LinkId="' + row.Id + '" onclick="deleteItemRow(this);" title="Quitar"><i class="bi bi-x-lg"></i></button>';
                             }
                         }
                     ],
                     "bAutoWidth": false,
-                    "pageLength": 25
+                    "pageLength": 25,
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+                    }
                 });
-
             }
         });
-
-
     };
 
-  
     function deleteItemRow(link) {
-
         RowId = $(link).attr('linkid').toString();
-       
+
         $.ajax({
             url: "/Reserva/DeleteToWatingList",
-            data: {
-                Id: RowId,
-            },
+            data: { Id: RowId },
             dataType: "json",
             success: function (data) {
-
                 if (data.Mensaje == "Done") {
-
-                    //delete row to table
                     tblWaitingList
-                                .row($(link).parents('tr'))
-                                .remove()
-                                .draw();
-                }
-                else {
+                        .row($(link).parents('tr'))
+                        .remove()
+                        .draw();
+                } else {
                     if (data.Mensaje == "Error.") {
                         alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                         console.log(data.Error);
                     }
-
                 }
-
             }
         });
     }
-
 </script>

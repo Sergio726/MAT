@@ -1,90 +1,85 @@
-﻿@*@model IEnumerable<MAT.Entities.PersonaPasajero>*@
 @model List<MAT.Entities.PersonaCliente>
 @using MAT.Enums
 @using MAT.Utilities
 @using MAT.Entities
 
-<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-<link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
-<script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
+<style>
+    .render-grid-pasajeros-container {
+        padding: 0.25rem;
+    }
+    #grid-seleccionar-pasajero {
+        width: 100% !important;
+    }
+    #grid-seleccionar-pasajero thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #grid-seleccionar-pasajero tbody td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #grid-seleccionar-pasajero tbody tr {
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    #grid-seleccionar-pasajero tbody tr:hover {
+        background: #fce7f3;
+    }
+    #grid-seleccionar-pasajero tbody tr.odd {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    #grid-seleccionar-pasajero tbody tr.odd:hover {
+        background: #fce7f3;
+    }
+</style>
+
+<div class="render-grid-pasajeros-container">
+    <table id="grid-seleccionar-pasajero" class="display">
+        <thead>
+            <tr>
+                <th class="hidden"></th>
+                <th>Apellido</th>
+                <th>Nombre</th>
+                <th>Tipo Doc.</th>
+                <th>Nro Doc.</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PersonaCliente item in Model)
+            {
+                <tr class="row-pasajero" data-id="@item.ClienteId">
+                    <td class="hidden">
+                        <label name="ClienteId">@item.ClienteId</label>
+                    </td>
+                    <td>@item.Apellido</td>
+                    <td>@item.Nombre</td>
+                    <td>@((eTipoDocumento)item.TipoDocumento)</td>
+                    <td>@item.NroDocumento</td>
+                    <td>@item.Telefono</td>
+                    <td>@item.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 <script type="text/javascript">
-    // NO inicializar DataTables aquí - se inicializa desde SeleccionarPasajero.cshtml
-    // Esto evita la doble inicialización cuando se carga el contenido via .load()
     $(function () {
-        $("table tbody tr:odd").addClass("odd");
-
         $("#panel-bus a.selected").each(function () {
             var pasajeroid = $(this).data("pasajero");
             if (pasajeroid) {
                 $("tr.row-pasajero[data-id=" + pasajeroid + "]").hide();
             }
-        });
-    });
-</script>
-
-<table id="grid-seleccionar-pasajero" class="grid mat-customtable">
-    <thead>
-    <tr>
-        <th class="hidden">
-        </th>
-        <th>
-            Apellido
-        </th>
-        <th>
-            Nombre
-        </th>
-        <th>
-           Tipo Documento
-        </th>
-        <th>
-            Nro Documento
-        </th>
-        <th>
-            Telefono
-        </th>
-        <th>
-            Email
-        </th>       
-    </tr>
-        </thead>
-    <tbody>    
-@foreach (PersonaCliente item in Model)
-{
-    <tr class="row-pasajero" data-id="@item.ClienteId">
-        <td class="hidden">
-            <label name="ClienteId">@item.ClienteId </label>
-        </td>
-        <td>
-            @item.Apellido
-        </td>
-        <td>
-            @item.Nombre
-        </td>
-        <td>
-            @((eTipoDocumento)item.TipoDocumento)
-            
-        </td>
-        <td>
-            @item.NroDocumento
-        </td>
-        <td>
-            @item.Telefono
-        </td>
-        <td>
-            @item.Email
-        </td>
-    </tr>
-}
-        </tbody>
-</table>
-<script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
-
-        $("#panel-bus a.selected").each(function () {
-            var pasajeroid = $(this).data("pasajero").trim();
-            $("tr.row-pasajero[data-id=" + pasajeroid + "]").hide();
         });
     });
 </script>

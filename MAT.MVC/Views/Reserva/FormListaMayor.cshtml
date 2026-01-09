@@ -1,73 +1,114 @@
-﻿@model List<MAT.MVC.Models.PasajeroMayor>
+@model List<MAT.MVC.Models.PasajeroMayor>
 @using MAT.Enums
 @using MAT.Utilities
 @using MAT.Entities
 
-<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-<link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
-<script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
+<style>
+    .form-lista-mayor-container {
+        padding: 0.5rem;
+    }
+    .help-icon-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 0.5rem;
+    }
+    .help-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        background: #fef3c7;
+        color: #92400e;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+    }
+    .help-badge i {
+        font-size: 0.875rem;
+    }
+    .table-container {
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    #grid-seleccionar-pasajero {
+        width: 100% !important;
+    }
+    #grid-seleccionar-pasajero thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #grid-seleccionar-pasajero tbody td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #grid-seleccionar-pasajero tbody tr {
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+    #grid-seleccionar-pasajero tbody tr:hover {
+        background: #fce7f3;
+    }
+    #grid-seleccionar-pasajero tbody tr:active {
+        background: #fbcfe8;
+    }
+</style>
+
+<div class="form-lista-mayor-container">
+    <div class="help-icon-row">
+        <div class="help-badge" title="Muestra aquellas personas que son titulares de la compra o pago de la factura del viaje. Dichas personas pueden ser responsables de un menor.">
+            <i class="bi bi-info-circle"></i>
+            Titulares de factura
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table id="grid-seleccionar-pasajero" class="display">
+            <thead>
+                <tr>
+                    <th class="hidden"></th>
+                    <th>Apellido</th>
+                    <th>Nombre</th>
+                    <th>Tipo Doc.</th>
+                    <th>Nro Doc.</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (MAT.MVC.Models.PasajeroMayor item in Model)
+                {
+                    <tr data-id="@item.ClienteId" data-pasajeid="@item.PasajeID" data-apellido="@item.Apellido" data-nombre="@item.Nombre" onclick="addMayor(this);">
+                        <td class="hidden">
+                            <label name="ClienteId">@item.ClienteId</label>
+                        </td>
+                        <td>@item.Apellido</td>
+                        <td>@item.Nombre</td>
+                        <td>@((eTipoDocumento)item.TipoDocumento)</td>
+                        <td>@item.NroDocumento</td>
+                        <td>@item.Telefono</td>
+                        <td>@item.Email</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#grid-seleccionar-pasajero").DataTable();
+        $("#grid-seleccionar-pasajero").DataTable({
+            "pageLength": 10,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+            }
+        });
     });
 </script>
-
-<div style="float: right;padding-bottom: 5px;">
-    <div class="iconHelp" title="Muestra aquellas personas que son titulares de la compra o pago de la factura del viaje. Dichas personas pueden ser responsables de un menor."></div>
-</div>
-<table id="grid-seleccionar-pasajero" class="mat-customtable" style="width:99%;">
-    <thead>
-    <tr>
-        <th class="hidden">
-        </th>
-        <th>
-            Apellido
-        </th>
-        <th>
-            Nombre
-        </th>
-        <th>
-           Tipo Documento
-        </th>
-        <th>
-            Nro Documento
-        </th>
-        <th>
-            Telefono
-        </th>
-        <th>
-            Email
-        </th>       
-    </tr>
-        </thead>
-    <tbody>    
-@foreach (MAT.MVC.Models.PasajeroMayor item in Model)
-{
-    <tr data-id="@item.ClienteId" data-pasajeid="@item.PasajeID" data-apellido="@item.Apellido" data-nombre="@item.Nombre" onclick="addMayor(this);">
-        <td class="hidden">
-            <label name="ClienteId">@item.ClienteId </label>
-        </td>
-        <td>
-            @item.Apellido
-        </td>
-        <td>
-            @item.Nombre
-        </td>
-        <td>
-            @((eTipoDocumento)item.TipoDocumento)
-            
-        </td>
-        <td>
-            @item.NroDocumento
-        </td>
-        <td>
-            @item.Telefono
-        </td>
-        <td>
-            @item.Email
-        </td>
-    </tr>
-}
-        </tbody>
-</table>
