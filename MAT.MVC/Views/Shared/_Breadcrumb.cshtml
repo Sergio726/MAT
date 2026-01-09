@@ -1,0 +1,92 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var id = ViewContext.RouteData.Values["id"]?.ToString();
+
+    // Mapeo de controladores a nombres legibles
+    var controllerNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Home", "Panel Principal" },
+        { "PersonaCliente", "Clientes" },
+        { "Hotel", "Hoteles" },
+        { "Transporte", "Transportes" },
+        { "Servicio", "Servicios" },
+        { "Excursion", "Excursiones" },
+        { "Precio", "Butacas" },
+        { "Adicional", "Adicionales" },
+        { "Viaje", "Viajes" },
+        { "Reserva", "Reservas" },
+        { "Factura", "Facturas" },
+        { "CuentaCorriente", "Cuenta Corriente" },
+        { "NotaCredito", "Notas de Credito" },
+        { "Paquete", "Paquetes" },
+        { "Admin", "Administracion" },
+        { "Account", "Cuenta" },
+        { "Busqueda", "Busqueda" }
+    };
+
+    // Mapeo de acciones a nombres legibles
+    var actionNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Index", "Listado" },
+        { "Create", "Nuevo" },
+        { "Edit", "Editar" },
+        { "Details", "Detalles" },
+        { "Delete", "Eliminar" },
+        { "ABM", "Nuevo" },
+        { "GestionViaje", "Gestion" },
+        { "GestionPaquete", "Gestion" }
+    };
+
+    var controllerDisplayName = controllerNames.ContainsKey(controller) ? controllerNames[controller] : controller;
+    var actionDisplayName = actionNames.ContainsKey(action) ? actionNames[action] : action;
+
+    var isHomePage = controller.Equals("Home", StringComparison.OrdinalIgnoreCase) &&
+                     action.Equals("Index", StringComparison.OrdinalIgnoreCase);
+}
+
+<div class="content-header">
+    <div class="content-header-left">
+        @if (!isHomePage)
+        {
+            <button type="button" class="btn-back" onclick="window.history.back()" title="Volver atras">
+                <i class="bi bi-arrow-left"></i>
+                <span>Volver</span>
+            </button>
+        }
+
+        <nav aria-label="breadcrumb" class="breadcrumb-nav">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/Home/Index">
+                        <i class="bi bi-house-door"></i>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                @if (!isHomePage)
+                {
+                    @if (!string.IsNullOrEmpty(controller) && !controller.Equals("Home", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <li class="breadcrumb-item">
+                            <a href="/@controller/Index">@controllerDisplayName</a>
+                        </li>
+                    }
+                    @if (!string.IsNullOrEmpty(action) && !action.Equals("Index", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">
+                            @actionDisplayName
+                            @if (!string.IsNullOrEmpty(id))
+                            {
+                                <span class="breadcrumb-id">#@id</span>
+                            }
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">@actionDisplayName</li>
+                    }
+                }
+            </ol>
+        </nav>
+    </div>
+</div>
