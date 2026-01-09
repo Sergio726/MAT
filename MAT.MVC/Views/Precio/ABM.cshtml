@@ -1,12 +1,38 @@
-﻿@model MAT.MVC.Models.PrecioModel
+@model MAT.MVC.Models.PrecioModel
+
+<style>
+    /* Estilos específicos para modal de precios */
+    .modal-precio-container {
+        padding: 1.5rem;
+    }
+
+    .modal-precio-container .modern-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .modal-precio-container .modern-form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    @@media (max-width: 576px) {
+        .modal-precio-container .modern-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
 <script type="text/javascript">
-    $("input[class='date']").datepicker({
-        changeMonth: true,
-        changeYear: true,
-        yearRange: '-100:+2'
+    $(document).ready(function() {
+        $(".date-picker").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '-100:+2',
+            dateFormat: 'dd/mm/yy'
+        });
     });
-   
+
     function savePrecio() {
         var parameters = $("#formPrecio").serializeArray();
 
@@ -57,64 +83,75 @@
                 }
             })
         }
-
-
     };
 
     function closePrecio() {
         $("#popupPrecios").dialog("close");
     }
-
 </script>
 
-    <div class="form">
-        <form id="formPrecio">
-            <input type="hidden" id="hdnPrecioID" name="PrecioID" value="@Model.PrecioID" />
-        <div class="form-label">
-            Monto
-        </div>
-        <div class="form-field">
-            <input type="number" name="Monto" value="@Model.Monto" />
+<div class="modal-precio-container">
+    <form id="formPrecio">
+        <input type="hidden" id="hdnPrecioID" name="PrecioID" value="@Model.PrecioID" />
+
+        <div class="modern-form-grid">
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-currency-dollar"></i>
+                    <span>Monto</span>
+                </label>
+                <input type="number" name="Monto" value="@Model.Monto" class="modern-form-input" placeholder="0.00" step="0.01" min="0" />
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Vigencia</span>
+                </label>
+                @if (Model.Vigencia.ToShortDateString() != "1/1/0001")
+                {
+                    <input type="text" class="modern-form-input date-picker" name="Vigencia" value="@Model.Vigencia.ToShortDateString()" placeholder="dd/mm/aaaa" />
+                }
+                else
+                {
+                    <input type="text" class="modern-form-input date-picker" name="Vigencia" placeholder="dd/mm/aaaa" />
+                }
+            </div>
+
+            <div class="modern-form-group full-width">
+                <label class="modern-form-label">
+                    <i class="bi bi-card-text"></i>
+                    <span>Descripcion</span>
+                </label>
+                <input type="text" name="Descripcion" value="@Model.Descripcion" class="modern-form-input" placeholder="Descripcion del precio" />
+            </div>
+
+            <div class="modern-form-group full-width">
+                <label class="modern-form-label">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Descripcion para Voucher</span>
+                </label>
+                <input type="text" name="DescripcionVoucher" value="@Model.DescripcionVoucher" class="modern-form-input" placeholder="Descripcion que aparecera en el voucher" />
+            </div>
+
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-calendar-month"></i>
+                    <span>Mes</span>
+                </label>
+                <input type="text" name="Mes" value="@Model.Mes" class="modern-form-input" placeholder="Ej: ENERO, FEBRERO..." />
+            </div>
         </div>
 
-        <div class="form-label">
-            Vigencia
+        <div class="modern-form-actions" style="margin-top: 1.5rem;">
+            <button type="button" class="btn-modern btn-modern-secondary" onclick="closePrecio();">
+                <i class="bi bi-x-circle"></i>
+                <span>Cancelar</span>
+            </button>
+            <button type="button" class="btn-modern btn-modern-primary" onclick="savePrecio();">
+                <i class="bi bi-check-circle"></i>
+                <span>Guardar</span>
+            </button>
         </div>
-        <div class="form-field">
-            @if (Model.Vigencia.ToShortDateString() != "1/1/0001")
-            {
-                <input type="datetime" class="date" name="Vigencia" value="@Model.Vigencia.ToShortDateString()" />
-              
-            }
-            else
-            {
-                <input type="datetime" class="date" name="Vigencia" />
-            }
-        </div>
-
-        <div class="form-label">
-            Descripcion
-        </div>
-        <div class="form-field">
-           <input type="text" name="Descripcion" value="@Model.Descripcion"/>
-        </div>
-        <div class="form-label">
-            Descripcion para Voucher
-        </div>
-        <div class="form-field">
-           <input type="text" name="DescripcionVoucher" value="@Model.DescripcionVoucher"/>
-        </div>
-        <div class="form-label">
-            Mes
-        </div>
-        <div class="form-field">
-           <input type="text" name="Mes" value="@Model.Mes" />
-        </div>
-        </form>
-        
-
-        <p class="botonera-form">
-            <input type="button" value="Guardar" onclick="javascript: savePrecio();" class="btn btn-inverse btn-small" />
-            <input type="button" value="Cancelar" onclick="javascript: closePrecio();" class="btn btn-inverse btn-small" />
-        </p>
-    </div>
+    </form>
+</div>

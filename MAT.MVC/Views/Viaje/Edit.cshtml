@@ -1,203 +1,377 @@
-﻿@model MAT.MVC.Models.ViajeModel
+@model MAT.MVC.Models.ViajeModel
 @using MAT.Utilities
 @using MAT.MVC.Models
 @{
     ViewBag.Title = "Editar Viaje";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var isNew = ViewBag.Action == "new";
+    var isDetail = ViewBag.Action == "detail";
+    var pageTitle = isNew ? "Nuevo Viaje" : (isDetail ? "Detalle del Viaje" : "Editar Viaje");
+    var pageIcon = isNew ? "bi-plus-circle" : (isDetail ? "bi-eye" : "bi-pencil-square");
 }
+
 <link href="~/Content/magicsearch/jquery.magicsearch.css" rel="stylesheet" />
 <link href="~/Content/magicsearch/normalize.css" rel="stylesheet" />
 
+<style>
+    .modern-form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .modern-form-section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 1rem;
+    }
+    .modern-form-section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .modern-form-section-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .form-grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+    @@media (max-width: 992px) {
+        .form-grid-3, .form-grid-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @@media (max-width: 576px) {
+        .form-grid-2, .form-grid-3, .form-grid-4 {
+            grid-template-columns: 1fr;
+        }
+    }
+    .modern-switch-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: var(--bg-secondary, #f8f9fa);
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .modern-switch-container input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: var(--primary-color, #e91e63);
+    }
+    .required-mark {
+        color: var(--primary-color, #e91e63);
+        margin-left: 0.25rem;
+    }
+</style>
 
-<h2 class="title">Editar - Viaje</h2>
-
-
-<form id="formViaje">
-    <input type="hidden" id="ViajeID" name="ViajeID" value="@Model.ViajeID"/>
-    <div class="form">
-
-        <div class="form-label">
-            <label>Paquete <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-
-            <input id="DDPaqueteId" placeholder="BUSCAR PAQUETE" type="text" value="@Model.PaqueteNombre" title="ESCRIBA PARA BUSCAR UN PAQUETE" />
-            <input type="hidden" id="PaqueteId" name="PaqueteId" value="@Model.PaqueteID" />
-        </div>
-        <div class="form-label">
-            <label>Transporte <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <select id="BusID" name="BusID">
-                @foreach (TransporteModel Transporte in TransporteMethod.GetListTransporte())
-                {
-                    <option value="@Transporte.TransporteID" @(Model.BusID == Transporte.TransporteID ? "selected" : "")>@(Transporte.NroCoche +" MATRICULA: " + Transporte.Matricula)</option>
-                }
-            </select>
-        </div>
-        <div class="form-label">
-            <label>Descripción <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input class="valtxt" type="text" id="Descripcion" name="Descripcion" value="@Model.Descripcion" />
-        </div>
-        <div class="form-label">
-            <label>Origen <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input class="valtxt" type="text" id="Origen" name="Origen" value="@Model.Origen" />
-        </div>
-
-        <div class="form-label">
-            <label>Fecha de Salida <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input class="valtxt date" type="text" id="FechaSalida" name="FechaSalida" class="date" value="@Model.FechaSalida" />
-        </div>
-
-        <div class="form-label">
-            <label>Hora de Salida <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input type="text" id="HoraSalida" name="HoraSalida" class="time" value="@Model.HoraSalida" />
-        </div>
-
-        <div class="form-label">
-            <label>Fecha de Regreso <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input class="valtxt date" type="text" id="FechaRegreso" name="FechaRegreso" class="date" value="@Model.FechaRegreso" />
-        </div>
-
-        <div class="form-label">
-            <label>Hora de Regreso <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input type="text" id="HoraRegreso" name="HoraRegreso" class="time" value="@Model.HoraRegreso" />
-        </div>
-
-        <div class="form-label">
-            <label title="Indicar cuando minitos antes de la salida del viaje es la concentración">Tiempo de Concentración en Minutos<span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input type="number" id="TiempoConsentracion" name="TiempoConsentracion" value="@Model.TiempoConsentracion" />
-        </div>
-
-        <div class="form-label">
-            <label>Pais de Origen <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input class="valtxt" type="text" id="PaisOrigen" name="PaisOrigen" value="@Model.PaisOrigen" />
-        </div>
-
-        <div class="form-label">
-            <label>Pais de Destino <span class="required">*</span></label>
-        </div>
-        <div class="form-field">
-            <input class="valtxt" type="text" id="PaisDestino" name="PaisDestino" value="@Model.PaisDestino" />
-        </div>
-
-        <div class="form-label">
-            <label>Paso</label>
-        </div>
-        <div class="form-field">
-            <input type="text" id="Paso" name="Paso" value="@Model.Paso" />
-        </div>
-
-        <div class="form-label">
-            <label>Medio</label>
-        </div>
-        <div class="form-field">
-            <select id="Medio" name="Medio">
-                <option value="AEREO" @(Model.Medio == "AEREO" ? "selected" : "")>AEREO</option>
-                <option value="TERRESTRE" @(Model.Medio == "TERRESTRE" ? "selected" : "")>TERRESTRE</option>
-            </select>
-        </div>
-        <div class="form-label">
-            <label>Tipo Moneda</label>
-        </div>
-        <div class="form-field">
-            <select id="MonedaTipo" name="MonedaTipo">
-                <option value="1" @(Model.MonedaTipo == 1 ? "selected" : "")>Peso Argentino $</option>
-                <option value="3" @(Model.MonedaTipo == 3 ? "selected" : "")>Dolar U$D</option>
-            </select>
-        </div>
-        <div class="form-label">
-            <label>Precio Semicama</label>
-        </div>
-        <div class="form-field">
-            <input type="number" id="PrecioSemicama" name="PrecioSemicama" value="@Model.PrecioSemicama" />
-        </div>
-        <div class="form-label">
-            <label>Precio Cama</label>
-        </div>
-        <div class="form-field">
-            <input type="number" id="PrecioCama" name="PrecioCama" value="@Model.PrecioCama" />
-        </div>
-        <div class="form-label">
-            <label>Precio Promocional</label>
-        </div>
-        <div class="form-field">
-            <input type="number" id="PrecioPromocional" name="PrecioPromocional" value="@Model.PrecioPromocional" />
-        </div>
-        <div class="form-label">
-            <label>Vencimiento de Promoción</label>
-        </div>
-        <div class="form-field">
-            <input type="text" class="date" id="FechaPromocion" name="FechaPromocion" value="@Model.FechaPromocion" />
-        </div>
-        <div class="form-label">
-            <label>Numero de Dias</label>
-        </div>
-        <div class="form-field">
-            <input type="number" id="nDias" name="nDias" value="@Model.nDias" />
-        </div>
-        <div class="form-label">
-            <label>Numero de Noches</label>
-        </div>
-        <div class="form-field">
-            <input type="number" id="nNoches" name="nNoches" value="@Model.nNoches" />
-        </div>
-        <div class="form-label">
-            <label>Observ. del Viaje</label>
-        </div>
-        <div class="form-field">
-            <input type="text" id="Observaciones" name="Observaciones" value="@Model.Observaciones" title="Agregar observacines. Use la coma (,) para separar los items" />
-        </div>
-        <div class="form-label">
-            <label>Publicar en Pag. Web</label>
-        </div>
-        <div class="form-field" style="background-color: #888888 "> 
-            <input id="IsPublicWeb" name="IsPublicWeb" value="@Model.IsPublicWeb" @(Model.IsPublicWeb == true? "checked" : "") type="checkbox" />
-        </div>
-        <input type="hidden" class="field-id" value="@Model.ViajeID" />
-        <p>
-            <a id="a_editar_viaje" style="display:none" href="/Viaje/Edit/?sAction=edit&sViajeID=@Model.ViajeID" class="btn btn-small btn-inverse">Editar</a>
-            <input type="button" value="Guardar" id="btn_guardar_viaje" class="btn btn-small btn-inverse" onclick="javascript: UpdateForm();" />
-            @Html.ActionLink("Volver a Lista de Viajes", "Index", null, new { @class = "btn btn-small btn-inverse" })
-        </p>
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi @pageIcon"></i>
+            <span>@pageTitle</span>
+        </h2>
     </div>
 
-</form>
+    <div class="modern-form-container">
+        <form id="formViaje">
+            <input type="hidden" id="ViajeID" name="ViajeID" value="@Model.ViajeID" />
+
+            <!-- Sección: Información Básica -->
+            <div class="modern-form-section">
+                <div class="modern-form-section-title">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Informacion Basica</span>
+                </div>
+                <div class="form-grid-2">
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Paquete<span class="required-mark">*</span></span>
+                        </label>
+                        <input id="DDPaqueteId" placeholder="Buscar paquete..." type="text" value="@Model.PaqueteNombre" title="Escriba para buscar un paquete" class="modern-form-input" />
+                        <input type="hidden" id="PaqueteId" name="PaqueteId" value="@Model.PaqueteID" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-bus-front"></i>
+                            <span>Transporte<span class="required-mark">*</span></span>
+                        </label>
+                        <select id="BusID" name="BusID" class="modern-form-select">
+                            @foreach (TransporteModel Transporte in TransporteMethod.GetListTransporte())
+                            {
+                                <option value="@Transporte.TransporteID" @(Model.BusID == Transporte.TransporteID ? "selected" : "")>@(Transporte.NroCoche + " MATRICULA: " + Transporte.Matricula)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-card-text"></i>
+                            <span>Descripcion<span class="required-mark">*</span></span>
+                        </label>
+                        <input class="modern-form-input valtxt" type="text" id="Descripcion" name="Descripcion" value="@Model.Descripcion" placeholder="Descripcion del viaje" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-geo-alt"></i>
+                            <span>Origen<span class="required-mark">*</span></span>
+                        </label>
+                        <input class="modern-form-input valtxt" type="text" id="Origen" name="Origen" value="@Model.Origen" placeholder="Ciudad de origen" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Fechas y Horarios -->
+            <div class="modern-form-section">
+                <div class="modern-form-section-title">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Fechas y Horarios</span>
+                </div>
+                <div class="form-grid-4">
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-calendar-plus"></i>
+                            <span>Fecha Salida<span class="required-mark">*</span></span>
+                        </label>
+                        <input class="modern-form-input valtxt date" type="text" id="FechaSalida" name="FechaSalida" value="@Model.FechaSalida" placeholder="dd/mm/aaaa" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-clock"></i>
+                            <span>Hora Salida<span class="required-mark">*</span></span>
+                        </label>
+                        <input type="text" id="HoraSalida" name="HoraSalida" class="modern-form-input time" value="@Model.HoraSalida" placeholder="HH:MM" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Fecha Regreso<span class="required-mark">*</span></span>
+                        </label>
+                        <input class="modern-form-input valtxt date" type="text" id="FechaRegreso" name="FechaRegreso" value="@Model.FechaRegreso" placeholder="dd/mm/aaaa" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Hora Regreso<span class="required-mark">*</span></span>
+                        </label>
+                        <input type="text" id="HoraRegreso" name="HoraRegreso" class="modern-form-input time" value="@Model.HoraRegreso" placeholder="HH:MM" />
+                    </div>
+                </div>
+
+                <div class="form-grid-3" style="margin-top: 1rem;">
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-hourglass-split"></i>
+                            <span>Tiempo Concentracion (min)<span class="required-mark">*</span></span>
+                        </label>
+                        <input type="number" id="TiempoConsentracion" name="TiempoConsentracion" value="@Model.TiempoConsentracion" class="modern-form-input" placeholder="30" title="Minutos antes de la salida para concentracion" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-sunrise"></i>
+                            <span>Numero de Dias</span>
+                        </label>
+                        <input type="number" id="nDias" name="nDias" value="@Model.nDias" class="modern-form-input" placeholder="0" min="0" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-moon-stars"></i>
+                            <span>Numero de Noches</span>
+                        </label>
+                        <input type="number" id="nNoches" name="nNoches" value="@Model.nNoches" class="modern-form-input" placeholder="0" min="0" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Ubicación y Transporte -->
+            <div class="modern-form-section">
+                <div class="modern-form-section-title">
+                    <i class="bi bi-globe-americas"></i>
+                    <span>Ubicacion y Medio de Transporte</span>
+                </div>
+                <div class="form-grid-4">
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-flag"></i>
+                            <span>Pais de Origen<span class="required-mark">*</span></span>
+                        </label>
+                        <input class="modern-form-input valtxt" type="text" id="PaisOrigen" name="PaisOrigen" value="@Model.PaisOrigen" placeholder="Ej: ARGENTINA" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-flag-fill"></i>
+                            <span>Pais de Destino<span class="required-mark">*</span></span>
+                        </label>
+                        <input class="modern-form-input valtxt" type="text" id="PaisDestino" name="PaisDestino" value="@Model.PaisDestino" placeholder="Ej: BRASIL" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-signpost-split"></i>
+                            <span>Paso Fronterizo</span>
+                        </label>
+                        <input type="text" id="Paso" name="Paso" value="@Model.Paso" class="modern-form-input" placeholder="Ej: PASO DE LOS LIBRES" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-airplane"></i>
+                            <span>Medio</span>
+                        </label>
+                        <select id="Medio" name="Medio" class="modern-form-select">
+                            <option value="TERRESTRE" @(Model.Medio == "TERRESTRE" ? "selected" : "")>TERRESTRE</option>
+                            <option value="AEREO" @(Model.Medio == "AEREO" ? "selected" : "")>AEREO</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Precios -->
+            <div class="modern-form-section">
+                <div class="modern-form-section-title">
+                    <i class="bi bi-currency-dollar"></i>
+                    <span>Precios</span>
+                </div>
+                <div class="form-grid-4">
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-cash-coin"></i>
+                            <span>Tipo Moneda</span>
+                        </label>
+                        <select id="MonedaTipo" name="MonedaTipo" class="modern-form-select">
+                            <option value="1" @(Model.MonedaTipo == 1 ? "selected" : "")>Peso Argentino $</option>
+                            <option value="3" @(Model.MonedaTipo == 3 ? "selected" : "")>Dolar U$D</option>
+                        </select>
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-tag"></i>
+                            <span>Precio Semicama</span>
+                        </label>
+                        <input type="number" id="PrecioSemicama" name="PrecioSemicama" value="@Model.PrecioSemicama" class="modern-form-input" placeholder="0.00" step="0.01" min="0" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-tag-fill"></i>
+                            <span>Precio Cama</span>
+                        </label>
+                        <input type="number" id="PrecioCama" name="PrecioCama" value="@Model.PrecioCama" class="modern-form-input" placeholder="0.00" step="0.01" min="0" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-percent"></i>
+                            <span>Precio Promocional</span>
+                        </label>
+                        <input type="number" id="PrecioPromocional" name="PrecioPromocional" value="@Model.PrecioPromocional" class="modern-form-input" placeholder="0.00" step="0.01" min="0" />
+                    </div>
+                </div>
+
+                <div class="form-grid-3" style="margin-top: 1rem;">
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-calendar-x"></i>
+                            <span>Vencimiento Promocion</span>
+                        </label>
+                        <input type="text" class="modern-form-input date" id="FechaPromocion" name="FechaPromocion" value="@Model.FechaPromocion" placeholder="dd/mm/aaaa" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Configuración Adicional -->
+            <div class="modern-form-section">
+                <div class="modern-form-section-title">
+                    <i class="bi bi-gear"></i>
+                    <span>Configuracion Adicional</span>
+                </div>
+                <div class="form-grid-2">
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-chat-left-text"></i>
+                            <span>Observaciones del Viaje</span>
+                        </label>
+                        <input type="text" id="Observaciones" name="Observaciones" value="@Model.Observaciones" class="modern-form-input" placeholder="Use coma (,) para separar items" title="Agregar observaciones. Use la coma (,) para separar los items" />
+                    </div>
+
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-globe"></i>
+                            <span>Publicar en Pagina Web</span>
+                        </label>
+                        <div class="modern-switch-container">
+                            <input id="IsPublicWeb" name="IsPublicWeb" value="@Model.IsPublicWeb" @(Model.IsPublicWeb == true ? "checked" : "") type="checkbox" />
+                            <span>Mostrar este viaje en la pagina web publica</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" class="field-id" value="@Model.ViajeID" />
+
+            <!-- Botones de Acción -->
+            <div class="modern-form-actions">
+                <a href="@Url.Action("Index", "Viaje")" class="btn-modern btn-modern-secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver a Lista de Viajes</span>
+                </a>
+                <a id="a_editar_viaje" style="display:none" href="/Viaje/Edit/?sAction=edit&sViajeID=@Model.ViajeID" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-pencil"></i>
+                    <span>Editar</span>
+                </a>
+                <button type="button" id="btn_guardar_viaje" class="btn-modern btn-modern-primary" onclick="UpdateForm();">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Guardar</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script src="~/Scripts/jquery.magicsearch.js"></script>
 <script type="text/javascript">
     $(function () {
         $("input[type='text']").keypress(function () {
-            $(this).css("background-color", "#fff");
+            $(this).css("background-color", "");
         });
         $("#PaqueteId").change(function () {
-            $(this).css("background-color", "#fff");
+            $(this).css("background-color", "");
         });
         $(".date").datepicker({
             changeMonth: true,
             changeYear: true,
-            yearRange: '-100:+2'
+            yearRange: '-100:+2',
+            dateFormat: 'dd/mm/yy'
         });
-        $("input[class='time']").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
-                
-        
-        
+        $("input.time").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+
         if ("@Model.PaqueteID" == "") {
             var dataSource = @Html.Raw(ViewBag.jListPaquete);
             $('#DDPaqueteId').magicsearch({
@@ -206,10 +380,8 @@
                 id: 'PaqueteID',
                 format: '%Descripcion%',
                 dropdownBtn: true
-
             });
         }
-        
 
         switch ("@ViewBag.Action") {
             case "detail":
@@ -225,9 +397,11 @@
                 $("#MonedaTipo").css("background-color", "transparent");
                 $("#BusID").attr("disabled", "disabled");
                 $("#BusID").css("background-color", "transparent");
-                $("input").css("border", "none")
+                $("#IsPublicWeb").attr("disabled", "disabled");
+                $("input").css("border", "none");
+                $("select").css("border", "none");
                 $("#btn_guardar_viaje").hide();
-                $(".required").hide();
+                $(".required-mark").hide();
                 $("#a_editar_viaje").show();
                 break;
 
@@ -239,13 +413,12 @@
                     id: 'PaqueteID',
                     format: '%Descripcion%',
                     dropdownBtn: true
-
                 });
-                $("#DDPaqueteId").attr("data-id","@Model.PaqueteID");
+                $("#DDPaqueteId").attr("data-id", "@Model.PaqueteID");
                 $("#DDPaqueteId").val("@Model.PaqueteNombre");
                 $("#PaqueteId").val("@Model.PaqueteID");
-             
                 break;
+
             case "new":
                 var dataSource = @Html.Raw(ViewBag.jListPaquete);
                 $('#DDPaqueteId').magicsearch({
@@ -254,20 +427,17 @@
                     id: 'PaqueteID',
                     format: '%Descripcion%',
                     dropdownBtn: true
-
                 });
-            break;
-
+                break;
         }
-        
     });
 
     function valForm() {
-        
         var bResult = true;
         $.each($(".valtxt"), function (i, l) {
             if ($(this).val() == "") {
-                $(this).css("background-color", "#E83A61");
+                $(this).css("background-color", "rgba(233, 30, 99, 0.1)");
+                $(this).css("border-color", "#E83A61");
                 bResult = false;
             }
         });
@@ -275,37 +445,34 @@
         var iHora = 0;
         $.each($(".time"), function (i, l) {
             if (!validarHora($(this).val())) {
-                $(this).css("background-color", "#E83A61");
+                $(this).css("background-color", "rgba(233, 30, 99, 0.1)");
+                $(this).css("border-color", "#E83A61");
                 iHora = iHora + 1;
                 bResult = false;
             }
         });
 
         if ($("#PrecioPromocional").val() > 0) {
-            if ($("#FechaPromocion").val() == "")
-            {
-                $("#FechaPromocion").css("background-color", "#E83A61");
+            if ($("#FechaPromocion").val() == "") {
+                $("#FechaPromocion").css("background-color", "rgba(233, 30, 99, 0.1)");
+                $("#FechaPromocion").css("border-color", "#E83A61");
                 bResult = false;
             }
         }
 
-        //if ($("#PaqueteId").val() == "") {
-        //    $("#PaqueteId").css("background-color", "#E83A61");
-        //    bResult = false;
-        //}
         if ($("#DDPaqueteId").val() == "") {
-            $("#DDPaqueteId").css("background-color", "#E83A61");
+            $("#DDPaqueteId").css("background-color", "rgba(233, 30, 99, 0.1)");
+            $("#DDPaqueteId").css("border-color", "#E83A61");
             bResult = false;
         }
         return bResult;
     }
 
-    function UpdateForm()
-    {
+    function UpdateForm() {
         if (!valForm()) {
             return alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
         }
-        
+
         var PaqueteID = $("#DDPaqueteId").attr("data-id");
         $("#PaqueteId").val(PaqueteID);
         var _data = $("#formViaje").serialize();
@@ -318,24 +485,21 @@
         }
 
         _data = params.toString();
-        
-        
+
         if ("@ViewBag.Action" == "edit") {
             $.ajax({
                 url: "/Viaje/UpdateViaje",
                 data: _data,
                 dataType: "json",
                 success: function (data) {
-                    
                     if (data.Mensaje === "Done.") {
-                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        confirm("Los datos se guardaron correctamente.", "Operación Exitosa");
                         setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=@Model.ViajeID"; }, 1000);
+                    }
+                    else {
+                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    }
                 }
-                else {
-                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
-                }
-            }
-
             });
         }
 
@@ -345,22 +509,19 @@
                 data: _data,
                 dataType: "json",
                 success: function (data) {
-                    
                     if (data.Mensaje === "Done.") {
                         var ViajeID = data.ID;
-                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        confirm("Los datos se guardaron correctamente.", "Operación Exitosa");
                         setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=" + ViajeID; }, 1000);
                     }
                     else {
                         alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
                 }
-
             });
         }
-        
     }
-  </script>
+</script>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
