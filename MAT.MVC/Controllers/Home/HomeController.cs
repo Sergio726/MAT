@@ -85,12 +85,17 @@ namespace MAT.MVC.Controllers.Home
             ViajeService vServ = new ViajeService();
             int yearinicio = vServ.GetAll().OrderBy(v => v.FechaSalida).FirstOrDefault().FechaSalida.Value.Year;
             int yearfinal = vServ.GetAll().OrderByDescending(v => v.FechaSalida).FirstOrDefault().FechaSalida.Value.Year;
+            int currentYear = DateTime.Now.Year;
+            // Si el año actual está fuera del rango, usar el año más reciente
+            int selectedYear = (currentYear >= yearinicio && currentYear <= yearfinal) ? currentYear : yearfinal;
+
             List<SelectListItem> yearlistitem = new List<SelectListItem>();
             for (int i = yearinicio; i < yearfinal +1 ; i++)
             {
                 SelectListItem item = new SelectListItem();
                 item.Text = i.ToString();
                 item.Value = i.ToString();
+                item.Selected = (i == selectedYear);
                 yearlistitem.Add(item);
             }
             return View(yearlistitem);
