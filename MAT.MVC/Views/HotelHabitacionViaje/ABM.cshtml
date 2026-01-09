@@ -1,71 +1,353 @@
-﻿@model MAT.MVC.Models.HotelHabitacionViajeModel
+@model MAT.MVC.Models.HotelHabitacionViajeModel
+
+<style>
+    .modal-container {
+        padding: 0.5rem;
+    }
+    .modal-header-info {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 0.5rem;
+    }
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .info-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .info-value {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .info-value i {
+        color: var(--primary-color, #e91e63);
+    }
+    .distribution-section {
+        background: white;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--primary-color, #e91e63) 0%, #c2185b 100%);
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    .section-header i {
+        font-size: 1.1rem;
+    }
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        align-items: flex-end;
+    }
+    .form-group-inline {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .form-label-sm {
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+    }
+    .form-input-sm {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        background: white;
+        transition: all 0.2s ease;
+    }
+    .form-input-sm:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.1);
+    }
+    .form-input-sm.input-cantidad {
+        width: 60px;
+        text-align: center;
+    }
+    .form-input-sm.input-precio {
+        width: 90px;
+    }
+    .form-input-sm.input-detalle {
+        width: 100px;
+    }
+    .form-select-sm {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        background: white;
+        min-width: 120px;
+    }
+    .form-select-sm:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+    }
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 0.875rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        font-size: 0.8rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .btn-primary-sm {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .btn-primary-sm:hover {
+        background: var(--primary-hover, #d81b60);
+    }
+    .btn-secondary-sm {
+        background: white;
+        color: var(--text-primary, #374151);
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-secondary-sm:hover {
+        background: var(--bg-secondary, #f3f4f6);
+    }
+    .table-container {
+        padding: 1rem;
+    }
+    #tblHotelHabitacionViaje {
+        width: 100% !important;
+    }
+    #tblHotelHabitacionViaje thead th {
+        background: var(--bg-secondary, #f9fafb);
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-secondary, #6b7280);
+        padding: 0.75rem;
+        border-bottom: 2px solid var(--border-color, #e5e7eb);
+    }
+    #tblHotelHabitacionViaje tbody td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblHotelHabitacionViaje tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .action-icon:hover {
+        background: var(--bg-secondary, #f3f4f6);
+    }
+    .action-icon img {
+        width: 20px;
+        height: 20px;
+    }
+    .alert-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+    #divFullLoading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+    }
+    #divFullLoading::after {
+        content: '';
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border-color, #e5e7eb);
+        border-top-color: var(--primary-color, #e91e63);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    @@media (max-width: 768px) {
+        .modal-header-info {
+            grid-template-columns: 1fr;
+        }
+        .form-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .form-group-inline {
+            width: 100%;
+        }
+        .form-input-sm,
+        .form-select-sm {
+            width: 100%;
+        }
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
 
 @if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
+    <div class="alert-error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        @ViewBag.Error
+    </div>
 }
 
-<div>
-    <div class="form-label">
-        <label class="custom_font_weigh_bold">VIAJE: @Model.ViajeNombre </label>
-        <label class="custom_font_weigh_bold">HOTEL: @Model.HotelNombre (@Model.Comentario) </label>
-        <label class="custom_font_weigh_bold">FECHA: @Model.Fecha.ToShortDateString() </label>
+<div class="modal-container">
+    <!-- Informacion del Viaje/Hotel -->
+    <div class="modal-header-info">
+        <div class="info-item">
+            <span class="info-label">Viaje</span>
+            <span class="info-value">
+                <i class="bi bi-bus-front"></i>
+                @Model.ViajeNombre
+            </span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Hotel</span>
+            <span class="info-value">
+                <i class="bi bi-building"></i>
+                @Model.HotelNombre
+                @if (!string.IsNullOrEmpty(Model.Comentario))
+                {
+                    <span style="font-weight: normal; color: var(--text-secondary);">(@Model.Comentario)</span>
+                }
+            </span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Fecha</span>
+            <span class="info-value">
+                <i class="bi bi-calendar-event"></i>
+                @Model.Fecha.ToShortDateString()
+            </span>
+        </div>
     </div>
-    <div>
-        <fieldset class="customborder">
-            <legend>
-                Distribucion de Habitaciones
-            </legend>
-            <label>
-                Cantidad
-                <input class="custom_width_45px" type="number" min="1" value="1" id="txtCantidad" />
-                @*</label>
 
-        <label>*@
-                Tipo Hab.
-                <select id="Tipo" name="Tipo" class="valid" title="Cantidad de Habitaciones">
+    <!-- Seccion de Distribucion -->
+    <div class="distribution-section">
+        <div class="section-header">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+            Distribucion de Habitaciones
+        </div>
+
+        <!-- Formulario de agregar -->
+        <div class="form-row">
+            <div class="form-group-inline">
+                <span class="form-label-sm">Cantidad</span>
+                <input class="form-input-sm input-cantidad" type="number" min="1" value="1" id="txtCantidad" />
+            </div>
+
+            <div class="form-group-inline">
+                <span class="form-label-sm">Tipo Hab.</span>
+                <select id="Tipo" name="Tipo" class="form-select-sm" title="Tipo de Habitacion">
                     @foreach (MAT.MVC.Models.HabitacionTipo item in ViewBag.HabitacionTipo)
                     {
                         <option value="@item.Id" capacidad="@item.CapacidadNormal">@item.Descripcion</option>
                     }
                 </select>
-                Precio
-                <input class="custom_width_65" type="text" value="" id="txtPrecio" />
-                Detalle
-                <input class="custom_width_50px" type="text" value="" id="txtDescripcion" />
-                <input type="button" class="btn btn-small btn-inverse view-all" value="Agregar" style="vertical-align: text-bottom;" title="Agregar Habitaciones" onclick="javascript: addDistribucion()" />
-                <input type="button" class="btn btn-small btn-inverse view-all" value="Guardar Plantilla" style="vertical-align: text-bottom;" title="Guardar distribucion en una planilla para usarla después." onclick="javascript: showNombrePlantila()" />
-                <input type="button" class="btn btn-small btn-inverse view-all" value="Cargar Plantilla" style="vertical-align: text-bottom;" title="Cargar una plantilla" onclick="javascript: showPlantilas()" />
-            </label>
-        
-            <div>
-                <table id="tblHotelHabitacionViaje" class="mat-customtable">
-                    <thead>
-                        <tr>
-                            <th>Nro Hab.</th>
-                            <th>Nombre Hab.</th>
-                            <th>Tipo</th>
-                            <th>Capacidad</th>
-                            <th>Precio</th>
-                            <th>Descripción</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                </table>
             </div>
-            
 
-        </fieldset>
+            <div class="form-group-inline">
+                <span class="form-label-sm">Precio</span>
+                <input class="form-input-sm input-precio" type="text" value="" id="txtPrecio" placeholder="0.00" />
+            </div>
 
+            <div class="form-group-inline">
+                <span class="form-label-sm">Detalle</span>
+                <input class="form-input-sm input-detalle" type="text" value="" id="txtDescripcion" placeholder="Opcional" />
+            </div>
+
+            <button type="button" class="btn-action btn-primary-sm" onclick="javascript: addDistribucion()" title="Agregar Habitaciones">
+                <i class="bi bi-plus-lg"></i>
+                Agregar
+            </button>
+
+            <button type="button" class="btn-action btn-secondary-sm" onclick="javascript: showNombrePlantila()" title="Guardar distribucion en una plantilla">
+                <i class="bi bi-save"></i>
+                Guardar Plantilla
+            </button>
+
+            <button type="button" class="btn-action btn-secondary-sm" onclick="javascript: showPlantilas()" title="Cargar una plantilla">
+                <i class="bi bi-folder2-open"></i>
+                Cargar Plantilla
+            </button>
+        </div>
+
+        <!-- Tabla de habitaciones -->
+        <div class="table-container">
+            <table id="tblHotelHabitacionViaje" class="display compact">
+                <thead>
+                    <tr>
+                        <th>Nro Hab.</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Capacidad</th>
+                        <th>Precio</th>
+                        <th>Descripcion</th>
+                        <th style="width: 80px;">Acciones</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
-
-
 
 <script type="text/javascript">
     $(document).ready(function () {
         Load_tblHotelHabitacionViaje(@Html.Raw(ViewBag.dtDistribucionHab));
-
     });
 
     var tblHotelHabitacionViaje;
@@ -83,35 +365,28 @@
         tblHotelHabitacionViaje = $("#tblHotelHabitacionViaje").DataTable({
             "aaData": jt,
             "columns": [
-            { "data": "NroHabitacion" },
-            { "data": "Nombre" },
-            //{ "data": "Monto", 
-            //    "mRender": function (data, type, row) {
-            //        var numberFormat = formatNumberMoney(row.Monto);
-            //        return numberFormat;
-            //    }
-            //},
-            { "data": "Tipo" },
-            { "data": "Capacidad" },
-            { "data": "HabPrecio", render: $.fn.dataTable.render.number(',', '.', 2) },
-            { "data": "HabDescripcion" },
-            { "data": "Capacidad",
-                "mRender": function (data, type, row) {
-
-                    var data = "<a href=\"javascript:editHabitacion('" + row.HabitacionID + "');\"><img src=\"/Images/pencil.png\" width=\"32\" height=\"32\" title=\"Editar\"></a>"
-                    data = data + "<a href='javascript:deleteDistribucionRow(" + row.TransHotelHabitacionViajeID + ");'><img src='/Images/cross.png' width='32' height='32' title='Eliminar Habitacion'></a>";
-                    return data;
+                { "data": "NroHabitacion" },
+                { "data": "Nombre" },
+                { "data": "Tipo" },
+                { "data": "Capacidad" },
+                { "data": "HabPrecio", render: $.fn.dataTable.render.number(',', '.', 2) },
+                { "data": "HabDescripcion" },
+                {
+                    "data": "Capacidad",
+                    "mRender": function (data, type, row) {
+                        var html = "<div style='display: flex; gap: 0.25rem;'>";
+                        html += "<a href=\"javascript:editHabitacion('" + row.HabitacionID + "');\" class='action-icon' title='Editar'><i class='bi bi-pencil-fill' style='color: #3b82f6;'></i></a>";
+                        html += "<a href='javascript:deleteDistribucionRow(" + row.TransHotelHabitacionViajeID + ");' class='action-icon' title='Eliminar'><i class='bi bi-trash-fill' style='color: #ef4444;'></i></a>";
+                        html += "</div>";
+                        return html;
+                    }
                 }
-            }
-            //{
-            //    "class":          "details-control",
-            //    "orderable":      false,
-            //    "data":           null,
-            //    "defaultContent": ""
-            //}
             ],
             "bAutoWidth": false,
-            "pageLength": 25
+            "pageLength": 25,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            }
         });
     };
 
@@ -121,10 +396,9 @@
         var Cantidad = $("#txtCantidad").val();
         var Tipo = $("#Tipo").val();
         var Fecha = "@Model.Fecha";
-        var habPrecio = $("#txtPrecio").val();;
+        var habPrecio = $("#txtPrecio").val();
         var habDescripcion = $("#txtDescripcion").val();
-        
-        //AddDistribucion(string HotelID, string ViajeID , string Fecha, int Tipo, int Cantidad)
+
         $.ajax({
             url: "/HotelHabitacionViaje/AddDistribucion",
             data: {
@@ -138,17 +412,14 @@
             },
             dataType: "json",
             success: function (data) {
-
                 if (data.Mensaje == "Done.") {
-                    alert("La distribución se agrego con exito", "Operación Exitosa");
+                    alert("La distribucion se agrego con exito", "Operacion Exitosa");
                     getDistribucion();
                 }
                 else {
                     alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     console.log(data.Error);
-
                 }
-
             }
         });
     };
@@ -157,7 +428,7 @@
         var ViajeID = "@Model.ViajeID";
         var HotelID = "@Model.HotelID";
         var Fecha = "@Model.Fecha";
-        
+
         $.ajax({
             url: "/HotelHabitacionViaje/dtDistribucionHab",
             data: {
@@ -167,33 +438,28 @@
             },
             dataType: "json",
             success: function (data) {
-
                 if (data.Mensaje == "Done.") {
-
                     Load_tblHotelHabitacionViaje(jQuery.parseJSON(data.DataTable));
                 }
                 else {
                     alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     console.log(data.Error);
-
                 }
-
             }
         });
     }
 
     var divLoading = "<div id='divFullLoading'></div>";
-    
+
     function deleteDistribucionRow(TransHotelHabitacionViajeID) {
         $("#popup_HotelHabitacionViaje").append(divLoading);
-         $.ajax({
+        $.ajax({
             url: "/HotelHabitacionViaje/deleteDistribucionRow",
             data: {
                 TransHotelHabitacionViajeID: TransHotelHabitacionViajeID,
             },
             dataType: "json",
             success: function (data) {
-
                 if (data.Mensaje == "Done.") {
                     getDistribucion();
                     $("#divFullLoading").remove();
@@ -203,25 +469,22 @@
                         alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                         console.log(data.Error);
                     }
-                    
                 }
-
             }
         });
     }
 
     function editHabitacion(HabitacionID) {
-        var title = "Edición de Habitación";
+        var title = "Edicion de Habitacion";
         var id = "popup_HabitacionEdit";
-
         var url = "/Habitacion/ABM?Id=" + HabitacionID.trim();
         ShowFormDialog(url, id, title, 'min');
     }
 
     function showNombrePlantila() {
-        var html = '<div class="custom_padding_10"><input type="text" id="txtNombrePlantilla" size="50" /><input Id="btnGuardarPlantilla" type="button" class="custom_margin_left_5 btn btn-small btn-inverse view-all" value="Guardar" style="vertical-align: text-bottom;" title="Guardar plantilla" onclick="javascript: addDistribucion_Plantilla()" /></div>';
+        var html = '<div style="padding: 1rem;"><div style="margin-bottom: 0.5rem; font-size: 0.875rem; color: #6b7280;">Nombre de la plantilla:</div><input type="text" id="txtNombrePlantilla" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; margin-bottom: 1rem;" /><button id="btnGuardarPlantilla" type="button" class="btn-action btn-primary-sm" style="width: 100%;" onclick="javascript: addDistribucion_Plantilla()"><i class="bi bi-save"></i> Guardar</button></div>';
         var dialogid = 'popin_NombrePlantila';
-        var dialogtitle = 'Nombre de Plantilla';
+        var dialogtitle = 'Guardar Plantilla';
         var widthsize = '30%';
         ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize);
     }
@@ -231,12 +494,11 @@
         var ViajeID = "@Model.ViajeID";
         var HotelID = "@Model.HotelID";
 
-        if (Nombre === ""){
-            alert("Por favor ingrese el un nombre para asignar a la plantilla.", "Error");
+        if (Nombre === "") {
+            alert("Por favor ingrese un nombre para asignar a la plantilla.", "Error");
         }
-        else
-        {
-            $("#btnGuardarPlantilla").attr('disabled',true);
+        else {
+            $("#btnGuardarPlantilla").attr('disabled', true);
             $.ajax({
                 url: "/HotelHabitacionViaje/CreatePlantilla",
                 data: {
@@ -246,41 +508,33 @@
                 },
                 dataType: "json",
                 success: function (data) {
-
                     if (data.Mensaje == "Done.") {
-                        alert("La plantilla se guardo con exito", "Operación Exitosa");
+                        alert("La plantilla se guardo con exito", "Operacion Exitosa");
                         $("#popin_NombrePlantila").dialog("close");
                     }
-                    else
-                    {
-                        if(data.Mensaje == "Alert.")
-                        {
-                             alert(data.Error, "Atención");
-                            $("#btnGuardarPlantilla").attr('disabled',false);
+                    else {
+                        if (data.Mensaje == "Alert.") {
+                            alert(data.Error, "Atencion");
+                            $("#btnGuardarPlantilla").attr('disabled', false);
                         }
-                        else{ 
+                        else {
                             alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                             console.log(data.Error);
                         }
                     }
-                    
-
                 }
             });
         }
-
-        
     };
 
-    function showPlantilas(){
-        var title = "Plantillas. Distribución de Habitaciones";
+    function showPlantilas() {
+        var title = "Plantillas - Distribucion de Habitaciones";
         var id = "popup_PlantillaDistribucionHabitacion";
-
         var url = "/HotelHabitacionViaje/GetPlantillasDistribucion";
         ShowFormDialog(url, id, title, 'medium');
     }
 
-    function insertByPlantilla(PlantillaId){
+    function insertByPlantilla(PlantillaId) {
         var ViajeID = "@Model.ViajeID";
         var HotelID = "@Model.HotelID";
         var Fecha = "@Model.Fecha";
@@ -297,25 +551,20 @@
             },
             dataType: "json",
             success: function (data) {
-
                 if (data.Mensaje == "Done.") {
-                    alert("Se agregaron habitaciones de la distribución de la Plantilla seleccionada.", "Operación Exitosa");
+                    alert("Se agregaron habitaciones de la distribucion de la Plantilla seleccionada.", "Operacion Exitosa");
                     $("#popup_PlantillaDistribucionHabitacion").dialog("close");
                     getDistribucion();
                 }
                 else {
                     alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     console.log(data.Error);
-
                 }
-
             }
         });
     };
 
-        
     function deletePlantilla(PlantillaId) {
-        
         $.ajax({
             url: "/HotelHabitacionViaje/deletePlantilla",
             data: {
@@ -323,22 +572,18 @@
             },
             dataType: "json",
             success: function (data) {
-
                 if (data.Mensaje == "Done.") {
                     $("#popup_divMSGDeletePlantilla").dialog("close");
                     $("#popup_PlantillaDistribucionHabitacion").dialog("close");
-                     showPlantilas();
+                    showPlantilas();
                 }
                 else {
                     if (data.Mensaje == "Error.") {
                         alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                         console.log(data.Error);
                     }
-
                 }
-
             }
         });
     }
-
 </script>
