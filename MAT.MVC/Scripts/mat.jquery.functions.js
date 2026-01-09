@@ -2,20 +2,25 @@
 
 }
 
-function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
-    
-    var width = "80%";
-    if (widthsize == "min") {
-        width = "50%";
-    } else if (widthsize == "medium") {
-        width = "65%";
-    } else if (widthsize == "default") {
-        width = "80%";
-    } else if (widthsize == "max") {
-        width = "100%";
-    } else if (widthsize == null) {
-        width = "80%";
+// Configuración centralizada de modales
+var ModalConfig = {
+    getWidth: function(size) {
+        var sizes = { 'min': '50%', 'medium': '65%', 'default': '80%', 'max': '100%', '30%': '30%' };
+        return sizes[size] || '80%';
+    },
+    setupOverlayClose: function(dialogid) {
+        // Cerrar modal al hacer clic en el overlay
+        $(document).off('click.modalOverlay').on('click.modalOverlay', '.ui-widget-overlay', function() {
+            if ($("#" + dialogid).length && $("#" + dialogid).dialog("isOpen")) {
+                $("#" + dialogid).dialog("close");
+            }
+        });
     }
+};
+
+function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
+    var width = ModalConfig.getWidth(widthsize);
+
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
 
@@ -26,34 +31,28 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
         dataType: "html",
         success: function (data) {
             $("#" + dialogid).html(data);
-           
         }
     });
-    //$("#" + dialogid).load(url);
+
     $("#" + dialogid).dialog({
         autoOpen: false,
         modal: true,
         width: width,
-        position: { my: 'top', at: 'top', of: window },
+        position: { my: 'center', at: 'center', of: window },
         closeOnEscape: true,
+        open: function() {
+            ModalConfig.setupOverlayClose(dialogid);
+        },
         close: function () {
+            $(document).off('click.modalOverlay');
             $("#" + dialogid).dialog("destroy").remove();
-            //$("#" + dialogid).remove();
         }
     });
     $("#" + dialogid).dialog("open");
 }
 function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize) {
-    var width = "80%";
-    if (widthsize == "min") {
-        width = "50%";
-    } else if (widthsize == "medium") {
-        width = "65%";
-    } else if (widthsize == "default") {
-        width = "80%";
-    } else if (widthsize == null) {
-        width = "80%";
-    }
+    var width = ModalConfig.getWidth(widthsize);
+
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
     $.ajax({
@@ -63,33 +62,27 @@ function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize) {
             $("#" + dialogid).html(data);
         }
     });
-    //$("#" + dialogid).load(url);
+
     $("#" + dialogid).dialog({
         autoOpen: false,
         modal: true,
         width: width,
-       // position: { my: 'top', at: 'top', of: window },
+        position: { my: 'center', at: 'center', of: window },
         closeOnEscape: true,
+        open: function() {
+            ModalConfig.setupOverlayClose(dialogid);
+        },
         close: function () {
+            $(document).off('click.modalOverlay');
             $("#" + dialogid).remove();
             window.location.reload(true);
         }
     });
     $("#" + dialogid).dialog("open");
-
-    $("#" + dialogid).parent().css("top", "100px")
 }
 function ShowFormDialogJson(url, dialogid, dialogtitle, widthsize, datasend) {
-    var width = "80%";
-    if (widthsize == "min") {
-        width = "50%";
-    } else if (widthsize == "medium") {
-        width = "65%";
-    } else if (widthsize == "default") {
-        width = "80%";
-    } else if (widthsize == null) {
-        width = "80%";
-    }
+    var width = ModalConfig.getWidth(widthsize);
+
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
     $.ajax({
@@ -101,14 +94,18 @@ function ShowFormDialogJson(url, dialogid, dialogtitle, widthsize, datasend) {
             $("#" + dialogid).html(data);
         }
     });
-    //$("#" + dialogid).load(url);
+
     $("#" + dialogid).dialog({
         autoOpen: false,
         modal: true,
         width: width,
-        position: { my: 'top', at: 'top', of: window },
+        position: { my: 'center', at: 'center', of: window },
         closeOnEscape: true,
+        open: function() {
+            ModalConfig.setupOverlayClose(dialogid);
+        },
         close: function () {
+            $(document).off('click.modalOverlay');
             $("#" + dialogid).remove();
         }
     });
@@ -116,30 +113,23 @@ function ShowFormDialogJson(url, dialogid, dialogtitle, widthsize, datasend) {
 }
 
 function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
-    var width = "80%";
-    if (widthsize == "min") {
-        width = "50%";
-    } else if (widthsize == "medium") {
-        width = "65%";
-    } else if (widthsize == "default") {
-        width = "80%";
-    } else if (widthsize == null) {
-        width = "80%";
-    }
-    else if (widthsize == "30%") {
-        width = "30%";
-    }
+    var width = ModalConfig.getWidth(widthsize);
+
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
     $("#" + dialogid).html(html);
-    
+
     $("#" + dialogid).dialog({
         autoOpen: false,
         modal: true,
         width: width,
-        position: { my: 'top', at: 'top', of: window },
+        position: { my: 'center', at: 'center', of: window },
         closeOnEscape: true,
+        open: function() {
+            ModalConfig.setupOverlayClose(dialogid);
+        },
         close: function () {
+            $(document).off('click.modalOverlay');
             $("#" + dialogid).remove();
         }
     });

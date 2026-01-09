@@ -1815,12 +1815,56 @@ div.bnn_floating-banner.hidden {
     transform: translateY(-2px);
 }
 
+/* ============================================
+   MODALES - Animaciones y Estilos Normalizados
+   ============================================ */
+
+/* Keyframes para animaciones de modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes modalFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+    }
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Overlay del modal */
+.ui-widget-overlay {
+    background: rgba(0, 0, 0, 0.5) !important;
+    animation: overlayFadeIn 0.3s ease-out forwards;
+    cursor: pointer;
+}
+
 /* Estilos modernos para modales jQuery UI (Seleccionar Pasajero y otros) */
 .ui-dialog {
     border-radius: var(--border-radius-lg) !important;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2), 0 10px 30px rgba(0, 0, 0, 0.1) !important;
     border: none !important;
     overflow: hidden;
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+.ui-dialog.modal-closing {
+    animation: modalFadeOut 0.2s ease-in forwards;
 }
 
 .ui-dialog .ui-dialog-titlebar,
@@ -1842,14 +1886,14 @@ div.bnn_floating-banner.hidden {
 }
 
 .ui-dialog .ui-dialog-titlebar-close {
-    background: transparent !important;
-    border: 2px solid var(--border-color) !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
+    background: var(--bg-secondary) !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
     transition: all 0.2s ease !important;
     top: 50% !important;
-    margin-top: -18px !important;
+    margin-top: -16px !important;
     right: 1rem !important;
     display: flex !important;
     align-items: center !important;
@@ -1857,51 +1901,331 @@ div.bnn_floating-banner.hidden {
     cursor: pointer !important;
     opacity: 1 !important;
     visibility: visible !important;
+    padding: 0 !important;
 }
 
 .ui-dialog .ui-dialog-titlebar-close:hover {
-    background: rgba(220, 38, 38, 0.1) !important;
-    border-color: #dc2626 !important;
-    transform: scale(1.1);
+    background: rgba(220, 38, 38, 0.15) !important;
+    transform: scale(1.05);
 }
 
 .ui-dialog .ui-dialog-titlebar-close:active {
     transform: scale(0.95);
 }
 
+/* Ocultar el icono original de jQuery UI */
+.ui-dialog .ui-dialog-titlebar-close .ui-icon,
 .ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick {
     background: none !important;
     background-image: none !important;
     text-indent: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: block !important;
     position: relative !important;
+    margin: 0 !important;
 }
 
-.ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick::before {
-    content: "×" !important;
-    font-size: 22px !important;
-    font-weight: 700 !important;
+/* Mostrar X usando ::after en el botón (más confiable) */
+.ui-dialog .ui-dialog-titlebar-close::after {
+    content: "✕" !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
     color: var(--text-secondary) !important;
     line-height: 1 !important;
-    display: block !important;
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
 }
 
-.ui-dialog .ui-dialog-titlebar-close:hover .ui-icon-closethick::before {
+.ui-dialog .ui-dialog-titlebar-close:hover::after {
     color: #dc2626 !important;
+}
+
+/* Ocultar el texto del span interno */
+.ui-dialog .ui-dialog-titlebar-close .ui-icon-closethick::before,
+.ui-dialog .ui-dialog-titlebar-close .ui-button-icon::before {
+    display: none !important;
 }
 
 .ui-dialog .ui-dialog-content {
     background: var(--white) !important;
     padding: 1.5rem !important;
     border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg) !important;
+}
+
+/* ============================================
+   FORMULARIOS EN MODALES - Estilos Reutilizables
+   ============================================ */
+
+/* Contenedor de formulario en modal */
+.ui-dialog .modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Grupo de campo con label */
+.ui-dialog .modal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Label del campo */
+.ui-dialog .modal-form-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+/* Input, select, textarea normalizados */
+.ui-dialog .modal-form-control,
+.ui-dialog input[type="text"],
+.ui-dialog input[type="number"],
+.ui-dialog input[type="email"],
+.ui-dialog input[type="password"],
+.ui-dialog input[type="date"],
+.ui-dialog select:not([multiple]),
+.ui-dialog textarea {
+    padding: 0.625rem 0.875rem !important;
+    border: 1px solid var(--border-color, #e5e7eb) !important;
+    border-radius: 8px !important;
+    font-size: 0.9375rem !important;
+    color: var(--text-primary, #1f2937) !important;
+    background: var(--white, #ffffff) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+}
+
+/* Inputs sin clase de ancho especifica toman 100% */
+.ui-dialog input[type="text"]:not([class*="width"]):not([class*="custom_width"]),
+.ui-dialog input[type="number"]:not([class*="width"]):not([class*="custom_width"]),
+.ui-dialog select:not([class*="width"]):not([class*="custom_width"]) {
+    width: 100%;
+}
+
+.ui-dialog .modal-form-control:focus,
+.ui-dialog input[type="text"]:focus,
+.ui-dialog input[type="number"]:focus,
+.ui-dialog input[type="email"]:focus,
+.ui-dialog input[type="password"]:focus,
+.ui-dialog input[type="date"]:focus,
+.ui-dialog select:focus,
+.ui-dialog textarea:focus {
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1) !important;
+    outline: none !important;
+}
+
+/* Radio buttons y checkboxes - no aplicar estilos de input */
+.ui-dialog input[type="radio"],
+.ui-dialog input[type="checkbox"] {
+    width: auto !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: auto !important;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    accent-color: var(--brand-primary);
+}
+
+/* Fila de campos (layout horizontal) */
+.ui-dialog .modal-form-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.ui-dialog .modal-form-row > * {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Acciones del modal (botones) */
+.ui-dialog .modal-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Botones dentro de modales */
+.ui-dialog .btn,
+.ui-dialog input[type="button"],
+.ui-dialog button:not(.ui-dialog-titlebar-close) {
+    padding: 0.625rem 1.25rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    text-decoration: none !important;
+    line-height: 1.4 !important;
+}
+
+/* Botones pequeños */
+.ui-dialog .btn-small,
+.ui-dialog .btn.btn-small,
+.ui-dialog input[type="button"].btn-small {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8125rem !important;
+}
+
+/* Botones primarios/inverse */
+.ui-dialog .btn-primary,
+.ui-dialog .btn-inverse,
+.ui-dialog input[type="button"].btn-inverse {
+    background: var(--brand-primary) !important;
+    color: white !important;
+}
+
+.ui-dialog .btn-primary:hover,
+.ui-dialog .btn-inverse:hover,
+.ui-dialog input[type="button"].btn-inverse:hover {
+    background: var(--brand-primary-dark, #c41952) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3) !important;
+}
+
+/* Botones secundarios/default */
+.ui-dialog .btn-secondary,
+.ui-dialog .btn-default {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.ui-dialog .btn-secondary:hover,
+.ui-dialog .btn-default:hover {
+    background: var(--border-color) !important;
+}
+
+/* Fieldset modernizado dentro de modales */
+.ui-dialog fieldset,
+.ui-dialog .customborder {
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius-lg) !important;
+    padding: 1.5rem !important;
+    margin: 0 !important;
+    background: var(--white) !important;
+}
+
+.ui-dialog fieldset legend,
+.ui-dialog .customborder legend {
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    color: var(--brand-primary) !important;
+    padding: 0.25rem 0.75rem !important;
+    margin-left: 0 !important;
+    background: var(--white) !important;
+}
+
+/* Form-label y form-field legacy (compatibilidad) */
+.ui-dialog .form-label {
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    color: var(--text-primary) !important;
+    margin-bottom: 0.5rem !important;
+    display: inline-block !important;
+    min-width: 50px !important;
+}
+
+.ui-dialog .form-field {
+    margin-bottom: 1rem !important;
+    display: inline-block !important;
+}
+
+.ui-dialog .form-field input,
+.ui-dialog .form-field select {
+    min-width: 120px;
+}
+
+/* Spacing y margenes para modales */
+.ui-dialog .custom_margin_5 {
+    margin: 0 !important;
+}
+
+.ui-dialog .custom_margin_bottom_10,
+.ui-dialog .custom_margin_bottom_15 {
+    margin-bottom: 1rem !important;
+}
+
+.ui-dialog .custom_margin_top_5,
+.ui-dialog .custom_margin_top_10 {
+    margin-top: 0.75rem !important;
+}
+
+.ui-dialog .custom_float_right {
+    float: none !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.5rem !important;
+    margin-top: 1.25rem !important;
+    padding-top: 1rem !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+/* Texto y spans en modales */
+.ui-dialog span {
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+}
+
+.ui-dialog .custom_font_weigh_bold {
+    font-weight: 700 !important;
+    color: var(--brand-primary) !important;
+}
+
+.ui-dialog .custom_font_size_14 {
+    font-size: 1rem !important;
+}
+
+.ui-dialog .custom_color_disabled {
+    color: var(--text-secondary) !important;
+    opacity: 0.6;
+}
+
+/* Links dentro de modales */
+.ui-dialog a.link {
+    color: var(--brand-primary) !important;
+    text-decoration: none !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+.ui-dialog a.link:hover {
+    text-decoration: underline !important;
+    opacity: 0.8;
+}
+
+/* Mensajes de error en modales */
+.ui-dialog .msgError {
+    background: rgba(220, 38, 38, 0.1) !important;
+    color: #dc2626 !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: var(--border-radius) !important;
+    font-size: 0.875rem !important;
+    margin-top: 1rem !important;
+    border-left: 3px solid #dc2626 !important;
+}
+
+/* Ocultar clases hide */
+.ui-dialog .hide {
+    display: none !important;
 }
 
 /* Estilos para el modal de Seleccionar Pasajero */

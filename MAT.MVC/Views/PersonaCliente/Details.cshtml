@@ -200,7 +200,7 @@
                 <span class="detail-label">Fecha de Nacimiento</span>
                 <span class="detail-value">
                     <i class="bi bi-calendar-event"></i>
-                    @(Model.FechaNacimiento != DateTime.MinValue ? Model.FechaNacimiento.ToString("dd/MM/yyyy") : "Sin definir")
+                    @(Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy") : "Sin definir")
                 </span>
             </div>
             <div class="detail-item">
