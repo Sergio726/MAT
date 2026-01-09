@@ -95,16 +95,20 @@ namespace MAT.MVC.Models
                 double totalprecio = 0;
                 double totaladicional = 0;
 
-                SqlDataReader _readerP = PrecioMethod.GetByIds(precioIds);
-                while (_readerP.Read())
+                using (SqlDataReader _readerP = PrecioMethod.GetByIds(precioIds))
                 {
-                    totalprecio = totalprecio + Convert.ToDouble(_readerP["MontoTotal"]);
+                    while (_readerP.Read())
+                    {
+                        totalprecio = totalprecio + Convert.ToDouble(_readerP["MontoTotal"]);
+                    }
                 }
 
-                SqlDataReader _readerA = AdicionalMethod.GetByIds(adicionalIds);
-                while (_readerA.Read())
+                using (SqlDataReader _readerA = AdicionalMethod.GetByIds(adicionalIds))
                 {
-                    totaladicional = totaladicional + Convert.ToDouble(_readerA["MontoTotal"]);
+                    while (_readerA.Read())
+                    {
+                        totaladicional = totaladicional + Convert.ToDouble(_readerA["MontoTotal"]);
+                    }
                 }
 
                 totalfactura = totalprecio + totaladicional;

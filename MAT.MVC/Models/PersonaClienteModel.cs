@@ -91,23 +91,24 @@ namespace MAT.MVC.Models
         {
             List<PersonaClienteModel> _List = new List<PersonaClienteModel>();
             SqlParameter[] dbParams = new SqlParameter[]{};
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_GetAll", dbParams);
-
-
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_GetAll", dbParams))
             {
-                PersonaClienteModel _item = new PersonaClienteModel();
-                _item.PersonaId = _reader["PersonaID"].ToString();
-                _item.Apellido = _reader["Apellido"].ToString().Trim();
-                _item.Nombre = _reader["Nombre"].ToString().Trim();
-                _item.NroDocumento = _reader["NroDocumento"].ToString();
-                _item.Telefono = _reader["Telefono"].ToString();
-                _item.Celular = _reader["Celular"].ToString();
-                _item.LocalidadNombre = _reader["LocalidadNombre"].ToString();
-                _item.Nacionalidad = _reader["Nacionalidad"].ToString();
-                _item.PaisResidencia = _reader["PaisResidencia"].ToString();
-                _item.IsTituarFactura = Convert.ToByte(_reader["IsTituarFactura"]);
-                _List.Add(_item);
+                while (_reader.Read())
+                {
+                    PersonaClienteModel _item = new PersonaClienteModel();
+                    _item.PersonaId = _reader["PersonaID"].ToString();
+                    _item.Apellido = _reader["Apellido"].ToString().Trim();
+                    _item.Nombre = _reader["Nombre"].ToString().Trim();
+                    _item.NroDocumento = _reader["NroDocumento"].ToString();
+                    _item.Telefono = _reader["Telefono"].ToString();
+                    _item.Celular = _reader["Celular"].ToString();
+                    _item.LocalidadNombre = _reader["LocalidadNombre"].ToString();
+                    _item.Nacionalidad = _reader["Nacionalidad"].ToString();
+                    _item.PaisResidencia = _reader["PaisResidencia"].ToString();
+                    _item.IsTituarFactura = Convert.ToByte(_reader["IsTituarFactura"]);
+                    _List.Add(_item);
+                }
             }
 
             return _List;
@@ -133,22 +134,23 @@ namespace MAT.MVC.Models
                 DBHelper.MakeParam("@TopCount", SqlDbType.Int, 0, topCount)
             };
             
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_GetTop", dbParams);
-
-            while (_reader.Read())
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_GetTop", dbParams))
             {
-                PersonaClienteModel _item = new PersonaClienteModel();
-                _item.PersonaId = _reader["PersonaID"].ToString();
-                _item.Apellido = _reader["Apellido"] != DBNull.Value ? _reader["Apellido"].ToString().Trim() : "";
-                _item.Nombre = _reader["Nombre"] != DBNull.Value ? _reader["Nombre"].ToString().Trim() : "";
-                _item.NroDocumento = _reader["NroDocumento"] != DBNull.Value ? _reader["NroDocumento"].ToString() : "";
-                _item.Telefono = _reader["Telefono"] != DBNull.Value ? _reader["Telefono"].ToString() : "";
-                _item.Celular = _reader["Celular"] != DBNull.Value ? _reader["Celular"].ToString() : "";
-                _item.LocalidadNombre = _reader["LocalidadNombre"] != DBNull.Value ? _reader["LocalidadNombre"].ToString() : "";
-                _item.Nacionalidad = _reader["Nacionalidad"] != DBNull.Value ? _reader["Nacionalidad"].ToString() : "";
-                _item.PaisResidencia = _reader["PaisResidencia"] != DBNull.Value ? _reader["PaisResidencia"].ToString() : "";
-                _item.IsTituarFactura = _reader["IsTituarFactura"] != DBNull.Value ? Convert.ToByte(_reader["IsTituarFactura"]) : (byte)0;
-                _List.Add(_item);
+                while (_reader.Read())
+                {
+                    PersonaClienteModel _item = new PersonaClienteModel();
+                    _item.PersonaId = _reader["PersonaID"].ToString();
+                    _item.Apellido = _reader["Apellido"] != DBNull.Value ? _reader["Apellido"].ToString().Trim() : "";
+                    _item.Nombre = _reader["Nombre"] != DBNull.Value ? _reader["Nombre"].ToString().Trim() : "";
+                    _item.NroDocumento = _reader["NroDocumento"] != DBNull.Value ? _reader["NroDocumento"].ToString() : "";
+                    _item.Telefono = _reader["Telefono"] != DBNull.Value ? _reader["Telefono"].ToString() : "";
+                    _item.Celular = _reader["Celular"] != DBNull.Value ? _reader["Celular"].ToString() : "";
+                    _item.LocalidadNombre = _reader["LocalidadNombre"] != DBNull.Value ? _reader["LocalidadNombre"].ToString() : "";
+                    _item.Nacionalidad = _reader["Nacionalidad"] != DBNull.Value ? _reader["Nacionalidad"].ToString() : "";
+                    _item.PaisResidencia = _reader["PaisResidencia"] != DBNull.Value ? _reader["PaisResidencia"].ToString() : "";
+                    _item.IsTituarFactura = _reader["IsTituarFactura"] != DBNull.Value ? Convert.ToByte(_reader["IsTituarFactura"]) : (byte)0;
+                    _List.Add(_item);
+                }
             }
 
             return _List;
@@ -161,21 +163,21 @@ namespace MAT.MVC.Models
             SqlParameter[] dbParams = new SqlParameter[] { 
                 DBHelper.MakeParam("@PersonaID", SqlDbType.UniqueIdentifier, 0, PeronsaID)
             };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_GetByPersonaID", dbParams);
-
-
-            if (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_GetByPersonaID", dbParams))
             {
-                _item.PersonaId = _reader["PersonaID"].ToString();
-                _item.Apellido = _reader["Apellido"].ToString().Trim();
-                _item.Nombre = _reader["Nombre"].ToString().Trim();
-                _item.NroDocumento = _reader["NroDocumento"].ToString();
-                _item.Telefono = _reader["Telefono"].ToString();
-                _item.Celular = _reader["Celular"].ToString();
-                _item.LocalidadNombre = _reader["LocalidadNombre"].ToString();
-                _item.Nacionalidad = _reader["Nacionalidad"].ToString();
-                _item.PaisResidencia = _reader["PaisResidencia"].ToString();
-                
+                if (_reader.Read())
+                {
+                    _item.PersonaId = _reader["PersonaID"].ToString();
+                    _item.Apellido = _reader["Apellido"].ToString().Trim();
+                    _item.Nombre = _reader["Nombre"].ToString().Trim();
+                    _item.NroDocumento = _reader["NroDocumento"].ToString();
+                    _item.Telefono = _reader["Telefono"].ToString();
+                    _item.Celular = _reader["Celular"].ToString();
+                    _item.LocalidadNombre = _reader["LocalidadNombre"].ToString();
+                    _item.Nacionalidad = _reader["Nacionalidad"].ToString();
+                    _item.PaisResidencia = _reader["PaisResidencia"].ToString();
+                }
             }
 
             return _item;
@@ -189,21 +191,21 @@ namespace MAT.MVC.Models
             SqlParameter[] dbParams = new SqlParameter[] {
                 DBHelper.MakeParam("@DNI", SqlDbType.VarChar, 50, DNI)
             };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Persona_GetByDNI", dbParams);
-
-
-            if (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Persona_GetByDNI", dbParams))
             {
-                _item.PersonaId = _reader["PersonaID"].ToString();
-                _item.Apellido = _reader["Apellido"].ToString().Trim();
-                _item.Nombre = _reader["Nombre"].ToString().Trim();
-                _item.NroDocumento = _reader["NroDocumento"].ToString();
-                _item.Telefono = _reader["Telefono"].ToString();
-                _item.Celular = _reader["Celular"].ToString();
-                _item.LocalidadNombre = _reader["LocalidadNombre"].ToString();
-                _item.Nacionalidad = _reader["Nacionalidad"].ToString();
-                _item.PaisResidencia = _reader["PaisResidencia"].ToString();
-
+                if (_reader.Read())
+                {
+                    _item.PersonaId = _reader["PersonaID"].ToString();
+                    _item.Apellido = _reader["Apellido"].ToString().Trim();
+                    _item.Nombre = _reader["Nombre"].ToString().Trim();
+                    _item.NroDocumento = _reader["NroDocumento"].ToString();
+                    _item.Telefono = _reader["Telefono"].ToString();
+                    _item.Celular = _reader["Celular"].ToString();
+                    _item.LocalidadNombre = _reader["LocalidadNombre"].ToString();
+                    _item.Nacionalidad = _reader["Nacionalidad"].ToString();
+                    _item.PaisResidencia = _reader["PaisResidencia"].ToString();
+                }
             }
 
             return _item;
@@ -214,11 +216,13 @@ namespace MAT.MVC.Models
             SqlParameter[] dbParams = new SqlParameter[] {
                 DBHelper.MakeParam("@DNI", SqlDbType.VarChar, 50, DNI)
             };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Persona_GetByDNI", dbParams);
-
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Persona_GetByDNI", dbParams))
             {
-                return 1;
+                while (_reader.Read())
+                {
+                    return 1;
+                }
             }
 
             return 0;
@@ -230,22 +234,23 @@ namespace MAT.MVC.Models
             SqlParameter[] dbParams = new SqlParameter[] { 
                  DBHelper.MakeParam("@param", SqlDbType.VarChar, 0, sParam),
             };
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_Search", dbParams);
-
-
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_Search", dbParams))
             {
-                PersonaClienteModel _item = new PersonaClienteModel();
-                _item.PersonaId = _reader["PersonaID"].ToString();
-                _item.Apellido = _reader["Apellido"].ToString().Trim();
-                _item.Nombre = _reader["Nombre"].ToString().Trim();
-                _item.NroDocumento = _reader["NroDocumento"].ToString();
-                _item.Telefono = _reader["Telefono"].ToString();
-                _item.Celular = _reader["Celular"].ToString();
-                _item.LocalidadNombre = _reader["LocalidadNombre"].ToString();
-                _item.Nacionalidad = _reader["Nacionalidad"].ToString();
-                _item.PaisResidencia = _reader["PaisResidencia"].ToString();
-                _List.Add(_item);
+                while (_reader.Read())
+                {
+                    PersonaClienteModel _item = new PersonaClienteModel();
+                    _item.PersonaId = _reader["PersonaID"].ToString();
+                    _item.Apellido = _reader["Apellido"].ToString().Trim();
+                    _item.Nombre = _reader["Nombre"].ToString().Trim();
+                    _item.NroDocumento = _reader["NroDocumento"].ToString();
+                    _item.Telefono = _reader["Telefono"].ToString();
+                    _item.Celular = _reader["Celular"].ToString();
+                    _item.LocalidadNombre = _reader["LocalidadNombre"].ToString();
+                    _item.Nacionalidad = _reader["Nacionalidad"].ToString();
+                    _item.PaisResidencia = _reader["PaisResidencia"].ToString();
+                    _List.Add(_item);
+                }
             }
 
             return _List;
@@ -255,17 +260,18 @@ namespace MAT.MVC.Models
         {
             List<PersonaCliente_CreditoClienteModel> _List = new List<PersonaCliente_CreditoClienteModel>();
             SqlParameter[] dbParams = new SqlParameter[] {};
-            SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_CreditoCliente_GetAll", dbParams);
-
-
-            while (_reader.Read())
+            
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_CreditoCliente_GetAll", dbParams))
             {
-                PersonaCliente_CreditoClienteModel _item = new PersonaCliente_CreditoClienteModel();
-                _item.ClienteID = new Guid(_reader["ClienteID"].ToString());
-                _item.FullName = _reader["FullName"].ToString();
-                _item.Monto = Convert.ToDecimal(_reader["Monto"].ToString());
-                
-                _List.Add(_item);
+                while (_reader.Read())
+                {
+                    PersonaCliente_CreditoClienteModel _item = new PersonaCliente_CreditoClienteModel();
+                    _item.ClienteID = new Guid(_reader["ClienteID"].ToString());
+                    _item.FullName = _reader["FullName"].ToString();
+                    _item.Monto = Convert.ToDecimal(_reader["Monto"].ToString());
+                    
+                    _List.Add(_item);
+                }
             }
 
             return _List;
