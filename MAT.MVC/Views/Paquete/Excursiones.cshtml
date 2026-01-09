@@ -1,20 +1,81 @@
-﻿@model Guid
+@model Guid
 
-<input id="guid-paquete" type="hidden" value="@Model.ToString()"
-<div id="search-excursion">
-    @*<div id="busqueda-excursion">
-        <input id="txt-filter-excursion" type="text" placeholder="Ingrese una Descripción" />
-    </div>*@
-</div>
-<div id="grid-excursiones" >
+<style>
+    .excursiones-modal-container {
+        padding: 0.5rem;
+    }
+    .grid-container {
+        min-height: 150px;
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+    }
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-close-modal {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 1rem;
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-close-modal:hover {
+        background: #e5e7eb;
+    }
+    .loading-state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        color: var(--text-secondary, #9ca3af);
+    }
+    .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #e5e7eb;
+        border-top-color: #e91e63;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 0.5rem;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+<input id="guid-paquete" type="hidden" value="@Model.ToString()" />
+
+<div class="excursiones-modal-container">
+    <div id="grid-excursiones" class="grid-container">
+        <div class="loading-state">
+            <div class="loading-spinner"></div>
+            Cargando excursiones...
+        </div>
+    </div>
+
+    <div class="modal-actions">
+        <a class="btn-close-modal" id="btn-cerrar-ventana-excursiones" href="#">
+            <i class="bi bi-x-lg"></i>
+            Cerrar
+        </a>
+    </div>
 </div>
 
-<p class="botonera-form">
-    <a class="btn btn-small btn-inverse" id="btn-cerrar-ventana-excursiones">Cerrar</a>
-</p>
 <script type="text/javascript">
     jQuery(function ($) {
         $("div#grid-excursiones").load("/Paquete/RenderGridExcursiones?id=" + $("#guid-paquete").val());
     });
-
 </script>

@@ -1,155 +1,364 @@
-﻿@model List<MAT.MVC.Models.PaqueteViculosModel>
+@model List<MAT.MVC.Models.PaqueteViculosModel>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Vinculos</h2>
+<style>
+    .vinculos-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .vinculos-header {
+        margin-bottom: 1.5rem;
+    }
+    .vinculos-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .vinculos-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .vinculo-section {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+    .section-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .btn-vincular {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 1rem;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-vincular:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+        text-decoration: none;
+    }
+    .vinculo-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .vinculo-table th {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: var(--bg-secondary, #f9fafb);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .vinculo-table td {
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .vinculo-table tr:last-child td {
+        border-bottom: none;
+    }
+    .vinculo-table tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .optional-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: #fef3c7;
+        color: #d97706;
+        border-radius: 0.25rem;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-left: 0.5rem;
+    }
+    .btn-delete {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-delete:hover {
+        background: #dc2626;
+        color: white;
+    }
+    .empty-state {
+        padding: 2rem;
+        text-align: center;
+        color: var(--text-secondary, #9ca3af);
+    }
+    .empty-state i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+    }
+    .empty-state p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+    .monto-cell {
+        font-weight: 600;
+        color: var(--success-color, #059669);
+    }
+</style>
 
-<h3>Servicios</h3>
-<table class="mat-customtable">
-    <thead>
-        <tr>
-            <th>
-                @Html.Label("Descripción")
-            </th>
-            <th></th>
-        </tr>
-    </thead>
+<div class="vinculos-container">
+    <div class="vinculos-header">
+        <h1 class="vinculos-title">
+            <i class="bi bi-link-45deg"></i>
+            Vinculos del Paquete
+        </h1>
+    </div>
 
-    <tbody>
-
-        @foreach (var item in Model)
+    <!-- Servicios Section -->
+    <div class="vinculo-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="bi bi-gear"></i>
+                Servicios
+            </h3>
+            <a href="#" id="btn-agregar-servicio" data-paquete="@ViewBag.PaqueteID" class="btn-vincular">
+                <i class="bi bi-plus-lg"></i>
+                Vincular Servicio
+            </a>
+        </div>
+        @{
+            var servicios = Model.Where(m => m.Tipo == "Servicio").ToList();
+        }
+        @if (servicios.Any())
         {
-            if (item.Tipo == "Servicio")
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Descripcion)
-                    </td>
-                    <td>
-                        <a id="btn-desvincular-servicio" href="#" data-servicio="@item.ID" data-paquete="@item.PaqueteID" class="button_delete" title="Desvincular Servicio">
-                        </a>
-                    </td>
-                </tr>
-
-            }
-
+            <table class="vinculo-table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th style="width: 60px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in servicios)
+                    {
+                        <tr>
+                            <td>@item.Descripcion</td>
+                            <td>
+                                <a id="btn-desvincular-servicio" href="#" data-servicio="@item.ID" data-paquete="@item.PaqueteID" class="btn-delete" title="Desvincular Servicio">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
-    </tbody>
-</table>
-<p class="botonera-form">
-    <a href="#" id="btn-agregar-servicio" data-paquete="@ViewBag.PaqueteID" class="btn btn-inverse btn-small">Vincular Servicio</a>
-</p>
-
-<h3>Excursiones</h3>
-<table class="mat-customtable">
-    <thead>
-        <tr>
-            <th>
-                Descripcion
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (MAT.MVC.Models.PaqueteExcursionCustomModel item in ViewBag.Excursiones)
-        {        
-            <tr>
-                <td>
-                    @item.Descripcion <strong>@(item.IsOpcional? "(OPCIONAL)":"" )</strong>
-                </td>
-                <td>
-                    <a id="btn-desvincular-excursion" href="#" data-paqueteexcursionid="@item.PaqueteExcursionID" title="Desvincular Excursión" class="button_delete">
-                    </a>
-                </td>
-            </tr>       
-        }
-    </tbody>
-</table>
-<p class="botonera-form">
-    <a href="#" id="btn-agregar-excursion" data-paquete="@ViewBag.PaqueteID" class="btn btn-inverse btn-small">Vincular Excursión</a>
-</p>
-
-<h3>Precios</h3>
-<table class="mat-customtable">
-    <thead>
-        <tr>
-            <th>
-                @Html.Label("Descripción")
-            </th>
-            <th>
-                @Html.Label("Monto")
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model)
-
+        else
         {
-            if (item.Tipo == "Precio")
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Descripcion)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Precio)
-                    </td>
-                    <td>
-                        <a id="btn-desvincular-precio" href="#" data-precio="@item.ID" data-paquete="@ViewBag.PaqueteID" title="Desvincular Precio" class="button_delete">
-                        </a>
-                    </td>
-                </tr>
-            }
-                
-
+            <div class="empty-state">
+                <i class="bi bi-gear"></i>
+                <p>No hay servicios vinculados</p>
+            </div>
         }
-    </tbody>
-</table>
-<p class="botonera-form">
-    <a href="#" id="btn-agregar-precio" data-paquete="@ViewBag.PaqueteID" class="btn btn-inverse btn-small">Vincular Precio</a>
-</p>
+    </div>
 
-<h3>Adicionales</h3>
-<table class="mat-customtable">
-    <thead>
-        <tr>
-            <th>
-                @Html.Label("Descripción")
-            </th>
-            <th>
-                @Html.Label("Monto")
-            </th>
-            <th></th>
-        </tr>
-    </thead>
+    <!-- Excursiones Section -->
+    <div class="vinculo-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="bi bi-compass"></i>
+                Excursiones
+            </h3>
+            <a href="#" id="btn-agregar-excursion" data-paquete="@ViewBag.PaqueteID" class="btn-vincular">
+                <i class="bi bi-plus-lg"></i>
+                Vincular Excursión
+            </a>
+        </div>
+        @{
+            var excursiones = ViewBag.Excursiones as IEnumerable<MAT.MVC.Models.PaqueteExcursionCustomModel>;
+        }
+        @if (excursiones != null && excursiones.Any())
+        {
+            <table class="vinculo-table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th style="width: 60px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in excursiones)
+                    {
+                        <tr>
+                            <td>
+                                @item.Descripcion
+                                @if (item.IsOpcional)
+                                {
+                                    <span class="optional-badge">
+                                        <i class="bi bi-star-fill"></i>
+                                        Opcional
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <a id="btn-desvincular-excursion" href="#" data-paqueteexcursionid="@item.PaqueteExcursionID" title="Desvincular Excursión" class="btn-delete">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-compass"></i>
+                <p>No hay excursiones vinculadas</p>
+            </div>
+        }
+    </div>
 
-    <tbody>
-            @foreach (var item in Model)
-            {
-             if (item.Tipo == "Adicional")
-             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Descripcion)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Precio)
-                    </td>
-                    <td>
-                        <a id="btn-desvincular-adicional" href="#" data-adicional="@item.ID" data-paquete="@ViewBag.PaqueteID" class="button_delete" title="Desvincular Adicional">
-                        </a>
-                    </td>
-                </tr>
-             }
-                
+    <!-- Precios Section -->
+    <div class="vinculo-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="bi bi-currency-dollar"></i>
+                Precios
+            </h3>
+            <a href="#" id="btn-agregar-precio" data-paquete="@ViewBag.PaqueteID" class="btn-vincular">
+                <i class="bi bi-plus-lg"></i>
+                Vincular Precio
+            </a>
+        </div>
+        @{
+            var precios = Model.Where(m => m.Tipo == "Precio").ToList();
+        }
+        @if (precios.Any())
+        {
+            <table class="vinculo-table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th style="width: 60px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in precios)
+                    {
+                        <tr>
+                            <td>@item.Descripcion</td>
+                            <td class="monto-cell">$@item.Precio</td>
+                            <td>
+                                <a id="btn-desvincular-precio" href="#" data-precio="@item.ID" data-paquete="@ViewBag.PaqueteID" title="Desvincular Precio" class="btn-delete">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-currency-dollar"></i>
+                <p>No hay precios vinculados</p>
+            </div>
+        }
+    </div>
 
-            }
-    </tbody>
-</table>
-<p class="botonera-form">
-    <a href="#" id="btn-agregar-adicional" data-paquete="@ViewBag.PaqueteID" class="btn btn-inverse btn-small">Vincular Adicional</a>
-</p>
+    <!-- Adicionales Section -->
+    <div class="vinculo-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="bi bi-plus-circle"></i>
+                Adicionales
+            </h3>
+            <a href="#" id="btn-agregar-adicional" data-paquete="@ViewBag.PaqueteID" class="btn-vincular">
+                <i class="bi bi-plus-lg"></i>
+                Vincular Adicional
+            </a>
+        </div>
+        @{
+            var adicionales = Model.Where(m => m.Tipo == "Adicional").ToList();
+        }
+        @if (adicionales.Any())
+        {
+            <table class="vinculo-table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th style="width: 60px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in adicionales)
+                    {
+                        <tr>
+                            <td>@item.Descripcion</td>
+                            <td class="monto-cell">$@item.Precio</td>
+                            <td>
+                                <a id="btn-desvincular-adicional" href="#" data-adicional="@item.ID" data-paquete="@ViewBag.PaqueteID" class="btn-delete" title="Desvincular Adicional">
+                                    <i class="bi bi-x-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-plus-circle"></i>
+                <p>No hay adicionales vinculados</p>
+            </div>
+        }
+    </div>
+</div>

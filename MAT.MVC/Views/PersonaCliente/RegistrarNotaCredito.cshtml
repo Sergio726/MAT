@@ -1,69 +1,233 @@
-﻿@using MAT.Entities
+@using MAT.Entities
 @using MAT.MVC.Models
 @model NotaCreditoModel
 
 @if (ViewBag.Error != null)
 {
-    <script type="text/ecmascript">
+    <script type="text/javascript">
         console.log("@ViewBag.Error");
     </script>
     return;
 }
 
+<style>
+    .nota-credito-container {
+        padding: 0.5rem;
+    }
+    .nota-credito-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .info-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .info-value {
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: var(--text-primary, #1f2937);
+    }
+    .info-value.highlight {
+        color: var(--primary-color, #e91e63);
+        font-weight: 600;
+    }
+    .info-value.success {
+        color: var(--success-color, #059669);
+        font-weight: 600;
+    }
+    .nota-credito-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .form-group.full-width {
+        grid-column: span 2;
+    }
+    .form-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .form-label i {
+        color: var(--primary-color, #e91e63);
+        font-size: 0.8rem;
+    }
+    .required-mark {
+        color: #dc2626;
+        font-weight: bold;
+    }
+    .form-input,
+    .form-textarea {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        background: white;
+        transition: all 0.2s ease;
+    }
+    .form-input:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .form-textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    .form-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.375rem;
+        padding: 0.625rem 1.25rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-primary {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .btn-primary:hover {
+        background: var(--primary-hover, #d81b60);
+    }
+    .btn-secondary {
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+    }
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+    @@media (max-width: 500px) {
+        .nota-credito-info,
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        .form-group.full-width {
+            grid-column: span 1;
+        }
+    }
+</style>
 
-<form id="formNotaCredito">
-    <div class="divForm">
-        <table class="tableInfo">
-            <tr>
-                <td ><b>Días restantes a la salida del viaje</b></td>
-                <td >@Model.Dias</td>
-            </tr>
-            <tr>
-                <td><b>Total de Factura</b></td>
-                <td>@string.Format("{0:C}",ViewBag.MontoFactura)</td>
-                
-            </tr>
-            <tr>
-                <td><b>Total de Pagos</b></td>
-                <td>@string.Format("{0:C}",ViewBag.TotalPagos)</td>
-                
-            </tr>
-            @*<tr>
-                <td><b>% de Retención</b></td>
-                <td>@string.Format("{0:C}",Model.MontoRetencion) @(Model.PorcentajeRetencion * 100)%</td>
-            </tr>*@
-            <tr>
-                <td><b>N° de Nota</b></td>
-                <td ><span class="required">*</span><input type="text" id="NroNota" name="NroNota" placeholder="INGRESE NRO DE NOTA" /></td>
-            </tr>
-            <tr>
-                <td><b>Monto de Nota de Crédito $</b></td>
-                <td><span class="required">*</span><input type="text" id="MontoNota" name="MontoNota" class="money" value="@String.Format("{0:C}",Model.MontoNota)"/></td>
-            </tr>
-            <tr>
-                <td><b>Monto a retener $</b></td>
-                <td ><span class="required">*</span><input type="text" id="MontoRetencion" name="MontoRetencion" class="money" value="@String.Format("{0:C}",Model.MontoRetencion)"/></td>
-            </tr>
-            <tr>
-                <td><b>Detalle</b></td>
-                <td ><span class="required">*</span><textarea  size="1000" id="DetalleNotaCredito" name="Detalle" style="max-width:206px; max-height: 123px;min-width:206px; min-height: 123px;" /></td>
-            </tr>
-        </table>
-     
+<div class="nota-credito-container">
+    <form id="formNotaCredito">
+        <div class="nota-credito-info">
+            <div class="info-item">
+                <span class="info-label">
+                    <i class="bi bi-calendar-event"></i>
+                    Dias restantes a la salida
+                </span>
+                <span class="info-value highlight">@Model.Dias dias</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">
+                    <i class="bi bi-receipt"></i>
+                    Total de Factura
+                </span>
+                <span class="info-value">@string.Format("{0:C}", ViewBag.MontoFactura)</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">
+                    <i class="bi bi-cash-stack"></i>
+                    Total de Pagos
+                </span>
+                <span class="info-value success">@string.Format("{0:C}", ViewBag.TotalPagos)</span>
+            </div>
+        </div>
+
+        <div class="nota-credito-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-hash"></i>
+                        N° de Nota <span class="required-mark">*</span>
+                    </label>
+                    <input type="text" id="NroNota" name="NroNota" class="form-input" placeholder="Ingrese numero de nota" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-currency-dollar"></i>
+                        Monto de Nota de Credito <span class="required-mark">*</span>
+                    </label>
+                    <input type="text" id="MontoNota" name="MontoNota" class="form-input money" value="@String.Format("{0:C}", Model.MontoNota)" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-percent"></i>
+                        Monto a Retener <span class="required-mark">*</span>
+                    </label>
+                    <input type="text" id="MontoRetencion" name="MontoRetencion" class="form-input money" value="@String.Format("{0:C}", Model.MontoRetencion)" />
+                </div>
+
+                <div class="form-group full-width">
+                    <label class="form-label">
+                        <i class="bi bi-card-text"></i>
+                        Detalle <span class="required-mark">*</span>
+                    </label>
+                    <textarea id="DetalleNotaCredito" name="Detalle" class="form-textarea" placeholder="Ingrese el detalle de la nota de credito..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" value="@Model.Dias" id="Dias" name="Dias" />
+        <input type="hidden" value="@Model.ClienteID" id="ClienteID" name="ClienteID" />
+        <input type="hidden" value="@ViewBag.FacturaID" id="FacturaID" name="FacturaID" />
+        <input type="hidden" value="@ViewBag.TotalPagos" id="hdnTotalPagos" name="hdnTotalPagos" />
+    </form>
+
+    <div class="form-actions">
+        <button type="button" id="btn-retencion" class="btn-action btn-primary">
+            <i class="bi bi-check-lg"></i>
+            Aceptar
+        </button>
+        <button type="button" id="btn-retencion-cancelar" class="btn-action btn-secondary">
+            <i class="bi bi-x-lg"></i>
+            Cancelar
+        </button>
     </div>
-
-     @*<input type="hidden" value="@Model.PorcentajeRetencion" id="PorcentajeRetencion" name="PorcentajeRetencion" />*@
-     <input type="hidden" value="@Model.Dias" id="Dias" name="Dias" />
-     <input type="hidden" value="@Model.ClienteID" id="ClienteID" name="ClienteID" />
-     <input type="hidden" value="@ViewBag.FacturaID" id="FacturaID" name="FacturaID" />
-     <input type="hidden" value="@ViewBag.TotalPagos" id="hdnTotalPagos" name="FacturaID" />
-
-</form>
-
-<p class="botonera-form">
-    <input type="button" id="btn-retencion" class="btn btn-small btn-inverse" value="Aceptar" />
-    <input type="button" id="btn-retencion-cancelar" class="btn btn-small btn-inverse" value="Cancelar" />
-</p>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {

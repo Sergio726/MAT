@@ -1,36 +1,173 @@
-﻿@{
-    ViewBag.Title = "HistorialdePagos";
+@{
+    ViewBag.Title = "Historial de Pagos";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .historial-pagos-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .historial-pagos-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .historial-pagos-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .historial-pagos-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .cliente-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        color: #db2777;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    .cliente-badge i {
+        font-size: 1rem;
+    }
+    .content-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 200px;
+        margin-bottom: 1.5rem;
+    }
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--text-secondary, #9ca3af);
+    }
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border-color, #e5e7eb);
+        border-top-color: var(--primary-color, #e91e63);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 1rem;
+    }
+    .loading-text {
+        font-size: 0.875rem;
+        margin: 0;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .error-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .error-message i {
+        font-size: 1.25rem;
+    }
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.625rem 1.25rem;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .btn-back:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+        text-decoration: none;
+    }
+</style>
+
 @if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div> 
-    return;   
+    <div class="historial-pagos-container">
+        <div class="error-message">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+        <a href="/PersonaCliente" class="btn-back">
+            <i class="bi bi-arrow-left"></i>
+            Volver a Lista de Clientes
+        </a>
+    </div>
+    return;
 }
+
+<div class="historial-pagos-container">
+    <div class="historial-pagos-header">
+        <h1 class="historial-pagos-title">
+            <i class="bi bi-clock-history"></i>
+            Historial de Pagos
+        </h1>
+        <div class="cliente-badge">
+            <i class="bi bi-person-fill"></i>
+            @ViewBag.oPesona.Nombre @ViewBag.oPesona.Apellido
+        </div>
+    </div>
+
+    <div id="divContent" class="content-card">
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Cargando historial de pagos...</p>
+        </div>
+    </div>
+
+    <a href="/PersonaCliente" class="btn-back">
+        <i class="bi bi-arrow-left"></i>
+        Lista de Clientes
+    </a>
+</div>
 
 <script type="text/javascript">
     $(function () {
-
-        $("#divContent").html(divLoading);
         $.ajax({
             url: "/PersonaCliente/partialHistorialdePagos",
-            data: {ClienteID: "@ViewBag.ClienteID"},
+            data: { ClienteID: "@ViewBag.ClienteID" },
             dataType: "html",
             success: function (data) {
                 $("#divContent").html(data);
             },
             error: function (e) {
+                $("#divContent").html(
+                    '<div class="loading-container" style="color: #dc2626;">' +
+                    '<i class="bi bi-exclamation-triangle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>' +
+                    '<p>Error al cargar el historial de pagos</p>' +
+                    '</div>'
+                );
                 console.log(e);
             }
         });
     });
 </script>
-
-<h2 class="title">Historial de Pagos (@ViewBag.oPesona.Nombre @ViewBag.oPesona.Apellido)  </h2>
-<div id="divContent">
-    <div class="iconLoading"></div>
-</div>
-<div>
-    <p style="margin-left:16px;"><a class="btn btn-small btn-inverse" href="/PersonaCliente">Lista de clientes</a></p>
-</div>

@@ -1,70 +1,261 @@
-﻿@using MAT.MVC.Models
+@using MAT.MVC.Models
+@using MAT.Enums
 @model CuentaModel
 @{
     ViewBag.Title = "Historial de Cuenta";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@using MAT.Enums
 
-<h2 class="title">Cliente - Historial de Cuenta (@Model.Persona.Nombre @Model.Persona.Apellido)</h2>
+<style>
+    .historial-cuenta-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .historial-cuenta-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .historial-cuenta-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .historial-cuenta-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .cliente-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        color: #db2777;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    .content-card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .cuenta-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .cuenta-table th {
+        padding: 0.875rem 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: var(--bg-secondary, #f9fafb);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .cuenta-table td {
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .cuenta-table tr:last-child td {
+        border-bottom: none;
+    }
+    .cuenta-table tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .monto-debe {
+        color: #dc2626;
+        font-weight: 500;
+    }
+    .monto-haber {
+        color: #059669;
+        font-weight: 500;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .btn-action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 0.375rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-details {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+    .btn-details:hover {
+        background: #2563eb;
+        color: white;
+    }
+    .btn-cancel {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+    .btn-cancel:hover {
+        background: #dc2626;
+        color: white;
+    }
+    .resumen-card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .resumen-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+    .resumen-item {
+        text-align: center;
+    }
+    .resumen-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+    .resumen-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    .resumen-value.debe {
+        color: #dc2626;
+    }
+    .resumen-value.haber {
+        color: #059669;
+    }
+    .resumen-value.total {
+        color: var(--primary-color, #e91e63);
+    }
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.625rem 1.25rem;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .btn-back:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+        text-decoration: none;
+    }
+    @@media (max-width: 768px) {
+        .resumen-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
-<table class="mat-customtable">
-    <thead>
-        <tr>            
-            <th>Fecha</th>
-            <th>Concepto</th>
-            <th>Medio de Pago</th>
-            <th>Debe</th>
-            <th>Haber</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (Resumen item in Model.ResumenCuenta)
-        {
-            <tr>                
-                <td>@item.Fecha.ToShortDateString()</td>    
-                <td>@item.Descripcion</td>
-                <td>@(item.TipoPago != null ?   ((eFormaPago)item.TipoPago).ToString() : "")</td>
-                <td>@string.Format("-{0:C}",item.Debe)</td>
-                <td>@string.Format("{0:C}",item.Haber)</td>
-                <td>
-                    <a href="#" id="btn-resumen-linea" data-comprobanteid="@item.Comprobante"><img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a>
-                    @if (item.Descripcion=="Pago")
-                    {
-                        <a href="#" id="btn-cancelar-pago" data-comprobanteid="@item.Comprobante"><img src="/Images/cross.png" width="32" height="32" title="Cancelar Pago" /></a>
-                    }
-                    @if (item.Descripcion == "Nota de Crédito")
-                    {
-                        <a href="#" id="btn-cancelar-nota" data-comprobanteid="@item.Comprobante"><img src="/Images/cross.png" width="32" height="32" title="Cancelar Nota de Crédito" /></a>
-                    }
-                </td>
-            </tr>    
-        }        
-    </tbody>
-</table>
+<div class="historial-cuenta-container">
+    <div class="historial-cuenta-header">
+        <h1 class="historial-cuenta-title">
+            <i class="bi bi-journal-text"></i>
+            Historial de Cuenta
+        </h1>
+        <div class="cliente-badge">
+            <i class="bi bi-person-fill"></i>
+            @Model.Persona.Nombre @Model.Persona.Apellido
+        </div>
+    </div>
 
-<table class="mat-resumtable">
-    <thead>
-        <tr>
-            <th>Total Debe</th>
-            <th>Total Haber</th>
-            <th>Total Unificado</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>@string.Format("{0:C}",Model.TotalDebe)</td>
-            <td>@string.Format("{0:C}",Model.TotalHaber)</td>
-            <td>@string.Format("{0:C}",Model.Unificado)</td>
-        </tr>
-    </tbody>
-</table>
-<p>
-    @Html.ActionLink("Lista de Clientes", "Index", null, new { @class = "btn btn-small btn-inverse" })
-</p>
-<script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
-    });
-</script>
+    <div class="content-card">
+        <table class="cuenta-table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Concepto</th>
+                    <th>Medio de Pago</th>
+                    <th>Debe</th>
+                    <th>Haber</th>
+                    <th style="width: 100px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Resumen item in Model.ResumenCuenta)
+                {
+                    <tr>
+                        <td>@item.Fecha.ToShortDateString()</td>
+                        <td>@item.Descripcion</td>
+                        <td>@(item.TipoPago != null ? ((eFormaPago)item.TipoPago).ToString() : "-")</td>
+                        <td class="monto-debe">@string.Format("-{0:C}", item.Debe)</td>
+                        <td class="monto-haber">@string.Format("{0:C}", item.Haber)</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="#" id="btn-resumen-linea" data-comprobanteid="@item.Comprobante" class="btn-action-icon btn-details" title="Detalles">
+                                    <i class="bi bi-file-text"></i>
+                                </a>
+                                @if (item.Descripcion == "Pago")
+                                {
+                                    <a href="#" id="btn-cancelar-pago" data-comprobanteid="@item.Comprobante" class="btn-action-icon btn-cancel" title="Cancelar Pago">
+                                        <i class="bi bi-x-lg"></i>
+                                    </a>
+                                }
+                                @if (item.Descripcion == "Nota de Crédito")
+                                {
+                                    <a href="#" id="btn-cancelar-nota" data-comprobanteid="@item.Comprobante" class="btn-action-icon btn-cancel" title="Cancelar Nota de Crédito">
+                                        <i class="bi bi-x-lg"></i>
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="resumen-card">
+        <div class="resumen-grid">
+            <div class="resumen-item">
+                <div class="resumen-label">Total Debe</div>
+                <div class="resumen-value debe">@string.Format("{0:C}", Model.TotalDebe)</div>
+            </div>
+            <div class="resumen-item">
+                <div class="resumen-label">Total Haber</div>
+                <div class="resumen-value haber">@string.Format("{0:C}", Model.TotalHaber)</div>
+            </div>
+            <div class="resumen-item">
+                <div class="resumen-label">Total Unificado</div>
+                <div class="resumen-value total">@string.Format("{0:C}", Model.Unificado)</div>
+            </div>
+        </div>
+    </div>
+
+    <a href="/PersonaCliente" class="btn-back">
+        <i class="bi bi-arrow-left"></i>
+        Lista de Clientes
+    </a>
+</div>

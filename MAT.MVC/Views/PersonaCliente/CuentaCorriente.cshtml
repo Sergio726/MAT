@@ -1,19 +1,99 @@
-﻿@using MAT.Entities
+@using MAT.Entities
 @model MAT.MVC.Models.CuentaCorrienteModel
 @{
     ViewBag.Title = "Movimientos de Nota de Crédito";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Cliente - Movimientos de Nota de Crédito</h2>
+<style>
+    .cuenta-corriente-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+    .cuenta-corriente-header {
+        margin-bottom: 1.5rem;
+    }
+    .cuenta-corriente-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+    .cuenta-corriente-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .content-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 200px;
+    }
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--text-secondary, #9ca3af);
+    }
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border-color, #e5e7eb);
+        border-top-color: var(--primary-color, #e91e63);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 1rem;
+    }
+    .loading-text {
+        font-size: 0.875rem;
+        margin: 0;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: #dc2626;
+    }
+    .error-container i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    .error-container p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+</style>
 
-<div id="divContent">
+<div class="cuenta-corriente-container">
+    <div class="cuenta-corriente-header">
+        <h1 class="cuenta-corriente-title">
+            <i class="bi bi-journal-text"></i>
+            Cliente - Movimientos de Nota de Crédito
+        </h1>
+    </div>
 
+    <div id="divContent" class="content-card">
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Cargando movimientos...</p>
+        </div>
+    </div>
 </div>
 
-<script type="text/ecmascript">
+<script type="text/javascript">
     $(document).ready(function () {
-        $("#divContent").html("<div class='iconLoading'></div>")
         $.ajax({
             url: "/NotaCredito/partialMovimientoNotaCredito",
             data: { ClienteID: "@ViewBag.ClienteID" },
@@ -21,10 +101,14 @@
                 $("#divContent").html(data);
             },
             error: function (e) {
-                alert("Se produjo un error. Contactese con el administrador.");
+                $("#divContent").html(
+                    '<div class="error-container">' +
+                    '<i class="bi bi-exclamation-triangle"></i>' +
+                    '<p>Se produjo un error al cargar los movimientos. Contactese con el administrador.</p>' +
+                    '</div>'
+                );
                 console.log(e);
             }
-        })
+        });
     });
-
 </script>

@@ -150,6 +150,18 @@ Se verificaron las siguientes vistas y se encontro que:
 63. **PersonaCliente/RegistrarPago.cshtml** - Modal de pago con grid layout, badge de saldo, integración con cotizador USD
 64. **Admin/ResumenPagos.cshtml** - Página de resumen de pagos con búsqueda magicsearch, placeholder de resultados
 65. **Reserva/FormReserva.cshtml** - Formulario de reserva con búsqueda de cliente, opciones de pago, card de total, integración cotizador
+66. **PersonaCliente/RegistrarPagoTotal.cshtml** - Modal de pago total con grid layout, badge de saldo, campos de recibo/factura
+67. **Admin/ResumenPagosPorFecha.cshtml** - Página de resumen por fecha con datepicker, loading spinner, placeholder
+68. **Paquete/Vinculos.cshtml** - Vista de vínculos con 4 secciones (Servicios, Excursiones, Precios, Adicionales), tablas modernas, empty states
+69. **PersonaCliente/CuentaCorriente.cshtml** - Vista de movimientos de nota de crédito con loading spinner, manejo de errores
+70. **PersonaCliente/HistorialdePagos.cshtml** - Vista de historial con header, badge de cliente, loading spinner, botón volver
+71. **PersonaCliente/RegistrarNotaCredito.cshtml** - Modal con info grid, formulario moderno, campos de montos y detalle
+72. **Paquete/Servicios.cshtml** - Modal de búsqueda con input estilizado, grid container, botón cerrar
+73. **Paquete/Precios.cshtml** - Modal de búsqueda con input estilizado, grid container, botón cerrar
+74. **Paquete/Excursiones.cshtml** - Modal con grid container, loading spinner, botón cerrar
+75. **Paquete/Adicionales.cshtml** - Modal de búsqueda con input estilizado, grid container, botón cerrar
+76. **PersonaCliente/HistorialCuenta.cshtml** - Vista completa con tabla de movimientos, card de resumen totales, botones de acción
+77. **PersonaCliente/NotaCreditoList.cshtml** - Lista con DataTables, botones de movimientos, loading modal
 
 ---
 
@@ -159,11 +171,11 @@ Se verificaron las siguientes vistas y se encontro que:
 
 #### Paquetes:
 - ~~Paquete/Edit.cshtml~~ - **COMPLETADA**
-- Paquete/Vinculos.cshtml
-- Paquete/Servicios.cshtml
-- Paquete/Precios.cshtml
-- Paquete/Excursiones.cshtml
-- Paquete/Adicionales.cshtml
+- ~~Paquete/Vinculos.cshtml~~ - **COMPLETADA**
+- ~~Paquete/Servicios.cshtml~~ - **COMPLETADA**
+- ~~Paquete/Precios.cshtml~~ - **COMPLETADA**
+- ~~Paquete/Excursiones.cshtml~~ - **COMPLETADA**
+- ~~Paquete/Adicionales.cshtml~~ - **COMPLETADA**
 
 #### Reservas:
 - ~~Reserva/FormReserva.cshtml~~ - **COMPLETADA**
@@ -184,13 +196,13 @@ Se verificaron las siguientes vistas y se encontro que:
 #### PersonaCliente (Vistas adicionales):
 - PersonaCliente/Voucher.cshtml
 - PersonaCliente/VoucherGrupal.cshtml
-- PersonaCliente/CuentaCorriente.cshtml
-- PersonaCliente/HistorialdePagos.cshtml
-- PersonaCliente/HistorialCuenta.cshtml
+- ~~PersonaCliente/CuentaCorriente.cshtml~~ - **COMPLETADA**
+- ~~PersonaCliente/HistorialdePagos.cshtml~~ - **COMPLETADA**
+- ~~PersonaCliente/HistorialCuenta.cshtml~~ - **COMPLETADA**
 - ~~PersonaCliente/RegistrarPago.cshtml~~ - **COMPLETADA**
-- PersonaCliente/RegistrarPagoTotal.cshtml
-- PersonaCliente/RegistrarNotaCredito.cshtml
-- PersonaCliente/NotaCreditoList.cshtml
+- ~~PersonaCliente/RegistrarPagoTotal.cshtml~~ - **COMPLETADA**
+- ~~PersonaCliente/RegistrarNotaCredito.cshtml~~ - **COMPLETADA**
+- ~~PersonaCliente/NotaCreditoList.cshtml~~ - **COMPLETADA**
 - PersonaCliente/PrincipalHabitaciones.cshtml
 - PersonaCliente/SeleccionarImportes.cshtml
 - PersonaCliente/CambiarPrecioList.cshtml
@@ -224,7 +236,7 @@ Se verificaron las siguientes vistas y se encontro que:
 - Admin/ServiciosAdminPrecioCreate.cshtml
 - Admin/ServiciosAdminPrecioEdit.cshtml
 - ~~Admin/ResumenPagos.cshtml~~ - **COMPLETADA**
-- Admin/ResumenPagosPorFecha.cshtml
+- ~~Admin/ResumenPagosPorFecha.cshtml~~ - **COMPLETADA**
 - Admin/GridResumenPagos.cshtml
 - Admin/GridResumenPagosFecha.cshtml
 - Admin/PlanillaServicios.cshtml
@@ -276,10 +288,10 @@ Se verificaron las siguientes vistas y se encontro que:
 | Fase 3 | Formularios y Tablas Medios | 11 | **COMPLETADA** |
 | Fase 4 | Formularios Complejos | 10 | **COMPLETADA** |
 | Fase 5 | Vistas Muy Complejas | 9 | **COMPLETADA** (NuevaReserva excluida por riesgo) |
-| Fase 6 | Vistas Especializadas | ~56 | En progreso (4 completadas) |
+| Fase 6 | Vistas Especializadas | ~56 | En progreso (16 completadas) |
 
-**TOTAL COMPLETADAS:** 67 vistas (+4 en esta sesion: Paquete/Edit, RegistrarPago, ResumenPagos, FormReserva)
-**TOTAL PENDIENTES:** ~56 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
+**TOTAL COMPLETADAS:** 79 vistas (+16 en esta sesion)
+**TOTAL PENDIENTES:** ~44 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
 
 ---
 
@@ -290,11 +302,29 @@ Se verificaron las siguientes vistas y se encontro que:
 3. ~~**Admin/ResumenPagos.cshtml**~~ - **COMPLETADA**
 4. ~~**Reserva/FormReserva.cshtml**~~ - **COMPLETADA**
 
+### Completadas en esta sesion:
+5. ~~**PersonaCliente/RegistrarPagoTotal.cshtml**~~ - **COMPLETADA**
+6. ~~**Admin/ResumenPagosPorFecha.cshtml**~~ - **COMPLETADA**
+7. ~~**Paquete/Vinculos.cshtml**~~ - **COMPLETADA**
+8. ~~**PersonaCliente/CuentaCorriente.cshtml**~~ - **COMPLETADA**
+
+### Completadas adicionales:
+9. ~~**PersonaCliente/HistorialdePagos.cshtml**~~ - **COMPLETADA**
+10. ~~**PersonaCliente/RegistrarNotaCredito.cshtml**~~ - **COMPLETADA**
+11. ~~**Paquete/Servicios.cshtml**~~ - **COMPLETADA**
+12. ~~**Paquete/Precios.cshtml**~~ - **COMPLETADA**
+
+### Completadas adicionales (batch 2):
+13. ~~**Paquete/Excursiones.cshtml**~~ - **COMPLETADA**
+14. ~~**Paquete/Adicionales.cshtml**~~ - **COMPLETADA**
+15. ~~**PersonaCliente/HistorialCuenta.cshtml**~~ - **COMPLETADA**
+16. ~~**PersonaCliente/NotaCreditoList.cshtml**~~ - **COMPLETADA**
+
 ### Nuevas prioridades:
-5. **PersonaCliente/RegistrarPagoTotal.cshtml** - Registro de pago total
-6. **Admin/ResumenPagosPorFecha.cshtml** - Resumen de pagos por fecha
-7. **Paquete/Vinculos.cshtml** - Vinculos de paquete
-8. **PersonaCliente/CuentaCorriente.cshtml** - Cuenta corriente de cliente
+17. **PersonaCliente/Voucher.cshtml** - Voucher de cliente
+18. **PersonaCliente/VoucherGrupal.cshtml** - Voucher grupal
+19. **Reserva/VinculacionMenor.cshtml** - Vinculación de menores
+20. **Reserva/QuickSearch.cshtml** - Búsqueda rápida de reservas
 
 ---
 
@@ -312,4 +342,4 @@ Se verificaron las siguientes vistas y se encontro que:
 
 ---
 
-**Ultima actualizacion:** 2026-01-09 (Sesion 5: +4 vistas Fase 6 modernizadas - Total 67 vistas)
+**Ultima actualizacion:** 2026-01-09 (Sesion 6: +16 vistas Fase 6 modernizadas - Total 79 vistas)
