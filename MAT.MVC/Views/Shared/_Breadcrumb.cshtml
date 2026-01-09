@@ -65,13 +65,13 @@
                 </li>
                 @if (!isHomePage)
                 {
-                    @if (!string.IsNullOrEmpty(controller) && !controller.Equals("Home", StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(controller) && !controller.Equals("Home", StringComparison.OrdinalIgnoreCase))
                     {
                         <li class="breadcrumb-item">
                             <a href="/@controller/Index">@controllerDisplayName</a>
                         </li>
                     }
-                    @if (!string.IsNullOrEmpty(action) && !action.Equals("Index", StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(action) && !action.Equals("Index", StringComparison.OrdinalIgnoreCase))
                     {
                         <li class="breadcrumb-item active" aria-current="page">
                             @actionDisplayName
