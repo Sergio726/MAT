@@ -1,151 +1,269 @@
-﻿@model List<MAT.MVC.Models.ViajeModel>
-<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+@model List<MAT.MVC.Models.ViajeModel>
 
-<table id="tblviajes" class="mat-customtable">
-    <thead>
-        <tr>
-            <th style="width:150px">
-                Paquete
-            </th>
-            <th style="width:150px">
-                Pescripción
-            </th>
-            <th>
-                Fecha de Salida
-            </th>
-            <th>
-                HR de salida
-            </th>
-            <th>
-                Pais Destino
-            </th>
-            <th>
-                Moneda
-            </th>
-            <th>
-                Precio
-            </th>
-            <th>
-                Precio Promo
-            </th>
-            <th style="width:60px">
-                Venc. de Promo
-            </th>
-            <th>
-                Paso
-            </th>
-            <th>
-                Medio
-            </th>
-            <th>
-                Publicado en WEB
-            </th>
-            <th style="width:250px;"></th>
+<style>
+    .viajes-list-container {
+        padding: 0;
+    }
+    #tblviajes {
+        width: 100% !important;
+    }
+    #tblviajes thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        white-space: nowrap;
+    }
+    #tblviajes tbody td {
+        padding: 0.625rem 0.5rem;
+        font-size: 0.8125rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        vertical-align: middle;
+    }
+    #tblviajes tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .viaje-paquete {
+        font-weight: 500;
+        color: var(--primary-color, #e91e63);
+    }
+    .viaje-fecha {
+        font-weight: 500;
+    }
+    .viaje-precio {
+        font-weight: 500;
+        color: #059669;
+    }
+    .viaje-precio-promo {
+        font-weight: 500;
+        color: #d97706;
+    }
+    .viaje-moneda {
+        display: inline-flex;
+        padding: 0.125rem 0.5rem;
+        background: #dbeafe;
+        color: #1d4ed8;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        border-radius: 9999px;
+    }
+    .viaje-medio-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 0.375rem;
+        font-size: 1rem;
+    }
+    .viaje-medio-bus {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+    .viaje-medio-avion {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+    .viaje-web-check {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+    }
+    .viaje-web-check.active {
+        color: #16a34a;
+    }
+    .viaje-web-check.inactive {
+        color: var(--text-secondary, #6b7280);
+    }
+    .viaje-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        flex-wrap: nowrap;
+    }
+    .btn-viaje-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-viaje-edit {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    .btn-viaje-edit:hover {
+        background: #d97706;
+        color: white;
+    }
+    .btn-viaje-detail {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+    .btn-viaje-detail:hover {
+        background: #2563eb;
+        color: white;
+    }
+    .btn-viaje-hotel {
+        background: #f3e8ff;
+        color: #9333ea;
+    }
+    .btn-viaje-hotel:hover {
+        background: #9333ea;
+        color: white;
+    }
+    .btn-viaje-pasajero {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+    .btn-viaje-pasajero:hover {
+        background: #16a34a;
+        color: white;
+    }
+    .btn-viaje-delete {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+    .btn-viaje-delete:hover {
+        background: #dc2626;
+        color: white;
+    }
+    .btn-viaje-cancel {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+    .btn-viaje-cancel:hover {
+        background: #b91c1c;
+        color: white;
+    }
+    /* DataTables overrides */
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        padding: 0.375rem 0.75rem;
+    }
+    .dataTables_wrapper .dataTables_length select {
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="viajes-list-container">
+    <table id="tblviajes" class="display">
+        <thead>
             <tr>
-                <td>
-                    @item.PaqueteNombre
-                </td>
-                <td>
-                    @item.Descripcion
-                </td>
-                <td>
-                    @item.FechaSalida
-                </td>
-                <td>
-                    @item.HoraSalida
-                </td>
-                <td>
-                    @item.PaisDestino
-                </td>
-                <td>
-                    @(item.MonedaTipo == 1 ? "$ ARG" : "U$D")
-                </td>
-                <td>
-                    @("$ ") @item.PrecioSemicama
-                </td>
-                <td>
-                    @("$ ") @item.PrecioPromocional
-                </td>
-                <td>
-                    @item.FechaPromocion
-                </td>
-                <td>
-                    @item.Paso
-                </td>
-                <td>
-                    @if (item.Medio == "TERRESTRE")
-                    {
-                        <div class="iconbus_35px" title="@item.Medio"></div>
-                    }
-                    else
-                    {
-                        if (item.Medio == "AEREO")
+                <th>Paquete</th>
+                <th>Descripción</th>
+                <th>Fecha Salida</th>
+                <th>Hora</th>
+                <th>Destino</th>
+                <th>Moneda</th>
+                <th>Precio</th>
+                <th>Promo</th>
+                <th>Venc. Promo</th>
+                <th>Paso</th>
+                <th>Medio</th>
+                <th>Web</th>
+                <th style="width:180px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><span class="viaje-paquete">@item.PaqueteNombre</span></td>
+                    <td>@item.Descripcion</td>
+                    <td><span class="viaje-fecha">@item.FechaSalida</span></td>
+                    <td>@item.HoraSalida</td>
+                    <td>@item.PaisDestino</td>
+                    <td><span class="viaje-moneda">@(item.MonedaTipo == 1 ? "ARS" : "USD")</span></td>
+                    <td><span class="viaje-precio">$ @item.PrecioSemicama</span></td>
+                    <td><span class="viaje-precio-promo">$ @item.PrecioPromocional</span></td>
+                    <td>@item.FechaPromocion</td>
+                    <td>@item.Paso</td>
+                    <td>
+                        @if (item.Medio == "TERRESTRE")
                         {
-                            <div class="iconavion_35px" title="@item.Medio"></div>
+                            <span class="viaje-medio-icon viaje-medio-bus" title="@item.Medio">
+                                <i class="bi bi-bus-front"></i>
+                            </span>
+                        }
+                        else if (item.Medio == "AEREO")
+                        {
+                            <span class="viaje-medio-icon viaje-medio-avion" title="@item.Medio">
+                                <i class="bi bi-airplane"></i>
+                            </span>
                         }
                         else
                         {
                             @item.Medio
                         }
-                    }
-                </td>
-                <td>
-                    <input type="checkbox" value="@item.IsPublicWeb" @(item.IsPublicWeb==true? "checked" : "")/>
-                </td>
-                <td>
-                    <a href="/viaje/edit/?saction=edit&sviajeid=@item.ViajeID" class="button_edit" title="editar">
-                    </a>
-
-                    <a href="/viaje/edit/?saction=detail&sviajeid=@item.ViajeID" class="button_detail" title="ver detalles">
-                    </a>
-                    <a href="/viaje/hoteles/@item.ViajeID" class="button_hotel" title="ver hoteles">
-                    </a>
-
-                    <a href="/pasajeroviaje/index/@item.ViajeID" class="button_pasajero" title="ver pasajeros">
-                    </a>
-
-                    <a id="btn-eliminar-viaje" data-id="@item.ViajeID" class="button_delete" title="eliminar viaje (mal cargado o sin uso)">
-                    </a>
-
-                    <a id="btn-cancelar-viaje" onclick="javascript: fncancelviaje('@item.ViajeID');" class="button_cancel" title="dar de baja el viaje (fuerza mayor)">
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@* DataTables ya está incluido en _Layout.cshtml - usando versión local *@
+                    </td>
+                    <td>
+                        @if (item.IsPublicWeb)
+                        {
+                            <span class="viaje-web-check active" title="Publicado en web">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="viaje-web-check inactive" title="No publicado">
+                                <i class="bi bi-circle"></i>
+                            </span>
+                        }
+                    </td>
+                    <td>
+                        <div class="viaje-actions">
+                            <a href="/viaje/edit/?saction=edit&sviajeid=@item.ViajeID" class="btn-viaje-action btn-viaje-edit" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="/viaje/edit/?saction=detail&sviajeid=@item.ViajeID" class="btn-viaje-action btn-viaje-detail" title="Ver detalles">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="/viaje/hoteles/@item.ViajeID" class="btn-viaje-action btn-viaje-hotel" title="Ver hoteles">
+                                <i class="bi bi-building"></i>
+                            </a>
+                            <a href="/pasajeroviaje/index/@item.ViajeID" class="btn-viaje-action btn-viaje-pasajero" title="Ver pasajeros">
+                                <i class="bi bi-people"></i>
+                            </a>
+                            <a href="#" id="btn-eliminar-viaje" data-id="@item.ViajeID" class="btn-viaje-action btn-viaje-delete" title="Eliminar viaje">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                            <a href="#" onclick="fncancelviaje('@item.ViajeID'); return false;" class="btn-viaje-action btn-viaje-cancel" title="Cancelar viaje">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {
         $("#tblviajes").DataTable({
             "columnDefs": [
-                // Plugin date-uk removido - DataTables ordenará fechas en formato dd/MM/yyyy automáticamente
-                // { type: 'date-uk', targets: [2, 9] },  // Comentado - plugin no disponible
-                { targets: [10, 11, 12], "orderable": false } // Desactiva ordenación en "Paso", "Medio" y "Acciones"
+                { targets: [10, 11, 12], "orderable": false }
             ],
-            "pageLength": 25, // Muestra 25 registros por página
-            "order": [[2, "asc"]], // Ordena por FechaSalida de manera ascendente
+            "pageLength": 25,
+            "order": [[2, "asc"]],
             "language": {
-                "lengthMenu": "Mostrar _MENU_ registros por página",
-                "zeroRecords": "No se encontraron resultados",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "infoEmpty": "No hay registros disponibles",
-                "infoFiltered": "(filtrado de _MAX_ registros en total)",
-                "search": "Buscar:",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
+                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
             }
         });
     });

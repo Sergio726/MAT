@@ -209,21 +209,22 @@ Se verificaron las siguientes vistas y se encontro que:
 - PersonaCliente/SeleccionarImportes.cshtml
 - PersonaCliente/CambiarPrecioList.cshtml
 - PersonaCliente/EliminarVenta.cshtml
-- PersonaCliente/Facturas.cshtml
+- ~~PersonaCliente/Facturas.cshtml~~ - **COMPLETADA**
 - PersonaCliente/GridHabitaciones.cshtml
-- PersonaCliente/PartialFacturas.cshtml
-- PersonaCliente/PartialCuentaCorriente.cshtml
-- PersonaCliente/partialHistorialdePagos.cshtml
+- ~~PersonaCliente/PartialFacturas.cshtml~~ - **COMPLETADA**
+- ~~PersonaCliente/PartialCuentaCorriente.cshtml~~ - **COMPLETADA**
+- ~~PersonaCliente/partialHistorialdePagos.cshtml~~ - **COMPLETADA**
 - PersonaCliente/partialHistorialdePagosByFactura.cshtml
 - PersonaCliente/PopupDetalleFactura.cshtml
 
 #### Viajes:
-- Viaje/ListViajes.cshtml
-- Viaje/PopPupViajes.cshtml
-- Viaje/Hoteles.cshtml
-- Viaje/HotelesDisponibles.cshtml
+- ~~Viaje/Index.cshtml~~ - **COMPLETADA**
+- ~~Viaje/ListViajes.cshtml~~ - **COMPLETADA**
+- ~~Viaje/PopPupViajes.cshtml~~ - **COMPLETADA**
+- ~~Viaje/Hoteles.cshtml~~ - **COMPLETADA**
+- ~~Viaje/HotelesDisponibles.cshtml~~ - **COMPLETADA**
 - Viaje/Hoteles07122016.cshtml
-- Viaje/HotelSetIngresoEgreso.cshtml
+- ~~Viaje/HotelSetIngresoEgreso.cshtml~~ - **COMPLETADA**
 
 #### Hoteles:
 - Hotel/Distribucion.cshtml
@@ -290,10 +291,10 @@ Se verificaron las siguientes vistas y se encontro que:
 | Fase 3 | Formularios y Tablas Medios | 11 | **COMPLETADA** |
 | Fase 4 | Formularios Complejos | 10 | **COMPLETADA** |
 | Fase 5 | Vistas Muy Complejas | 9 | **COMPLETADA** (NuevaReserva excluida por riesgo) |
-| Fase 6 | Vistas Especializadas | ~56 | En progreso (35 completadas + 3 especiales) |
+| Fase 6 | Vistas Especializadas | ~56 | En progreso (45 completadas + 3 especiales) |
 
-**TOTAL COMPLETADAS:** 98 vistas (+10 en esta sesion)
-**TOTAL PENDIENTES:** ~25 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
+**TOTAL COMPLETADAS:** 108 vistas (+10 en esta sesion)
+**TOTAL PENDIENTES:** ~15 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
 **ESPECIALES:** 3 vistas (2 documentos de impresión, 1 mínima)
 
 ---
@@ -353,6 +354,18 @@ Se verificaron las siguientes vistas y se encontro que:
 34. ~~**Admin/PartialDropDownHotel.cshtml**~~ - **COMPLETADA** - Dropdown de hoteles
 35. ~~**Admin/PartialGridServiciosAdmin.cshtml**~~ - **COMPLETADA** - Grid servicios admin
 
+### Completadas adicionales (batch 5 - Viaje y PersonaCliente):
+36. ~~**Viaje/Index.cshtml**~~ - **COMPLETADA** - Página principal de viajes con filtro por año
+37. ~~**Viaje/ListViajes.cshtml**~~ - **COMPLETADA** - Grid de viajes con DataTables y acciones
+38. ~~**Viaje/Hoteles.cshtml**~~ - **COMPLETADA** - Lista de hoteles por viaje
+39. ~~**Viaje/HotelesDisponibles.cshtml**~~ - **COMPLETADA** - Grid de hoteles disponibles
+40. ~~**Viaje/HotelSetIngresoEgreso.cshtml**~~ - **COMPLETADA** - Modal edición ingreso/egreso
+41. ~~**Viaje/PopPupViajes.cshtml**~~ - **COMPLETADA** - Popup de viajes con acciones de impresión
+42. ~~**PersonaCliente/Facturas.cshtml**~~ - **COMPLETADA** - Lista de facturas por cliente
+43. ~~**PersonaCliente/PartialFacturas.cshtml**~~ - **COMPLETADA** - Tabla parcial de facturas
+44. ~~**PersonaCliente/PartialCuentaCorriente.cshtml**~~ - **COMPLETADA** - Cuenta corriente con resumen
+45. ~~**PersonaCliente/partialHistorialdePagos.cshtml**~~ - **COMPLETADA** - Historial de pagos por viaje
+
 ---
 
 ## NOTAS:
@@ -369,4 +382,4 @@ Se verificaron las siguientes vistas y se encontro que:
 
 ---
 
-**Ultima actualizacion:** 2026-01-09 (Sesion 8: +10 vistas baja complejidad - Total 98 vistas)
+**Ultima actualizacion:** 2026-01-09 (Sesion 9: +10 vistas Viaje y PersonaCliente - Total 108 vistas)

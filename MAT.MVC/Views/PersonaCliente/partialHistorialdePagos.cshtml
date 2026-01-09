@@ -1,41 +1,115 @@
-﻿@if (ViewBag.Error != null)
+@if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div>   
+    <div class="error-message">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>@ViewBag.Error</span>
+    </div>
     return;
 }
 
 @model List<MAT.MVC.Models.FacturaViaje>
-@{int iCount = 0;}
+@{ int iCount = 0; }
 
+<style>
+    .error-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        color: #dc2626;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .historial-pagos-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    .historial-pagos-table thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        text-align: left;
+    }
+    .historial-pagos-table thead th.header-title {
+        background: var(--primary-color, #e91e63);
+        color: white;
+        font-size: 0.875rem;
+        text-transform: none;
+    }
+    .historial-pagos-table tbody td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .historial-pagos-table tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .viaje-nombre {
+        font-weight: 500;
+        color: var(--primary-color, #e91e63);
+    }
+    .btn-detalle-pago {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: #dbeafe;
+        color: #2563eb;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-detalle-pago:hover {
+        background: #2563eb;
+        color: white;
+    }
+</style>
 
-<table id="tblFacturaViaje" class="mat-customtable" style="width:98%;">
-    <thead> 
+<table id="tblFacturaViaje" class="historial-pagos-table">
+    <thead>
         <tr>
-            <th colspan="5" >Historial de Pagos por Viaje</th>
+            <th colspan="5" class="header-title">
+                <i class="bi bi-clock-history"></i> Historial de Pagos por Viaje
+            </th>
         </tr>
         <tr>
-            <th>Item</th>
+            <th style="width: 60px;">#</th>
             <th>Viaje</th>
             <th>Fecha de Viaje</th>
             <th>Fecha de Facturación</th>
-            <th></th>
+            <th style="width: 60px;"></th>
         </tr>
     </thead>
-    <tbody >
+    <tbody>
         @foreach (MAT.MVC.Models.FacturaViaje item in Model)
         {
             iCount += 1;
-        <tr>
-            <td>@iCount</td>
-            <td>@item.PaqueteNombre.ToString().ToUpper()</td>
-            <td>@item.ViajeSalida.ToShortDateString()</td>
-            <td>@item.FacturaFecha</td>
-            <td><a href="javascript:pagosFactura('@item.FacturaID');" id="lnkDetalles"><img src="/Images/notepad.png" width="32" height="32" title="Detalles" /></a></td>
-        </tr>    
+            <tr>
+                <td>@iCount</td>
+                <td><span class="viaje-nombre">@item.PaqueteNombre.ToString().ToUpper()</span></td>
+                <td>@item.ViajeSalida.ToShortDateString()</td>
+                <td>@item.FacturaFecha</td>
+                <td>
+                    <a href="javascript:pagosFactura('@item.FacturaID');" class="btn-detalle-pago" title="Ver Detalles">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </a>
+                </td>
+            </tr>
         }
-        
     </tbody>
-    
 </table>
 
 <div id="divPopup" title="Pagos" style="display:none;">
@@ -45,18 +119,14 @@
 <script type="text/javascript">
     $(".ui-dialog-content").remove();
 
-    function pagosFactura(FacturaID)
-    {
-        //$(".ui-dialog-content").dialog("close");
-        $("#divContentPagos").html(divLoading);
+    function pagosFactura(FacturaID) {
+        $("#divContentPagos").html('<div style="padding:2rem;text-align:center;"><div class="loading-spinner"></div><p>Cargando...</p></div>');
         $("#divPopup").dialog("open");
         $("#divPopup").dialog({
             modal: true,
             position: { my: 'top', at: 'top', of: window },
             width: "80%"
         });
-        //partialHistorialPago.dialog("open");
-       
 
         $.ajax({
             url: "/PersonaCliente/partialHistorialdePagosByFactura",

@@ -1,89 +1,268 @@
-﻿@model List<MAT.MVC.Models.ViajeHotel> 
+@model List<MAT.MVC.Models.ViajeHotel>
 
 @{
     ViewBag.Title = "Hoteles";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+    .hoteles-page-container {
+        padding: 1.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .hoteles-page-header {
+        margin-bottom: 1.5rem;
+    }
+    .hoteles-viaje-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 0 0.5rem 0;
+    }
+    .hoteles-viaje-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .hoteles-section-title {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+    .hoteles-section-title i {
+        color: #9333ea;
+    }
+    .hoteles-table-container {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+    .hoteles-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .hoteles-table thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        text-align: left;
+    }
+    .hoteles-table tbody td {
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        vertical-align: middle;
+    }
+    .hoteles-table tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .hoteles-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    .hotel-nombre {
+        font-weight: 500;
+        color: var(--primary-color, #e91e63);
+    }
+    .hotel-fecha {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+    .hotel-fecha-date {
+        font-weight: 500;
+    }
+    .hotel-fecha-time {
+        font-size: 0.75rem;
+        color: var(--text-secondary, #6b7280);
+    }
+    .hotel-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .btn-hotel-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-hotel-habitacion {
+        background: #f3e8ff;
+        color: #9333ea;
+    }
+    .btn-hotel-habitacion:hover {
+        background: #9333ea;
+        color: white;
+    }
+    .btn-hotel-edit {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    .btn-hotel-edit:hover {
+        background: #d97706;
+        color: white;
+    }
+    .btn-hotel-delete {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+    .btn-hotel-delete:hover {
+        background: #dc2626;
+        color: white;
+    }
+    .btn-vincular-hotel {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-vincular-hotel:hover {
+        background: #d81b60;
+        color: white;
+        text-decoration: none;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary, #6b7280);
+    }
+    .empty-state i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+</style>
+
+<div class="hoteles-page-container">
+    <div class="hoteles-page-header">
+        @if (Model.Count > 0)
+        {
+            <h2 class="hoteles-viaje-title">
+                <i class="bi bi-bus-front"></i>
+                VIAJE: @Model.First().ViajeNombre
+            </h2>
+        }
+        <h4 class="hoteles-section-title">
+            <i class="bi bi-building"></i>
+            Lista de Hoteles
+        </h4>
+    </div>
+
+    <input type="hidden" id="viajeID" value="@ViewData["viajeid"]" />
+
+    <div class="hoteles-table-container">
+        @if (Model.Count > 0)
+        {
+            <table class="hoteles-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Comentario</th>
+                        <th>Ingreso</th>
+                        <th>Egreso</th>
+                        <th style="width: 130px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><span class="hotel-nombre">@item.Nombre</span></td>
+                            <td>@item.Comentario</td>
+                            <td>
+                                <div class="hotel-fecha">
+                                    <span class="hotel-fecha-date">@item.Desde</span>
+                                    <span class="hotel-fecha-time">@item.HoraIngreso</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="hotel-fecha">
+                                    <span class="hotel-fecha-date">@item.Hasta</span>
+                                    <span class="hotel-fecha-time">@item.HoraSalida</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="hotel-actions">
+                                    <a href="javascript: getDistribuciones('@item.ViajeHotelID','@(item.Desde)','@(item.Hasta)');" class="btn-hotel-action btn-hotel-habitacion" title="Distribución de Habitaciones">
+                                        <i class="bi bi-door-open"></i>
+                                    </a>
+                                    <a href="javascript: setEgresoIngreso('@item.ViajeHotelID','@item.ViajeID','@item.Desde');" class="btn-hotel-action btn-hotel-edit" title="Editar ingreso/egreso">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="#" id="btn-desvincular-hotel" data-hotel="@item.HotelID" data-viaje="@item.ViajeID" class="btn-hotel-action btn-hotel-delete" title="Desvincular Hotel">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-building"></i>
+                <p>No hay hoteles vinculados a este viaje</p>
+            </div>
+        }
+    </div>
+
+    <div id="divHotelHabitacionViaje"></div>
+
+    <a href="#" id="btn-agregar-hotel" data-viaje="@ViewData["viajeid"]" class="btn-vincular-hotel">
+        <i class="bi bi-plus-lg"></i>
+        Vincular Hotel
+    </a>
+</div>
+
 <script type="text/javascript">
     function setEgresoIngreso(ViajeHotelID, viajeid, Fecha) {
         var title = "Editar Entrada y Salida al Hotel";
         var id = "setEgresoIngreso";
-        
         var url = "/Viaje/HotelSetIngresoEgreso?ViajeHotelID=" + ViajeHotelID + "&viajeid=" + viajeid + "&Fecha=" + Fecha;
-        ShowFormDialog(url, id, title,'min');
+        ShowFormDialog(url, id, title, 'min');
     }
 
     function getDistribuciones(ViajeHotelID, Desde, Hasta) {
-
         if (Desde == '') {
-            return alert('Por favor, primero defina el dia de Ingreso al hotel', 'Atención');
+            return alert('Por favor, primero defina el día de Ingreso al hotel', 'Atención');
         }
-
         if (Hasta == '') {
-            return alert('Por favor, primero defina el dia de Ingreso al hotel', 'Atención');
+            return alert('Por favor, primero defina el día de Egreso del hotel', 'Atención');
         }
-
-        var title = "Distribucion Habitaciones/Viaje";
+        var title = "Distribución Habitaciones/Viaje";
         var id = "popup_HotelHabitacionViaje";
         var url = "/HotelHabitacionViaje/ABM?ViajeHotelID=" + ViajeHotelID;
         ShowFormDialog(url, id, title, 'default');
     }
-   
 </script>
-
-
-@if (Model.Count > 0)
-{
-   <h2 class="title">VIAJE: @Model.First().ViajeNombre</h2> 
-}
-
-<h4 class="">Lista de Hoteles</h4>
-<input type="hidden" id="viajeID" value="@ViewData["viajeid"]" />
-
-<table class="mat-customtable">
-    <thead>
-        <tr>
-            <th>
-                Nombre
-            </th>
-            <th>
-                Comentario
-            </th>
-            <th>
-                Ingreso
-            </th>
-            <th>
-                Egreso
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model)
-        {        
-            <tr>
-                <td>
-                    @item.Nombre
-                </td>
-                <td>@item.Comentario</td>
-                <td><span>@(item.Desde) </span><span>@item.HoraIngreso</span></td>
-                <td><span>@(item.Hasta) </span><span>@item.HoraSalida</span></td>
-                <td>
-                    <a href="javascript: getDistribuciones('@item.ViajeHotelID','@(item.Desde)','@(item.Hasta)');" class="button_habitacion" title="Distribucion de Habitaciones" >
-                    </a>
-                    <a href="javascript: setEgresoIngreso('@item.ViajeHotelID','@item.ViajeID','@item.Desde');" id="@item.ViajeHotelID" class="button_edit" title="Editar ingreso/egreso al Hotel" >
-                    </a>
-                    <a id="btn-desvincular-hotel" href="#" data-hotel="@item.HotelID" data-viaje="@item.ViajeID" class="button_delete" title="Desvincular Hotel">
-                    </a>
-                </td>
-            </tr>       
-        }
-    </tbody>
-</table>
-<div id="divHotelHabitacionViaje">
-
-</div>
-<p class="botonera-form">
-    <a href="#" id="btn-agregar-hotel" data-viaje="@ViewData["viajeid"]" class="btn btn-inverse btn-small">Vincular Hotel</a>
-</p>
