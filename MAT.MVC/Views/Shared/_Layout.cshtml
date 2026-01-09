@@ -72,6 +72,12 @@
 
             <!-- Wrapper -->
             <div class="wrapper">
+                <!-- Mobile Menu Toggle Button -->
+                <button type="button" class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menú">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
                 <!-- User Profile -->
                 <div class="user-profile-container">
                     <img src="~/Images/mat header.png" alt="Marco Antonio Tours" class="user-profile-logo" />
@@ -86,11 +92,14 @@
         </div>
         <!-- Top navbar END -->
 
+        <!-- Mobile Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
         <!-- Sidebar menu & content wrapper -->
         <div id="wrapper">
 
             <!-- Sidebar Menu -->
-            <div id="menu" class="hidden-phone hidden-print">
+            <div id="menu" class="hidden-print">
 
                 <!-- Brand -->
                 
@@ -309,6 +318,42 @@
                             $(this).parent('li.hasSubmenu').addClass('parent-active');
                         });
                     }
+                }
+            });
+
+            // Mobile menu toggle
+            var mobileToggle = $('#mobileMenuToggle');
+            var sidebar = $('#menu');
+            var overlay = $('#sidebarOverlay');
+
+            mobileToggle.on('click', function() {
+                sidebar.toggleClass('mobile-open');
+                overlay.toggleClass('active');
+                $('body').toggleClass('sidebar-open');
+            });
+
+            overlay.on('click', function() {
+                sidebar.removeClass('mobile-open');
+                overlay.removeClass('active');
+                $('body').removeClass('sidebar-open');
+            });
+
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar.hasClass('mobile-open')) {
+                    sidebar.removeClass('mobile-open');
+                    overlay.removeClass('active');
+                    $('body').removeClass('sidebar-open');
+                }
+            });
+
+            // Close sidebar when clicking a menu link on mobile
+            sidebar.on('click', 'a[href]:not([data-bs-toggle])', function() {
+                if ($(window).width() <= 768) {
+                    setTimeout(function() {
+                        sidebar.removeClass('mobile-open');
+                        overlay.removeClass('active');
+                        $('body').removeClass('sidebar-open');
+                    }, 150);
                 }
             });
         });

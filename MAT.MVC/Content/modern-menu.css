@@ -425,3 +425,26 @@
 #menu .menu-0 li.hasSubmenu.parent-active > [data-bs-toggle="collapse"]::after {
     transform: rotate(90deg) !important;
 }
+
+/* ===== MOBILE MENU ===== */
+@media (max-width: 768px) {
+    #menu {
+        padding-top: 1rem;
+    }
+
+    #menu .menu-0 > li > a {
+        padding: 14px 20px !important;
+        min-height: 48px;
+    }
+
+    #menu .menu-0 > li.hasSubmenu > ul.collapse > li > a,
+    #menu .menu-0 > li.hasSubmenu > ul.show > li > a {
+        padding: 12px 20px 12px 2.5rem !important;
+        min-height: 44px;
+    }
+
+    #menu .slim-scroll {
+        max-height: calc(100vh - 60px) !important;
+        height: auto !important;
+    }
+}
