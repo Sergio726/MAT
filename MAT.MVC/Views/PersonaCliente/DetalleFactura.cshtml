@@ -1,97 +1,371 @@
-﻿@using MAT.Entities
+@using MAT.Entities
 @using MAT.Enums
 @using MAT.Utilities
 @using MAT.MVC.Models
 
-@*@model FacturaModel*@
 @model FacturaStandard
 @{
     Guid FacturaID = Model.FacturaID;
     Guid ClienteID = Model.ClienteID;
     double dTotal = 0;
     double dTotalPagos = Model.Monto - Model.Saldo;
-
 }
 
-
-    <div class="form-modal">
-        @{
-            string sUSD = "";
-            if (Model.MonedaTipo != 1)
-            {
-                sUSD = "(USD)";
-            }
+<style>
+    .factura-detail-container {
+        padding: 0.5rem;
+    }
+    .factura-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    .factura-info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .factura-info-item.full-width {
+        grid-column: span 2;
+    }
+    .factura-info-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .factura-info-value {
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        padding: 0.5rem 0.625rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .factura-info-value i {
+        color: var(--primary-color, #e91e63);
+        font-size: 0.875rem;
+    }
+    .factura-info-value .currency-badge {
+        background: var(--primary-color, #e91e63);
+        color: white;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 0.25rem;
+    }
+    .factura-section {
+        margin-bottom: 1rem;
+    }
+    .factura-section-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        padding: 0.5rem 0.75rem;
+        background: var(--bg-secondary, #f3f4f6);
+        border-radius: 0.375rem 0.375rem 0 0;
+        border-bottom: 2px solid var(--primary-color, #e91e63);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .factura-section-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .factura-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+    }
+    .factura-table thead th {
+        background: var(--bg-secondary, #f9fafb);
+        padding: 0.5rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .factura-table tbody td {
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        color: var(--text-primary, #1f2937);
+    }
+    .factura-table tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .factura-table tfoot th {
+        background: var(--bg-secondary, #f3f4f6);
+        padding: 0.625rem 0.5rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        border-top: 2px solid var(--border-color, #e5e7eb);
+    }
+    .btn-action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 0.375rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-secondary, #6b7280);
+        text-decoration: none;
+    }
+    .btn-action-icon:hover {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .factura-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+        margin-top: 1rem;
+    }
+    .btn-factura {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 0.875rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        font-size: 0.75rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-factura-primary {
+        background: var(--primary-color, #e91e63);
+        color: white;
+    }
+    .btn-factura-primary:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+        text-decoration: none;
+    }
+    .btn-factura-secondary {
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-factura-secondary:hover {
+        background: var(--border-color, #e5e7eb);
+        color: var(--text-primary, #374151);
+        text-decoration: none;
+    }
+    .btn-factura-danger {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+    .btn-factura-danger:hover {
+        background: #fecaca;
+        color: #dc2626;
+        text-decoration: none;
+    }
+    .dialog-hidden {
+        display: none;
+    }
+    .dialog-content {
+        padding: 1rem;
+    }
+    .dialog-content .form-group {
+        margin-bottom: 0.75rem;
+    }
+    .dialog-content label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        margin-bottom: 0.25rem;
+    }
+    .dialog-content input[type="number"],
+    .dialog-content input[type="text"] {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+    }
+    .dialog-content input:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+    .dialog-content .radio-group {
+        display: flex;
+        gap: 1rem;
+        margin: 0.5rem 0;
+    }
+    .dialog-content .radio-group label {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        cursor: pointer;
+    }
+    @@media (max-width: 480px) {
+        .factura-info-grid {
+            grid-template-columns: 1fr;
         }
+        .factura-info-item.full-width {
+            grid-column: span 1;
+        }
+        .factura-actions {
+            flex-direction: column;
+        }
+        .btn-factura {
+            justify-content: center;
+        }
+    }
+</style>
 
-        <div class="form-label">Monto</div>
-        <div class="form-field">@String.Format("{0:C}", Model.Monto) <b>@sUSD</b></div>
+<div class="factura-detail-container">
+    @{
+        string sUSD = "";
+        if (Model.MonedaTipo != 1)
+        {
+            sUSD = "USD";
+        }
+    }
 
-        <div class="form-label">Saldo</div>
-        <div class="form-field">@String.Format("{0:C}", Model.Saldo) <b>@sUSD</b></div>
+    <!-- Informacion de la Factura -->
+    <div class="factura-info-grid">
+        <div class="factura-info-item">
+            <span class="factura-info-label">Monto</span>
+            <span class="factura-info-value">
+                <i class="bi bi-currency-dollar"></i>
+                @String.Format("{0:C}", Model.Monto)
+                @if (!string.IsNullOrEmpty(sUSD))
+                {
+                    <span class="currency-badge">@sUSD</span>
+                }
+            </span>
+        </div>
+        <div class="factura-info-item">
+            <span class="factura-info-label">Saldo</span>
+            <span class="factura-info-value">
+                <i class="bi bi-wallet2"></i>
+                @String.Format("{0:C}", Model.Saldo)
+                @if (!string.IsNullOrEmpty(sUSD))
+                {
+                    <span class="currency-badge">@sUSD</span>
+                }
+            </span>
+        </div>
+        <div class="factura-info-item">
+            <span class="factura-info-label">Fecha</span>
+            <span class="factura-info-value">
+                <i class="bi bi-calendar3"></i>
+                @Model.Fecha
+            </span>
+        </div>
+        <div class="factura-info-item">
+            <span class="factura-info-label">Cliente</span>
+            <span class="factura-info-value">
+                <i class="bi bi-person"></i>
+                @(Model.ClienteApellido + " " + Model.ClienteNombre)
+            </span>
+        </div>
+        <div class="factura-info-item">
+            <span class="factura-info-label">Vendedor</span>
+            <span class="factura-info-value">
+                <i class="bi bi-person-badge"></i>
+                @(Model.VendedorApellido + " " + Model.VendedorNombre)
+            </span>
+        </div>
+        <div class="factura-info-item">
+            <span class="factura-info-label">Paquete</span>
+            <span class="factura-info-value">
+                <i class="bi bi-box-seam"></i>
+                @Model.PaqueteDescripcion
+            </span>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Observaciones))
+        {
+            <div class="factura-info-item full-width">
+                <span class="factura-info-label">Observaciones</span>
+                <span class="factura-info-value">
+                    <i class="bi bi-chat-left-text"></i>
+                    @Model.Observaciones
+                </span>
+            </div>
+        }
+    </div>
 
-        <div class="form-label">Fecha</div>
-        <div class="form-field">@Model.Fecha</div>
-
-        <div class="form-label">Cliente</div>
-        <div class="form-field">@(Model.ClienteApellido + " " + Model.ClienteNombre)</div>
-
-        <div class="form-label">Vendedor</div>
-        <div class="form-field">@(Model.VendedorApellido + " " + Model.VendedorNombre)</div>
-
-        <div class="form-label">Paquete</div>
-        <div class="form-field">@Model.PaqueteDescripcion</div>
-
-        <div class="form-label">Observaciones</div>
-        <div class="form-field">@Model.Observaciones</div>
-
-        <table class="mat-customtable">
+    <!-- Tabla de Pasajeros/Butacas -->
+    <div class="factura-section">
+        <div class="factura-section-title">
+            <i class="bi bi-people"></i>
+            Pasajeros
+        </div>
+        <table class="factura-table">
             <thead>
                 <tr>
                     <th>Butaca</th>
                     <th>Pasajero</th>
-                    <th></th>
+                    <th style="width: 70px;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (FacturaDetalle item in ViewBag.FacturaDetalle)
                 {
                     <tr>
-                        <td>@item.ButacaNro</td>
+                        <td>
+                            <strong>@item.ButacaNro</strong>
+                        </td>
                         <td>@item.PasajeroNombre @item.PasajeroApellido</td>
                         <td>
-                            <a href="#" class="btn-editar-butaca button_edit" id="btn-editar-butaca" data-anterior="@item.ButacaID" data-pasaje="@item.PasajeID" title="Editar Butaca">
-                            </a>
-                            @if (item.HabitacionID != new Guid("00000000-0000-0000-0000-000000000000") && item.HabitacionID != null)
-                            {
-                                <a href="#" class="btn-editar-habitacion button_agregar_habitacion" id="btn-editar-habitacion" title="Agregar Habitacion" data-factura="@(Model.FacturaID.ToString() ?? "")" data-anterior="@item.HabitacionID" data-pasaje="@item.PasajeID" data-viaje="@item.ViajeID" data-pasajero="@item.PasajeroID">
+                            <div style="display: flex; gap: 0.25rem;">
+                                <a href="#" class="btn-action-icon btn-editar-butaca" id="btn-editar-butaca" data-anterior="@item.ButacaID" data-pasaje="@item.PasajeID" title="Editar Butaca">
+                                    <i class="bi bi-pencil"></i>
                                 </a>
-
-                            }
-                            else
-                            {
-                                <a href="#" class="btn-editar-habitacion button_agregar_habitacion" id="btn-editar-habitacion" title="Agregar Habitacion" data-factura="@(Model.FacturaID.ToString() ?? "")" data-pasaje="@item.PasajeID" data-viaje="@item.ViajeID" data-pasajero="@item.PasajeroID">
-                                </a>
-                            }
+                                @if (item.HabitacionID != new Guid("00000000-0000-0000-0000-000000000000") && item.HabitacionID != null)
+                                {
+                                    <a href="#" class="btn-action-icon btn-editar-habitacion" id="btn-editar-habitacion" title="Agregar Habitacion" data-factura="@(Model.FacturaID.ToString() ?? "")" data-anterior="@item.HabitacionID" data-pasaje="@item.PasajeID" data-viaje="@item.ViajeID" data-pasajero="@item.PasajeroID">
+                                        <i class="bi bi-door-open"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="#" class="btn-action-icon btn-editar-habitacion" id="btn-editar-habitacion" title="Agregar Habitacion" data-factura="@(Model.FacturaID.ToString() ?? "")" data-pasaje="@item.PasajeID" data-viaje="@item.ViajeID" data-pasajero="@item.PasajeroID">
+                                        <i class="bi bi-door-open"></i>
+                                    </a>
+                                }
+                            </div>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
+    </div>
 
-
-        @if (ViewBag.ListMenores.Count > 0)
-        {
-            <table id="tblListMenores" class="mat-customtable">
+    <!-- Tabla de Menores (si existen) -->
+    @if (ViewBag.ListMenores.Count > 0)
+    {
+        <div class="factura-section">
+            <div class="factura-section-title">
+                <i class="bi bi-shield-check"></i>
+                Seguro Menor
+            </div>
+            <table id="tblListMenores" class="factura-table">
                 <thead>
                     <tr>
-                        <th colspan="3">Seguro Menor</th>
+                        <th style="width: 40px;">#</th>
+                        <th>Responsable del menor</th>
+                        <th>Menor a cargo</th>
                     </tr>
-                    <tr>
-                        <th></th>
-                        <th style="width: 48%;">Responsable del menor</th>
-                        <th style="width: 48%;">Menor a cargo</th>
-                    </tr>
-
                 </thead>
                 <tbody>
                     @{int i = 0;}
@@ -106,52 +380,48 @@
                                 <td>@(item.ApellidoMenor + ", " + item.NomreMenor + " Doc.: " + item.DocMenor)</td>
                             </tr>
                         }
-
                     }
-
                 </tbody>
             </table>
-        }
+        </div>
+    }
 
-        <table class="mat-customtable">
+    <!-- Tabla de Items -->
+    <div class="factura-section">
+        <div class="factura-section-title">
+            <i class="bi bi-list-ul"></i>
+            Items
+        </div>
+        <table class="factura-table">
             <thead>
                 <tr>
-                    <th colspan="5">Items</th>
-                </tr>
-                <tr>
-                    <th></th>
+                    <th style="width: 40px;">#</th>
                     <th>Fecha</th>
                     <th>Detalle</th>
-                    <th>Cantidad</th>
+                    <th style="width: 60px;">Cant.</th>
                     <th>Precio</th>
                 </tr>
             </thead>
             <tbody>
-                @{ int iNro = 0;
-
+                @{
+                    int iNro = 0;
                     foreach (DBOFacturaDetalle item in ViewBag.ExtendFacturaDetalle)
                     {
                         iNro += 1;
                         dTotal += item.Precio;
                         <tr>
+                            <td>@iNro</td>
+                            <td>@item.Fecha</td>
+                            <td>@item.Detalle</td>
+                            <td>@item.Cantidad</td>
                             <td>
-                                @iNro
-                            </td>
-                            <td>
-                                @item.Fecha
-                            </td>
-                            <td>
-                                @item.Detalle
-                            </td>
-                            <td>
-                                @item.Cantidad
-                            </td>
-                            <td>
-                                <div class="custom_diplay_flex">
-                                    <span class="custom_padding_5">@String.Format("{0:C}", item.Precio)</span>
+                                <div style="display: flex; align-items: center; gap: 0.375rem;">
+                                    <span>@String.Format("{0:C}", item.Precio)</span>
                                     @if (item.Detalle.Contains("PAQUETE"))
                                     {
-                                        <a href="javascript: fnCambiarPrecio('@item.Id','@Model.FacturaID');" title="Cambiar Precio"><div class="button_edit"></div></a>
+                                        <a href="javascript: fnCambiarPrecio('@item.Id','@Model.FacturaID');" title="Cambiar Precio" class="btn-action-icon" style="width: 24px; height: 24px;">
+                                            <i class="bi bi-pencil" style="font-size: 0.7rem;"></i>
+                                        </a>
                                     }
                                 </div>
                             </td>
@@ -161,65 +431,118 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th>Total</th>
-                    <th colspan="3"></th>
+                    <th colspan="4" style="text-align: right;">Total</th>
                     <th>@String.Format("{0:C}", dTotal)</th>
                 </tr>
             </tfoot>
         </table>
-
-        <p class="botonera-form">
-            @if (Model.Estado == (int)eEstadoFactura.Pagado)
-            {
-                <a href="#" id="btn-imprimirvouchers" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-inverse">Imprimir Vouchers</a>
-                <a href="#" id="btn-notacredito" data-facturaid="@FacturaID" data-clienteid="@ClienteID" data-fecha="@Model.Fecha" data-monto="@Model.Monto" class="btn btn-small btn-inverse">Nota de Crédito</a>
-                @*<a href="#" id="btn-eliminarventa" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-danger">Eliminar Venta</a>*@
-            }
-            else
-            {
-                <a href="#" id="btn-abrirregistrarpago" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-inverse">Registrar Pago Parcial</a>
-                <a href="#" id="btn-abrirpagototal" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-inverse">Pago Total de Factura</a>
-                <a href="#" id="btn-descuentoRecargo" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-inverse" onclick="javascript: $('#divDescuentoRecargo').dialog({width: 400,modal: true});">Descuento/Recargo</a>
-                <a href="#" id="btn-notacredito" data-facturaid="@FacturaID" data-clienteid="@ClienteID" data-fecha="@Model.Fecha" data-monto="@Model.Monto" class="btn btn-small btn-inverse">Nota de Crédito</a>
-                @*<a href="#" id="btn-eliminarventa" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-danger">Eliminar Venta</a>*@
-            }
-            <a href="javascript:pagosFactura('@FacturaID');" class="btn btn-small btn-inverse" title="Ver pagos de esta factura">Pagos</a>
-            <a href="#" id="btn-eliminarventa" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn btn-small btn-danger">Eliminar Venta</a>
-        </p>
     </div>
 
-    <div id="divSelectTipoVoucher" title="Tipo de Voucher" style="display:none;">
-        <div class="custom_line_height_25 custom_margin_left_5">
-            <a href="javascript: imprimirVoucher('@FacturaID','Grupal');" class="custom_text_color_black"><div class="divOk"><span class="custom_margin_left_35">Grupal</span></div></a>
-            <a href="javascript: imprimirVoucher('@FacturaID','Individual');" class="custom_text_color_black"><div class="divOk"><span class="custom_margin_left_35">Individual</span></div></a>
-            <input type="checkbox" id="chkInfoAdicional" /><a href="javascript:void(0);" id="aCheckInforAd" class="custom_text_color_black"> Incluir Información Adicional</a>
+    <!-- Acciones -->
+    <div class="factura-actions">
+        @if (Model.Estado == (int)eEstadoFactura.Pagado)
+        {
+            <a href="#" id="btn-imprimirvouchers" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-primary">
+                <i class="bi bi-printer"></i>
+                Imprimir Vouchers
+            </a>
+            <a href="#" id="btn-notacredito" data-facturaid="@FacturaID" data-clienteid="@ClienteID" data-fecha="@Model.Fecha" data-monto="@Model.Monto" class="btn-factura btn-factura-secondary">
+                <i class="bi bi-file-earmark-minus"></i>
+                Nota de Credito
+            </a>
+        }
+        else
+        {
+            <a href="#" id="btn-abrirregistrarpago" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-primary">
+                <i class="bi bi-cash"></i>
+                Pago Parcial
+            </a>
+            <a href="#" id="btn-abrirpagototal" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-primary">
+                <i class="bi bi-cash-stack"></i>
+                Pago Total
+            </a>
+            <a href="#" id="btn-descuentoRecargo" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-secondary" onclick="javascript: $('#divDescuentoRecargo').dialog({width: 400,modal: true});">
+                <i class="bi bi-percent"></i>
+                Descuento/Recargo
+            </a>
+            <a href="#" id="btn-notacredito" data-facturaid="@FacturaID" data-clienteid="@ClienteID" data-fecha="@Model.Fecha" data-monto="@Model.Monto" class="btn-factura btn-factura-secondary">
+                <i class="bi bi-file-earmark-minus"></i>
+                Nota de Credito
+            </a>
+        }
+        <a href="javascript:pagosFactura('@FacturaID');" class="btn-factura btn-factura-secondary" title="Ver pagos de esta factura">
+            <i class="bi bi-receipt"></i>
+            Pagos
+        </a>
+        <a href="#" id="btn-eliminarventa" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-danger">
+            <i class="bi bi-trash3"></i>
+            Eliminar Venta
+        </a>
+    </div>
+</div>
+
+<!-- Dialogs -->
+<div id="divSelectTipoVoucher" title="Tipo de Voucher" class="dialog-hidden">
+    <div class="dialog-content">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <a href="javascript: imprimirVoucher('@FacturaID','Grupal');" class="btn-factura btn-factura-secondary" style="justify-content: center;">
+                <i class="bi bi-people"></i>
+                Grupal
+            </a>
+            <a href="javascript: imprimirVoucher('@FacturaID','Individual');" class="btn-factura btn-factura-secondary" style="justify-content: center;">
+                <i class="bi bi-person"></i>
+                Individual
+            </a>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: 0.5rem;">
+                <input type="checkbox" id="chkInfoAdicional" />
+                <span>Incluir Informacion Adicional</span>
+            </label>
         </div>
-
     </div>
+</div>
 
-    <div id="Voucher_dialog-message" title="Atencion">
+<div id="Voucher_dialog-message" title="Atencion">
+</div>
 
+<div id="divDescuentoRecargo" title="Descuento/Recargo" class="dialog-hidden">
+    <div class="dialog-content">
+        <div class="form-group">
+            <label for="nMonto">Monto <span style="color: #ef4444;">*</span></label>
+            <input type="number" id="nMonto" min="0" max="100000" value="0" />
+        </div>
+        <div class="form-group">
+            <label for="txtDetalleDR">Detalle <span style="color: #ef4444;">*</span></label>
+            <input type="text" id="txtDetalleDR" maxlength="100" />
+        </div>
+        <div class="form-group">
+            <label>Tipo</label>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="rDR" value="Descuento" checked />
+                    Descuento
+                </label>
+                <label>
+                    <input type="radio" name="rDR" value="Incremento" />
+                    Incremento
+                </label>
+            </div>
+        </div>
+        <div style="margin-top: 1rem; text-align: right;">
+            <button type="button" class="btn-factura btn-factura-primary" onclick="addDR()">
+                <i class="bi bi-plus-lg"></i>
+                Agregar
+            </button>
+        </div>
     </div>
+</div>
 
-    <div id="divDescuentoRecargo" title="Descuento/Recargo" style="display:none; padding:1%;">
-
-        <span>Monto: </span><input type="number" id="nMonto" min="0" max="100000" style="width:75%;" value="0" /><span class="required">*</span><br />
-        <span>Detalle: </span><input type="text" id="txtDetalleDR" maxlength="100" style="width:74%;" /><span class="required">*</span><br />
-        <span>Descuento </span> <input type="radio" name="rDR" value="Descuento" checked />
-        <span>Incremento </span> <input type="radio" name="rDR" value="Incremento" /><br />
-
-        <input type="button" class="btn btn-small btn-inverse" value="Agregar" style="margin: 5%; float: right;" onclick="addDR()" />
-    </div>
-    <input type="hidden" id="hdnTotalPagos" value="@dTotalPagos" />
-    <input type="hidden" id="hdnViajeMonedaTipo" value="@Model.MonedaTipo" />
-
-   
-
+<input type="hidden" id="hdnTotalPagos" value="@dTotalPagos" />
+<input type="hidden" id="hdnViajeMonedaTipo" value="@Model.MonedaTipo" />
 
 <script type="text/javascript">
     $(function () {
-        if ($(".btn-editar-habitacion").size() != $(".btn-editar-butaca").size()) {
-            alert("Opción Imprimir Voucher no disponible. Debe reservar las habitaciones para el/los pasajero/s correspondientes.");
+        if ($(".btn-editar-habitacion").length != $(".btn-editar-butaca").length) {
+            alert("Opcion Imprimir Voucher no disponible. Debe reservar las habitaciones para el/los pasajero/s correspondientes.");
             $("#btn-imprimirvouchers").hide();
         }
         $("#btn-abrirregistrarpago").click(function () {
@@ -241,9 +564,9 @@
         else {
             $("#btn-abrirpagototal").attr("disabled", "disabled");
             $("#btn-abrirpagototal").attr("title", "Solo habilitado para pago en Pesos.");
+            $("#btn-abrirpagototal").css("opacity", "0.5");
+            $("#btn-abrirpagototal").css("cursor", "not-allowed");
         }
-
-
 
         $("#btn-eliminarventa").click(function () {
             var url = "/PersonaCliente/EliminarVenta?facturaid=" + $(this).data("facturaid") + "&clienteid=" + $(this).data("clienteid");
@@ -252,12 +575,9 @@
             ShowFormDialog(url, id, title, "min");
         });
 
-        $("#aCheckInforAd").click(function () {
-            if ($("#chkInfoAdicional").is(":checked")) {
-                $("#chkInfoAdicional").attr("checked", false)
-            }
-            else {
-                $("#chkInfoAdicional").attr("checked", true)
+        $("#aCheckInforAd, #chkInfoAdicional").click(function (e) {
+            if (e.target.id === "aCheckInforAd") {
+                $("#chkInfoAdicional").prop("checked", !$("#chkInfoAdicional").is(":checked"));
             }
         });
     });
@@ -285,10 +605,8 @@
             },
             success: function (data) {
                 if (data.Estado == "Done.") {
-                    //window.location.reload(true);
                     $('#divDescuentoRecargo').dialog('close');
                     PopupDetalleFactura_Load();
-
                 }
                 else {
                     alert("Se produjo un error. Contactese con el administrador.");
@@ -302,9 +620,8 @@
         })
     }
 
-    function fnCambiarPrecio(DetalleFacturaId, FacturaId)
-    {
-        var htmlLoading = "<div class='iconLoading'></div>";
+    function fnCambiarPrecio(DetalleFacturaId, FacturaId) {
+        var htmlLoading = "<div class='loading-container'><div class='loading-spinner'></div></div>";
         ShowFormDialogHTML(htmlLoading, "PopinPrecioList", "Cambiar Precio", "min");
         $.ajax({
             url: "/PersonaCliente/CambiarPrecioList",
@@ -314,7 +631,6 @@
             },
             success: function (data) {
                 $("#PopinPrecioList").html(data);
-                //html, dialogid, dialogtitle, widthsize
             },
             error: function (e) {
                 alert("Se produjo un error. Contactese con el administrador.");
@@ -323,4 +639,3 @@
         })
     }
 </script>
-

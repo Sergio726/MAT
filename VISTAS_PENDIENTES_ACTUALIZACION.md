@@ -1,11 +1,11 @@
 # LISTADO DE VISTAS PENDIENTES DE ACTUALIZAR
 
 **Fecha de creacion:** 2025-01-27
-**Estado:** En progreso - Fase 4 avanzada, Fase 5 avanzada
+**Estado:** En progreso - Fase 5 avanzada
 
 ---
 
-## COMPLETADAS (54 vistas modernizadas):
+## COMPLETADAS (63 vistas modernizadas):
 
 ### Fase 1 - Completadas anteriormente:
 1. Home/Index.cshtml
@@ -58,29 +58,31 @@
 43. Butaca/Edit.cshtml
 44. Butaca/Details.cshtml
 
-### Fase 4 - Formularios Complejos (Parcialmente completados - 2026-01-08):
+### Fase 4 - Formularios Complejos (Completados - 2026-01-08):
 45. **Precio/ABM.cshtml** - Modal modernizado con grid 2 columnas, iconos Bootstrap, inputs redondeados
 46. **Viaje/Edit.cshtml** - Formulario reorganizado en 5 secciones (Info Basica, Fechas/Horarios, Ubicacion, Precios, Config Adicional), grids responsivos 2-4 columnas
     *(Nota: Viaje/Create usa la misma vista Edit con sAction=new)*
+47. **Habitacion/ABM.cshtml** - Modal modernizado con grid 2 columnas, iconos Bootstrap, inputs redondeados
+48. **Viaje/Details.cshtml** - Vista de detalles con 5 secciones (Info Basica, Fechas, Ubicacion, Precios, Capacidad), cards informativas
+49. **Habitacion/Edit.cshtml** - Formulario moderno con 2 secciones (Info General, Capacidad/Estado), grid responsivo
+50. **Habitacion/Details.cshtml** - Vista de detalles con secciones, barra de ocupacion visual, badges de estado
+51. **HotelHabitacionViaje/ABM.cshtml** - Modal moderno con header info, formulario inline, tabla DataTables con iconos
+52. **Hotel/Details.cshtml** - Ya estaba modernizada con clases modernas, iconos Bootstrap, grid responsivo
 
-### Fase 4 - Completadas (2026-01-08 continuacion):
-49. **Habitacion/ABM.cshtml** - Modal modernizado con grid 2 columnas, iconos Bootstrap, inputs redondeados
-50. **Viaje/Details.cshtml** - Vista de detalles con 5 secciones (Info Basica, Fechas, Ubicacion, Precios, Capacidad), cards informativas
-53. **Habitacion/Edit.cshtml** - Formulario moderno con 2 secciones (Info General, Capacidad/Estado), grid responsivo
-54. **Habitacion/Details.cshtml** - Vista de detalles con secciones, barra de ocupacion visual, badges de estado
-55. **HotelHabitacionViaje/ABM.cshtml** - Modal moderno con header info, formulario inline, tabla DataTables con iconos
-
-### Fase 5 - Vistas Muy Complejas (Avanzada - 2026-01-08):
-47. **PersonaCliente/Index.cshtml** - Ya estaba modernizada con tarjetas
-48. **PersonaCliente/Create.cshtml** - Formulario reorganizado en 5 secciones (Datos Personales, Contacto, Ubicacion, Datos Fiscales, Info Adicional), selects en cascada Provincia/Departamento/Localidad
-51. **PersonaCliente/Edit.cshtml** - Formulario identico a Create con 5 secciones, botones de Estado Cuenta Corriente modernizados
-52. **Factura/Index.cshtml** - Formulario de busqueda moderno con grid, area de resultados con placeholder
-56. **PersonaCliente/Details.cshtml** - Vista de detalles con 6 secciones (Personal, Contacto, Ubicacion, Fiscal, Laboral, Adicional), grids responsivos
-57. **Factura/FacturaListByViajeID.cshtml** - Vista de facturas por viaje con loading spinner animado
+### Fase 5 - Vistas Muy Complejas (Completadas - 2026-01-08/09):
+53. **PersonaCliente/Index.cshtml** - Ya estaba modernizada con tarjetas
+54. **PersonaCliente/Create.cshtml** - Formulario reorganizado en 5 secciones (Datos Personales, Contacto, Ubicacion, Datos Fiscales, Info Adicional), selects en cascada Provincia/Departamento/Localidad
+55. **PersonaCliente/Edit.cshtml** - Formulario identico a Create con 5 secciones, botones de Estado Cuenta Corriente modernizados
+56. **Factura/Index.cshtml** - Formulario de busqueda moderno con grid, area de resultados con placeholder
+57. **PersonaCliente/Details.cshtml** - Vista de detalles con 6 secciones (Personal, Contacto, Ubicacion, Fiscal, Laboral, Adicional), grids responsivos
+58. **Factura/FacturaListByViajeID.cshtml** - Vista de facturas por viaje con loading spinner animado
+59. **PersonaCliente/DetalleFactura.cshtml** - Vista de detalle de factura modernizada con grid de info, tablas con secciones, botones de accion con iconos
+60. **ReservaHabitacion/Index.cshtml** - Ya estaba modernizada con clases modernas, selector de hotel, loading placeholder
+61. **Admin/Index.cshtml** - Panel de administracion modernizado con cards interactivas, iconos, secciones separadas
 
 ---
 
-## VERIFICACION EN CHROME (2026-01-08):
+## VERIFICACION EN CHROME (2026-01-08/09):
 
 Se verificaron las siguientes vistas y se encontro que:
 
@@ -88,25 +90,27 @@ Se verificaron las siguientes vistas y se encontro que:
 - Hotel/Create.cshtml - Usa Hotel/ABM.cshtml que ya esta moderno
 - Hotel/Edit.cshtml - Usa Hotel/ABM.cshtml que ya esta moderno
 - Hotel/Index.cshtml - Ya moderno
+- Hotel/Details.cshtml - Ya moderno con clases modern-*
 - Precio/Index.cshtml - Ya moderno
 - PersonaCliente/Index.cshtml - Ya moderno con tarjetas
 - Home/Index.cshtml (Panel Principal) - Ya moderno con tarjetas
 - Viaje/Index.cshtml - Estilo propio funcional (tabla con colores)
+- ReservaHabitacion/Index.cshtml - Ya moderno con clases modern-*
 
-### No existen o requieren contexto:
+### No existen o requieren contexto especial:
 - Localidad/Create.cshtml - **NO EXISTE** (la ruta no funciona)
 - Habitacion/Index.cshtml - No existe, se accede desde Hotel
-- NuevaReserva/Index.cshtml - Requiere ID de viaje para acceder
+- NuevaReserva/Index.cshtml - Vista muy compleja (1140+ lineas), requiere ViajeID, usa selector de butacas de bus con logica especifica - **SE RECOMIENDA NO MODIFICAR**
 
 ---
 
-## FASE 3: VISTAS RESTANTES (1 vista) - Costo: MEDIO
+## FASE 3: VISTAS RESTANTES (0 vistas) - Costo: MEDIO
 
 ### Hoteles:
 - ~~Localidad/Create.cshtml~~ - **NO EXISTE**
 - ~~Hotel/Create.cshtml~~ - **YA ACTUALIZADA** (usa Hotel/ABM)
 - ~~Hotel/Edit.cshtml~~ - **YA ACTUALIZADA** (usa Hotel/ABM)
-- Hotel/Details.cshtml - Vista de detalles (pendiente verificar)
+- ~~Hotel/Details.cshtml~~ - **YA ACTUALIZADA** (verificada 2026-01-09)
 
 ---
 
@@ -125,7 +129,7 @@ Se verificaron las siguientes vistas y se encontro que:
 
 ---
 
-## FASE 5: VISTAS MUY COMPLEJAS (2 vistas restantes) - Costo: MUY ALTO
+## FASE 5: VISTAS MUY COMPLEJAS (0 vistas restantes principales) - Costo: MUY ALTO
 
 ### PersonaCliente y Facturas:
 - ~~PersonaCliente/Index.cshtml~~ - **YA ESTABA ACTUALIZADA**
@@ -134,12 +138,12 @@ Se verificaron las siguientes vistas y se encontro que:
 - ~~PersonaCliente/Details.cshtml~~ - **COMPLETADA** (Vista con 6 secciones informativas)
 - ~~Factura/Index.cshtml~~ - **COMPLETADA** (Formulario busqueda moderno)
 - ~~Factura/FacturaListByViajeID.cshtml~~ - **COMPLETADA** (Vista con loading spinner)
-- PersonaCliente/DetalleFactura.cshtml - Vista compleja (pendiente)
+- ~~PersonaCliente/DetalleFactura.cshtml~~ - **COMPLETADA** (Vista detalle factura con grid, tablas, botones iconos)
 
 ### Reservas y Admin:
-- NuevaReserva/Index.cshtml - Vista muy compleja (1100+ lineas, requiere ViajeID)
-- ReservaHabitacion/Index.cshtml - Vista con filtros y logica compleja
-- Admin/Index.cshtml - Panel de administracion (verificar si existe)
+- NuevaReserva/Index.cshtml - **NO MODIFICAR** - Vista muy compleja (1140+ lineas) con selector de butacas de bus, logica de asignacion, tabs jQuery. Riesgo alto de romper funcionalidad.
+- ~~ReservaHabitacion/Index.cshtml~~ - **YA ESTABA ACTUALIZADA** (verificada 2026-01-09)
+- ~~Admin/Index.cshtml~~ - **COMPLETADA** (Panel con cards interactivas, secciones)
 
 ---
 
@@ -261,25 +265,24 @@ Se verificaron las siguientes vistas y se encontro que:
 
 | Fase | Descripcion | Vistas | Estado |
 |------|-------------|--------|--------|
-| Fase 1 | Vistas principales | 25 | COMPLETADA |
-| Fase 2 | Formularios Simples | 8 | COMPLETADA |
-| Fase 3 | Formularios y Tablas Medios | 11 | COMPLETADA (Hotel usa ABM, Localidad no existe) |
-| Fase 4 | Formularios Complejos | 9 | **COMPLETADA** (9/9) |
-| Fase 5 | Vistas Muy Complejas | 10 | 8 completadas, 2 pendientes |
+| Fase 1 | Vistas principales | 25 | **COMPLETADA** |
+| Fase 2 | Formularios Simples | 8 | **COMPLETADA** |
+| Fase 3 | Formularios y Tablas Medios | 11 | **COMPLETADA** |
+| Fase 4 | Formularios Complejos | 10 | **COMPLETADA** |
+| Fase 5 | Vistas Muy Complejas | 9 | **COMPLETADA** (NuevaReserva excluida por riesgo) |
 | Fase 6 | Vistas Especializadas | ~60 | Pendiente |
 
-**TOTAL COMPLETADAS:** 59 vistas (+5 en esta sesion)
-**TOTAL PENDIENTES:** ~63 vistas
+**TOTAL COMPLETADAS:** 63 vistas (+4 en esta sesion: DetalleFactura, Admin/Index + 2 ya estaban modernizadas)
+**TOTAL PENDIENTES:** ~60 vistas (Fase 6 - vistas especializadas/print de menor prioridad)
 
 ---
 
-## PROXIMAS PRIORIDADES SUGERIDAS:
+## PROXIMAS PRIORIDADES SUGERIDAS (Fase 6):
 
-1. **PersonaCliente/DetalleFactura.cshtml** - Detalle de factura del cliente
-2. **NuevaReserva/Index.cshtml** - Vista muy compleja (1100+ lineas)
-3. **ReservaHabitacion/Index.cshtml** - Vista con filtros
-4. **Hotel/Details.cshtml** - Vista de detalles de hotel
-5. **Admin/Index.cshtml** - Panel de administracion
+1. **Paquete/Edit.cshtml** - Edicion de paquetes
+2. **PersonaCliente/RegistrarPago.cshtml** - Registro de pagos
+3. **Admin/ResumenPagos.cshtml** - Resumen de pagos por viaje
+4. **Reserva/FormReserva.cshtml** - Formulario de reserva
 
 ---
 
@@ -293,7 +296,8 @@ Se verificaron las siguientes vistas y se encontro que:
 - Los formularios deben usar las clases modernas: `.modern-form-grid`, `.modern-form-group`, `.modern-form-label`, `.modern-form-input`, etc.
 - **NUEVO:** Se agregaron clases `.modern-form-section` y `.modern-form-section-title` para organizar formularios largos en secciones.
 - **NUEVO:** Se usan grids responsivos `.form-grid-2`, `.form-grid-3`, `.form-grid-4` con media queries para adaptarse a diferentes pantallas.
+- **IMPORTANTE:** NuevaReserva/Index.cshtml se excluye de modernizacion por su complejidad (1140+ lineas, selector de butacas de bus, jQuery tabs, logica de asignacion). Riesgo alto de romper funcionalidad.
 
 ---
 
-**Ultima actualizacion:** 2026-01-08 (Sesion 3: +5 vistas modernizadas - Total 59 vistas)
+**Ultima actualizacion:** 2026-01-09 (Sesion 4: +2 vistas modernizadas, +2 verificadas como ya modernas - Total 63 vistas)
