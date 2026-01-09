@@ -1,0 +1,266 @@
+/* ============================================
+   ESTILOS MODERNOS PARA DATATABLES
+   Marco Antonio Tours - Estilo SaaS
+   ============================================ */
+
+/* Contenedor general de DataTables */
+.dataTables_wrapper {
+    font-family: inherit;
+    padding: 0;
+}
+
+/* ============================================
+   HEADER: Selector "Mostrar" e Input "Buscar"
+   ============================================ */
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+}
+
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary, #6b7280);
+    margin: 0;
+}
+
+/* Select "Mostrar X registros" */
+.dataTables_wrapper .dataTables_length select {
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary, #1f2937);
+    background-color: var(--white, #ffffff);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 14px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 70px;
+}
+
+.dataTables_wrapper .dataTables_length select:hover {
+    border-color: var(--text-secondary, #6b7280);
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+    outline: none;
+    border-color: var(--brand-primary, #e63375);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+/* Input "Buscar" */
+.dataTables_wrapper .dataTables_filter input {
+    padding: 0.5rem 0.75rem;
+    padding-left: 2.25rem;
+    font-size: 0.875rem;
+    color: var(--text-primary, #1f2937);
+    background-color: var(--white, #ffffff);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 0.75rem center;
+    background-size: 14px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    min-width: 200px;
+}
+
+.dataTables_wrapper .dataTables_filter input:hover {
+    border-color: var(--text-secondary, #6b7280);
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    outline: none;
+    border-color: var(--brand-primary, #e63375);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+}
+
+.dataTables_wrapper .dataTables_filter input::placeholder {
+    color: var(--text-muted, #9ca3af);
+}
+
+/* ============================================
+   FOOTER: Info y Paginacion
+   ============================================ */
+
+.dataTables_wrapper .dataTables_info {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #6b7280);
+    padding: 1rem 0;
+}
+
+/* Contenedor de paginacion */
+.dataTables_wrapper .dataTables_paginate {
+    padding: 1rem 0;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 0.75rem;
+    margin: 0 0.125rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary, #6b7280);
+    background: var(--white, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb) !important;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: var(--text-primary, #1f2937);
+    background: var(--bg-secondary, #f8f9fa);
+    border-color: var(--text-secondary, #6b7280) !important;
+}
+
+/* Pagina actual */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: var(--white, #ffffff) !important;
+    background: var(--brand-primary, #e63375) !important;
+    border-color: var(--brand-primary, #e63375) !important;
+    font-weight: 600;
+}
+
+/* Botones deshabilitados */
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+    color: var(--text-muted, #9ca3af) !important;
+    background: var(--bg-secondary, #f8f9fa) !important;
+    border-color: var(--border-color, #e5e7eb) !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Botones Anterior y Siguiente */
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+.dataTables_wrapper .dataTables_paginate .paginate_button.next {
+    padding: 0 1rem;
+}
+
+/* Ellipsis */
+.dataTables_wrapper .dataTables_paginate .ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    color: var(--text-secondary, #6b7280);
+}
+
+/* ============================================
+   TABLA
+   ============================================ */
+
+table.dataTable {
+    border-collapse: collapse !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+table.dataTable thead th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary, #6b7280);
+    background: var(--bg-secondary, #f8f9fa);
+    border-bottom: 2px solid var(--border-color, #e5e7eb) !important;
+    padding: 0.875rem 1rem;
+}
+
+table.dataTable thead th:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+table.dataTable thead th:last-child {
+    border-radius: 0 8px 0 0;
+}
+
+table.dataTable tbody td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    vertical-align: middle;
+}
+
+table.dataTable tbody tr:hover {
+    background-color: rgba(230, 51, 117, 0.03);
+}
+
+/* Sorting icons */
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc {
+    cursor: pointer;
+    position: relative;
+    padding-right: 1.5rem !important;
+}
+
+table.dataTable thead .sorting::after,
+table.dataTable thead .sorting_asc::after,
+table.dataTable thead .sorting_desc::after {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.4;
+}
+
+table.dataTable thead .sorting_asc::after {
+    opacity: 1;
+    color: var(--brand-primary, #e63375);
+}
+
+table.dataTable thead .sorting_desc::after {
+    opacity: 1;
+    color: var(--brand-primary, #e63375);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        float: none;
+        text-align: left;
+        margin-bottom: 0.75rem;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        min-width: 100%;
+        width: 100%;
+    }
+
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        float: none;
+        text-align: center;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 0.5rem;
+        font-size: 0.8125rem;
+    }
+}
