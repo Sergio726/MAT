@@ -4981,3 +4981,199 @@ ul.viajes-lista li .viaje-container h4 {
     margin: 0 0 0.75rem 0 !important;
     line-height: 1.4 !important;
 }
+
+/* ============================================
+   ESTILOS GLOBALES PARA JQUERY UI DATEPICKER
+   Aplica a todos los calendarios de la app
+   ============================================ */
+
+/* Contenedor principal del datepicker */
+.ui-datepicker {
+    background: var(--white, #ffffff) !important;
+    border: 1px solid var(--border-color, #e5e7eb) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12) !important;
+    padding: 0 !important;
+    font-family: inherit !important;
+    z-index: 1000 !important;
+}
+
+/* Header del calendario */
+.ui-datepicker-header {
+    background: var(--brand-primary, #e63375) !important;
+    border: none !important;
+    border-radius: 11px 11px 0 0 !important;
+    padding: 0.875rem 1rem !important;
+}
+
+/* Titulo (mes y año) */
+.ui-datepicker-title {
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+}
+
+.ui-datepicker-title select {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    border-radius: 4px !important;
+    color: white !important;
+    font-weight: 500 !important;
+    padding: 0.25rem 0.5rem !important;
+    margin: 0 0.25rem !important;
+}
+
+.ui-datepicker-title select option {
+    background: var(--white, #ffffff) !important;
+    color: var(--text-primary, #1f2937) !important;
+}
+
+/* Botones de navegacion (prev/next) */
+.ui-datepicker-prev,
+.ui-datepicker-next {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    width: 28px !important;
+    height: 28px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    margin-top: 0 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.ui-datepicker-prev {
+    left: 0.75rem !important;
+}
+
+.ui-datepicker-next {
+    right: 0.75rem !important;
+}
+
+.ui-datepicker-prev:hover,
+.ui-datepicker-next:hover {
+    background: rgba(255, 255, 255, 0.35) !important;
+}
+
+.ui-datepicker-prev span,
+.ui-datepicker-next span {
+    display: block !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: -5px 0 0 -4px !important;
+    border: solid transparent !important;
+    background-image: none !important;
+}
+
+.ui-datepicker-prev span {
+    border-width: 5px 8px 5px 0 !important;
+    border-color: transparent white transparent transparent !important;
+    margin-left: -5px !important;
+}
+
+.ui-datepicker-next span {
+    border-width: 5px 0 5px 8px !important;
+    border-color: transparent transparent transparent white !important;
+    margin-left: -3px !important;
+}
+
+/* Tabla del calendario */
+.ui-datepicker-calendar {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 0 !important;
+}
+
+/* Cabecera de dias de la semana */
+.ui-datepicker-calendar th {
+    background: var(--bg-secondary, #f8f9fa) !important;
+    border: none !important;
+    padding: 0.75rem 0.5rem !important;
+    color: var(--text-secondary, #6b7280) !important;
+    font-weight: 600 !important;
+    font-size: 0.8125rem !important;
+    text-transform: uppercase !important;
+}
+
+/* Celdas de los dias */
+.ui-datepicker-calendar td {
+    border: none !important;
+    padding: 0.25rem !important;
+}
+
+.ui-datepicker-calendar td span,
+.ui-datepicker-calendar td a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin: 0 auto !important;
+    border: none !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    color: var(--text-primary, #1f2937) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+}
+
+.ui-datepicker-calendar td a:hover {
+    background: var(--bg-secondary, #f8f9fa) !important;
+    color: var(--brand-primary, #e63375) !important;
+}
+
+/* Dia actual (hoy) */
+.ui-datepicker-calendar td.ui-datepicker-today a {
+    background: rgba(230, 51, 117, 0.1) !important;
+    color: var(--brand-primary, #e63375) !important;
+    font-weight: 600 !important;
+}
+
+/* Dia seleccionado */
+.ui-datepicker-calendar td.ui-datepicker-current-day a,
+.ui-datepicker-calendar td a.ui-state-active,
+.ui-datepicker-calendar td a.ui-state-highlight {
+    background: var(--brand-primary, #e63375) !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Dias de otros meses (grises) */
+.ui-datepicker-calendar td.ui-datepicker-other-month span,
+.ui-datepicker-calendar td.ui-datepicker-unselectable span {
+    color: var(--text-muted, #9ca3af) !important;
+    opacity: 0.5 !important;
+}
+
+/* Dias no seleccionables */
+.ui-datepicker-calendar td.ui-state-disabled span {
+    color: var(--text-muted, #9ca3af) !important;
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+}
+
+/* Quitar iconos de sprite de jQuery UI */
+.ui-datepicker .ui-icon {
+    background-image: none !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .ui-datepicker {
+        width: 280px !important;
+    }
+
+    .ui-datepicker-calendar td span,
+    .ui-datepicker-calendar td a {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.8125rem !important;
+    }
+}
