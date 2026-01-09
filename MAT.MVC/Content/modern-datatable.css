@@ -126,9 +126,9 @@
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-    color: var(--text-primary, #1f2937);
-    background: var(--bg-secondary, #f8f9fa);
-    border-color: var(--text-secondary, #6b7280) !important;
+    color: var(--white, #ffffff) !important;
+    background: var(--brand-primary, #e63375) !important;
+    border-color: var(--brand-primary, #e63375) !important;
 }
 
 /* Pagina actual */
