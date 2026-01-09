@@ -1,22 +1,43 @@
-﻿@if (Request.IsAuthenticated)
+@if (Request.IsAuthenticated)
 {
-    <div class="user-profile-wrapper">
-        <div class="user-profile-info">
-            <span class="user-profile-greeting">Hola,</span>
-            @Html.ActionLink(User.Identity.Name, "Manage", "Account", routeValues: null, htmlAttributes: new { @class = "user-profile-name", title = "Administrar" })
+    <div class="user-menu-container">
+        <div class="user-menu-trigger" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-avatar">
+                @{
+                    var userName = User.Identity.Name ?? "U";
+                    var initials = userName.Length >= 2
+                        ? userName.Substring(0, 2).ToUpper()
+                        : userName.Substring(0, 1).ToUpper();
+                }
+                @initials
+            </div>
+            <span class="user-name">@User.Identity.Name</span>
+            <i class="bi bi-chevron-down user-chevron"></i>
         </div>
-        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
-        {
-            @Html.AntiForgeryToken()
-            <a href="javascript:document.getElementById('logoutForm').submit()" class="user-profile-logout">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Cerrar sesión</span>
-            </a>
-        }
+        <div class="dropdown-menu dropdown-menu-end user-dropdown">
+            <div class="dropdown-header">
+                <div class="dropdown-user-avatar">@initials</div>
+                <div class="dropdown-user-info">
+                    <span class="dropdown-user-name">@User.Identity.Name</span>
+                    <span class="dropdown-user-role">Administrador</span>
+                </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <a href="javascript:document.getElementById('logoutForm').submit()" class="dropdown-item dropdown-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Cerrar sesion</span>
+                </a>
+            }
+        </div>
     </div>
 }
 else
 {
-    @Html.ActionLink("Registrarse", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })<br />
-    @Html.ActionLink("Iniciar sesión", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })<br />
+    <div class="auth-links">
+        @Html.ActionLink("Registrarse", "Register", "Account", routeValues: null, htmlAttributes: new { @class = "auth-link" })
+        @Html.ActionLink("Iniciar sesion", "Login", "Account", routeValues: null, htmlAttributes: new { @class = "auth-link auth-link-primary" })
+    </div>
 }
