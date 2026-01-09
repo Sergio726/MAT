@@ -248,7 +248,8 @@
     border: none !important;
     border-radius: 8px 8px 0 0 !important;
     color: white !important;
-    padding: 0.75rem !important;
+    padding: 0.75rem 2.5rem !important;
+    position: relative !important;
 }
 
 .modern-calendar-container .ui-datepicker-title {
@@ -260,21 +261,22 @@
 .modern-calendar-container .ui-datepicker-next {
     background: rgba(255, 255, 255, 0.2) !important;
     border: none !important;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     cursor: pointer !important;
-    width: 2em !important;
-    height: 2em !important;
+    width: 28px !important;
+    height: 28px !important;
     display: block !important;
     position: absolute !important;
-    top: 0.5em !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
 }
 
 .modern-calendar-container .ui-datepicker-prev {
-    left: 0.5em !important;
+    left: 0.5rem !important;
 }
 
 .modern-calendar-container .ui-datepicker-next {
-    right: 0.5em !important;
+    right: 0.5rem !important;
 }
 
 .modern-calendar-container .ui-datepicker-prev:hover,
@@ -4996,6 +4998,7 @@ ul.viajes-lista li .viaje-container h4 {
     padding: 0 !important;
     font-family: inherit !important;
     z-index: 1000 !important;
+    min-width: 300px !important;
 }
 
 /* Header del calendario */
@@ -5003,7 +5006,8 @@ ul.viajes-lista li .viaje-container h4 {
     background: var(--brand-primary, #e63375) !important;
     border: none !important;
     border-radius: 11px 11px 0 0 !important;
-    padding: 0.875rem 1rem !important;
+    padding: 0.875rem 2.5rem !important;
+    position: relative !important;
 }
 
 /* Titulo (mes y año) */
@@ -5031,6 +5035,7 @@ ul.viajes-lista li .viaje-container h4 {
 /* Botones de navegacion (prev/next) */
 .ui-datepicker-prev,
 .ui-datepicker-next {
+    position: absolute !important;
     background: rgba(255, 255, 255, 0.2) !important;
     border: none !important;
     border-radius: 6px !important;
@@ -5044,11 +5049,11 @@ ul.viajes-lista li .viaje-container h4 {
 }
 
 .ui-datepicker-prev {
-    left: 0.75rem !important;
+    left: 0.5rem !important;
 }
 
 .ui-datepicker-next {
-    right: 0.75rem !important;
+    right: 0.5rem !important;
 }
 
 .ui-datepicker-prev:hover,
