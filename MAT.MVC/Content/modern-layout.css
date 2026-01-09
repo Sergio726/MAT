@@ -23,11 +23,11 @@
     left: 0 !important;
     right: 0 !important;
     height: var(--navbar-height) !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding: 0.875rem 2rem !important;
     width: 100% !important;
     z-index: 1030 !important;
     background: var(--white, #ffffff) !important;
+    box-sizing: border-box !important;
 }
 
 #wrapper {
