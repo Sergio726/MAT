@@ -1823,22 +1823,22 @@ div.bnn_floating-banner.hidden {
 @keyframes modalFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.95) translateY(-20px);
+        transform: translate(-50%, -50%) scale(0.95);
     }
     to {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: translate(-50%, -50%) scale(1);
     }
 }
 
 @keyframes modalFadeOut {
     from {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: translate(-50%, -50%) scale(1);
     }
     to {
         opacity: 0;
-        transform: scale(0.95) translateY(-20px);
+        transform: translate(-50%, -50%) scale(0.95);
     }
 }
 
@@ -1861,6 +1861,14 @@ div.bnn_floating-banner.hidden {
     border: none !important;
     overflow: hidden;
     animation: modalFadeIn 0.3s ease-out forwards;
+    /* Forzar centrado en viewport */
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    max-height: 90vh;
+    max-width: 95vw;
 }
 
 .ui-dialog.modal-closing {
