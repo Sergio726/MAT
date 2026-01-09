@@ -35,22 +35,22 @@
                         <td>
                             @if (item.Monto > 0)
                             {
-                                <span class="badge badge-pesos">$@item.Monto.ToString("N2")</span>
+                                <span class="badge-precio badge-precio-pesos">$@item.Monto.ToString("N2")</span>
                             }
                             else
                             {
-                                <span class="text-muted">-</span>
+                                <span class="table-text-muted">-</span>
                             }
                         </td>
                         <td>
                             <strong>@item.Descripcion</strong>
                         </td>
                         <td>
-                            <div class="modern-table-actions">
-                                <a href="/Adicional/Edit/@item.AdicionalId" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                            <div class="table-actions">
+                                <a href="/Adicional/Edit/@item.AdicionalId" class="btn-action btn-action-edit" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="#" class="modern-btn-icon btn-danger-icon btn-eliminar-adicional" data-id="@item.AdicionalId" title="Eliminar">
+                                <a href="#" class="btn-action btn-action-delete btn-eliminar-adicional" data-id="@item.AdicionalId" title="Eliminar">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>

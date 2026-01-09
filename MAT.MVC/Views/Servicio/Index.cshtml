@@ -49,27 +49,27 @@
                             {
                                 if (item.Moneda == "PES" || item.Moneda == "ARS")
                                 {
-                                    <span class="badge badge-pesos">$@item.Precio.ToString("N2")</span>
+                                    <span class="badge-precio badge-precio-pesos">$@item.Precio.ToString("N2")</span>
                                 }
                                 else
                                 {
-                                    <span class="badge badge-dolares">U$S@item.Precio.ToString("N2")</span>
+                                    <span class="badge-precio badge-precio-dolar">U$S@item.Precio.ToString("N2")</span>
                                 }
                             }
                             else
                             {
-                                <span class="text-muted">-</span>
+                                <span class="table-text-muted">-</span>
                             }
                         </td>
                         <td>
                             @item.Moneda
                         </td>
                         <td>
-                            <div class="modern-table-actions">
-                                <a href="/Servicio/Edit/@item.ServicioID" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                            <div class="table-actions">
+                                <a href="/Servicio/Edit/@item.ServicioID" class="btn-action btn-action-edit" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="#" class="modern-btn-icon btn-danger-icon btn-eliminar-servicio" data-id="@item.ServicioID" title="Eliminar">
+                                <a href="#" class="btn-action btn-action-delete btn-eliminar-servicio" data-id="@item.ServicioID" title="Eliminar">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>

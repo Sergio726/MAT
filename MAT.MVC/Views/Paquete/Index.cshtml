@@ -76,27 +76,27 @@
                             }
                             else
                             {
-                                <span class="text-muted">-</span>
+                                <span class="table-text-muted">-</span>
                             }
                         </td>
                         <td>
-                            <span class="badge-categoria" style="font-size: 0.75rem;">
+                            <span class="badge-moneda @(item.MonedaCodigo == "ARS" || item.MonedaCodigo == "PES" ? "badge-moneda-pesos" : "badge-moneda-dolar")">
                                 @item.MonedaCodigo
                             </span>
                         </td>
                         <td>@item.Temporada</td>
                         <td>
-                            <div class="modern-table-actions">
-                                <a href="/Paquete/Vinculos/@item.PaqueteID" class="modern-btn-icon" title="Vínculos">
+                            <div class="table-actions">
+                                <a href="/Paquete/Vinculos/@item.PaqueteID" class="btn-action btn-action-info" title="Vínculos">
                                     <i class="bi bi-link-45deg"></i>
                                 </a>
-                                <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" class="btn-action btn-action-edit" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" class="modern-btn-icon" title="Detalle">
+                                <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" class="btn-action btn-action-view" title="Detalle">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="/Paquete/Delete/@item.PaqueteID" class="modern-btn-icon modern-btn-icon-delete" title="Eliminar" onclick="return confirm('¿Está seguro que desea eliminar este paquete?');">
+                                <a href="/Paquete/Delete/@item.PaqueteID" class="btn-action btn-action-delete" title="Eliminar" onclick="return confirm('¿Está seguro que desea eliminar este paquete?');">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>

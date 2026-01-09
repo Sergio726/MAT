@@ -39,11 +39,11 @@
                         <td>
                             @if (item.Costo.HasValue)
                             {
-                                <span class="badge badge-pesos">$@item.Costo.Value.ToString("N2")</span>
+                                <span class="badge-precio badge-precio-pesos">$@item.Costo.Value.ToString("N2")</span>
                             }
                             else
                             {
-                                <span class="text-muted">-</span>
+                                <span class="table-text-muted">-</span>
                             }
                         </td>
                         <td>
@@ -53,15 +53,15 @@
                             }
                             else
                             {
-                                <span class="text-muted">-</span>
+                                <span class="table-text-muted">-</span>
                             }
                         </td>
                         <td>
-                            <div class="modern-table-actions">
-                                <a href="/Excursion/Edit/@item.ExcursionId" class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                            <div class="table-actions">
+                                <a href="/Excursion/Edit/@item.ExcursionId" class="btn-action btn-action-edit" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="#" class="modern-btn-icon btn-danger-icon btn-eliminar-excursion" data-id="@item.ExcursionId" title="Eliminar">
+                                <a href="#" class="btn-action btn-action-delete btn-eliminar-excursion" data-id="@item.ExcursionId" title="Eliminar">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>

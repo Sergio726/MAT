@@ -50,7 +50,7 @@
                             }
                             @if (!item.TipoDocumento.HasValue && string.IsNullOrEmpty(item.NroDocumento))
                             {
-                                <span class="text-muted">-</span>
+                                <span class="table-text-muted">-</span>
                             }
                         </td>
                         <td>@(item.Telefono ?? item.Celular ?? "-")</td>
@@ -62,22 +62,22 @@
                             }
                             else
                             {
-                                <span class="text-muted">-</span>
+                                <span class="table-text-muted">-</span>
                             }
                         </td>
                         <td>@(item.PaisResidencia ?? "-")</td>
                         <td>
-                            <div class="modern-table-actions">
+                            <div class="table-actions">
                                 <a href="@Url.Action("Details", "Persona", new { id = item.PersonaId })"
-                                   class="modern-btn-icon modern-btn-icon-view" title="Ver Detalles">
+                                   class="btn-action btn-action-view" title="Ver Detalles">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a href="@Url.Action("Edit", "Persona", new { id = item.PersonaId })"
-                                   class="modern-btn-icon modern-btn-icon-edit" title="Editar">
+                                   class="btn-action btn-action-edit" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <a href="#"
-                                   class="modern-btn-icon btn-danger-icon btn-eliminar-persona"
+                                   class="btn-action btn-action-delete btn-eliminar-persona"
                                    data-id="@item.PersonaId"
                                    data-nombre="@(item.Nombre + " " + item.Apellido)"
                                    title="Eliminar">

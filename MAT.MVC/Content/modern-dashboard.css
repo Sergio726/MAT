@@ -2653,7 +2653,7 @@ div.bnn_floating-banner.hidden {
 }
 
 .modern-prereservas-table tbody tr:hover {
-    background-color: rgba(230, 51, 117, 0.03);
+    background-color: rgba(230, 51, 117, 0.05);
 }
 
 .modern-prereservas-table tbody td {
@@ -2921,8 +2921,8 @@ div.bnn_floating-banner.hidden {
 }
 
 .modern-table-observaciones tbody tr:hover {
-    background-color: var(--bg-main);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: rgba(230, 51, 117, 0.05);
+    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.08);
 }
 
 /* Wrapper de DataTables */
@@ -3540,8 +3540,8 @@ div.bnn_floating-banner.hidden {
 }
 
 .modern-table tbody tr:hover {
-    background-color: var(--bg-main);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: rgba(230, 51, 117, 0.05);
+    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.08);
 }
 
 .modern-table-actions {
