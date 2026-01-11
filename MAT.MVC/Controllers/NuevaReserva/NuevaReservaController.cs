@@ -59,6 +59,53 @@ namespace MAT.MVC.Controllers.NuevaReserva
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Busca presupuestos activos por DNI del cliente
+        /// </summary>
+        [HttpPost]
+        public JsonResult BuscarPresupuestoPorDni(string dniCliente)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dniCliente))
+                {
+                    return Json(new { success = false, message = "El DNI es requerido." }, JsonRequestBehavior.AllowGet);
+                }
+
+                var presupuestos = PresupuestoMethod.GetByDni(dniCliente.Trim());
+
+                if (presupuestos == null || presupuestos.Count == 0)
+                {
+                    return Json(new { success = true, hasPresupuesto = false, presupuestos = new List<object>() }, JsonRequestBehavior.AllowGet);
+                }
+
+                // Tomar el más reciente
+                var presupuesto = presupuestos.OrderByDescending(p => p.FechaCreacion).FirstOrDefault();
+
+                var resultado = new
+                {
+                    presupuestoId = presupuesto.PresupuestoID.ToString(),
+                    codigoSeguimiento = presupuesto.CodigoSeguimiento,
+                    montoPactado = presupuesto.MontoPactado,
+                    vendedorOrigenNombre = presupuesto.VendedorOrigenNombre,
+                    vendedorIdOrigen = presupuesto.VendedorIdOrigen.ToString(),
+                    viajeId = presupuesto.ViajeId?.ToString(),
+                    viajeDescripcion = presupuesto.ViajeDescripcion,
+                    paqueteDescripcion = presupuesto.PaqueteDescripcion,
+                    fechaCreacion = presupuesto.FechaCreacion.ToString("dd/MM/yyyy HH:mm"),
+                    fechaExpiracion = presupuesto.FechaExpiracion.ToString("dd/MM/yyyy HH:mm"),
+                    isExpirado = presupuesto.IsExpirado
+                };
+
+                return Json(new { success = true, hasPresupuesto = true, presupuesto = resultado }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en NuevaReservaController.BuscarPresupuestoPorDni: {ex.Message} - {ex.StackTrace}", 1);
+                return Json(new { success = false, message = "Error al buscar presupuestos." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         public async Task<JsonResult> QuickPersonaSearchAsync(string query)
         {
             var result = new List<PersonaDto>();
@@ -178,6 +225,31 @@ namespace MAT.MVC.Controllers.NuevaReserva
                 {
                     var result = await _backendAPI.ReservarPasajes(datosPago);
                     sEstadoFactura = result.Factura.EstadoDescripcion;
+                    
+                    // Si hay un presupuesto asociado, actualizar su estado
+                    if (!string.IsNullOrEmpty(reserva.PresupuestoId))
+                    {
+                        try
+                        {
+                            Guid presupuestoId = new Guid(reserva.PresupuestoId);
+                            Guid? facturaId = !string.IsNullOrEmpty(result.Factura.Id) ? new Guid(result.Factura.Id) : (Guid?)null;
+                            Guid vendedorCierre = MATContext.CurrentVendedor.VendedorId;
+                            
+                            PresupuestoMethod.UpdateEstado(
+                                presupuestoId,
+                                eEstadoPresupuesto.Cerrado,
+                                facturaId,
+                                vendedorCierre
+                            );
+                            
+                            MATLogger.Log($"Presupuesto {presupuestoId} cerrado exitosamente. Factura: {facturaId}", 0);
+                        }
+                        catch (Exception exPresupuesto)
+                        {
+                            // Log el error pero no interrumpir el flujo de la venta
+                            MATLogger.Log($"Error al actualizar presupuesto: {exPresupuesto.Message}", 1);
+                        }
+                    }
                 }
                 catch (Exception ex) { 
                     string mess = ex.Message;

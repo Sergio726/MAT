@@ -47,6 +47,20 @@
             </div>
 
             <div class="col-lg-3 col-md-6">
+                <div class="modern-card modern-card-warning">
+                    <div class="modern-card-header">
+                        <div class="modern-card-title">Presupuestos</div>
+                        <i class="bi bi-file-earmark-text modern-card-icon-small"></i>
+                    </div>
+                    <div class="modern-card-content">
+                        <a href="/Presupuesto/Create" class="modern-card-link">Crear Presupuesto <i class="bi bi-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
                 <div class="modern-card modern-card-info">
                     <div class="modern-card-header">
                         <div class="modern-card-title">Gestión de Paquetes</div>
@@ -57,9 +71,7 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="modern-card modern-card-primary">
                     <div class="modern-card-header">
@@ -114,17 +126,24 @@
     </div>
 </div>
 
-@* Banner flotante - Oculto por defecto, se muestra solo cuando hay viajes por vencer *@
+@* Banner flotante moderno - Oculto por defecto, se muestra solo cuando hay viajes por vencer *@
 <div>
-    <div class="bnn_floating-banner hidden" id="banner">
-        <button class="bnn_close-banner" onclick="closeBanner()"><span>&times;</span></button>
-        <ul id="banner-list"></ul>
+    <div class="bnn_floating-banner hidden" id="banner" style="display: none !important;">
+        <button class="bnn_close-banner" onclick="closeBanner()" aria-label="Cerrar"><span>&times;</span></button>
+        <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+            <h3 style="margin: 0; font-size: 1.125rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                <i class="bi bi-clock-history" style="color: var(--brand-primary);"></i>
+                Viajes Próximos a Salir
+            </h3>
+        </div>
+        <ul id="banner-list" style="list-style: none; padding: 0; margin: 0;"></ul>
     </div>
 
     <script>
         function closeBanner() {
             const banner = document.getElementById('banner');
             banner.style.display = 'none';
+            banner.classList.add('hidden');
         }
 
         function formatDateDiff(dateString) {
@@ -134,42 +153,53 @@
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
 
-        $.ajax({
-            url: "/Viaje/GetViajesPorVencer",
-            data: {},
-            dataType: "json",
-            success: function (data) {
-                // jQuery 3.x puede devolver el JSON ya parseado
-                // Verificar si data.sJsonResult es string o ya es objeto
-                let jsonData;
-                if (typeof data.sJsonResult === 'string') {
-                    jsonData = JSON.parse(data.sJsonResult);
-                } else {
-                    jsonData = data.sJsonResult || data;
+        $(document).ready(function() {
+            $.ajax({
+                url: "/Viaje/GetViajesPorVencer",
+                data: {},
+                dataType: "json",
+                success: function (data) {
+                    // jQuery 3.x puede devolver el JSON ya parseado
+                    // Verificar si data.sJsonResult es string o ya es objeto
+                    let jsonData;
+                    if (typeof data.sJsonResult === 'string') {
+                        jsonData = JSON.parse(data.sJsonResult);
+                    } else {
+                        jsonData = data.sJsonResult || data;
+                    }
+
+                    // Verificar que Table exista y tenga elementos
+                    if (jsonData && jsonData.Table && Array.isArray(jsonData.Table) && jsonData.Table.length > 0) {
+                        const banner = document.getElementById('banner');
+                        const bannerList = document.getElementById('banner-list');
+                        
+                        // Limpiar la lista antes de agregar elementos
+                        bannerList.innerHTML = '';
+                        
+                        jsonData.Table.forEach(item => {
+                            const daysToDeparture = formatDateDiff(item.fechasalida);
+                            const listItem = document.createElement('li');
+
+                            listItem.innerHTML = `
+                                <h2><a href="/Reserva/Index?viajeid=${item.ViajeID}">${item.descripcion}</a></h2>
+                                <p>A ${daysToDeparture} días de la salida</p>
+                                <p>Lugares disponibles: ${item.Disponibles}</p>
+                                `;
+
+                            bannerList.appendChild(listItem);
+                        });
+
+                        // Mostrar el banner solo si hay elementos
+                        if (bannerList.children.length > 0) {
+                            banner.classList.remove('hidden');
+                            banner.style.display = '';
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al cargar viajes por vencer:", error);
                 }
-
-                // Verificar que Table exista y tenga elementos
-                if (jsonData && jsonData.Table && Array.isArray(jsonData.Table) && jsonData.Table.length > 0) {
-                    const bannerList = document.getElementById('banner-list');
-                    jsonData.Table.forEach(item => {
-                        const daysToDeparture = formatDateDiff(item.fechasalida);
-                        const listItem = document.createElement('li');
-
-                        listItem.innerHTML = `
-                            <h2><a href="/Reserva/Index?viajeid=${item.ViajeID}">${item.descripcion}</a></h2>
-                            <p>A ${daysToDeparture} días de la salida</p>
-                            <p>Lugares disponibles: ${item.Disponibles}</p>
-                            `;
-
-                        bannerList.appendChild(listItem);
-                    })
-
-                    $("#banner").removeClass("hidden");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error al cargar viajes por vencer:", error);
-            }
+            });
         });
     </script>
 </div>

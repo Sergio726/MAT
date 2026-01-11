@@ -475,16 +475,153 @@ ul.viajes-lista li h6 {
     opacity: 1 !important;
 }
 
-/* Ocultar banner flotante cuando tiene clase hidden */
+/* Banner flotante moderno para viajes por vencer - Sobrescribe estilos antiguos */
+.bnn_floating-banner {
+    position: fixed !important;
+    bottom: 2rem !important;
+    right: 2rem !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    background: var(--white) !important;
+    border-radius: var(--border-radius-lg) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+    padding: 1.5rem !important;
+    width: 380px !important;
+    max-width: calc(100vw - 4rem) !important;
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+    z-index: 1050 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: 1px solid var(--border-color) !important;
+    text-align: left !important;
+    color: var(--text-primary) !important;
+}
+
 .bnn_floating-banner.hidden,
 #banner.hidden,
 div.bnn_floating-banner.hidden {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
-    height: 0 !important;
-    width: 0 !important;
-    overflow: hidden !important;
+    transform: translateY(20px) !important;
+    pointer-events: none !important;
+}
+
+.bnn_floating-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--brand-primary), #ff6b9d);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+.bnn_floating-banner ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.bnn_floating-banner li {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--bg-main);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.bnn_floating-banner li:last-child {
+    margin-bottom: 0;
+}
+
+.bnn_floating-banner li:hover {
+    background: #f8f9fa;
+    border-color: var(--brand-primary);
+    transform: translateX(4px);
+}
+
+.bnn_floating-banner h2 {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+    margin: 0 0 0.5rem 0 !important;
+    line-height: 1.4 !important;
+}
+
+.bnn_floating-banner h2 a {
+    color: var(--brand-primary) !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+
+.bnn_floating-banner h2 a:hover {
+    color: #ff6b9d !important;
+    text-decoration: underline !important;
+}
+
+.bnn_floating-banner p {
+    margin: 0.25rem 0 !important;
+    font-size: 0.875rem !important;
+    color: var(--text-secondary) !important;
+    line-height: 1.5 !important;
+}
+
+.bnn_floating-banner p:first-of-type {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.bnn_close-banner {
+    position: absolute !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    background: transparent !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+    color: var(--text-secondary) !important;
+    z-index: 10 !important;
+}
+
+.bnn_close-banner:hover {
+    background: var(--bg-main);
+    color: var(--text-primary);
+}
+
+.bnn_close-banner span {
+    font-size: 24px !important;
+    line-height: 1 !important;
+    font-weight: 300 !important;
+    color: inherit !important;
+}
+
+/* Scrollbar personalizado para el banner */
+.bnn_floating-banner::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bnn_floating-banner::-webkit-scrollbar-track {
+    background: var(--bg-main);
+    border-radius: 3px;
+}
+
+.bnn_floating-banner::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.bnn_floating-banner::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
 }
 
 /* Estilos para cards con collapse (compatibilidad con sistema de widgets) */
