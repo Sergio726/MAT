@@ -1,8 +1,10 @@
-@model MAT.MVC.Models.HotelHabitacionViajeModel
+﻿﻿@model MAT.MVC.Models.HotelHabitacionViajeModel
 
 <style>
     .modal-container {
         padding: 0.5rem;
+        max-height: calc(80vh - 60px);
+        overflow-y: auto;
     }
     .modal-header-info {
         display: grid;
@@ -141,6 +143,24 @@
     }
     .table-container {
         padding: 1rem;
+        max-height: 350px;
+        overflow-y: auto;
+    }
+    .form-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .form-buttons .btn-action,
+    .form-row .btn-action {
+        width: auto !important;
+        height: auto !important;
+        min-width: auto;
+        flex-shrink: 0;
+        padding: 0.5rem 0.875rem;
     }
     #tblHotelHabitacionViaje {
         width: 100% !important;
@@ -280,7 +300,7 @@
     <div class="distribution-section">
         <div class="section-header">
             <i class="bi bi-grid-3x3-gap-fill"></i>
-            Distribucion de Habitaciones
+            Distribución de Habitaciones
         </div>
 
         <!-- Formulario de agregar -->
@@ -314,8 +334,11 @@
                 <i class="bi bi-plus-lg"></i>
                 Agregar
             </button>
+        </div>
 
-            <button type="button" class="btn-action btn-secondary-sm" onclick="javascript: showNombrePlantila()" title="Guardar distribucion en una plantilla">
+        <!-- Botones de plantillas -->
+        <div class="form-buttons">
+            <button type="button" class="btn-action btn-secondary-sm" onclick="javascript: showNombrePlantila()" title="Guardar distribución en una plantilla">
                 <i class="bi bi-save"></i>
                 Guardar Plantilla
             </button>
@@ -336,7 +359,7 @@
                         <th>Tipo</th>
                         <th>Capacidad</th>
                         <th>Precio</th>
-                        <th>Descripcion</th>
+                        <th>Descripción</th>
                         <th style="width: 80px;">Acciones</th>
                     </tr>
                 </thead>
@@ -528,7 +551,7 @@
     };
 
     function showPlantilas() {
-        var title = "Plantillas - Distribucion de Habitaciones";
+        var title = "Plantillas - Distribución de Habitaciones";
         var id = "popup_PlantillaDistribucionHabitacion";
         var url = "/HotelHabitacionViaje/GetPlantillasDistribucion";
         ShowFormDialog(url, id, title, 'medium');

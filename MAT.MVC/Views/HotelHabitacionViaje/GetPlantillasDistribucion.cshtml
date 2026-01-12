@@ -1,63 +1,157 @@
-﻿<div class="custom_padding_10">
-    <table id="tblPlantillas" class="mat-customtable">
-        <thead>
-            <tr>
-                <th>Plantila</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-    </table>
+﻿﻿<style>
+    .plantillas-container {
+        padding: 0.5rem;
+        max-height: calc(80vh - 60px);
+        overflow-y: auto;
+    }
+    .plantillas-table-container {
+        padding: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    #tblPlantillas {
+        width: 100% !important;
+    }
+    #tblPlantillas thead th {
+        background: var(--bg-secondary, #f9fafb);
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-secondary, #6b7280);
+        padding: 0.75rem;
+        border-bottom: 2px solid var(--border-color, #e5e7eb);
+    }
+    #tblPlantillas tbody td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    #tblPlantillas tbody tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 0.375rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .action-icon:hover {
+        background: var(--bg-secondary, #f3f4f6);
+    }
+    .confirm-dialog {
+        padding: 1rem;
+    }
+    .confirm-message {
+        font-size: 0.875rem;
+        color: var(--text-primary, #374151);
+        margin-bottom: 1rem;
+    }
+    .confirm-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 0.875rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        font-size: 0.8rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+    .btn-danger-sm {
+        background: #ef4444;
+        color: white;
+    }
+    .btn-danger-sm:hover {
+        background: #dc2626;
+    }
+    .btn-secondary-sm {
+        background: white;
+        color: var(--text-primary, #374151);
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-secondary-sm:hover {
+        background: var(--bg-secondary, #f3f4f6);
+    }
+</style>
+
+<div class="plantillas-container">
+    <div class="plantillas-table-container">
+        <table id="tblPlantillas" class="display compact">
+            <thead>
+                <tr>
+                    <th>Plantilla</th>
+                    <th style="width: 100px;">Acciones</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 </div>
 
-<div Id="divMSGDeletePlantilla" class="hide">
-    <div class="custom_padding_10">
-        <span>Al eliminar esta plantilla no podra recuperarla. Desea continuar?</span>
+<div id="divMSGDeletePlantilla" class="hide">
+    <div class="confirm-dialog">
+        <div class="confirm-message">
+            Al eliminar esta plantilla no podrá recuperarla. ¿Desea continuar?
+        </div>
+        <div class="confirm-buttons">
+            <button type="button" class="btn-action btn-secondary-sm" onclick="javascript: $('#popup_divMSGDeletePlantilla').dialog('close')">
+                Cancelar
+            </button>
+            <button type="button" class="btn-action btn-danger-sm" onclick="javascript: deletePlantilla('##PlantillaId##');">
+                <i class="bi bi-trash-fill"></i>
+                Eliminar
+            </button>
+        </div>
     </div>
-    <div class="custom_padding_10">
-        <button type="button" onclick="javascript: deletePlantilla('##PlantillaId##');">Si. Eliminar</button>
-        <button type="button" onclick="javascript: $('#popup_divMSGDeletePlantilla').dialog('close') ">Cancelar</button>
-    </div>
-    
 </div>
 
 <script type="text/javascript">
     $(document).ready(function () {
         loadPlantillas(@Html.Raw(ViewBag.dtPlantilla));
-
     });
 
-
-    function loadPlantillas(datatable)
-    {
+    function loadPlantillas(datatable) {
         var jTables = eval(datatable);
         var jt = jTables.Table;
 
         $("#tblPlantillas").DataTable({
             "aaData": jt,
             "columns": [
-            { "data": "Nombre" },
-            {
-                "data": "Id",
-                "mRender": function (data, type, row) {
-                    
-                    var data = "<a href='javascript:insertByPlantilla(" + row.Id + ");'><img src='/Images/Icons/icon-copy-128px.png' width='26' height='26' title='Cargar Plantilla'></a>";
-                    data = data + "<a href='javascript:deletePlantillaMSG(" + row.Id + ");'><img src='/Images/cross.png' width='32' height='32' title='Eliminar Plantilla'></a>";
-                    return data;
+                { "data": "Nombre" },
+                {
+                    "data": "Id",
+                    "mRender": function (data, type, row) {
+                        var html = "<div style='display: flex; gap: 0.25rem;'>";
+                        html += "<a href='javascript:insertByPlantilla(" + row.Id + ");' class='action-icon' title='Cargar Plantilla'><i class='bi bi-clipboard-check-fill' style='color: #3b82f6;'></i></a>";
+                        html += "<a href='javascript:deletePlantillaMSG(" + row.Id + ");' class='action-icon' title='Eliminar Plantilla'><i class='bi bi-trash-fill' style='color: #ef4444;'></i></a>";
+                        html += "</div>";
+                        return html;
+                    }
                 }
-            }
             ],
             "bAutoWidth": false,
-            "pageLength": 25
+            "pageLength": 25,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            }
         });
     }
 
     function deletePlantillaMSG(PlantillaId) {
-
         var html = $("#divMSGDeletePlantilla").html();
-        html = html.replace('##PlantillaId##', PlantillaId)
-        //confirm(html);
-        
+        html = html.replace('##PlantillaId##', PlantillaId);
         ShowFormDialogHTML(html, 'popup_divMSGDeletePlantilla', 'Atención', '30%');
     }
-
 </script>

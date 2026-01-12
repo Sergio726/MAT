@@ -5,8 +5,9 @@
 // Configuración centralizada de modales
 var ModalConfig = {
     getWidth: function(size) {
-        var sizes = { 'min': '50%', 'medium': '65%', 'default': '80%', 'max': '100%', '30%': '30%' };
-        return sizes[size] || '80%';
+        // Usar anchos en píxeles para mejor centrado con sidebar fijo
+        var sizes = { 'min': 600, 'medium': 800, 'default': 1000, 'max': '95%', '30%': 400 };
+        return sizes[size] || 1000;
     },
     setupOverlayClose: function(dialogid) {
         // Cerrar modal al hacer clic en el overlay
