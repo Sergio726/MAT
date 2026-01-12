@@ -201,8 +201,11 @@
         pago.MontoRecibido = stringToFloat(MontoRecibido);
 
         oFormReserva.Reserva.Pago = pago;
-
         
+        // Agregar información del presupuesto si existe
+        if (typeof oReserva !== 'undefined' && oReserva.PresupuestoId) {
+            oFormReserva.Reserva.PresupuestoId = oReserva.PresupuestoId;
+        }
 
         var divLoading = "<div id='divFullLoading'></div>";
         $("#FormReserva").append(divLoading);

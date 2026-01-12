@@ -306,6 +306,7 @@
     <Compile Include="Controllers\NuevaReserva\NuevaReservaController.cs" />
     <Compile Include="Controllers\Pago\PagoController.cs" />
     <Compile Include="Controllers\Paquete\PaqueteController.cs" />
+    <Compile Include="Controllers\Presupuesto\PresupuestoController.cs" />
     <Compile Include="Controllers\PasajeroViaje\PasajeroViajeController.cs" />
     <Compile Include="Controllers\PersonaCliente\PersonaClienteController.cs" />
     <Compile Include="Controllers\PersonaPasajero\PersonaPasajeroController.cs" />
@@ -376,6 +377,7 @@
     <Compile Include="Models\PlanillaHotelModel.cs" />
     <Compile Include="Models\PlanillaHotelPrintModel.cs" />
     <Compile Include="Models\PrecioModel.cs" />
+    <Compile Include="Models\PresupuestoModel.cs" />
     <Compile Include="Models\RegistroPagoModel.cs" />
     <Compile Include="Models\ReservaModel.cs" />
     <Compile Include="Models\ResumenPlanillaModel.cs" />
@@ -838,6 +840,8 @@
     <Content Include="Views\NuevaReserva\DetalleViaje.cshtml" />
     <Content Include="Views\NuevaReserva\SeleccionarPasajero.cshtml" />
     <Content Include="Views\NuevaReserva\FormReserva.cshtml" />
+    <Content Include="Views\Presupuesto\Create.cshtml" />
+    <Content Include="Views\Presupuesto\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

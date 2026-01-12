@@ -78,6 +78,29 @@
                                 <label>DNI</label>
                                 <label class="show-data" id="cliente-dni"></label>
                             </div>
+                            <!-- Banner de Atribución de Presupuesto -->
+                            <div id="banner-atribucion" class="alert alert-warning" style="display: none; margin-top: 15px;">
+                                <div class="row">
+                                    <div class="col-xs-1">
+                                        <i class="glyphicons glyphicons-user" style="font-size: 24px;"></i>
+                                    </div>
+                                    <div class="col-xs-11">
+                                        <strong style="text-transform: uppercase; font-size: 11px;">¡Atención Atribución Detectada!</strong>
+                                        <p style="margin: 5px 0; font-size: 12px;">
+                                            Este cliente fue asesorado previamente por <strong id="vendedor-origen-nombre"></strong> vía telefónica.
+                                        </p>
+                                        <div style="font-size: 11px; color: #666;">
+                                            <span>Código: <strong id="codigo-seguimiento"></strong></span> | 
+                                            <span>Monto pactado: <strong id="monto-pactado"></strong></span>
+                                        </div>
+                                        <div style="margin-top: 8px; padding: 8px; background-color: #f0f0f0; border-radius: 3px; font-size: 11px;">
+                                            <strong>Reparto de Comisión Automático:</strong><br/>
+                                            <span>Vendedor 1 (Origen): <strong id="comision-origen">50%</strong></span> | 
+                                            <span>Vendedor 2 (Cierre): <strong id="comision-cierre">50%</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -299,6 +322,8 @@
             oReserva.HabitacionesDisponibles = [];
             oReserva.Adicionales = [];
             oReserva.PrecioTotal = 0;
+            oReserva.PresupuestoId = null;
+            oReserva.VendedorIdOrigen = null;
 
 
             function loadAutoComplete() {
@@ -325,8 +350,47 @@
                         oReserva.Cliente = ul.item.data;
                         oReserva.addPasajero(ul.item.data);
                         $("#cliente-dni").html(ul.item.data.NroDocumento);
+                        
+                        // Buscar presupuesto por DNI
+                        if (ul.item.data.NroDocumento) {
+                            buscarPresupuestoPorDni(ul.item.data.NroDocumento);
+                        }
                     }
                 });
+                
+                // Función para buscar presupuesto por DNI
+                function buscarPresupuestoPorDni(dni) {
+                    $.ajax({
+                        url: "/NuevaReserva/BuscarPresupuestoPorDni",
+                        type: "POST",
+                        data: { dniCliente: dni },
+                        success: function (response) {
+                            if (response.success && response.hasPresupuesto) {
+                                var presupuesto = response.presupuesto;
+                                
+                                // Mostrar banner de atribución
+                                $("#vendedor-origen-nombre").text(presupuesto.vendedorOrigenNombre);
+                                $("#codigo-seguimiento").text(presupuesto.codigoSeguimiento);
+                                $("#monto-pactado").text("$" + parseFloat(presupuesto.montoPactado).toLocaleString('es-AR'));
+                                $("#comision-origen").text("50%");
+                                $("#comision-cierre").text("50%");
+                                
+                                $("#banner-atribucion").slideDown();
+                                
+                                // Guardar información del presupuesto para usar al cerrar la venta
+                                oReserva.PresupuestoId = presupuesto.presupuestoId;
+                                oReserva.VendedorIdOrigen = presupuesto.vendedorIdOrigen;
+                            } else {
+                                $("#banner-atribucion").slideUp();
+                                oReserva.PresupuestoId = null;
+                                oReserva.VendedorIdOrigen = null;
+                            }
+                        },
+                        error: function () {
+                            console.log("Error al buscar presupuesto");
+                        }
+                    });
+                }
                 $("#txt-busqueda-pasajero").autocomplete({
                     minLength: 3,
                     source: function (request, response) {

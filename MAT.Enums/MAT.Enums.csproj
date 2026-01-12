@@ -63,6 +63,7 @@
     <Compile Include="eEstadoFactura.cs" />
     <Compile Include="eEstadoHabitacion.cs" />
     <Compile Include="eEstadoPasaje.cs" />
+    <Compile Include="eEstadoPresupuesto.cs" />
     <Compile Include="eEstadoRendicion.cs" />
     <Compile Include="eFormaPago.cs" />
     <Compile Include="eFormaPagoCliente.cs" />

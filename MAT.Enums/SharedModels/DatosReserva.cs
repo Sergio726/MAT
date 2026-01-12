@@ -10,5 +10,6 @@ namespace MAT.Enums.SharedModels
         public DatosPago Pago { get; set; }
         public Guid ViajeId { get; set; }
         public decimal PrecioTotal { get; set; }
+        public string PresupuestoId { get; set; }
     }
 }
