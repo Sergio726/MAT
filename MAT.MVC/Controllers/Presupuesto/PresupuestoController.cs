@@ -16,6 +16,28 @@ namespace MAT.MVC.Controllers.Presupuesto
     public class PresupuestoController : Controller
     {
         /// <summary>
+        /// Página principal del módulo de presupuestos
+        /// </summary>
+        public ActionResult Index()
+        {
+            try
+            {
+                // Obtener estadísticas de presupuestos
+                var estadisticas = PresupuestoMethod.GetEstadisticas();
+
+                ViewBag.Estadisticas = estadisticas;
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.Index: {ex.Message}", 1);
+                ViewBag.Error = "Error al cargar el panel de presupuestos.";
+                return View();
+            }
+        }
+
+        /// <summary>
         /// Vista para crear un presupuesto rápido (Preventa telefónica)
         /// </summary>
         public ActionResult Create()
@@ -92,7 +114,7 @@ namespace MAT.MVC.Controllers.Presupuesto
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult CreatePresupuesto(string dniCliente, Guid? viajeId, double montoPactado, string observaciones = "")
+        public JsonResult CreatePresupuesto(string dniCliente, Guid? viajeId, double montoPactado, string observaciones = "", string telefonoCliente = null)
         {
             try
             {
@@ -128,14 +150,51 @@ namespace MAT.MVC.Controllers.Presupuesto
                 // Generar código y guardar
                 string codigoSeguimiento = PresupuestoMethod.CreatePresupuesto(presupuesto);
 
-                // TODO: Integrar con WhatsApp si está disponible
-                // Por ahora solo retornamos el código
+                // Construir mensaje de WhatsApp
+                string mensajeWhatsApp = ConstruirMensajeWhatsApp(codigoSeguimiento, montoPactado, viajeId);
+                
+                // Intentar enviar WhatsApp si hay teléfono
+                bool whatsappEnviado = false;
+                string whatsappLink = null;
+                string mensajeWhatsAppResultado = "";
+                
+                if (!string.IsNullOrWhiteSpace(telefonoCliente))
+                {
+                    try
+                    {
+                        whatsappEnviado = EnviarWhatsApp(telefonoCliente, mensajeWhatsApp, out whatsappLink);
+                        if (whatsappEnviado)
+                        {
+                            mensajeWhatsAppResultado = " El mensaje de WhatsApp ha sido enviado exitosamente.";
+                        }
+                        else if (!string.IsNullOrEmpty(whatsappLink))
+                        {
+                            mensajeWhatsAppResultado = " Se abrirá WhatsApp para enviar el mensaje.";
+                        }
+                        else
+                        {
+                            mensajeWhatsAppResultado = " No se pudo generar el enlace de WhatsApp, pero el código está disponible.";
+                        }
+                    }
+                    catch (Exception exWhatsApp)
+                    {
+                        MATLogger.Log($"Error al enviar WhatsApp: {exWhatsApp.Message}", 1);
+                        mensajeWhatsAppResultado = " No se pudo generar el enlace de WhatsApp, pero el código está disponible.";
+                    }
+                }
+                else
+                {
+                    mensajeWhatsAppResultado = " No se encontró teléfono del cliente. El código está disponible para compartir manualmente.";
+                }
 
                 return Json(new 
                 { 
                     success = true, 
                     codigoSeguimiento = codigoSeguimiento,
-                    message = $"Presupuesto creado exitosamente. Código: {codigoSeguimiento}"
+                    whatsappEnviado = whatsappEnviado,
+                    whatsappLink = whatsappLink,
+                    mensajeWhatsApp = mensajeWhatsApp,
+                    message = $"Presupuesto creado exitosamente. Código: {codigoSeguimiento}.{mensajeWhatsAppResultado}"
                 });
             }
             catch (Exception ex)
@@ -377,6 +436,97 @@ namespace MAT.MVC.Controllers.Presupuesto
             {
                 MATLogger.Log($"Error en PresupuestoController.UpdateEstado: {ex.Message} - {ex.StackTrace}", 1);
                 return Json(new { success = false, message = "Error al actualizar el estado del presupuesto." });
+            }
+        }
+
+        /// <summary>
+        /// Construye el mensaje de WhatsApp con el código de seguimiento
+        /// </summary>
+        private string ConstruirMensajeWhatsApp(string codigoSeguimiento, double montoPactado, Guid? viajeId)
+        {
+            var vendedorActual = MATContext.CurrentVendedor;
+            string nombreVendedor = vendedorActual?.Descripcion ?? "Marco Antonio Tours";
+            
+            string mensaje = $"¡Hola! 👋\n\n";
+            mensaje += $"Te acabo de generar un *Código de Reserva Preferencial*:\n";
+            mensaje += $"*{codigoSeguimiento}*\n\n";
+            mensaje += $"💰 Monto acordado: ${montoPactado:N2}\n\n";
+            mensaje += $"📋 *Instrucciones:*\n";
+            mensaje += $"Cuando vengas a la agencia, presenta este código y quien esté en caja te atenderá directamente con tu ficha lista.\n\n";
+            mensaje += $"⏰ Este código es válido por 48 horas.\n\n";
+            mensaje += $"Saludos,\n{nombreVendedor}\nMarco Antonio Tours";
+
+            return mensaje;
+        }
+
+        /// <summary>
+        /// Envía un mensaje de WhatsApp al cliente o genera un enlace directo
+        /// </summary>
+        private bool EnviarWhatsApp(string telefono, string mensaje, out string whatsappLink)
+        {
+            whatsappLink = null;
+            
+            try
+            {
+                // Limpiar teléfono (remover caracteres especiales)
+                string telefonoLimpio = telefono.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("+", "");
+                
+                // Verificar si hay una API de WhatsApp configurada
+                string whatsappApiUrl = System.Configuration.ConfigurationManager.AppSettings["WhatsApp_API_URL"]?.ToString();
+                string enableDirectLink = System.Configuration.ConfigurationManager.AppSettings["WhatsApp_EnableDirectLink"]?.ToString() ?? "true";
+                
+                // Si hay API configurada, intentar usar la API
+                if (!string.IsNullOrEmpty(whatsappApiUrl))
+                {
+                    // Aquí iría la implementación real de la API de WhatsApp
+                    // Ejemplo con HttpClient:
+                    /*
+                    using (var client = new System.Net.Http.HttpClient())
+                    {
+                        var payload = new
+                        {
+                            phone = telefonoLimpio,
+                            message = mensaje
+                        };
+                        
+                        var json = Newtonsoft.Json.JsonConvert.SerializeObject(payload);
+                        var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                        
+                        var response = await client.PostAsync(whatsappApiUrl, content);
+                        return response.IsSuccessStatusCode;
+                    }
+                    */
+                    
+                    // Por ahora retornamos false para indicar que no se envió por API
+                    // y generamos el enlace directo como fallback
+                }
+                
+                // Si no hay API o está habilitado el enlace directo, generar enlace de WhatsApp
+                if (enableDirectLink.Equals("true", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Formatear teléfono para WhatsApp (debe incluir código de país sin +)
+                    // Si no tiene código de país, asumimos Argentina (54)
+                    if (!telefonoLimpio.StartsWith("54") && telefonoLimpio.Length <= 10)
+                    {
+                        telefonoLimpio = "54" + telefonoLimpio;
+                    }
+                    
+                    // Codificar el mensaje para URL
+                    string mensajeCodificado = System.Web.HttpUtility.UrlEncode(mensaje);
+                    
+                    // Generar enlace de WhatsApp
+                    whatsappLink = $"https://wa.me/{telefonoLimpio}?text={mensajeCodificado}";
+                    
+                    MATLogger.Log($"Enlace de WhatsApp generado: {whatsappLink}", 2);
+                    return false; // Retornamos false porque no se envió automáticamente, pero tenemos el enlace
+                }
+                
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en EnviarWhatsApp: {ex.Message}", 1);
+                return false;
             }
         }
     }

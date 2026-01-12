@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Configuration;
 
 namespace MAT.MVC.Models
 {
@@ -181,6 +182,81 @@ namespace MAT.MVC.Models
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Obtiene estadísticas de presupuestos
+        /// </summary>
+        public static Dictionary<string, int> GetEstadisticas()
+        {
+            var estadisticas = new Dictionary<string, int>
+            {
+                { "Pendientes", 0 },
+                { "Cerrados", 0 },
+                { "Expirados", 0 },
+                { "Total", 0 }
+            };
+
+            try
+            {
+                string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"]?.ConnectionString;
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    MATLogger.Log("No se encontró la cadena de conexión para obtener estadísticas", 1);
+                    return estadisticas;
+                }
+
+                using (SqlConnection cn = new SqlConnection(connectionString))
+                {
+                    cn.Open();
+
+                    // Pendientes
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Total FROM [dbo].[Presupuesto] WHERE [Estado] = 1", cn))
+                    {
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            estadisticas["Pendientes"] = Convert.ToInt32(result);
+                        }
+                    }
+
+                    // Cerrados
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Total FROM [dbo].[Presupuesto] WHERE [Estado] = 3", cn))
+                    {
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            estadisticas["Cerrados"] = Convert.ToInt32(result);
+                        }
+                    }
+
+                    // Expirados
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Total FROM [dbo].[Presupuesto] WHERE [Estado] = 2", cn))
+                    {
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            estadisticas["Expirados"] = Convert.ToInt32(result);
+                        }
+                    }
+
+                    // Total
+                    using (SqlCommand cmd = new SqlCommand("SELECT COUNT(*) as Total FROM [dbo].[Presupuesto]", cn))
+                    {
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            estadisticas["Total"] = Convert.ToInt32(result);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error al obtener estadísticas de presupuestos: {ex.Message}", 1);
+            }
+
+            return estadisticas;
         }
     }
 }

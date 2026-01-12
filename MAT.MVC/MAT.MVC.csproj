@@ -841,6 +841,7 @@
     <Content Include="Views\NuevaReserva\SeleccionarPasajero.cshtml" />
     <Content Include="Views\NuevaReserva\FormReserva.cshtml" />
     <Content Include="Views\Presupuesto\Create.cshtml" />
+    <Content Include="Views\Presupuesto\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

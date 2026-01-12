@@ -1,7 +1,7 @@
 @{
     Response.ContentType = "text/html; charset=utf-8";
     Response.Charset = "utf-8";
-    ViewBag.Title = "Preventa Telefónica - Generar Presupuesto";
+    ViewBag.Title = "Preventa Telefonica - Generar Presupuesto";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -15,7 +15,6 @@
     </div>
 
     <div class="row g-4" style="align-items: stretch;">
-        <!-- Formulario Principal -->
         <div class="col-lg-6" style="display: flex;">
             <div class="modern-card" style="display: flex; flex-direction: column; height: 100%;">
                 <div class="modern-card-header">
@@ -35,7 +34,7 @@
                                 <input type="text" 
                                        class="modern-form-input" 
                                        id="txt-busqueda-cliente" 
-                                       placeholder="Ingrese nombre o DNI del cliente (mínimo 3 caracteres)..." 
+                                       placeholder="Ingrese nombre o DNI del cliente (minimo 3 caracteres)..." 
                                        autocomplete="off" />
                                 <span id="loading-cliente" style="display: none; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);">
                                     <i class="bi bi-hourglass-split"></i>
@@ -43,9 +42,10 @@
                             </div>
                             <input type="hidden" id="txtDniCliente" />
                             <input type="hidden" id="ClienteId" />
+                            <input type="hidden" id="txtTelefonoCliente" />
                             <small class="form-text text-muted">
                                 <i class="bi bi-info-circle"></i>
-                                Busque por nombre, apellido o DNI. El DNI será usado para vincular el presupuesto con la venta final
+                                Busque por nombre, apellido o DNI. El DNI sera usado para vincular el presupuesto con la venta final
                             </small>
                         </div>
 
@@ -79,7 +79,7 @@
                                    autocomplete="name" />
                             <small class="form-text text-muted">
                                 <i class="bi bi-info-circle"></i>
-                                Opcional: Use este campo si el cliente no está registrado en el sistema
+                                Opcional: Use este campo si el cliente no esta registrado en el sistema
                             </small>
                         </div>
 
@@ -91,7 +91,6 @@
                             @Html.DropDownList("ddlViaje", (List<SelectListItem>)ViewBag.Viajes, "Seleccione un viaje (opcional)", new { @class = "modern-form-select" })
                         </div>
 
-                        <!-- Sección de Precio y Adicionales (se muestra cuando se selecciona un viaje) -->
                         <div id="divViajeInfo" style="display: none;">
                             <div class="modern-form-group">
                                 <label class="modern-form-label">
@@ -112,8 +111,7 @@
                                     Adicionales Disponibles
                                 </label>
                                 <div id="adicionalesContainer" style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                    <!-- Los adicionales se cargarán aquí dinámicamente -->
-                                </div>
+                                    </div>
                             </div>
 
                             <div class="modern-form-group">
@@ -176,10 +174,8 @@
             </div>
         </div>
 
-        <!-- Panel Lateral -->
         <div class="col-lg-6" style="display: flex;">
             <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
-                <!-- Script Sugerido -->
                 <div class="modern-card modern-card-info" style="flex: 1; display: flex; flex-direction: column;">
                     <div class="modern-card-header" style="padding: 1rem 1.5rem; flex-shrink: 0;">
                         <div class="modern-card-title" style="font-size: 0.9375rem;">
@@ -193,13 +189,12 @@
                                 "<span id="scriptNombreCliente" style="font-weight: 600;">[Nombre del Cliente]</span>, 
                                 para que no tengas que repetir todo cuando vayas a la agencia y te respeten este precio de 
                                 $<span id="scriptMonto" style="font-weight: 600;">[Monto]</span>, te acabo de enviar un 
-                                <strong>Codigo de Reserva Preferencial</strong> a tu WhatsApp. Preséntalo al llegar y quien esté en caja te va a atender directamente con tu ficha lista."
+                                <strong>Codigo de Reserva Preferencial</strong> a tu WhatsApp. Presentalo al llegar y quien este en caja te va a atender directamente con tu ficha lista."
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Previsualización de Ticket -->
                 <div class="modern-card" style="flex: 1; display: flex; flex-direction: column;">
                     <div class="modern-card-header" style="padding: 1rem 1.5rem; flex-shrink: 0;">
                         <div class="modern-card-title" style="font-size: 0.9375rem;">
@@ -222,7 +217,6 @@
                 </div>
             </div>
 
-            <!-- Mensaje de Resultado -->
             <div id="divResultado" class="alert" style="display: none; margin-top: 1.5rem; border-radius: 12px; border: none; box-shadow: var(--card-shadow);">
                 <div style="display: flex; align-items: flex-start; gap: 1rem;">
                     <i class="bi" id="iconResultado" style="font-size: 1.5rem; flex-shrink: 0;"></i>
@@ -420,10 +414,10 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        // Verificar que jQuery UI esté cargado
+        // Verificar que jQuery UI este cargado
         if (typeof $.ui === 'undefined' || typeof $.ui.autocomplete === 'undefined') {
-            console.error('jQuery UI Autocomplete no está cargado. Verifique que jquery-ui esté incluido en el layout.');
-            mostrarResultado('Error: jQuery UI no está cargado. Por favor, recargue la página.', 'danger');
+            console.error('jQuery UI Autocomplete no esta cargado. Verifique que jquery-ui este incluido en el layout.');
+            mostrarResultado('Error: jQuery UI no esta cargado. Por favor, recargue la pagina.', 'danger');
             return;
         }
 
@@ -466,8 +460,6 @@
                     error: function (xhr, status, error) {
                         $("#loading-cliente").hide();
                         console.error("Error en autocomplete:", error);
-                        console.error("Status:", status);
-                        console.error("Response:", xhr.responseText);
                         response([]);
                     }
                 });
@@ -484,13 +476,15 @@
                     var nombreCompleto = (apellido + (apellido && nombre ? ", " : "") + nombre).trim();
                     if (!nombreCompleto) nombreCompleto = "Sin nombre";
                     var personaId = cliente.PersonaId || '';
+                    var telefono = cliente.Telefono || cliente.TelefonoMovil || cliente.TelefonoCelular || '';
                     
                     $("#txtDniCliente").val(dni);
                     $("#ClienteId").val(personaId);
+                    $("#txtTelefonoCliente").val(telefono);
                     $("#txtNombreCliente").val(nombreCompleto);
                     $("#txt-busqueda-cliente").val(nombreCompleto);
                     
-                    // Mostrar información del cliente seleccionado
+                    // Mostrar informacion del cliente seleccionado
                     $("#lblNombreCliente").text(nombreCompleto);
                     $("#lblDniCliente").text(dni || 'No especificado');
                     $("#divClienteSeleccionado").slideDown();
@@ -501,23 +495,23 @@
                 return false;
             },
             focus: function (event, ui) {
-                // Prevenir que se llene el input con el label completo
                 event.preventDefault();
                 return false;
             }
         });
 
-        // Función para limpiar cliente seleccionado
+        // Funcion para limpiar cliente seleccionado
         window.limpiarCliente = function() {
             $("#txt-busqueda-cliente").val('');
             $("#txtDniCliente").val('');
             $("#ClienteId").val('');
+            $("#txtTelefonoCliente").val('');
             $("#txtNombreCliente").val('');
             $("#divClienteSeleccionado").slideUp();
             actualizarScriptSugerido();
         };
 
-        // Función para actualizar el script sugerido
+        // Funcion para actualizar el script sugerido
         function actualizarScriptSugerido() {
             var nombre = $("#txtNombreCliente").val() || $("#lblNombreCliente").text() || '[Nombre del Cliente]';
             var monto = $('#txtMontoPactado').val() || '[Monto]';
@@ -550,7 +544,7 @@
             if (viajeId && viajeId !== '') {
                 cargarInfoViaje(viajeId);
             } else {
-                // Limpiar información del viaje
+                // Limpiar informacion del viaje
                 $('#divViajeInfo').slideUp();
                 $('#divAdicionales').hide();
                 $('#adicionalesContainer').empty();
@@ -561,7 +555,7 @@
             }
         });
 
-        // Función para cargar información del viaje
+        // Funcion para cargar informacion del viaje
         function cargarInfoViaje(viajeId) {
             $.ajax({
                 url: '@Url.Action("GetViajeInfo", "Presupuesto")',
@@ -587,28 +581,27 @@
                             $('#adicionalesContainer').empty();
                         }
                         
-                        // Mostrar sección de información del viaje
+                        // Mostrar seccion de informacion del viaje
                         $('#divViajeInfo').slideDown();
                         
                         // Actualizar monto total
                         actualizarMontoTotal();
                     } else {
-                        mostrarResultado(response.message || 'Error al cargar información del viaje.', 'danger');
+                        mostrarResultado(response.message || 'Error al cargar informacion del viaje.', 'danger');
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error al cargar información del viaje:', error);
-                    mostrarResultado('Error al cargar información del viaje. Por favor, intente nuevamente.', 'danger');
+                    mostrarResultado('Error al cargar informacion del viaje. Por favor, intente nuevamente.', 'danger');
                 }
             });
         }
 
-        // Función para renderizar adicionales
+        // Funcion para renderizar adicionales
         function renderizarAdicionales(adicionales) {
             var html = '';
             $.each(adicionales, function (index, adicional) {
                 var adicionalId = adicional.adicionalId || adicional.AdicionalId;
-                var descripcion = adicional.descripcion || adicional.Descripcion || 'Sin descripción';
+                var descripcion = adicional.descripcion || adicional.Descripcion || 'Sin descripcion';
                 var precio = parseFloat(adicional.precio || adicional.Precio || 0);
                 var precioFormateado = precio.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 
@@ -625,7 +618,6 @@
             
             $('#adicionalesContainer').html(html);
             
-            // Agregar event listeners a los checkboxes
             $('.adicional-checkbox').on('change', function () {
                 var adicionalId = $(this).data('adicional-id');
                 var precio = parseFloat($(this).data('precio')) || 0;
@@ -638,12 +630,11 @@
                         return a.id !== adicionalId;
                     });
                 }
-                
                 actualizarMontoTotal();
             });
         }
 
-        // Función para actualizar el monto total
+        // Funcion para actualizar el monto total
         function actualizarMontoTotal() {
             var precioBase = window.precioBaseViaje || 0;
             var totalAdicionales = 0;
@@ -657,7 +648,6 @@
             var montoTotal = precioBase + totalAdicionales;
             $('#lblMontoTotal').text('$' + montoTotal.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
             
-            // Actualizar el campo de monto pactado si está vacío o si el usuario no lo ha modificado manualmente
             if (!$('#txtMontoPactado').data('manual-edit')) {
                 $('#txtMontoPactado').val(montoTotal.toFixed(2));
             }
@@ -665,64 +655,44 @@
             actualizarScriptSugerido();
         }
 
-        // Marcar cuando el usuario edita manualmente el monto
         $('#txtMontoPactado').on('input', function () {
             $(this).data('manual-edit', true);
             actualizarScriptSugerido();
         });
 
-        // Función para escapar HTML
         function escapeHtml(text) {
             if (!text) return "";
-            var map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
+            var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
             return String(text).replace(/[&<>"']/g, function (m) { return map[m]; });
         }
 
-        // Inicializar variables
         window.precioBaseViaje = 0;
         window.adicionalesSeleccionados = [];
 
-        // Submit del formulario
         $('#formPresupuesto').on('submit', function (e) {
             e.preventDefault();
-
             var dniCliente = $('#txtDniCliente').val().trim().replace(/\./g, '');
             var nombreCliente = $('#txtNombreCliente').val().trim();
             var viajeId = $('#ddlViaje').val();
             var montoPactado = parseFloat($('#txtMontoPactado').val());
             var observaciones = $('#txtObservaciones').val();
 
-            // Validar que se haya seleccionado un cliente o ingresado DNI/nombre manualmente
             if (!dniCliente && !nombreCliente) {
                 mostrarResultado('Debe buscar y seleccionar un cliente o ingresar al menos el nombre del cliente manualmente.', 'danger');
-                $('#txt-busqueda-cliente').focus();
-                return;
-            }
-
-            // Si hay DNI, validar formato
-            if (dniCliente && dniCliente.length < 7) {
-                mostrarResultado('El DNI del cliente debe tener al menos 7 dígitos.', 'danger');
-                $('#txt-busqueda-cliente').focus();
                 return;
             }
 
             if (!montoPactado || montoPactado <= 0) {
                 mostrarResultado('El monto debe ser mayor a cero.', 'danger');
-                $('#txtMontoPactado').focus();
                 return;
             }
 
-            // Deshabilitar botón
             var $btn = $('#btnGenerarCodigo');
             var originalHtml = $btn.html();
             $btn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i><span>Generando...</span>');
 
+            var telefonoCliente = $('#txtTelefonoCliente').val().trim();
+            
             $.ajax({
                 url: '@Url.Action("CreatePresupuesto", "Presupuesto")',
                 type: 'POST',
@@ -730,33 +700,44 @@
                     dniCliente: dniCliente,
                     viajeId: viajeId || null,
                     montoPactado: montoPactado,
-                    observaciones: observaciones
+                    observaciones: observaciones,
+                    telefonoCliente: telefonoCliente || null
                 },
                 success: function (response) {
                     if (response.success) {
-                        // Actualizar código en la previsualización
                         $('#lblCodigoSeguimiento').text(response.codigoSeguimiento);
                         $('#lblNumeroTicket').text('#' + response.codigoSeguimiento.split('-').pop());
                         
-                        mostrarResultado(
-                            '¡Presupuesto generado exitosamente! El codigo de seguimiento ha sido enviado al cliente.',
-                            'success'
-                        );
+                        // Mostrar mensaje según si se envió WhatsApp o no
+                        var mensaje = '¡Presupuesto generado exitosamente! Código: ' + response.codigoSeguimiento;
                         
-                        // Scroll suave al resultado
-                        $('html, body').animate({
-                            scrollTop: $('#divResultado').offset().top - 100
-                        }, 500);
+                        if (response.whatsappEnviado) {
+                            mensaje += '\n\n✅ El mensaje de WhatsApp ha sido enviado exitosamente al cliente.';
+                        } else if (response.whatsappLink) {
+                            // Si hay enlace de WhatsApp, abrirlo automáticamente
+                            mensaje += '\n\n📱 Abriendo WhatsApp para enviar el mensaje...';
+                            
+                            // Abrir WhatsApp en una nueva ventana/pestaña
+                            window.open(response.whatsappLink, '_blank');
+                            
+                            // Guardar enlace y mensaje en variables globales para acceso fácil
+                            window.whatsappLinkParaCopiar = response.whatsappLink;
+                            window.mensajeWhatsAppParaCopiar = response.mensajeWhatsApp;
+                            window.codigoSeguimientoParaCopiar = response.codigoSeguimiento;
+                        } else if (response.mensajeWhatsApp) {
+                            mensaje += '\n\n📱 No se pudo generar el enlace de WhatsApp.';
+                            mensaje += '\n\nMensaje para copiar y enviar manualmente:';
+                            mensaje += '\n\n' + response.mensajeWhatsApp;
+                            
+                            // Guardar mensaje en variable global para acceso fácil
+                            window.mensajeWhatsAppParaCopiar = response.mensajeWhatsApp;
+                            window.codigoSeguimientoParaCopiar = response.codigoSeguimiento;
+                        }
+                        
+                        mostrarResultado(mensaje, 'success');
                     } else {
-                        mostrarResultado(response.message || 'Error al generar el presupuesto. Por favor, intente nuevamente.', 'danger');
+                        mostrarResultado(response.message || 'Error al generar el presupuesto.', 'danger');
                     }
-                },
-                error: function (xhr) {
-                    var errorMsg = 'Error al generar el presupuesto. Por favor, intente nuevamente.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMsg = xhr.responseJSON.message;
-                    }
-                    mostrarResultado(errorMsg, 'danger');
                 },
                 complete: function () {
                     $btn.prop('disabled', false).html(originalHtml);
@@ -771,47 +752,18 @@
         var $title = $('#titleResultado');
         var $icon = $('#iconResultado');
         
-        // Remover todas las clases de alert
-        $div.removeClass('alert-success alert-danger alert-warning alert-info')
-            .addClass('alert-' + tipo);
+        $div.removeClass('alert-success alert-danger alert-warning alert-info').addClass('alert-' + tipo);
         
-        // Configurar icono y título según el tipo
         var config = {
-            'success': {
-                icon: 'bi-check-circle-fill',
-                title: '¡Éxito!',
-                color: '#10b981'
-            },
-            'danger': {
-                icon: 'bi-exclamation-triangle-fill',
-                title: 'Error',
-                color: '#ef4444'
-            },
-            'warning': {
-                icon: 'bi-exclamation-circle-fill',
-                title: 'Advertencia',
-                color: '#f59e0b'
-            },
-            'info': {
-                icon: 'bi-info-circle-fill',
-                title: 'Información',
-                color: '#3b82f6'
-            }
+            'success': { icon: 'bi-check-circle-fill', title: '¡Exito!', color: '#10b981' },
+            'danger': { icon: 'bi-exclamation-triangle-fill', title: 'Error', color: '#ef4444' }
         };
         
-        var tipoConfig = config[tipo] || config['info'];
-        
+        var tipoConfig = config[tipo] || { icon: 'bi-info-circle-fill', title: 'Informacion', color: '#3b82f6' };
         $icon.removeClass().addClass('bi ' + tipoConfig.icon).css('color', tipoConfig.color);
         $title.text(tipoConfig.title);
         $msg.html(mensaje);
-        
         $div.fadeIn();
-        
-        // Auto-ocultar después de 5 segundos si es éxito
-        if (tipo === 'success') {
-            setTimeout(function() {
-                $div.fadeOut();
-            }, 5000);
-        }
+        if (tipo === 'success') setTimeout(function() { $div.fadeOut(); }, 5000);
     }
 </script>
