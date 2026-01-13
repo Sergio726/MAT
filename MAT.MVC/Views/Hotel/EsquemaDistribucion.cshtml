@@ -1,15 +1,517 @@
-﻿@model List<MAT.MVC.Models.EsquemaDistribucion>
+@model List<MAT.MVC.Models.EsquemaDistribucion>
 
 <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
 
-<script type="text/javascript">
-    $(document).ready(function(){
-        loadGrid();
+<style>
+    /* ===== MODERN HOTEL SCHEMA STYLES ===== */
+    .schema-container {
+        padding: 25px;
+    }
 
-    });
+    /* Info cards */
+    .info-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
 
-    function loadGrid()
+    .info-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .info-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1e3a5f;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e91e63;
+    }
+
+    .info-card p {
+        margin: 0;
+        line-height: 1.8;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .info-card span {
+        color: #666;
+    }
+
+    .info-card input.info-input {
+        border: none;
+        background: transparent;
+        font-size: 13px;
+        color: #333;
+        font-weight: 500;
+        padding: 0;
+        width: auto;
+    }
+
+    .info-card input.info-input:focus {
+        outline: none;
+        background: #fff;
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+
+    /* Group info row */
+    .group-info-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 25px;
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+        border-radius: 8px;
+        color: white;
+        font-size: 13px;
+    }
+
+    .group-info-row span {
+        font-weight: 500;
+    }
+
+    .group-info-row input {
+        border: none;
+        background: rgba(255,255,255,0.1);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 13px;
+        width: 180px;
+    }
+
+    .group-info-row input::placeholder {
+        color: rgba(255,255,255,0.6);
+    }
+
+    .group-info-row input:focus {
+        outline: none;
+        background: rgba(255,255,255,0.2);
+    }
+
+    /* Room type section */
+    .room-type-section {
+        margin-bottom: 25px;
+    }
+
+    .room-type-header {
+        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 6px 6px 0 0;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .room-tables-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        border: 1px solid #e0e0e0;
+        border-top: none;
+        border-radius: 0 0 6px 6px;
+        overflow: hidden;
+    }
+
+    .room-table-wrapper {
+        border-right: 1px solid #e0e0e0;
+    }
+
+    .room-table-wrapper:last-child {
+        border-right: none;
+    }
+
+    .room-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .room-table thead {
+        background: #f8f9fa;
+    }
+
+    .room-table thead th {
+        padding: 10px 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #1e3a5f;
+        text-transform: uppercase;
+        font-size: 11px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .room-table thead th:first-child {
+        width: 120px;
+    }
+
+    .room-table tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .room-table tbody tr:nth-child(even) {
+        background: #fafafa;
+    }
+
+    .room-table tbody tr:hover {
+        background: #fff3e0;
+    }
+
+    .room-table tbody td {
+        padding: 10px 12px;
+        vertical-align: top;
+    }
+
+    .room-table tbody td:first-child {
+        font-weight: 600;
+        color: #1e3a5f;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    /* Person in room */
+    .person-entry {
+        padding: 3px 0;
+        font-size: 12px;
+        color: #333;
+    }
+
+    .person-entry:not(:last-child) {
+        border-bottom: 1px dashed #e0e0e0;
+        padding-bottom: 5px;
+        margin-bottom: 3px;
+    }
+
+    .person-entry.tutor-person {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin: 2px 0;
+        border-bottom: none !important;
+    }
+
+    .empty-room {
+        color: #999;
+        font-style: italic;
+    }
+
+    /* Error message */
+    .schema-error {
+        background: #ffebee;
+        color: #c62828;
+        padding: 15px 20px;
+        border-left: 4px solid #c62828;
+        border-radius: 4px;
+        font-size: 14px;
+        margin: 20px;
+    }
+
+    /* Print styles - Compact and simple */
+    @@media print {
+        .schema-container {
+            padding: 10px;
+        }
+
+        /* Info section - compact */
+        .info-section {
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .info-card {
+            padding: 8px 12px;
+            background: white !important;
+            border: 1px solid #000;
+            border-radius: 0;
+        }
+
+        .info-card-title {
+            font-size: 11px;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #000;
+            color: #000;
+        }
+
+        .info-card p {
+            font-size: 9px;
+            line-height: 1.4;
+        }
+
+        .info-card input.info-input {
+            font-size: 9px;
+        }
+
+        /* Group info - simple */
+        .group-info-row {
+            background: #f0f0f0 !important;
+            color: #000 !important;
+            padding: 6px 12px;
+            margin-bottom: 10px;
+            border-radius: 0;
+            font-size: 9px;
+            border: 1px solid #ccc;
+        }
+
+        .group-info-row input {
+            background: white !important;
+            color: #000 !important;
+            border: 1px solid #999 !important;
+            font-size: 9px;
+            padding: 2px 5px;
+        }
+
+        /* Room sections - compact */
+        .room-type-section {
+            margin-bottom: 8px;
+        }
+
+        .room-type-header {
+            background: #333 !important;
+            color: white !important;
+            padding: 4px 8px;
+            font-size: 9px;
+            border-radius: 0;
+        }
+
+        .room-tables-container {
+            border: 1px solid #000;
+            border-top: none;
+            border-radius: 0;
+        }
+
+        .room-table-wrapper {
+            border-right: 1px solid #ccc;
+        }
+
+        .room-table {
+            font-size: 8px;
+        }
+
+        .room-table thead {
+            background: #e0e0e0 !important;
+        }
+
+        .room-table thead th {
+            padding: 4px 6px;
+            font-size: 8px;
+            border-bottom: 1px solid #000;
+            color: #000;
+        }
+
+        .room-table tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .room-table tbody tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .room-table tbody tr:hover {
+            background: transparent;
+        }
+
+        .room-table tbody td {
+            padding: 3px 6px;
+        }
+
+        .room-table tbody td:first-child {
+            font-size: 8px;
+            color: #000;
+        }
+
+        /* Person entries - compact */
+        .person-entry {
+            padding: 1px 0;
+            font-size: 8px;
+        }
+
+        .person-entry:not(:last-child) {
+            border-bottom: none;
+            padding-bottom: 1px;
+            margin-bottom: 1px;
+        }
+
+        .person-entry.tutor-person {
+            background: #666 !important;
+            color: white !important;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-size: 8px;
+        }
+
+        .empty-room {
+            font-size: 8px;
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .info-section {
+            grid-template-columns: 1fr;
+        }
+        .group-info-row {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .room-tables-container {
+            grid-template-columns: 1fr;
+        }
+        .room-table-wrapper {
+            border-right: none;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .room-table-wrapper:last-child {
+            border-bottom: none;
+        }
+    }
+</style>
+
+@if (ViewBag.Error != null)
+{
+    <div class="schema-error"><span>@ViewBag.Error</span></div>
+}
+
+<div class="schema-container">
+    <!-- Info Section -->
+    <div class="info-section">
+        <div class="info-card">
+            <div class="info-card-title">Marco Antonio Tours</div>
+            <p>
+                <span>Empresa de Viajes y Turismo - Leg. N° </span><input name="nro_legajo" placeholder="N° LEGAJO" type="text" class="info-input" value="11.049" /><br />
+                <span>Dean Funes N° 29 - Tel. (0387) 4321823</span><br />
+                <span>Email: reservas@marcoantoniotours.tur.ar</span><br />
+                <span>SALTA - ARGENTINA</span>
+            </p>
+        </div>
+        <div class="info-card">
+            @if (Model.Count > 0)
+            {
+                <div class="info-card-title">@Model[0].HotelNombre</div>
+                <p>
+                    <span>Ingreso: </span><input type="text" class="info-input" placeholder="INGRESO" value="@Model[0].HotelIngreso" /><br />
+                    <span>Egreso: </span><input type="text" class="info-input" placeholder="EGRESO" value="@Model[0].HotelEgreso" /><br />
+                    <span>Total Pax: </span><input type="text" class="info-input" placeholder="TOTAL PAX" value="@ViewBag.CantPax" />
+                </p>
+            }
+        </div>
+    </div>
+
+    <!-- Group Info -->
+    <div class="group-info-row">
+        <div>
+            <span>GRUPO:</span> Marco Antonio Tours - SALTA
+        </div>
+        <div>
+            <span>COORDINADOR:</span> <input type="text" id="txt-coordinadora" placeholder="APELLIDO/NOMBRE" />
+        </div>
+    </div>
+
+    <!-- Room Distribution -->
+    @for (int i = 1; i < 9; i++)
     {
+        var vModel = Model.Where(mod => mod.HabTipo == i).ToList();
+
+        if (vModel.Count() > 0)
+        {
+            int iLength = vModel.Count();
+            int iLength1 = vModel.Count();
+
+            if (iLength % 2 > 0)
+            {
+                iLength = iLength + 1;
+            }
+
+            <div class="room-type-section">
+                <div class="room-type-header">@vModel.First().HabTipoDescripcion</div>
+                <div class="room-tables-container">
+                    <div class="room-table-wrapper">
+                        <table class="room-table">
+                            <thead>
+                                <tr>
+                                    <th>N° - HAB</th>
+                                    <th>RESERVADO A</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int n = 0; n < (iLength / 2); n++)
+                                {
+                                    <tr>
+                                        <td>@vModel[n].NroHabitacion @vModel[n].HabNombre</td>
+                                        <td>
+                                            @if (vModel[n].lHotelPersona.Any())
+                                            {
+                                                foreach (var persona in vModel[n].lHotelPersona)
+                                                {
+                                                    <div class="person-entry divPersona" id="@persona.PersonaID">
+                                                        - @persona.PersonaNombre @persona.PersonaApellido
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="empty-room">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="room-table-wrapper">
+                        <table class="room-table">
+                            <thead>
+                                <tr>
+                                    <th>N° - HAB</th>
+                                    <th>RESERVADO A</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int n = (iLength / 2); n < iLength1; n++)
+                                {
+                                    <tr>
+                                        <td>@vModel[n].NroHabitacion @vModel[n].HabNombre</td>
+                                        <td>
+                                            @if (vModel[n].lHotelPersona.Any())
+                                            {
+                                                foreach (var persona in vModel[n].lHotelPersona)
+                                                {
+                                                    <div class="person-entry divPersona" id="@persona.PersonaID">
+                                                        - @persona.PersonaNombre @persona.PersonaApellido
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="empty-room">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
         var sViajeId = "@ViewData["viajeid"].ToString()";
         $.ajax({
             url: "/Reserva/GetListTutoresByViajeID",
@@ -20,157 +522,10 @@
                 $(".divPersona").each(function (e) {
                     var Id = $(this).attr("id");
                     if (list.indexOf(Id) > 0) {
-                        $(this).addClass("Tutor");
+                        $(this).addClass("tutor-person");
                     }
-                })
+                });
             }
         });
-    }
-    
+    });
 </script>
-
-
-@if (ViewBag.Error != null)
-{
-   <div class="msgError"><span>@ViewBag.Error</span></div>    
-}
-
-<div id="hoteles" class="container">
-
-    <div class="backMAT">
-        <span class="title">DISTRIBUCION DE HABITACIONES</span>
-
-        <div class="tabla custom_margin_bottom_15">
-            <div class="row">
-                <div class="col_dos">
-                    <span class="title">MARCO ANTONIO TOURS</span>
-                    <p>
-                        <span>Empresa de Viajes y Turismo - Leg. Nº </span><input name="nro_legajo" placeholder="N° LEGAJO" type="text" class="custom_border_none" value="11.049"/><br />
-                        <span>Dean Funes Nº 29 - Tel. (0387) 4321823</span><br />
-                        <span>Email: reservas@marcoantoniotours.tur.ar</span><br />
-                        <span>SALTA - ARGENTINA</span>
-                    </p>
-                </div>
-                <div class="col_dos">
-                    @if (Model.Count > 0)
-                    {
-                        <span class="title">@Model[0].HotelNombre</span>    
-                
-                        <p>
-                            <span>Ingreso:   </span><input type="text" class="custom_border_none" placeholder="INGRESO" value="@Model[0].HotelIngreso" /><br />
-                            <span>Egreso:    </span><input type="text" class="custom_border_none custom_margin_left_4" placeholder="EGRESO" value="@Model[0].HotelEgreso" /><br />
-                            <span>Total Pax: </span><input type="text" class="custom_border_none" placeholder="TOTAL PAX" value="@ViewBag.CantPax" />
-                        </p>
-                    
-                    }
-                </div>
-            </div>
-            <div class="row">
-                <div class="col_dos">
-                    <span>GRUPO: Marco Antonio Tours - SALTA</span>
-                </div>
-                <div class="col_dos">
-                    <span>COORDINADOR: </span><input type="text" id="txt-coordinadora" class="custom_border_none custom_width_200px" placeholder="APELLIDO/NOMBRE" />
-                </div>
-            </div>
-        </div>
-
-       
-        <!--ditribucion de habitaciones-->
-        @for (int i = 1; i < 9; i++) //lista de int tipo de habitacion
-        {
-            var vModel = Model.Where(mod => mod.HabTipo == i).ToList();
-
-            if (vModel.Count() > 0)
-            {
-                int iLength = vModel.Count();
-                int iLength1 = vModel.Count();
-                
-                
-                if (iLength % 2 > 0)
-                {
-                    iLength = iLength + 1;
-                }
-                        
-                        <span class="title">@vModel.First().HabTipoDescripcion</span>
-                        <div class="tabla custom_margin_bottom_15">
-                            <table style="width: 100%;" cellspacing="0">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <table width="100%;" cellspacing="0" class="tblSingle">
-                                                <thead>
-                                                    <tr style="text-align: center;">
-                                                        <th style="width: 130px;">N° - HAB</th>
-                                                        <th style="width: 500px;">RESERVADO A</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @for (int n = 0; n < (iLength / 2); n++)
-                                                    {
-                                                        <tr class="rowHeigth0">
-                                                            <td class="custom_font_weigh_bold">
-                                                                <span style="font-size:11px;">@vModel[n].NroHabitacion  @vModel[n].HabNombre</span>
-                                                            </td>
-                                                            <td>
-                                                                @foreach (var persona in @vModel[n].lHotelPersona)
-                                                                {
-                                                                    <div style="text-align: left;" class="divPersona" id="@persona.PersonaID">
-                                                                        <span>@("- ") @persona.PersonaNombre @(" ") @persona.PersonaApellido </span>
-                                                                    </div>
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-
-                                        </td>
-                                        <!-- col2 -->
-
-                                        <td style="display: flex;">
-                                            <table width="100%;" cellspacing="0" class="tblSingle">
-                                                <thead>
-                                                    <tr style="text-align: center;">
-                                                        <th style="width: 130px;">N° - HAB</th>
-                                                        <th style="width: 500px;">RESERVADO A</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @for (int n = (iLength / 2); n < iLength1; n++)
-                                                    {
-                                                        <tr class="rowHeigth0">
-                                                            <td class="custom_font_weigh_bold">
-                                                                <span style="font-size:11px;">@vModel[n].NroHabitacion  @vModel[n].HabNombre</span>
-                                                            </td>
-                                                            <td>
-                                                                @foreach (var persona in @vModel[n].lHotelPersona)
-                                                                {
-                                                                    <div style="text-align: left;" class="divPersona" id="@persona.PersonaID">
-                                                                        <span>@("- ") @persona.PersonaNombre @(" ") @persona.PersonaApellido </span>
-                                                                    </div>
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-
-
-
-                                        </td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-
-                        </div>
-            }
-            
-        }
-
-        <!---->
-        
-    </div>
-
-</div>

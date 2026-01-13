@@ -1,45 +1,279 @@
-﻿@{
+@{
     ViewBag.Title = "Distribución de Hoteles";
 }
 
 <head>
     <title>DISTRIBUCION DE HABITACIONES</title>
-
     <script src="~/Scripts/jquery-1.8.2.min.js"></script>
     <link href="~/Content/hoteles.css" rel="stylesheet" />
-    <link href="~/Content/mat.esquemadistribucion.print.css" rel="stylesheet"  media="print"/>
+    <link href="~/Content/mat.esquemadistribucion.print.css" rel="stylesheet" media="print"/>
     <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
+<style>
+    /* ===== MODERN HOTEL DISTRIBUTION STYLES ===== */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: #f5f5f5;
+        -webkit-print-color-adjust: exact;
+    }
+
+    /* Main container */
+    .hotel-distribution-page {
+        width: 95%;
+        max-width: 1200px;
+        margin: 20px auto;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* Header */
+    .hotel-header {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+        color: white;
+        padding: 18px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .hotel-header-title {
+        font-size: 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .hotel-header-logo img {
+        height: 50px;
+        width: auto;
+    }
+
+    /* Toolbar */
+    .hotel-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 25px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e0e0e0;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .hotel-selector-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .hotel-selector-label {
+        font-weight: 600;
+        color: #1e3a5f;
+        font-size: 14px;
+    }
+
+    .hotel-select {
+        padding: 10px 35px 10px 15px;
+        font-size: 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        min-width: 300px;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hotel-select:hover {
+        border-color: #c2185b;
+    }
+
+    .hotel-select:focus {
+        outline: none;
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+
+    .btn-print {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(233, 30, 99, 0.3);
+        transition: all 0.2s ease;
+    }
+
+    .btn-print:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+    }
+
+    .btn-print:active {
+        transform: translateY(0);
+    }
+
+    .btn-print i {
+        font-size: 16px;
+    }
+
+    /* Content area */
+    .hotel-content {
+        padding: 0;
+        min-height: 400px;
+    }
+
+    /* Loading indicator */
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #e91e63;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Error message */
+    .error-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 15px 20px;
+        border-left: 4px solid #c62828;
+        margin: 20px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    /* Print styles - Compact and simple */
+    @@media print {
+        body {
+            background: white;
+            padding: 0;
+            margin: 0;
+            font-size: 10px;
+        }
+        .hotel-distribution-page {
+            box-shadow: none;
+            margin: 0;
+            width: 100%;
+            max-width: none;
+            border-radius: 0;
+            border: none;
+        }
+        .hotel-toolbar {
+            display: none !important;
+        }
+        .hotel-header {
+            background: white !important;
+            color: #000 !important;
+            padding: 10px 15px;
+            border-bottom: 2px solid #000;
+        }
+        .hotel-header-title {
+            font-size: 14px;
+            color: #000;
+        }
+        .hotel-header-logo img {
+            height: 35px;
+            filter: grayscale(100%);
+        }
+        .hotel-content {
+            min-height: auto;
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .hotel-distribution-page {
+            margin: 10px;
+            width: auto;
+        }
+        .hotel-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .hotel-selector-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .hotel-select {
+            min-width: 100%;
+        }
+        .btn-print {
+            justify-content: center;
+        }
+    }
+</style>
 
 @if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
+    <div class="error-message"><span>@ViewBag.Error</span></div>
 }
 
 <input type="hidden" id="distribucion-viaje-id" value="@ViewData["viajeid"]" />
-<div id="divContentListHotel" class="form" style="padding-bottom:20px;">
-    <div class="form-label"><span class="title">Hoteles</span></div>
-    <div class="form-field">
-       
-        @if (ViewBag.ListHotel != null)
-        {
-            <select id="HotelPorViaje" name="HotelPorViaje">
-            @foreach (MAT.MVC.Models.HotelDropDown item in ViewBag.ListHotel)
-            {
-                <option value="@item.HotelID" fecha="@item.Fecha.ToString("dd/MM/yyyy")">@item.Nombre @item.Fecha.ToString("dd/MM/yyyy")</option>
-            }
-            </select>    
-        }
-        
-        
-        <input id="btn-print-distribucion" type="button" class="btn btn-inverse" value="Imprimir Distribución" />
-    </div>
-</div>
 
-<div id="esquema-distribucion" class="custom_padding_top_10">
-    <div class="iconLoading"></div>
+<div class="hotel-distribution-page">
+    <div class="hotel-header">
+        <div class="hotel-header-title">Distribución de Habitaciones</div>
+        <div class="hotel-header-logo">
+            <img src="/Images/marco_antonio_back3.png" alt="Marco Antonio Tours" />
+        </div>
+    </div>
+
+    <div class="hotel-toolbar">
+        <div class="hotel-selector-group">
+            <span class="hotel-selector-label">Hotel:</span>
+            @if (ViewBag.ListHotel != null)
+            {
+                <select id="HotelPorViaje" name="HotelPorViaje" class="hotel-select">
+                    @foreach (MAT.MVC.Models.HotelDropDown item in ViewBag.ListHotel)
+                    {
+                        <option value="@item.HotelID" fecha="@item.Fecha.ToString("dd/MM/yyyy")">@item.Nombre @item.Fecha.ToString("dd/MM/yyyy")</option>
+                    }
+                </select>
+            }
+        </div>
+        <button id="btn-print-distribucion" type="button" class="btn-print">
+            <i class="bi bi-printer-fill"></i>
+            Imprimir Distribución
+        </button>
+    </div>
+
+    <div id="esquema-distribucion" class="hotel-content">
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <span>Cargando distribución...</span>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -47,37 +281,38 @@
         var idselected = $("#HotelPorViaje option:selected").val();
         var viajeid = $("#distribucion-viaje-id").val();
         var fecha = $("#HotelPorViaje option:selected").attr("fecha");
-        var url = "/Hotel/EsquemaDistribucion?hotelid=" + idselected + "&viajeid=" + viajeid + "&fecha=" + fecha;
 
         setTimeout(function () {
             loadPage(idselected, viajeid, fecha)
-        }, 1000);
-
-
-        
+        }, 500);
     });
+
     $(document).on("change", "#HotelPorViaje", function () {
         var idselected = $("#HotelPorViaje option:selected").val();
         var fecha = $('#HotelPorViaje option:selected').attr("fecha");
         var viajeid = $("#distribucion-viaje-id").val();
-       
+
+        $("#esquema-distribucion").html('<div class="loading-container"><div class="loading-spinner"></div><span>Cargando distribución...</span></div>');
+
         setTimeout(function () {
-            $("#esquema-distribucion").html("<div class=\"iconLoading\"></div>");
             loadPage(idselected, viajeid, fecha)
-        }, 500);
+        }, 300);
     });
+
     $(document).on("click", "#btn-print-distribucion", function () {
         window.print();
     });
 
-    function loadPage(idselected, viajeid, fecha)
-    {
+    function loadPage(idselected, viajeid, fecha) {
         $.ajax({
             url: "/Hotel/EsquemaDistribucion",
             data: { hotelid: idselected, viajeid: viajeid, fecha: fecha },
             dataType: "html",
             success: function (data) {
                 $("#esquema-distribucion").html(data);
+            },
+            error: function() {
+                $("#esquema-distribucion").html('<div class="error-message">Error al cargar la distribución. Por favor, intente nuevamente.</div>');
             }
         });
     }
