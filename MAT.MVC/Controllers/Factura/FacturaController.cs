@@ -85,9 +85,29 @@ namespace MAT.MVC.Controllers.Factura
         [Authorize]
         public ActionResult FacturaListByViajeID(string sViajeID, string sPaquete)
         {
-
             ViewBag.ViajeID = sViajeID;
             ViewBag.PaqueteDescripcion = sPaquete;
+            
+            // Obtener información del viaje
+            if (!string.IsNullOrEmpty(sViajeID))
+            {
+                try
+                {
+                    var viaje = ViajeMethod.ViajeByViajeID(sViajeID);
+                    if (viaje != null)
+                    {
+                        ViewBag.ViajeDescripcion = viaje.Descripcion;
+                        ViewBag.ViajeFechaSalida = viaje.FechaSalida;
+                    }
+                }
+                catch
+                {
+                    // Si hay error, dejar los valores vacíos
+                    ViewBag.ViajeDescripcion = "";
+                    ViewBag.ViajeFechaSalida = "";
+                }
+            }
+            
             return View();
         }
 

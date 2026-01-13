@@ -1,19 +1,69 @@
 ﻿@if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div> 
+    <div class="modern-alert-error">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>@ViewBag.Error</span>
+    </div>
     return;   
 }
 
-<div class="custom_text_aling_left">
-    <span class="custom_font_weigh_bold"> Pasajeros </span>
-    <ul>
+<div class="modern-pasajeros-list">
+    <div class="modern-pasajeros-title">
+        <i class="bi bi-people"></i>
+        <span>Pasajeros</span>
+    </div>
+    <ul class="modern-pasajeros-items">
         @foreach (var item in ViewBag.lPasajeros)
-            {
-                <li>
-                    @item
-                </li>
-            }
-       
-    </ul>        
-    
+        {
+            <li class="modern-pasajero-item">
+                <i class="bi bi-person-circle"></i>
+                <span>@item</span>
+            </li>
+        }
+    </ul>
 </div>
+
+<style>
+    .modern-pasajeros-list {
+        padding: 1rem;
+    }
+    .modern-pasajeros-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .modern-pasajeros-title i {
+        color: var(--primary-color, #e91e63);
+        font-size: 1rem;
+    }
+    .modern-pasajeros-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .modern-pasajero-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.5rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        transition: all 0.2s ease;
+    }
+    .modern-pasajero-item:hover {
+        background: var(--border-color, #e5e7eb);
+    }
+    .modern-pasajero-item i {
+        color: var(--primary-color, #e91e63);
+        font-size: 1rem;
+    }
+</style>

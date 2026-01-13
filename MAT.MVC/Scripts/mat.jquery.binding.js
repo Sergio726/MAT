@@ -624,9 +624,25 @@ $(document).on("click", "#btn-notacredito", function () {
     var Fecha = $(this).data("fecha");
     var Monto = $(this).data("monto");
     var TotalPagos = $("#hdnTotalPagos").val();
+    
+    // Validar que los datos necesarios estén presentes
+    if (!facturaid || !clienteid) {
+        alert("Error: Faltan datos necesarios para generar la nota de crédito.");
+        console.error("Datos faltantes - facturaid:", facturaid, "clienteid:", clienteid);
+        return;
+    }
+    
     var title = "Nota de Credito";
     var id = "NotaCredito";
-    var url = "/PersonaCliente/RegistrarNotaCredito?facturaid=" + facturaid + "&clienteid=" + clienteid + "&sFecha=" + Fecha + "&sMonto=" + Monto + "&sTotalPagos=" + TotalPagos;
+    
+    // Codificar correctamente los parámetros de la URL
+    var url = "/PersonaCliente/RegistrarNotaCredito" +
+        "?facturaid=" + encodeURIComponent(facturaid) +
+        "&clienteid=" + encodeURIComponent(clienteid) +
+        "&sFecha=" + encodeURIComponent(Fecha || "") +
+        "&sMonto=" + encodeURIComponent(Monto || "") +
+        "&sTotalPagos=" + encodeURIComponent(TotalPagos || "");
+    
     ShowFormDialog(url, id, title, "min");
 });
 

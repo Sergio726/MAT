@@ -3055,9 +3055,162 @@ div.bnn_floating-banner.hidden {
     color: #1e40af;
 }
 
+.modern-alert-success {
+    border-left-color: #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+}
+
+.modern-alert-success .modern-alert-content i {
+    color: #10b981;
+}
+
+.modern-alert-success .modern-alert-link {
+    color: #065f46;
+}
+
 .modern-alert-link:hover {
     color: var(--brand-primary);
     text-decoration: none;
+}
+
+/* Modal de mensaje de éxito */
+.modern-success-dialog {
+    padding: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+}
+
+.modern-success-dialog .ui-dialog-titlebar {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modern-success-dialog .ui-dialog-title {
+    font-weight: 600;
+    font-size: 1.125rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    color: white;
+}
+
+.modern-success-dialog .ui-dialog-title i {
+    font-size: 1.25rem;
+}
+
+.modern-success-dialog .ui-dialog-titlebar-close {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 6px !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    opacity: 1 !important;
+}
+
+.modern-success-dialog .ui-dialog-titlebar-close:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.1);
+}
+
+.modern-success-dialog .ui-dialog-titlebar-close .ui-icon {
+    background: none !important;
+    text-indent: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+}
+
+.modern-success-dialog .ui-dialog-titlebar-close .ui-icon:before {
+    content: "\00d7";
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1;
+    color: white;
+}
+
+.modern-success-dialog .ui-dialog-content {
+    padding: 2rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-primary, #1f2937);
+    background: white;
+    min-height: 80px;
+}
+
+.modern-success-dialog .ui-dialog-content i {
+    font-size: 2.5rem;
+    color: #10b981;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.modern-success-dialog .ui-dialog-content span {
+    flex: 1;
+    word-wrap: break-word;
+}
+
+.modern-success-dialog .ui-dialog-buttonpane {
+    padding: 1rem 1.5rem 1.5rem !important;
+    border-top: 1px solid #e5e7eb !important;
+    margin: 0 !important;
+    background: #f9fafb !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.75rem !important;
+}
+
+.modern-success-dialog .ui-dialog-buttonpane .ui-button,
+.modern-success-dialog .ui-dialog-buttonpane button {
+    background: #10b981 !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.625rem 2rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.9375rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    min-width: 100px !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2) !important;
+}
+
+.modern-success-dialog .ui-dialog-buttonpane .ui-button:hover,
+.modern-success-dialog .ui-dialog-buttonpane button:hover {
+    background: #059669 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+}
+
+.modern-success-dialog .ui-dialog-buttonpane .ui-button:active,
+.modern-success-dialog .ui-dialog-buttonpane button:active {
+    transform: translateY(0) !important;
+}
+
+/* Asegurar que el overlay sea visible */
+.ui-widget-overlay {
+    background: rgba(0, 0, 0, 0.5) !important;
+    opacity: 1 !important;
 }
 
 /* ============================================
@@ -3616,6 +3769,19 @@ div.bnn_floating-banner.hidden {
 .modern-form-textarea {
     width: 100%;
     padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.modern-form-input-error {
+    border-color: #dc2626 !important;
+    background-color: #fef2f2 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+.modern-form-input-error:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
+}
     border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 0.9375rem;
@@ -4883,9 +5049,36 @@ div.bnn_floating-banner.hidden {
     gap: 0.375rem;
 }
 
+.badge-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
 .badge-success i,
-.badge-danger i {
+.badge-danger i,
+.badge-warning i {
     font-size: 0.875rem;
+}
+
+/* Badge para montos en pesos - Texto oscuro */
+.badge-pesos {
+    background: #f0f9ff;
+    color: var(--text-primary, #1f2937);
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border: 1px solid #e0e7ff;
 }
 
 /* Botones pequeños */
@@ -5677,4 +5870,130 @@ ul.viajes-lista li .viaje-container h4 {
         height: 32px !important;
         font-size: 0.8125rem !important;
     }
+}
+
+/* Estilos para loading spinner moderno */
+.modern-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.modern-loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--brand-primary);
+    border-radius: 50%;
+    animation: modern-spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes modern-spin {
+    to { transform: rotate(360deg); }
+}
+
+.modern-loading-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Estilo para subtítulo en página moderna */
+.modern-page-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin-left: 0.5rem;
+}
+
+/* Información del viaje */
+.modern-page-viaje-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+.modern-page-viaje-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--brand-primary, #e91e63);
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.1) 0%, rgba(233, 30, 99, 0.05) 100%);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border-left: 3px solid var(--brand-primary, #e91e63);
+}
+
+.modern-page-viaje-name i {
+    color: var(--brand-primary, #e91e63);
+    font-size: 1.25rem;
+}
+
+.modern-page-viaje-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-secondary, #6b7280);
+    background: var(--bg-secondary, #f9fafb);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+.modern-page-viaje-date i {
+    color: var(--text-secondary, #6b7280);
+    font-size: 1rem;
+}
+
+/* Estilo para botón de ver detalles */
+.modern-btn-icon-view {
+    color: var(--text-secondary);
+}
+
+.modern-btn-icon-view:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.modern-btn-icon-danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.modern-btn-icon-danger:hover {
+    background: #dc2626;
+    color: white;
+}
+
+/* Estilo para detalles expandibles en tablas */
+.modern-table tbody tr.shown {
+    background-color: rgba(230, 51, 117, 0.03);
+}
+
+.modern-table tbody td.details-control {
+    cursor: pointer;
+    text-align: center;
+}
+
+.modern-table tbody td.details-control:hover {
+    background-color: rgba(230, 51, 117, 0.05);
+}
+
+.modern-table tbody td.details-control i {
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+}
+
+.modern-table tbody td.details-control:hover i {
+    color: var(--brand-primary);
+}
 }

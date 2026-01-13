@@ -2,19 +2,45 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<div class="custom_padding_left_5 custom_width_99percent">
-<h2 class="title">Auditoría de Reservas</h2>
-    <form id="formFilter">
-        <fieldset class="border">
-          <legend>Filtrar por Fecha</legend>
-          <span>Desde</span><input name='dateFrom' class="valtxt" id="dateFrom" type='text' tabindex='1' style="margin-left:2px;">
-          <span>Hasta</span> <input name='dateTo' class="valtxt" id="dateTo" type='text' tabindex='2' style="margin-left:2px;">
-          <input type="button" value="Buscar" onclick="javascript: searchFactura();"/>
-         </fieldset>
-    </form>
-</div>
-<div id="divResult" class="custom_padding_left_5 custom_padding_right_5">
-    <table id="tblAudit" style="display:none;" >
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-shield-check"></i>
+            <span>Auditoría de Facturas</span>
+        </h2>
+    </div>
+
+    <div class="modern-form-container">
+        <form id="formFilter">
+            <div class="modern-form-grid">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-calendar3"></i>
+                        <span>Desde</span>
+                    </label>
+                    <input name='dateFrom' class="modern-form-input valtxt" id="dateFrom" type='text' tabindex='1' placeholder="Seleccione fecha">
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-form-label">
+                        <i class="bi bi-calendar3"></i>
+                        <span>Hasta</span>
+                    </label>
+                    <input name='dateTo' class="modern-form-input valtxt" id="dateTo" type='text' tabindex='2' placeholder="Seleccione fecha">
+                </div>
+
+                <div class="modern-form-group">
+                    <button type="button" onclick="javascript: searchFactura();" class="btn-modern btn-modern-primary">
+                        <i class="bi bi-search"></i>
+                        <span>Buscar</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="divResult" class="modern-table-container">
+    <table id="tblAudit" class="modern-table" style="display:none;">
         @*<thead>
             <tr>
                 <th>
@@ -56,10 +82,11 @@
 
         $.each($(".valtxt"), function (i, l) {
             if ($(this).val() == "") {
-                $(this).css("background-color", "rgba(162, 130, 169, 0.75)");
+                $(this).addClass("modern-form-input-error");
                 bResult = false;
+            } else {
+                $(this).removeClass("modern-form-input-error");
             }
-            
         });
         if (!bResult) {
             alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
@@ -77,7 +104,8 @@
 
     function searchFactura() {
         if (valForm()) {
-            $("#divResult").addClass("iconLoading");
+            var loadingHtml = '<div class="modern-loading-container"><div class="modern-loading-spinner"></div><span class="modern-loading-text">Buscando registros...</span></div>';
+            $("#divResult").html(loadingHtml);
             var date1 = $("#dateFrom").val();
             var date2 = $("#dateTo").val();
             $.ajax({
@@ -89,9 +117,10 @@
                 dataType: "json",
                 success: function (data) {
                     loadTable(data);
-
+                },
+                error: function() {
+                    $("#divResult").html('<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Error al buscar registros. Por favor, intente nuevamente.</span></div>');
                 }
-
             });
         }
     }
@@ -122,8 +151,18 @@
                     "pageLength": 25
                 });
 
-        $("#divResult").removeClass("iconLoading");
+        $("#divResult").html("");
+        $("#divResult").append($("#tblAudit"));
         $("#tblAudit").show();
     }
 
 </script>
+
+<style>
+    .modern-form-input-error {
+        border-color: #dc2626 !important;
+        background-color: #fef2f2 !important;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+    }
+</style>
+</div>

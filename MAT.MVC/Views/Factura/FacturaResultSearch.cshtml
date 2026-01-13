@@ -1,7 +1,11 @@
-﻿@if (ViewBag.Error != null)
-{
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
-}
+﻿<div class="modern-table-container">
+    @if (ViewBag.Error != null)
+    {
+        <div class="modern-alert-error">
+            <i class="bi bi-exclamation-circle"></i>
+            <span>@ViewBag.Error</span>
+        </div>
+    }
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -19,61 +23,122 @@
                 {
                     "data": "Fecha",
                     "mRender": function (data, type, row) {
-                        //const dateString = "2024-11-14";
-                        // Crear un objeto Date a partir de la cadena
-                        //const date = new Date(dateString); // Extraer las partes de la fecha 
-                        const date = new Date(row.Fecha); // Extraer las partes de la fecha 
+                        const date = new Date(row.Fecha);
                         const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexed 
-                        const day = String(date.getDate()).padStart(2, '0'); // Formatear la fecha en el formato deseado 
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
                         const hours = String(date.getHours()).padStart(2, '0');
                         const minutes = String(date.getMinutes()).padStart(2, '0');
-                        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`
+                        const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;
                         return formattedDate;
                     }
                 },
             { "data": "ClienteFullName"},
-            { "data": "Monto", 
-            "mRender": function (data, type, row) {
-                var numberFormat = formatNumberMoney(row.Monto);
-                    return numberFormat;
+            { 
+                "data": "Monto", 
+                "mRender": function (data, type, row) {
+                    var monto = row.Monto;
+                    
+                    // Verificar si el monto es válido (permitir 0)
+                    if (monto == null || monto === undefined || monto === '') {
+                        return '<span class="table-text-muted">-</span>';
+                    }
+                    
+                    // Convertir a número si es string
+                    var montoNum = parseFloat(monto);
+                    if (isNaN(montoNum) && monto !== 0) {
+                        return '<span class="table-text-muted">-</span>';
+                    }
+                    
+                    // Formatear el número
+                    try {
+                        if (typeof formatNumberMoney === 'function') {
+                            var numberFormat = formatNumberMoney(montoNum);
+                            if (numberFormat && numberFormat.trim() !== '') {
+                                return '<span class="badge badge-pesos">' + numberFormat + '</span>';
+                            }
+                        }
+                        // Fallback si formatNumberMoney no está disponible o devuelve vacío
+                        return '<span class="badge badge-pesos">$' + montoNum.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span>';
+                    } catch (e) {
+                        // Fallback en caso de error
+                        return '<span class="badge badge-pesos">$' + montoNum.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</span>';
+                    }
                 }
             },
-        	{ "data": "EstadoDescripcion" },
+        	{ 
+                "data": "EstadoDescripcion",
+                "mRender": function (data, type, row) {
+                    var estado = row.EstadoDescripcion || '';
+                    var badgeClass = 'badge-categoria';
+                    if (estado.toLowerCase().includes('pagada') || estado.toLowerCase().includes('cancelada')) {
+                        badgeClass = 'badge-success';
+                    } else if (estado.toLowerCase().includes('pendiente')) {
+                        badgeClass = 'badge-warning';
+                    }
+                    return '<span class="badge ' + badgeClass + '">' + estado + '</span>';
+                }
+            },
             { "data": "PaqueteDescripcion"},
             { "data": "ViajeDescripcion" },
-            { "data": "FacturaID",
+            { 
+                "data": "FacturaID",
+                "class": "text-center",
         	    "mRender": function (data, type, row) {
-        	        var _data = { "FacturaID": row.FacturaID}
-        	        var data = $("#divLnkFactura").html().trim().render(_data);
-        	        return data;
+        	        if (!row.FacturaID) {
+        	            return '';
+        	        }
+        	        var _data = { "FacturaID": row.FacturaID};
+        	        var template = $("#divLnkFactura").html();
+        	        if (template && template.trim() !== '') {
+        	            var rendered = template.trim().render(_data);
+        	            return rendered;
+        	        }
+        	        // Fallback si el template no está disponible
+        	        return '<div class="modern-table-actions"><a href="#" class="modern-btn-icon modern-btn-icon-view btn-detallefactura" data-facturaid="' + row.FacturaID + '" title="Ver Factura"><i class="bi bi-eye"></i></a></div>';
         	    }
         	},
             {
-                "class":          "details-control",
+                "class":          "details-control text-center",
                 "orderable":      false,
                 "data":           null,
-                "defaultContent": ""
+                "defaultContent": '<i class="bi bi-chevron-down"></i>'
             }
             ],
             "bAutoWidth": false,
-            "pageLength": 25
+            "pageLength": 25,
+            "order": [[1, 'desc']],
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ facturas",
+                "infoEmpty": "No hay facturas disponibles",
+                "infoFiltered": "(filtrado de _MAX_ facturas totales)",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
         });
 
         $('#tblFacturas tbody').on('click', 'td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = table.row( tr );
+            var icon = $(this).find('i');
  
             if ( row.child.isShown() ) {
                 // This row is already open - close it
                 row.child.hide();
                 tr.removeClass('shown');
+                icon.removeClass('bi-chevron-up').addClass('bi-chevron-down');
             }
             else {
                 // Open this row
                 row.child( format(row.data()) ).show();
                 tr.addClass('shown');
-                
+                icon.removeClass('bi-chevron-down').addClass('bi-chevron-up');
             }
         } );
     });
@@ -81,71 +146,56 @@
     function format ( d ) {
         // `d` is the original data object for the row
         var FacturaID = d.FacturaID;
-        var divLoading = "<div id='"+ FacturaID + "'  class='iconLoading'></div>";
+        var divLoading = '<div id="' + FacturaID + '" class="modern-loading-container" style="padding: 2rem;"><div class="modern-loading-spinner"></div><span class="modern-loading-text">Cargando detalles...</span></div>';
         $("#divMoreDetails").html(divLoading);
         
         getPasajeros(FacturaID);
-        return sReturn = $("#divMoreDetails").html().trim();
-            
+        return $("#divMoreDetails").html().trim();
     }
     
-   
     function getPasajeros(FacturaID)
     {
-        //debugger
-        //var divLoading = "<div class='iconLoading'></div>";
-        //$("#divMoreDetails").html(divLoading);
         $.ajax({
             url: "/Factura/FacturaMoreDetails",
             data: { sFacturaID: FacturaID},
             success: function (data) {
                 $("#" + FacturaID).html(data);
-                $("#" + FacturaID).removeClass("iconLoading");
-                
+                $("#" + FacturaID).removeClass("modern-loading-container");
+            },
+            error: function () {
+                $("#" + FacturaID).html('<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Error al cargar los detalles</span></div>');
             }
         });
-
-       // return  $("#divMoreDetails").html().trim();
     }
 </script>
 
-<table class="grid mat-customtable" id="tblFacturas">
+<table class="modern-table" id="tblFacturas">
     <thead>
         <tr>
-
-            <th style="width:60px;">
-                Nro Factura
-            </th>
-            <th style="width:60px;">
-                Fecha
-            </th>
-            <th style="width:60px;">
-                Titular
-            </th>
-            <th style="width:60px;">
-                Monto
-            </th>
-            <th style="width:85px;">
-                Estado
-            </th>
-            <th style="width:85px;">
-                Paquete
-            </th>
-            <th style="width:115px;">
-                Viaje
-            </th>
-            <th style="width:10px;"></th>
-            <th style="width:10px;"></th>
+            <th>Nro Factura</th>
+            <th>Fecha</th>
+            <th>Titular</th>
+            <th>Monto</th>
+            <th>Estado</th>
+            <th>Paquete</th>
+            <th>Viaje</th>
+            <th style="width: 80px;">Acciones</th>
+            <th style="width: 50px;"></th>
         </tr>
-        </thead>
-    
+    </thead>
+    <tbody>
+    </tbody>
 </table>
 
  <div id="divMoreDetails" style="display:none;">
    
 </div>
 
-<div id="divLnkFactura" style="display:none;"> 
-    <a href="#" class="btn-detallefactura button_detail" data-facturaid="{{FacturaID}}" title="Ver Factura" >
-    </a>
+    <div id="divLnkFactura" style="display:none;"> 
+        <div class="modern-table-actions">
+            <a href="#" class="modern-btn-icon modern-btn-icon-view btn-detallefactura" data-facturaid="{{FacturaID}}" title="Ver Factura">
+                <i class="bi bi-eye"></i>
+            </a>
+        </div>
+    </div>
 </div>

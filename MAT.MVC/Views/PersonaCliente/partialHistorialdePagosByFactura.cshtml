@@ -1,6 +1,9 @@
 ﻿@if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div>   
+    <div class="modern-alert-error">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>@ViewBag.Error</span>
+    </div>
     return;
 }
 
@@ -18,17 +21,19 @@
         $('#tblPagos tbody').on('click', 'td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = table.row(tr);
+            var icon = $(this).find('i');
 
             if (row.child.isShown()) {
                 // This row is already open - close it
                 row.child.hide();
                 tr.removeClass('shown');
+                icon.removeClass('bi-chevron-up').addClass('bi-chevron-down');
             }
             else {
                 // Open this row
                 row.child(format($(tr).attr("id").replace('r_',''))).show();
                 tr.addClass('shown');
-
+                icon.removeClass('bi-chevron-down').addClass('bi-chevron-up');
             }
         });
     });
@@ -36,7 +41,7 @@
     function format(d) {
         
         var PagoID = d;
-        var divLoading = "<div id='" + PagoID + "'  class='iconLoading'></div>";
+        var divLoading = '<div id="' + PagoID + '" class="modern-loading-container" style="padding: 2rem;"><div class="modern-loading-spinner"></div><span class="modern-loading-text">Cargando detalles...</span></div>';
         $("#divPagoMoreDetails").html(divLoading);
 
         getPagoDetalle(PagoID);
@@ -62,7 +67,7 @@
                 }
                 var _html = $("#divPagoDetalle").html().trim().render(_data);
                 $("#" + PagoID).html(_html);
-                $("#" + PagoID).removeClass("iconLoading");
+                $("#" + PagoID).removeClass("modern-loading-container");
 
             }
         });
@@ -75,7 +80,8 @@
 @model List<MAT.MVC.Models.PagoModel>
 @{int iCount = 0;
   decimal dSum = 0;}
-<table id="tblPagos" class="mat-customtable" style="width:98%;">
+<div class="modern-table-container">
+<table id="tblPagos" class="modern-table" style="width:100%;">
     <thead> 
         <tr>
             <th></th>
@@ -104,8 +110,17 @@
             <td>@item.Vendedor</td>
             <td>@String.Format("{0:C}", item.Monto)</td>
             <td title="Tipo de Moneda del Paquete">(@item.MonedaPaquete.Trim())</td>
-            <td><a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');" id="lnkCancelarPago"><div class="divDelete" title="Cancelar Pago"></div></a></td>
-            <td class="@(item.Moneda.Trim() != "ARS" || item.MonedaPaquete.Trim() !="ARS"? "details-control": "")"></td>
+            <td>
+                <a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');" id="lnkCancelarPago" class="modern-btn-icon modern-btn-icon-danger" title="Cancelar Pago">
+                    <i class="bi bi-x-circle"></i>
+                </a>
+            </td>
+            <td class="@(item.Moneda.Trim() != "ARS" || item.MonedaPaquete.Trim() !="ARS"? "details-control text-center": "")">
+                @if (item.Moneda.Trim() != "ARS" || item.MonedaPaquete.Trim() != "ARS")
+                {
+                    <i class="bi bi-chevron-down"></i>
+                }
+            </td>
         </tr>    
         }
         
@@ -131,12 +146,53 @@
    
 </div>
 
-<div id="divPagoDetalle" class="hide">
-    <div class="custom_margin_5 custom_text_aling_left">
-        <span class="custom_font_weigh_bold">Monto Recibido: </span><span>{{MontoRecibido}} ({{MonedaRecibida}})</span><br />
-        <span class="custom_font_weigh_bold">Monto Equivalente: </span><span>{{MontoEquivalente}} ({{MonedaEquivalente}})</span><br />
-        <span class="custom_font_weigh_bold">Cotización: </span><span>1 U$D = {{Cotizacion}}</span><br />
-        <span class="custom_font_weigh_bold">Fecha de Transaccion: </span><span>{{Fecha}}</span>
+<div id="divPagoDetalle" style="display:none;">
+    <div class="modern-pago-detalle">
+        <div class="modern-pago-detalle-item">
+            <span class="modern-pago-detalle-label">Monto Recibido:</span>
+            <span class="modern-pago-detalle-value">{{MontoRecibido}} ({{MonedaRecibida}})</span>
+        </div>
+        <div class="modern-pago-detalle-item">
+            <span class="modern-pago-detalle-label">Monto Equivalente:</span>
+            <span class="modern-pago-detalle-value">{{MontoEquivalente}} ({{MonedaEquivalente}})</span>
+        </div>
+        <div class="modern-pago-detalle-item">
+            <span class="modern-pago-detalle-label">Cotización:</span>
+            <span class="modern-pago-detalle-value">1 U$D = {{Cotizacion}}</span>
+        </div>
+        <div class="modern-pago-detalle-item">
+            <span class="modern-pago-detalle-label">Fecha de Transacción:</span>
+            <span class="modern-pago-detalle-value">{{Fecha}}</span>
+        </div>
     </div>
-    
 </div>
+</div>
+
+<style>
+    .modern-pago-detalle {
+        padding: 1rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 0.5rem;
+        margin: 0.5rem 0;
+    }
+    .modern-pago-detalle-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .modern-pago-detalle-item:last-child {
+        border-bottom: none;
+    }
+    .modern-pago-detalle-label {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--text-secondary, #6b7280);
+    }
+    .modern-pago-detalle-value {
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+    }
+</style>

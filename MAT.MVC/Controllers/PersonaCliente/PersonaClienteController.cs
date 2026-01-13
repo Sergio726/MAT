@@ -1044,6 +1044,50 @@ namespace MAT.MVC.Controllers.PersonaCliente
         }
 
 
+        [HttpPost]
+        [Authorize]
+        public JsonResult EliminarPasajeroDeFactura(Guid pasajeID, Guid facturaID)
+        {
+            string[] sResult = new string[2];
+            try
+            {
+                // Desvincular menores de la factura antes de eliminar el pasajero
+                EliminarVinculoPasajeroMenor(facturaID);
+                
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@PasajeID", SqlDbType.UniqueIdentifier, 0, pasajeID),
+                    DBHelper.MakeParam("@FacturaID", SqlDbType.UniqueIdentifier, 0, facturaID),
+                    DBHelper.MakeParam("@Result", SqlDbType.VarChar, 100, "")
+                };
+                
+                // Configurar parámetro de salida
+                dbParams[2].Direction = ParameterDirection.Output;
+                
+                DBHelper.ExecuteNonQuery("dbo.usp_MAT_Factura_EliminarPasajero", dbParams);
+                
+                string result = dbParams[2].Value != null ? dbParams[2].Value.ToString() : "Error: No se recibió respuesta del procedimiento.";
+                
+                if (result == "Done.")
+                {
+                    sResult[0] = "Done.";
+                    sResult[1] = "Pasajero eliminado correctamente. La factura ha sido actualizada.";
+                }
+                else
+                {
+                    sResult[0] = "Error.";
+                    sResult[1] = result;
+                }
+            }
+            catch (Exception e)
+            {
+                sResult[0] = "Error.";
+                sResult[1] = "Error al eliminar el pasajero: " + e.Message;
+            }
+            
+            return Json(sResult, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult ElegirNuevaButaca(Guid anteriorid, Guid pasajeid)
         {
             ViewData["anteriorid"] = anteriorid;
