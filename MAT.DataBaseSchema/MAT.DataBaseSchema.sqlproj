@@ -497,6 +497,7 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_GetByCodigo.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_UpdateEstado.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_Expirados.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_GetAll.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare1.scmp" />

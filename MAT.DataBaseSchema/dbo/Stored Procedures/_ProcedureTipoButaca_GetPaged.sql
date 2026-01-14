@@ -1,8 +1,7 @@
-﻿
+
 /*
 ----------------------------------------------------------------------------------------------------
 
--- Created By: Reproisa (www.reproisa.com)
 -- Purpose: Gets records from the TipoButaca table passing page index and page count parameters
 ----------------------------------------------------------------------------------------------------
 */

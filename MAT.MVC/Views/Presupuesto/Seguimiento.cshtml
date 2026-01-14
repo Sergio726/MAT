@@ -1,0 +1,938 @@
+@{
+    Response.ContentType = "text/html; charset=utf-8";
+    Response.Charset = "utf-8";
+    ViewBag.Title = "Panel de Seguimiento de Presupuestos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-clipboard-data"></i>
+            <span>Panel de Seguimiento de Presupuestos</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="@Url.Action("Create", "Presupuesto")" class="btn-modern btn-modern-primary">
+                <i class="bi bi-plus-circle"></i>
+                <span>Crear Nuevo Presupuesto</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Panel de Filtros -->
+    <div class="modern-card mb-4">
+        <div class="modern-card-header" style="cursor: pointer;" onclick="toggleFiltros()">
+            <div class="modern-card-title">
+                <i class="bi bi-funnel"></i>
+                <span>Filtros de Búsqueda</span>
+            </div>
+            <i class="bi bi-chevron-down" id="iconFiltros"></i>
+        </div>
+        <div class="modern-card-content" id="divFiltros" style="display: none;">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="modern-form-label">
+                        <i class="bi bi-search"></i>
+                        Búsqueda Rápida
+                    </label>
+                    <input type="text" 
+                           id="txtBusquedaRapida" 
+                           class="modern-form-input" 
+                           placeholder="Código, DNI o nombre de cliente..." />
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label">
+                        <i class="bi bi-tag"></i>
+                        Estado
+                    </label>
+                    <select id="ddlEstado" class="modern-form-select">
+                        <option value="">Todos</option>
+                        <option value="1">Pendiente</option>
+                        <option value="2">Expirado</option>
+                        <option value="3">Cerrado</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="modern-form-label">
+                        <i class="bi bi-person"></i>
+                        Vendedor
+                    </label>
+                    <select id="ddlVendedor" class="modern-form-select">
+                        <option value="">Todos los vendedores</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label">
+                        <i class="bi bi-calendar"></i>
+                        Fecha Desde
+                    </label>
+                    <input type="date" id="txtFechaDesde" class="modern-form-input" />
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label">
+                        <i class="bi bi-calendar-check"></i>
+                        Fecha Hasta
+                    </label>
+                    <input type="date" id="txtFechaHasta" class="modern-form-input" />
+                </div>
+            </div>
+            <div class="row g-3 mt-3">
+                <div class="col-12">
+                    <button type="button" class="btn-modern btn-modern-primary" onclick="aplicarFiltros()">
+                        <i class="bi bi-search"></i>
+                        <span>Aplicar Filtros</span>
+                    </button>
+                    <button type="button" class="btn-modern btn-modern-secondary" onclick="limpiarFiltros()">
+                        <i class="bi bi-x-circle"></i>
+                        <span>Limpiar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Presupuestos -->
+    <div class="modern-card">
+        <div class="modern-card-header">
+            <div class="modern-card-title">
+                <i class="bi bi-list-ul"></i>
+                <span>Listado de Presupuestos</span>
+            </div>
+        </div>
+        <div class="modern-card-content" style="padding: 0;">
+            <div style="padding: 1.5rem;">
+                <table id="tblPresupuestos" class="modern-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Cliente</th>
+                            <th>Vendedor Origen</th>
+                            <th>Monto</th>
+                            <th>Viaje</th>
+                            <th>Fecha Creación</th>
+                            <th>Expiración</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalle -->
+<div id="modalDetallePresupuesto" style="display: none;">
+    <div id="contenidoDetallePresupuesto"></div>
+</div>
+
+<style>
+    /* Estilos modernos para badges de estado */
+    .presupuesto-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.375rem 0.875rem;
+        border-radius: 20px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+    
+    .badge-pendiente {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+    
+    .badge-cerrado {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+    
+    .badge-expirado {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+    }
+    
+    .badge-proximo-expiracion {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+        font-size: 0.75rem;
+        padding: 0.25rem 0.625rem;
+        margin-top: 0.25rem;
+        display: block;
+        width: fit-content;
+    }
+    
+    /* Botones de acción modernos */
+    .btn-accion-presupuesto {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        margin: 0 0.25rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background: transparent;
+    }
+    
+    .btn-accion-presupuesto i {
+        font-size: 1rem;
+    }
+    
+    .btn-accion-presupuesto.btn-ver {
+        color: #3b82f6;
+    }
+    
+    .btn-accion-presupuesto.btn-ver:hover {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+    }
+    
+    .btn-accion-presupuesto.btn-copiar {
+        color: #6b7280;
+    }
+    
+    .btn-accion-presupuesto.btn-copiar:hover {
+        background: rgba(107, 114, 128, 0.1);
+        color: #4b5563;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(107, 114, 128, 0.2);
+    }
+    
+    /* Estilos mejorados para DataTables */
+    #tblPresupuestos.dataTable {
+        width: 100% !important;
+        border-collapse: collapse;
+    }
+    
+    #tblPresupuestos.dataTable thead th {
+        background: var(--bg-main) !important;
+        padding: 1rem !important;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-primary);
+        border-bottom: 2px solid var(--border-color) !important;
+    }
+    
+    #tblPresupuestos.dataTable tbody td {
+        padding: 1rem !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        color: var(--text-primary);
+        font-size: 0.9375rem;
+        vertical-align: middle;
+    }
+    
+    #tblPresupuestos.dataTable tbody tr {
+        transition: all 0.2s ease;
+        background-color: var(--white) !important;
+    }
+    
+    #tblPresupuestos.dataTable tbody tr:hover {
+        background-color: rgba(230, 51, 117, 0.05) !important;
+        box-shadow: 0 2px 8px rgba(230, 51, 117, 0.08);
+    }
+    
+    #tblPresupuestos.dataTable tbody tr.odd {
+        background-color: #fafafa !important;
+    }
+    
+    #tblPresupuestos.dataTable tbody tr.odd:hover {
+        background-color: rgba(230, 51, 117, 0.05) !important;
+    }
+    
+    /* Estilos para DataTables info y paginación */
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        padding: 1rem 1.5rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.5rem 0.75rem;
+        margin: 0 0.25rem;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary) !important;
+        transition: all 0.2s ease;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: var(--brand-primary) !important;
+        color: white !important;
+        border-color: var(--brand-primary);
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--brand-primary) !important;
+        color: white !important;
+        border-color: var(--brand-primary);
+    }
+    
+    /* Mejoras para el código de seguimiento */
+    #tblPresupuestos.dataTable tbody td:first-child {
+        font-weight: 600;
+    }
+    
+    /* Espaciado para acciones */
+    #tblPresupuestos.dataTable tbody td:last-child {
+        text-align: center;
+    }
+    
+    /* Estilos para el modal moderno */
+    .ui-dialog.modern-dialog {
+        border-radius: 12px;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2), 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .ui-dialog.modern-dialog .ui-dialog-titlebar {
+        background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%);
+        color: white;
+        border: none;
+        border-radius: 12px 12px 0 0;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        font-size: 1.125rem;
+    }
+    
+    .ui-dialog.modern-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        color: white;
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .ui-dialog.modern-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+    
+    /* Mejora para el código en la tabla */
+    #tblPresupuestos.dataTable tbody td:first-child strong {
+        color: var(--brand-primary);
+        font-size: 0.9375rem;
+        letter-spacing: 0.025em;
+    }
+    
+    /* Mejora para el monto en la tabla */
+    #tblPresupuestos.dataTable tbody td:nth-child(4) {
+        font-weight: 600;
+        color: var(--brand-primary);
+    }
+</style>
+
+<script type="text/javascript">
+    var tablaPresupuestos;
+    var filtrosActuales = {};
+
+    $(document).ready(function () {
+        // Inicializar DataTable
+        tablaPresupuestos = $('#tblPresupuestos').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-AR.json'
+            },
+            pageLength: 25,
+            order: [[5, 'desc']], // Ordenar por fecha de creación descendente
+            columnDefs: [
+                { orderable: true, targets: [0, 1, 2, 3, 5, 6, 7] },
+                { orderable: false, targets: [4, 8] },
+                { className: "text-center", targets: [7, 8] },
+                { className: "text-end", targets: [3] }
+            ],
+            responsive: true,
+            processing: true,
+            serverSide: false,
+            data: [],
+            columns: [
+                {
+                    data: 'codigoSeguimiento',
+                    render: function (data, type, row) {
+                        return '<strong style="color: var(--brand-primary);">' + data + '</strong>';
+                    }
+                },
+                {
+                    data: 'dniCliente',
+                    render: function (data, type, row) {
+                        return '<div><strong>DNI:</strong> ' + (data || 'N/A') + '</div>';
+                    }
+                },
+                {
+                    data: 'vendedorOrigenNombre',
+                    render: function (data) {
+                        return data || 'N/A';
+                    }
+                },
+                {
+                    data: 'montoPactado',
+                    render: function (data) {
+                        return '$' + parseFloat(data).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                },
+                {
+                    data: 'viajeDescripcion',
+                    render: function (data) {
+                        return data ? '<small>' + data + '</small>' : '<span class="text-muted">Sin viaje</span>';
+                    }
+                },
+                {
+                    data: 'fechaCreacion',
+                    render: function (data) {
+                        return '<small>' + data + '</small>';
+                    }
+                },
+                {
+                    data: 'fechaExpiracion',
+                    render: function (data, type, row) {
+                        var html = '<small>' + data + '</small>';
+                        if (row.diasRestantes > 0 && row.diasRestantes <= 1 && row.estado === 1) {
+                            html += '<br><span class="badge-proximo-expiracion presupuesto-badge">Expira en ' + row.diasRestantes + ' día</span>';
+                        }
+                        return html;
+                    }
+                },
+                {
+                    data: 'estadoNombre',
+                    render: function (data, type, row) {
+                        var badgeClass = 'badge-pendiente';
+                        if (data === 'Cerrado') badgeClass = 'badge-cerrado';
+                        else if (data === 'Expirado' || row.isExpirado) badgeClass = 'badge-expirado';
+                        return '<span class="presupuesto-badge ' + badgeClass + '">' + data + '</span>';
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        var html = '<button class="btn-accion-presupuesto btn-ver" onclick="verDetalle(\'' + row.presupuestoId + '\')" title="Ver detalle">';
+                        html += '<i class="bi bi-eye"></i></button>';
+                        html += '<button class="btn-accion-presupuesto btn-copiar" onclick="copiarCodigo(\'' + row.codigoSeguimiento + '\')" title="Copiar código">';
+                        html += '<i class="bi bi-clipboard"></i></button>';
+                        return html;
+                    }
+                }
+            ]
+        });
+
+        // Cargar vendedores para el filtro
+        cargarVendedores();
+
+        // Inicializar filtros vacíos y cargar presupuestos
+        // Verificar que la tabla esté inicializada antes de cargar datos
+        if (tablaPresupuestos) {
+            aplicarFiltros(); // Esto inicializa filtrosActuales y carga los presupuestos
+        } else {
+            console.error('Error: tablaPresupuestos no está inicializada');
+            setTimeout(function() {
+                if (tablaPresupuestos) {
+                    aplicarFiltros();
+                } else {
+                    console.error('Error: tablaPresupuestos sigue sin estar inicializada después de esperar');
+                }
+            }, 100);
+        }
+    });
+
+    function toggleFiltros() {
+        $('#divFiltros').slideToggle();
+        var icon = $('#iconFiltros');
+        if (icon.hasClass('bi-chevron-down')) {
+            icon.removeClass('bi-chevron-down').addClass('bi-chevron-up');
+        } else {
+            icon.removeClass('bi-chevron-up').addClass('bi-chevron-down');
+        }
+    }
+
+    function cargarVendedores() {
+        $.ajax({
+            url: '@Url.Action("GetVendedores", "Presupuesto")',
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if (response.success && response.data) {
+                    var $ddl = $('#ddlVendedor');
+                    $.each(response.data, function (index, vendedor) {
+                        $ddl.append($('<option></option>').val(vendedor.vendedorId).text(vendedor.descripcion));
+                    });
+                }
+            },
+            error: function () {
+                console.error('Error al cargar vendedores');
+            }
+        });
+    }
+
+    function aplicarFiltros() {
+        var estadoVal = $('#ddlEstado').val();
+        var vendedorVal = $('#ddlVendedor').val();
+        var fechaDesdeVal = $('#txtFechaDesde').val();
+        var fechaHastaVal = $('#txtFechaHasta').val();
+        
+        filtrosActuales = {
+            estado: (estadoVal && estadoVal !== '') ? parseInt(estadoVal) : null,
+            vendedorIdOrigen: (vendedorVal && vendedorVal !== '') ? vendedorVal : null,
+            dniCliente: null,
+            codigoSeguimiento: null,
+            fechaDesde: (fechaDesdeVal && fechaDesdeVal !== '') ? fechaDesdeVal : null,
+            fechaHasta: (fechaHastaVal && fechaHastaVal !== '') ? fechaHastaVal : null
+        };
+
+        // Procesar búsqueda rápida
+        var busquedaRapida = $('#txtBusquedaRapida').val().trim();
+        if (busquedaRapida) {
+            // Si parece un código (MAT-XXXX-XXXX)
+            if (busquedaRapida.toUpperCase().startsWith('MAT-')) {
+                filtrosActuales.codigoSeguimiento = busquedaRapida;
+            } else {
+                // Asumir que es DNI
+                filtrosActuales.dniCliente = busquedaRapida;
+            }
+        }
+
+        cargarPresupuestos();
+    }
+
+    function limpiarFiltros() {
+        $('#txtBusquedaRapida').val('');
+        $('#ddlEstado').val('');
+        $('#ddlVendedor').val('');
+        $('#txtFechaDesde').val('');
+        $('#txtFechaHasta').val('');
+        filtrosActuales = {};
+        cargarPresupuestos();
+    }
+
+    function cargarPresupuestos() {
+        // Verificar que la tabla esté inicializada
+        if (!tablaPresupuestos || !$.fn.DataTable.isDataTable('#tblPresupuestos')) {
+            console.error('Error: tablaPresupuestos no está inicializada al intentar cargar presupuestos');
+            // No alertar, solo intentar inicializar la tabla si no existe
+            if (!$.fn.DataTable.isDataTable('#tblPresupuestos')) {
+                console.log('La tabla no existe, se inicializará al recibir los datos');
+            }
+        }
+
+        console.log('Cargando presupuestos con filtros:', filtrosActuales);
+
+        var url = '@Url.Action("GetAll", "Presupuesto")';
+        console.log('URL del endpoint:', url);
+        console.log('Filtros a enviar:', JSON.stringify(filtrosActuales));
+        
+        // Asegurar que todos los parámetros se envíen correctamente
+        // jQuery no envía propiedades null, así que solo incluimos las que tienen valor
+        var datosEnvio = {};
+        if (filtrosActuales.estado !== null && filtrosActuales.estado !== undefined) {
+            datosEnvio.estado = filtrosActuales.estado;
+        }
+        if (filtrosActuales.vendedorIdOrigen !== null && filtrosActuales.vendedorIdOrigen !== undefined && filtrosActuales.vendedorIdOrigen !== '') {
+            datosEnvio.vendedorIdOrigen = filtrosActuales.vendedorIdOrigen;
+        }
+        if (filtrosActuales.dniCliente !== null && filtrosActuales.dniCliente !== undefined && filtrosActuales.dniCliente !== '') {
+            datosEnvio.dniCliente = filtrosActuales.dniCliente;
+        }
+        if (filtrosActuales.codigoSeguimiento !== null && filtrosActuales.codigoSeguimiento !== undefined && filtrosActuales.codigoSeguimiento !== '') {
+            datosEnvio.codigoSeguimiento = filtrosActuales.codigoSeguimiento;
+        }
+        if (filtrosActuales.fechaDesde !== null && filtrosActuales.fechaDesde !== undefined && filtrosActuales.fechaDesde !== '') {
+            datosEnvio.fechaDesde = filtrosActuales.fechaDesde;
+        }
+        if (filtrosActuales.fechaHasta !== null && filtrosActuales.fechaHasta !== undefined && filtrosActuales.fechaHasta !== '') {
+            datosEnvio.fechaHasta = filtrosActuales.fechaHasta;
+        }
+        
+        console.log('Datos a enviar al servidor:', datosEnvio);
+        console.log('URL completa:', url);
+        
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: datosEnvio,
+            dataType: 'json',
+            beforeSend: function(xhr) {
+                console.log('Enviando petición AJAX a:', url, 'con datos:', filtrosActuales);
+            },
+            success: function (response) {
+                console.log('Respuesta recibida:', response);
+                
+                if (response && response.success) {
+                    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+                        console.log('Datos recibidos:', response.data.length, 'registros');
+                        console.log('Primer registro completo:', JSON.stringify(response.data[0], null, 2));
+                        
+                        try {
+                            console.log('Actualizando tabla con', response.data.length, 'registros');
+                            console.log('Primer registro:', response.data[0]);
+                            
+                            // Destruir la tabla existente si existe
+                            if ($.fn.DataTable.isDataTable('#tblPresupuestos')) {
+                                tablaPresupuestos.destroy();
+                            }
+                            
+                            // Recrear la tabla con los nuevos datos
+                            tablaPresupuestos = $('#tblPresupuestos').DataTable({
+                                language: {
+                                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-AR.json'
+                                },
+                                pageLength: 25,
+                                order: [[5, 'desc']],
+                                columnDefs: [
+                                    { orderable: true, targets: [0, 1, 2, 3, 5, 6, 7] },
+                                    { orderable: false, targets: [4, 8] },
+                                    { className: "text-center", targets: [7, 8] },
+                                    { className: "text-end", targets: [3] }
+                                ],
+                                responsive: true,
+                                processing: false,
+                                serverSide: false,
+                                data: response.data, // Pasar los datos directamente aquí
+                                columns: [
+                                    {
+                                        data: 'codigoSeguimiento',
+                                        render: function (data, type, row) {
+                                            return '<strong style="color: var(--brand-primary);">' + (data || '') + '</strong>';
+                                        }
+                                    },
+                                    {
+                                        data: 'dniCliente',
+                                        render: function (data, type, row) {
+                                            return '<div><strong>DNI:</strong> ' + (data || 'N/A') + '</div>';
+                                        }
+                                    },
+                                    {
+                                        data: 'vendedorOrigenNombre',
+                                        render: function (data) {
+                                            return data || 'N/A';
+                                        }
+                                    },
+                                    {
+                                        data: 'montoPactado',
+                                        render: function (data) {
+                                            return '$' + parseFloat(data || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                        }
+                                    },
+                                    {
+                                        data: 'viajeDescripcion',
+                                        render: function (data) {
+                                            return data ? '<small>' + data + '</small>' : '<span class="text-muted">Sin viaje</span>';
+                                        }
+                                    },
+                                    {
+                                        data: 'fechaCreacion',
+                                        render: function (data) {
+                                            return '<small>' + (data || '') + '</small>';
+                                        }
+                                    },
+                                    {
+                                        data: 'fechaExpiracion',
+                                        render: function (data, type, row) {
+                                            var html = '<small>' + (data || '') + '</small>';
+                                            if (row.diasRestantes > 0 && row.diasRestantes <= 1 && row.estado === 1) {
+                                                html += '<br><span class="badge-proximo-expiracion presupuesto-badge">Expira en ' + row.diasRestantes + ' día</span>';
+                                            }
+                                            return html;
+                                        }
+                                    },
+                                    {
+                                        data: 'estadoNombre',
+                                        render: function (data, type, row) {
+                                            var badgeClass = 'badge-pendiente';
+                                            if (data === 'Cerrado') badgeClass = 'badge-cerrado';
+                                            else if (data === 'Expirado' || row.isExpirado) badgeClass = 'badge-expirado';
+                                            return '<span class="presupuesto-badge ' + badgeClass + '">' + (data || 'Pendiente') + '</span>';
+                                        }
+                                    },
+                                    {
+                                        data: null,
+                                        render: function (data, type, row) {
+                                            var html = '<button class="btn-accion-presupuesto btn-ver" onclick="verDetalle(\'' + row.presupuestoId + '\')" title="Ver detalle">';
+                                            html += '<i class="bi bi-eye"></i></button>';
+                                            html += '<button class="btn-accion-presupuesto btn-copiar" onclick="copiarCodigo(\'' + row.codigoSeguimiento + '\')" title="Copiar código">';
+                                            html += '<i class="bi bi-clipboard"></i></button>';
+                                            return html;
+                                        }
+                                    }
+                                ]
+                            });
+                            
+                            console.log('Tabla recreada. Total de filas:', tablaPresupuestos.rows().count());
+                        } catch (error) {
+                            console.error('Error al actualizar la tabla:', error);
+                            console.error('Stack trace:', error.stack);
+                            alert('Error al mostrar los datos en la tabla: ' + error.message);
+                        }
+                    } else {
+                        console.log('No hay datos en la respuesta o el array está vacío');
+                        // Si la tabla no existe, crearla vacía
+                        if (!$.fn.DataTable.isDataTable('#tblPresupuestos')) {
+                            // Inicializar tabla vacía (se hace en document.ready)
+                        } else {
+                            tablaPresupuestos.clear().draw();
+                        }
+                        mostrarMensaje('No se encontraron presupuestos con los filtros aplicados.', 'info');
+                    }
+                } else {
+                    console.error('Respuesta sin success o con error:', response);
+                    // Si la tabla no existe, no intentar limpiarla
+                    if ($.fn.DataTable.isDataTable('#tblPresupuestos')) {
+                        tablaPresupuestos.clear().draw();
+                    }
+                    mostrarMensaje(response.message || 'Error al obtener los presupuestos.', 'danger');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error AJAX al cargar presupuestos:', {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText,
+                    statusCode: xhr.status,
+                    readyState: xhr.readyState,
+                    url: url
+                });
+                
+                var errorMsg = 'Error al cargar los presupuestos. ';
+                
+                // Si el status es 0, puede ser un problema de CORS, URL incorrecta, o error de red
+                if (xhr.status === 0) {
+                    errorMsg += 'No se pudo conectar con el servidor. Verifique la consola del navegador para más detalles.';
+                    console.error('La petición no se completó. Posibles causas: CORS, URL incorrecta (' + url + '), o error de red.');
+                } else if (xhr.status === 404) {
+                    errorMsg += 'El endpoint no fue encontrado (404). Verifique la ruta: ' + url;
+                    console.error('Endpoint no encontrado. URL:', url);
+                } else if (xhr.status === 500) {
+                    errorMsg += 'Error del servidor (500). Revise los logs del servidor.';
+                    if (xhr.responseText) {
+                        console.error('Error del servidor:', xhr.responseText);
+                    }
+                } else if (xhr.responseText) {
+                    try {
+                        var errorResponse = JSON.parse(xhr.responseText);
+                        errorMsg += errorResponse.message || errorResponse.Message || '';
+                    } catch (e) {
+                        console.error('No se pudo parsear la respuesta de error:', e);
+                        errorMsg += 'Por favor, intente nuevamente.';
+                    }
+                } else {
+                    errorMsg += 'Por favor, intente nuevamente.';
+                }
+                
+                mostrarMensaje(errorMsg, 'danger');
+            }
+        });
+    }
+
+    function verDetalle(presupuestoId) {
+        console.log('Solicitando detalle para presupuesto:', presupuestoId);
+        $.ajax({
+            url: '@Url.Action("GetDetalle", "Presupuesto")',
+            type: 'POST',
+            data: { presupuestoId: presupuestoId },
+            dataType: 'json',
+            success: function (response) {
+                console.log('Respuesta de GetDetalle:', response);
+                if (response.success && response.presupuesto) {
+                    mostrarModalDetalle(response.presupuesto);
+                } else if (response.success && response.data) {
+                    // Fallback por si el formato cambia
+                    mostrarModalDetalle(response.data);
+                } else {
+                    console.error('Error en respuesta:', response);
+                    mostrarMensaje(response.message || 'Error al obtener el detalle del presupuesto.', 'danger');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error AJAX en GetDetalle:', {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText,
+                    statusCode: xhr.status
+                });
+                mostrarMensaje('Error al obtener el detalle del presupuesto. Por favor, intente nuevamente.', 'danger');
+            }
+        });
+    }
+
+    function mostrarModalDetalle(p) {
+        var html = '<div class="modern-card-content" style="padding: 2rem;">';
+        
+        // Header con código y estado
+        html += '<div class="d-flex justify-content-between align-items-start mb-4" style="border-bottom: 2px solid var(--border-color); padding-bottom: 1.5rem;">';
+        html += '<div>';
+        html += '<h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary); font-size: 1.5rem; font-weight: 700;">Detalle de Presupuesto</h3>';
+        html += '<div style="font-size: 1.25rem; color: var(--brand-primary); font-weight: 600;">' + p.codigoSeguimiento + '</div>';
+        html += '</div>';
+        html += '<span class="presupuesto-badge badge-' + (p.estadoNombre === 'Cerrado' ? 'cerrado' : p.estadoNombre === 'Expirado' ? 'expirado' : 'pendiente') + '">' + p.estadoNombre + '</span>';
+        html += '</div>';
+        
+        // Grid de información
+        html += '<div class="row g-4 mb-4">';
+        
+        // Información del cliente
+        html += '<div class="col-md-6">';
+        html += '<div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">';
+        html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">DNI Cliente</div>';
+        html += '<div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">' + (p.dniCliente || 'N/A') + '</div>';
+        html += '</div>';
+        html += '</div>';
+        
+        // Monto pactado
+        html += '<div class="col-md-6">';
+        html += '<div style="background: linear-gradient(135deg, rgba(230, 51, 117, 0.1) 0%, rgba(230, 51, 117, 0.05) 100%); padding: 1rem; border-radius: 8px; border: 1px solid rgba(230, 51, 117, 0.2);">';
+        html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Monto Pactado</div>';
+        html += '<div style="font-size: 1.5rem; font-weight: 700; color: var(--brand-primary);">$' + parseFloat(p.montoPactado).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</div>';
+        html += '</div>';
+        html += '</div>';
+        
+        // Vendedores
+        html += '<div class="col-md-6">';
+        html += '<div style="background: var(--bg-main); padding: 1rem; border-radius: 8px;">';
+        html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Vendedor Origen</div>';
+        html += '<div style="font-size: 1rem; font-weight: 500; color: var(--text-primary);">' + (p.vendedorOrigenNombre || 'N/A') + '</div>';
+        html += '</div>';
+        html += '</div>';
+        
+        if (p.vendedorCierreNombre && p.vendedorCierreNombre !== 'N/A') {
+            html += '<div class="col-md-6">';
+            html += '<div style="background: var(--bg-main); padding: 1rem; border-radius: 8px;">';
+            html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Vendedor de Cierre</div>';
+            html += '<div style="font-size: 1rem; font-weight: 500; color: var(--text-primary);">' + p.vendedorCierreNombre + '</div>';
+            html += '</div>';
+            html += '</div>';
+        }
+        
+        html += '</div>';
+        
+        // Viaje si existe
+        if (p.viajeDescripcion && p.viajeDescripcion !== 'N/A') {
+            html += '<div class="mb-4">';
+            html += '<div style="background: var(--bg-main); padding: 1rem; border-radius: 8px;">';
+            html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Viaje</div>';
+            html += '<div style="font-size: 1rem; font-weight: 500; color: var(--text-primary);">' + p.viajeDescripcion + '</div>';
+            if (p.paqueteDescripcion && p.paqueteDescripcion !== 'N/A') {
+                html += '<div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">' + p.paqueteDescripcion + '</div>';
+            }
+            html += '</div>';
+            html += '</div>';
+        }
+        
+        // Fechas
+        html += '<div class="row g-4 mb-4">';
+        html += '<div class="col-md-6">';
+        html += '<div style="background: var(--bg-main); padding: 1rem; border-radius: 8px;">';
+        html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Fecha de Creación</div>';
+        html += '<div style="font-size: 1rem; font-weight: 500; color: var(--text-primary);"><i class="bi bi-calendar3"></i> ' + p.fechaCreacion + '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="col-md-6">';
+        html += '<div style="background: var(--bg-main); padding: 1rem; border-radius: 8px;">';
+        html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Fecha de Expiración</div>';
+        html += '<div style="font-size: 1rem; font-weight: 500; color: var(--text-primary);"><i class="bi bi-calendar-x"></i> ' + p.fechaExpiracion;
+        if (p.isExpirado) {
+            html += ' <span class="presupuesto-badge badge-expirado" style="margin-left: 0.5rem;">Expirado</span>';
+        }
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        
+        // Factura asociada si existe
+        if (p.facturaId) {
+            html += '<div class="mb-4">';
+            html += '<div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); padding: 1rem; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);">';
+            html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Factura Asociada</div>';
+            html += '<a href="/PersonaCliente/PopupDetalleFactura?facturaid=' + p.facturaId + '" class="btn-modern btn-modern-primary" target="_blank" style="margin-top: 0.5rem;"><i class="bi bi-receipt"></i> Ver Factura</a>';
+            html += '</div>';
+            html += '</div>';
+        }
+        
+        // Observaciones si existen
+        if (p.observaciones) {
+            html += '<div class="mb-4">';
+            html += '<div style="background: var(--bg-main); padding: 1rem; border-radius: 8px;">';
+            html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Observaciones</div>';
+            html += '<div style="font-size: 1rem; color: var(--text-primary); line-height: 1.6;">' + p.observaciones + '</div>';
+            html += '</div>';
+            html += '</div>';
+        }
+        
+        // Botones de acción
+        html += '<div class="d-flex justify-content-end gap-2 mt-4" style="border-top: 2px solid var(--border-color); padding-top: 1.5rem;">';
+        html += '<button class="btn-modern btn-modern-secondary" onclick="copiarCodigo(\'' + p.codigoSeguimiento + '\')"><i class="bi bi-clipboard"></i> Copiar Código</button>';
+        html += '<button class="btn-modern btn-modern-secondary" onclick="$(\'#modalDetallePresupuesto\').dialog(\'close\')"><i class="bi bi-x-lg"></i> Cerrar</button>';
+        html += '</div>';
+
+        html += '</div>';
+
+        $('#contenidoDetallePresupuesto').html(html);
+        
+        $('#modalDetallePresupuesto').dialog({
+            title: '<i class="bi bi-file-earmark-text"></i> Detalle de Presupuesto',
+            modal: true,
+            width: '70%',
+            maxWidth: '900px',
+            resizable: true,
+            position: { my: 'center', at: 'center', of: window },
+            dialogClass: 'modern-dialog'
+        });
+    }
+
+    function copiarCodigo(codigo) {
+        navigator.clipboard.writeText(codigo).then(function() {
+            mostrarMensaje('Código copiado al portapapeles: ' + codigo, 'success');
+        }, function() {
+            // Fallback para navegadores antiguos
+            var textArea = document.createElement("textarea");
+            textArea.value = codigo;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            mostrarMensaje('Código copiado al portapapeles: ' + codigo, 'success');
+        });
+    }
+
+    function mostrarMensaje(mensaje, tipo) {
+        // Usar el sistema de mensajes existente o crear uno simple
+        var alertClass = tipo === 'success' ? 'alert-success' : tipo === 'danger' ? 'alert-danger' : 'alert-info';
+        var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 10001; min-width: 300px;">';
+        alertHtml += mensaje;
+        alertHtml += '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+        alertHtml += '</div>';
+        
+        $('body').append(alertHtml);
+        setTimeout(function() {
+            $('.alert').fadeOut(function() {
+                $(this).remove();
+            });
+        }, 3000);
+    }
+
+    // Búsqueda rápida con Enter
+    $('#txtBusquedaRapida').on('keypress', function(e) {
+        if (e.which === 13) {
+            aplicarFiltros();
+        }
+    });
+</script>
+

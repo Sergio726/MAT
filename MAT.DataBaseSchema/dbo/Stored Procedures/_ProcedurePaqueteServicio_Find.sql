@@ -1,8 +1,7 @@
-﻿
+
 /*
 ----------------------------------------------------------------------------------------------------
 
--- Created By: Reproisa (www.reproisa.com)
 -- Purpose: Finds records in the PaqueteServicio table passing nullable parameters
 ----------------------------------------------------------------------------------------------------
 */

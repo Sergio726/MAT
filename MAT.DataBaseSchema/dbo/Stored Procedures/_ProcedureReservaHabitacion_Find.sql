@@ -1,8 +1,7 @@
-﻿
+
 /*
 ----------------------------------------------------------------------------------------------------
 
--- Created By: Reproisa (www.reproisa.com)
 -- Purpose: Finds records in the ReservaHabitacion table passing nullable parameters
 ----------------------------------------------------------------------------------------------------
 */

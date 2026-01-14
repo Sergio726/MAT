@@ -13,9 +13,7 @@ namespace MAT.Utilities
         readonly static int SAVE_COUNTER = 1000;// save after 1000 messages
         readonly static int MIN_IMPORTANCE = 0;// log only messages with importance value >=MIN_IMPORTANCE
 
-        readonly static string DIR_LOG_FILES = @"c:\Reproisa\";
-
-        static string _filename = DIR_LOG_FILES + @"Log." + DateTime.Now.ToString("yyMMdd.HHmm") + @".txt";
+        // Deshabilitado: No se utilizan archivos físicos de log
 
         readonly static List<string> _list_log = new List<string>();
         readonly static object _locker = new object();
@@ -23,12 +21,11 @@ namespace MAT.Utilities
         static DateTime _last_save = DateTime.Now;
 
         public static void NewFile()
-        {//new file is created because filename changed
+        {
+            // Deshabilitado: No se crean archivos físicos
             SaveToFile();
             lock (_locker)
             {
-
-                _filename = DIR_LOG_FILES + @"Log." + DateTime.Now.ToString("yyMMdd.HHmm") + @".txt";
                 _counter = 0;
             }
         }
@@ -48,27 +45,22 @@ namespace MAT.Utilities
 
         public static void SaveToFile()
         {
-            lock (_locker)
-                if (_list_log.Count == 0)
-                {
-                    _last_save = _last_save = DateTime.Now;
-                    return;
-                }
+            // Deshabilitado: No se escriben archivos físicos de log
+            // Los logs se mantienen solo en memoria y se limpian periódicamente
             lock (_locker)
             {
-                if (!File.Exists(_filename))
+                if (_list_log.Count == 0)
                 {
-                    File.CreateText(_filename);
+                    _last_save = DateTime.Now;
+                    return;
                 }
-                using (StreamWriter logfile = File.AppendText(_filename))
+                
+                // Limpiar logs antiguos de la memoria (mantener solo los últimos 1000)
+                if (_list_log.Count > 1000)
                 {
-
-                    foreach (string s in _list_log) logfile.WriteLine(s);
-                    logfile.Flush();
-                    logfile.Close();
+                    _list_log.RemoveRange(0, _list_log.Count - 1000);
                 }
-
-                _list_log.Clear();
+                
                 _counter = 0;
                 _last_save = DateTime.Now;
             }
@@ -77,15 +69,9 @@ namespace MAT.Utilities
 
         public static void ReadLog(string logfile)
         {
-            using (StreamReader r = File.OpenText(logfile))
-            {
-                string line;
-                while ((line = r.ReadLine()) != null)
-                {
-                    Console.WriteLine(line);
-                }
-                r.Close();
-            }
+            // Deshabilitado: No se leen archivos físicos de log
+            // Los logs ahora se mantienen solo en memoria
+            Console.WriteLine("ReadLog: La lectura de archivos de log está deshabilitada. Los logs se mantienen solo en memoria.");
         }
 
         public static string FormatMessageToHtml(string message)

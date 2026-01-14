@@ -258,6 +258,61 @@ namespace MAT.MVC.Models
 
             return estadisticas;
         }
+
+        /// <summary>
+        /// Obtiene todos los presupuestos con filtros opcionales
+        /// </summary>
+        public static List<PresupuestoStandard> GetAll(int? estado = null, Guid? vendedorIdOrigen = null, string dniCliente = null, string codigoSeguimiento = null, DateTime? fechaDesde = null, DateTime? fechaHasta = null)
+        {
+            List<PresupuestoStandard> lista = new List<PresupuestoStandard>();
+
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@Estado", SqlDbType.Int, 0, estado.HasValue ? (object)estado.Value : DBNull.Value),
+                DBHelper.MakeParam("@VendedorIdOrigen", SqlDbType.UniqueIdentifier, 0, vendedorIdOrigen.HasValue ? (object)vendedorIdOrigen.Value : DBNull.Value),
+                DBHelper.MakeParam("@DniCliente", SqlDbType.VarChar, 50, string.IsNullOrWhiteSpace(dniCliente) ? (object)DBNull.Value : dniCliente),
+                DBHelper.MakeParam("@CodigoSeguimiento", SqlDbType.VarChar, 50, string.IsNullOrWhiteSpace(codigoSeguimiento) ? (object)DBNull.Value : codigoSeguimiento),
+                DBHelper.MakeParam("@FechaDesde", SqlDbType.DateTime, 0, fechaDesde.HasValue ? (object)fechaDesde.Value : DBNull.Value),
+                DBHelper.MakeParam("@FechaHasta", SqlDbType.DateTime, 0, fechaHasta.HasValue ? (object)fechaHasta.Value : DBNull.Value)
+            };
+
+            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Presupuesto_GetAll", dbParams))
+            {
+                while (_reader.Read())
+                {
+                    PresupuestoStandard presupuesto = new PresupuestoStandard();
+                    presupuesto.PresupuestoID = new Guid(_reader["PresupuestoID"].ToString());
+                    presupuesto.DniCliente = _reader["DniCliente"].ToString();
+                    presupuesto.VendedorIdOrigen = new Guid(_reader["VendedorIdOrigen"].ToString());
+                    presupuesto.VendedorOrigenNombre = _reader["VendedorOrigenNombre"]?.ToString() ?? string.Empty;
+                    presupuesto.CodigoSeguimiento = _reader["CodigoSeguimiento"].ToString();
+                    presupuesto.MontoPactado = Convert.ToDouble(_reader["MontoPactado"]);
+                    
+                    if (_reader["ViajeId"] != DBNull.Value)
+                        presupuesto.ViajeId = new Guid(_reader["ViajeId"].ToString());
+                    
+                    presupuesto.ViajeDescripcion = _reader["ViajeDescripcion"]?.ToString() ?? string.Empty;
+                    presupuesto.PaqueteDescripcion = _reader["PaqueteDescripcion"]?.ToString() ?? string.Empty;
+                    presupuesto.Estado = (eEstadoPresupuesto)Convert.ToInt32(_reader["Estado"]);
+                    presupuesto.FechaCreacion = Convert.ToDateTime(_reader["FechaCreacion"]);
+                    presupuesto.FechaExpiracion = Convert.ToDateTime(_reader["FechaExpiracion"]);
+                    
+                    if (_reader["FacturaId"] != DBNull.Value)
+                        presupuesto.FacturaId = new Guid(_reader["FacturaId"].ToString());
+                    
+                    if (_reader["VendedorIdCierre"] != DBNull.Value)
+                        presupuesto.VendedorIdCierre = new Guid(_reader["VendedorIdCierre"].ToString());
+                    
+                    presupuesto.VendedorCierreNombre = _reader["VendedorCierreNombre"]?.ToString() ?? string.Empty;
+                    presupuesto.Observaciones = _reader["Observaciones"]?.ToString() ?? string.Empty;
+                    presupuesto.IsExpirado = Convert.ToBoolean(_reader["IsExpirado"]);
+
+                    lista.Add(presupuesto);
+                }
+            }
+
+            return lista;
+        }
     }
 }
 

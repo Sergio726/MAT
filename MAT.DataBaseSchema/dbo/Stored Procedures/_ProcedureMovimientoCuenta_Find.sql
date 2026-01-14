@@ -1,8 +1,7 @@
-﻿
+
 /*
 ----------------------------------------------------------------------------------------------------
 
--- Created By: Reproisa (www.reproisa.com)
 -- Purpose: Finds records in the MovimientoCuenta table passing nullable parameters
 ----------------------------------------------------------------------------------------------------
 */

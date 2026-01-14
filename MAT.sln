@@ -11,12 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Services", "MAT.Service
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Web", "MAT.Web\MAT.Web.csproj", "{47FE3BE8-3E46-47CA-8494-473755867DD0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NetTiers", "NetTiers", "{F3A10C8D-3227-449F-A2CB-014DE2D7F415}"
-	ProjectSection(SolutionItems) = preProject
-		AssemblyInfo.cs = AssemblyInfo.cs
-		MAT.snk = MAT.snk
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.MVC", "MAT.MVC\MAT.MVC.csproj", "{7F372704-B3FF-4A93-81E5-301BF144F42B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Enums", "MAT.Enums\MAT.Enums.csproj", "{6560D8B9-7562-45C9-B40B-BEA63EC6CB30}"
@@ -38,7 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 		References\DotNetOpenAuth.OpenId.RelyingParty.dll = References\DotNetOpenAuth.OpenId.RelyingParty.dll
 		References\DotNetOpenAuth.OpenId.RelyingParty.xml = References\DotNetOpenAuth.OpenId.RelyingParty.xml
 		References\DotNetOpenAuth.OpenId.xml = References\DotNetOpenAuth.OpenId.xml
-		References\MATCodeSmithProject.csp = References\MATCodeSmithProject.csp
 		References\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll = References\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll
 		References\Microsoft.Practices.EnterpriseLibrary.Caching.dll = References\Microsoft.Practices.EnterpriseLibrary.Caching.dll
 		References\Microsoft.Practices.EnterpriseLibrary.Common.dll = References\Microsoft.Practices.EnterpriseLibrary.Common.dll
@@ -118,10 +111,5 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
-		{8996A7B4-57D3-440B-A545-A701844B8C4A} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
-		{794327CE-DC0A-4381-89EE-4C00AFB08D5A} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
-		{47FE3BE8-3E46-47CA-8494-473755867DD0} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
-		{20E43088-4618-4F4A-B8AD-FC31B50D94CD} = {F3A10C8D-3227-449F-A2CB-014DE2D7F415}
 	EndGlobalSection
 EndGlobal
