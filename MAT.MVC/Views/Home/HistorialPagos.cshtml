@@ -1,42 +1,123 @@
-﻿@{
+@{
     ViewBag.Title = "HistorialPagos";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="title">Historial de Pagos</h2>
-
-@*<div id="search-historialpagos">
-    <div id="busqueda-historialpagos">
-        <input id="txt-filter-historialpagos" type="text" placeholder="Ingrese texto de búsqueda" />
-    </div>
-</div>*@
-<div id="search-historialpagos">
-   
-    <div id="busqueda-historialpagos">
-        <input id="filtro-fecha" class="datetime custom_margin_5" type="datetime" placeholder="Seleccionar Fecha"/>
-    </div>
-</div>
-<div id="grid_pagos">
-
-</div>
-
-@*<script type="text/javascript">
-    function getParameterByName(name) {
-        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-            results = regex.exec(location.search);
-        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+<style>
+    .search-form-container {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
     }
-    jQuery(function ($) {
-        var page = getParameterByName("page");
-        if (page!="") {
-            $("div#grid-historialpagos").load("/Home/RenderGridHistorialPagos?page=" + page);
-        } else {
-            $("div#grid-historialpagos").load("/Home/RenderGridHistorialPagos");
+    .search-form-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .search-form-title i {
+        color: var(--primary-color, #e91e63);
+    }
+    .search-form-grid {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+    .search-form-grid .modern-form-group:first-child {
+        width: 250px;
+    }
+    @@media (max-width: 768px) {
+        .search-form-grid {
+            flex-direction: column;
         }
-        $("#search-historialpagos").css("margin-left", "10");
-    });
-</script>*@
+        .search-form-grid .modern-form-group:first-child {
+            width: 100%;
+        }
+    }
+    .search-results-container {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 200px;
+    }
+    .search-results-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        color: var(--text-secondary, #6b7280);
+    }
+    .search-results-empty i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    /* Custom datepicker input styling */
+    #filtro-fecha {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #filtro-fecha:focus {
+        outline: none;
+        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+</style>
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-clock-history"></i>
+            <span>Historial de Pagos</span>
+        </h2>
+    </div>
+
+    <!-- Formulario de Busqueda -->
+    <div class="search-form-container">
+        <div class="search-form-title">
+            <i class="bi bi-calendar-event"></i>
+            <span>Seleccionar fecha para ver pagos</span>
+        </div>
+
+        <div class="search-form-grid">
+            <div class="modern-form-group">
+                <label class="modern-form-label">
+                    <i class="bi bi-calendar3"></i>
+                    <span>Fecha</span>
+                </label>
+                <input id="filtro-fecha" type="text" placeholder="Seleccionar Fecha" class="modern-form-input" readonly />
+            </div>
+
+            <div class="modern-form-group">
+                <button type="button" id="btn-buscar-pagos" class="btn-modern btn-modern-primary" style="height: 42px;" disabled>
+                    <i class="bi bi-search"></i>
+                    <span>Buscar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="search-results-container">
+        <div id="grid_pagos">
+            <div class="search-results-empty">
+                <i class="bi bi-credit-card"></i>
+                <span>Seleccione una fecha para ver el historial de pagos</span>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     $.customDate = function (dateObject) {
@@ -53,26 +134,28 @@
         var date = year + "-" + month + "-" + day;
         return date;
     }
+
     $(function () {
-        $("input[type='datetime']").datepicker({
+        $("#filtro-fecha").datepicker({
             changeMonth: true,
             changeYear: true,
             yearRange: '-100:+2',
             onSelect: function () {
-                var fechaseleccionada = escape($(this).datepicker().val());
-                var fechaconvertida = $.customDate(fechaseleccionada);
-                console.log(fechaconvertida);
-                var url = "/Admin/GridResumenPagosFecha?fecha=" + fechaconvertida;;
-                
-                $("#grid_pagos").load("<div class='iconLoading'></div>");
-                $("#grid_pagos").load(url, function () {
-                    $(".divDelete").remove();
-                });
-              
+                $("#btn-buscar-pagos").prop('disabled', false);
             }
         });
-    });
-    
-   
-</script>
 
+        $("#btn-buscar-pagos").on('click', function() {
+            var fechaseleccionada = escape($("#filtro-fecha").datepicker().val());
+            var fechaconvertida = $.customDate(fechaseleccionada);
+            var url = "/Admin/GridResumenPagosFecha?fecha=" + fechaconvertida;
+
+            var divLoading = '<div class="modern-loading-container"><div class="modern-loading-spinner"></div><span class="modern-loading-text">Cargando pagos...</span></div>';
+            $("#grid_pagos").html(divLoading);
+
+            $("#grid_pagos").load(url, function () {
+                $(".divDelete").remove();
+            });
+        });
+    });
+</script>
