@@ -7,22 +7,85 @@
     #tblviajes {
         width: 100% !important;
     }
+
+    /* Fecha salida: mantener jerarquía sin cambiar el color */
+    .viaje-fecha-salida {
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        white-space: nowrap;
+    }
+
+    /* Unificar tipografía en toda la tabla */
+    #tblviajes,
+    #tblviajes th,
+    #tblviajes td,
+    #tblviajes span,
+    #tblviajes a {
+        font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+    }
+
+    /* Salida: fecha + hora en una sola columna */
+    .viaje-salida {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+
+    .viaje-salida-hora {
+        color: var(--text-secondary, #6b7280);
+        font-weight: 500;
+    }
+
+    /* Precio: incluir badge de moneda al lado */
+    .viaje-precio {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+
+    /* Evitar que estilos externos cambien tamaños puntuales */
+    .precio-value,
+    .precio-promo {
+        font-size: inherit;
+        font-weight: 600;
+    }
+
+    /* Acciones: reordenadas y agrupadas (principales + peligrosas) */
+    .table-actions.table-actions-viajes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+
+    .table-actions-viajes .table-actions-main,
+    .table-actions-viajes .table-actions-danger {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .table-actions-viajes .table-actions-danger {
+        padding-left: 0.5rem;
+        margin-left: 0.25rem;
+        border-left: 1px solid var(--border-color, #e5e7eb);
+    }
 </style>
 
 <div class="viajes-list-container">
     <table id="tblviajes" class="display">
         <thead>
             <tr>
+                <th>Salida</th>
                 <th>Paquete</th>
-                <th>Descripción</th>
-                <th>Fecha Salida</th>
-                <th>Hora</th>
                 <th>Destino</th>
-                <th>Moneda</th>
                 <th>Precio</th>
                 <th>Promo</th>
-                <th>Venc. Promo</th>
-                <th>Paso</th>
                 <th>Medio</th>
                 <th>Web</th>
                 <th style="width:180px;"></th>
@@ -32,16 +95,44 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td><span class="table-text-primary">@item.PaqueteNombre</span></td>
-                    <td>@item.Descripcion</td>
-                    <td><span class="table-text-bold">@item.FechaSalida</span></td>
-                    <td>@item.HoraSalida</td>
+                    <td>
+                        <span class="viaje-salida">
+                            <span class="viaje-fecha-salida">@item.FechaSalida</span>
+                            @if (!string.IsNullOrWhiteSpace(item.HoraSalida))
+                            {
+                                <span class="viaje-salida-hora">@item.HoraSalida</span>
+                            }
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/Reserva/Index?viajeid=@item.ViajeID"
+                           class="table-text-primary"
+                           style="text-decoration: none;"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="top"
+                           title="@item.Descripcion">
+                            @item.PaqueteNombre
+                        </a>
+                    </td>
                     <td>@item.PaisDestino</td>
-                    <td><span class="badge-moneda @(item.MonedaTipo == 1 ? "badge-moneda-pesos" : "badge-moneda-dolar")">@(item.MonedaTipo == 1 ? "ARS" : "USD")</span></td>
-                    <td><span class="precio-value">$ @item.PrecioSemicama</span></td>
-                    <td><span class="precio-promo">$ @item.PrecioPromocional</span></td>
-                    <td>@item.FechaPromocion</td>
-                    <td>@item.Paso</td>
+                    <td>
+                        <span class="viaje-precio">
+                            <span class="precio-value">$ @item.PrecioSemicama.ToString("N2", new System.Globalization.CultureInfo("es-AR"))</span>
+                            <span class="badge-moneda @(item.MonedaTipo == 1 ? "badge-moneda-pesos" : "badge-moneda-dolar")">@(item.MonedaTipo == 1 ? "ARS" : "USD")</span>
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <span class="viaje-precio">
+                                <span class="precio-promo">$ @item.PrecioPromocional.ToString("N2", new System.Globalization.CultureInfo("es-AR"))</span>
+                                <span class="badge-moneda @(item.MonedaTipo == 1 ? "badge-moneda-pesos" : "badge-moneda-dolar")">@(item.MonedaTipo == 1 ? "ARS" : "USD")</span>
+                            </span>
+                            @if (!string.IsNullOrEmpty(item.FechaPromocion))
+                            {
+                                <span style="font-size: 0.75rem; color: var(--text-secondary, #6b7280);">Vence: @item.FechaPromocion</span>
+                            }
+                        </div>
+                    </td>
                     <td>
                         @if (item.Medio == "TERRESTRE")
                         {
@@ -75,25 +166,29 @@
                         }
                     </td>
                     <td>
-                        <div class="table-actions">
-                            <a href="/viaje/edit/?saction=edit&sviajeid=@item.ViajeID" class="btn-action btn-action-edit" title="Editar">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a href="/viaje/edit/?saction=detail&sviajeid=@item.ViajeID" class="btn-action btn-action-view" title="Ver detalles">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="/viaje/hoteles/@item.ViajeID" class="btn-action btn-action-hotel" title="Ver hoteles">
-                                <i class="bi bi-building"></i>
-                            </a>
-                            <a href="/pasajeroviaje/index/@item.ViajeID" class="btn-action btn-action-people" title="Ver pasajeros">
-                                <i class="bi bi-people"></i>
-                            </a>
-                            <a href="#" id="btn-eliminar-viaje" data-id="@item.ViajeID" class="btn-action btn-action-delete" title="Eliminar viaje">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                            <a href="#" onclick="fncancelviaje('@item.ViajeID'); return false;" class="btn-action btn-action-cancel" title="Cancelar viaje">
-                                <i class="bi bi-x-circle"></i>
-                            </a>
+                        <div class="table-actions table-actions-viajes">
+                            <div class="table-actions-main">
+                                <a href="/viaje/edit/?saction=edit&sviajeid=@item.ViajeID" class="btn-action btn-action-edit" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/viaje/edit/?saction=detail&sviajeid=@item.ViajeID" class="btn-action btn-action-view" title="Ver detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="/pasajeroviaje/index/@item.ViajeID" class="btn-action btn-action-people" title="Ver pasajeros">
+                                    <i class="bi bi-people"></i>
+                                </a>
+                                <a href="/viaje/hoteles/@item.ViajeID" class="btn-action btn-action-hotel" title="Ver hoteles">
+                                    <i class="bi bi-building"></i>
+                                </a>
+                            </div>
+                            <div class="table-actions-danger">
+                                <a href="#" onclick="fncancelviaje('@item.ViajeID'); return false;" class="btn-action btn-action-cancel" title="Cancelar viaje">
+                                    <i class="bi bi-x-circle"></i>
+                                </a>
+                                <a href="#" id="btn-eliminar-viaje" data-id="@item.ViajeID" class="btn-action btn-action-delete" title="Eliminar viaje">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -106,14 +201,22 @@
     $(document).ready(function () {
         $("#tblviajes").DataTable({
             "columnDefs": [
-                { targets: [10, 11, 12], "orderable": false }
+                { targets: [5, 6, 7], "orderable": false }
             ],
             "pageLength": 25,
-            "order": [[2, "asc"]],
+            "order": [[1, "asc"]],
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
             }
         });
+
+        // Tooltips (Bootstrap) - necesario porque esta tabla se renderiza vía Ajax
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('#tblviajes [data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
     });
 </script>
 

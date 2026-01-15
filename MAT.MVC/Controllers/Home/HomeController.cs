@@ -37,7 +37,126 @@ namespace MAT.MVC.Controllers.Home
                 return RedirectToAction("Login", "Account");
             }
             if (Roles.IsUserInRole(User.Identity.Name, "Administrador")) return RedirectToAction("Index", "Admin");
+            
+            // Obtener estadísticas del mes actual
+            var estadisticas = GetEstadisticasMesActual();
+            ViewBag.Estadisticas = estadisticas;
+            
             return View();
+        }
+
+        /// <summary>
+        /// Obtiene las estadísticas del mes actual
+        /// </summary>
+        private Dictionary<string, object> GetEstadisticasMesActual()
+        {
+            var estadisticas = new Dictionary<string, object>();
+            
+            try
+            {
+                var fechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                var fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
+                
+                // Obtener facturas del mes actual
+                var facturaService = new FacturaService();
+                var facturasMes = facturaService.GetAll()
+                    .Where(f => f.Fecha.HasValue && 
+                           f.Fecha.Value >= fechaInicio && 
+                           f.Fecha.Value <= fechaFin)
+                    .ToList();
+                
+                // Total por cobrar (facturas con saldo pendiente)
+                double totalPorCobrar = 0;
+                foreach (var factura in facturasMes)
+                {
+                    if (factura.Monto.HasValue)
+                    {
+                        var movimientos = new MovimientoCuentaService().GetByFacturaId(factura.FacturaId)
+                            .Where(m => m.PagoId.HasValue).ToList();
+                        double pagos = 0;
+                        foreach (var mov in movimientos)
+                        {
+                            if (mov.PagoId.HasValue)
+                            {
+                                var pago = new PagoService().GetByPagoId(mov.PagoId.Value);
+                                if (pago.Monto.HasValue)
+                                    pagos += pago.Monto.Value;
+                            }
+                        }
+                        double saldo = factura.Monto.Value - pagos;
+                        if (saldo > 0)
+                            totalPorCobrar += saldo;
+                    }
+                }
+                
+                // Cantidad de presupuestos del mes
+                var presupuestosMes = PresupuestoMethod.GetAll()
+                    .Where(p => p.FechaCreacion >= fechaInicio && p.FechaCreacion <= fechaFin)
+                    .ToList();
+                
+                // Clientes nuevos del mes (clientes con su primera factura en el mes actual)
+                // Un cliente es nuevo si su primera factura está en el mes actual
+                var clientesConFacturasMes = facturasMes
+                    .Where(f => f.ClienteId != Guid.Empty)
+                    .Select(f => f.ClienteId)
+                    .Distinct()
+                    .ToList();
+                
+                var clientesNuevos = 0;
+                foreach (var clienteId in clientesConFacturasMes)
+                {
+                    // Verificar si este cliente tiene facturas anteriores al mes actual
+                    var facturasAnteriores = facturaService.GetByClienteId(clienteId, 0, 1, out int totalFacturas)
+                        .Where(f => f.Fecha.HasValue && f.Fecha.Value < fechaInicio)
+                        .Any();
+                    
+                    // Si no tiene facturas anteriores, es un cliente nuevo
+                    if (!facturasAnteriores)
+                    {
+                        clientesNuevos++;
+                    }
+                }
+                
+                // Ventas por vendedor
+                var ventasPorVendedor = facturasMes
+                    .Where(f => f.VendedorId != Guid.Empty)
+                    .GroupBy(f => f.VendedorId)
+                    .Select(g => new
+                    {
+                        VendedorId = g.Key,
+                        Cantidad = g.Count(),
+                        Total = g.Sum(f => f.Monto ?? 0)
+                    })
+                    .ToList();
+                
+                var vendedorService = new VendedorService();
+                var ventasVendedorDetalle = ventasPorVendedor.Select(v => new
+                {
+                    VendedorNombre = vendedorService.GetByVendedorId(v.VendedorId)?.Descripcion ?? "Sin nombre",
+                    Cantidad = v.Cantidad,
+                    Total = v.Total
+                }).ToList();
+                
+                estadisticas["TotalPorCobrar"] = totalPorCobrar;
+                estadisticas["CantidadPresupuestos"] = presupuestosMes.Count;
+                estadisticas["ClientesNuevos"] = clientesNuevos;
+                estadisticas["VentasPorVendedor"] = ventasVendedorDetalle;
+                estadisticas["TotalVentas"] = facturasMes.Sum(f => f.Monto ?? 0);
+                estadisticas["CantidadVentas"] = facturasMes.Count;
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error al obtener estadísticas del mes: {ex.Message}", 1);
+                // Valores por defecto en caso de error
+                estadisticas["TotalPorCobrar"] = 0;
+                estadisticas["CantidadPresupuestos"] = 0;
+                estadisticas["ClientesNuevos"] = 0;
+                estadisticas["VentasPorVendedor"] = new List<object>();
+                estadisticas["TotalVentas"] = 0;
+                estadisticas["CantidadVentas"] = 0;
+            }
+            
+            return estadisticas;
         }
 
         [Authorize]

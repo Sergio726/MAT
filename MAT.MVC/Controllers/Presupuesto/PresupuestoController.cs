@@ -529,6 +529,239 @@ namespace MAT.MVC.Controllers.Presupuesto
                 return false;
             }
         }
+
+        /// <summary>
+        /// Panel de seguimiento de presupuestos
+        /// </summary>
+        public ActionResult Seguimiento()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.Seguimiento: {ex.Message}", 1);
+                ViewBag.Error = "Error al cargar el panel de seguimiento.";
+                return View();
+            }
+        }
+
+        /// <summary>
+        /// Obtiene todos los presupuestos con filtros opcionales
+        /// </summary>
+        [HttpPost]
+        public JsonResult GetAll(int? estado = null, string vendedorIdOrigen = null, string dniCliente = null, string codigoSeguimiento = null, string fechaDesde = null, string fechaHasta = null)
+        {
+            try
+            {
+                // Log al inicio del método para verificar que se está llamando
+                MATLogger.Log($"PresupuestoController.GetAll - Método llamado. Parámetros recibidos: estado={estado}, vendedorIdOrigen={vendedorIdOrigen}, dniCliente={dniCliente}, codigoSeguimiento={codigoSeguimiento}, fechaDesde={fechaDesde}, fechaHasta={fechaHasta}", 2);
+                
+                int? estadoInt = estado;
+                Guid? vendedorGuid = null;
+                DateTime? fechaDesdeDate = null;
+                DateTime? fechaHastaDate = null;
+
+                if (!string.IsNullOrWhiteSpace(vendedorIdOrigen))
+                {
+                    try
+                    {
+                        vendedorGuid = new Guid(vendedorIdOrigen);
+                        MATLogger.Log($"PresupuestoController.GetAll - VendedorIdOrigen convertido correctamente: {vendedorGuid}", 2);
+                    }
+                    catch (Exception ex)
+                    {
+                        MATLogger.Log($"Error al convertir vendedorIdOrigen a Guid: {vendedorIdOrigen} - {ex.Message}", 1);
+                        vendedorGuid = null;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(fechaDesde))
+                {
+                    if (DateTime.TryParse(fechaDesde, out DateTime fechaDesdeParsed))
+                    {
+                        fechaDesdeDate = fechaDesdeParsed;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(fechaHasta))
+                {
+                    if (DateTime.TryParse(fechaHasta, out DateTime fechaHastaParsed))
+                    {
+                        fechaHastaDate = fechaHastaParsed;
+                    }
+                }
+
+                // Log para depuración
+                MATLogger.Log($"PresupuestoController.GetAll - Filtros aplicados: Estado={estadoInt}, VendedorGuid={vendedorGuid}, DNI={dniCliente}, Codigo={codigoSeguimiento}, FechaDesde={fechaDesdeDate}, FechaHasta={fechaHastaDate}", 2);
+
+                var presupuestos = PresupuestoMethod.GetAll(estadoInt, vendedorGuid, dniCliente, codigoSeguimiento, fechaDesdeDate, fechaHastaDate);
+                
+                MATLogger.Log($"PresupuestoController.GetAll - Presupuestos encontrados: {presupuestos.Count}", 2);
+
+                var resultado = presupuestos.Select(p => new
+                {
+                    presupuestoId = p.PresupuestoID.ToString(),
+                    codigoSeguimiento = p.CodigoSeguimiento,
+                    dniCliente = p.DniCliente,
+                    vendedorOrigenNombre = p.VendedorOrigenNombre,
+                    vendedorIdOrigen = p.VendedorIdOrigen.ToString(),
+                    montoPactado = p.MontoPactado,
+                    viajeId = p.ViajeId?.ToString(),
+                    viajeDescripcion = p.ViajeDescripcion,
+                    paqueteDescripcion = p.PaqueteDescripcion,
+                    estado = (int)p.Estado,
+                    estadoNombre = p.Estado.ToString(),
+                    fechaCreacion = p.FechaCreacion.ToString("dd/MM/yyyy HH:mm"),
+                    fechaExpiracion = p.FechaExpiracion.ToString("dd/MM/yyyy HH:mm"),
+                    facturaId = p.FacturaId?.ToString(),
+                    vendedorCierreNombre = p.VendedorCierreNombre,
+                    observaciones = p.Observaciones,
+                    isExpirado = p.IsExpirado,
+                    diasRestantes = p.FechaExpiracion > DateTime.Now ? (int)(p.FechaExpiracion - DateTime.Now).TotalDays : 0
+                }).ToList();
+
+                return Json(new { success = true, data = resultado, total = resultado.Count }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.GetAll: {ex.Message} - {ex.StackTrace}", 1);
+                return Json(new { success = false, message = "Error al obtener los presupuestos." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene la lista de vendedores para el filtro
+        /// </summary>
+        [HttpPost]
+        public JsonResult GetVendedores()
+        {
+            try
+            {
+                // Usar VendedorService si está disponible, sino consulta directa
+                var vendedores = new List<object>();
+
+                try
+                {
+                    string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"]?.ConnectionString;
+                    if (!string.IsNullOrEmpty(connectionString))
+                    {
+                        using (SqlConnection cn = new SqlConnection(connectionString))
+                        {
+                            cn.Open();
+                            using (SqlCommand cmd = new SqlCommand("SELECT [VendedorID], [Descripcion], [Apellido], [Nombre] FROM [dbo].[PersonaVendedor] ORDER BY [Descripcion]", cn))
+                            {
+                                using (SqlDataReader reader = cmd.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        string descripcion = reader["Descripcion"]?.ToString() ?? string.Empty;
+                                        string apellido = reader["Apellido"]?.ToString() ?? string.Empty;
+                                        string nombre = reader["Nombre"]?.ToString() ?? string.Empty;
+                                        
+                                        // Si hay nombre y apellido, usarlos para la descripción, sino usar la descripción del vendedor
+                                        if (!string.IsNullOrWhiteSpace(apellido) || !string.IsNullOrWhiteSpace(nombre))
+                                        {
+                                            descripcion = $"{apellido}, {nombre}".Trim(new char[] { ' ', ',' });
+                                        }
+                                        
+                                        vendedores.Add(new
+                                        {
+                                            vendedorId = reader["VendedorID"].ToString(),
+                                            descripcion = descripcion
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MATLogger.Log($"Error al obtener vendedores: {ex.Message}", 1);
+                }
+
+                return Json(new { success = true, data = vendedores }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.GetVendedores: {ex.Message}", 1);
+                return Json(new { success = false, message = "Error al obtener los vendedores." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene el detalle completo de un presupuesto
+        /// </summary>
+        [HttpPost]
+        public JsonResult GetDetalle(string presupuestoId)
+        {
+            try
+            {
+                MATLogger.Log($"PresupuestoController.GetDetalle - Solicitado ID: {presupuestoId}", 2);
+                
+                if (string.IsNullOrWhiteSpace(presupuestoId))
+                {
+                    MATLogger.Log("PresupuestoController.GetDetalle - ID vacío o nulo", 1);
+                    return Json(new { success = false, message = "El ID del presupuesto es requerido." }, JsonRequestBehavior.AllowGet);
+                }
+
+                Guid presupuestoGuid;
+                try
+                {
+                    presupuestoGuid = new Guid(presupuestoId);
+                }
+                catch (Exception ex)
+                {
+                    MATLogger.Log($"PresupuestoController.GetDetalle - Error al convertir GUID: {presupuestoId} - {ex.Message}", 1);
+                    return Json(new { success = false, message = "El ID del presupuesto no es válido." }, JsonRequestBehavior.AllowGet);
+                }
+                
+                // Buscar por ID - usar GetAll y filtrar en memoria (podría optimizarse con un método específico)
+                var presupuestos = PresupuestoMethod.GetAll(null, null, null, null, null, null);
+                MATLogger.Log($"PresupuestoController.GetDetalle - Total de presupuestos cargados: {presupuestos.Count}", 2);
+                
+                var presupuesto = presupuestos.FirstOrDefault(p => p.PresupuestoID == presupuestoGuid);
+
+                if (presupuesto == null)
+                {
+                    MATLogger.Log($"PresupuestoController.GetDetalle - Presupuesto no encontrado: {presupuestoGuid}", 1);
+                    return Json(new { success = false, message = "Presupuesto no encontrado." }, JsonRequestBehavior.AllowGet);
+                }
+
+                MATLogger.Log($"PresupuestoController.GetDetalle - Presupuesto encontrado: {presupuesto.CodigoSeguimiento}", 2);
+
+                var resultado = new
+                {
+                    presupuestoId = presupuesto.PresupuestoID.ToString(),
+                    codigoSeguimiento = presupuesto.CodigoSeguimiento,
+                    dniCliente = presupuesto.DniCliente,
+                    vendedorOrigenNombre = presupuesto.VendedorOrigenNombre ?? string.Empty,
+                    vendedorIdOrigen = presupuesto.VendedorIdOrigen.ToString(),
+                    montoPactado = presupuesto.MontoPactado,
+                    viajeId = presupuesto.ViajeId?.ToString(),
+                    viajeDescripcion = presupuesto.ViajeDescripcion ?? string.Empty,
+                    paqueteDescripcion = presupuesto.PaqueteDescripcion ?? string.Empty,
+                    estado = (int)presupuesto.Estado,
+                    estadoNombre = presupuesto.Estado.ToString(),
+                    fechaCreacion = presupuesto.FechaCreacion.ToString("dd/MM/yyyy HH:mm"),
+                    fechaExpiracion = presupuesto.FechaExpiracion.ToString("dd/MM/yyyy HH:mm"),
+                    facturaId = presupuesto.FacturaId?.ToString(),
+                    vendedorCierreNombre = presupuesto.VendedorCierreNombre ?? string.Empty,
+                    observaciones = presupuesto.Observaciones ?? string.Empty,
+                    isExpirado = presupuesto.IsExpirado,
+                    diasRestantes = presupuesto.FechaExpiracion > DateTime.Now ? (int)(presupuesto.FechaExpiracion - DateTime.Now).TotalDays : 0
+                };
+
+                return Json(new { success = true, presupuesto = resultado }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.GetDetalle: {ex.Message} - {ex.StackTrace}", 1);
+                return Json(new { success = false, message = $"Error al obtener el detalle del presupuesto: {ex.Message}" }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }
 

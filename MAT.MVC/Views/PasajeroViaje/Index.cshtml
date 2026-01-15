@@ -70,9 +70,17 @@
                             }
                         </td>
                         <td>
-                            @if (item.PasajeroFechaNacimiento.HasValue)
+                            @if (!string.IsNullOrWhiteSpace(item.PasajeroFechaNacimiento))
                             {
-                                @item.PasajeroFechaNacimiento.Value.ToString("dd/MM/yyyy")
+                                DateTime fechaNac;
+                                if (DateTime.TryParse(item.PasajeroFechaNacimiento, out fechaNac))
+                                {
+                                    @fechaNac.ToString("dd/MM/yyyy")
+                                }
+                                else
+                                {
+                                    @item.PasajeroFechaNacimiento
+                                }
                             }
                             else
                             {
