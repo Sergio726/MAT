@@ -3321,42 +3321,55 @@ div.bnn_floating-banner.hidden {
     align-items: center;
 }
 
-.btn-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
+/* Botones específicos para pre-reservas - mayor especificidad para sobrescribir modern-datatable.css */
+.modern-prereservas-actions .btn-action {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
+    width: auto !important;
+    height: auto !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
 }
 
-.btn-action i {
-    font-size: 1rem;
+.modern-prereservas-actions .btn-action i {
+    font-size: 1rem !important;
 }
 
-.btn-action-renew {
-    background: #10b981;
-    color: var(--white);
+.modern-prereservas-actions .btn-action-renew {
+    background: #10b981 !important;
+    color: #fff !important;
 }
 
-.btn-action-renew:hover {
-    background: #059669;
+.modern-prereservas-actions .btn-action-renew span,
+.modern-prereservas-actions .btn-action-renew i {
+    color: #fff !important;
+}
+
+.modern-prereservas-actions .btn-action-renew:hover {
+    background: #059669 !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-.btn-action-delete {
-    background: #ef4444;
-    color: var(--white);
+.modern-prereservas-actions .btn-action-delete {
+    background: #ef4444 !important;
+    color: #fff !important;
 }
 
-.btn-action-delete:hover {
-    background: #dc2626;
+.modern-prereservas-actions .btn-action-delete span,
+.modern-prereservas-actions .btn-action-delete i {
+    color: #fff !important;
+}
+
+.modern-prereservas-actions .btn-action-delete:hover {
+    background: #dc2626 !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
