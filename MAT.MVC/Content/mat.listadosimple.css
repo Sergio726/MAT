@@ -185,8 +185,5 @@ body {
 
 /* Override header from mat.styles.custom.css */
 #divEncabezadoViaje.headMAT {
-    background-image: url('/Images/marco_antonio_back3.png') !important;
-    background-repeat: no-repeat !important;
-    background-position: right 15px center !important;
-    background-size: auto 60px !important;
+    background-image: none !important;
 }
