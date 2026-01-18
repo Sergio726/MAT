@@ -2014,7 +2014,7 @@ div.bnn_floating-banner.hidden {
     margin: 0 !important;
     max-height: 90vh;
     max-width: 95vw;
-    z-index: 10000 !important; /* Asegurar que esté por encima de todo */
+    z-index: 10000; /* Permitir que jQuery UI administre el stack (moveToTop) */
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -3435,6 +3435,11 @@ div.bnn_floating-banner.hidden {
     pointer-events: auto !important;
     position: relative !important;
     z-index: 2 !important;
+}
+
+/* Pagos debe quedar por encima del resto de dialogs abiertos */
+.ui-dialog.mat-pagos-dialog {
+    z-index: 20050 !important;
 }
 
 /* ============================================

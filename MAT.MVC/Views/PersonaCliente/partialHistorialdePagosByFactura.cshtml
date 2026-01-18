@@ -170,11 +170,17 @@
     <div class="modern-pago-detalle">
         <div class="modern-pago-detalle-item">
             <span class="modern-pago-detalle-label">Monto Recibido:</span>
-            <span class="modern-pago-detalle-value">{{MontoRecibido}} ({{MonedaRecibida}})</span>
+            <span class="modern-pago-detalle-value">
+                {{MontoRecibido}}
+                <span class="badge pago-badge">{{MonedaRecibida}}</span>
+            </span>
         </div>
         <div class="modern-pago-detalle-item">
             <span class="modern-pago-detalle-label">Monto Equivalente:</span>
-            <span class="modern-pago-detalle-value">{{MontoEquivalente}} ({{MonedaEquivalente}})</span>
+            <span class="modern-pago-detalle-value">
+                {{MontoEquivalente}}
+                <span class="badge pago-badge">{{MonedaEquivalente}}</span>
+            </span>
         </div>
         <div class="modern-pago-detalle-item">
             <span class="modern-pago-detalle-label">Cotización:</span>
@@ -214,5 +220,18 @@
         font-weight: 500;
         font-size: 0.875rem;
         color: var(--text-primary, #1f2937);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .pago-badge {
+        background: #fff !important;
+        color: var(--text-secondary, #6b7280) !important;
+        border: 1px solid var(--border-color, #e5e7eb) !important;
+        font-weight: 700 !important;
+        font-size: 0.75rem !important;
+        padding: 0.25rem 0.5rem !important;
+        border-radius: 999px !important;
     }
 </style>

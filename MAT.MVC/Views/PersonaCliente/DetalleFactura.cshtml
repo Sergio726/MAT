@@ -729,61 +729,14 @@
         })
     }
 
-    // Función para mostrar pagos de la factura
+    // Pagos (Factura): delega a implementación global (un solo popin top-level)
     function pagosFactura(FacturaID) {
-        var divLoading = "<div class='modern-loading-container' style='padding: 2rem;'><div class='modern-loading-spinner'></div><span class='modern-loading-text'>Cargando pagos...</span></div>";
-        
-        // Crear el div del popup si no existe
-        if ($("#divPopup_DetalleFactura").length === 0) {
-            $("body").append('<div id="divPopup_DetalleFactura" title="Pagos" style="display:none;"><div id="divContentPagos_DetalleFactura"></div></div>');
+        if (typeof window.openPagosFacturaDialog === "function") {
+            window.openPagosFacturaDialog(FacturaID);
+        } else {
+            // fallback mínimo
+            var url = "/PersonaCliente/partialHistorialdePagosByFactura?FacturaID=" + encodeURIComponent(FacturaID || "");
+            ShowFormDialog(url, "PopinPagosFactura", "Pagos", "wide");
         }
-        
-        $("#divContentPagos_DetalleFactura").html(divLoading);
-
-        var $dlg = $("#divPopup_DetalleFactura");
-        var hasInstance = false;
-        try { hasInstance = !!$dlg.dialog("instance"); } catch (e) { hasInstance = !!$dlg.data("ui-dialog"); }
-
-        if (!hasInstance) {
-            $dlg.dialog({
-                autoOpen: false,
-                modal: true,
-                closeOnEscape: true,
-                resizable: false,
-                draggable: false,
-                position: { my: 'center', at: 'center', of: window },
-                width: "80%",
-                dialogClass: "mat-pagos-dialog",
-                open: function () {
-                    var $self = $(this);
-                    // asegurar que el X cierre
-                    try {
-                        var $w = $self.dialog("widget");
-                        $w.find(".ui-dialog-titlebar-close")
-                            .off("click.matPagosClose")
-                            .on("click.matPagosClose", function (e) {
-                                e.preventDefault();
-                                $self.dialog("close");
-                            });
-                    } catch (e) { }
-
-                    // Cargar los pagos
-                    $.ajax({
-                        url: "/PersonaCliente/partialHistorialdePagosByFactura",
-                        data: { FacturaID: FacturaID },
-                        dataType: "html",
-                        success: function (data) {
-                            $("#divContentPagos_DetalleFactura").html(data);
-                        },
-                        error: function (e) {
-                            $("#divContentPagos_DetalleFactura").html('<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Error al cargar los pagos</span></div>');
-                            console.log(e);
-                        }
-                    });
-                }
-            });
-        }
-
-        $dlg.dialog("open");
     }
 </script>

@@ -2,22 +2,14 @@
 
 }
 
-// Fix: algunos popins embebidos (Pagos) quedan con el botón X sin cerrar por conflictos de init/estilos.
-// Handler delegado robusto para cerrar el dialog correspondiente.
-$(document).off("click.matDialogCloseFix").on("click.matDialogCloseFix", ".ui-dialog.mat-pagos-dialog .ui-dialog-titlebar-close", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-        var $content = $(this).closest(".ui-dialog").find(".ui-dialog-content").first();
-        if ($content.length && typeof $content.dialog === "function") {
-            $content.dialog("close");
-        } else {
-            $(this).closest(".ui-dialog").hide();
-        }
-    } catch (err) {
-        // no-op
-    }
-});
+// Popin Pagos (Factura): implementación limpia usando ShowFormDialog (un solo dialog top-level).
+// Evita conflictos de IDs duplicados / dialogs embebidos, y el botón X funciona de forma nativa.
+window.openPagosFacturaDialog = function (FacturaID) {
+    var id = "PopinPagosFactura";
+    var title = "Pagos";
+    var url = "/PersonaCliente/partialHistorialdePagosByFactura?FacturaID=" + encodeURIComponent(FacturaID || "");
+    ShowFormDialog(url, id, title, "wide");
+};
 
 // Función para mostrar mensaje de éxito de manera moderna
 function ShowSuccessMessage(message, title, callback) {
