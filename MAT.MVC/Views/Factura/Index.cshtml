@@ -85,17 +85,7 @@
         </h2>
     </div>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="modern-alert-error">
-            <i class="bi bi-exclamation-circle"></i>
-            <span>Error al cargar la pagina. Por favor intente nuevamente.</span>
-        </div>
-        <script type="text/javascript">
-            console.log(@ViewBag.Error);
-        </script>
-        return;
-    }
+    @* Alertas globales: se muestran en _Alerts.cshtml (Layout). *@
 
     <!-- Formulario de Busqueda -->
     <div class="search-form-container">

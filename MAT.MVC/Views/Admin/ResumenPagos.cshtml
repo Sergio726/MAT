@@ -4,17 +4,7 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-@if (ViewBag.Error != null)
-{
-    <div class="alert-error">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <span>Error al cargar pagina.</span>
-    </div>
-    <script type="text/javascript">
-        console.log(@ViewBag.Error);
-    </script>
-    return;
-}
+@* Alertas globales: se muestran en _Alerts.cshtml (LayoutAdmin). *@
 
 <link href="~/Content/magicsearch/jquery.magicsearch.css" rel="stylesheet" />
 <link href="~/Content/magicsearch/normalize.css" rel="stylesheet" />

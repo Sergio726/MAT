@@ -14,6 +14,7 @@
         GetString(TempData["MsgError"]);
 
     var hasModelStateErrors = !ViewData.ModelState.IsValid;
+    var showModelState = hasModelStateErrors && string.IsNullOrWhiteSpace(error);
 }
 
 <div class="modern-alerts-host hidden-print">
@@ -25,11 +26,11 @@
         </div>
     }
 
-    @if (hasModelStateErrors)
+    @if (showModelState)
     {
         <div class="modern-alert modern-alert-error" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i>
-            <span>@Html.ValidationSummary(false)</span>
+            <div>@Html.ValidationSummary(false)</div>
         </div>
     }
 
