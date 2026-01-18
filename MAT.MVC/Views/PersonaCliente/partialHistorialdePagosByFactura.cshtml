@@ -106,10 +106,25 @@
             <td>@item.FechaPago.ToShortDateString() @item.FechaPago.ToShortTimeString()</td>
             <td>@item.NroRecibo</td>
             <td>@item.TransaccionID</td>
-            <td>@item.TipoPagoDescripcion</td>
+            <td>
+                @{
+                    var tipoPago = (item.TipoPagoDescripcion ?? "").Trim();
+                    var tipoPagoLower = tipoPago.ToLower();
+                    var tipoPagoClass = "text-bg-secondary";
+                    if (tipoPagoLower.Contains("contado") || tipoPagoLower.Contains("efectivo")) { tipoPagoClass = "text-bg-success"; }
+                    else if (tipoPagoLower.Contains("transfer")) { tipoPagoClass = "text-bg-info"; }
+                    else if (tipoPagoLower.Contains("tarjeta")) { tipoPagoClass = "text-bg-primary"; }
+                    else if (tipoPagoLower.Contains("mercado")) { tipoPagoClass = "text-bg-warning"; }
+                }
+                <span class="badge @tipoPagoClass">@tipoPago</span>
+            </td>
             <td>@item.Vendedor</td>
             <td>@String.Format("{0:C}", item.Monto)</td>
-            <td title="Tipo de Moneda del Paquete">(@item.MonedaPaquete.Trim())</td>
+            <td title="Tipo de Moneda del Paquete">
+                <span class="badge text-bg-light" style="border: 1px solid var(--border-color, #e5e7eb);">
+                    @item.MonedaPaquete.Trim()
+                </span>
+            </td>
             <td>
                 <a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');" id="lnkCancelarPago" class="modern-btn-icon modern-btn-icon-danger" title="Cancelar Pago">
                     <i class="bi bi-x-circle"></i>
@@ -131,7 +146,12 @@
             <th colspan="5"></th>
             @if (Model.Count() > 0)
             {
-                <th colspan="4">@String.Format("{0:C}", dSum) (@Model.First().MonedaPaquete.Trim())</th>    
+                <th colspan="4">
+                    @String.Format("{0:C}", dSum)
+                    <span class="badge text-bg-light" style="border: 1px solid var(--border-color, #e5e7eb); margin-left: .25rem;">
+                        @Model.First().MonedaPaquete.Trim()
+                    </span>
+                </th>    
             }
             else
             {

@@ -2,20 +2,52 @@
 
 }
 
+// Fix: algunos popins embebidos (Pagos) quedan con el botón X sin cerrar por conflictos de init/estilos.
+// Handler delegado robusto para cerrar el dialog correspondiente.
+$(document).off("click.matDialogCloseFix").on("click.matDialogCloseFix", ".ui-dialog.mat-pagos-dialog .ui-dialog-titlebar-close", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+        var $content = $(this).closest(".ui-dialog").find(".ui-dialog-content").first();
+        if ($content.length && typeof $content.dialog === "function") {
+            $content.dialog("close");
+        } else {
+            $(this).closest(".ui-dialog").hide();
+        }
+    } catch (err) {
+        // no-op
+    }
+});
+
 // Función para mostrar mensaje de éxito de manera moderna
 function ShowSuccessMessage(message, title, callback) {
-    title = title || 'Atención';
-    message = message || 'Operación realizada correctamente.';
+    title = title || 'Operación exitosa';
+    message = message || 'La operación se realizó correctamente.';
     
     // Remover diálogo si ya existe
     if ($("#modern-success-dialog").length > 0) {
         $("#modern-success-dialog").dialog("destroy").remove();
     }
+
+    // Normalizar mensajes comunes (mejor UX)
+    var msg = (message || "").toString();
+    // Caso típico: eliminación de pasajero en factura
+    if (/pasajero\s+eliminado/i.test(msg) && /factura/i.test(msg)) {
+        msg = "Pasajero eliminado.\nLa factura fue actualizada (butaca/habitación liberadas si correspondía).";
+    }
+    msg = msg.replace(/\r\n/g, "\n");
+    var msgHtml = msg
+        .split("\n")
+        .map(function (line) { return $("<div/>").text(line).html(); })
+        .join("<br/>");
     
     var dialogContent = '<div id="modern-success-dialog" style="display: none;">' +
         '<div style="display: flex; align-items: flex-start; gap: 1.25rem;">' +
         '<i class="bi bi-check-circle-fill" style="font-size: 2.5rem; color: #10b981; flex-shrink: 0; margin-top: 0.125rem;"></i>' +
-        '<span style="flex: 1; line-height: 1.6; font-size: 1rem; color: #1f2937;">' + message + '</span>' +
+        '<div style="flex: 1;">' +
+        '<div style="font-weight: 700; font-size: 1.05rem; color: #0f172a; margin-bottom: 0.25rem;">Listo</div>' +
+        '<div style="line-height: 1.55; font-size: 0.95rem; color: #1f2937;">' + msgHtml + '</div>' +
+        '</div>' +
         '</div>' +
         '</div>';
     
@@ -27,7 +59,8 @@ function ShowSuccessMessage(message, title, callback) {
         width: 500,
         minWidth: 400,
         maxWidth: 600,
-        title: '<i class="bi bi-check-circle"></i> ' + title,
+        // jQuery UI Dialog no soporta HTML en title: dejar texto plano para evitar que se vea "<i ...>"
+        title: title,
         resizable: false,
         draggable: false,
         dialogClass: 'modern-success-dialog',

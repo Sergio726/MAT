@@ -602,68 +602,73 @@
             var pasajeID = $(this).data("pasaje");
             var facturaID = $(this).data("factura");
             var pasajeroNombre = $(this).data("pasajero");
-            
-            if (!confirm("¿Está seguro que desea eliminar al pasajero " + pasajeroNombre + " de esta factura?\n\nEsta acción:\n- Eliminará el pasajero de la factura\n- Liberará la butaca asignada\n- Liberará la habitación si tiene una asignada\n- Actualizará el monto total de la factura\n\nEsta acción no se puede deshacer.")) {
-                return false;
-            }
-            
-            // Mostrar loading
+
             var $btn = $(this);
             var originalHtml = $btn.html();
-            $btn.html('<i class="bi bi-hourglass-split"></i>').prop('disabled', true);
-            
-            $.ajax({
-                url: "/PersonaCliente/EliminarPasajeroDeFactura",
-                type: "POST",
-                data: {
-                    pasajeID: pasajeID,
-                    facturaID: facturaID
-                },
-                success: function (data) {
-                    if (data[0] == "Done.") {
-                        // Mostrar mensaje de éxito de manera moderna
-                        if (typeof ShowSuccessMessage === 'function') {
-                            ShowSuccessMessage(data[1], 'Operación Exitosa', function() {
-                                // Recargar el detalle de la factura después de cerrar el mensaje
-                                if (typeof window.PopupDetalleFactura_Load === 'function') {
-                                    window.PopupDetalleFactura_Load();
-                                } else if (typeof PopupDetalleFactura_Load === 'function') {
-                                    PopupDetalleFactura_Load();
+
+            confirm(
+                "¿Está seguro que desea eliminar al pasajero " + pasajeroNombre + " de esta factura?\n\nEsta acción:\n- Eliminará el pasajero de la factura\n- Liberará la butaca asignada\n- Liberará la habitación si tiene una asignada\n- Actualizará el monto total de la factura\n\nEsta acción no se puede deshacer.",
+                "Atención",
+                function () {
+                    // OK
+                    var $dlg = $(this);
+                    $dlg.dialog("close");
+                    $dlg.remove();
+
+                    // Mostrar loading
+                    $btn.html('<i class="bi bi-hourglass-split"></i>').prop('disabled', true);
+
+                    $.ajax({
+                        url: "/PersonaCliente/EliminarPasajeroDeFactura",
+                        type: "POST",
+                        data: {
+                            pasajeID: pasajeID,
+                            facturaID: facturaID
+                        },
+                        success: function (data) {
+                            if (data[0] == "Done.") {
+                                // Mostrar mensaje de éxito de manera moderna
+                                if (typeof ShowSuccessMessage === 'function') {
+                                    ShowSuccessMessage(data[1], 'Operación Exitosa', function () {
+                                        if (typeof window.PopupDetalleFactura_Load === 'function') {
+                                            window.PopupDetalleFactura_Load();
+                                        } else if (typeof PopupDetalleFactura_Load === 'function') {
+                                            PopupDetalleFactura_Load();
+                                        } else {
+                                            location.reload();
+                                        }
+                                    });
                                 } else {
-                                    // Si estamos en un popup/dialog, cerrarlo y recargar
-                                    var $dialog = $('.ui-dialog:visible');
-                                    if ($dialog.length > 0 && $dialog.find('#Detalles').length > 0) {
-                                        // Estamos en el modal de detalle de factura
-                                        setTimeout(function() {
-                                            window.location.reload();
-                                        }, 300);
+                                    (window.alertSuccess || window.alert)(data[1], "Éxito");
+                                    if (typeof window.PopupDetalleFactura_Load === 'function') {
+                                        window.PopupDetalleFactura_Load();
+                                    } else if (typeof PopupDetalleFactura_Load === 'function') {
+                                        PopupDetalleFactura_Load();
                                     } else {
                                         location.reload();
                                     }
                                 }
-                            });
-                        } else {
-                            // Fallback a alert si la función no existe
-                            (window.alertSuccess || window.alert)(data[1], "Éxito");
-                            if (typeof window.PopupDetalleFactura_Load === 'function') {
-                                window.PopupDetalleFactura_Load();
-                            } else if (typeof PopupDetalleFactura_Load === 'function') {
-                                PopupDetalleFactura_Load();
                             } else {
-                                location.reload();
+                                (window.alertError || window.alert)("Error: " + data[1], "Error");
+                                $btn.html(originalHtml).prop('disabled', false);
                             }
+                        },
+                        error: function (xhr, status, error) {
+                            (window.alertError || window.alert)("Error al eliminar el pasajero. Por favor, intente nuevamente.", "Error");
+                            console.error("Error:", error);
+                            $btn.html(originalHtml).prop('disabled', false);
                         }
-                    } else {
-                        (window.alertError || window.alert)("Error: " + data[1], "Error");
-                        $btn.html(originalHtml).prop('disabled', false);
-                    }
+                    });
                 },
-                error: function (xhr, status, error) {
-                    (window.alertError || window.alert)("Error al eliminar el pasajero. Por favor, intente nuevamente.", "Error");
-                    console.error("Error:", error);
-                    $btn.html(originalHtml).prop('disabled', false);
+                function () {
+                    // Cancel
+                    var $dlg = $(this);
+                    $dlg.dialog("close");
+                    $dlg.remove();
                 }
-            });
+            );
+
+            return false;
         });
     });
 
@@ -734,26 +739,51 @@
         }
         
         $("#divContentPagos_DetalleFactura").html(divLoading);
-        $("#divPopup_DetalleFactura").dialog({
-            modal: true,
-            position: { my: 'center', at: 'center', of: window },
-            width: "80%",
-            open: function() {
-                // Cargar los pagos
-                $.ajax({
-                    url: "/PersonaCliente/partialHistorialdePagosByFactura",
-                    data: { FacturaID: FacturaID },
-                    dataType: "html",
-                    success: function (data) {
-                        $("#divContentPagos_DetalleFactura").html(data);
-                    },
-                    error: function (e) {
-                        $("#divContentPagos_DetalleFactura").html('<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Error al cargar los pagos</span></div>');
-                        console.log(e);
-                    }
-                });
-            }
-        });
-        $("#divPopup_DetalleFactura").dialog("open");
+
+        var $dlg = $("#divPopup_DetalleFactura");
+        var hasInstance = false;
+        try { hasInstance = !!$dlg.dialog("instance"); } catch (e) { hasInstance = !!$dlg.data("ui-dialog"); }
+
+        if (!hasInstance) {
+            $dlg.dialog({
+                autoOpen: false,
+                modal: true,
+                closeOnEscape: true,
+                resizable: false,
+                draggable: false,
+                position: { my: 'center', at: 'center', of: window },
+                width: "80%",
+                dialogClass: "mat-pagos-dialog",
+                open: function () {
+                    var $self = $(this);
+                    // asegurar que el X cierre
+                    try {
+                        var $w = $self.dialog("widget");
+                        $w.find(".ui-dialog-titlebar-close")
+                            .off("click.matPagosClose")
+                            .on("click.matPagosClose", function (e) {
+                                e.preventDefault();
+                                $self.dialog("close");
+                            });
+                    } catch (e) { }
+
+                    // Cargar los pagos
+                    $.ajax({
+                        url: "/PersonaCliente/partialHistorialdePagosByFactura",
+                        data: { FacturaID: FacturaID },
+                        dataType: "html",
+                        success: function (data) {
+                            $("#divContentPagos_DetalleFactura").html(data);
+                        },
+                        error: function (e) {
+                            $("#divContentPagos_DetalleFactura").html('<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Error al cargar los pagos</span></div>');
+                            console.log(e);
+                        }
+                    });
+                }
+            });
+        }
+
+        $dlg.dialog("open");
     }
 </script>

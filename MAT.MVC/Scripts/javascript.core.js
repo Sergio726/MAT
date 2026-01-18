@@ -1,5 +1,14 @@
-﻿this.confirm = function (message, title, ok_function, cancel_function) {
+﻿// Guardar confirm nativo (para fallback y compatibilidad)
+this._nativeConfirm = this._nativeConfirm || this.confirm;
+
+this.confirm = function (message, title, ok_function, cancel_function) {
     /// <summary>Redefine la ventana modal de alerta</summary>
+    // Si se usa como confirm síncrono (sin callbacks), fallback al confirm nativo.
+    // Esto evita perder el botón de aceptación y mantiene compatibilidad con "if (!confirm(...))".
+    if (typeof ok_function !== "function" && typeof cancel_function !== "function") {
+        return this._nativeConfirm ? this._nativeConfirm(message) : window.confirm(message);
+    }
+
     var $div = $("<div />");
     $div.attr("title", typeof title !== "string" ? "Atención" : title);
     //-
@@ -14,10 +23,57 @@
     $(document.body).append($div);
     $div.dialog({
         modal: true,
-        buttons: {
-            Ok: ok_function,
-            Cancel: cancel_function
-        }
+        closeOnEscape: true,
+        resizable: false,
+        draggable: false,
+        dialogClass: "modern-confirm-dialog",
+        open: function () {
+            // Asegurar que el botón X cierre (algunas combinaciones de jQuery UI + estilos pueden interferir)
+            var $dlg = $(this);
+            try {
+                var $w = $dlg.dialog("widget");
+                $w.find(".ui-dialog-titlebar-close")
+                    .off("click.matConfirmClose")
+                    .on("click.matConfirmClose", function (e) {
+                        e.preventDefault();
+                        $dlg.dialog("close");
+                    });
+
+                // Dar estilo bootstrap al botón Aceptar (jQuery UI puede ignorar "class" en versiones legacy)
+                var $btns = $w.find(".ui-dialog-buttonpane button");
+                $btns.each(function () {
+                    var $b = $(this);
+                    var txt = ($b.text() || "").trim().toLowerCase();
+                    if (txt === "aceptar") $b.addClass("btn btn-primary");
+                    if (txt === "cancelar") $b.addClass("btn btn-outline-secondary");
+                });
+            } catch (e) { }
+        },
+        close: function () {
+            // Limpieza segura (incluye cierre por X)
+            var $dlg = $(this);
+            try { $dlg.dialog("destroy"); } catch (e) { }
+            try { $dlg.remove(); } catch (e) { }
+        },
+        buttons: [
+            {
+                text: "Cancelar",
+                click: (typeof cancel_function === "function") ? cancel_function : function () {
+                    var $dlg = $(this);
+                    $dlg.dialog("close");
+                    $dlg.remove();
+                }
+            },
+            {
+                text: "Aceptar",
+                "class": "btn btn-primary",
+                click: (typeof ok_function === "function") ? ok_function : function () {
+                    var $dlg = $(this);
+                    $dlg.dialog("close");
+                    $dlg.remove();
+                }
+            }
+        ]
     });
 }
 

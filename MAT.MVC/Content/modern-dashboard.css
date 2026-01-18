@@ -3402,10 +3402,39 @@ div.bnn_floating-banner.hidden {
     transform: translateY(0) !important;
 }
 
+/* Confirm dialog (Eliminar pasajero / confirmaciones) */
+.ui-dialog.modern-confirm-dialog .ui-dialog-content {
+    font-size: 0.9rem !important;
+    line-height: 1.45 !important;
+}
+
+.ui-dialog.modern-confirm-dialog .ui-dialog-content p {
+    font-size: inherit !important;
+    line-height: inherit !important;
+    margin: 0 !important;
+}
+
 /* Asegurar que el overlay sea visible */
 .ui-widget-overlay {
     background: rgba(0, 0, 0, 0.5) !important;
     opacity: 1 !important;
+}
+
+/* Dialog Pagos: tipografía más compacta + asegurar X clickeable */
+.ui-dialog.mat-pagos-dialog .ui-dialog-content {
+    font-size: 0.9rem !important;
+}
+
+.ui-dialog.mat-pagos-dialog .modern-table-container,
+.ui-dialog.mat-pagos-dialog table,
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper {
+    font-size: 0.875rem !important;
+}
+
+.ui-dialog.mat-pagos-dialog .ui-dialog-titlebar-close {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 2 !important;
 }
 
 /* ============================================
