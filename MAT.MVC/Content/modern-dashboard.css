@@ -3422,13 +3422,14 @@ div.bnn_floating-banner.hidden {
 
 /* Dialog Pagos: tipografía más compacta + asegurar X clickeable */
 .ui-dialog.mat-pagos-dialog .ui-dialog-content {
-    font-size: 0.9rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.32 !important;
 }
 
 .ui-dialog.mat-pagos-dialog .modern-table-container,
 .ui-dialog.mat-pagos-dialog table,
 .ui-dialog.mat-pagos-dialog .dataTables_wrapper {
-    font-size: 0.875rem !important;
+    font-size: 0.82rem !important;
 }
 
 .ui-dialog.mat-pagos-dialog .ui-dialog-titlebar-close {
@@ -3440,6 +3441,402 @@ div.bnn_floating-banner.hidden {
 /* Pagos debe quedar por encima del resto de dialogs abiertos */
 .ui-dialog.mat-pagos-dialog {
     z-index: 20050 !important;
+}
+
+/* Pagos: header + badges pastel + detalles */
+.ui-dialog.mat-pagos-dialog .mat-pagos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-title > i {
+    font-size: 1.1rem;
+    color: var(--primary-color, #e91e63);
+    margin-top: 0.1rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-title-text {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text-primary, #0f172a);
+    line-height: 1.2;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #64748b);
+    margin-top: 0.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 520px;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-secondary, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.15rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary-value > i {
+    color: #0ea5e9;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary-amount {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--text-primary, #0f172a);
+}
+
+.ui-dialog.mat-pagos-dialog .mat-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-ellipsis {
+    display: inline-block;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-empty {
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-medio {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.18rem 0.55rem;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 0.78rem;
+    line-height: 1.1;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-fecha {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    white-space: nowrap;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-date {
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-fecha-time {
+    color: var(--text-secondary, #64748b);
+    font-size: 0.78rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-vendedor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-vendedor i {
+    color: #64748b;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-monto {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+}
+
+.ui-dialog.mat-pagos-dialog td.details-control {
+    cursor: pointer;
+}
+
+/* Tabla Pagos: mismo look que listado de facturas */
+.ui-dialog.mat-pagos-dialog #tblPagos.dataTable,
+.ui-dialog.mat-pagos-dialog #tblPagos {
+    width: 100% !important;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos thead th {
+    background: #f8f9fa !important;
+    padding: 0.6rem 0.75rem !important;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #e5e7eb !important;
+    border-top: none !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody td {
+    padding: 0.7rem 0.75rem !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    color: #1f2937;
+    background: white !important;
+    vertical-align: middle;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr:hover td {
+    background: #f9fafb !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.odd td {
+    background: #fafafa !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.odd:hover td {
+    background: #f3f4f6 !important;
+}
+
+/* Expanded row styling */
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.shown td {
+    background: #fef2f2 !important;
+    border-bottom-color: #fecaca !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.shown + tr td {
+    background: #fff5f5 !important;
+    padding: 1rem 1.5rem !important;
+}
+
+/* Details control: icon por CSS (como Facturas) */
+.ui-dialog.mat-pagos-dialog #tblPagos td.details-control {
+    cursor: pointer;
+    text-align: center;
+    width: 40px !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos td.details-control::before {
+    content: '';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: #dcfce7;
+    color: #15803d;
+    border-radius: 50%;
+    font-family: 'bootstrap-icons';
+    font-size: 0.75rem;
+    content: '\F64D';
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tr.shown td.details-control::before {
+    content: '\F2EA';
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Badges pastel */
+.ui-dialog.mat-pagos-dialog .mat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+/* Botón cancelar pago: más chico y pastel (similar a acciones de facturas) */
+.ui-dialog.mat-pagos-dialog a.mat-pago-cancel {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    padding: 0 !important;
+    border-radius: 0.45rem !important;
+    background: #fff1f2 !important;
+    border: 1px solid #fecdd3 !important;
+    color: #e11d48 !important;
+    box-shadow: none !important;
+}
+
+.ui-dialog.mat-pagos-dialog a.mat-pago-cancel:hover {
+    background: #ffe4e6 !important;
+    border-color: #fda4af !important;
+    transform: translateY(-1px);
+}
+
+.ui-dialog.mat-pagos-dialog a.mat-pago-cancel i {
+    font-size: 0.9rem !important;
+}
+
+/* DataTables controls en Pagos: más compactos */
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_length,
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_filter,
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_info {
+    font-size: 0.82rem;
+}
+
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_length select,
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_filter input {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.82rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-green {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-blue {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-purple {
+    background: #f5f3ff;
+    border-color: #ddd6fe;
+    color: #5b21b6;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-amber {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-slate {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #334155;
+}
+
+/* Detalle expandido */
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle {
+    padding: 0.85rem;
+    background: var(--bg-secondary, #f9fafb);
+    border-radius: 0.65rem;
+    margin: 0.5rem 0;
+    border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0;
+    border-bottom: 1px dashed var(--border-color, #e5e7eb);
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-item:last-child {
+    border-bottom: none;
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-label {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--text-secondary, #64748b);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-label i {
+    color: #0ea5e9;
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-value {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--text-primary, #0f172a);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+/* Responsive (mobile): ocultar columnas menos críticas para que la tabla no se ensanche */
+@media (max-width: 768px) {
+    /* # */
+    .ui-dialog.mat-pagos-dialog #tblPagos th:nth-child(1),
+    .ui-dialog.mat-pagos-dialog #tblPagos td:nth-child(1) {
+        display: none;
+    }
+
+    /* Transacción */
+    .ui-dialog.mat-pagos-dialog #tblPagos th:nth-child(4),
+    .ui-dialog.mat-pagos-dialog #tblPagos td:nth-child(4) {
+        display: none;
+    }
+
+    /* Vendedor */
+    .ui-dialog.mat-pagos-dialog #tblPagos th:nth-child(6),
+    .ui-dialog.mat-pagos-dialog #tblPagos td:nth-child(6) {
+        display: none;
+    }
+
+    /* El total ya está en la cabecera: ocultar tfoot para evitar desalineaciones */
+    .ui-dialog.mat-pagos-dialog #tblPagos tfoot {
+        display: none;
+    }
+
+    .ui-dialog.mat-pagos-dialog .mat-pagos-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ui-dialog.mat-pagos-dialog .mat-pagos-summary {
+        text-align: left;
+    }
+
+    .ui-dialog.mat-pagos-dialog .mat-ellipsis {
+        max-width: 140px;
+    }
+
+    .ui-dialog.mat-pagos-dialog .mat-pago-medio {
+        max-width: 140px;
+    }
 }
 
 /* ============================================
