@@ -323,8 +323,15 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
     });
     $("#" + dialogid).dialog("open");
 }
-function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize) {
+// ShowFormDialogCloseRefresh:
+// Históricamente recargaba toda la página al cerrar, para “refrescar” datos.
+// Ahora soporta refresh selectivo vía options:
+// - reloadOnClose (default: true) mantiene compatibilidad
+// - onClose: callback para refrescar un panel/tabla sin reload completo
+function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize, options) {
     var width = ModalConfig.getWidth(widthsize);
+    var opts = options || {};
+    var reloadOnClose = (opts.reloadOnClose !== false); // default true (compat)
 
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
@@ -348,7 +355,18 @@ function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize) {
         close: function () {
             $(document).off('click.modalOverlay');
             $("#" + dialogid).remove();
-            window.location.reload(true);
+
+            // Permitir refresh selectivo / hooks por pantalla
+            try {
+                if (typeof opts.onClose === "function") opts.onClose();
+                $(document).trigger("mat:dialogCloseRefresh", { dialogid: dialogid, url: url });
+            } catch (e) {
+                console.warn("ShowFormDialogCloseRefresh onClose error:", e);
+            }
+
+            if (reloadOnClose) {
+                window.location.reload(true);
+            }
         }
     });
     $("#" + dialogid).dialog("open");

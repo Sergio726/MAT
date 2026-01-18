@@ -1388,9 +1388,10 @@ $(document).on("click", "#btn-eliminar-viaje", function () {
 
 
 
-$(document).on("click", ".ui-dialog-titlebar-close", function () {
-    window.location.reload();
-});
+// IMPORTANT:
+// No recargar la página al cerrar cualquier popin.
+// La mayoría de los flujos (Reserva/Index) actualizan el DOM por JS/AJAX (butacas/estados),
+// y un reload global rompe UX (pierde selección/scroll) y empeora performance.
 
 $(document).on("click", "#btn-cancelar-seleccion", function () {
     $("#panel-bus a.selected").removeClass("selected");
@@ -1403,35 +1404,70 @@ $(document).on("click", "#btn-agregar-servicio", function () {
     var title = "Lista de Servicios";
     var id = "Servicios";
     var url = "/Paquete/Servicios?id=" + paqueteid;
-    ShowFormDialogCloseRefresh(url, id, title, "medium");
+    ShowFormDialogCloseRefresh(url, id, title, "medium", {
+        reloadOnClose: false,
+        onClose: function () {
+            if (typeof window.refreshPaqueteVinculos === "function") {
+                window.refreshPaqueteVinculos();
+            }
+        }
+    });
 });
 $(document).on("click", "#btn-agregar-excursion", function () {
     var paqueteid = $(this).data("paquete");
     var title = "Lista de Excursiones";
     var id = "Excursiones";
     var url = "/Paquete/Excursiones?id=" + paqueteid;
-    ShowFormDialogCloseRefresh(url, id, title, "medium");
+    ShowFormDialogCloseRefresh(url, id, title, "medium", {
+        reloadOnClose: false,
+        onClose: function () {
+            if (typeof window.refreshPaqueteVinculos === "function") {
+                window.refreshPaqueteVinculos();
+            }
+        }
+    });
 });
 $(document).on("click", "#btn-agregar-precio", function () {
     var paqueteid = $(this).data("paquete");
     var title = "Lista de Precios";
     var id = "Precios";
     var url = "/Paquete/Precios?id=" + paqueteid;
-    ShowFormDialogCloseRefresh(url, id, title, "medium");
+    ShowFormDialogCloseRefresh(url, id, title, "medium", {
+        reloadOnClose: false,
+        onClose: function () {
+            if (typeof window.refreshPaqueteVinculos === "function") {
+                window.refreshPaqueteVinculos();
+            }
+        }
+    });
 });
 $(document).on("click", "#btn-agregar-adicional", function () {
     var paqueteid = $(this).data("paquete");
     var title = "Lista de Adicionales";
     var id = "Adicionales";
     var url = "/Paquete/Adicionales?id=" + paqueteid;
-    ShowFormDialogCloseRefresh(url, id, title, "medium");
+    ShowFormDialogCloseRefresh(url, id, title, "medium", {
+        reloadOnClose: false,
+        onClose: function () {
+            if (typeof window.refreshPaqueteVinculos === "function") {
+                window.refreshPaqueteVinculos();
+            }
+        }
+    });
 });
 $(document).on("click", "#btn-agregar-hotel", function () {
     var viajeid = $(this).data("viaje");
     var title = "Lista de Hoteles";
     var id = "Hoteles";
     var url = "/Viaje/HotelesDisponibles?id=" + viajeid;
-    ShowFormDialogCloseRefresh(url, id, title, "medium");
+    ShowFormDialogCloseRefresh(url, id, title, "medium", {
+        reloadOnClose: false,
+        onClose: function () {
+            if (typeof window.refreshViajeHoteles === "function") {
+                window.refreshViajeHoteles();
+            }
+        }
+    });
 });
 
 //- VINCULAR SERVICIOS

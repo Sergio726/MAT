@@ -149,7 +149,7 @@
     }
 </style>
 
-<div class="vinculos-container">
+<div id="vinculos-root" class="vinculos-container">
     <div class="vinculos-header">
         <h1 class="vinculos-title">
             <i class="bi bi-link-45deg"></i>
@@ -362,3 +362,17 @@
         }
     </div>
 </div>
+
+<script type="text/javascript">
+    // Refresh selectivo: recarga esta vista sin refrescar toda la página (mantiene UX y estado)
+    window.refreshPaqueteVinculos = function () {
+        try {
+            var id = "@ViewBag.PaqueteID";
+            var url = "/Paquete/Vinculos?id=" + encodeURIComponent(id);
+            $("#vinculos-root").load(url + " #vinculos-root>*");
+        } catch (e) {
+            // fallback
+            window.location.reload(true);
+        }
+    };
+</script>

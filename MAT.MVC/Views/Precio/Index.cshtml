@@ -111,7 +111,18 @@
         var title = "Precios"; //Titulo Modificado por petición del cliente. Detalle de Factura -> Nota de Crédito
         var id = "popupPrecios";
         
-        ShowFormDialogCloseRefresh(url, id, title,"medium");
+        // Evitar reload completo: refrescar DataTable local si existe
+        ShowFormDialogCloseRefresh(url, id, title, "medium", {
+            reloadOnClose: false,
+            onClose: function () {
+                try {
+                    var t = $("#tblPrecios").DataTable();
+                    if (t) t.draw(false);
+                } catch (e) {
+                    // fallback suave
+                }
+            }
+        });
     }
 
     function deletePrecio(PrecioID) {
