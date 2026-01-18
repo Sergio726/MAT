@@ -6,35 +6,28 @@
 }
 
 <div class="modern-reserva-habitacion-container">
-    <div class="modern-reserva-habitacion-header">
-        <h3 class="modern-reserva-habitacion-title">
-            <i class="bi bi-building"></i>
-            <span>Seleccionar Hotel</span>
-        </h3>
-    </div>
-
     <div class="modern-reserva-habitacion-form">
-        @using (Html.BeginForm())
-        {
-            <div class="modern-form-group-inline">
-                <label class="modern-form-label-inline">
-                    <i class="bi bi-building"></i>
-                    <span>Hotel</span>
-                </label>
-                <select id="ddHotel" class="modern-form-select">
-                    @foreach (MAT.MVC.Models.HotelDropDown item in ViewBag.ListaHoteles)
-                    {
-                        <option value="@item.HotelID" fecha="@item.Fecha.ToString("dd/MM/yyyy")">
-                            @item.Nombre - @item.Fecha.ToString("dd/MM/yyyy")
-                        </option>
-                    }
-                </select>
-                <button id="btnFiltrarHabitacion" type="button" class="btn-modern btn-modern-primary" title="Filtrar por hotel">
-                    <i class="bi bi-funnel"></i>
-                    <span>Filtrar</span>
-                </button>
-            </div>
-        }
+        <div class="modern-form-group-inline" style="align-items: center;">
+            <label class="modern-form-label-inline" style="min-width: 0;">
+                <i class="bi bi-building"></i>
+                <span>Hotel</span>
+            </label>
+            <select id="ddHotel" class="modern-form-select" style="flex: 1; min-width: 0;">
+                @foreach (MAT.MVC.Models.HotelDropDown item in ViewBag.ListaHoteles)
+                {
+                    <option value="@item.HotelID" fecha="@item.Fecha.ToString("dd/MM/yyyy")">
+                        @item.Nombre - @item.Fecha.ToString("dd/MM/yyyy")
+                    </option>
+                }
+            </select>
+            <button id="btnFiltrarHabitacion" type="button" class="btn-modern btn-modern-primary" title="Actualizar habitaciones">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>Actualizar</span>
+            </button>
+        </div>
+        <div class="text-muted" style="margin-top: .5rem; font-size: .85rem;">
+            Seleccioná el hotel y elegí una habitación disponible para reservar.
+        </div>
     </div>
 
     <div id="gridHabitacion" class="modern-reserva-habitacion-grid">
@@ -57,15 +50,45 @@
     <input type="hidden" id="hdnPasajeID" value="@ViewBag.PasajeID" />
 </div>
 
-<script type="text/javascript">
+    <script type="text/javascript">
     function finalizarReserva() {
         var viajeID = $("#viaje-id").val();
         window.location.href = "/Reserva/Index?viajeid=" + viajeID;
     }
 
+    function loadHabitaciones() {
+        var hotelID = $("#ddHotel").val();
+        var fecha = $("#ddHotel option:selected").attr("fecha");
+        var viajeId = $("#viaje-id").val();
+        var pasajeroId = "@ViewBag.PasajeroID";
+
+        var url = "/ReservaHabitacion/GridHotelHabitacion"
+            + "?HotelID=" + encodeURIComponent(hotelID || "")
+            + "&viajeid=" + encodeURIComponent(viajeId || "")
+            + "&PasajeroID=" + encodeURIComponent(pasajeroId || "")
+            + "&Fecha=" + encodeURIComponent(fecha || "");
+
+        var t0 = (window.performance && performance.now) ? performance.now() : null;
+        $("#gridHabitacion").load(url, function () {
+            var perf = $("#gridHabitacion").find(".rh-perf").first();
+            if (perf && perf.length) {
+                var total = perf.data("totalMs");
+                var db = perf.data("dbMs");
+                var rsv = perf.data("reservaMs");
+                var cnt = perf.data("count");
+                if (window.console && console.info) {
+                    console.info("[ReservaHabitacion] habitaciones=" + cnt + " | db=" + db + "ms | reserva=" + rsv + "ms | total=" + total + "ms");
+                }
+            }
+            if (t0 != null && window.console && console.debug) {
+                console.debug("[ReservaHabitacion] load() client=" + Math.round(performance.now() - t0) + "ms");
+            }
+        });
+    }
+
     $(function () {
-        var HotelID = $('#ddHotel').val();
-        var Fecha = $('#ddHotel option:selected').attr("fecha");
-        $('#gridHabitacion').load('/ReservaHabitacion/GridHotelHabitacion?HotelID=' + HotelID + "&viajeid=" + $("#viaje-id").val() + "&PasajeroID=" + "@ViewBag.PasajeroID" + "&Fecha=" + Fecha);
+        $("#btnFiltrarHabitacion").on("click", function () { loadHabitaciones(); });
+        $("#ddHotel").on("change", function () { loadHabitaciones(); });
+        loadHabitaciones();
     });
 </script>

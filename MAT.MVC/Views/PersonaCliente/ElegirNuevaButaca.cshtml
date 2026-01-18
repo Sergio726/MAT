@@ -34,7 +34,7 @@
                     <div id="tabs-1">
                         <ul class="piso_superior_edicion">
                             
-                            <li class="tv1 bus-marker" aria-label="TV">
+                            <li class="tv1 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
                                 <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
                             </li>
                          
@@ -74,22 +74,22 @@
                 </ul>
                 <div id="tabs-1">
                     <ul class="piso_superior_edicion">
-                        <li class="escalera bus-marker" aria-label="Escalera">
+                        <li class="escalera bus-marker" aria-label="Escalera" title="Escalera" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-ladder"></i><span class="visually-hidden">Escalera</span>
                         </li>
-                        <li class="bar bus-marker" aria-label="Bar">
+                        <li class="bar bus-marker" aria-label="Bar" title="Bar" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-cup-straw"></i><span class="visually-hidden">Bar</span>
                         </li>
-                        <li class="tv1 bus-marker" aria-label="TV">
+                        <li class="tv1 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
                         </li>
-                        <li class="tv2 bus-marker" aria-label="TV">
+                        <li class="tv2 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
                         </li>
-                        <li class="tv3 bus-marker" aria-label="TV">
+                        <li class="tv3 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
                         </li>
-                        <li class="tv4 bus-marker" aria-label="TV">
+                        <li class="tv4 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
                         </li>
                         @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
@@ -109,16 +109,16 @@
                 <div id="tabs-2">
                     <!--<ul class="piso_inferior_edicion">-->
                      <ul class="piso_inferior_edicion">
-                        <li class="escalera bus-marker" aria-label="Escalera">
+                        <li class="escalera bus-marker" aria-label="Escalera" title="Escalera" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-ladder"></i><span class="visually-hidden">Escalera</span>
                         </li>
-                        <li class="bar bus-marker" aria-label="Bar">
+                        <li class="bar bus-marker" aria-label="Bar" title="Bar" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-cup-straw"></i><span class="visually-hidden">Bar</span>
                         </li>
-                        <li class="banio bus-marker" aria-label="Baño">
+                        <li class="banio bus-marker" aria-label="Baño" title="Baño" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-door-closed"></i><span class="visually-hidden">Baño</span>
                         </li>
-                        <li class="tv1 bus-marker" aria-label="TV">
+                        <li class="tv1 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
                         </li>
                         @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 2))
