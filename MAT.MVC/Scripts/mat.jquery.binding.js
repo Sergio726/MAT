@@ -535,7 +535,40 @@ $(document).on("click", "#btn-distribucion-habitaciones", function () {
 
 $(document).on("click", "#btn-imprimirvouchers", function () {
     var facturaId = $(this).data("facturaid");
-    $("#divSelectTipoVoucher").dialog();
+
+    // Importante: este popup se abre desde dentro de otro dialog modal (DetalleFactura).
+    // Si lo abrimos como no-modal, el overlay del modal padre puede quedar por encima y el botón X no recibe clicks.
+    // Por eso lo abrimos como modal y con z-index consistente.
+    try {
+        if ($("#divSelectTipoVoucher").hasClass("ui-dialog-content")) {
+            $("#divSelectTipoVoucher").dialog("destroy");
+        }
+    } catch (e) { }
+
+    $("#divSelectTipoVoucher").dialog({
+        modal: true,
+        width: 420,
+        resizable: false,
+        draggable: false,
+        closeOnEscape: true,
+        dialogClass: "mat-dialog mat-dialog--brandtitle",
+        open: function () {
+            var $dlg = $(this);
+            try {
+                var $w = $dlg.dialog("widget");
+                // Asegurar que el botón X cierre (defensivo contra overlays / estilos)
+                $w.find(".ui-dialog-titlebar-close")
+                    .off("click.matForceClose")
+                    .on("click.matForceClose", function (e) {
+                        e.preventDefault();
+                        $dlg.dialog("close");
+                    });
+
+                // Mantenerlo arriba del stack (nested dialogs)
+                $dlg.dialog("moveToTop");
+            } catch (e2) { }
+        }
+    });
     //preguntar por grupal o individual
 
     //$.ajax({
@@ -589,12 +622,13 @@ function imprimirVoucher(facturaId, TipoVoucher) {
                         modal: true,
                         buttons: {
                             Ok: function () {
-                                $("#divSelectTipoVoucher").dialog("destroy").remove();
+                                // No remover el nodo del DOM: se reutiliza si el usuario vuelve a imprimir.
+                                try { $("#divSelectTipoVoucher").dialog("close"); } catch (e) { }
                                 $(this).dialog("close");
                                 showVoucher(facturaId, TipoVoucher, bInfoAdicional);
                             },
                             Cancel: function () {
-                                $("#divSelectTipoVoucher").dialog("destroy").remove();
+                                try { $("#divSelectTipoVoucher").dialog("close"); } catch (e) { }
                                 $(this).dialog("close");
                             }
                         }
@@ -647,23 +681,101 @@ $(document).on("click", "#btn-notacredito", function () {
 });
 
 $(document).on("click", "#btn-retencion", function () {
-    if ($("#NroNota").val().trim() == "") {
-        return (window.alertInfo || window.alert)("El nro de nota es obligatorio.", "Validación");
-    }
-    var fmontoRetencion = parseFloat($("#MontoRetencion").val().replace(".", "").replace(",", "."));
-    var fmontohdnTotalPagos = parseFloat($("#hdnTotalPagos").val().replace(".", "").replace(",", "."));
-    var fmontohdnMontoNota = parseFloat($("#MontoNota").val().replace(".", "").replace(",", "."));
-    if (fmontoRetencion > fmontohdnTotalPagos) {
-        return (window.alertInfo || window.alert)("El monto a retener no debe ser mayor al total de pagos.", "Validación");
-    }
-    if (fmontohdnMontoNota > fmontohdnTotalPagos) {
-        return (window.alertInfo || window.alert)("El monto de la Nota de Crédito no debe ser mayor al total de pagos.", "Validación");
-    }
-    if ($("#DetalleNotaCredito").val().trim() == "") {
-        return (window.alertInfo || window.alert)("Debe ingresar un detalle de Nota de Crédito.", "Validación");
+    var $dlg = $("#NotaCredito");
+    if (!$dlg.length) return;
+
+    var $btn = $("#btn-retencion");
+    var $btnCancel = $("#btn-retencion-cancelar");
+
+    function parseMoney(val) {
+        var s = (val == null ? "" : String(val)).trim();
+        // mantener solo dígitos, separadores y signo
+        s = s.replace(/[^\d,.\-]/g, "");
+        // miles con punto: remover todos los puntos, decimal con coma -> punto
+        s = s.replace(/\./g, "").replace(",", ".");
+        var n = parseFloat(s);
+        return isNaN(n) ? NaN : n;
     }
 
-    
+    function clearErrors() {
+        $dlg.find(".is-invalid").removeClass("is-invalid");
+        $dlg.find(".mat-field-error").text("");
+    }
+
+    function setError(fieldId, msg) {
+        var $field = $("#" + fieldId);
+        if ($field.length) $field.addClass("is-invalid");
+        $dlg.find('.mat-field-error[data-for="' + fieldId + '"]').text(msg || "");
+    }
+
+    function setLoading(isLoading) {
+        if (isLoading) {
+            if (!$btn.data("matOrigHtml")) $btn.data("matOrigHtml", $btn.html());
+            $btn.prop("disabled", true).addClass("mat-btn-loading")
+                .html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Procesando...');
+            $btnCancel.prop("disabled", true);
+        } else {
+            var orig = $btn.data("matOrigHtml");
+            if (orig) $btn.html(orig);
+            $btn.prop("disabled", false).removeClass("mat-btn-loading");
+            $btnCancel.prop("disabled", false);
+        }
+    }
+
+    clearErrors();
+
+    var nro = $("#NroNota").val().trim();
+    var detalle = $("#DetalleNotaCredito").val().trim();
+    var montoRetencion = parseMoney($("#MontoRetencion").val());
+    var totalPagos = parseMoney($("#hdnTotalPagos").val());
+    var montoNota = parseMoney($("#MontoNota").val());
+
+    var ok = true;
+
+    if (!nro) {
+        setError("NroNota", "El número de nota es obligatorio.");
+        ok = false;
+    }
+    if (!$("#MontoNota").val().trim()) {
+        setError("MontoNota", "El monto de nota de crédito es obligatorio.");
+        ok = false;
+    } else if (isNaN(montoNota)) {
+        setError("MontoNota", "Ingrese un monto válido.");
+        ok = false;
+    }
+    if (!$("#MontoRetencion").val().trim()) {
+        setError("MontoRetencion", "El monto a retener es obligatorio.");
+        ok = false;
+    } else if (isNaN(montoRetencion)) {
+        setError("MontoRetencion", "Ingrese un monto válido.");
+        ok = false;
+    }
+    if (!detalle) {
+        setError("DetalleNotaCredito", "El detalle es obligatorio.");
+        ok = false;
+    }
+
+    // Validaciones cruzadas (solo si hay números)
+    if (ok && !isNaN(totalPagos)) {
+        if (!isNaN(montoRetencion) && montoRetencion > totalPagos) {
+            setError("MontoRetencion", "El monto a retener no debe ser mayor al total de pagos.");
+            ok = false;
+        }
+        if (!isNaN(montoNota) && montoNota > totalPagos) {
+            setError("MontoNota", "El monto de la nota no debe ser mayor al total de pagos.");
+            ok = false;
+        }
+    }
+
+    if (!ok) {
+        // Enfocar el primer campo inválido
+        var $firstInvalid = $dlg.find(".is-invalid").first();
+        if ($firstInvalid.length) $firstInvalid.trigger("focus");
+        return;
+    }
+
+    setLoading(true);
+
     var _data = $("#formNotaCredito").serializeArray();
     $.ajax({
         url: "/PersonaCliente/RegistrarNotaCredito",
@@ -671,16 +783,31 @@ $(document).on("click", "#btn-retencion", function () {
         data: _data,
         success: function (data) {
             var result = eval(data);
-            $("#NotaCredito").dialog("close");
-            $("#Detalles").dialog("close");
-            if (result[0]== "Done.") {
+            if (result && result[0] === "Done.") {
+                $("#NotaCredito").dialog("close");
+                $("#Detalles").dialog("close");
                 (window.alertSuccess || window.alert)("Nota de Crédito realizada correctamente.", "Éxito");
             } else {
-                console.log(result[1])
-                (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
+                console.log(result ? result[1] : data);
+                (window.alertError || window.alert)("No se pudo registrar la Nota de Crédito. Verifique los datos e intente nuevamente.", "Error");
+                setLoading(false);
             }
+        },
+        error: function (e) {
+            console.log(e);
+            (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
+            setLoading(false);
         }
     });
+});
+
+// UX: Enter en inputs del popin -> Aceptar (excepto en textarea)
+$(document).on("keydown", "#NotaCredito input, #NotaCredito select", function (e) {
+    var key = e.key || e.which;
+    if (key === "Enter" || key === 13) {
+        e.preventDefault();
+        $("#btn-retencion").trigger("click");
+    }
 });
 
 $(document).on("click", "#btn-retencion-cancelar", function () {

@@ -705,6 +705,101 @@ div.wait {
     color: #f59e0b;
 }
 
+/* ============================================================
+   UTILIDADES (paleta de marca) - UI moderna
+   ============================================================ */
+.text-brand {
+    color: var(--brand-primary, #e91e63) !important;
+}
+
+/* ============================================================
+   POPIN: Nota de Crédito (Resumen superior)
+   - Sin estilos inline en el view
+   - Reusa variables modernas (saas-variables / modern-dashboard)
+   ============================================================ */
+.mat-nc-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+@media (max-width: 720px) {
+    .mat-nc-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+.mat-nc-summary-card {
+    background: var(--bg-secondary, #f3f4f6);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+}
+
+.mat-nc-summary-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary, #6b7280);
+}
+
+.mat-nc-summary-label i {
+    color: var(--brand-primary, #e91e63);
+    font-size: 1rem;
+}
+
+.mat-nc-summary-value {
+    margin-top: 0.25rem;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--text-primary, #111827);
+}
+
+/* Campos full-width dentro del layout flex del modal */
+.mat-nc-full {
+    flex: 1 1 100% !important;
+    min-width: 240px;
+}
+
+/* Errores inline (sin alerts legacy) */
+.mat-field-error {
+    min-height: 1.1rem;
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #dc2626;
+}
+
+/* Scoped: Popin NotaCredito - footer sticky y estados */
+.ui-dialog[aria-describedby="NotaCredito"] .modal-form-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background: var(--white, #ffffff);
+    margin: 1rem -1.5rem -1.5rem -1.5rem; /* expandir sobre padding de .ui-dialog-content */
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.ui-dialog[aria-describedby="NotaCredito"] .mat-nc-summary {
+    margin-bottom: 0.25rem;
+}
+
+.ui-dialog[aria-describedby="NotaCredito"] .is-invalid {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+}
+
+.ui-dialog[aria-describedby="NotaCredito"] .mat-btn-loading {
+    opacity: 0.9;
+    cursor: progress !important;
+}
+
 div.msgError,
 .msgError,
 .MsgError,

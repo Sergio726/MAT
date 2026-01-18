@@ -278,7 +278,7 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
 
-    var divLoading = "<div class='modern-loading-container' style='padding: 2rem;'><div class='modern-loading-spinner'></div><span class='modern-loading-text'>Cargando...</span></div>";
+    var divLoading = "<div class='modern-loading-container'><div class='modern-loading-spinner'></div><span class='modern-loading-text'>Cargando...</span></div>";
     $("#" + dialogid).html(divLoading);
     $("#" + dialogid).data("matBaseWidth", width);
     
@@ -288,6 +288,23 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
         success: function (data) {
             if (data && data.trim() !== '') {
                 $("#" + dialogid).html(data);
+
+                // UX: aplicar máscara de moneda automáticamente en el contenido cargado (si el plugin está disponible)
+                try {
+                    if ($.fn && typeof $.fn.mask === "function") {
+                        $("#" + dialogid).find(".money").mask("#.##0,00", { reverse: true });
+                    }
+                } catch (e) {
+                    // no-op
+                }
+
+                // UX: enfocar el primer campo visible del modal
+                try {
+                    var $first = $("#" + dialogid).find("input, textarea, select").filter(":visible").first();
+                    if ($first && $first.length) $first.trigger("focus");
+                } catch (e2) {
+                    // no-op
+                }
             } else {
                 $("#" + dialogid).html('<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>No se pudo cargar el contenido. Por favor, intente nuevamente.</span></div>');
             }
@@ -312,6 +329,9 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
         width: width,
         position: { my: 'center', at: 'center', of: window },
         closeOnEscape: true,
+        resizable: false,
+        draggable: false,
+        dialogClass: "mat-dialog",
         open: function() {
             ModalConfig.setupOverlayClose(dialogid);
 
@@ -338,6 +358,12 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
             if (dialogid === "idResHab") {
                 var $wHab = $("#" + dialogid).dialog("widget");
                 if ($wHab && $wHab.length) $wHab.addClass("mat-dialog--brandtitle");
+            }
+
+            // Nota de Crédito: UX consistente (titlebar blanco + scroll interno)
+            if (dialogid === "NotaCredito") {
+                var $wNc = $("#" + dialogid).dialog("widget");
+                if ($wNc && $wNc.length) $wNc.addClass("mat-dialog--brandtitle");
             }
         },
         close: function () {
