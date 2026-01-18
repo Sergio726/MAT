@@ -308,6 +308,12 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
                 var $w = $dlg.dialog("widget");
                 if ($w && $w.length) $w.addClass("mat-dialog--formreserva");
             }
+
+            // ReservaHabitacion: titlebar con estilo "Seleccionar pasajero" (brand header)
+            if (dialogid === "idResHab") {
+                var $wHab = $("#" + dialogid).dialog("widget");
+                if ($wHab && $wHab.length) $wHab.addClass("mat-dialog--brandtitle");
+            }
         },
         close: function () {
             $(document).off('click.modalOverlay');
