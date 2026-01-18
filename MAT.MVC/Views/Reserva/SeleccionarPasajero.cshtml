@@ -26,7 +26,26 @@
 <input id="input-piso" type="hidden" value="@ViewData["piso"]" />
 <input id="input-moneda-tipo" type="hidden" value="@(Model.MonedaTipo ?? 1)" />
 <div class="custom_padding_4 seleccionar-pasajero-container">
-    <div class="seleccionar-pasajero-section">
+    <div class="seleccionar-pasajero-stepper" id="sp-stepper" aria-label="Pasos para completar la reserva">
+        <div class="stepper-title"><i class="bi bi-list-check"></i> Pasos</div>
+        <div class="stepper-steps" role="list">
+            <button type="button" class="stepper-step" role="listitem" data-step="1" data-target="#sp-step-precios" data-icon="bi-tag">
+                <i class="step-icon bi bi-tag"></i> Precio
+            </button>
+            <button type="button" class="stepper-step" role="listitem" data-step="2" data-target="#sp-step-adicionales" data-icon="bi-plus-circle">
+                <i class="step-icon bi bi-plus-circle"></i> Adicionales
+            </button>
+            <button type="button" class="stepper-step" role="listitem" data-step="3" data-target="#search-pasajero" data-icon="bi-people">
+                <i class="step-icon bi bi-people"></i> Pasajeros
+            </button>
+            <button type="button" class="stepper-step" role="listitem" data-step="4" data-target="#sp-step-confirmar" data-icon="bi-check2-circle">
+                <i class="step-icon bi bi-check2-circle"></i> Confirmar
+            </button>
+        </div>
+        <div class="stepper-meta" aria-live="polite">Paso 1 de 4</div>
+    </div>
+
+    <div class="seleccionar-pasajero-section" id="sp-step-precios" data-step="1">
         <div class="section-header">
             <i class="bi bi-tag"></i>
         <h3>Precios</h3>
@@ -55,7 +74,7 @@
         </div>
     </div>
 
-    <div class="seleccionar-pasajero-section">
+    <div class="seleccionar-pasajero-section" id="sp-step-adicionales" data-step="2">
         <div class="section-header">
             <i class="bi bi-plus-circle"></i>
             <h3>Adicionales</h3>
@@ -129,7 +148,7 @@
         </div>
     </div>
 
-    <div class="botonera-form">
+    <div class="botonera-form" id="sp-step-confirmar" data-step="4">
         <button type="button" class="btn btn-primary" id="btn-continuar-reserva">
             <i class="bi bi-check-circle"></i> Continuar Reserva
         </button>
@@ -153,14 +172,75 @@
             $(".adicionales-list input[type=checkbox][value*=CAMA]").closest(".adicional-item").addClass("selected");
         }
 
+        function scrollToInDialog(selector) {
+            var $content = $("#SeleccionPasajero");
+            var $target = $(selector);
+            if (!$content.length || !$target.length) return;
+            var top = $target.position().top + $content.scrollTop() - 12;
+            $content.stop(true).animate({ scrollTop: top }, 200);
+        }
+
+        function setStepState(step, done) {
+            var $btn = $("#sp-stepper .stepper-step[data-step='" + step + "']");
+            if (!$btn.length) return;
+            $btn.toggleClass("is-done", !!done);
+
+            var $icon = $btn.find(".step-icon");
+            if (!$icon.length) return;
+
+            if (done) {
+                $icon.attr("class", "step-icon bi bi-check-circle-fill");
+            } else {
+                var baseIcon = $btn.data("icon") || "bi-circle";
+                $icon.attr("class", "step-icon bi " + baseIcon);
+            }
+        }
+
+        function updateStepper() {
+            var hasPrecio = $("input[name='radio_precio']:checked").length > 0;
+            var hasAdicional = $("input[name='check_adicional']:checked").length > 0;
+            var menores = parseInt($("#numMenor").val() || 0, 10) || 0;
+            var eListMenor = !!($("#hdnListMenor").data && $("#hdnListMenor").data("complete"));
+            var hasPaso2 = hasAdicional || menores > 0 || eListMenor;
+            var pasajerosCount = (window.pasajerosSeleccionadosModal || []).length;
+            var hasPasajeros = pasajerosCount > 0;
+            var canContinue = hasPrecio && hasPasajeros;
+
+            setStepState(1, hasPrecio);
+            setStepState(2, hasPaso2);
+            setStepState(3, hasPasajeros);
+            setStepState(4, canContinue);
+
+            var active = (!hasPrecio) ? 1 : ((!hasPaso2) ? 2 : ((!hasPasajeros) ? 3 : 4));
+            $("#sp-stepper .stepper-step").removeClass("is-active");
+            $("#sp-stepper .stepper-step[data-step='" + active + "']").addClass("is-active");
+            $("#sp-stepper .stepper-meta").text("Paso " + active + " de 4");
+
+            $("#btn-continuar-reserva").prop("disabled", !canContinue);
+        }
+
+        // Navegación rápida por pasos
+        $(document).on("click", "#sp-stepper .stepper-step", function () {
+            var target = $(this).data("target");
+            if (target) scrollToInDialog(target);
+        });
+
         // Agregar clase 'selected' cuando se selecciona un precio o adicional
         $(document).on("change", "input[name='radio_precio']", function () {
             $(".precio-item").removeClass("selected");
             $(this).closest(".precio-item").addClass("selected");
+            updateStepper();
+            scrollToInDialog("#sp-step-adicionales");
         });
 
         $(document).on("change", "input[name='check_adicional']", function () {
             $(this).closest(".adicional-item").toggleClass("selected", $(this).is(":checked"));
+            updateStepper();
+        });
+
+        // Seguro menor (input number)
+        $(document).on("input change", "#numMenor", function () {
+            updateStepper();
         });
 
         // Agregar clase focused cuando el input tiene focus
@@ -278,6 +358,7 @@
                 window.pasajerosSeleccionadosModal.push(pasajero);
                 renderizarPasajerosSeleccionados();
                 actualizarContador();
+                updateStepper();
             }
         }
 
@@ -288,6 +369,7 @@
             });
             renderizarPasajerosSeleccionados();
             actualizarContador();
+            updateStepper();
             
             // Actualizar checkbox en autocomplete si está visible
             $("#autocomplete-suggestions .checkbox-pasajero[data-id='" + pasajeroId + "']").prop("checked", false);
@@ -403,6 +485,7 @@
 
         // Inicializar contador
         actualizarContador();
+        updateStepper();
         
         // Inicializar tooltips de Bootstrap
         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {

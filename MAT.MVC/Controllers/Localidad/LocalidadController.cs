@@ -10,6 +10,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Localidad
 {
@@ -54,7 +55,7 @@ namespace MAT.MVC.Controllers.Localidad
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.GetProvincia");
             }
 
             return Json(new
@@ -98,7 +99,7 @@ namespace MAT.MVC.Controllers.Localidad
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.GetDepartamento");
             }
 
             return Json(new
@@ -134,7 +135,7 @@ namespace MAT.MVC.Controllers.Localidad
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.AddLocalidad");
             }
 
             return Json(new
@@ -229,7 +230,7 @@ namespace MAT.MVC.Controllers.Localidad
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.GetLocalidad");
             }
 
             return Json(new
@@ -271,7 +272,7 @@ namespace MAT.MVC.Controllers.Localidad
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.GetLocalidadId");
             }
 
             return Json(new

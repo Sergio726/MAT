@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Factura
 {
@@ -29,7 +30,7 @@ namespace MAT.MVC.Controllers.Factura
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message + " " + e.StackTrace.ToString();
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "FacturaController.Index");
             }
 
             return View();

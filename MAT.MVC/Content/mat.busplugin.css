@@ -173,6 +173,90 @@ div#container {
 	height: 50px;
 }
 
+/* Marcadores del bus (TV / Escalera / Bar / Baño) */
+.piso_superior li.bus-marker,
+.piso_inferior li.bus-marker,
+.piso_superior_edicion li.bus-marker,
+.piso_inferior_edicion li.bus-marker,
+.new_piso_superior li.bus-marker,
+.new_piso_inferior li.bus-marker {
+    visibility: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 18px;
+    color: #6b7280;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    pointer-events: auto; /* permitir hover para tooltip */
+    z-index: 2; /* por encima del fondo, sin tapar interacción principal */
+}
+
+.piso_superior li.bus-marker i,
+.piso_inferior li.bus-marker i,
+.piso_superior_edicion li.bus-marker i,
+.piso_inferior_edicion li.bus-marker i,
+.new_piso_superior li.bus-marker i,
+.new_piso_inferior li.bus-marker i {
+    line-height: 1;
+}
+
+/* Evitar rotaciones heredadas pensadas para texto */
+.piso_superior li.bus-marker,
+.piso_inferior li.bus-marker,
+.piso_superior_edicion li.bus-marker,
+.piso_inferior_edicion li.bus-marker,
+.new_piso_superior li.bus-marker,
+.new_piso_inferior li.bus-marker {
+    -webkit-transform: none !important;
+    transform: none !important;
+}
+
+/* ============================================================
+   Posiciones refinadas para íconos (evita superposiciones)
+   Nota: los offsets originales eran para texto rotado.
+   ============================================================ */
+
+/* Piso superior (coche doble piso): escalera y bar en el pasillo (no arriba de butacas) */
+#coche51_61 .piso_superior .bar.bus-marker,
+#coche51_61 .piso_superior_edicion .bar.bus-marker,
+#coche51_61 .new_piso_superior .bar.bus-marker {
+    left: 220px !important;
+    top: 40px !important;
+}
+
+#coche51_61 .piso_superior .escalera.bus-marker,
+#coche51_61 .piso_superior_edicion .escalera.bus-marker,
+#coche51_61 .new_piso_superior .escalera.bus-marker {
+    left: 220px !important;
+    top: 120px !important; /* separa del bar y de las filas A/B */
+}
+
+/* Piso inferior (coche doble piso): separa baño/bar y mantiene escalera arriba */
+#coche51_61 .piso_inferior .escalera.bus-marker,
+#coche51_61 .piso_inferior_edicion .escalera.bus-marker,
+#coche51_61 .new_piso_inferior .escalera.bus-marker {
+    left: 120px !important;
+    top: 70px !important;
+}
+
+#coche51_61 .piso_inferior .banio.bus-marker,
+#coche51_61 .piso_inferior_edicion .banio.bus-marker,
+#coche51_61 .new_piso_inferior .banio.bus-marker {
+    left: 120px !important;
+    top: 150px !important; /* evita choque con bar (220) */
+}
+
+#coche51_61 .piso_inferior .bar.bus-marker,
+#coche51_61 .piso_inferior_edicion .bar.bus-marker,
+#coche51_61 .new_piso_inferior .bar.bus-marker {
+    left: 120px !important;
+    top: 220px !important;
+}
+
 .piso_superior li#master,
 .piso_inferior li#master,
 .piso_superior_edicion li#master,

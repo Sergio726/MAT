@@ -255,7 +255,7 @@ $(document).on("click", "#btn-reservar", function () {
 
         var dialogid = "FormReserva";
         var dialogtitle = "Reserva de Pasajes";
-        ShowFormDialog(url, dialogid, dialogtitle, "min");
+        ShowFormDialog(url, dialogid, dialogtitle, "wide");
         
     } else {
         (window.alertInfo || window.alert)("Debe seleccionar al menos una butaca para la reserva.", "Validación");
@@ -342,7 +342,7 @@ $(document).on("click", "#btn-reservar", function () {
             success: function (result) {
                 var dialogid = "FormReserva";
                 var dialogtitle = "Reserva de Pasajes";
-                ShowFormDialogHTML(result, dialogid, dialogtitle, "min");
+                ShowFormDialogHTML(result, dialogid, dialogtitle, "wide");
             },
             error: function(xhr, status, error) {
                 (window.alertError || window.alert)("Error al procesar la reserva: " + error, "Error");

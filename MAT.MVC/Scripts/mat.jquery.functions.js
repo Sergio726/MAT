@@ -91,8 +91,141 @@ function ShowSuccessMessage(message, title, callback) {
 var ModalConfig = {
     getWidth: function(size) {
         // Usar anchos en píxeles para mejor centrado con sidebar fijo
-        var sizes = { 'min': 600, 'medium': 800, 'default': 1000, 'max': '95%', '30%': 400 };
+        var sizes = { 'min': 600, 'medium': 800, 'default': 1000, 'wide': 1100, 'max': '95%', '30%': 400, 'fullscreen': '100%' };
         return sizes[size] || 1000;
+    },
+    setupFullscreen: function (dialogid, enableByDefault) {
+        var $content = $("#" + dialogid);
+        if (!$content.length) return;
+
+        $content.data("matFullscreenEnabled", !!enableByDefault);
+
+        function ensureMaximizeButton() {
+            var $widget = $content.dialog("widget");
+            if (!$widget || !$widget.length) return;
+
+            var $titlebar = $widget.find(".ui-dialog-titlebar");
+            if (!$titlebar.length) return;
+
+            if ($titlebar.find(".mat-dialog-titlebar-maximize").length) return;
+
+            var $btn = $("<button/>", {
+                type: "button",
+                class: "mat-dialog-titlebar-maximize",
+                "aria-label": "Maximizar / restaurar",
+                title: "Maximizar / restaurar"
+            }).append($("<i/>", { class: "bi bi-arrows-fullscreen" }));
+
+            // Insertar antes del botón cerrar si existe
+            var $close = $titlebar.find(".ui-dialog-titlebar-close");
+            if ($close.length) $btn.insertBefore($close);
+            else $titlebar.append($btn);
+
+            $btn.on("click", function () {
+                var enabled = !!$content.data("matFullscreenEnabled");
+                ModalConfig.setFullscreen(dialogid, !enabled);
+            });
+        }
+
+        function syncFullscreenWidget() {
+            if (!$content.length) return;
+            if (!$content.data("matFullscreenEnabled")) return;
+
+            var $widget = $content.dialog("widget");
+            if (!$widget || !$widget.length) return;
+
+            var margin = 12;
+            var w = Math.max(320, Math.floor($(window).width() - margin * 2));
+            var h = Math.max(240, Math.floor($(window).height() - margin * 2));
+            w = Math.min(1400, w);
+
+            // Forzar dimensiones y re-centrar (jQuery UI puede quedar con top/left viejos)
+            $content.dialog("option", "width", w);
+            $content.dialog("option", "height", h);
+            $content.dialog("option", "position", { my: "center", at: "center", of: window });
+
+            // Asegurar fixed (sin forzar top/left manualmente)
+            $widget.css({ position: "fixed" });
+        }
+
+        function syncFullscreenLayout() {
+            if (!$content.length) return;
+            if (!$content.data("matFullscreenEnabled")) return;
+
+            var $widget = $content.dialog("widget");
+            if (!$widget || !$widget.length) return;
+
+            // Calcular alto disponible para el content (evita que se corte dentro del fullscreen)
+            var titleH = $widget.find(".ui-dialog-titlebar").outerHeight() || 0;
+            var buttonPaneH = $widget.find(".ui-dialog-buttonpane").outerHeight() || 0;
+            var widgetH = $widget.innerHeight() || 0;
+            var padding = 0;
+            var contentH = Math.max(120, widgetH - titleH - buttonPaneH - padding);
+
+            $content.css({
+                height: contentH + "px",
+                overflow: "auto"
+            });
+        }
+
+        // Guardar para reuso (y cleanup on close)
+        $content.data("matEnsureMaximizeButton", ensureMaximizeButton);
+        $content.data("matSyncFullscreenWidget", syncFullscreenWidget);
+        $content.data("matSyncFullscreenLayout", syncFullscreenLayout);
+
+        // Sync en resize mientras esté abierto
+        $(window).off("resize.matDialogFullscreen-" + dialogid).on("resize.matDialogFullscreen-" + dialogid, function () {
+            // Esperar a que el browser aplique layout antes de recalcular
+            var raf = window.requestAnimationFrame || function (cb) { return setTimeout(cb, 0); };
+            raf(function () {
+                syncFullscreenWidget();
+                syncFullscreenLayout();
+            });
+        });
+    },
+    setFullscreen: function (dialogid, enabled) {
+        var $content = $("#" + dialogid);
+        if (!$content.length) return;
+
+        var $widget = $content.dialog("widget");
+        if (!$widget || !$widget.length) return;
+
+        $content.data("matFullscreenEnabled", !!enabled);
+
+        if (enabled) {
+            $widget.addClass("mat-dialog--fullscreen");
+
+            // Forzar tamaño real fullscreen (no depender solo de CSS)
+            // Importante: primero ajustar widget, luego recalcular el alto del content.
+            var raf = window.requestAnimationFrame || function (cb) { return setTimeout(cb, 0); };
+            raf(function () {
+                var syncWidget = $content.data("matSyncFullscreenWidget");
+                if (typeof syncWidget === "function") syncWidget();
+
+                var syncLayout = $content.data("matSyncFullscreenLayout");
+                if (typeof syncLayout === "function") syncLayout();
+            });
+        } else {
+            $widget.removeClass("mat-dialog--fullscreen");
+            var baseWidth = $content.data("matBaseWidth");
+            if (baseWidth) $content.dialog("option", "width", baseWidth);
+            $content.dialog("option", "height", "auto");
+            $content.dialog("option", "position", { my: "center", at: "center", of: window });
+            $content.css({ height: "", overflow: "" });
+            $widget.css({ width: "", height: "", top: "", left: "", right: "", bottom: "", transform: "" });
+        }
+
+        // Icono toggle
+        var $icon = $widget.find(".mat-dialog-titlebar-maximize i");
+        if ($icon.length) {
+            $icon.removeClass("bi-arrows-fullscreen bi-fullscreen-exit").addClass(enabled ? "bi-fullscreen-exit" : "bi-arrows-fullscreen");
+        }
+
+        // En fullscreen lo sincronizamos en RAF arriba (para evitar height incorrecto).
+        if (!enabled) {
+            var sync = $content.data("matSyncFullscreenLayout");
+            if (typeof sync === "function") sync();
+        }
     },
     setupOverlayClose: function(dialogid) {
         // Cerrar modal al hacer clic en el overlay
@@ -107,6 +240,11 @@ var ModalConfig = {
 function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
     var width = ModalConfig.getWidth(widthsize);
 
+    // Forzar tamaño más amplio para este flujo (mejor UX dentro del formulario)
+    if (dialogid === "FormReserva") {
+        width = ModalConfig.getWidth("wide");
+    }
+
     // Remover el diálogo si ya existe
     if ($("#" + dialogid).length > 0) {
         $("#" + dialogid).dialog("destroy").remove();
@@ -117,6 +255,7 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
 
     var divLoading = "<div class='modern-loading-container' style='padding: 2rem;'><div class='modern-loading-spinner'></div><span class='modern-loading-text'>Cargando...</span></div>";
     $("#" + dialogid).html(divLoading);
+    $("#" + dialogid).data("matBaseWidth", width);
     
     $.ajax({
         url: url,
@@ -150,9 +289,29 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
         closeOnEscape: true,
         open: function() {
             ModalConfig.setupOverlayClose(dialogid);
+
+            // Fullscreen por defecto para SeleccionarPasajero (maximiza el popin)
+            if (dialogid === "SeleccionPasajero") {
+                ModalConfig.setupFullscreen(dialogid, true);
+                var ensureBtn = $("#" + dialogid).data("matEnsureMaximizeButton");
+                if (typeof ensureBtn === "function") ensureBtn();
+                ModalConfig.setFullscreen(dialogid, true);
+            }
+
+            // Mejor UX: limitar alto para que el scroll sea interno y no se corte el contenido
+            if (dialogid === "FormReserva") {
+                var $dlg = $("#" + dialogid);
+                var maxH = Math.max(520, Math.floor($(window).height() - 80));
+                $dlg.dialog("option", "maxHeight", maxH);
+                $dlg.dialog("option", "height", "auto");
+
+                var $w = $dlg.dialog("widget");
+                if ($w && $w.length) $w.addClass("mat-dialog--formreserva");
+            }
         },
         close: function () {
             $(document).off('click.modalOverlay');
+            $(window).off("resize.matDialogFullscreen-" + dialogid);
             $("#" + dialogid).dialog("destroy").remove();
         }
     });
@@ -223,6 +382,11 @@ function ShowFormDialogJson(url, dialogid, dialogtitle, widthsize, datasend) {
 function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
     var width = ModalConfig.getWidth(widthsize);
 
+    // Forzar tamaño más amplio para este flujo (mejor UX dentro del formulario)
+    if (dialogid === "FormReserva") {
+        width = ModalConfig.getWidth("wide");
+    }
+
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
     $("#" + dialogid).html(html);
@@ -235,6 +399,16 @@ function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
         closeOnEscape: true,
         open: function() {
             ModalConfig.setupOverlayClose(dialogid);
+
+            if (dialogid === "FormReserva") {
+                var $dlg = $("#" + dialogid);
+                var maxH = Math.max(520, Math.floor($(window).height() - 80));
+                $dlg.dialog("option", "maxHeight", maxH);
+                $dlg.dialog("option", "height", "auto");
+
+                var $w = $dlg.dialog("widget");
+                if ($w && $w.length) $w.addClass("mat-dialog--formreserva");
+            }
         },
         close: function () {
             $(document).off('click.modalOverlay');

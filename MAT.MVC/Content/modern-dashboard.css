@@ -2390,10 +2390,147 @@ div.bnn_floating-banner.hidden {
     display: none !important;
 }
 
+/* ============================================================
+   MODAL FULLSCREEN / MAXIMIZABLE (jQuery UI Dialog)
+   ============================================================ */
+.ui-dialog .mat-dialog-titlebar-maximize {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    width: 34px !important;
+    height: 34px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    color: var(--text-secondary) !important;
+}
+
+.ui-dialog .mat-dialog-titlebar-maximize:hover {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    color: var(--text-primary) !important;
+}
+
+.ui-dialog .mat-dialog-titlebar-maximize i {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.ui-dialog.mat-dialog--fullscreen {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100vw - 24px) !important;
+    height: calc(100vh - 24px) !important;
+    max-width: 1400px !important;
+    max-height: none !important;
+    border-radius: 14px !important;
+}
+
+.ui-dialog.mat-dialog--fullscreen .ui-dialog-content {
+    width: auto !important;
+    max-height: none !important;
+    overflow: auto !important;
+}
+
+.ui-dialog.mat-dialog--fullscreen .ui-dialog-titlebar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Dialog wide (FormReserva) */
+.ui-dialog.mat-dialog--formreserva {
+    max-width: 1200px !important;
+    width: calc(100vw - 24px) !important;
+}
+
+.ui-dialog.mat-dialog--formreserva .ui-dialog-content {
+    padding: 0 !important; /* el padding lo maneja el contenido */
+}
+
 /* Estilos para el modal de Seleccionar Pasajero */
 /* ============================================
    NUEVO DISEÑO MODERNO PARA SELECCIONAR PASAJERO
    ============================================ */
+
+.seleccionar-pasajero-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.seleccionar-pasajero-stepper .stepper-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-right: 0.25rem;
+    white-space: nowrap;
+}
+
+.seleccionar-pasajero-stepper .stepper-steps {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.seleccionar-pasajero-stepper .stepper-step {
+    appearance: none;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    border-radius: 999px;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.seleccionar-pasajero-stepper .stepper-step:hover {
+    border-color: var(--brand-primary);
+    color: var(--text-primary);
+}
+
+.seleccionar-pasajero-stepper .stepper-step.is-active {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.12);
+    color: var(--brand-primary);
+}
+
+.seleccionar-pasajero-stepper .stepper-step.is-done {
+    border-color: rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.08);
+    color: #059669;
+}
+
+.seleccionar-pasajero-stepper .stepper-step .step-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.seleccionar-pasajero-stepper .stepper-meta {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
 
 .seleccionar-pasajero-container {
     display: flex;
@@ -4549,6 +4686,26 @@ div.bnn_floating-banner.hidden {
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px solid var(--border-color);
+}
+
+/* En fullscreen, mantener acciones siempre accesibles */
+.ui-dialog.mat-dialog--fullscreen #SeleccionPasajero .botonera-form {
+    position: sticky;
+    bottom: 0;
+    z-index: 6;
+    background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,1) 55%);
+    backdrop-filter: blur(6px);
+    margin: 0;
+    padding: 0.875rem 1rem;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0;
+    box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.06);
+    width: 100%;
+}
+
+/* Evitar que el footer sticky tape el último contenido */
+.ui-dialog.mat-dialog--fullscreen #SeleccionPasajero {
+    padding-bottom: 92px !important;
 }
 
 /* Panel de butaca asignada */

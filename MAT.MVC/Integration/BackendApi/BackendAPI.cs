@@ -24,6 +24,24 @@ namespace MAT.MVC.Integration
             string backendApiURL = System.Configuration.ConfigurationManager.AppSettings["BackendAPI_URL"].ToString();
             HttpClient httpClient = HttpClientFactory.Create();
             httpClient.BaseAddress = new Uri(backendApiURL);
+            // Timeout defensivo para evitar requests colgadas al backend
+            // (se puede ajustar vía appSetting BackendAPI_TimeoutSeconds)
+            try
+            {
+                var timeoutSetting = System.Configuration.ConfigurationManager.AppSettings["BackendAPI_TimeoutSeconds"];
+                if (int.TryParse(timeoutSetting, out var seconds) && seconds > 0)
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(seconds);
+                }
+                else
+                {
+                    httpClient.Timeout = TimeSpan.FromSeconds(15);
+                }
+            }
+            catch
+            {
+                httpClient.Timeout = TimeSpan.FromSeconds(15);
+            }
             
             _apiClient = new ApiClient(httpClient);
         }

@@ -119,40 +119,53 @@
             <h1 class="error-title">¡Ups! Algo salió mal</h1>
         </div>
 
+        @{
+            var isDev = string.Equals(System.Configuration.ConfigurationManager.AppSettings["SystemDEV"], "true", StringComparison.OrdinalIgnoreCase);
+            // Compatible con compilación Razor/C# antigua (sin operador ?.)
+            var correlationId = "";
+            var ctx = System.Web.HttpContext.Current;
+            if (ctx != null && ctx.Items != null && ctx.Items["MAT.CorrelationId"] != null)
+            {
+                correlationId = ctx.Items["MAT.CorrelationId"].ToString();
+            }
+            var displayMessage = isDev ? Model.Message : "Ocurrió un error inesperado. Intente nuevamente.";
+        }
+
         <div class="error-message">
-            @Model.Message
+            @displayMessage
+            @if (!string.IsNullOrWhiteSpace(correlationId))
+            {
+                <div style="margin-top: 0.75rem; font-size: 0.95em; color: #6b7280;">
+                    ID: @correlationId
+                </div>
+            }
         </div>
 
-        <div class="error-details">
-            <div class="error-detail-item">
-                <div class="error-detail-label">Tipo de Error:</div>
-                <div class="error-detail-value">@Model.GetType().Name</div>
+        @if (isDev)
+        {
+            <div class="error-details">
+                <div class="error-detail-item">
+                    <div class="error-detail-label">Tipo de Error:</div>
+                    <div class="error-detail-value">@Model.GetType().Name</div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.StackTrace))
+                {
+                    <div class="error-detail-item">
+                        <div class="error-detail-label">Stack Trace:</div>
+                        <div class="error-detail-value">@Model.StackTrace</div>
+                    </div>
+                }
+
+                @if (Model.InnerException != null)
+                {
+                    <div class="error-detail-item">
+                        <div class="error-detail-label">Error Interno:</div>
+                        <div class="error-detail-value">@Model.InnerException.Message</div>
+                    </div>
+                }
             </div>
-
-            @if (!string.IsNullOrEmpty(Model.StackTrace))
-            {
-                <div class="error-detail-item">
-                    <div class="error-detail-label">Stack Trace:</div>
-                    <div class="error-detail-value">@Model.StackTrace</div>
-                </div>
-            }
-
-            @if (!string.IsNullOrEmpty(Model.HelpLink))
-            {
-                <div class="error-detail-item">
-                    <div class="error-detail-label">Enlace de Ayuda:</div>
-                    <div class="error-detail-value">@Model.HelpLink</div>
-                </div>
-            }
-
-            @if (Model.InnerException != null)
-            {
-                <div class="error-detail-item">
-                    <div class="error-detail-label">Error Interno:</div>
-                    <div class="error-detail-value">@Model.InnerException.Message</div>
-                </div>
-            }
-        </div>
+        }
 
         <div class="error-actions">
             <a href="/Home/Index" class="btn">Volver al inicio</a>
@@ -160,7 +173,10 @@
 
         <div class="error-footer">
             <p>Si el problema persiste, por favor contacte con su Administrador de Sistema</p>
-            <p>ID de Error: @Guid.NewGuid()</p>
+            @if (!string.IsNullOrWhiteSpace(correlationId))
+            {
+                <p>ID de Error: @correlationId</p>
+            }
         </div>
 
         <div class="error-time">

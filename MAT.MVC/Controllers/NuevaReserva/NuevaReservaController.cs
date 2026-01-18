@@ -261,9 +261,9 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
             catch (Exception ex)
             {
-                string msg = String.Format("Error in PagarReserva. Message: {0}. StackTrace:{1}", ex.Message, ex.StackTrace);
-                //MATLogger.Log(msg, 1);
-                return msg;
+                // No exponer stacktrace al cliente
+                var safe = MAT.MVC.Infrastructure.ErrorUtil.LogAndGetPublicMessage(ex, "NuevaReservaController.PagarReserva");
+                return "Error: " + safe;
             }
         }
     }

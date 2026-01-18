@@ -14,6 +14,7 @@ using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using MAT.MVC.Common;
 using System.Web.Helpers;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Viaje
 {
@@ -409,7 +410,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.HotelIngresoEgreso_Set");
                 sResult[2] = "Error.";
             }
 
@@ -432,7 +433,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.UpdateViaje");
             }
 
             return Json(new
@@ -453,7 +454,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.InsertViaje");
             }
 
             return Json(new
@@ -475,7 +476,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.DeleteViaje");
             }
 
             return Json(new
@@ -497,7 +498,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.CancelViaje");
             }
 
             return Json(new
@@ -518,7 +519,7 @@ namespace MAT.MVC.Controllers.Viaje
             }
             catch (Exception e)
             {
-                sMensaje = "Error: " + e.Message + " StackTrace: " + e.StackTrace;
+                sMensaje = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.GetViajesPorVencer");
             }
 
             return Json(new

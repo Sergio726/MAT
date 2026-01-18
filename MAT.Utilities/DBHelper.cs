@@ -161,7 +161,8 @@ namespace MAT.Utilities
             // Usamos una variable para la conexión fuera del try para poder cerrarla en el catch si falla
             SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString());
             SqlCommand cmd = new SqlCommand(sqlSpName, cn);
-            cmd.CommandTimeout = Convert.ToInt16(ConfigurationManager.AppSettings.Get("connectionCommandTimeout"));
+            // Timeout por request (si existe) para evitar colapsos por SP colgados
+            cmd.CommandTimeout = GetEffectiveCommandTimeout(sqlSpName);
             cmd.CommandType = CommandType.StoredProcedure;
 
             if (dbParams != null)
@@ -192,7 +193,8 @@ namespace MAT.Utilities
         {
             SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString());
             SqlCommand cmd = new SqlCommand(sqlSpName, cn);
-            cmd.CommandTimeout = Convert.ToInt16(ConfigurationManager.AppSettings.Get("connectionCommandTimeout"));
+            // Timeout por request (si existe) para evitar colapsos por SP colgados
+            cmd.CommandTimeout = GetEffectiveCommandTimeout(sqlSpName);
             cmd.CommandType = CommandType.StoredProcedure;
 
             if (dbParams != null)
@@ -226,7 +228,8 @@ namespace MAT.Utilities
             object retVal = null;
             SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString());
             SqlCommand cmd = new SqlCommand(sqlSpName, cn);
-            cmd.CommandTimeout = Convert.ToInt16(ConfigurationManager.AppSettings.Get("connectionCommandTimeout"));
+            // Timeout por request (si existe) para evitar colapsos por SP colgados
+            cmd.CommandTimeout = GetEffectiveCommandTimeout(sqlSpName);
             cmd.CommandType = CommandType.StoredProcedure;
 
             if (dbParams != null)
@@ -379,6 +382,33 @@ namespace MAT.Utilities
             param.Direction = ParameterDirection.Output;
 
             return param;
+        }
+
+        private static int GetEffectiveCommandTimeout(string sqlSpName)
+        {
+            // Base timeout desde config
+            var configured = Convert.ToInt32(ConfigurationManager.AppSettings.Get("connectionCommandTimeout"));
+
+            // Para requests web: usar clamp por request si existe (HttpContext.Items["MAT.DbCommandTimeoutSeconds"])
+            try
+            {
+                var ctx = HttpContext.Current;
+                if (ctx?.Items != null && ctx.Items["MAT.DbCommandTimeoutSeconds"] != null)
+                {
+                    if (int.TryParse(ctx.Items["MAT.DbCommandTimeoutSeconds"].ToString(), out var perRequest) && perRequest > 0)
+                    {
+                        // nunca exceder lo configurado (por compatibilidad)
+                        return Math.Min(configured, perRequest);
+                    }
+                }
+            }
+            catch
+            {
+                // si HttpContext no está disponible o falla, usar config
+            }
+
+            // Por defecto, usar timeout configurado
+            return configured;
         }
 
         public static SqlParameter MakeParamReturnValue(SqlDbType dbType, int size)

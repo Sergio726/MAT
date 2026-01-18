@@ -141,12 +141,13 @@
                                     <div id="coche_minibus" data-id="@Model.Reservas.First().TransporteID" data-numero="@Model.Reservas.First().TransporteNroCoche">
                                         <div id="bus-tabs" class="scroll_x">
                                             <ul>
-                                                <li><a href="#tabs-1">MINIBUS</a></li>
+                                                <li><a href="#tabs-1">Minibus</a></li>
                                             </ul>
                                             <div id="tabs-1">
-                                                <h2>MINI BUS</h2>
                                                 <ul id="coche_minibus-tabs-1" class="new_piso_superior">
-                                                    <li class="tv1">TV</li>
+                                                    <li class="tv1 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -157,12 +158,13 @@
                                     <div id="coche_minibus" data-id="@Model.Reservas.First().TransporteID" data-numero="@Model.Reservas.First().TransporteNroCoche">
                                         <div id="bus-tabs" class="scroll_x">
                                             <ul>
-                                                <li><a href="#tabs-1">CAMION 4X4</a></li>
+                                                <li><a href="#tabs-1">Camión 4x4</a></li>
                                             </ul>
                                             <div id="tabs-1">
-                                                <h2>CAMION 4X4</h2>
                                                 <ul id="coche_minibus-tabs-1" class="new_piso_superior">
-                                                    <li class="tv1">TV</li>
+                                                    <li class="tv1 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -173,17 +175,28 @@
                                     <div id="coche_pisoelevado" data-id="@Model.Reservas.First().TransporteID" data-numero="@Model.Reservas.First().TransporteNroCoche">
                                         <div id="bus-tabs" class="scroll_x">
                                             <ul>
-                                                <li><a href="#tabs-1">Piso Elevado</a></li>
+                                                <li><a href="#tabs-1">Piso Elevado · Semi cama</a></li>
                                             </ul>
                                             <div id="tabs-1">
-                                                <h2>PISO ELEVADO SEMI CAMA</h2>
                                                 <ul id="coche_pisoelevado-tabs-1" class="new_piso_inferior">
-                                                    <li class="banio">BAÑO</li>
-                                                    <li class="bar">BAR</li>
-                                                    <li class="tv1">TV</li>
-                                                    <li class="tv2">TV</li>
-                                                    <li class="tv3">TV</li>
-                                                    <li class="tv4">TV</li>
+                                                    <li class="banio bus-marker" aria-label="Baño">
+                                                        <i class="bi bi-door-closed"></i><span class="visually-hidden">Baño</span>
+                                                    </li>
+                                                    <li class="bar bus-marker" aria-label="Bar">
+                                                        <i class="bi bi-cup-straw"></i><span class="visually-hidden">Bar</span>
+                                                    </li>
+                                                    <li class="tv1 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
+                                                    <li class="tv2 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
+                                                    <li class="tv3 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
+                                                    <li class="tv4 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -194,27 +207,45 @@
                                     <div id="coche51_61" data-id="@Model.Reservas.First().TransporteID" data-numero="@Model.Reservas.First().TransporteNroCoche">
                                         <div id="bus-tabs" class="scroll_x">
                                             <ul>
-                                                <li><a href="#tabs-1">Piso Superior</a></li>
-                                                <li><a href="#tabs-2">Piso Inferior</a></li>
+                                                <li><a href="#tabs-1">Piso Superior · Semi cama</a></li>
+                                                <li><a href="#tabs-2">Piso Inferior · Cama</a></li>
                                             </ul>
                                             <div id="tabs-1">
-                                                <h2>PISO SUPERIOR SEMI CAMA</h2>
                                                 <ul id="coche51_61-tabs-1" class="new_piso_superior">
-                                                    <li class="escalera">ESCALERA</li>
-                                                    <li class="bar">BAR</li>
-                                                    <li class="tv1">TV</li>
-                                                    <li class="tv2">TV</li>
-                                                    <li class="tv3">TV</li>
-                                                    <li class="tv4">TV</li>
+                                                    <li class="escalera bus-marker" aria-label="Escalera">
+                                                        <i class="bi bi-ladder"></i><span class="visually-hidden">Escalera</span>
+                                                    </li>
+                                                    <li class="bar bus-marker" aria-label="Bar">
+                                                        <i class="bi bi-cup-straw"></i><span class="visually-hidden">Bar</span>
+                                                    </li>
+                                                    <li class="tv1 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
+                                                    <li class="tv2 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
+                                                    <li class="tv3 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
+                                                    <li class="tv4 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
                                                 </ul>
                                             </div>
                                             <div id="tabs-2">
-                                                <h2>PISO INFERIOR CAMA</h2>
                                                 <ul id="coche51_61-tabs-2" class="new_piso_inferior">
-                                                    <li class="escalera">ESCALERA</li>
-                                                    <li class="bar">BAR</li>
-                                                    <li class="banio">BAÑO</li>
-                                                    <li class="tv1">TV</li>
+                                                    <li class="escalera bus-marker" aria-label="Escalera">
+                                                        <i class="bi bi-ladder"></i><span class="visually-hidden">Escalera</span>
+                                                    </li>
+                                                    <li class="bar bus-marker" aria-label="Bar">
+                                                        <i class="bi bi-cup-straw"></i><span class="visually-hidden">Bar</span>
+                                                    </li>
+                                                    <li class="banio bus-marker" aria-label="Baño">
+                                                        <i class="bi bi-door-closed"></i><span class="visually-hidden">Baño</span>
+                                                    </li>
+                                                    <li class="tv1 bus-marker" aria-label="TV">
+                                                        <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>

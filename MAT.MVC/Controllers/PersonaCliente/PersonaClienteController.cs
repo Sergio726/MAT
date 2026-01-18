@@ -17,6 +17,7 @@ using MAT.MVC.Filters;
 using System.Text;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.PersonaCliente
 {
@@ -404,7 +405,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = "Error: " + e.Message + " " + e.StackTrace;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.partialHistorialdePagos");
                 return PartialView();
                 
             }
@@ -622,7 +623,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch(Exception e)
             {
-                sResult = e.Message + " StackTrace: " + e.StackTrace.ToString();
+                sResult = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.EliminarFactura");
             }
 
             return sResult;
@@ -876,7 +877,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ExistDni");
             }
 
             return Json(new
@@ -935,7 +936,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 sResult[1] = Models.VoucherMethod.GetNrPrintByFacturaID(facturaId.ToString()).ToString();
             }
             catch (Exception e){
-                sResult[0] = e.Message + e.StackTrace;
+                sResult[0] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Voucher_GetNrPrintByFacturaID");
                 sResult[1] = "";
             }
             return Json(sResult , JsonRequestBehavior.AllowGet);  
@@ -1301,7 +1302,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                sResult = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.EliminarVenta");
             }
 
 
@@ -1341,7 +1342,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                sResult = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.EliminarReservaHotel");
             }
 
 

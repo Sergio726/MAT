@@ -2,7 +2,14 @@
     // Convención de claves soportadas (TempData/ViewBag):
     // - Success, Error, Warning, Info
     // - MsgError (legacy)
-    string GetString(object o) => o == null ? null : o.ToString();
+    // Compat: Razor con C# antiguo (sin local functions / expression-bodied members)
+    Func<object, string> GetString = o => o == null ? null : o.ToString();
+    Func<string, string> ToSafeHtml = s =>
+    {
+        if (string.IsNullOrWhiteSpace(s)) return "";
+        // Encode por defecto para evitar inyección; mantener saltos de línea.
+        return HttpUtility.HtmlEncode(s).Replace("\r\n", "<br/>").Replace("\n", "<br/>");
+    };
 
     var success = GetString(TempData["Success"]) ?? GetString(ViewBag.Success);
     var info = GetString(TempData["Info"]) ?? GetString(ViewBag.Info);
@@ -22,7 +29,7 @@
     {
         <div class="modern-alert modern-alert-error" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i>
-            <span>@Html.Raw(error)</span>
+            <span>@Html.Raw(ToSafeHtml(error))</span>
         </div>
     }
 
@@ -38,7 +45,7 @@
     {
         <div class="modern-alert modern-alert-warning" role="alert">
             <i class="bi bi-exclamation-circle-fill"></i>
-            <span>@Html.Raw(warning)</span>
+            <span>@Html.Raw(ToSafeHtml(warning))</span>
         </div>
     }
 
@@ -46,7 +53,7 @@
     {
         <div class="modern-alert modern-alert-info" role="alert">
             <i class="bi bi-info-circle-fill"></i>
-            <span>@Html.Raw(info)</span>
+            <span>@Html.Raw(ToSafeHtml(info))</span>
         </div>
     }
 
@@ -54,7 +61,7 @@
     {
         <div class="modern-alert modern-alert-success" role="alert">
             <i class="bi bi-check-circle-fill"></i>
-            <span>@Html.Raw(success)</span>
+            <span>@Html.Raw(ToSafeHtml(success))</span>
         </div>
     }
 </div>
