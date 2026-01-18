@@ -151,7 +151,7 @@
 <script type="text/javascript">
     function save() {
         if ($("#Nombre").val().replace(/ /g,'') == "") {
-            alert("El campo nombre es obigatorio. Por favor ingrese el nombre del Hotel.");
+            (window.alertInfo || window.alert)("El campo nombre es obligatorio. Por favor ingrese el nombre del Hotel.", "Validación");
             return;
         }
 
@@ -184,7 +184,7 @@
                             confirm("Ya existe un hotel con ese nombre, por favor cambie el nombre.", "Advertencia");
                         }
                         else {
-                            alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                            (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                             console.log(data.Error);
                         }
                     }
@@ -212,7 +212,7 @@
 
                     }
                     else {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                         console.log(data.Error);
                     }
                 }
@@ -236,7 +236,7 @@
                     return false;
                 }
                 else {
-                    alert("Ha ocurrido un error, al intentar checkear el nombre del hotel.", "Error");
+                    (window.alertError || window.alert)("Ha ocurrido un error, al intentar checkear el nombre del hotel.", "Error");
                     console.log(data.Error);
                     return true;
                 }

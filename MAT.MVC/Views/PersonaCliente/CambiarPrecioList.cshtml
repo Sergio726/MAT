@@ -34,13 +34,13 @@ else
                         $("#PopinPrecioList").dialog("close");
                     }
                     else {
-                        alert("Se produjo un error. Contactese con el administrador.");
+                        (window.alertError || window.alert)("Se produjo un error. Contáctese con el administrador.", "Error");
                         console.log(data[1]);
                     }
                                         
                 },
                 error: function (e) {
-                    alert("Se produjo un error. Contactese con el administrador.");
+                    (window.alertError || window.alert)("Se produjo un error. Contáctese con el administrador.", "Error");
                     console.log(e);
                 }
             })

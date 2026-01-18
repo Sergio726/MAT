@@ -164,16 +164,16 @@
     function valForm() {
         var ViajeID = $("#id_viaje").val();
         if (ViajeID == "") {
-            return alert("No hay un viaje seleccionado, por favor actualice la página.");
+            return (window.alertInfo || window.alert)("No hay un viaje seleccionado, por favor actualice la página.", "Validación");
         }
         var PasajeID = $("#hdnPasajeId").val();
         var MayorID = $("#hdnMayorId").val();
         if (MayorID == "" || PasajeID == "") {
-            return alert("Seleccione un tutor o encargado del menor por favor.");
+            return (window.alertInfo || window.alert)("Seleccione un tutor o encargado del menor por favor.", "Validación");
         }
         var MenorID = $("#hdnMenorId").val();
         if (MenorID == "") {
-            return alert("Seleccione un menor por favor.");
+            return (window.alertInfo || window.alert)("Seleccione un menor por favor.", "Validación");
         }
 
         $.ajax({
@@ -189,7 +189,7 @@
                     loadPasajeroMenor();
                 }
                 else {
-                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                 }
             }
         });

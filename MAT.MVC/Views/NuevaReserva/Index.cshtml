@@ -698,13 +698,13 @@
                 }
 
                 if (this.Pasajeros.length == 0) {
-                    alert("Agregue pasajeros para continuar.")
+                    (window.alertInfo || window.alert)("Agregue pasajeros para continuar.", "Validación")
                     return false;
                 }
 
                 const pasajerosSinButacas = this.Pasajeros.filter(p => p.Butaca.ButacaId == "");
                 if (pasajerosSinButacas.length == 0) {
-                    alert("Todos los pasajeros estan asignados a butacas.")
+                    (window.alertInfo || window.alert)("Todos los pasajeros están asignados a butacas.", "Validación")
                     return false;
                 }
 
@@ -834,7 +834,7 @@
                 const oCheckBox = $("#tblHabitacion_checkbox_" + id);
 
                 if (this.Pasajeros.length == 0) {
-                    alert("Agregue pasajeros para continuar.")
+                    (window.alertInfo || window.alert)("Agregue pasajeros para continuar.", "Validación")
                     oCheckBox.prop("checked", false);
                     return false;
                 }
@@ -852,11 +852,11 @@
                             this.assignPasajeroHabitacion(id);
                             break;
                         case capacidadActual > 0:
-                            alert("La capacidad ya esta cubierta y tiene disponible " + capacidadActual);
+                            (window.alertInfo || window.alert)("La capacidad ya está cubierta y tiene disponible " + capacidadActual + " lugar(es).", "Validación");
                             oCheckBox.prop("checked", false);
                             break;
                         case capacidadActual == 0:
-                            alert("La capacidad ya esta cubierta");
+                            (window.alertInfo || window.alert)("La capacidad ya está cubierta.", "Validación");
                             oCheckBox.prop("checked", false);
                             break;
                     }
@@ -1002,7 +1002,7 @@
                 }
 
                 if (this.Pasajeros.length == 0) {
-                    alert("Agregue pasajeros para continuar.")
+                    (window.alertInfo || window.alert)("Agregue pasajeros para continuar.", "Validación")
                     oCheckBox.prop("checked", false);
                     return false;
                 }
@@ -1017,7 +1017,7 @@
                     if (adicional.IsMenor) {
                         const pasajerosMenores = oReserva.Pasajeros.filter(p => p.Edad < 3 && p.Butaca.ButacaId == "");
                         if (pasajerosMenores.length <= 0) {
-                            alert("No hay menores a 3 años de edad y sin butacas para asignar este adicional");
+                            (window.alertInfo || window.alert)("No hay menores de 3 años de edad y sin butaca para asignar este adicional.", "Validación");
                             oCheckBox.prop("checked", false);
                             return false;
                         }
@@ -1157,7 +1157,7 @@
             oReserva.reservar = function () {
                 const message = this.validarReserva();
                 if (message != "") {
-                    alert(message);
+                    (window.alertInfo || window.alert)(message, "Validación");
                     return false;
                 }
 

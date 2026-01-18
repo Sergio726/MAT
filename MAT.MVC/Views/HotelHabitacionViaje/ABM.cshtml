@@ -436,11 +436,11 @@
             dataType: "json",
             success: function (data) {
                 if (data.Mensaje == "Done.") {
-                    alert("La distribucion se agrego con exito", "Operacion Exitosa");
+                    (window.alertSuccess || window.alert)("La distribución se agregó con éxito", "Operación Exitosa");
                     getDistribucion();
                 }
                 else {
-                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     console.log(data.Error);
                 }
             }
@@ -465,7 +465,7 @@
                     Load_tblHotelHabitacionViaje(jQuery.parseJSON(data.DataTable));
                 }
                 else {
-                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     console.log(data.Error);
                 }
             }
@@ -489,7 +489,7 @@
                 }
                 else {
                     if (data.Mensaje == "Error.") {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                         console.log(data.Error);
                     }
                 }
@@ -518,7 +518,7 @@
         var HotelID = "@Model.HotelID";
 
         if (Nombre === "") {
-            alert("Por favor ingrese un nombre para asignar a la plantilla.", "Error");
+            (window.alertInfo || window.alert)("Por favor ingrese un nombre para asignar a la plantilla.", "Validación");
         }
         else {
             $("#btnGuardarPlantilla").attr('disabled', true);
@@ -532,16 +532,16 @@
                 dataType: "json",
                 success: function (data) {
                     if (data.Mensaje == "Done.") {
-                        alert("La plantilla se guardo con exito", "Operacion Exitosa");
+                        (window.alertSuccess || window.alert)("La plantilla se guardó con éxito", "Operación Exitosa");
                         $("#popin_NombrePlantila").dialog("close");
                     }
                     else {
                         if (data.Mensaje == "Alert.") {
-                            alert(data.Error, "Atencion");
+                            (window.alertInfo || window.alert)(data.Error, "Atención");
                             $("#btnGuardarPlantilla").attr('disabled', false);
                         }
                         else {
-                            alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                            (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                             console.log(data.Error);
                         }
                     }
@@ -575,12 +575,12 @@
             dataType: "json",
             success: function (data) {
                 if (data.Mensaje == "Done.") {
-                    alert("Se agregaron habitaciones de la distribucion de la Plantilla seleccionada.", "Operacion Exitosa");
+                    (window.alertSuccess || window.alert)("Se agregaron habitaciones de la distribución de la Plantilla seleccionada.", "Operación Exitosa");
                     $("#popup_PlantillaDistribucionHabitacion").dialog("close");
                     getDistribucion();
                 }
                 else {
-                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     console.log(data.Error);
                 }
             }
@@ -602,7 +602,7 @@
                 }
                 else {
                     if (data.Mensaje == "Error.") {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                         console.log(data.Error);
                     }
                 }

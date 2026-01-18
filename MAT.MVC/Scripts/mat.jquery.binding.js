@@ -15,7 +15,7 @@ $(document).on("click", "#btn_crear_pasajes", function () {
     var viajeid = $(".field-id").val();
     var url = "/Viaje/CrearPasajes?id=" + viajeid;
     $.get(url, { id: viajeid }, function (data) {
-        alert(data);
+        (window.alertInfo || window.alert)(data, "Atención");
     });
 });
 
@@ -56,12 +56,12 @@ $(document).on("click", "select[name='Pago.TipoPago']", function () {
                     $("#total-credito").val(Cred);
                 }
                 else {
-                    alert("Ocurrió un error a intentar calcular el crédito disponible.");
+                    (window.alertError || window.alert)("Ocurrió un error al intentar calcular el crédito disponible.", "Error");
                     console.log(response[1]);
                 }
             },
             error: function (e) {
-                alert("Ocurrió un error a intentar calcular el crédito disponible.");
+                (window.alertError || window.alert)("Ocurrió un error al intentar calcular el crédito disponible.", "Error");
                 console.log(e);
             }
         })
@@ -73,7 +73,7 @@ $(document).on("click", "#btnReservarPasaje", function () {
     var condicion = $("input[name=condicion]:checked").val();
 
     if (clienteid == "") {
-        return alert("Debe seleccionar un Cliente.");
+        return (window.alertInfo || window.alert)("Debe seleccionar un Cliente.", "Validación");
     }
 
     if (ViajeMonedaTipo != "1" && condicion == "Efectivo") {
@@ -110,21 +110,21 @@ $(document).on("click", "#btnReservarPasaje", function () {
 
     if (montoFactura == monto) {
         if ($("input[name='comprobante']:checked").val() == "Recibo") {
-            return alert("Esta realizando el pago total de la factura. Debe ingresar un número de factura.");
+            return (window.alertInfo || window.alert)("Está realizando el pago total de la factura. Debe ingresar un número de factura.", "Validación");
         }
     }
 
     if (tipopago == 4) {
         if (parseFloat(monto) > parseFloat($("#total-credito").val()))
         {
-            return alert("Credito insufiente. Ingrese un monto menor o igual al Crédito Disponible.")
+            return (window.alertInfo || window.alert)("Crédito insuficiente. Ingrese un monto menor o igual al Crédito Disponible.", "Validación");
         }
     }
 
     if (descuento >0) {
         if (detalledescuento.trim() == '')
         {
-            return alert('Por favor agregue una descripción para el descuento aplicado.');
+            return (window.alertInfo || window.alert)("Por favor agregue una descripción para el descuento aplicado.", "Validación");
         }
     }
     
@@ -191,19 +191,19 @@ $(document).on("click", "#btnReservarPasaje", function () {
             var result = data == "True" ? true : false;
             $("#FormReserva").dialog("close");
             if (data == "Pagado") {
-                alert("Reserva realizada correctamente. Pago total recibido.");
+                (window.alertSuccess || window.alert)("Reserva realizada correctamente. Pago total recibido.", "Éxito");
                 $(document).off("click", "#panel-bus a.selected", null);
                 $("#panel-bus a.selected").addClass("reservado").removeClass("selected");
             } else if (data == "Señado") {
-                alert("Reserva realizada correctamente. Seña parcial recibida.");
+                (window.alertSuccess || window.alert)("Reserva realizada correctamente. Seña parcial recibida.", "Éxito");
                 $(document).off("click", "#panel-bus a.selected", null);
                 $("#panel-bus a.selected").addClass("señado").removeClass("selected");
             } else if (data == "Pre-reserva") {
-                alert("Pre-Reserva realizada correctamente.");
+                (window.alertSuccess || window.alert)("Pre-reserva realizada correctamente.", "Éxito");
                 $(document).off("click", "#panel-bus a.selected", null);
                 $("#panel-bus a.selected").addClass("prereserva").removeClass("selected");
             } else if (data == "Error") {
-                alert("Error de Sistema. Contacte con el Administrador.");
+                (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
             }
         }
     });
@@ -258,7 +258,7 @@ $(document).on("click", "#btn-reservar", function () {
         ShowFormDialog(url, dialogid, dialogtitle, "min");
         
     } else {
-        alert("Sr. Usuario debe seleccionar al menos una butaca para la reserva.");
+        (window.alertInfo || window.alert)("Debe seleccionar al menos una butaca para la reserva.", "Validación");
     }
 
 });
@@ -281,7 +281,7 @@ $(document).on("click", "#btn-reservar", function () {
         });
 
         if (butacasSinPasajero.length > 0) {
-            alert("Hay " + butacasSinPasajero.length + " butaca(s) seleccionada(s) sin pasajero asignado. Por favor asigne un pasajero a cada butaca antes de reservar.");
+            (window.alertInfo || window.alert)("Hay " + butacasSinPasajero.length + " butaca(s) seleccionada(s) sin pasajero asignado. Por favor asigne un pasajero a cada butaca antes de reservar.", "Validación");
             return;
         }
 
@@ -313,7 +313,7 @@ $(document).on("click", "#btn-reservar", function () {
         });
 
         if (pasajes.length === 0) {
-            alert("No hay pasajes válidos para reservar.");
+            (window.alertInfo || window.alert)("No hay pasajes válidos para reservar.", "Validación");
             return;
         }
 
@@ -345,12 +345,12 @@ $(document).on("click", "#btn-reservar", function () {
                 ShowFormDialogHTML(result, dialogid, dialogtitle, "min");
             },
             error: function(xhr, status, error) {
-                alert("Error al procesar la reserva: " + error);
+                (window.alertError || window.alert)("Error al procesar la reserva: " + error, "Error");
             }
         });
 
     } else {
-        alert("Sr. Usuario debe seleccionar al menos una butaca para la reserva.");
+        (window.alertInfo || window.alert)("Debe seleccionar al menos una butaca para la reserva.", "Validación");
     }
 });
 
@@ -455,10 +455,10 @@ $(document).on("click", "#btn-buscar-persona", function () {
             var result = data == "True" ? true : false;
             $("#FormReserva").dialog("close");
             if (result) {
-                alert("Reserva realizada correctamente.");
+                (window.alertSuccess || window.alert)("Reserva realizada correctamente.", "Éxito");
                 $("#panel-bus a.selected").addClass("reservado").removeClass("selected").off("click");
             } else {
-                alert("Error de Sistema. Contacte con el Administrador.");
+                (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
             }
         }
     });
@@ -476,10 +476,10 @@ $(document).on("click", "#btnEliminarVenta", function () {
             $("#EliminarVenta").dialog("close");
             var result = data == "True" ? true : false;
             if (result) {
-                alert("La venta ha sido eliminada correctamente.");
+                (window.alertSuccess || window.alert)("La venta ha sido eliminada correctamente.", "Éxito");
                 setTimeout(function () { location.reload(); }, 1000);
             } else {
-                alert("Error de Sistema. Verifique el código de seguridad o contacte con el Administrador de Sistema.");
+                (window.alertError || window.alert)("Error de Sistema. Verifique el código de seguridad o contacte con el Administrador de Sistema.", "Error");
             }
         }
     });
@@ -627,7 +627,7 @@ $(document).on("click", "#btn-notacredito", function () {
     
     // Validar que los datos necesarios estén presentes
     if (!facturaid || !clienteid) {
-        alert("Error: Faltan datos necesarios para generar la nota de crédito.");
+        (window.alertError || window.alert)("Faltan datos necesarios para generar la nota de crédito.", "Error");
         console.error("Datos faltantes - facturaid:", facturaid, "clienteid:", clienteid);
         return;
     }
@@ -648,19 +648,19 @@ $(document).on("click", "#btn-notacredito", function () {
 
 $(document).on("click", "#btn-retencion", function () {
     if ($("#NroNota").val().trim() == "") {
-        return alert("El nro de nota es obligatorio.");
+        return (window.alertInfo || window.alert)("El nro de nota es obligatorio.", "Validación");
     }
     var fmontoRetencion = parseFloat($("#MontoRetencion").val().replace(".", "").replace(",", "."));
     var fmontohdnTotalPagos = parseFloat($("#hdnTotalPagos").val().replace(".", "").replace(",", "."));
     var fmontohdnMontoNota = parseFloat($("#MontoNota").val().replace(".", "").replace(",", "."));
     if (fmontoRetencion > fmontohdnTotalPagos) {
-        return alert("El monto a retener no debe ser mayor al total de pagos.");
+        return (window.alertInfo || window.alert)("El monto a retener no debe ser mayor al total de pagos.", "Validación");
     }
     if (fmontohdnMontoNota > fmontohdnTotalPagos) {
-        return alert("El monto de la Nota de Crédito no debe ser mayor al total de pagos.");
+        return (window.alertInfo || window.alert)("El monto de la Nota de Crédito no debe ser mayor al total de pagos.", "Validación");
     }
     if ($("#DetalleNotaCredito").val().trim() == "") {
-        return alert("Debe ingresar un detalle de Nota de Crédito.");
+        return (window.alertInfo || window.alert)("Debe ingresar un detalle de Nota de Crédito.", "Validación");
     }
 
     
@@ -674,10 +674,10 @@ $(document).on("click", "#btn-retencion", function () {
             $("#NotaCredito").dialog("close");
             $("#Detalles").dialog("close");
             if (result[0]== "Done.") {
-                alert("Nota de Crédito realizada correctamente.");
+                (window.alertSuccess || window.alert)("Nota de Crédito realizada correctamente.", "Éxito");
             } else {
                 console.log(result[1])
-                alert("Error de Sistema. Contacte con el Administrador.");
+                (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
             }
         }
     });
@@ -781,7 +781,7 @@ $(document).on("click", "#btnReservarHabitacion", function () {
 
     //});
     if (iFecha > 0) {
-        return alert("Por favor verifique que las fechas ingresadas no esten en blanco y sean correctas dd/mm/yyyy.", "Fecha Incorrecta")
+        return (window.alertInfo || window.alert)("Por favor verifique que las fechas ingresadas no estén en blanco y sean correctas (dd/mm/yyyy).", "Fecha incorrecta");
 
     }
 
@@ -794,7 +794,7 @@ $(document).on("click", "#btnReservarHabitacion", function () {
 
     });
     if (iHora > 0) {
-        return alert("Por favor verifique que las horas ingresadas no esten en blanco y sean correctas hh:mm.", "Hora Incorrecta")
+        return (window.alertInfo || window.alert)("Por favor verifique que las horas ingresadas no estén en blanco y sean correctas (hh:mm).", "Hora incorrecta");
 
     }
 
@@ -842,16 +842,16 @@ $(document).on("click", "#btnReservarHabitacion", function () {
                 var pathname = window.location.pathname;
 
                 if (pathname == "/Reserva/Index") {
-                    alert('Reserva Exitosa');
+                    (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
                 }
                 else {
                     PopupDetalleFactura_Load();
-                    alert('Reserva Exitosa');
+                    (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
                 }
                 window.location.reload(true);
             }
             else {
-                alert('No se pudo realizar la reserva');
+                (window.alertError || window.alert)("No se pudo realizar la reserva.", "Error");
             }
 
             
@@ -1040,11 +1040,11 @@ $(document).on("keyup", "#frmCreateCliente #NroDocumento", function () {
                     
                     if (response.Data == "True") {
                         $("#NroDocumento").val("");
-                        alert("El DNI ingresado ya existe en el Sistema. Por favor ingrese otro DNI o contacte con el administrador del Sistema.");
+                        (window.alertInfo || window.alert)("El DNI ingresado ya existe en el sistema. Por favor ingrese otro DNI o contacte con el administrador.", "Validación");
                     }
                 }
                 else {
-                    alert(response.Result);
+                    (window.alertInfo || window.alert)(response.Result, "Atención");
                 }
 
             }
@@ -1057,7 +1057,7 @@ $(document).on("keyup", "#frmCreateCliente #NroDocumento", function () {
         //    success: function (data) {
         //        if (data == "True") {
         //            $("#NroDocumento").val("");
-        //            alert("El DNI ingresado ya existe en el Sistema. Por favor ingrese otro DNI o contacte con el administrador del Sistema.");
+        //            (mensaje legacy) "El DNI ingresado ya existe en el sistema..."
         //        }
         //    }
         //});
@@ -1080,12 +1080,12 @@ $(document).on("keyup", "#frmEditCliente #NroDocumento", function () {
 
                     if (response.Data == "True") {
                         $("#NroDocumento").val("");
-                        alert("El DNI ingresado ya existe en el Sistema. Por favor ingrese otro DNI o contacte con el administrador del Sistema.");
+                        (window.alertInfo || window.alert)("El DNI ingresado ya existe en el sistema. Por favor ingrese otro DNI o contacte con el administrador.", "Validación");
                     }
                   
                 }
                 else {
-                    alert(response.Result);
+                    (window.alertInfo || window.alert)(response.Result, "Atención");
                 }
 
             }
@@ -1097,40 +1097,40 @@ $(document).on("keyup", "#frmEditCliente #NroDocumento", function () {
 $(document).on("click", "#btnAgregarCliente", function () {
     var nrodoc = $("input[name=NroDocumento]").val();
     if ($("#Apellido").val().trim() == "") {
-        return alert("Por favor ingrese el apellido de la persona.");
+        return (window.alertInfo || window.alert)("Por favor ingrese el apellido de la persona.", "Validación");
     }
     if ($("#Nombre").val().trim() == "") {
-        return alert("Por favor ingrese el nombre de la persona.");
+        return (window.alertInfo || window.alert)("Por favor ingrese el nombre de la persona.", "Validación");
     }
     if ($("#NroDocumento").val().trim() == "") {
-        return alert("Por favor ingrese el número de documento de la persona.");
+        return (window.alertInfo || window.alert)("Por favor ingrese el número de documento de la persona.", "Validación");
     }
     if ($("#Domicilio").val().trim() == "") {
-        return alert("Por favor ingrese el domicilio de la persona.");
+        return (window.alertInfo || window.alert)("Por favor ingrese el domicilio de la persona.", "Validación");
     }
     if ($("#Telefono").val().trim() == "") {
-        return alert("Por favor ingrese el télefono de la persona.");
+        return (window.alertInfo || window.alert)("Por favor ingrese el teléfono de la persona.", "Validación");
     }
     if ($("#FechaNacimiento").val().trim() == "") {
-        return alert("Por favor ingrese la fecha de nacimiento.");
+        return (window.alertInfo || window.alert)("Por favor ingrese la fecha de nacimiento.", "Validación");
     }
     if ($("#Provincia").val().trim() == "0") {
-        return alert("Por favor seleccione una Provincia.");
+        return (window.alertInfo || window.alert)("Por favor seleccione una Provincia.", "Validación");
     }
     if ($("#ddDepartamento").val().trim() == "0") {
-        return alert("Por favor seleccione un Departamento.");
+        return (window.alertInfo || window.alert)("Por favor seleccione un Departamento.", "Validación");
     }
     if ($("#ddLocalidad").val().trim() == "0") {
-        return alert("Por favor seleccione una localidad.");
+        return (window.alertInfo || window.alert)("Por favor seleccione una Localidad.", "Validación");
     }
     if ($("#Nacionalidad").val().trim() == "") {
-        return alert("Por favor ingrese la nacionalidad de la persona.");
+        return (window.alertInfo || window.alert)("Por favor ingrese la nacionalidad de la persona.", "Validación");
     }
     if ($("#PaisResidencia").val().trim() == "") {
-        return alert("Por favor ingrese un pais de residencia.");
+        return (window.alertInfo || window.alert)("Por favor ingrese un país de residencia.", "Validación");
     }
     //if ($("#Cuit").val().trim() == "") {
-    //    return alert("Por favor ingrese el CUIL o CUIL de la persona.");
+    //    return (mensaje legacy) "Por favor ingrese el CUIL/CUIT de la persona.";
     //}
     $.ajax({
         type: "POST",
@@ -1143,14 +1143,14 @@ $(document).on("click", "#btnAgregarCliente", function () {
 
                 if (response.Data == "True") {
                     $("#NroDocumento").val("");
-                    alert("El DNI ingresado ya existe en el Sistema. Por favor ingrese otro DNI o contacte con el administrador del Sistema.");
+                    (window.alertInfo || window.alert)("El DNI ingresado ya existe en el sistema. Por favor ingrese otro DNI o contacte con el administrador.", "Validación");
                 }
                 else {
                     $("#frmCreateCliente").submit();
                 }
             }
             else {
-                alert(response.Result);
+                (window.alertInfo || window.alert)(response.Result, "Atención");
             }
 
         }
@@ -1170,7 +1170,7 @@ $(document).on("click", "#btn-cancelar-pago", function () {
                 if (data == "True") {
                     window.location.reload(true);
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1197,7 +1197,7 @@ $(document).on("click", "#btn-cancelar-nota", function () {
                 if (data == "True") {
                     window.location.reload(true);
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1221,11 +1221,11 @@ $(document).on("click", "#btn-eliminar-servicio", function () {
             data: { id: id },
             success: function (data) {
                 if (data == "True") {
-                    alert("Servicio Eliminado Correctamente.");
+                    (window.alertSuccess || window.alert)("Servicio eliminado correctamente.", "Éxito");
                     setTimeout(5000);
                     window.location.reload();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1250,11 +1250,11 @@ $(document).on("click", "#btn-eliminar-servicio-admin", function () {
             data: { id: id },
             success: function (data) {
                 if (data == "True") {
-                    alert("Servicio Eliminado Correctamente.");
+                    (window.alertSuccess || window.alert)("Servicio eliminado correctamente.", "Éxito");
                     setTimeout(5000);
                     window.location.reload();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1279,11 +1279,11 @@ $(document).on("click", "#btn-eliminar-excursion", function () {
             data: { id: id },
             success: function (data) {
                 if (data == "True") {
-                    alert("Excursión Eliminada Correctamente.");
+                    (window.alertSuccess || window.alert)("Excursión eliminada correctamente.", "Éxito");
                     setTimeout(5000);
                     window.location.reload();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1308,11 +1308,11 @@ $(document).on("click", "#btn-eliminar-adicional", function () {
             data: { id: id },
             success: function (data) {
                 if (data == "True") {
-                    alert("Adicional Eliminado Correctamente.");
+                    (window.alertSuccess || window.alert)("Adicional eliminado correctamente.", "Éxito");
                     setTimeout(5000);
                     window.location.reload();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1337,11 +1337,11 @@ $(document).on("click", "#btn-eliminar-precio", function () {
             data: { id: id },
             success: function (data) {
                 if (data == "True") {
-                    alert("Precio Eliminado Correctamente.");
+                    (window.alertSuccess || window.alert)("Precio eliminado correctamente.", "Éxito");
                     setTimeout(5000);
                     window.location.reload();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1367,11 +1367,11 @@ $(document).on("click", "#btn-eliminar-viaje", function () {
             success: function (data) {
                 console.log(data);
                 if (data.Mensaje == "Done") {
-                    alert("Viaje eliminado Correctamente.");
+                    (window.alertSuccess || window.alert)("Viaje eliminado correctamente.", "Éxito");
                     setTimeout(5000);
                     window.location.reload();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1446,7 +1446,7 @@ $(document).on("click", "#btn-vincular-servicio", function () {
             if (data == "True") {
                 btn.parent().parent().hide();
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -1465,7 +1465,7 @@ $(document).on("click", "#btn-desvincular-servicio", function () {
                 if (data == "True") {
                     btn.parent().parent().remove();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1492,7 +1492,7 @@ $(document).on("click", "#btn-vincular-excursion", function () {
             if (data == "True") {
                 btn.parent().parent().parent().hide();
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -1510,7 +1510,7 @@ $(document).on("click", "#btn-desvincular-excursion", function () {
                 if (data == "True") {
                     btn.parent().parent().remove();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1536,7 +1536,7 @@ $(document).on("click", "#btn-vincular-precio", function () {
             if (data == "True") {
                 btn.parent().parent().hide();
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -1555,7 +1555,7 @@ $(document).on("click", "#btn-desvincular-precio", function () {
                 if (data == "True") {
                     btn.parent().parent().remove();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1581,7 +1581,7 @@ $(document).on("click", "#btn-vincular-adicional", function () {
             if (data == "True") {
                 btn.parent().parent().hide();
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -1600,7 +1600,7 @@ $(document).on("click", "#btn-desvincular-adicional", function () {
                 if (data == "True") {
                     btn.parent().parent().remove();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1627,7 +1627,7 @@ $(document).on("click", "#btn-vincular-hotel", function () {
             if (data == "True") {
                 btn.parent().parent().hide();
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             };
         }
     });
@@ -1646,7 +1646,7 @@ $(document).on("click", "#btn-desvincular-hotel", function () {
                 if (data == "True") {
                     btn.parent().parent().remove();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1742,7 +1742,7 @@ $(document).on("click", "#btn-aceptar-cambio-butaca", function () {
                     //$("#btn-detallefactura").click();
                     PopupDetalleFactura_Load();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1785,7 +1785,7 @@ $(document).on("click", ".btn-cambio-habitacion", function () {
                 //$("#btn-detallefactura").click();
                 PopupDetalleFactura_Load();
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -1809,11 +1809,11 @@ $(document).on("click", ".btn-eliminar-precio-habitacion", function () {
             data: { preciohabitacionid: id },
             success: function (data) {
                 if (data == "True") {
-                    alert("Precio Eliminado Correctamente.");
+                    (window.alertSuccess || window.alert)("Precio eliminado correctamente.", "Éxito");
                     setTimeout(5000);
                     window.location.reload();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1838,11 +1838,11 @@ $(document).on("click", ".btn-eliminar-precio-servicio", function () {
             data: { id: id },
             success: function (data) {
                 if (data == "True") {
-                    alert("Precio Eliminado Correctamente.");
+                    (window.alertSuccess || window.alert)("Precio eliminado correctamente.", "Éxito");
                     setTimeout(5000);
                     window.location.reload();
                 } else {
-                    alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
@@ -1875,7 +1875,7 @@ $(document).on("click", "#btn-seleccionar-servicio-admin", function () {
                 $("#GridServiciosAdmin").dialog("close");
                 $("#grid_items").load("/Admin/GridPlanillaServicioItemContext");
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -1895,7 +1895,7 @@ $(document).on("blur", "input.cantidad", function () {
             if (data == "True") {
                 console.log(data);
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -1948,9 +1948,9 @@ $(document).on("click", "#btn-generar-planilla", function () {
         data: { viajeid: viajeid, total: total },
         success: function (data) {
             if (data == "True") {
-                alert("Planilla Generada Correctamente");
+                (window.alertSuccess || window.alert)("Planilla generada correctamente.", "Éxito");
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -2040,10 +2040,10 @@ $(document).on("click", "#btn-guardar-planilla", function () {
         data: { planillaid: planillaid, fecha: fecha, total: total},
         success: function (data) {
             if (data == "True") {
-                //alert("Planilla Generada Correctamente");
+                // (mensaje legacy) Planilla generada correctamente
             } else {
                 hecho = false;
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -2060,10 +2060,10 @@ $(document).on("click", "#btn-guardar-planilla", function () {
                 data: { itemid: id, dias: dias, subtotal: subtotal },
                 success: function (data) {
                     if (data == "True") {
-                        //alert("Planilla Generada Correctamente");
+                        // (mensaje legacy) Planilla generada correctamente
                     } else {
                         hecho = false;
-                        alert("Error en la Operación Actualizar Habitaciones Planilla Item. Contacte con el Administrador del Sistema.");
+                        (window.alertError || window.alert)("Error en la operación (actualizar habitaciones de planilla). Contacte con el Administrador del Sistema.", "Error");
                     }
                 }
             });
@@ -2080,15 +2080,15 @@ $(document).on("click", "#btn-guardar-planilla", function () {
             data: { id: id, cantidad: cantidad, subtotal: subtotal },
             success: function (data) {
                 if (data == "True") {
-                    //alert("Planilla Generada Correctamente");
+                    // (mensaje legacy) Planilla generada correctamente
                 } else {
                     hecho = false;
-                    alert("Error en la Operación Actualizar Servicios Planilla Item. Contacte con el Administrador del Sistema.");
+                    (window.alertError || window.alert)("Error en la operación (actualizar servicios de planilla). Contacte con el Administrador del Sistema.", "Error");
                 }
             }
         });
     });
-    if (hecho) alert("Datos guardados correctamente");
+    if (hecho) (window.alertSuccess || window.alert)("Datos guardados correctamente.", "Éxito");
 });
 
 $(document).on("click", "#btn-siguiente-paso-planilla", function () {
@@ -2099,9 +2099,9 @@ $(document).on("click", "#btn-siguiente-paso-planilla", function () {
         data: { viajeid: viajeid },
         success: function (data) {
             if (data == "True") {
-                //alert("Planilla Generada Correctamente");
+                // (mensaje legacy) Planilla generada correctamente
             } else {
-                alert("Error en la Operación. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -2119,9 +2119,9 @@ $(document).on("click", "#btn-siguiente-paso-planilla", function () {
                 data: { habitacionid: id, dias: dias, subtotal: subtotal},
                 success: function (data) {
                     if (data == "True") {
-                        //alert("Planilla Generada Correctamente");
+                        // (mensaje legacy) Planilla generada correctamente
                     } else {
-                        alert("Error en la Operación Agregar Habitaciones Planilla Item. Contacte con el Administrador del Sistema.");
+                        (window.alertError || window.alert)("Error en la operación (agregar habitaciones a planilla). Contacte con el Administrador del Sistema.", "Error");
                     }
                 }
             });
@@ -2133,9 +2133,9 @@ $(document).on("click", "#btn-siguiente-paso-planilla", function () {
         data: { total: total },
         success: function (data) {
             if (data == "True") {
-                //alert("Planilla Generada Correctamente");
+                // (mensaje legacy) Planilla generada correctamente
             } else {
-                alert("Error en la Operación Agregar Total. Contacte con el Administrador del Sistema.");
+                (window.alertError || window.alert)("Error en la operación (agregar total). Contacte con el Administrador del Sistema.", "Error");
             }
         }
     });
@@ -2192,7 +2192,7 @@ function eliminarReservaHotel(PasajeroID, HabitacionID, ViajeID) {
 
             }
             else {
-                alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
             }
             $("#divFullLoading").remove();
         }

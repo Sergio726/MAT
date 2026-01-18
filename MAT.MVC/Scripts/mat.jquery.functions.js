@@ -255,12 +255,12 @@ function validarCTA(ClienteId, Estado) {
             if (result) {
                 $('#btnActivar').attr('src', '/Images/Icons/icon-boton-verde.png');
                 $('#btnDesactivar').attr('src', '/Images/Icons/icon-boton-rojo2.png');
-                alert('Se activo la cuenta corriente del el cliente seleccionado');
+                (window.alertSuccess || window.alert)('Se activó la cuenta corriente del cliente seleccionado.', 'Éxito');
             }
             else {
                 $('#btnActivar').attr('src', '/Images/Icons/icon-boton-verde2.png');
                 $('#btnDesactivar').attr('src', '/Images/Icons/icon-boton-rojo.png');
-                alert('Se desactivo la cuenta corriente del cliente seleccionado');
+                (window.alertInfo || window.alert)('Se desactivó la cuenta corriente del cliente seleccionado.', 'Atención');
             }
 
         }

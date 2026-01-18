@@ -255,10 +255,10 @@
 
     function getDistribuciones(ViajeHotelID, Desde, Hasta) {
         if (Desde == '') {
-            return alert('Por favor, primero defina el día de Ingreso al hotel', 'Atención');
+            return (window.alertInfo || window.alert)('Por favor, primero defina el día de Ingreso al hotel', 'Atención');
         }
         if (Hasta == '') {
-            return alert('Por favor, primero defina el día de Egreso del hotel', 'Atención');
+            return (window.alertInfo || window.alert)('Por favor, primero defina el día de Egreso del hotel', 'Atención');
         }
         var title = "Distribución Habitaciones/Viaje";
         var id = "popup_HotelHabitacionViaje";

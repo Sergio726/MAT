@@ -256,7 +256,7 @@
         $("#btnRegistrarPago").click(function () {
             if (ViajeMonedaTipo != "1") {
                 if ($("#hdnCotizacion").val() == "") {
-                    alert("Debe definir la cotizacion de la moneda para el pago de este viaje.");
+                    (window.alertInfo || window.alert)("Debe definir la cotización de la moneda para el pago de este viaje.", "Validación");
                     return;
                 }
             }
@@ -278,7 +278,7 @@
             var MontoRecibido = monto;
 
             if (parseFloat(monto.replace(/\./g, "")) > parseFloat(Saldo)) {
-                return alert("El monto ingresado no puede ser mayor al saldo de la factura. Saldo actual: $" + parseFloat(Saldo));
+                return (window.alertInfo || window.alert)("El monto ingresado no puede ser mayor al saldo de la factura. Saldo actual: $" + parseFloat(Saldo), "Validación");
             }
 
             if ((ViajeMonedaTipo != "1") || (MontoRecibidoMonedaTipo != "1")) {
@@ -318,11 +318,11 @@
                     $("#RegistrarPago").dialog("close");
                     $("#DetalleFactura").dialog("close");
                     if (result) {
-                        alert("Pago recibido correctamente.");
+                        (window.alertSuccess || window.alert)("Pago recibido correctamente.", "Éxito");
                         $("#RegistrarPago").dialog("close");
                         PopupDetalleFactura_Load();
                     } else {
-                        alert("Error de Sistema. Contacte con el Administrador.");
+                        (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
                     }
                 }
             });

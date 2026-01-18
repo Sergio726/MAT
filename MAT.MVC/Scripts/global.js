@@ -356,7 +356,7 @@ function asignarPasajerosAButacas() {
         
         // Si hay más pasajeros, mostrar mensaje
         if (window.infoReservaModal.pasajeros.length > 1) {
-            alert('Pasajero asignado a la butaca. ' + (window.infoReservaModal.pasajeros.length - 1) + ' pasajero(s) disponible(s) para asignar a otras butacas.');
+            (window.alertInfo || window.alert)('Pasajero asignado a la butaca. ' + (window.infoReservaModal.pasajeros.length - 1) + ' pasajero(s) disponible(s) para asignar a otras butacas.', 'Atención');
         }
     }
     
@@ -480,7 +480,7 @@ function ElegirButacaMulti(elto) {
     elto.toggleClass('selected');
 
     $(".selected").each(function () {
-        alert($(this).attr('title'));
+        (window.alertInfo || window.alert)($(this).attr('title'), 'Atención');
     });
 
 

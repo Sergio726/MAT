@@ -615,7 +615,7 @@
                         
                     }
                     else {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
 
                 }
@@ -635,7 +635,7 @@
     //            $("#divPreReservas").dialog("close");
     //            var result = data == "True" ? true : false;
     //            if (result) {
-    //                alert("La Pre Reserva se dio de baja correctamente.","Baja Correcta");
+    //                (window.alertSuccess || window.alert)("La Pre Reserva se dio de baja correctamente.", "Baja Correcta");
                     
     //            } 
     //        }

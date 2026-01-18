@@ -134,12 +134,12 @@
                     console.log('succesfull');
                 }
                 else {
-                    alert("Se produjo un error. Asegurece que el precio que quiere eliminar no este vinculado en algun Paquete.");
+                    (window.alertError || window.alert)("Se produjo un error. Asegúrese que el precio que quiere eliminar no esté vinculado en algún Paquete.", "Error");
                     console.log(data[1]);
                 }
             },
             error: function (e) {
-                alert("Se produjo un error. Contactese con el administrador.");
+                (window.alertError || window.alert)("Se produjo un error. Contáctese con el administrador.", "Error");
                 console.log(e);
             }
         })

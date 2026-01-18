@@ -646,7 +646,7 @@
                         }
                         $("#ddDepartamento").val("@DepartamentoID").change();
                     } else {
-                        alert(response.data);
+                        (window.alertError || window.alert)(response.data, "Error");
                     }
                 }
             });
@@ -673,7 +673,7 @@
                         }
                         $("#ddLocalidad").val("@LocalidadID");
                     } else {
-                        alert(response.data);
+                        (window.alertError || window.alert)(response.data, "Error");
                     }
                 }
             });
@@ -693,7 +693,7 @@
 
     function UpdateForm() {
         if (!valForm()) {
-            return alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
+            return (window.alertInfo || window.alert)("Los campos remarcados no pueden estar vacíos. Por favor revise que estén cargados de forma correcta.", "Validación");
         }
 
         var _data = $("#formPaquete").serialize();
@@ -708,7 +708,7 @@
                         confirm("Los datos se guardaron correctamente.", "Operacion Exitosa");
                         setTimeout(function () { location.href = "/Paquete/Edit/?sAction=detail&sPaqueteID=@Model.PaqueteID"; }, 1000);
                     } else {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
                 }
             });
@@ -725,7 +725,7 @@
                         confirm("Los datos se guardaron correctamente.", "Operacion Exitosa");
                         setTimeout(function () { location.href = "/Paquete/Edit/?sAction=detail&sPaqueteID=" + PaqueteID; }, 1000);
                     } else {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
                 }
             });
@@ -753,7 +753,7 @@
         });
 
         if (!b) {
-            return alert("Los campos remarcados son obligatorios. Por favor complete la seleccion.")
+            return (window.alertInfo || window.alert)("Los campos remarcados son obligatorios. Por favor complete la selección.", "Validación")
         } else {
             var sPais = $("#ddPais option:selected").text();
             var sProvincia = $("#ddProvincia option:selected").text();

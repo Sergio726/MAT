@@ -1,0 +1,59 @@
+@{
+    // Convención de claves soportadas (TempData/ViewBag):
+    // - Success, Error, Warning, Info
+    // - MsgError (legacy)
+    string GetString(object o) => o == null ? null : o.ToString();
+
+    var success = GetString(TempData["Success"]) ?? GetString(ViewBag.Success);
+    var info = GetString(TempData["Info"]) ?? GetString(ViewBag.Info);
+    var warning = GetString(TempData["Warning"]) ?? GetString(ViewBag.Warning);
+    var error =
+        GetString(TempData["Error"]) ??
+        GetString(ViewBag.Error) ??
+        GetString(ViewBag.MsgError) ??
+        GetString(TempData["MsgError"]);
+
+    var hasModelStateErrors = !ViewData.ModelState.IsValid;
+}
+
+<div class="modern-alerts-host hidden-print">
+    @if (!string.IsNullOrWhiteSpace(error))
+    {
+        <div class="modern-alert modern-alert-error" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>@Html.Raw(error)</span>
+        </div>
+    }
+
+    @if (hasModelStateErrors)
+    {
+        <div class="modern-alert modern-alert-error" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>@Html.ValidationSummary(false)</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(warning))
+    {
+        <div class="modern-alert modern-alert-warning" role="alert">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span>@Html.Raw(warning)</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(info))
+    {
+        <div class="modern-alert modern-alert-info" role="alert">
+            <i class="bi bi-info-circle-fill"></i>
+            <span>@Html.Raw(info)</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(success))
+    {
+        <div class="modern-alert modern-alert-success" role="alert">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>@Html.Raw(success)</span>
+        </div>
+    }
+</div>

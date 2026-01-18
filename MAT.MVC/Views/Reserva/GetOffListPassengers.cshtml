@@ -294,7 +294,7 @@
                 if (data.Error == "") {
                     jTables = JSON.parse(data.jsTable);
                 } else {
-                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     console.log(data.Error);
                 }
 
@@ -337,7 +337,7 @@
                         .draw();
                 } else {
                     if (data.Mensaje == "Error.") {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                         console.log(data.Error);
                     }
                 }

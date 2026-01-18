@@ -89,14 +89,14 @@
             }
         });
         if (!bResult) {
-            alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
+            (window.alertInfo || window.alert)("Los campos remarcados no pueden estar vacíos. Por favor revise que estén cargados de forma correcta.", "Validación");
             return bResult;
         }
 
         var date1 = $("#dateFrom").val();
         var date2 = $("#dateTo").val();
         if (validate_fechaMayorQue(date2, date1)) {
-            alert("La fecha inicial no puede ser mayor a la fecha final.");
+            (window.alertInfo || window.alert)("La fecha inicial no puede ser mayor a la fecha final.", "Validación");
              return false;
         }
         return bResult;

@@ -160,7 +160,7 @@
             }
             else {
                 if (nrMenores <= ListMenorID.length) {
-                    return alert("Solo puede seleccionar hasta " + nrMenores + " menores. Si desea seleccionar más, cambie la cantidad de seguro de menor.");
+                    return (window.alertInfo || window.alert)("Solo puede seleccionar hasta " + nrMenores + " menores. Si desea seleccionar más, cambie la cantidad de seguro de menor.", "Validación");
                 }
                 ListMenorID.push(MenorID);
                 $(this).addClass('selected');
@@ -177,7 +177,7 @@
         var nrMenores = $("#numMenor").val();
         if (nrMenores > ListMenorID.length) {
             var n = parseInt(nrMenores) - parseInt(ListMenorID.length);
-            return alert("Por favor seleccione " + n + " menores más.");
+            return (window.alertInfo || window.alert)("Por favor seleccione " + n + " menores más.", "Validación");
         }
         $("#hdnListMenor").val(ListMenorID);
         $("#divFormListaMenor").dialog("close");

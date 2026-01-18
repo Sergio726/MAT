@@ -191,7 +191,7 @@
 
     function searchFactura() {
         if ($("#txtPersonaDNI").val() == "" && $("#DDViaje").val() == "") {
-            return alert("Por favor ingrese al menos un parametro de busqueda.");
+            return (window.alertInfo || window.alert)("Por favor ingrese al menos un parámetro de búsqueda.", "Validación");
         }
 
         if ($("#txtPersonaDNI").val() == "") {

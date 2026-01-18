@@ -17,7 +17,7 @@
 
     function validarMenores() {
         if ($("#numMenor").val() == "0") {
-            return alert("Por favor defina la cantidad de seguros para menores.");
+            return (window.alertInfo || window.alert)("Por favor defina la cantidad de seguros para menores.", "Validación");
         }
         showFormListaMenor();
     };
@@ -343,13 +343,13 @@
         $("#btn-continuar-reserva").on("click", function () {
             // Validar que haya pasajeros seleccionados
             if (window.pasajerosSeleccionadosModal.length === 0) {
-                alert("Por favor seleccione al menos un pasajero.");
+                (window.alertInfo || window.alert)("Por favor seleccione al menos un pasajero.", "Validación");
                 return false;
             }
 
             // Validar que haya un precio seleccionado
             if ($("input[name='radio_precio']:checked").length === 0) {
-                alert("Por favor seleccione un precio.");
+                (window.alertInfo || window.alert)("Por favor seleccione un precio.", "Validación");
                 return false;
             }
 
@@ -385,7 +385,7 @@
                     // Si hay más pasajeros, mostrar mensaje
                     if (window.pasajerosSeleccionadosModal.length > 1) {
                         setTimeout(function() {
-                            alert('Pasajero asignado a la butaca. ' + (window.pasajerosSeleccionadosModal.length - 1) + ' pasajero(s) disponible(s) para asignar a otras butacas.');
+                            (window.alertSuccess || window.alert)('Pasajero asignado a la butaca. ' + (window.pasajerosSeleccionadosModal.length - 1) + ' pasajero(s) disponible(s) para asignar a otras butacas.', 'Operación Exitosa');
                         }, 300);
                     }
                 }

@@ -574,7 +574,7 @@
                             LoadLocalidad();
                         }
                     } else {
-                        alert(response.data);
+                        (window.alertError || window.alert)(response.data, "Error");
                     }
                 }
             });
@@ -604,7 +604,7 @@
                             $("#ddLocalidad").val(parseInt(IdLocalidad));
                         }
                     } else {
-                        alert(response.data);
+                        (window.alertError || window.alert)(response.data, "Error");
                     }
                 }
             });
@@ -624,7 +624,7 @@
                     $("#Provincia").val(parseInt(IdProvincia));
                     LoadDepartamento(parseInt(IdProvincia), parseInt(IdDepartamento));
                 } else {
-                    alert(response.data);
+                    (window.alertError || window.alert)(response.data, "Error");
                 }
             }
         });
@@ -637,37 +637,37 @@
 
     function sendForm() {
         if ($("#Apellido").val().trim() == "") {
-            return alert("Por favor ingrese el apellido de la persona.");
+            return (window.alertInfo || window.alert)("Por favor ingrese el apellido de la persona.", "Validación");
         }
         if ($("#Nombre").val().trim() == "") {
-            return alert("Por favor ingrese el nombre de la persona.");
+            return (window.alertInfo || window.alert)("Por favor ingrese el nombre de la persona.", "Validación");
         }
         if ($("#NroDocumento").val().trim() == "") {
-            return alert("Por favor ingrese el numero de documento de la persona.");
+            return (window.alertInfo || window.alert)("Por favor ingrese el número de documento de la persona.", "Validación");
         }
         if ($("#Domicilio").val().trim() == "") {
-            return alert("Por favor ingrese el domicilio de la persona.");
+            return (window.alertInfo || window.alert)("Por favor ingrese el domicilio de la persona.", "Validación");
         }
         if ($("#Telefono").val().trim() == "") {
-            return alert("Por favor ingrese el telefono de la persona.");
+            return (window.alertInfo || window.alert)("Por favor ingrese el teléfono de la persona.", "Validación");
         }
         if ($("#FechaNacimiento").val().trim() == "") {
-            return alert("Por favor ingrese la fecha de nacimiento.");
+            return (window.alertInfo || window.alert)("Por favor ingrese la fecha de nacimiento.", "Validación");
         }
         if ($("#Provincia").val().trim() == "0") {
-            return alert("Por favor seleccione una Provincia.");
+            return (window.alertInfo || window.alert)("Por favor seleccione una Provincia.", "Validación");
         }
         if ($("#ddDepartamento").val().trim() == "0") {
-            return alert("Por favor seleccione un Departamento.");
+            return (window.alertInfo || window.alert)("Por favor seleccione un Departamento.", "Validación");
         }
         if ($("#ddLocalidad").val().trim() == "0") {
-            return alert("Por favor seleccione una localidad.");
+            return (window.alertInfo || window.alert)("Por favor seleccione una localidad.", "Validación");
         }
         if ($("#Nacionalidad").val().trim() == "") {
-            return alert("Por favor ingrese la nacionalidad de la persona.");
+            return (window.alertInfo || window.alert)("Por favor ingrese la nacionalidad de la persona.", "Validación");
         }
         if ($("#PaisResidencia").val().trim() == "") {
-            return alert("Por favor ingrese un pais de residencia.");
+            return (window.alertInfo || window.alert)("Por favor ingrese un país de residencia.", "Validación");
         }
         $("#frmEditCliente").submit();
     }

@@ -557,7 +557,7 @@
 <script type="text/javascript">
     $(function () {
         if ($(".btn-editar-habitacion").length != $(".btn-editar-butaca").length) {
-            alert("Opcion Imprimir Voucher no disponible. Debe reservar las habitaciones para el/los pasajero/s correspondientes.");
+            (window.alertInfo || window.alert)("Opción Imprimir Voucher no disponible. Debe reservar las habitaciones para el/los pasajero/s correspondientes.", "Atención");
             $("#btn-imprimirvouchers").hide();
         }
         $("#btn-abrirregistrarpago").click(function () {
@@ -644,7 +644,7 @@
                             });
                         } else {
                             // Fallback a alert si la función no existe
-                            alert(data[1]);
+                            (window.alertSuccess || window.alert)(data[1], "Éxito");
                             if (typeof window.PopupDetalleFactura_Load === 'function') {
                                 window.PopupDetalleFactura_Load();
                             } else if (typeof PopupDetalleFactura_Load === 'function') {
@@ -654,12 +654,12 @@
                             }
                         }
                     } else {
-                        alert("Error: " + data[1]);
+                        (window.alertError || window.alert)("Error: " + data[1], "Error");
                         $btn.html(originalHtml).prop('disabled', false);
                     }
                 },
                 error: function (xhr, status, error) {
-                    alert("Error al eliminar el pasajero. Por favor, intente nuevamente.");
+                    (window.alertError || window.alert)("Error al eliminar el pasajero. Por favor, intente nuevamente.", "Error");
                     console.error("Error:", error);
                     $btn.html(originalHtml).prop('disabled', false);
                 }
@@ -672,10 +672,10 @@
         var Monto = $("#nMonto").val();
         var Detalle = $("#txtDetalleDR").val()
         if (Monto <= 0) {
-            return alert("Debe agregar un monto.");
+            return (window.alertInfo || window.alert)("Debe agregar un monto.", "Validación");
         }
         if (Detalle.trim() == '') {
-            return alert("Debe ingresar un detalle.");
+            return (window.alertInfo || window.alert)("Debe ingresar un detalle.", "Validación");
         }
 
         var DescuentoIncremento = $("input[name='rDR']:checked").val();
@@ -694,12 +694,12 @@
                     PopupDetalleFactura_Load();
                 }
                 else {
-                    alert("Se produjo un error. Contactese con el administrador.");
+                    (window.alertError || window.alert)("Se produjo un error. Contáctese con el administrador.", "Error");
                     console.log(data.Estado);
                 }
             },
             error: function (e) {
-                alert("Se produjo un error. Contactese con el administrador.");
+                (window.alertError || window.alert)("Se produjo un error. Contáctese con el administrador.", "Error");
                 console.log(e);
             }
         })
@@ -718,7 +718,7 @@
                 $("#PopinPrecioList").html(data);
             },
             error: function (e) {
-                alert("Se produjo un error. Contactese con el administrador.");
+                (window.alertError || window.alert)("Se produjo un error. Contáctese con el administrador.", "Error");
                 console.log(e);
             }
         })
