@@ -3614,23 +3614,23 @@ div.bnn_floating-banner.hidden {
 }
 
 .ui-dialog.mat-pagos-dialog #tblPagos tbody td {
-    padding: 0.7rem 0.75rem !important;
-    border-bottom: 1px solid #f3f4f6 !important;
+    padding: 0.85rem 0.75rem !important;
+    border-bottom: 1px solid #f1f5f9 !important;
     color: #1f2937;
     background: white !important;
     vertical-align: middle;
+    transition: background-color 0.15s ease;
 }
 
-.ui-dialog.mat-pagos-dialog #tblPagos tbody tr:hover td {
-    background: #f9fafb !important;
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr:hover td,
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.odd:hover td,
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.even:hover td {
+    background: rgba(230, 51, 117, 0.04) !important;
 }
 
-.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.odd td {
-    background: #fafafa !important;
-}
-
-.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.odd:hover td {
-    background: #f3f4f6 !important;
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.odd td,
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.even td {
+    background: white !important;
 }
 
 /* Expanded row styling */

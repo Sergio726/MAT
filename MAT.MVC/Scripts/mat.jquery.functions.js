@@ -376,6 +376,12 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
                 var $wNc = $("#" + dialogid).dialog("widget");
                 if ($wNc && $wNc.length) $wNc.addClass("mat-dialog--brandtitle");
             }
+
+            // Pagos de Factura: aplicar estilos modernos
+            if (dialogid === "PopinPagosFactura") {
+                var $wPagos = $("#" + dialogid).dialog("widget");
+                if ($wPagos && $wPagos.length) $wPagos.addClass("mat-pagos-dialog");
+            }
         },
         close: function () {
             $(document).off('click.modalOverlay');
