@@ -343,6 +343,17 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
                 ModalConfig.setFullscreen(dialogid, true);
             }
 
+            // Lista de Espera: +5% de ancho (sin afectar otros popins "min")
+            if (dialogid === "divOffListPassengers") {
+                try {
+                    var $dlgWL = $("#" + dialogid);
+                    var baseW = $dlgWL.data("matBaseWidth");
+                    if (baseW && typeof baseW === "number") {
+                        $dlgWL.dialog("option", "width", Math.round(baseW * 1.05));
+                    }
+                } catch (e) { }
+            }
+
             // Mejor UX: limitar alto para que el scroll sea interno y no se corte el contenido
             if (dialogid === "FormReserva") {
                 var $dlg = $("#" + dialogid);
