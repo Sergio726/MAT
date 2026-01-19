@@ -47,6 +47,15 @@ namespace MAT.MVC.Models
         public Boolean IsPublicWeb { get; set; }
 
     }
+
+    public class ViajePorVencerDto
+    {
+        public Guid ViajeID { get; set; }
+        public string Descripcion { get; set; }
+        public DateTime? FechaSalida { get; set; }
+        public int Disponibles { get; set; }
+        public int? DaysToDeparture { get; set; }
+    }
     
     public class ViajeHotel {
         public string ViajeHotelID { get; set; }
@@ -640,6 +649,65 @@ namespace MAT.MVC.Models
                 // Podés loguearlo o manejarlo como prefieras
                 return JsonConvert.SerializeObject(new { error = ex.Message });
             }
+        }
+
+        public static List<ViajePorVencerDto> GetViajesPorVencerDto(int maxItems = 7)
+        {
+            SqlParameter[] dbParams = new SqlParameter[] { };
+            DataSet ds = DBHelper.ExecuteDataSet("dbo.usp_MAT_Dashboard_Viajes_LugaresDisponibles", dbParams);
+
+            var result = new List<ViajePorVencerDto>();
+            if (ds == null || ds.Tables.Count == 0 || ds.Tables[0] == null) return result;
+
+            var t = ds.Tables[0];
+            Func<string, bool> hasCol = (name) => t.Columns.Contains(name);
+
+            foreach (DataRow dr in t.Rows)
+            {
+                if (result.Count >= maxItems) break;
+
+                // Columnas esperadas por el SP: ViajeID, descripcion, fechasalida, Disponibles (casing puede variar)
+                object viajeIdObj = hasCol("ViajeID") ? dr["ViajeID"] : (hasCol("ViajeId") ? dr["ViajeId"] : null);
+                if (viajeIdObj == null || viajeIdObj == DBNull.Value) continue;
+
+                Guid viajeId;
+                if (!Guid.TryParse(viajeIdObj.ToString(), out viajeId)) continue;
+
+                string descripcion = "";
+                if (hasCol("descripcion") && dr["descripcion"] != DBNull.Value) descripcion = dr["descripcion"].ToString();
+                else if (hasCol("Descripcion") && dr["Descripcion"] != DBNull.Value) descripcion = dr["Descripcion"].ToString();
+
+                int disponibles = 0;
+                object dispObj = hasCol("Disponibles") ? dr["Disponibles"] : (hasCol("disponibles") ? dr["disponibles"] : null);
+                if (dispObj != null && dispObj != DBNull.Value) int.TryParse(dispObj.ToString(), out disponibles);
+
+                DateTime? fechaSalida = null;
+                object fsObj = hasCol("fechasalida") ? dr["fechasalida"] : (hasCol("FechaSalida") ? dr["FechaSalida"] : null);
+                if (fsObj != null && fsObj != DBNull.Value)
+                {
+                    DateTime fs;
+                    if (DateTime.TryParse(fsObj.ToString(), out fs)) fechaSalida = fs;
+                }
+
+                int? days = null;
+                if (fechaSalida.HasValue)
+                {
+                    var today = DateTime.Today;
+                    var target = fechaSalida.Value.Date;
+                    days = (int)Math.Ceiling((target - today).TotalDays);
+                }
+
+                result.Add(new ViajePorVencerDto
+                {
+                    ViajeID = viajeId,
+                    Descripcion = descripcion ?? "",
+                    FechaSalida = fechaSalida,
+                    Disponibles = disponibles,
+                    DaysToDeparture = days
+                });
+            }
+
+            return result;
         }
 
     }

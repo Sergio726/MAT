@@ -15,6 +15,10 @@ using Newtonsoft.Json;
 using MAT.MVC.Common;
 using System.Web.Helpers;
 using MAT.MVC.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Runtime.Caching;
+using Newtonsoft.Json;
 
 namespace MAT.MVC.Controllers.Viaje
 {
@@ -508,22 +512,49 @@ namespace MAT.MVC.Controllers.Viaje
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
+        [HttpGet]
         public JsonResult GetViajesPorVencer()
         {
-            string sJsonResult = "";
             string sMensaje = "";
+            List<MAT.MVC.Models.ViajePorVencerDto> items = new List<MAT.MVC.Models.ViajePorVencerDto>();
 
             try
             {
-                sJsonResult = ViajeMethod.GetViajesPorVencer();
+                const string cacheKey = "MAT.ViajesPorVencer.items.v1";
+                var cache = MemoryCache.Default;
+
+                var cached = cache.Get(cacheKey) as List<MAT.MVC.Models.ViajePorVencerDto>;
+                if (cached != null)
+                {
+                    items = cached;
+                }
+                else
+                {
+                    items = ViajeMethod.GetViajesPorVencerDto(7);
+                    cache.Set(cacheKey, items, new CacheItemPolicy
+                    {
+                        AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+                    });
+                }
             }
             catch (Exception e)
             {
                 sMensaje = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.GetViajesPorVencer");
             }
 
+            // Fallback legacy (para no romper consumidores viejos): { Table: [...] }
+            // Nota: NO incluye la metadata del DataSet, pero conserva el shape usado por el Home viejo.
+            var sJsonResult = "";
+            try
+            {
+                sJsonResult = JsonConvert.SerializeObject(new { Table = items });
+            }
+            catch { }
+
             return Json(new
             {
+                items,
                 sJsonResult,
                 sMensaje
             }, JsonRequestBehavior.AllowGet);
