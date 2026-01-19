@@ -101,6 +101,21 @@
     #tblWaitingList {
         width: 100% !important;
     }
+    /* Tabla: tipografía más chica y mejor lectura */
+    #tblWaitingList thead th {
+        font-size: 0.7rem;
+        padding: 0.6rem 0.75rem;
+    }
+    #tblWaitingList tbody td {
+        font-size: 0.78rem;
+        padding: 0.6rem 0.75rem;
+        vertical-align: top;
+    }
+    /* Observaciones: más ancho y permitir wrap */
+    #tblWaitingList td.col-observacion {
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
     #tblWaitingList thead th {
         background: var(--bg-secondary, #f9fafb);
         padding: 0.75rem 1rem;
@@ -304,13 +319,20 @@
                         { "data": "Cliente" },
                         { "data": "Vendedor" },
                         { "data": "Fecha" },
-                        { "data": "Observacion" },
+                        { "data": "Observacion", "className": "col-observacion" },
                         {
                             "data": "Opciones",
                             "mRender": function (data, type, row) {
                                 return '<button type="button" class="btn-delete-row" LinkId="' + row.Id + '" onclick="deleteItemRow(this);" title="Quitar"><i class="bi bi-x-lg"></i></button>';
                             }
                         }
+                    ],
+                    "columnDefs": [
+                        { "targets": 0, "width": "22%" },
+                        { "targets": 1, "width": "14%" },
+                        { "targets": 2, "width": "10%" },
+                        { "targets": 3, "width": "50%" }, /* Observaciones más grande */
+                        { "targets": 4, "width": "4%", "orderable": false }
                     ],
                     "bAutoWidth": false,
                     "pageLength": 25,
@@ -336,10 +358,15 @@
                         .remove()
                         .draw();
                 } else {
-                    if (data.Mensaje == "Error.") {
-                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
-                        console.log(data.Error);
+                    // Normalizado: mostrar el mensaje real (ej: permisos)
+                    var msg = (data && data.Error) ? data.Error : "Ha ocurrido un error, por favor intente nuevamente.";
+                    // Si es por permisos, es informativo (no error de sistema)
+                    if (/solo puede ser eliminado/i.test(msg)) {
+                        (window.alertInfo || window.alert)(msg, "Atención");
+                    } else {
+                        (window.alertError || window.alert)(msg, "Error");
                     }
+                    console.log(msg);
                 }
             }
         });

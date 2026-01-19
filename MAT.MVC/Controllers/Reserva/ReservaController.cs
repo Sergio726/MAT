@@ -392,8 +392,10 @@ namespace MAT.MVC.Controllers.Reserva
 
             return Json(new
             {
-                Mensaje = sResult[0],
-                Error = sResult[1]
+                // Mensaje: "Done" | "Error"
+                // Error: texto humano para UI (vacío si Done)
+                Mensaje = string.IsNullOrWhiteSpace(sResult[0]) ? "Error" : sResult[0],
+                Error = (string.Equals(sResult[0], "Done", StringComparison.OrdinalIgnoreCase) ? "" : (sResult[1] ?? ""))
             }, JsonRequestBehavior.AllowGet);
         }
 
