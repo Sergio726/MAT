@@ -424,16 +424,51 @@
     </div>
 
     <script>
+        // Persistencia del cierre (no volver a mostrar por X horas)
+        const BANNER_DISMISS_KEY = "mat.banner.viajesPorVencer.dismissUntil";
+        const BANNER_DISMISS_HOURS = 12;
+
         function closeBanner() {
             const banner = document.getElementById('banner');
             banner.style.display = 'none';
             banner.classList.add('hidden');
+            try {
+                const until = Date.now() + (BANNER_DISMISS_HOURS * 60 * 60 * 1000);
+                localStorage.setItem(BANNER_DISMISS_KEY, String(until));
+            } catch (e) { }
+        }
+
+        function isBannerDismissed() {
+            try {
+                const raw = localStorage.getItem(BANNER_DISMISS_KEY);
+                if (!raw) return false;
+                const until = parseInt(raw, 10);
+                return !isNaN(until) && until > Date.now();
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function parseNetDate(dateString) {
+            // Soporta: ISO, "yyyy-MM-dd", y "/Date(1700000000000)/"
+            if (!dateString) return null;
+            if (typeof dateString === "string") {
+                const m = /\/Date\((\d+)\)\//.exec(dateString);
+                if (m && m[1]) return new Date(parseInt(m[1], 10));
+            }
+            const d = new Date(dateString);
+            return isNaN(d.getTime()) ? null : d;
         }
 
         function formatDateDiff(dateString) {
+            const targetDate = parseNetDate(dateString);
+            if (!targetDate) return null;
+
+            // Normalizar a "medianoche" para evitar off-by-one por horas/zona
             const today = new Date();
-            const targetDate = new Date(dateString);
-            const diffTime = targetDate - today;
+            const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const t1 = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+            const diffTime = t1.getTime() - t0.getTime();
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
 
@@ -442,37 +477,69 @@
             var accessCount = $('.quick-access-item').length;
             $('#accessCountBadge').text(accessCount);
 
+            // Si el usuario lo cerró recientemente, no lo volvemos a cargar/mostrar
+            if (isBannerDismissed()) {
+                return;
+            }
+
             $.ajax({
                 url: "/Viaje/GetViajesPorVencer",
                 data: {},
                 dataType: "json",
                 success: function (data) {
-                    // jQuery 3.x puede devolver el JSON ya parseado
-                    // Verificar si data.sJsonResult es string o ya es objeto
-                    let jsonData;
-                    if (typeof data.sJsonResult === 'string') {
-                        jsonData = JSON.parse(data.sJsonResult);
-                    } else {
-                        jsonData = data.sJsonResult || data;
+                    if (data && data.sMensaje) {
+                        console.warn("GetViajesPorVencer:", data.sMensaje);
+                        return;
                     }
 
-                    // Verificar que Table exista y tenga elementos
-                    if (jsonData && jsonData.Table && Array.isArray(jsonData.Table) && jsonData.Table.length > 0) {
+                    // v2: el endpoint devuelve items tipados (DTO). Fallback: sJsonResult legacy {Table:[...]}
+                    let items = (data && Array.isArray(data.items)) ? data.items : null;
+                    if (!items) {
+                        let jsonData;
+                        if (typeof data.sJsonResult === 'string') {
+                            jsonData = JSON.parse(data.sJsonResult);
+                        } else {
+                            jsonData = data.sJsonResult || data;
+                        }
+                        if (jsonData && jsonData.Table && Array.isArray(jsonData.Table)) {
+                            items = jsonData.Table;
+                        }
+                    }
+
+                    if (items && Array.isArray(items) && items.length > 0) {
                         const banner = document.getElementById('banner');
                         const bannerList = document.getElementById('banner-list');
                         
                         // Limpiar la lista antes de agregar elementos
                         bannerList.innerHTML = '';
                         
-                        jsonData.Table.forEach(item => {
-                            const daysToDeparture = formatDateDiff(item.fechasalida);
+                        const MAX_ITEMS = 7;
+                        items.slice(0, MAX_ITEMS).forEach(item => {
+                            const daysToDeparture = (typeof item.DaysToDeparture === "number")
+                                ? item.DaysToDeparture
+                                : formatDateDiff(item.fechasalida || item.FechaSalida);
                             const listItem = document.createElement('li');
 
-                            listItem.innerHTML = `
-                                <h2><a href="/Reserva/Index?viajeid=${item.ViajeID}">${item.descripcion}</a></h2>
-                                <p>A ${daysToDeparture} días de la salida</p>
-                                <p>Lugares disponibles: ${item.Disponibles}</p>
-                                `;
+                            // Evitar XSS: NO usar innerHTML con datos de backend
+                            const h2 = document.createElement('h2');
+                            const a = document.createElement('a');
+                            a.href = "/Reserva/Index?viajeid=" + encodeURIComponent(item.ViajeID || item.ViajeId || "");
+                            a.textContent = ((item.Descripcion || item.descripcion) || "").toString();
+                            h2.appendChild(a);
+
+                            const p1 = document.createElement('p');
+                            if (typeof daysToDeparture === "number") {
+                                p1.textContent = "A " + daysToDeparture + " días de la salida";
+                            } else {
+                                p1.textContent = "Próximo a salir";
+                            }
+
+                            const p2 = document.createElement('p');
+                            p2.textContent = "Lugares disponibles: " + (item.Disponibles != null ? item.Disponibles : (item.disponibles != null ? item.disponibles : "-"));
+
+                            listItem.appendChild(h2);
+                            listItem.appendChild(p1);
+                            listItem.appendChild(p2);
 
                             bannerList.appendChild(listItem);
                         });

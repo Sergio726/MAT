@@ -20,6 +20,7 @@ using MAT.MVC.Integration;
 using System.Threading.Tasks;
 using AutoMapper;
 using MAT.MVC.Integration.BackendApi.Models;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Reserva
 {
@@ -334,7 +335,7 @@ namespace MAT.MVC.Controllers.Reserva
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.GetWatinList");
             }
 
 
@@ -385,14 +386,16 @@ namespace MAT.MVC.Controllers.Reserva
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.DeleteToWatingList");
             }
 
 
             return Json(new
             {
-                Mensaje = sResult[0],
-                Error = sResult[1]
+                // Mensaje: "Done" | "Error"
+                // Error: texto humano para UI (vacío si Done)
+                Mensaje = string.IsNullOrWhiteSpace(sResult[0]) ? "Error" : sResult[0],
+                Error = (string.Equals(sResult[0], "Done", StringComparison.OrdinalIgnoreCase) ? "" : (sResult[1] ?? ""))
             }, JsonRequestBehavior.AllowGet);
         }
 

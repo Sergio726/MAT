@@ -470,7 +470,7 @@
 
     function UpdateForm() {
         if (!valForm()) {
-            return alert("Los campos remarcados no pueden estar vacios. Por favor revise que esten cargados de forma correcta.");
+            return (window.alertInfo || window.alert)("Los campos remarcados no pueden estar vacíos. Por favor revise que estén cargados de forma correcta.", "Validación");
         }
 
         var PaqueteID = $("#DDPaqueteId").attr("data-id");
@@ -497,7 +497,7 @@
                         setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=@Model.ViajeID"; }, 1000);
                     }
                     else {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
                 }
             });
@@ -515,7 +515,7 @@
                         setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=" + ViajeID; }, 1000);
                     }
                     else {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
                 }
             });

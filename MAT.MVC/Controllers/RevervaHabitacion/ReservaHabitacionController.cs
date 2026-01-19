@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using System.Data;
 using MAT.MVC.Models;
 using MAT.MVC.Common;
+using System.Diagnostics;
 
 namespace MAT.MVC.Controllers.RevervaHabitacion
 {
@@ -47,14 +48,29 @@ namespace MAT.MVC.Controllers.RevervaHabitacion
             List<HabitacionDisponibilidad> model = new List<HabitacionDisponibilidad>();
             try
             {
+                var swTotal = Stopwatch.StartNew();
+                var swDb = Stopwatch.StartNew();
                 model = HabitacionMethod.GetHabitacionDisponibilidad(viajeid, HotelID, Fecha);
+                swDb.Stop();
+
+                long reservaMs = 0;
                 if (PasajeroID != "")
                 {
+                    var swReserva = Stopwatch.StartNew();
                     string[] sHabReserva = MAT.MVC.Models.HabitacionMethod.HotelHabitacionReserva(PasajeroID, viajeid, Fecha);
                     ViewBag.HabitacionSelected = sHabReserva[0];
                     ViewBag.PasajeroID = PasajeroID;
+                    swReserva.Stop();
+                    reservaMs = swReserva.ElapsedMilliseconds;
                     
                 }
+
+                swTotal.Stop();
+                ViewBag.PerfTotalMs = swTotal.ElapsedMilliseconds;
+                ViewBag.PerfDbMs = swDb.ElapsedMilliseconds;
+                ViewBag.PerfReservaMs = reservaMs;
+                ViewBag.PerfCount = (model == null ? 0 : model.Count);
+
                 return PartialView(model);
             }
             catch (Exception e){

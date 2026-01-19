@@ -209,10 +209,10 @@
                     var result = data == "True" ? true : false;
                     $("#PagoTotal").dialog("close");
                     if (result) {
-                        alert("Pago recibido correctamente.");
+                        (window.alertSuccess || window.alert)("Pago recibido correctamente.", "Éxito");
                         PopupDetalleFactura_Load();
                     } else {
-                        alert("Error de Sistema. Contacte con el Administrador.");
+                        (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
                     }
                 }
             });

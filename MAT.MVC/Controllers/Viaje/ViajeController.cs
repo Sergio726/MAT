@@ -14,6 +14,12 @@ using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using MAT.MVC.Common;
 using System.Web.Helpers;
+using MAT.MVC.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Web;
+using System.Web.Caching;
+using Newtonsoft.Json;
 
 namespace MAT.MVC.Controllers.Viaje
 {
@@ -409,7 +415,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.HotelIngresoEgreso_Set");
                 sResult[2] = "Error.";
             }
 
@@ -432,7 +438,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.UpdateViaje");
             }
 
             return Json(new
@@ -453,7 +459,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.InsertViaje");
             }
 
             return Json(new
@@ -475,7 +481,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.DeleteViaje");
             }
 
             return Json(new
@@ -497,7 +503,7 @@ namespace MAT.MVC.Controllers.Viaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.CancelViaje");
             }
 
             return Json(new
@@ -507,22 +513,52 @@ namespace MAT.MVC.Controllers.Viaje
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
+        [HttpGet]
         public JsonResult GetViajesPorVencer()
         {
-            string sJsonResult = "";
             string sMensaje = "";
+            List<MAT.MVC.Models.ViajePorVencerDto> items = new List<MAT.MVC.Models.ViajePorVencerDto>();
 
             try
             {
-                sJsonResult = ViajeMethod.GetViajesPorVencer();
+                const string cacheKey = "MAT.ViajesPorVencer.items.v1";
+
+                // Cache server-side sin depender de System.Runtime.Caching (evita problemas de referencia)
+                var cached = HttpRuntime.Cache[cacheKey] as List<MAT.MVC.Models.ViajePorVencerDto>;
+                if (cached != null)
+                {
+                    items = cached;
+                }
+                else
+                {
+                    items = ViajeMethod.GetViajesPorVencerDto(7);
+                    HttpRuntime.Cache.Insert(
+                        cacheKey,
+                        items,
+                        dependencies: null,
+                        absoluteExpiration: DateTime.UtcNow.AddMinutes(5),
+                        slidingExpiration: Cache.NoSlidingExpiration
+                    );
+                }
             }
             catch (Exception e)
             {
-                sMensaje = "Error: " + e.Message + " StackTrace: " + e.StackTrace;
+                sMensaje = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.GetViajesPorVencer");
             }
+
+            // Fallback legacy (para no romper consumidores viejos): { Table: [...] }
+            // Nota: NO incluye la metadata del DataSet, pero conserva el shape usado por el Home viejo.
+            var sJsonResult = "";
+            try
+            {
+                sJsonResult = JsonConvert.SerializeObject(new { Table = items });
+            }
+            catch { }
 
             return Json(new
             {
+                items,
                 sJsonResult,
                 sMensaje
             }, JsonRequestBehavior.AllowGet);

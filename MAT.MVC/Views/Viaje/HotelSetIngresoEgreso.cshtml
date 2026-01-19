@@ -130,7 +130,7 @@
             }
         });
         if (iFecha > 0) {
-            return alert("Por favor verifique que las fechas ingresadas no estén en blanco y sean correctas dd/mm/yyyy.", "Fecha Incorrecta");
+            return (window.alertInfo || window.alert)("Por favor verifique que las fechas ingresadas no estén en blanco y sean correctas dd/mm/yyyy.", "Fecha Incorrecta");
         }
 
         var iHora = 0;
@@ -141,7 +141,7 @@
             }
         });
         if (iHora > 0) {
-            return alert("Por favor verifique que las horas ingresadas no estén en blanco y sean correctas hh:mm.", "Hora Incorrecta");
+            return (window.alertInfo || window.alert)("Por favor verifique que las horas ingresadas no estén en blanco y sean correctas hh:mm.", "Hora Incorrecta");
         }
 
         var _data = $("#formData").serialize();
@@ -154,13 +154,13 @@
                     if (data.ID > 0) {
                         var urlReload = "/Viaje/Hoteles/" + $("#reserva-viaje-id").val();
                         $("#setEgresoIngreso").dialog("close");
-                        alert(data.Mensaje, "Operación Exitosa");
+                        (window.alertSuccess || window.alert)(data.Mensaje, "Operación Exitosa");
                         window.location.href = urlReload;
                     } else {
-                        alert(data.Mensaje, "Error");
+                        (window.alertError || window.alert)(data.Mensaje, "Error");
                     }
                 } else {
-                    alert("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                    (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                 }
             }
         });

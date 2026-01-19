@@ -117,28 +117,13 @@
 </div>
 
 <script type="text/javascript">
-    $(".ui-dialog-content").remove();
-
     function pagosFactura(FacturaID) {
-        $("#divContentPagos").html('<div style="padding:2rem;text-align:center;"><div class="loading-spinner"></div><p>Cargando...</p></div>');
-        $("#divPopup").dialog("open");
-        $("#divPopup").dialog({
-            modal: true,
-            position: { my: 'top', at: 'top', of: window },
-            width: "80%"
-        });
-
-        $.ajax({
-            url: "/PersonaCliente/partialHistorialdePagosByFactura",
-            data: { FacturaID: FacturaID },
-            dataType: "html",
-            success: function (data) {
-                $("#divContentPagos").html(data);
-            },
-            error: function (e) {
-                console.log(e);
-            }
-        });
+        if (typeof window.openPagosFacturaDialog === "function") {
+            window.openPagosFacturaDialog(FacturaID);
+        } else {
+            var url = "/PersonaCliente/partialHistorialdePagosByFactura?FacturaID=" + encodeURIComponent(FacturaID || "");
+            ShowFormDialog(url, "PopinPagosFactura", "Pagos", "wide");
+        }
     }
 
     function cancelarPago(PagoID, FacturaID) {
@@ -149,7 +134,11 @@
             success: function (data) {
                 var response = eval(data);
                 if (response[0] == "Done.") {
-                    $("#divContentPagos").dialog("close");
+                    try {
+                        if ($("#PopinPagosFactura").length && typeof $("#PopinPagosFactura").dialog === "function") {
+                            $("#PopinPagosFactura").dialog("close");
+                        }
+                    } catch (e) { }
                     pagosFactura(FacturaID);
                 } else {
                     console.log(response[1]);

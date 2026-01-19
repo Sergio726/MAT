@@ -116,22 +116,36 @@
                             </a>
                         </li>
 
-                        <!-- Menu Regular Item - Presupuestos -->
-                        <li>
-                            <a href="/Presupuesto/Index" data-bs-toggle="tooltip" data-bs-placement="right" title="Módulo de Presupuestos">
-                                <i class="bi bi-file-earmark-text"></i>
-                                <span>Presupuestos</span>
-                            </a>
-                        </li>
-
                         <!-- Components Submenu Level 1 -->
                         <li class="hasSubmenu active">
                             <a data-bs-toggle="collapse" href="#menu_components" id="btn_configuracion" role="button" aria-expanded="true" aria-controls="menu_components">
                                 <i class="bi bi-gear"></i>
                                 <span>Configuración</span>
                             </a>
+                           
                             <ul class="collapse show" id="menu_components">
                                 <!-- Components Submenu Level 2 -->
+                                <!-- Presupuestos -->
+                                <li class="hasSubmenu">
+                                    <a data-bs-toggle="collapse" href="#menu_presupuestos" role="button" aria-expanded="false" aria-controls="menu_presupuestos">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                        <span>Presupuestos</span>
+                                    </a>
+                                    <ul class="collapse" id="menu_presupuestos">
+                                        <li>
+                                            <a href="/Presupuesto/Index">
+                                                <i class="bi bi-list-ul"></i>
+                                                <span>Listado</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Presupuesto/Seguimiento">
+                                                <i class="bi bi-clipboard-data"></i>
+                                                <span>Seguimiento</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
                                 <li class="hasSubmenu">
                                     <a data-bs-toggle="collapse" href="#menu_clientes" role="button" aria-expanded="false" aria-controls="menu_clientes">
                                         <i class="bi bi-people"></i>
@@ -150,7 +164,7 @@
                                                 <span>Listado</span>
                                             </a>
                                         </li>
-                                    </ul>                                    
+                                    </ul>
                                 </li>
                                 <li class="hasSubmenu">
                                     <a data-bs-toggle="collapse" href="#menu_hoteles" role="button" aria-expanded="false" aria-controls="menu_hoteles">
@@ -276,6 +290,7 @@
             <!-- Content -->
             <div id="content">
                 @Html.Partial("_Breadcrumb")
+                @Html.Partial("_Alerts")
                 @RenderBody()
             </div>
 

@@ -173,6 +173,190 @@ div#container {
 	height: 50px;
 }
 
+/* Marcadores del bus (TV / Escalera / Bar / Baño) */
+.piso_superior li.bus-marker,
+.piso_inferior li.bus-marker,
+.piso_superior_edicion li.bus-marker,
+.piso_inferior_edicion li.bus-marker,
+.new_piso_superior li.bus-marker,
+.new_piso_inferior li.bus-marker {
+    visibility: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 18px;
+    color: #6b7280;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    pointer-events: auto; /* permitir hover para tooltip */
+    z-index: 1; /* siempre por debajo de las butacas (evita superposición visual) */
+}
+
+/* Asegurar que las butacas queden por encima de los markers */
+.piso_superior li[class*="seat_"],
+.piso_inferior li[class*="seat_"],
+.piso_superior_edicion li[class*="seat_"],
+.piso_inferior_edicion li[class*="seat_"],
+.new_piso_superior li[class*="seat_"],
+.new_piso_inferior li[class*="seat_"] {
+    z-index: 5;
+    transform: translateX(10px);
+}
+
+/* Piso inferior (coche doble piso): volver a posiciones históricas (antes de iconizar) */
+
+.piso_superior li.bus-marker i,
+.piso_inferior li.bus-marker i,
+.piso_superior_edicion li.bus-marker i,
+.piso_inferior_edicion li.bus-marker i,
+.new_piso_superior li.bus-marker i,
+.new_piso_inferior li.bus-marker i {
+    line-height: 1;
+}
+
+/* Evitar rotaciones heredadas pensadas para texto */
+.piso_superior li.bus-marker,
+.piso_inferior li.bus-marker,
+.piso_superior_edicion li.bus-marker,
+.piso_inferior_edicion li.bus-marker,
+.new_piso_superior li.bus-marker,
+.new_piso_inferior li.bus-marker {
+    -webkit-transform: none !important;
+    transform: none !important;
+}
+
+/* ============================================================
+   Posiciones refinadas para íconos (evita superposiciones)
+   Nota: los offsets originales eran para texto rotado.
+   ============================================================ */
+
+/* Helpers: alinear a grilla de butacas (left de seat_XX / top de filas A/B/C/D) */
+
+/* Piso superior (coche doble piso): escalera y bar en el pasillo (no arriba de butacas) */
+#coche51_61 .piso_superior .bar.bus-marker,
+#coche51_61 .piso_superior_edicion .bar.bus-marker,
+#coche51_61 .new_piso_superior .bar.bus-marker {
+    left: 210px !important; /* seat_03 */
+    top: 20px !important;  /* fila A */
+}
+
+#coche51_61 .piso_superior .escalera.bus-marker,
+#coche51_61 .piso_superior_edicion .escalera.bus-marker,
+#coche51_61 .new_piso_superior .escalera.bus-marker {
+    left: 210px !important; /* seat_03 */
+    top: 70px !important;   /* fila B */
+}
+
+/* TVs: centrados verticalmente en el pasillo (entre filas B y C) y alineados horizontalmente (lado a lado) */
+#coche51_61 .piso_superior .tv1.bus-marker,
+#coche51_61 .piso_superior_edicion .tv1.bus-marker,
+#coche51_61 .new_piso_superior .tv1.bus-marker {
+    left: 80px !important;  /* sigue el orden original tv1..tv4 */
+    top: 125px !important;  /* centro del pasillo: gap entre 120 y 180 */
+}
+
+#coche51_61 .piso_superior .tv2.bus-marker,
+#coche51_61 .piso_superior_edicion .tv2.bus-marker,
+#coche51_61 .new_piso_superior .tv2.bus-marker {
+    left: 280px !important;
+    top: 125px !important;
+}
+
+#coche51_61 .piso_superior .tv3.bus-marker,
+#coche51_61 .piso_superior_edicion .tv3.bus-marker,
+#coche51_61 .new_piso_superior .tv3.bus-marker {
+    left: 430px !important;
+    top: 125px !important;
+}
+
+#coche51_61 .piso_superior .tv4.bus-marker,
+#coche51_61 .piso_superior_edicion .tv4.bus-marker,
+#coche51_61 .new_piso_superior .tv4.bus-marker {
+    left: 580px !important;
+    top: 125px !important;
+}
+
+#coche51_61 .piso_inferior .escalera.bus-marker,
+#coche51_61 .piso_inferior_edicion .escalera.bus-marker,
+#coche51_61 .new_piso_inferior .escalera.bus-marker {
+    left: 120px !important;
+    top: 19px !important;
+}
+
+#coche51_61 .piso_inferior .banio.bus-marker,
+#coche51_61 .piso_inferior_edicion .banio.bus-marker,
+#coche51_61 .new_piso_inferior .banio.bus-marker {
+    left: 120px !important;
+    top: 170px !important;
+}
+
+#coche51_61 .piso_inferior .bar.bus-marker,
+#coche51_61 .piso_inferior_edicion .bar.bus-marker,
+#coche51_61 .new_piso_inferior .bar.bus-marker {
+    left: 120px !important;
+    top: 230px !important;
+}
+
+#coche51_61 .piso_inferior .tv1.bus-marker,
+#coche51_61 .piso_inferior_edicion .tv1.bus-marker,
+#coche51_61 .new_piso_inferior .tv1.bus-marker {
+    left: 160px !important;
+    top: 100px !important;
+}
+
+/* Minibus / Camión 4x4 (usan #coche_minibus): alinear TV a grilla */
+#coche_minibus .tv1.bus-marker {
+    left: 180px !important;
+    top: 125px !important;
+}
+
+/* Piso elevado: alinear baño/bar al borde derecho de la grilla */
+#coche_pisoelevado .piso_inferior .banio.bus-marker,
+#coche_pisoelevado .piso_inferior_edicion .banio.bus-marker,
+#coche_pisoelevado .new_piso_inferior .banio.bus-marker {
+    left: 710px !important; /* seat_13 */
+    top: 20px !important;   /* fila A */
+}
+
+#coche_pisoelevado .piso_inferior .bar.bus-marker,
+#coche_pisoelevado .piso_inferior_edicion .bar.bus-marker,
+#coche_pisoelevado .new_piso_inferior .bar.bus-marker {
+    left: 710px !important; /* seat_13 */
+    top: 70px !important;   /* fila B */
+}
+
+/* Piso elevado · Semi cama: TVs centradas verticalmente en el pasillo y alineadas desde la primera fila (seat_01) */
+#coche_pisoelevado .piso_inferior .tv1.bus-marker,
+#coche_pisoelevado .piso_inferior_edicion .tv1.bus-marker,
+#coche_pisoelevado .new_piso_inferior .tv1.bus-marker {
+    left: 80px !important;   /* junto a seat_01 (left 100px) */
+    top: 125px !important;   /* centro del pasillo: gap entre B (70) y C (180) */
+}
+
+#coche_pisoelevado .piso_inferior .tv2.bus-marker,
+#coche_pisoelevado .piso_inferior_edicion .tv2.bus-marker,
+#coche_pisoelevado .new_piso_inferior .tv2.bus-marker {
+    left: 280px !important;
+    top: 125px !important;
+}
+
+#coche_pisoelevado .piso_inferior .tv3.bus-marker,
+#coche_pisoelevado .piso_inferior_edicion .tv3.bus-marker,
+#coche_pisoelevado .new_piso_inferior .tv3.bus-marker {
+    left: 430px !important;
+    top: 125px !important;
+}
+
+#coche_pisoelevado .piso_inferior .tv4.bus-marker,
+#coche_pisoelevado .piso_inferior_edicion .tv4.bus-marker,
+#coche_pisoelevado .new_piso_inferior .tv4.bus-marker {
+    left: 580px !important;
+    top: 125px !important;
+}
+
 .piso_superior li#master,
 .piso_inferior li#master,
 .piso_superior_edicion li#master,

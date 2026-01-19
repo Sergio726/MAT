@@ -158,7 +158,7 @@
                     parent.getDistribucion();
                 } else {
                     if (data.Mensaje == "Error.") {
-                        alert("Ha ocurrido un error, por favor intente nuevamente.");
+                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
                         console.log(data.Error);
                     }
                 }

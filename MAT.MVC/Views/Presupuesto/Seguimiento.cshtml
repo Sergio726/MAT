@@ -680,7 +680,7 @@
                         } catch (error) {
                             console.error('Error al actualizar la tabla:', error);
                             console.error('Stack trace:', error.stack);
-                            alert('Error al mostrar los datos en la tabla: ' + error.message);
+                            (window.alertError || window.alert)('Error al mostrar los datos en la tabla: ' + error.message, 'Error');
                         }
                     } else {
                         console.log('No hay datos en la respuesta o el array está vacío');

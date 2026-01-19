@@ -45,11 +45,11 @@
                         getObservacionesGenerales();
                     }
                     else {
-                        alert(data.Msj);
+                        (window.alertInfo || window.alert)(data.Msj, "Atención");
                     }
                 }
                 else {
-                    alert('Ocurrió un error al intentar eliminar la observación, por favor comuníquese con el administrador.')
+                    (window.alertError || window.alert)('Ocurrió un error al intentar eliminar la observación, por favor comuníquese con el administrador.', 'Error')
                     console.log(data.Msj);
                     $("#popup_Observacion").dialog("close");
                 }

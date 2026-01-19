@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Data;
 using System.Data.SqlClient;
 using Newtonsoft.Json;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.HotelHabitacionViaje
 {
@@ -58,7 +59,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "HotelHabitacionViajeController.AddDistribucion");
             }
 
 
@@ -87,7 +88,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             {
                 sResult[0] = "";
                 sResult[1] = "Error.";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[2] = ErrorUtil.LogAndGetPublicMessage(e, "HotelHabitacionViajeController.dtDistribucionHab");
             }
 
 
@@ -116,7 +117,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             {
                 sResult[0] = "";
                 sResult[1] = "Error.";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[2] = ErrorUtil.LogAndGetPublicMessage(e, "HotelHabitacionViajeController.deleteDistribucionRow");
             }
 
 
@@ -151,7 +152,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "HotelHabitacionViajeController.CreatePlantilla");
             }
 
 
@@ -194,7 +195,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "HotelHabitacionViajeController.AddDistribucionByPlantilla");
             }
 
 
@@ -218,7 +219,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "HotelHabitacionViajeController.deletePlantilla");
             }
 
 

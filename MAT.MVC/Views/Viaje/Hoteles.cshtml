@@ -162,7 +162,7 @@
     }
 </style>
 
-<div class="hoteles-page-container">
+<div id="hoteles-root" class="hoteles-page-container">
     <div class="hoteles-page-header">
         @if (Model.Count > 0)
         {
@@ -246,6 +246,18 @@
 </div>
 
 <script type="text/javascript">
+    // Refresh selectivo: recarga esta vista sin refrescar toda la página
+    window.refreshViajeHoteles = function () {
+        try {
+            var url = window.location.pathname + window.location.search;
+            $("#hoteles-root").load(url + " #hoteles-root>*");
+        } catch (e) {
+            window.location.reload(true);
+        }
+    };
+</script>
+
+<script type="text/javascript">
     function setEgresoIngreso(ViajeHotelID, viajeid, Fecha) {
         var title = "Editar Entrada y Salida al Hotel";
         var id = "setEgresoIngreso";
@@ -255,10 +267,10 @@
 
     function getDistribuciones(ViajeHotelID, Desde, Hasta) {
         if (Desde == '') {
-            return alert('Por favor, primero defina el día de Ingreso al hotel', 'Atención');
+            return (window.alertInfo || window.alert)('Por favor, primero defina el día de Ingreso al hotel', 'Atención');
         }
         if (Hasta == '') {
-            return alert('Por favor, primero defina el día de Egreso del hotel', 'Atención');
+            return (window.alertInfo || window.alert)('Por favor, primero defina el día de Egreso del hotel', 'Atención');
         }
         var title = "Distribución Habitaciones/Viaje";
         var id = "popup_HotelHabitacionViaje";

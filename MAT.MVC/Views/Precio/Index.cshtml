@@ -19,14 +19,6 @@
         </div>
     </div>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="modern-alert-error">
-            <i class="bi bi-exclamation-circle"></i>
-            <span>@ViewBag.Error</span>
-        </div>
-    }
-
     <div class="modern-table-container">
         <table class="modern-table" id="tblPrecios">
             <thead>
@@ -119,7 +111,18 @@
         var title = "Precios"; //Titulo Modificado por petición del cliente. Detalle de Factura -> Nota de Crédito
         var id = "popupPrecios";
         
-        ShowFormDialogCloseRefresh(url, id, title,"medium");
+        // Evitar reload completo: refrescar DataTable local si existe
+        ShowFormDialogCloseRefresh(url, id, title, "medium", {
+            reloadOnClose: false,
+            onClose: function () {
+                try {
+                    var t = $("#tblPrecios").DataTable();
+                    if (t) t.draw(false);
+                } catch (e) {
+                    // fallback suave
+                }
+            }
+        });
     }
 
     function deletePrecio(PrecioID) {
@@ -134,12 +137,12 @@
                     console.log('succesfull');
                 }
                 else {
-                    alert("Se produjo un error. Asegurece que el precio que quiere eliminar no este vinculado en algun Paquete.");
+                    (window.alertError || window.alert)("Se produjo un error. Asegúrese que el precio que quiere eliminar no esté vinculado en algún Paquete.", "Error");
                     console.log(data[1]);
                 }
             },
             error: function (e) {
-                alert("Se produjo un error. Contactese con el administrador.");
+                (window.alertError || window.alert)("Se produjo un error. Contáctese con el administrador.", "Error");
                 console.log(e);
             }
         })

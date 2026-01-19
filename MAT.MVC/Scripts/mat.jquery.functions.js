@@ -2,20 +2,44 @@
 
 }
 
+// Popin Pagos (Factura): implementación limpia usando ShowFormDialog (un solo dialog top-level).
+// Evita conflictos de IDs duplicados / dialogs embebidos, y el botón X funciona de forma nativa.
+window.openPagosFacturaDialog = function (FacturaID) {
+    var id = "PopinPagosFactura";
+    var title = "Pagos";
+    var url = "/PersonaCliente/partialHistorialdePagosByFactura?FacturaID=" + encodeURIComponent(FacturaID || "");
+    ShowFormDialog(url, id, title, "wide");
+};
+
 // Función para mostrar mensaje de éxito de manera moderna
 function ShowSuccessMessage(message, title, callback) {
-    title = title || 'Atención';
-    message = message || 'Operación realizada correctamente.';
+    title = title || 'Operación exitosa';
+    message = message || 'La operación se realizó correctamente.';
     
     // Remover diálogo si ya existe
     if ($("#modern-success-dialog").length > 0) {
         $("#modern-success-dialog").dialog("destroy").remove();
     }
+
+    // Normalizar mensajes comunes (mejor UX)
+    var msg = (message || "").toString();
+    // Caso típico: eliminación de pasajero en factura
+    if (/pasajero\s+eliminado/i.test(msg) && /factura/i.test(msg)) {
+        msg = "Pasajero eliminado.\nLa factura fue actualizada (butaca/habitación liberadas si correspondía).";
+    }
+    msg = msg.replace(/\r\n/g, "\n");
+    var msgHtml = msg
+        .split("\n")
+        .map(function (line) { return $("<div/>").text(line).html(); })
+        .join("<br/>");
     
     var dialogContent = '<div id="modern-success-dialog" style="display: none;">' +
         '<div style="display: flex; align-items: flex-start; gap: 1.25rem;">' +
         '<i class="bi bi-check-circle-fill" style="font-size: 2.5rem; color: #10b981; flex-shrink: 0; margin-top: 0.125rem;"></i>' +
-        '<span style="flex: 1; line-height: 1.6; font-size: 1rem; color: #1f2937;">' + message + '</span>' +
+        '<div style="flex: 1;">' +
+        '<div style="font-weight: 700; font-size: 1.05rem; color: #0f172a; margin-bottom: 0.25rem;">Listo</div>' +
+        '<div style="line-height: 1.55; font-size: 0.95rem; color: #1f2937;">' + msgHtml + '</div>' +
+        '</div>' +
         '</div>' +
         '</div>';
     
@@ -27,7 +51,8 @@ function ShowSuccessMessage(message, title, callback) {
         width: 500,
         minWidth: 400,
         maxWidth: 600,
-        title: '<i class="bi bi-check-circle"></i> ' + title,
+        // jQuery UI Dialog no soporta HTML en title: dejar texto plano para evitar que se vea "<i ...>"
+        title: title,
         resizable: false,
         draggable: false,
         dialogClass: 'modern-success-dialog',
@@ -91,8 +116,141 @@ function ShowSuccessMessage(message, title, callback) {
 var ModalConfig = {
     getWidth: function(size) {
         // Usar anchos en píxeles para mejor centrado con sidebar fijo
-        var sizes = { 'min': 600, 'medium': 800, 'default': 1000, 'max': '95%', '30%': 400 };
+        var sizes = { 'min': 600, 'medium': 800, 'default': 1000, 'wide': 1100, 'max': '95%', '30%': 400, 'fullscreen': '100%' };
         return sizes[size] || 1000;
+    },
+    setupFullscreen: function (dialogid, enableByDefault) {
+        var $content = $("#" + dialogid);
+        if (!$content.length) return;
+
+        $content.data("matFullscreenEnabled", !!enableByDefault);
+
+        function ensureMaximizeButton() {
+            var $widget = $content.dialog("widget");
+            if (!$widget || !$widget.length) return;
+
+            var $titlebar = $widget.find(".ui-dialog-titlebar");
+            if (!$titlebar.length) return;
+
+            if ($titlebar.find(".mat-dialog-titlebar-maximize").length) return;
+
+            var $btn = $("<button/>", {
+                type: "button",
+                class: "mat-dialog-titlebar-maximize",
+                "aria-label": "Maximizar / restaurar",
+                title: "Maximizar / restaurar"
+            }).append($("<i/>", { class: "bi bi-arrows-fullscreen" }));
+
+            // Insertar antes del botón cerrar si existe
+            var $close = $titlebar.find(".ui-dialog-titlebar-close");
+            if ($close.length) $btn.insertBefore($close);
+            else $titlebar.append($btn);
+
+            $btn.on("click", function () {
+                var enabled = !!$content.data("matFullscreenEnabled");
+                ModalConfig.setFullscreen(dialogid, !enabled);
+            });
+        }
+
+        function syncFullscreenWidget() {
+            if (!$content.length) return;
+            if (!$content.data("matFullscreenEnabled")) return;
+
+            var $widget = $content.dialog("widget");
+            if (!$widget || !$widget.length) return;
+
+            var margin = 12;
+            var w = Math.max(320, Math.floor($(window).width() - margin * 2));
+            var h = Math.max(240, Math.floor($(window).height() - margin * 2));
+            w = Math.min(1400, w);
+
+            // Forzar dimensiones y re-centrar (jQuery UI puede quedar con top/left viejos)
+            $content.dialog("option", "width", w);
+            $content.dialog("option", "height", h);
+            $content.dialog("option", "position", { my: "center", at: "center", of: window });
+
+            // Asegurar fixed (sin forzar top/left manualmente)
+            $widget.css({ position: "fixed" });
+        }
+
+        function syncFullscreenLayout() {
+            if (!$content.length) return;
+            if (!$content.data("matFullscreenEnabled")) return;
+
+            var $widget = $content.dialog("widget");
+            if (!$widget || !$widget.length) return;
+
+            // Calcular alto disponible para el content (evita que se corte dentro del fullscreen)
+            var titleH = $widget.find(".ui-dialog-titlebar").outerHeight() || 0;
+            var buttonPaneH = $widget.find(".ui-dialog-buttonpane").outerHeight() || 0;
+            var widgetH = $widget.innerHeight() || 0;
+            var padding = 0;
+            var contentH = Math.max(120, widgetH - titleH - buttonPaneH - padding);
+
+            $content.css({
+                height: contentH + "px",
+                overflow: "auto"
+            });
+        }
+
+        // Guardar para reuso (y cleanup on close)
+        $content.data("matEnsureMaximizeButton", ensureMaximizeButton);
+        $content.data("matSyncFullscreenWidget", syncFullscreenWidget);
+        $content.data("matSyncFullscreenLayout", syncFullscreenLayout);
+
+        // Sync en resize mientras esté abierto
+        $(window).off("resize.matDialogFullscreen-" + dialogid).on("resize.matDialogFullscreen-" + dialogid, function () {
+            // Esperar a que el browser aplique layout antes de recalcular
+            var raf = window.requestAnimationFrame || function (cb) { return setTimeout(cb, 0); };
+            raf(function () {
+                syncFullscreenWidget();
+                syncFullscreenLayout();
+            });
+        });
+    },
+    setFullscreen: function (dialogid, enabled) {
+        var $content = $("#" + dialogid);
+        if (!$content.length) return;
+
+        var $widget = $content.dialog("widget");
+        if (!$widget || !$widget.length) return;
+
+        $content.data("matFullscreenEnabled", !!enabled);
+
+        if (enabled) {
+            $widget.addClass("mat-dialog--fullscreen");
+
+            // Forzar tamaño real fullscreen (no depender solo de CSS)
+            // Importante: primero ajustar widget, luego recalcular el alto del content.
+            var raf = window.requestAnimationFrame || function (cb) { return setTimeout(cb, 0); };
+            raf(function () {
+                var syncWidget = $content.data("matSyncFullscreenWidget");
+                if (typeof syncWidget === "function") syncWidget();
+
+                var syncLayout = $content.data("matSyncFullscreenLayout");
+                if (typeof syncLayout === "function") syncLayout();
+            });
+        } else {
+            $widget.removeClass("mat-dialog--fullscreen");
+            var baseWidth = $content.data("matBaseWidth");
+            if (baseWidth) $content.dialog("option", "width", baseWidth);
+            $content.dialog("option", "height", "auto");
+            $content.dialog("option", "position", { my: "center", at: "center", of: window });
+            $content.css({ height: "", overflow: "" });
+            $widget.css({ width: "", height: "", top: "", left: "", right: "", bottom: "", transform: "" });
+        }
+
+        // Icono toggle
+        var $icon = $widget.find(".mat-dialog-titlebar-maximize i");
+        if ($icon.length) {
+            $icon.removeClass("bi-arrows-fullscreen bi-fullscreen-exit").addClass(enabled ? "bi-fullscreen-exit" : "bi-arrows-fullscreen");
+        }
+
+        // En fullscreen lo sincronizamos en RAF arriba (para evitar height incorrecto).
+        if (!enabled) {
+            var sync = $content.data("matSyncFullscreenLayout");
+            if (typeof sync === "function") sync();
+        }
     },
     setupOverlayClose: function(dialogid) {
         // Cerrar modal al hacer clic en el overlay
@@ -107,6 +265,11 @@ var ModalConfig = {
 function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
     var width = ModalConfig.getWidth(widthsize);
 
+    // Forzar tamaño más amplio para este flujo (mejor UX dentro del formulario)
+    if (dialogid === "FormReserva") {
+        width = ModalConfig.getWidth("wide");
+    }
+
     // Remover el diálogo si ya existe
     if ($("#" + dialogid).length > 0) {
         $("#" + dialogid).dialog("destroy").remove();
@@ -115,8 +278,9 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
 
-    var divLoading = "<div class='modern-loading-container' style='padding: 2rem;'><div class='modern-loading-spinner'></div><span class='modern-loading-text'>Cargando...</span></div>";
+    var divLoading = "<div class='modern-loading-container'><div class='modern-loading-spinner'></div><span class='modern-loading-text'>Cargando...</span></div>";
     $("#" + dialogid).html(divLoading);
+    $("#" + dialogid).data("matBaseWidth", width);
     
     $.ajax({
         url: url,
@@ -124,6 +288,23 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
         success: function (data) {
             if (data && data.trim() !== '') {
                 $("#" + dialogid).html(data);
+
+                // UX: aplicar máscara de moneda automáticamente en el contenido cargado (si el plugin está disponible)
+                try {
+                    if ($.fn && typeof $.fn.mask === "function") {
+                        $("#" + dialogid).find(".money").mask("#.##0,00", { reverse: true });
+                    }
+                } catch (e) {
+                    // no-op
+                }
+
+                // UX: enfocar el primer campo visible del modal
+                try {
+                    var $first = $("#" + dialogid).find("input, textarea, select").filter(":visible").first();
+                    if ($first && $first.length) $first.trigger("focus");
+                } catch (e2) {
+                    // no-op
+                }
             } else {
                 $("#" + dialogid).html('<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>No se pudo cargar el contenido. Por favor, intente nuevamente.</span></div>');
             }
@@ -148,18 +329,71 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
         width: width,
         position: { my: 'center', at: 'center', of: window },
         closeOnEscape: true,
+        resizable: false,
+        draggable: false,
+        dialogClass: "mat-dialog",
         open: function() {
             ModalConfig.setupOverlayClose(dialogid);
+
+            // Fullscreen por defecto para SeleccionarPasajero (maximiza el popin)
+            if (dialogid === "SeleccionPasajero") {
+                ModalConfig.setupFullscreen(dialogid, true);
+                var ensureBtn = $("#" + dialogid).data("matEnsureMaximizeButton");
+                if (typeof ensureBtn === "function") ensureBtn();
+                ModalConfig.setFullscreen(dialogid, true);
+            }
+
+            // Lista de Espera: +5% de ancho (sin afectar otros popins "min")
+            if (dialogid === "divOffListPassengers") {
+                try {
+                    var $dlgWL = $("#" + dialogid);
+                    var baseW = $dlgWL.data("matBaseWidth");
+                    if (baseW && typeof baseW === "number") {
+                        $dlgWL.dialog("option", "width", Math.round(baseW * 1.05));
+                    }
+                } catch (e) { }
+            }
+
+            // Mejor UX: limitar alto para que el scroll sea interno y no se corte el contenido
+            if (dialogid === "FormReserva") {
+                var $dlg = $("#" + dialogid);
+                var maxH = Math.max(520, Math.floor($(window).height() - 80));
+                $dlg.dialog("option", "maxHeight", maxH);
+                $dlg.dialog("option", "height", "auto");
+
+                var $w = $dlg.dialog("widget");
+                if ($w && $w.length) $w.addClass("mat-dialog--formreserva");
+            }
+
+            // ReservaHabitacion: titlebar con estilo "Seleccionar pasajero" (brand header)
+            if (dialogid === "idResHab") {
+                var $wHab = $("#" + dialogid).dialog("widget");
+                if ($wHab && $wHab.length) $wHab.addClass("mat-dialog--brandtitle");
+            }
+
+            // Nota de Crédito: UX consistente (titlebar blanco + scroll interno)
+            if (dialogid === "NotaCredito") {
+                var $wNc = $("#" + dialogid).dialog("widget");
+                if ($wNc && $wNc.length) $wNc.addClass("mat-dialog--brandtitle");
+            }
         },
         close: function () {
             $(document).off('click.modalOverlay');
+            $(window).off("resize.matDialogFullscreen-" + dialogid);
             $("#" + dialogid).dialog("destroy").remove();
         }
     });
     $("#" + dialogid).dialog("open");
 }
-function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize) {
+// ShowFormDialogCloseRefresh:
+// Históricamente recargaba toda la página al cerrar, para “refrescar” datos.
+// Ahora soporta refresh selectivo vía options:
+// - reloadOnClose (default: true) mantiene compatibilidad
+// - onClose: callback para refrescar un panel/tabla sin reload completo
+function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize, options) {
     var width = ModalConfig.getWidth(widthsize);
+    var opts = options || {};
+    var reloadOnClose = (opts.reloadOnClose !== false); // default true (compat)
 
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
@@ -183,7 +417,18 @@ function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize) {
         close: function () {
             $(document).off('click.modalOverlay');
             $("#" + dialogid).remove();
-            window.location.reload(true);
+
+            // Permitir refresh selectivo / hooks por pantalla
+            try {
+                if (typeof opts.onClose === "function") opts.onClose();
+                $(document).trigger("mat:dialogCloseRefresh", { dialogid: dialogid, url: url });
+            } catch (e) {
+                console.warn("ShowFormDialogCloseRefresh onClose error:", e);
+            }
+
+            if (reloadOnClose) {
+                window.location.reload(true);
+            }
         }
     });
     $("#" + dialogid).dialog("open");
@@ -223,6 +468,11 @@ function ShowFormDialogJson(url, dialogid, dialogtitle, widthsize, datasend) {
 function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
     var width = ModalConfig.getWidth(widthsize);
 
+    // Forzar tamaño más amplio para este flujo (mejor UX dentro del formulario)
+    if (dialogid === "FormReserva") {
+        width = ModalConfig.getWidth("wide");
+    }
+
     var divcontent = "<div id='" + dialogid + "' title='" + dialogtitle + "'></div>";
     $("body").append(divcontent);
     $("#" + dialogid).html(html);
@@ -235,6 +485,16 @@ function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
         closeOnEscape: true,
         open: function() {
             ModalConfig.setupOverlayClose(dialogid);
+
+            if (dialogid === "FormReserva") {
+                var $dlg = $("#" + dialogid);
+                var maxH = Math.max(520, Math.floor($(window).height() - 80));
+                $dlg.dialog("option", "maxHeight", maxH);
+                $dlg.dialog("option", "height", "auto");
+
+                var $w = $dlg.dialog("widget");
+                if ($w && $w.length) $w.addClass("mat-dialog--formreserva");
+            }
         },
         close: function () {
             $(document).off('click.modalOverlay');
@@ -255,12 +515,12 @@ function validarCTA(ClienteId, Estado) {
             if (result) {
                 $('#btnActivar').attr('src', '/Images/Icons/icon-boton-verde.png');
                 $('#btnDesactivar').attr('src', '/Images/Icons/icon-boton-rojo2.png');
-                alert('Se activo la cuenta corriente del el cliente seleccionado');
+                (window.alertSuccess || window.alert)('Se activó la cuenta corriente del cliente seleccionado.', 'Éxito');
             }
             else {
                 $('#btnActivar').attr('src', '/Images/Icons/icon-boton-verde2.png');
                 $('#btnDesactivar').attr('src', '/Images/Icons/icon-boton-rojo.png');
-                alert('Se desactivo la cuenta corriente del cliente seleccionado');
+                (window.alertInfo || window.alert)('Se desactivó la cuenta corriente del cliente seleccionado.', 'Atención');
             }
 
         }

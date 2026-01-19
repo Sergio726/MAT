@@ -99,12 +99,12 @@
                         $("#total-credito").val(Cred);
                     }
                     else {
-                        alert("Ocurrió un error a intentar calcular el crédito disponible.");
+                        (window.alertError || window.alert)("Ocurrió un error al intentar calcular el crédito disponible.", "Error");
                         console.log(response[1]);
                     }
                 },
                 error: function (e) {
-                    alert("Ocurrió un error a intentar calcular el crédito disponible.");
+                    (window.alertError || window.alert)("Ocurrió un error al intentar calcular el crédito disponible.", "Error");
                     console.log(e);
                 }
             })
@@ -136,19 +136,19 @@
 
         if (montoFactura == monto) {
             if ($("input[name='comprobante']:checked").val() == "Recibo") {
-                return alert("Esta realizando el pago total de la factura. Debe ingresar un número de factura.");
+                return (window.alertInfo || window.alert)("Está realizando el pago total de la factura. Debe ingresar un número de factura.", "Validación");
             }
         }
 
         if (tipopago == 4) {
             if (parseFloat(monto) > parseFloat($("#total-credito").val())) {
-                return alert("Credito insufiente. Ingrese un monto menor o igual al Crédito Disponible.")
+                return (window.alertInfo || window.alert)("Crédito insuficiente. Ingrese un monto menor o igual al Crédito Disponible.", "Validación")
             }
         }
 
         if (descuento > 0) {
             if (detalledescuento.trim() == '') {
-                return alert('Por favor agregue una descripción para el descuento aplicado.');
+                return (window.alertInfo || window.alert)('Por favor agregue una descripción para el descuento aplicado.', 'Validación');
             }
         }
 
@@ -238,7 +238,11 @@
                         console.log(data);
                         break;                    
                 }
-                alert(message);
+                if (estadoFactura === "pagado" || estadoFactura === "señado" || estadoFactura === "pre-reserva") {
+                    (window.alertSuccess || window.alert)(message, "Éxito");
+                } else {
+                    (window.alertError || window.alert)(message, "Error");
+                }
                 oFormReserva.TerminarReserva(message);
             }
         });

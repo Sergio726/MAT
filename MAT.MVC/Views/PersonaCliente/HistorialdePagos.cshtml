@@ -110,21 +110,6 @@
     }
 </style>
 
-@if (ViewBag.Error != null)
-{
-    <div class="historial-pagos-container">
-        <div class="error-message">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-            <span>@ViewBag.Error</span>
-        </div>
-        <a href="/PersonaCliente" class="btn-back">
-            <i class="bi bi-arrow-left"></i>
-            Volver a Lista de Clientes
-        </a>
-    </div>
-    return;
-}
-
 <div class="historial-pagos-container">
     <div class="historial-pagos-header">
         <h1 class="historial-pagos-title">

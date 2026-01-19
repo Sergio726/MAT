@@ -10,6 +10,7 @@ using MAT.MVC.Models;
 using System.IO;
 using System.Data;
 using Newtonsoft.Json;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Paquete
 {
@@ -122,7 +123,8 @@ namespace MAT.MVC.Controllers.Paquete
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                // Legacy: devuelve Mensaje, mantenemos formato sin StackTrace
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.InsertPaquete");
             }
 
             return Json(new
@@ -142,7 +144,8 @@ namespace MAT.MVC.Controllers.Paquete
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                // Legacy: devuelve Mensaje, mantenemos formato sin StackTrace
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.UpdatePaquete");
             }
 
             return Json(new
@@ -312,7 +315,7 @@ namespace MAT.MVC.Controllers.Paquete
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message + e.StackTrace;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.RenderGridExcursiones");
             }
             return PartialView();
         }

@@ -10,6 +10,7 @@ using MAT.MVC.Models;
 using WebMatrix.WebData;
 using System.Data;
 using System.Data.SqlClient;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Hotel
 {
@@ -28,7 +29,7 @@ namespace MAT.MVC.Controllers.Hotel
             }
             catch (Exception e)
             {
-                ViewBag.MsgError = e.Message + " " + e.StackTrace;
+                ViewBag.MsgError = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.Index");
             }
             return View(LHotel);
         }
@@ -51,7 +52,7 @@ namespace MAT.MVC.Controllers.Hotel
             }
             catch (Exception e)
             {
-                ViewBag.MsgError = e.Message + " " + e.StackTrace;
+                ViewBag.MsgError = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.ABM");
             }
             return View(oHotel);
         }
@@ -78,7 +79,7 @@ namespace MAT.MVC.Controllers.Hotel
             {
                 sResult[0] = "";
                 sResult[1] = "Error.";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[2] = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.HotelCreate");
             }
 
 
@@ -104,7 +105,7 @@ namespace MAT.MVC.Controllers.Hotel
             {
                 sResult[0] = "";
                 sResult[1] = "Error.";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[2] = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.HotelUpdate");
             }
 
 
@@ -138,7 +139,7 @@ namespace MAT.MVC.Controllers.Hotel
             {
                 sResult[0] = "";
                 sResult[1] = "Error.";
-                sResult[2] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[2] = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.HotelCheckNombre");
             }
 
 
@@ -210,7 +211,7 @@ namespace MAT.MVC.Controllers.Hotel
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message + e.StackTrace;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.EsquemaDistribucion");
                 return PartialView(ListDistribucion);
             }
         }

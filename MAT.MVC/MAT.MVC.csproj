@@ -319,6 +319,10 @@
     <Compile Include="Controllers\Transporte\TransporteController.cs" />
     <Compile Include="Controllers\Viaje\ViajeController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
+    <Compile Include="Filters\GlobalExceptionFilter.cs" />
+    <Compile Include="Filters\RequestGuardFilter.cs" />
+    <Compile Include="Infrastructure\ErrorUtil.cs" />
+    <Compile Include="Infrastructure\RequestContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

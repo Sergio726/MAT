@@ -92,12 +92,18 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@ID", SqlDbType.Int, 0, ID),
                         DBHelper.MakeParam("@UsuarioID", SqlDbType.Int, 0,UsuarioID)
                     };
-                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_Delete", dbParams))
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_ListaEspera_Delete_Soft", dbParams))
                     {
                         while (_reader.Read())
                         {
-                            sResult[0] = "Done";
-                            sResult[1] = _reader["Result"].ToString();
+                            // Nuevo contrato SP:
+                            // Estado: Done|Error
+                            // Mensaje: texto para UI
+                            var estado = _reader["Estado"] != null ? _reader["Estado"].ToString() : "";
+                            var mensaje = _reader["Mensaje"] != null ? _reader["Mensaje"].ToString() : "";
+
+                            sResult[0] = string.IsNullOrWhiteSpace(estado) ? "Error" : estado.Trim();
+                            sResult[1] = mensaje ?? "";
                         }
                     }
                 }
@@ -114,10 +120,11 @@ namespace MAT.MVC.Models
             public static DataSet GetListaEspera(string ViajeID)
             {
                 List<ListaEsperaView> _List = new List<ListaEsperaView>();
+                // El SP usa UNIQUEIDENTIFIER: evitar conversiones implícitas (mejor plan/índices)
                 SqlParameter[] dbParams = new SqlParameter[] {
-                 DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, ViajeID),
-            };
-                DataSet _ds = DBHelper.ExecuteDataSet("dbo.usp_MAT_ListaEspera_SelectByViajeId", dbParams);
+                    DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, new Guid(ViajeID)),
+                };
+                DataSet _ds = DBHelper.ExecuteDataSet("dbo.usp_MAT_ListaEspera_SelectByViajeId_Active", dbParams);
 
                 return _ds;
             }

@@ -10,6 +10,7 @@ using Model = MAT.MVC.Models;
 using MAT.MVC.Models;
 using Newtonsoft.Json;
 using System.Data;
+using MAT.MVC.Infrastructure;
 namespace MAT.MVC.Controllers.Habitacion
 {
     public class HabitacionController : Controller
@@ -103,7 +104,7 @@ namespace MAT.MVC.Controllers.Habitacion
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController.updateHabitacion");
             }
 
 

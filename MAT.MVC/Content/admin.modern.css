@@ -1,0 +1,134 @@
+/* Admin Modern UI (Dark Blue) - Bootstrap 5 base */
+:root {
+  --admin-bg: #071a2b;
+  --admin-surface: #0b243a;
+  --admin-surface-2: #0f2f4c;
+  --admin-border: rgba(255, 255, 255, 0.10);
+  --admin-text: #e7effa;
+  --admin-text-muted: rgba(231, 239, 250, 0.72);
+  --admin-primary: #0b2a4a;
+  --admin-primary-2: #0a3a66;
+  --admin-primary-rgb: 11, 42, 74;
+}
+
+/* page shell */
+body.admin-modern {
+  background: radial-gradient(1200px 600px at 20% 0%, #0b2a4a 0%, var(--admin-bg) 60%);
+  color: var(--admin-text);
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* topbar */
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: linear-gradient(90deg, var(--admin-primary) 0%, var(--admin-primary-2) 100%);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-topbar .navbar-brand {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.admin-topbar .btn-outline-light {
+  border-color: rgba(255,255,255,0.28);
+}
+
+/* layout */
+.admin-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.admin-sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, var(--admin-surface) 0%, #081b2c 100%);
+  border-right: 1px solid var(--admin-border);
+}
+
+.admin-sidebar .nav-link {
+  color: rgba(231, 239, 250, 0.86);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link:focus {
+  background: rgba(var(--admin-primary-rgb), 0.22);
+  color: #ffffff;
+}
+
+.admin-sidebar .nav-link.active {
+  background: rgba(var(--admin-primary-rgb), 0.32);
+  color: #ffffff;
+}
+
+.admin-sidebar .nav-section-title {
+  color: var(--admin-text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 16px 0 8px 0;
+}
+
+.admin-sidebar .admin-userbox {
+  background: rgba(0,0,0,0.14);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.admin-sidebar .admin-userbox .name {
+  font-weight: 700;
+}
+
+.admin-sidebar .admin-userbox .muted {
+  color: var(--admin-text-muted);
+  font-size: 0.85rem;
+}
+
+.admin-content {
+  flex: 1;
+  min-width: 0;
+  background: #f3f6fb;
+  color: #111827;
+}
+
+.admin-content-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* alerts host spacing */
+.modern-alerts-host {
+  margin-bottom: 14px;
+}
+
+/* offcanvas */
+.admin-offcanvas {
+  background: linear-gradient(180deg, var(--admin-surface) 0%, #081b2c 100%);
+  color: var(--admin-text);
+}
+
+.admin-offcanvas .nav-link {
+  color: rgba(231, 239, 250, 0.90);
+}
+
+.admin-offcanvas .nav-link:hover {
+  background: rgba(var(--admin-primary-rgb), 0.22);
+  color: #fff;
+}
+

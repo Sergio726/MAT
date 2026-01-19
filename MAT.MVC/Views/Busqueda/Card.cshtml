@@ -165,7 +165,7 @@
                 $(".resumen-perfil").html(data);
             },
             error: function (e) {
-                alert("Se produjo un error. Contactese con el administrador.");
+                (window.alertError || window.alert)("Se produjo un error. Contáctese con el administrador.", "Error");
                 console.log(e);
             }
         })

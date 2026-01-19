@@ -9,31 +9,33 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var table = $("#tblPagos").DataTable({
+        var $tbl = $("#tblPagos");
+        if ($.fn.DataTable && $.fn.DataTable.isDataTable && $.fn.DataTable.isDataTable($tbl)) {
+            try { $tbl.DataTable().destroy(); } catch (e) { }
+        }
+
+        var table = $tbl.DataTable({
             "columnDefs": [
                 {
-                    "targets": [0,1,7,8,9],
+                    "targets": [8,9],
                     "orderable": false
                 },
             ]
         });
 
-        $('#tblPagos tbody').on('click', 'td.details-control', function () {
+        $('#tblPagos tbody').off('click.pagos', 'td.details-control').on('click.pagos', 'td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = table.row(tr);
-            var icon = $(this).find('i');
 
             if (row.child.isShown()) {
                 // This row is already open - close it
                 row.child.hide();
                 tr.removeClass('shown');
-                icon.removeClass('bi-chevron-up').addClass('bi-chevron-down');
             }
             else {
                 // Open this row
                 row.child(format($(tr).attr("id").replace('r_',''))).show();
                 tr.addClass('shown');
-                icon.removeClass('bi-chevron-down').addClass('bi-chevron-up');
             }
         });
     });
@@ -78,17 +80,37 @@
 
 
 @model List<MAT.MVC.Models.PagoModel>
-@{int iCount = 0;
-  decimal dSum = 0;}
-<div class="modern-table-container">
-<table id="tblPagos" class="modern-table" style="width:100%;">
+@{
+    int iCount = 0;
+    decimal dSum = 0;
+    if (Model != null)
+    {
+        foreach (var p in Model) { dSum += p.Monto; }
+    }
+}
+<div class="mat-pagos">
+    <div class="mat-pagos-header">
+        <div class="mat-pagos-summary">
+            <div class="mat-pagos-summary-label">Total</div>
+            <div class="mat-pagos-summary-value">
+                <span class="mat-pagos-summary-amount">@String.Format("{0:C}", dSum)</span>
+                @if (Model != null && Model.Count > 0)
+                {
+                    <span class="mat-badge mat-badge--pastel-slate">@Model.First().MonedaPaquete.Trim()</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="modern-table-container mat-pagos-tablewrap">
+<table id="tblPagos" class="display" style="width:100%;">
     <thead> 
         <tr>
-            <th></th>
+            <th>#</th>
             <th>Fecha</th>
-            <th>Nro de Recibo</th>
+            <th>Recibo</th>
             <th>Transacción</th>
-            <th>Medio de Pago</th>
+            <th>Medio</th>
             <th>Vendedor</th>
             <th>Monto</th>
             <th>Moneda</th>
@@ -100,27 +122,79 @@
         @foreach (MAT.MVC.Models.PagoModel item in Model)
         {
             iCount += 1;
-            dSum += item.Monto;
         <tr id="r_@item.PagoID">
             <td>@iCount</td>
-            <td>@item.FechaPago.ToShortDateString() @item.FechaPago.ToShortTimeString()</td>
-            <td>@item.NroRecibo</td>
-            <td>@item.TransaccionID</td>
-            <td>@item.TipoPagoDescripcion</td>
-            <td>@item.Vendedor</td>
-            <td>@String.Format("{0:C}", item.Monto)</td>
-            <td title="Tipo de Moneda del Paquete">(@item.MonedaPaquete.Trim())</td>
             <td>
-                <a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');" id="lnkCancelarPago" class="modern-btn-icon modern-btn-icon-danger" title="Cancelar Pago">
+                <div class="mat-pago-fecha">
+                    <div class="mat-pago-date">@item.FechaPago.ToShortDateString()</div>
+                    <div class="mat-pago-fecha-time">@item.FechaPago.ToShortTimeString()</div>
+                </div>
+            </td>
+            <td>
+                @{
+                    var recibo = (item.NroRecibo ?? "").Trim();
+                }
+                @if (string.IsNullOrWhiteSpace(recibo))
+                {
+                    <span class="mat-empty" aria-label="Sin recibo">—</span>
+                }
+                else
+                {
+                    <span class="mat-mono mat-ellipsis" title="@recibo">@recibo</span>
+                }
+            </td>
+            <td>
+                @{
+                    var trx = (item.TransaccionID ?? "").Trim();
+                }
+                @if (string.IsNullOrWhiteSpace(trx))
+                {
+                    <span class="mat-empty" aria-label="Sin transacción">—</span>
+                }
+                else
+                {
+                    <span class="mat-mono mat-ellipsis" title="@trx">@trx</span>
+                }
+            </td>
+            <td>
+                @{
+                    var tipoPago = (item.TipoPagoDescripcion ?? "").Trim();
+                }
+                @if (string.IsNullOrWhiteSpace(tipoPago))
+                {
+                    <span class="mat-empty" aria-label="Sin medio">—</span>
+                }
+                else
+                {
+                    <span class="mat-pago-medio" title="@tipoPago">@tipoPago</span>
+                }
+            </td>
+            <td>
+                <span class="mat-pago-vendedor mat-ellipsis" title="@item.Vendedor">
+                    @item.Vendedor
+                </span>
+            </td>
+            <td class="text-end">
+                <span class="mat-pago-monto">@String.Format("{0:C}", item.Monto)</span>
+            </td>
+            <td>
+                @{
+                    var m = (item.Moneda ?? "").Trim();
+                    var monedaClass = "mat-badge--pastel-slate";
+                    if (m == "ARS") { monedaClass = "mat-badge--pastel-green"; }
+                    else if (m == "USD") { monedaClass = "mat-badge--pastel-blue"; }
+                }
+                <span class="mat-badge @monedaClass">@m</span>
+            </td>
+            <td>
+                <a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');"
+                   id="lnkCancelarPago"
+                   class="modern-btn-icon modern-btn-icon-danger mat-pago-cancel"
+                   title="Cancelar Pago">
                     <i class="bi bi-x-circle"></i>
                 </a>
             </td>
-            <td class="@(item.Moneda.Trim() != "ARS" || item.MonedaPaquete.Trim() !="ARS"? "details-control text-center": "")">
-                @if (item.Moneda.Trim() != "ARS" || item.MonedaPaquete.Trim() != "ARS")
-                {
-                    <i class="bi bi-chevron-down"></i>
-                }
-            </td>
+            <td class="@(item.Moneda.Trim() != "ARS" || item.MonedaPaquete.Trim() !="ARS"? "details-control": "")"></td>
         </tr>    
         }
         
@@ -131,7 +205,12 @@
             <th colspan="5"></th>
             @if (Model.Count() > 0)
             {
-                <th colspan="4">@String.Format("{0:C}", dSum) (@Model.First().MonedaPaquete.Trim())</th>    
+                <th colspan="4">
+                    @String.Format("{0:C}", dSum)
+                    <span class="mat-badge mat-badge--pastel-slate" style="margin-left: .25rem;">
+                        @Model.First().MonedaPaquete.Trim()
+                    </span>
+                </th>    
             }
             else
             {
@@ -149,50 +228,28 @@
 <div id="divPagoDetalle" style="display:none;">
     <div class="modern-pago-detalle">
         <div class="modern-pago-detalle-item">
-            <span class="modern-pago-detalle-label">Monto Recibido:</span>
-            <span class="modern-pago-detalle-value">{{MontoRecibido}} ({{MonedaRecibida}})</span>
+            <span class="modern-pago-detalle-label">Monto recibido</span>
+            <span class="modern-pago-detalle-value">
+                {{MontoRecibido}}
+                <span class="mat-badge mat-badge--pastel-slate">{{MonedaRecibida}}</span>
+            </span>
         </div>
         <div class="modern-pago-detalle-item">
-            <span class="modern-pago-detalle-label">Monto Equivalente:</span>
-            <span class="modern-pago-detalle-value">{{MontoEquivalente}} ({{MonedaEquivalente}})</span>
+            <span class="modern-pago-detalle-label">Equivalente</span>
+            <span class="modern-pago-detalle-value">
+                {{MontoEquivalente}}
+                <span class="mat-badge mat-badge--pastel-slate">{{MonedaEquivalente}}</span>
+            </span>
         </div>
         <div class="modern-pago-detalle-item">
-            <span class="modern-pago-detalle-label">Cotización:</span>
+            <span class="modern-pago-detalle-label">Cotización</span>
             <span class="modern-pago-detalle-value">1 U$D = {{Cotizacion}}</span>
         </div>
         <div class="modern-pago-detalle-item">
-            <span class="modern-pago-detalle-label">Fecha de Transacción:</span>
+            <span class="modern-pago-detalle-label">Fecha transacción</span>
             <span class="modern-pago-detalle-value">{{Fecha}}</span>
         </div>
     </div>
 </div>
 </div>
-
-<style>
-    .modern-pago-detalle {
-        padding: 1rem;
-        background: var(--bg-secondary, #f9fafb);
-        border-radius: 0.5rem;
-        margin: 0.5rem 0;
-    }
-    .modern-pago-detalle-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-    }
-    .modern-pago-detalle-item:last-child {
-        border-bottom: none;
-    }
-    .modern-pago-detalle-label {
-        font-weight: 600;
-        font-size: 0.875rem;
-        color: var(--text-secondary, #6b7280);
-    }
-    .modern-pago-detalle-value {
-        font-weight: 500;
-        font-size: 0.875rem;
-        color: var(--text-primary, #1f2937);
-    }
-</style>
+</div>

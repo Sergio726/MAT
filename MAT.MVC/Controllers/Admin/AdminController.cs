@@ -14,6 +14,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Text;
 using Newtonsoft.Json;
+using MAT.MVC.Infrastructure;
 namespace MAT.MVC.Controllers.Admin
 {
     public class AdminController : Controller
@@ -47,7 +48,7 @@ namespace MAT.MVC.Controllers.Admin
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message + " " + e.StackTrace.ToString();
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.ResumenPagos");
             }
             
             return View();
@@ -71,7 +72,7 @@ namespace MAT.MVC.Controllers.Admin
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message + e.StackTrace.ToString();
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.GridResumenPagos");
             }
             return PartialView();
         }

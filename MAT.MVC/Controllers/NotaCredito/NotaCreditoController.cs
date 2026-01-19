@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers
 {
@@ -61,7 +62,7 @@ namespace MAT.MVC.Controllers
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = e.Message + e.StackTrace.ToString();
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "NotaCreditoController.getCreditoDisponible");
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
         }

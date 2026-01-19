@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using MAT.MVC.Models;
 using System.Data;
+using MAT.MVC.Infrastructure;
 
 
 namespace MAT.MVC.Controllers.Servicio
@@ -35,7 +36,7 @@ namespace MAT.MVC.Controllers.Servicio
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message + e.StackTrace;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ServicioController.Index");
             }
             return View(ListSevicios);
         }
@@ -71,7 +72,7 @@ namespace MAT.MVC.Controllers.Servicio
                 return RedirectToAction("Index");
             }
             catch (Exception e){
-                ViewBag.Error = e.Message;
+                TempData["Error"] = ErrorUtil.LogAndGetPublicMessage(e, "ServicioController.Create(POST)");
                 return RedirectToAction("Create");
             }
             

@@ -14,14 +14,6 @@
         </h2>
     </div>
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="modern-alert-error">
-            <i class="bi bi-exclamation-circle"></i>
-            <span>@ViewBag.Error</span>
-        </div>
-    }
-
     <div class="modern-form-container">
         <div class="modern-form-grid">
             <div class="modern-form-group">
@@ -88,7 +80,7 @@
                         }
                     }
                     else {
-                        alert(response.data);
+                        (window.alertError || window.alert)(response.data, "Error");
                     }
                 }
             });
@@ -97,13 +89,13 @@
 
     function AddLocalidad() {
         if ($("#ddProvincia").val() == "0") {
-            return alert("Por favor seleccione una provincia.");
+            return (window.alertInfo || window.alert)("Por favor seleccione una provincia.", "Validación");
         }
         if ($("#popin_ddDepartamento").val() == "0") {
-            return alert("Por favor seleccione un Departamento.");
+            return (window.alertInfo || window.alert)("Por favor seleccione un Departamento.", "Validación");
         }
         if ($("#txtLocalidad").val().trim() == "") {
-            return alert("Por favor ingrese una localidad.");
+            return (window.alertInfo || window.alert)("Por favor ingrese una localidad.", "Validación");
         }
 
         var IdDepartamento = $("#popin_ddDepartamento").val();
@@ -119,11 +111,11 @@
             dataType: "json",
             success: function (response) {
                 if (response.Result == "Done.") {
-                    alert("Se agrego una localidad.", "Operacion Exitosa");
+                    (window.alertSuccess || window.alert)("Se agregó una localidad.", "Operación Exitosa");
                     $("#AgregarLocalidad").dialog("close");
                 }
                 else {
-                    alert(response.data);
+                    (window.alertError || window.alert)(response.data, "Error");
                 }
             }
         });

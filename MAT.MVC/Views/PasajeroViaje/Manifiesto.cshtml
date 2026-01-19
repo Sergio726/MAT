@@ -1,1139 +1,412 @@
 @model List<MAT.Entities.PasajeroViaje>
+
+@using System.Linq
 @using MAT.Enums
-@using MAT.Utilities
+@using MAT.Entities
+@using MAT.Services
+
 @{
     ViewBag.Title = "Manifiesto";
     int numeracion = 1;
+
+    Viaje viaje = null;
+    if (Model != null && Model.Count > 0)
+    {
+        ViajeService vs = new ViajeService();
+        // ViajeId es Guid? en MAT.Entities.PasajeroViaje (view)
+        System.Guid? viajeId = Model.First().ViajeId;
+        if (viajeId != null && viajeId.HasValue)
+        {
+            viaje = vs.GetByViajeId(viajeId.Value);
+        }
+    }
 }
 
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:x="urn:schemas-microsoft-com:office:excel"
-xmlns="http://www.w3.org/TR/REC-html40">
-    
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-    <meta name="ProgId" content="Excel.Sheet">
-    <meta name="Generator" content="Microsoft Excel 12">
-    <title>MANIFIESTO DE TRIPULANTES Y PASAJEROS</title>
-    <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-    <link href="~/Content/mat.manifiesto.print.css" rel="stylesheet" media="print"/>
-    <link rel="File-List" href="MANIFIESTO%20SEBA2_archivos/filelist.xml">
-    <style id="MANIFIESTO SEBA_2107_Styles">
-        <!-- table {
-            mso-displayed-decimal-separator: "\,";
-            mso-displayed-thousand-separator: "\.";
-        }
-              
-        .font52107 {
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial;
-            mso-generic-font-family: auto;
-            mso-font-charset: 0;
-        }
+<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
+<link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
+<link href="~/Content/bootstrap-icons.css" rel="stylesheet" />
 
-        .font62107 {
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-        }
-
-        .font72107 {
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-        }
-
-        .font82107 {
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-        }
-
-        
-        .xl642107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: none;
-            border-left: 1.0pt solid windowtext;
-            mso-background-source: auto;
-            mso-pattern: auto;
-            white-space: nowrap;
-        }
-
-        
-        .xl662107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            mso-background-source: auto;
-            mso-pattern: auto;
-            white-space: nowrap;
-        }
-
-        .xl672107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: none;
-            border-left: none;
-            mso-background-source: auto;
-            mso-pattern: auto;
-            white-space: nowrap;
-        }
-
-        
-        .xl692107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial;
-            mso-generic-font-family: auto;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: middle;
-            border: 1.0pt solid windowtext;
-            mso-background-source: auto;
-            mso-pattern: auto;
-            white-space: nowrap;
-        }
-              
-        
-       
-        .xl732107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            font-size: 8pt;
-            font-family: Arial, sans-serif;
-            border: 1.0pt solid windowtext;
-            white-space: nowrap;
-        }
-               
-                
-        .xl772107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: none;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-      
-        .xl792107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: none;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl802107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: none;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl812107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: none;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-                
-        .xl842107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-       
-        .xl862107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: black;
-            font-size: 11.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Calibri, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl872107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl882107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl892107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl902107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl912107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl922107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial;
-            mso-generic-font-family: auto;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: none;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl932107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial;
-            mso-generic-font-family: auto;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: none;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl942107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial;
-            mso-generic-font-family: auto;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: general;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: none;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-             
-
-        .xl1062107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            mso-background-source: auto;
-            mso-pattern: auto;
-            white-space: nowrap;
-        }
-
-        
-        .xl1092107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1102107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 11.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1112107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 11.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1122107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: none;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1132107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: none;
-            border-bottom: none;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1142107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 8.0pt;
-            font-weight: 700;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: 1.0pt solid windowtext;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: none;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1152107 {
-            border-style: none none solid solid;
-            border-width: medium medium 1pt 1pt;
-            color: windowtext;
-            font-family: "Gill Sans MT Condensed",sans-serif;
-            font-size: 9pt;
-            font-style: normal;
-            font-weight: 400;
-            padding-left: 1px;
-            padding-right: 1px;
-            padding-top: 1px;
-            text-align: center;
-            text-decoration: none;
-            vertical-align: bottom;
-            white-space: normal;
-        }
-
-        .xl1162107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 10.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: "Gill Sans MT Condensed", sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: normal;
-        }
-
-        .xl1172107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 10.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: "Gill Sans MT Condensed", sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: normal;
-        }
-
-        .xl1182107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 10.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial;
-            mso-generic-font-family: auto;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: left;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: normal;
-        }
-
-        .xl1192107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 10.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial;
-            mso-generic-font-family: auto;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: left;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: normal;
-        }
-
-        .xl1202107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 10.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: "Short Date";
-            text-align: center;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1212107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 10.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: "Short Date";
-            text-align: center;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1222107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 9.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: left;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1232107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 9.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: left;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1242107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 9.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: none;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: 1.0pt solid windowtext;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-
-        .xl1252107 {
-            padding-top: 1px;
-            padding-right: 1px;
-            padding-left: 1px;
-            mso-ignore: padding;
-            color: windowtext;
-            font-size: 9.0pt;
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            mso-font-charset: 0;
-            mso-number-format: General;
-            text-align: center;
-            vertical-align: bottom;
-            border-top: none;
-            border-right: 1.0pt solid windowtext;
-            border-bottom: 1.0pt solid windowtext;
-            border-left: none;
-            background: white;
-            mso-pattern: black none;
-            white-space: nowrap;
-        }
-            .logo-voucher {
-        
-        width:30%;
+<style>
+    /* Mantener el look & feel de ListadoSimple */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        background-color: #f5f5f5;
         margin: 0;
+        padding: 20px;
     }
-        -->
-    </style>
-</head>
 
-<body>
-    <!--[if !excel]>&nbsp;&nbsp;<![endif]-->
-    <!--La siguiente información se generó mediante la característica Publicar como
-página Web de Microsoft Office Excel.-->
-    <!--Si se vuelve a publicar el mismo elemento desde Excel, se reemplazará toda
-la información comprendida entre las etiquetas DIV.-->
-    <!----------------------------->
-    <!--INICIO DE LOS RESULTADOS DEL ASISTENTE PARA PUBLICAR COMO PÁGINA WEB DE
-EXCEL -->
-    <!----------------------------->
-    <div  class="backMAT">
-    <div id="MANIFIESTO SEBA_2107" align="center" x:publishsource="Excel">
+    .Content {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
 
-        <table border="0" cellpadding="0" cellspacing="0" width="787" style='border-collapse: collapse; table-layout: fixed; width: 591pt'>
-            <col width="23" style='mso-width-source: userset; mso-width-alt: 841; width: 17pt'>
-            <col width="222" style='mso-width-source: userset; mso-width-alt: 8118; width: 167pt'>
-            <col width="85" style='mso-width-source: userset; mso-width-alt: 3108; width: 64pt'>
-            <col width="150" style='mso-width-source: userset; mso-width-alt: 5485; width: 113pt'>
-            <col width="73" style='mso-width-source: userset; mso-width-alt: 2669; width: 55pt'>
-            <col width="44" style='mso-width-source: userset; mso-width-alt: 1609; width: 33pt'>
-            <col width="95" span="2" style='mso-width-source: userset; mso-width-alt: 3474; width: 71pt'>
+    /* Encabezado tipo ListadoSimple */
+    #divEncabezadoViaje.headMAT {
+        background-color: #1e3a5f;
+        background-image: none;
+    }
 
-            <tr style='height: 10pt;border-top:solid 1px;'>
+    .EncabezadoViaje {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 80px;
+        padding: 18px 25px;
+        color: white;
+    }
 
-                <td colspan="8" style="border-left:solid 1px;border-right:solid 1px; border-bottom:solid 1px; font-family:Arial; font-size:8pt;">
-                    <div>
-                        <span style="font-weight:bold">DEL OMNIBUS MATRICULA N°: </span> <input type="text" style='border: none' placeholder="MATRICULA">
-                        <span style="font-weight:bold">SALIDO DE SALTA-ARGENTINA, ENTRANDO A: </span> <input type="text" placeholder="PAIS ENTRADA" style='border: none'>
-                    </div>
-                </td>
-            </tr>
+    .viaje-info { flex: 1; }
+    .viaje-logo { flex-shrink: 0; margin-left: 20px; margin-right: 20px; }
+    .viaje-logo img { height: 50px; width: auto; }
+    .viaje-titulo {
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: white;
+    }
+    .viaje-subtitulo {
+        font-size: 13px;
+        color: rgba(255,255,255,0.9);
+    }
+    .viaje-fechas {
+        font-size: 12px;
+        color: rgba(255,255,255,0.9);
+        margin-top: 4px;
+    }
+    .viaje-fechas strong { color: white; }
+    .fecha-separador { margin: 0 12px; opacity: 0.5; }
 
-            <tr style='height: 10pt;border-top:solid 1px;'>
-                <td colspan="8" style="border-left:solid 1px;border-right:solid 1px; border-bottom:solid 1px; font-family:Arial; font-size:8pt;">
-                    <span style="font-weight:bold;">MEDIO TRANS: </span>
-                    <input type="text" placeholder="MEDIO TRANS." style='border: none;width:126px;'>
-                    <span style="font-weight:bold;padding-left:1px;">NACION: </span>
-                    <input type="text" placeholder="NACION" style='border: none;width:100px;'>
-                    <span style="font-weight:bold">PAIS SEDE: </span>
-                    <input type="text" placeholder="PAIS SEDE" style='border: none; width:120px;'>
-                    <span style="font-weight:bold">PAIS LIMITROFE: </span>
-                    <input type="text" placeholder="PAIS LIMITROFE" style='border: none;width:120px;'>
-                </td>
+    /* Toolbar */
+    .toolbar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 12px 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e0e0e0;
+        gap: 10px;
+    }
+    .total-pasajeros {
+        font-size: 13px;
+        color: #666;
+        margin-right: auto;
+    }
+    .total-pasajeros strong { color: #333; }
+    .btn-print {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(233, 30, 99, 0.3);
+        transition: all 0.2s ease;
+    }
+    .btn-print:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4); }
+    .btn-print:active { transform: translateY(0); }
+    .btn-print i { font-size: 16px; }
 
-            <tr style='height: 10pt'>
-                <td class="xl772107" colspan="2">CON FECHA</td>
-                <td class="xl772107">POR</td>
-                <td class="xl842107">PASO INTERNACIONAL</td>
-                <td class="xl792107">CON</td>
-                <td class="xl812107"><input type="text" placeholder="CANT" class="xl812107" style='border: none; width:100%'></td>
-                <td class="xl862107">@Model.Count()</td>
-                <td class="xl872107">PASAJEROS</td>
-            </tr>
-            <tr style='height: 10pt'>
-                <td colspan="2" class="xl1202107" style='border-right: 1.0pt solid black; '><input type="text" placeholder="FECHA" style='border: none'></td>
-                <td class="xl882107" style='border-left: none'>&nbsp;</td>
-                <td class="xl892107"><input type="text" placeholder="PASO INTERNACIONAL" style='border: none; width:100%'></td>
-                <td class="xl902107">&nbsp;</td>
-                <td class="xl872107">&nbsp;</td>
-                <td class="xl912107" style='border-top: none; border-left: none'><input type="text" class="xl912107" placeholder="NRO TRIPULANTES" style='border: none;width:100%'></td>
-                <td class="xl872107">TRIPULANTES</td>
-            </tr>
-            <tr style='height: 10pt'>
-                <td colspan="8" class="xl1122107" style='border-right: 1.0pt solid black;'>
-                    CONSIGNADO A:<span style='mso-spacerun: yes'>
-                    </span><font class="font82107">
-                        MARCO ANTONIO TOURS -<span style='mso-spacerun:yes'>  </span>Deán Funes nº 29 - SALTA - ARGENTINA<span style='mso-spacerun:yes'>  </span>
-                    </font><font class="font62107">
-                        <span style='mso-spacerun:yes'> </span>
-                    </font>
-                </td>
-            </tr>
+    /* Tabla */
+    #tablaPasajeros.backMAT { background-image: none !important; background: white !important; }
+    .table-scroll { overflow-x: auto; }
+    .tabla { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 1100px; }
+    .tabla thead { background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); color: white; }
+    .tabla thead tr td {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 10px;
+        padding: 10px 8px;
+        border: none;
+        border-right: 1px solid rgba(255,255,255,0.2);
+        white-space: nowrap;
+    }
+    .tabla thead tr td:last-child { border-right: none; }
+    .tabla tbody tr:nth-child(even) { background-color: #f8f9fa; }
+    .tabla tbody tr:hover { background-color: #fff3e0; }
+    .tabla tbody td.celda {
+        padding: 8px;
+        border: none;
+        border-bottom: 1px solid #e0e0e0;
+        color: #333;
+        vertical-align: top;
+        white-space: nowrap;
+    }
+    .column_nro { width: 42px; text-align: center; }
 
-            <tr style='height: 10pt'>
-                <td colspan="8" class="xl1092107" style='border-right: 1.0pt solid black; '>TRIPULANTES<font class="font52107"></font></td>
-            </tr>
-            <tr style='height: 30pt'>
-                <!-- aumentamos altura -->
-                <td class="xl792107" colspan="2">
-                    <textarea placeholder="1- APELLIDO/NOMBRE DNI" class="xl792107"
-                              style="border: none; width: 228px; height: 40px; resize: none;"></textarea>
-                </td>
-                <td class="xl802107">
-                    <textarea placeholder="2- APELLIDO/NOMBRE DNI" class="xl792107"
-                              style="border: none; width: 228px; height: 40px; resize: none;"></textarea>
-                </td>
-                <td class="xl922107">&nbsp;</td>
-                <td class="xl802107" colspan="2">
-                    <textarea placeholder="3- APELLIDO/NOMBRE DNI" class="xl792107"
-                              style="border: none; width: 228px; height: 40px; resize: none;"></textarea>
-                </td>
-                <td class="xl932107">&nbsp;</td>
-                <td class="xl942107">&nbsp;</td>
-            </tr>
+    @@media print {
+        .toolbar { display: none !important; }
+        body { padding: 0; background: white; }
+        .Content { box-shadow: none; width: 100%; max-width: none; border-radius: 0; }
+        .table-scroll { overflow: visible; }
+        .tabla { min-width: 0; font-size: 10px; }
+    }
 
-            <tr style='height: 10pt'>
-                <td colspan="8" class="xl1062107" style='border-right: 1.0pt solid black;'><span style='mso-spacerun: yes'></span><font>PASAJEROS</font></td>
-            </tr>
+    /* Cabecera de manifiesto (campos editables) */
+    .manifiesto-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e0e0e0;
+        background: #ffffff;
+    }
 
-            <tr style='height: 10pt; width: 100%; border-bottom:solid 1px;'>
-                <td class="xl642107 nro">N°</td>
-                <td class="xl642107 apeynom" style='border-top: none; border-left: none'>
-                    APELLIDO Y NOMBRE<span style='mso-spacerun: yes'> </span>
-                </td>
-                <td class="xl672107 fecha" style='border-top: none'>
-                    FECHA NAC<span style='mso-spacerun: yes'> </span>
-                </td>
-                <td class="xl642107 dni" style='border-top: none'>DOC. TIPO N°</td>
-                <td class="xl642107 ocupacion" style='border-top: none; border-left: none'>OCUPACION</td>
-                <td class="xl642107 sexo" style='border-top: none; border-left: none'>SEXO</td>
-                <td class="xl672107 nacionalidad" style='border-top: none'>NACIONALIDAD</td>
-                <td class="xl642107 pais" style='border-top: none'>
-                    PAIS RESID<span style='mso-spacerun: yes'> </span>
-                </td>
-            </tr>
+    .mf-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-            @foreach (var item in Model)
+    .mf-card-title {
+        background: #f8f9fa;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 10px 14px;
+        font-weight: 800;
+        font-size: 12px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mf-card-body {
+        padding: 12px 14px;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 10px 12px;
+        align-items: end;
+    }
+
+    .mf-field { display: flex; flex-direction: column; gap: 4px; }
+    .mf-label {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #64748b;
+    }
+    .mf-input {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+        outline: none;
+        background: #fff;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .mf-input:focus {
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.12);
+    }
+
+    .mf-static {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+        background: #f8fafc;
+        color: #0f172a;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mf-help {
+        font-size: 11px;
+        color: #64748b;
+        line-height: 1.35;
+    }
+
+    .mf-span-12 { grid-column: span 12; }
+    .mf-span-8 { grid-column: span 8; }
+    .mf-span-6 { grid-column: span 6; }
+    .mf-span-4 { grid-column: span 4; }
+    .mf-span-3 { grid-column: span 3; }
+    .mf-span-2 { grid-column: span 2; }
+
+    @@media print {
+        .manifiesto-header { padding: 10px 12px; }
+        .mf-input { border-color: #111; box-shadow: none !important; }
+        .mf-card { border-color: #111; }
+        .mf-card-title { background: #fff; border-bottom-color: #111; color: #111; }
+        .mf-static { background: #fff; border-color: #111; }
+    }
+</style>
+
+<div id="divContent" class="Content">
+    <div id="divEncabezadoViaje" class="EncabezadoViaje headMAT">
+        <div class="viaje-info">
+            <div class="viaje-titulo">Manifiesto de Tripulantes y Pasajeros</div>
+            <div class="viaje-subtitulo">
+                @(viaje != null ? viaje.Descripcion : "Viaje")
+            </div>
+            @if (viaje != null)
             {
-
-
-                <tr style='height: 17px; width: 100%'>
-
-                    <td class="xl692107 nro">
-                        @Html.Label(numeracion.ToString())
-                    </td>
-                    <td class="xl732107">
-                        @Html.Label(item.Apellido + ", " + item.Nombre)
-                    </td>
-                    <td class="xl732107" style="text-align:center;">
-                        @if (item.FechaNacimiento.HasValue)
-                        {
-                            @Html.Label(item.FechaNacimiento.Value.ToShortDateString())
-                        }
-                    </td>
-                    <td class="xl732107">
-                        @((eTipoDocumento)item.TipoDocumento.Value) @Html.DisplayFor(model => item.NroDocumento)
-                    </td>
-                    <td class="xl732107">
-                        @if (!string.IsNullOrEmpty(item.Ocupacion))
-                        {
-                            @Html.Label(item.Ocupacion.ToString().Substring(0, 7).ToUpper())
-                            if (item.Ocupacion.Length > 7)
-                            {
-                                <span>.</span>
-                            }
-                        }
-                    </td>
-                    <td class="xl732107 sexo">
-                        @Html.Label(((eSexo)item.Sexo).ToString().Substring(0, 1))
-                    </td>
-                    <td class="xl732107">
-                        @Html.DisplayFor(model => item.Nacionalidad)
-                    </td>
-                    <td class="xl732107">
-                        @Html.DisplayFor(model => item.PaisResidencia)
-                    </td>
-
-
-                </tr>
-                numeracion += 1;
+                <div class="viaje-fechas">
+                    <span><strong>Salida:</strong> @string.Format("{0:dd/MM/yyyy}", viaje.FechaSalida)</span>
+                    <span class="fecha-separador">|</span>
+                    <span><strong>Regreso:</strong> @string.Format("{0:dd/MM/yyyy}", viaje.FechaRegreso)</span>
+                </div>
             }
-
-            <![if supportMisalignedColumns]>
-            <tr height="0" style='display: none'>
-                <td width="23" style='width: 17pt'></td>
-                <td width="222" style='width: 167pt'></td>
-                <td width="85" style='width: 64pt'></td>
-                <td width="150" style='width: 113pt'></td>
-                <td width="73" style='width: 55pt'></td>
-                <td width="44" style='width: 33pt'></td>
-                <td width="95" style='width: 71pt'></td>
-                <td width="95" style='width: 71pt'></td>
-            </tr>
-            <![endif]>
-        </table>
-
+        </div>
+        <div class="viaje-logo">
+            <img src="/Images/marco_antonio_back3.png" alt="Marco Antonio Turismo" />
+        </div>
     </div>
-     </div>
 
-    <!----------------------------->
-    <!--FINAL DE LOS RESULTADOS DEL ASISTENTE PARA PUBLICAR COMO PÁGINA WEB DE
-EXCEL-->
-    <!----------------------------->
-</body>
+    <div class="toolbar HideToPrint">
+        <span class="total-pasajeros">Total: <strong>@(Model == null ? 0 : Model.Count)</strong> pasajeros</span>
+        <button type="button" class="btn-print" onclick="javascript:printListado();">
+            <i class="bi bi-printer-fill"></i>
+            Imprimir Manifiesto
+        </button>
+    </div>
 
-</html>
+    <!-- Cabecera original (mismo contenido que antes, con formato moderno) -->
+    <div class="manifiesto-header">
+        <div class="mf-card">
+            <div class="mf-card-title">
+                <i class="bi bi-file-earmark-text"></i>
+                Datos del Manifiesto
+            </div>
+            <div class="mf-card-body">
+                <div class="mf-field mf-span-3">
+                    <div class="mf-label">Del</div>
+                    <div class="mf-static">Omnibus</div>
+                </div>
+                <div class="mf-field mf-span-3">
+                    <div class="mf-label">MatrÃ­cula NÂ°</div>
+                    <input type="text" class="mf-input" placeholder="MATRICULA" />
+                </div>
+                <div class="mf-field mf-span-3">
+                    <div class="mf-label">Salido de</div>
+                    <div class="mf-static">Salta</div>
+                </div>
+                <div class="mf-field mf-span-3">
+                    <div class="mf-label">Entrado a</div>
+                    <input type="text" class="mf-input" placeholder="PAIS ENTRADA" />
+                </div>
+
+                <div class="mf-field mf-span-4">
+                    <div class="mf-label">Medio Transp.</div>
+                    <input type="text" class="mf-input" placeholder="MEDIO TRANSPORTE" />
+                </div>
+                <div class="mf-field mf-span-4">
+                    <div class="mf-label">NaciÃ³n</div>
+                    <input type="text" class="mf-input" placeholder="NACION" />
+                </div>
+                <div class="mf-field mf-span-2">
+                    <div class="mf-label">PaÃ­s sede</div>
+                    <input type="text" class="mf-input" placeholder="PAIS SEDE" />
+                </div>
+                <div class="mf-field mf-span-2">
+                    <div class="mf-label">PaÃ­s limÃ­trofe</div>
+                    <input type="text" class="mf-input" placeholder="PAIS LIMITROFE" />
+                </div>
+
+                <div class="mf-field mf-span-3">
+                    <div class="mf-label">Con fecha</div>
+                    <input type="text" class="mf-input" placeholder="FECHA" />
+                </div>
+                <div class="mf-field mf-span-6">
+                    <div class="mf-label">Paso internacional</div>
+                    <input type="text" class="mf-input" placeholder="PASO INTERNACIONAL" />
+                </div>
+                <div class="mf-field mf-span-3">
+                    <div class="mf-label">Nro tripulantes</div>
+                    <input type="text" class="mf-input" placeholder="NRO TRIPULANTES" />
+                </div>
+
+                <div class="mf-field mf-span-12">
+                    <div class="mf-label">Consignado a</div>
+                    <div class="mf-static">MARCO ANTONIO TOURS - DeÃ¡n Funes NÂ° 29 - SALTA - ARGENTINA</div>
+                    <div class="mf-help">Nombre completo de la empresa, compaÃ±Ã­a y/o agencia propietaria, consignataria y explotadora del transporte.</div>
+                </div>
+
+                <div class="mf-field mf-span-12">
+                    <div class="mf-label">Tripulantes (Apellido/Nombre - Doc. Tipo/NÂ°)</div>
+                </div>
+                <div class="mf-field mf-span-6">
+                    <input type="text" class="mf-input" placeholder="TRIPULANTE 1" />
+                </div>
+                <div class="mf-field mf-span-6">
+                    <input type="text" class="mf-input" placeholder="TRIPULANTE 2" />
+                </div>
+                <div class="mf-field mf-span-6">
+                    <input type="text" class="mf-input" placeholder="TRIPULANTE 3" />
+                </div>
+                <div class="mf-field mf-span-6">
+                    <input type="text" class="mf-input" placeholder="TRIPULANTE 4" />
+                </div>
+
+                <div class="mf-field mf-span-12">
+                    <div class="mf-help">Con <strong>@(Model == null ? 0 : Model.Count)</strong> pasajeros.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tablaPasajeros" class="backMAT">
+        <div class="table-scroll">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <td class="celda column_nro">NÂ°</td>
+                        <td class="celda column_apellido">Apellido</td>
+                        <td class="celda column_nombre">Nombre</td>
+                        <td class="celda column_tipo_doc">Tipo Doc.</td>
+                        <td class="celda column_nro_doc">NÂ° Doc.</td>
+                        <td class="celda column_fecha_nac">Fecha Nac.</td>
+                        <td class="celda column_sexo">Sexo</td>
+                        <td class="celda column_nacionalidad">Nacionalidad</td>
+                        <td class="celda column_pais_residencia">PaÃ­s Residencia</td>
+                        <td class="celda column_ocupacion">OcupaciÃ³n</td>
+                        <td class="celda column_telefono">TelÃ©fono</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="celda column_nro">@numeracion</td>
+                                <td class="celda column_apellido">@((item.Apellido ?? "").ToString().ToUpper())</td>
+                                <td class="celda column_nombre">@((item.Nombre ?? "").ToString().ToUpper())</td>
+                                <td class="celda column_tipo_doc">@(item.TipoDocumento.HasValue ? ((eTipoDocumento)item.TipoDocumento.Value).ToString() : "")</td>
+                                <td class="celda column_nro_doc">@((item.NroDocumento ?? "").ToString().Replace(".", ""))</td>
+                                <td class="celda column_fecha_nac">@string.Format("{0:dd/MM/yyyy}", item.FechaNacimiento)</td>
+                                <td class="celda column_sexo">@(item.Sexo.HasValue ? ((eSexo)item.Sexo.Value).ToString() : "")</td>
+                                <td class="celda column_nacionalidad">@((item.Nacionalidad ?? "").ToString())</td>
+                                <td class="celda column_pais_residencia">@((item.PaisResidencia ?? "").ToString())</td>
+                                <td class="celda column_ocupacion">@((item.Ocupacion ?? "").ToString())</td>
+                                <td class="celda column_telefono">@((item.Telefono ?? "").ToString())</td>
+                            </tr>
+                            numeracion += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function printListado() {
+        window.print();
+    }
+</script>
 

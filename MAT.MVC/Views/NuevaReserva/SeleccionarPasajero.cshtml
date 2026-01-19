@@ -193,7 +193,7 @@
         if (disponibilidad > 0) {
             this.PasajerosSelected.push(pasajeroId);
         } else {
-            alert("La capacidad de la habitacion ya esta cubierta");
+            (window.alertInfo || window.alert)("La capacidad de la habitación ya está cubierta.", "Validación");
             oChecBox.prop("checked", false);
         }
     }

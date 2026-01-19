@@ -2014,7 +2014,7 @@ div.bnn_floating-banner.hidden {
     margin: 0 !important;
     max-height: 90vh;
     max-width: 95vw;
-    z-index: 10000 !important; /* Asegurar que esté por encima de todo */
+    z-index: 10000; /* Permitir que jQuery UI administre el stack (moveToTop) */
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -2033,6 +2033,64 @@ div.bnn_floating-banner.hidden {
     padding: 1.25rem 1.5rem !important;
     border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
     color: var(--text-primary) !important;
+}
+
+/* Titlebar específico para ReservaHabitacion (blanco + texto negro) */
+.ui-dialog.mat-dialog--brandtitle .ui-dialog-titlebar,
+.ui-dialog.mat-dialog--brandtitle .ui-widget-header {
+    background: var(--white, #ffffff) !important;
+    border-bottom: 1px solid var(--border-color, #e5e7eb) !important;
+    color: var(--text-primary, #1f2937) !important;
+}
+
+.ui-dialog.mat-dialog--brandtitle .ui-dialog-title {
+    color: var(--text-primary, #1f2937) !important;
+    letter-spacing: -0.01em;
+}
+
+.ui-dialog.mat-dialog--brandtitle .ui-dialog-titlebar-close {
+    background: var(--bg-secondary, #f3f4f6) !important;
+}
+
+.ui-dialog.mat-dialog--brandtitle .ui-dialog-titlebar-close::after {
+    color: var(--text-secondary, #6b7280) !important;
+}
+
+.ui-dialog.mat-dialog--brandtitle .ui-dialog-titlebar-close:hover {
+    background: rgba(220, 38, 38, 0.15) !important;
+}
+
+.ui-dialog.mat-dialog--brandtitle .ui-dialog-titlebar-close:hover::after {
+    color: #dc2626 !important;
+}
+
+/* Hard override: Reserva - Habitación (idResHab) debe ser titlebar blanco con letras negras */
+.ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar,
+.ui-dialog[aria-describedby="idResHab"] .ui-widget-header {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #1f2937 !important;
+    border-bottom: 1px solid var(--border-color, #e5e7eb) !important;
+}
+
+.ui-dialog[aria-describedby="idResHab"] .ui-dialog-title {
+    color: #1f2937 !important;
+}
+
+.ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar-close {
+    background: var(--bg-secondary, #f3f4f6) !important;
+}
+
+.ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar-close::after {
+    color: var(--text-secondary, #6b7280) !important;
+}
+
+/* ReservaHabitacion: tipografía del botón "Actualizar" */
+.ui-dialog[aria-describedby="idResHab"] #btnFiltrarHabitacion,
+.ui-dialog[aria-describedby="idResHab"] #btnFiltrarHabitacion span {
+    font-size: 0.9375rem;
+    /* color: var(--text-primary); */
 }
 
 .ui-dialog .ui-dialog-title {
@@ -2390,10 +2448,147 @@ div.bnn_floating-banner.hidden {
     display: none !important;
 }
 
+/* ============================================================
+   MODAL FULLSCREEN / MAXIMIZABLE (jQuery UI Dialog)
+   ============================================================ */
+.ui-dialog .mat-dialog-titlebar-maximize {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    width: 34px !important;
+    height: 34px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    color: var(--text-secondary) !important;
+}
+
+.ui-dialog .mat-dialog-titlebar-maximize:hover {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    color: var(--text-primary) !important;
+}
+
+.ui-dialog .mat-dialog-titlebar-maximize i {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.ui-dialog.mat-dialog--fullscreen {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100vw - 24px) !important;
+    height: calc(100vh - 24px) !important;
+    max-width: 1400px !important;
+    max-height: none !important;
+    border-radius: 14px !important;
+}
+
+.ui-dialog.mat-dialog--fullscreen .ui-dialog-content {
+    width: auto !important;
+    max-height: none !important;
+    overflow: auto !important;
+}
+
+.ui-dialog.mat-dialog--fullscreen .ui-dialog-titlebar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Dialog wide (FormReserva) */
+.ui-dialog.mat-dialog--formreserva {
+    max-width: 1200px !important;
+    width: calc(100vw - 24px) !important;
+}
+
+.ui-dialog.mat-dialog--formreserva .ui-dialog-content {
+    padding: 0 !important; /* el padding lo maneja el contenido */
+}
+
 /* Estilos para el modal de Seleccionar Pasajero */
 /* ============================================
    NUEVO DISEÑO MODERNO PARA SELECCIONAR PASAJERO
    ============================================ */
+
+.seleccionar-pasajero-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.seleccionar-pasajero-stepper .stepper-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-right: 0.25rem;
+    white-space: nowrap;
+}
+
+.seleccionar-pasajero-stepper .stepper-steps {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.seleccionar-pasajero-stepper .stepper-step {
+    appearance: none;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    border-radius: 999px;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.seleccionar-pasajero-stepper .stepper-step:hover {
+    border-color: var(--brand-primary);
+    color: var(--text-primary);
+}
+
+.seleccionar-pasajero-stepper .stepper-step.is-active {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.12);
+    color: var(--brand-primary);
+}
+
+.seleccionar-pasajero-stepper .stepper-step.is-done {
+    border-color: rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.08);
+    color: #059669;
+}
+
+.seleccionar-pasajero-stepper .stepper-step .step-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.seleccionar-pasajero-stepper .stepper-meta {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
 
 .seleccionar-pasajero-container {
     display: flex;
@@ -3207,10 +3402,441 @@ div.bnn_floating-banner.hidden {
     transform: translateY(0) !important;
 }
 
+/* Confirm dialog (Eliminar pasajero / confirmaciones) */
+.ui-dialog.modern-confirm-dialog .ui-dialog-content {
+    font-size: 0.9rem !important;
+    line-height: 1.45 !important;
+}
+
+.ui-dialog.modern-confirm-dialog .ui-dialog-content p {
+    font-size: inherit !important;
+    line-height: inherit !important;
+    margin: 0 !important;
+}
+
 /* Asegurar que el overlay sea visible */
 .ui-widget-overlay {
     background: rgba(0, 0, 0, 0.5) !important;
     opacity: 1 !important;
+}
+
+/* Dialog Pagos: tipografía más compacta + asegurar X clickeable */
+.ui-dialog.mat-pagos-dialog .ui-dialog-content {
+    font-size: 0.82rem !important;
+    line-height: 1.32 !important;
+}
+
+.ui-dialog.mat-pagos-dialog .modern-table-container,
+.ui-dialog.mat-pagos-dialog table,
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper {
+    font-size: 0.82rem !important;
+}
+
+.ui-dialog.mat-pagos-dialog .ui-dialog-titlebar-close {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Pagos debe quedar por encima del resto de dialogs abiertos */
+.ui-dialog.mat-pagos-dialog {
+    z-index: 20050 !important;
+}
+
+/* Pagos: header + badges pastel + detalles */
+.ui-dialog.mat-pagos-dialog .mat-pagos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-title > i {
+    font-size: 1.1rem;
+    color: var(--primary-color, #e91e63);
+    margin-top: 0.1rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-title-text {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text-primary, #0f172a);
+    line-height: 1.2;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #64748b);
+    margin-top: 0.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 520px;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-secondary, #64748b);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.15rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary-value > i {
+    color: #0ea5e9;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pagos-summary-amount {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--text-primary, #0f172a);
+}
+
+.ui-dialog.mat-pagos-dialog .mat-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-ellipsis {
+    display: inline-block;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-empty {
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-medio {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.18rem 0.55rem;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 0.78rem;
+    line-height: 1.1;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-fecha {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    white-space: nowrap;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-date {
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-fecha-time {
+    color: var(--text-secondary, #64748b);
+    font-size: 0.78rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-vendedor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-vendedor i {
+    color: #64748b;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-pago-monto {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+}
+
+.ui-dialog.mat-pagos-dialog td.details-control {
+    cursor: pointer;
+}
+
+/* Tabla Pagos: mismo look que listado de facturas */
+.ui-dialog.mat-pagos-dialog #tblPagos.dataTable,
+.ui-dialog.mat-pagos-dialog #tblPagos {
+    width: 100% !important;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos thead th {
+    background: #f8f9fa !important;
+    padding: 0.6rem 0.75rem !important;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #e5e7eb !important;
+    border-top: none !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody td {
+    padding: 0.7rem 0.75rem !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    color: #1f2937;
+    background: white !important;
+    vertical-align: middle;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr:hover td {
+    background: #f9fafb !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.odd td {
+    background: #fafafa !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.odd:hover td {
+    background: #f3f4f6 !important;
+}
+
+/* Expanded row styling */
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.shown td {
+    background: #fef2f2 !important;
+    border-bottom-color: #fecaca !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tbody tr.shown + tr td {
+    background: #fff5f5 !important;
+    padding: 1rem 1.5rem !important;
+}
+
+/* Details control: icon por CSS (como Facturas) */
+.ui-dialog.mat-pagos-dialog #tblPagos td.details-control {
+    cursor: pointer;
+    text-align: center;
+    width: 40px !important;
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos td.details-control::before {
+    content: '';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: #dcfce7;
+    color: #15803d;
+    border-radius: 50%;
+    font-family: 'bootstrap-icons';
+    font-size: 0.75rem;
+    content: '\F64D';
+}
+
+.ui-dialog.mat-pagos-dialog #tblPagos tr.shown td.details-control::before {
+    content: '\F2EA';
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Badges pastel */
+.ui-dialog.mat-pagos-dialog .mat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+/* Botón cancelar pago: más chico y pastel (similar a acciones de facturas) */
+.ui-dialog.mat-pagos-dialog a.mat-pago-cancel {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    padding: 0 !important;
+    border-radius: 0.45rem !important;
+    background: #fff1f2 !important;
+    border: 1px solid #fecdd3 !important;
+    color: #e11d48 !important;
+    box-shadow: none !important;
+}
+
+.ui-dialog.mat-pagos-dialog a.mat-pago-cancel:hover {
+    background: #ffe4e6 !important;
+    border-color: #fda4af !important;
+    transform: translateY(-1px);
+}
+
+.ui-dialog.mat-pagos-dialog a.mat-pago-cancel i {
+    font-size: 0.9rem !important;
+}
+
+/* DataTables controls en Pagos: más compactos */
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_length,
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_filter,
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_info {
+    font-size: 0.82rem;
+}
+
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_length select,
+.ui-dialog.mat-pagos-dialog .dataTables_wrapper .dataTables_filter input {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.82rem;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-green {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-blue {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-purple {
+    background: #f5f3ff;
+    border-color: #ddd6fe;
+    color: #5b21b6;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-amber {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.ui-dialog.mat-pagos-dialog .mat-badge--pastel-slate {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #334155;
+}
+
+/* Detalle expandido */
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle {
+    padding: 0.85rem;
+    background: var(--bg-secondary, #f9fafb);
+    border-radius: 0.65rem;
+    margin: 0.5rem 0;
+    border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0;
+    border-bottom: 1px dashed var(--border-color, #e5e7eb);
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-item:last-child {
+    border-bottom: none;
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-label {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--text-secondary, #64748b);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-label i {
+    color: #0ea5e9;
+}
+
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle-value {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--text-primary, #0f172a);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+/* Responsive (mobile): ocultar columnas menos críticas para que la tabla no se ensanche */
+@media (max-width: 768px) {
+    /* # */
+    .ui-dialog.mat-pagos-dialog #tblPagos th:nth-child(1),
+    .ui-dialog.mat-pagos-dialog #tblPagos td:nth-child(1) {
+        display: none;
+    }
+
+    /* Transacción */
+    .ui-dialog.mat-pagos-dialog #tblPagos th:nth-child(4),
+    .ui-dialog.mat-pagos-dialog #tblPagos td:nth-child(4) {
+        display: none;
+    }
+
+    /* Vendedor */
+    .ui-dialog.mat-pagos-dialog #tblPagos th:nth-child(6),
+    .ui-dialog.mat-pagos-dialog #tblPagos td:nth-child(6) {
+        display: none;
+    }
+
+    /* El total ya está en la cabecera: ocultar tfoot para evitar desalineaciones */
+    .ui-dialog.mat-pagos-dialog #tblPagos tfoot {
+        display: none;
+    }
+
+    .ui-dialog.mat-pagos-dialog .mat-pagos-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ui-dialog.mat-pagos-dialog .mat-pagos-summary {
+        text-align: left;
+    }
+
+    .ui-dialog.mat-pagos-dialog .mat-ellipsis {
+        max-width: 140px;
+    }
+
+    .ui-dialog.mat-pagos-dialog .mat-pago-medio {
+        max-width: 140px;
+    }
 }
 
 /* ============================================
@@ -3782,7 +4408,14 @@ div.bnn_floating-banner.hidden {
 .modern-form-textarea {
     width: 100%;
     padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    color: var(--text-primary);
+    background: var(--white);
     transition: all 0.2s ease;
+    box-sizing: border-box;
 }
 
 .modern-form-input-error {
@@ -3794,15 +4427,6 @@ div.bnn_floating-banner.hidden {
 .modern-form-input-error:focus {
     border-color: #dc2626 !important;
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2) !important;
-}
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 0.9375rem;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
-    color: var(--text-primary);
-    background: var(--white);
-    transition: all 0.2s ease;
-    box-sizing: border-box;
 }
 
 .modern-form-input:focus,
@@ -4551,6 +5175,26 @@ div.bnn_floating-banner.hidden {
     border-top: 1px solid var(--border-color);
 }
 
+/* En fullscreen, mantener acciones siempre accesibles */
+.ui-dialog.mat-dialog--fullscreen #SeleccionPasajero .botonera-form {
+    position: sticky;
+    bottom: 0;
+    z-index: 6;
+    background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,1) 55%);
+    backdrop-filter: blur(6px);
+    margin: 0;
+    padding: 0.875rem 1rem;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0;
+    box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.06);
+    width: 100%;
+}
+
+/* Evitar que el footer sticky tape el último contenido */
+.ui-dialog.mat-dialog--fullscreen #SeleccionPasajero {
+    padding-bottom: 92px !important;
+}
+
 /* Panel de butaca asignada */
 .panel-butaca-asignada {
     background: var(--white);
@@ -5171,14 +5815,16 @@ div.bnn_floating-banner.hidden {
 }
 
 .ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar {
-    background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%) !important;
+    background: #ffffff !important;
+    background-image: none !important;
     border: none !important;
+    border-bottom: 1px solid var(--border-color, #e5e7eb) !important;
     border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
     padding: 1.25rem 1.5rem !important;
 }
 
 .ui-dialog[aria-describedby="idResHab"] .ui-dialog-title {
-    color: white !important;
+    color: #1f2937 !important;
     font-size: 1.25rem !important;
     font-weight: 700 !important;
     display: flex !important;
@@ -5187,31 +5833,26 @@ div.bnn_floating-banner.hidden {
 }
 
 .ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar-close {
-    background: rgba(255, 255, 255, 0.2) !important;
+    background: var(--bg-secondary, #f3f4f6) !important;
     border: none !important;
-    border-radius: 6px !important;
-    width: 2rem !important;
-    height: 2rem !important;
+    border-radius: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
     top: 50% !important;
-    transform: translateY(-50%) !important;
-    right: 1.5rem !important;
+    margin-top: -16px !important;
+    right: 1rem !important;
 }
 
 .ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar-close:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
+    background: rgba(220, 38, 38, 0.15) !important;
 }
 
-.ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar-close .ui-icon-closethick {
-    background-image: none !important;
-    color: white !important;
-    font-size: 1rem !important;
+/* Mantener el ícono de cierre del estilo global (usa ::after en el botón) */
+.ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar-close::after {
+    color: var(--text-secondary, #6b7280) !important;
 }
-
-.ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar-close .ui-icon-closethick::before {
-    content: "×";
-    font-size: 1.5rem;
-    line-height: 1;
-    display: block;
+.ui-dialog[aria-describedby="idResHab"] .ui-dialog-titlebar-close:hover::after {
+    color: #dc2626 !important;
 }
 
 /* Responsive para el modal */
@@ -6008,7 +6649,6 @@ ul.viajes-lista li .viaje-container h4 {
 
 .modern-table tbody td.details-control:hover i {
     color: var(--brand-primary);
-}
 }
 
 /* ============================================

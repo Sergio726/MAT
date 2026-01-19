@@ -29,13 +29,14 @@
             <div id="coche_minibus" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
                 <div id="bus-tabs" class="scroll_x">
                     <ul>
-                        <li><a href="#tabs-1">Piso Superior</a></li>
+                        <li><a href="#tabs-1">Minibus</a></li>
                     </ul>
                     <div id="tabs-1">
-                        <h2>MINI BUS</h2>
                         <ul class="piso_superior_edicion">
                             
-                            <li class="tv1">TV</li>
+                            <li class="tv1 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
+                                <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                            </li>
                          
                              @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
                              {
@@ -68,18 +69,29 @@
             <div id="coche51_61" data-id="@Model.First().TransporteID" data-numero="@Model.First().TransporteNroCoche">
             <div id="bus-tabs">
                 <ul>
-                    <li><a href="#tabs-1">Piso Superior</a></li>
-                    <li><a href="#tabs-2">Piso Inferior</a></li>
+                        <li><a href="#tabs-1">Piso Superior · Semi cama</a></li>
+                        <li><a href="#tabs-2">Piso Inferior · Cama</a></li>
                 </ul>
                 <div id="tabs-1">
-                    <h2>PISO SUPERIOR SEMI CAMA</h2>
                     <ul class="piso_superior_edicion">
-                        <li class="escalera">ESCALERA</li>
-                        <li class="bar">BAR</li>
-                        <li class="tv1">TV</li>
-                        <li class="tv2">TV</li>
-                        <li class="tv3">TV</li>
-                        <li class="tv4">TV</li>
+                        <li class="escalera bus-marker" aria-label="Escalera" title="Escalera" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-ladder"></i><span class="visually-hidden">Escalera</span>
+                        </li>
+                        <li class="bar bus-marker" aria-label="Bar" title="Bar" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-cup-straw"></i><span class="visually-hidden">Bar</span>
+                        </li>
+                        <li class="tv1 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                        </li>
+                        <li class="tv2 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                        </li>
+                        <li class="tv3 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                        </li>
+                        <li class="tv4 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                        </li>
                         @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 1))
                         {
                             if (pasaje.PasajeroId != null)
@@ -95,13 +107,20 @@
                     </ul>
                 </div>
                 <div id="tabs-2">
-                    <h2>PISO INFERIOR CAMA</h2>
                     <!--<ul class="piso_inferior_edicion">-->
                      <ul class="piso_inferior_edicion">
-                        <li class="escalera">ESCALERA</li>
-                        <li class="bar">BAR</li>
-                        <li class="banio">BAÑO</li>
-                        <li class="tv1">TV</li>
+                        <li class="escalera bus-marker" aria-label="Escalera" title="Escalera" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-ladder"></i><span class="visually-hidden">Escalera</span>
+                        </li>
+                        <li class="bar bus-marker" aria-label="Bar" title="Bar" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-cup-straw"></i><span class="visually-hidden">Bar</span>
+                        </li>
+                        <li class="banio bus-marker" aria-label="Baño" title="Baño" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-door-closed"></i><span class="visually-hidden">Baño</span>
+                        </li>
+                        <li class="tv1 bus-marker" aria-label="TV" title="TV" data-bs-toggle="tooltip" data-bs-placement="top">
+                            <i class="bi bi-tv"></i><span class="visually-hidden">TV</span>
+                        </li>
                         @foreach (ReservaStandard pasaje in Model.Where(p => p.ButacaPiso == 2))
                         {
                             <li class="seat_@pasaje.ButacaFila @pasaje.ButacaPosicion"><a href="#row_@pasaje.ButacaFila" id="@pasaje.PasajeId" data-piso="@pasaje.ButacaPiso" data-estado="@pasaje.EstadoPasaje" title="@pasaje.ButacaCodigoButaca" data-pasajero="" data-precio="" data-adicionales="">@pasaje.ButacaCodigoButaca</a></li>

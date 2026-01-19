@@ -1,5 +1,6 @@
 @{
     ViewBag.Title = "Panel de Administracion";
+    // Mantener layout Admin (menú Admin es independiente del menú principal)
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
@@ -22,7 +23,7 @@
         margin: 0 0 0.5rem 0;
     }
     .admin-title i {
-        color: var(--primary-color, #e91e63);
+        color: var(--primary-color, #0b2a4a);
     }
     .admin-subtitle {
         font-size: 0.875rem;
@@ -38,13 +39,13 @@
         color: var(--text-primary, #1f2937);
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid var(--primary-color, #e91e63);
+        border-bottom: 2px solid var(--primary-color, #0b2a4a);
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
     .admin-section-title i {
-        color: var(--primary-color, #e91e63);
+        color: var(--primary-color, #0b2a4a);
     }
     .admin-cards-grid {
         display: grid;
@@ -67,8 +68,8 @@
     }
     .admin-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 10px 25px rgba(233, 30, 99, 0.15);
-        border-color: var(--primary-color, #e91e63);
+        box-shadow: 0 10px 25px rgba(var(--primary-rgb, 11, 42, 74), 0.15);
+        border-color: var(--primary-color, #0b2a4a);
         text-decoration: none;
     }
     .admin-card::before {
@@ -78,7 +79,7 @@
         left: 0;
         width: 4px;
         height: 100%;
-        background: var(--primary-color, #e91e63);
+        background: var(--primary-color, #0b2a4a);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
@@ -100,8 +101,8 @@
         color: #d97706;
     }
     .admin-card-icon.icon-primary {
-        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
-        color: #db2777;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #0a3a66;
     }
     .admin-card-icon.icon-info {
         background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
@@ -146,7 +147,7 @@
         background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     }
     .badge-primary {
-        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+        background: linear-gradient(135deg, #0b2a4a 0%, #0a3a66 100%);
     }
     .badge-info {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -158,7 +159,7 @@
     }
     .admin-card:hover .admin-card-arrow {
         transform: translateX(4px);
-        color: var(--primary-color, #e91e63);
+        color: var(--primary-color, #0b2a4a);
     }
     .admin-dev-section {
         margin-top: 2rem;
@@ -202,6 +203,8 @@
         </h1>
         <p class="admin-subtitle">Seccion exclusiva para administradores del sistema</p>
     </div>
+
+    @* Menú Admin vive en el layout (_LayoutAdmin). Mantener la vista enfocada solo en contenido. *@
 
     <div class="admin-section">
         <h2 class="admin-section-title">

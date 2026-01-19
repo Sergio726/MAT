@@ -139,7 +139,7 @@
         // Validación básica
         var detalle = $('textarea[name="Detalle"]').val().trim();
         if (!detalle) {
-            alert('Por favor ingrese una observación.');
+            (window.alertInfo || window.alert)('Por favor ingrese una observación.', 'Validación');
             $('textarea[name="Detalle"]').focus();
             return;
         }
@@ -159,13 +159,13 @@
                     $("#popup_Observacion").dialog("close");
                 }
                 else{
-                    alert('Ocurrió un error al intentar guardar la observación, por favor comuníquese con el administrador.');
+                    (window.alertError || window.alert)('Ocurrió un error al intentar guardar la observación, por favor comuníquese con el administrador.', 'Error');
                     console.log(data.Msj);
                     $("#popup_Observacion").dialog("close");
                 }
             },
             error: function() {
-                alert('Ocurrió un error al intentar guardar la observación. Por favor intente nuevamente.');
+                (window.alertError || window.alert)('Ocurrió un error al intentar guardar la observación. Por favor intente nuevamente.', 'Error');
             }
         });
 

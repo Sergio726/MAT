@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using MAT.Utilities;
+using MAT.MVC.Infrastructure;
 
 
 namespace MAT.MVC.Integration
@@ -43,10 +44,24 @@ namespace MAT.MVC.Integration
                 return JsonConvert.DeserializeObject<T>(content);
 
             }
+            catch (TaskCanceledException ex)
+            {
+                // Timeout / cancelación (evitar HTML en excepción)
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI timeout/cancel. Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. Timeout del servicio. ID: {correlationId}");
+            }
+            catch (HttpRequestException ex)
+            {
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI HTTP error. Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. No se pudo conectar al servicio. ID: {correlationId}");
+            }
             catch (Exception ex)
             {
-                string message = MATLogger.FormatExceptionToHtml(ex, $"Error with url: {uri}");
-                throw new Exception(message);
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI error. Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. Ocurrió un error inesperado. ID: {correlationId}");
             }
             
         }
@@ -61,9 +76,23 @@ namespace MAT.MVC.Integration
                 var result = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<T>(result);
             }
+            catch (TaskCanceledException ex)
+            {
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI timeout/cancel (POST). Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. Timeout del servicio. ID: {correlationId}");
+            }
+            catch (HttpRequestException ex)
+            {
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI HTTP error (POST). Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. No se pudo conectar al servicio. ID: {correlationId}");
+            }
             catch (Exception ex)
             {
-                throw new Exception($"Error with url: {uri}.\nMessajeError: {ex.Message}.\nStackTrace: {ex.StackTrace}");
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI error (POST). Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. Ocurrió un error inesperado. ID: {correlationId}");
             }
         }
 
@@ -78,9 +107,23 @@ namespace MAT.MVC.Integration
                 var result = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<T>(result);
             }
+            catch (TaskCanceledException ex)
+            {
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI timeout/cancel (PUT). Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. Timeout del servicio. ID: {correlationId}");
+            }
+            catch (HttpRequestException ex)
+            {
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI HTTP error (PUT). Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. No se pudo conectar al servicio. ID: {correlationId}");
+            }
             catch (Exception ex)
             {
-                throw new Exception($"Error with url: {uri}.\nMessajeError: {ex.Message}.\nStackTrace: {ex.StackTrace}");
+                var correlationId = RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] BackendAPI error (PUT). Url: {uri}. {ex.Message}", 1);
+                throw new Exception($"Error with url: {uri}. Ocurrió un error inesperado. ID: {correlationId}");
             }
         }
 

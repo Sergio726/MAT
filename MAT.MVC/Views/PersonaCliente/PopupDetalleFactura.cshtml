@@ -13,7 +13,7 @@
     function PopupDetalleFactura_Load() {
         var FacturaID = "@ViewBag.FacturaID";
         $.ajax({
-            url: "/PersonaCliente/DetalleFactura",
+            url: "/PersonaCliente/DetalleFacturaFast",
             data: {
                 facturaid: FacturaID
             },
@@ -21,36 +21,33 @@
                 $("#divPopupDetalleFactura").html(data);
             },
             error: function (e) {
-                var divError = '<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Se produjo un error. Contactese con el administrador.</span></div>';
-                $("#divPopupDetalleFactura").html(divError);
+                // Fallback: endpoint legacy (mantener operatividad si el SP nuevo aún no está deployado)
+                $.ajax({
+                    url: "/PersonaCliente/DetalleFactura",
+                    data: { facturaid: FacturaID },
+                    success: function (html) {
+                        $("#divPopupDetalleFactura").html(html);
+                    },
+                    error: function (e2) {
+                        var divError = '<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Se produjo un error. Contactese con el administrador.</span></div>';
+                        $("#divPopupDetalleFactura").html(divError);
+                        console.log(e2);
+                    }
+                });
                 console.log(e);
             }
         })
     }
 
 
-    //seccion pagos
+    // Pagos (Factura): un solo dialog top-level usando ShowFormDialog
     function pagosFactura(FacturaID) {
-        //$(".ui-dialog-content").dialog("close");
-        $("#divContentPagos_DetalleFactura").html(divLoading);
-        $("#divPopup_DetalleFactura").dialog("open");
-        $("#divPopup_DetalleFactura").dialog({
-            modal: true,
-            position: { my: 'top', at: 'top', of: window },
-            width: "80%"
-        });
-        
-        $.ajax({
-            url: "/PersonaCliente/partialHistorialdePagosByFactura",
-            data: { FacturaID: FacturaID },
-            dataType: "html",
-            success: function (data) {
-                $("#divContentPagos_DetalleFactura").html(data);
-            },
-            error: function (e) {
-                console.log(e);
-            }
-        });
+        if (typeof window.openPagosFacturaDialog === "function") {
+            window.openPagosFacturaDialog(FacturaID);
+        } else {
+            var url = "/PersonaCliente/partialHistorialdePagosByFactura?FacturaID=" + encodeURIComponent(FacturaID || "");
+            ShowFormDialog(url, "PopinPagosFactura", "Pagos", "wide");
+        }
     }
 
     function cancelarPago(PagoID, FacturaID) {
@@ -62,7 +59,12 @@
                 var response = eval(data);
                 if (response[0] == "Done.") {
                     PopupDetalleFactura_Load();
-                    $("#divContentPagos_DetalleFactura").dialog("close");
+                    // refrescar popin de pagos si está abierto
+                    try {
+                        if ($("#PopinPagosFactura").length && typeof $("#PopinPagosFactura").dialog === "function") {
+                            $("#PopinPagosFactura").dialog("close");
+                        }
+                    } catch (e) { }
                     pagosFactura(FacturaID);
                 } else {
                     console.log(response[1]);
@@ -78,6 +80,4 @@
 <input type="hidden" id="hdnPasajeID" value="" />
 <input type="hidden" id="hdnHabitacionID" value="" />
 
-<div id="divPopup_DetalleFactura" title="Pagos" style="display:none;">
-    <div id="divContentPagos_DetalleFactura"></div>
-</div>
+

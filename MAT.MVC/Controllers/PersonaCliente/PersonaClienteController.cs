@@ -17,6 +17,7 @@ using MAT.MVC.Filters;
 using System.Text;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.PersonaCliente
 {
@@ -404,7 +405,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = "Error: " + e.Message + " " + e.StackTrace;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.partialHistorialdePagos");
                 return PartialView();
                 
             }
@@ -506,6 +507,31 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 return View("Error", e);
             }
             
+        }
+
+        /// <summary>
+        /// Endpoint optimizado para el popin DetalleFactura: 1 solo SP / 1 roundtrip.
+        /// Requiere el SP dbo.usp_MAT_Factura_GetDetallePopupByFacturaID (ver /database).
+        /// </summary>
+        public ActionResult DetalleFacturaFast(Guid facturaid)
+        {
+            try
+            {
+                ViewBag.Error = "";
+
+                var data = FacturaMetod.GetDetallePopupByFacturaID(facturaid);
+                ViewBag.FacturaDetalle = data.FacturaDetalle ?? new List<FacturaDetalle>();
+                ViewBag.ListMenores = data.Menores ?? new List<PasajeroMenorModel>();
+                ViewBag.ExtendFacturaDetalle = data.Items ?? new List<DBOFacturaDetalle>();
+
+                // Reutilizamos la misma vista parcial para minimizar cambios UI.
+                return PartialView("DetalleFactura", data.Factura ?? new FacturaStandard());
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+                return View("Error", e);
+            }
         }
 
         public static List<PasajeroMenorModel> GetPasajeroMenorByFacturaID(Guid facturaid)
@@ -622,7 +648,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch(Exception e)
             {
-                sResult = e.Message + " StackTrace: " + e.StackTrace.ToString();
+                sResult = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.EliminarFactura");
             }
 
             return sResult;
@@ -876,7 +902,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ExistDni");
             }
 
             return Json(new
@@ -935,7 +961,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 sResult[1] = Models.VoucherMethod.GetNrPrintByFacturaID(facturaId.ToString()).ToString();
             }
             catch (Exception e){
-                sResult[0] = e.Message + e.StackTrace;
+                sResult[0] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Voucher_GetNrPrintByFacturaID");
                 sResult[1] = "";
             }
             return Json(sResult , JsonRequestBehavior.AllowGet);  
@@ -1301,7 +1327,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                sResult = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.EliminarVenta");
             }
 
 
@@ -1341,7 +1367,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                sResult = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.EliminarReservaHotel");
             }
 
 

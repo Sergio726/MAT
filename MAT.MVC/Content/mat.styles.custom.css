@@ -461,14 +461,28 @@ table.tblSingle thead {
     cursor:pointer;
 }
 .iconLoading {
-    background-image: url("/Images/Icons/icon-NewLoading.gif");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 90px auto;
-    cursor: pointer;
-    height: 55px;
+    /* Legacy loader (normalizado a spinner moderno; sin GIF) */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 55px;
     width: 98%;
     margin-top: 15px;
+}
+
+.iconLoading::before {
+    content: "";
+    width: 36px;
+    height: 36px;
+    border: 4px solid rgba(229, 231, 235, 1);
+    border-top-color: var(--brand-primary, #e91e63);
+    border-radius: 50%;
+    animation: modern-spin 0.8s linear infinite;
+}
+
+@keyframes modern-spin {
+    to { transform: rotate(360deg); }
 }
 
 .iconPrint {
@@ -618,20 +632,211 @@ div.wait {
 .fieldError {
     background-color: #E83A61 !important;
 }
-div.msgError {
-    color: #bd362f;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: rgba(255, 0, 0, 0.36);
-    padding: 5px;
+/* ============================================================
+   NORMALIZACION DE MENSAJES (Error/Alerta) - UI Moderna
+   Unifica: .msgError, .MsgError, .error-message, .schema-error, .alert-error
+   ============================================================ */
+
+/* Host para alertas globales (Layout) */
+.modern-alerts-host {
+    margin-bottom: 1rem;
 }
 
-.msgError {
-    color: #bd362f;
-    font-size: 14px;
-    font-weight: bold;
-    background-color: rgba(255, 0, 0, 0.36);
-    padding: 5px;
+/* Variantes modernas (para que funcionen también en Admin, que no carga modern-dashboard.css) */
+.modern-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    margin-bottom: 1rem;
+}
+
+.modern-alert i {
+    font-size: 1.25rem;
+}
+
+.modern-alert-error {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+    font-weight: 600;
+}
+
+.modern-alert-error i {
+    color: #ef4444;
+}
+
+.modern-alert-success {
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+    border-left: 4px solid #10b981;
+    color: #065f46;
+    font-weight: 600;
+}
+
+.modern-alert-success i {
+    color: #10b981;
+}
+
+.modern-alert-info {
+    background: #dbeafe;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid #3b82f6;
+    color: #1e40af;
+    font-weight: 600;
+}
+
+.modern-alert-info i {
+    color: #3b82f6;
+}
+
+.modern-alert-warning {
+    background: #ffedd5;
+    border: 1px solid #fed7aa;
+    border-left: 4px solid #f59e0b;
+    color: #92400e;
+    font-weight: 600;
+}
+
+.modern-alert-warning i {
+    color: #f59e0b;
+}
+
+/* ============================================================
+   UTILIDADES (paleta de marca) - UI moderna
+   ============================================================ */
+.text-brand {
+    color: var(--brand-primary, #e91e63) !important;
+}
+
+/* ============================================================
+   POPIN: Nota de Crédito (Resumen superior)
+   - Sin estilos inline en el view
+   - Reusa variables modernas (saas-variables / modern-dashboard)
+   ============================================================ */
+.mat-nc-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+@media (max-width: 720px) {
+    .mat-nc-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+.mat-nc-summary-card {
+    background: var(--bg-secondary, #f3f4f6);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+}
+
+.mat-nc-summary-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary, #6b7280);
+}
+
+.mat-nc-summary-label i {
+    color: var(--brand-primary, #e91e63);
+    font-size: 1rem;
+}
+
+.mat-nc-summary-value {
+    margin-top: 0.25rem;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--text-primary, #111827);
+}
+
+/* Campos full-width dentro del layout flex del modal */
+.mat-nc-full {
+    flex: 1 1 100% !important;
+    min-width: 240px;
+}
+
+/* Errores inline (sin alerts legacy) */
+.mat-field-error {
+    min-height: 1.1rem;
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #dc2626;
+}
+
+/* Scoped: Popin NotaCredito - footer sticky y estados */
+.ui-dialog[aria-describedby="NotaCredito"] .modal-form-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background: var(--white, #ffffff);
+    margin: 1rem -1.5rem -1.5rem -1.5rem; /* expandir sobre padding de .ui-dialog-content */
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.ui-dialog[aria-describedby="NotaCredito"] .mat-nc-summary {
+    margin-bottom: 0.25rem;
+}
+
+.ui-dialog[aria-describedby="NotaCredito"] .is-invalid {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+}
+
+.ui-dialog[aria-describedby="NotaCredito"] .mat-btn-loading {
+    opacity: 0.9;
+    cursor: progress !important;
+}
+
+div.msgError,
+.msgError,
+.MsgError,
+.error-message,
+.schema-error,
+.alert-error {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    border-radius: 8px;
+    color: #991b1b;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+div.msgError i,
+.msgError i,
+.MsgError i,
+.error-message i,
+.schema-error i,
+.alert-error i {
+    font-size: 1.25rem;
+    color: #ef4444;
+}
+
+div.msgError span,
+.msgError span,
+.MsgError span,
+.error-message span,
+.schema-error span,
+.alert-error span {
+    font-weight: 600;
 }
 
 .señaIncompleta {
@@ -733,18 +938,58 @@ a.link:hover{
 }
 
 #divFullLoading {
-    text-align: center;
+    /* Overlay global legacy normalizado (sin GIF) */
     position: absolute;
+    inset: 0;
     width: 100%;
-    /*height: 125vh;*/
     height: 100%;
-    background-color: #31181954;
-    left: 0px;
-    top: 0px;
-    background-image: url(/Images/Icons/icon-NewLoading.gif);
-    background-size: 95px;
-    background-repeat: no-repeat, repeat;
-    background-position: center;
+    background: rgba(17, 24, 39, 0.35);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    text-align: center;
+    backdrop-filter: blur(2px);
+}
+
+#divFullLoading::before {
+    content: "";
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(229, 231, 235, 1);
+    border-top-color: var(--brand-primary, #e91e63);
+    border-radius: 50%;
+    animation: modern-spin 0.8s linear infinite;
+}
+
+#divFullLoading::after {
+    content: "Cargando...";
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+/* Normalización de loaders inline legacy */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--text-secondary, #6b7280);
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(229, 231, 235, 1);
+    border-top-color: var(--brand-primary, #e91e63);
+    border-radius: 50%;
+    animation: modern-spin 0.8s linear infinite;
+    margin-bottom: 1rem;
 }
 
 .custom_width_45px {

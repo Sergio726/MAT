@@ -14,17 +14,32 @@
             "searching": false,
             "bLengthChange": false,
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.13/i18n/Spanish.json"
+                "processing": "Procesando...",
+                "lengthMenu": "Mostrar _MENU_",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_",
+                "infoEmpty": "Mostrando 0 a 0 de 0",
+                "infoFiltered": "(filtrado de _MAX_)",
+                "paginate": { "first": "Primero", "last": "Último", "next": ">", "previous": "<" }
             },
             "order": [[0, "asc"]],
             "pageLength": 10,
-            "responsive": true
+            "responsive": true,
+            "autoWidth": false,
+            "deferRender": true
         });
     });
 </script>
 
 <input type="hidden" id="input-viaje-id" value="@ViewData["viajeid"]" />
 <input type="hidden" id="hdnHabitacionID" />
+
+<div class="rh-perf"
+     data-total-ms="@((ViewBag.PerfTotalMs ?? 0).ToString())"
+     data-db-ms="@((ViewBag.PerfDbMs ?? 0).ToString())"
+     data-reserva-ms="@((ViewBag.PerfReservaMs ?? 0).ToString())"
+     data-count="@((ViewBag.PerfCount ?? 0).ToString())"
+     style="display:none"></div>
 
 @if (ViewBag.Error != null)
 {
@@ -42,11 +57,7 @@
                 <tr>
                     <th>
                         <i class="bi bi-hash"></i>
-                        N° Habitación
-                    </th>
-                    <th>
-                        <i class="bi bi-building"></i>
-                        Hotel
+                        Habitación
                     </th>
                     <th>
                         <i class="bi bi-door-open"></i>
@@ -76,12 +87,6 @@
                             </div>
                         </td>
                         <td>
-                            <div class="modern-habitacion-hotel">
-                                <i class="bi bi-building"></i>
-                                <span>@item.HotelNombre</span>
-                            </div>
-                        </td>
-                        <td>
                             <span class="badge-pasajero">@item.HabitacionTipo</span>
                         </td>
                         <td>
@@ -103,7 +108,7 @@
                         <td id="td-@item.HabitacionID">
                             @if (item.Disponibilidad > 0 && ViewBag.HabitacionSelected == null)
                             {
-                                <a class="aReserva btn-modern btn-modern-primary btn-modern-sm" 
+                                <a class="aReserva btn btn-sm btn-primary" role="button"
                                    data-viaje="@ViewData["viajeid"]" 
                                    data-habitacionid="@item.HabitacionID" 
                                    id="@item.HabitacionID" 
@@ -116,7 +121,7 @@
                             else if (item.HabitacionID == ViewBag.HabitacionSelected)
                             {
                                 <a href="javascript:eliminarReservaHotel('@ViewBag.PasajeroID','@ViewBag.HabitacionSelected','@ViewData["viajeid"].ToString()');" 
-                                   class="btn-modern btn-modern-danger btn-modern-sm"
+                                   class="btn btn-sm btn-danger"
                                    title="Eliminar reserva de habitación">
                                     <i class="bi bi-trash"></i>
                                     <span>Eliminar</span>

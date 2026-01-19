@@ -4,17 +4,7 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-@if (ViewBag.Error != null)
-{
-    <div class="alert-error">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <span>Error al cargar pagina.</span>
-    </div>
-    <script type="text/javascript">
-        console.log(@ViewBag.Error);
-    </script>
-    return;
-}
+@* Alertas globales: se muestran en _Alerts.cshtml (LayoutAdmin). *@
 
 <link href="~/Content/magicsearch/jquery.magicsearch.css" rel="stylesheet" />
 <link href="~/Content/magicsearch/normalize.css" rel="stylesheet" />
@@ -39,7 +29,7 @@
         margin: 0;
     }
     .resumen-title i {
-        color: var(--primary-color, #e91e63);
+        color: var(--primary-color, #0b2a4a);
     }
     .search-card {
         background: white;
@@ -63,7 +53,7 @@
         gap: 0.375rem;
     }
     .search-label i {
-        color: var(--primary-color, #e91e63);
+        color: var(--primary-color, #0b2a4a);
     }
     .search-input-wrapper {
         position: relative;
@@ -79,8 +69,8 @@
     }
     .search-input-wrapper input:focus {
         outline: none;
-        border-color: var(--primary-color, #e91e63);
-        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        border-color: var(--primary-color, #0b2a4a);
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 11, 42, 74), 0.10);
     }
     .search-input-wrapper i {
         position: absolute;
