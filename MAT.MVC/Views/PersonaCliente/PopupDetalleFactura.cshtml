@@ -13,7 +13,7 @@
     function PopupDetalleFactura_Load() {
         var FacturaID = "@ViewBag.FacturaID";
         $.ajax({
-            url: "/PersonaCliente/DetalleFactura",
+            url: "/PersonaCliente/DetalleFacturaFast",
             data: {
                 facturaid: FacturaID
             },
@@ -21,8 +21,19 @@
                 $("#divPopupDetalleFactura").html(data);
             },
             error: function (e) {
-                var divError = '<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Se produjo un error. Contactese con el administrador.</span></div>';
-                $("#divPopupDetalleFactura").html(divError);
+                // Fallback: endpoint legacy (mantener operatividad si el SP nuevo aún no está deployado)
+                $.ajax({
+                    url: "/PersonaCliente/DetalleFactura",
+                    data: { facturaid: FacturaID },
+                    success: function (html) {
+                        $("#divPopupDetalleFactura").html(html);
+                    },
+                    error: function (e2) {
+                        var divError = '<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Se produjo un error. Contactese con el administrador.</span></div>';
+                        $("#divPopupDetalleFactura").html(divError);
+                        console.log(e2);
+                    }
+                });
                 console.log(e);
             }
         })

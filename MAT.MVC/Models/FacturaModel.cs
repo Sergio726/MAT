@@ -127,6 +127,147 @@ namespace MAT.MVC.Models
     }
 
     public class FacturaMetod {
+        public class FacturaDetallePopupResult
+        {
+            public FacturaStandard Factura { get; set; }
+            public List<FacturaDetalle> FacturaDetalle { get; set; }
+            public List<PasajeroMenorModel> Menores { get; set; }
+            public List<DBOFacturaDetalle> Items { get; set; }
+        }
+
+        /// <summary>
+        /// Fast path: 1 solo SP / 1 roundtrip para armar el popin DetalleFactura.
+        /// Requiere el SP dbo.usp_MAT_Factura_GetDetallePopupByFacturaID (ver /database).
+        /// </summary>
+        public static FacturaDetallePopupResult GetDetallePopupByFacturaID(Guid FacturaID)
+        {
+            var result = new FacturaDetallePopupResult
+            {
+                Factura = new FacturaStandard(),
+                FacturaDetalle = new List<FacturaDetalle>(),
+                Menores = new List<PasajeroMenorModel>(),
+                Items = new List<DBOFacturaDetalle>()
+            };
+
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@FacturaId", SqlDbType.UniqueIdentifier, 0, FacturaID)
+            };
+
+            DataSet ds = DBHelper.ExecuteDataSet("dbo.usp_MAT_Factura_GetDetallePopupByFacturaID", dbParams);
+            if (ds == null || ds.Tables.Count == 0) return result;
+
+            // helpers (defensivo por diferencias de casing/aliases)
+            Func<DataRow, string, bool> hasCol = (dr, name) => dr != null && dr.Table != null && dr.Table.Columns.Contains(name);
+            Func<DataRow, string, object> col = (dr, name) => hasCol(dr, name) ? dr[name] : null;
+            Func<DataRow, string, string, object> col2 = (dr, a, b) => hasCol(dr, a) ? dr[a] : (hasCol(dr, b) ? dr[b] : null);
+
+            // RS1: cabecera factura (1 fila)
+            if (ds.Tables.Count > 0 && ds.Tables[0] != null && ds.Tables[0].Rows.Count > 0)
+            {
+                var dr = ds.Tables[0].Rows[0];
+                var facturaIdVal = col(dr, "FacturaID");
+                if (facturaIdVal != null && facturaIdVal != DBNull.Value) result.Factura.FacturaID = new Guid(facturaIdVal.ToString());
+
+                var montoVal = col(dr, "Monto");
+                if (montoVal != null && montoVal != DBNull.Value) result.Factura.Monto = Convert.ToDouble(montoVal);
+
+                var saldoVal = col(dr, "Saldo");
+                if (saldoVal != null && saldoVal != DBNull.Value) result.Factura.Saldo = Convert.ToDouble(saldoVal);
+
+                var fechaVal = col(dr, "Fecha");
+                if (fechaVal != null && fechaVal != DBNull.Value) result.Factura.Fecha = Convert.ToDateTime(fechaVal);
+
+                var estadoVal = col(dr, "Estado");
+                if (estadoVal != null && estadoVal != DBNull.Value) result.Factura.Estado = Convert.ToInt32(estadoVal);
+
+                var clienteIdVal = col(dr, "ClienteID");
+                if (clienteIdVal != null && clienteIdVal != DBNull.Value) result.Factura.ClienteID = new Guid(clienteIdVal.ToString());
+
+                result.Factura.Observaciones = (col(dr, "Observaciones") ?? "").ToString();
+                result.Factura.ClienteNombre = (col(dr, "Nombre") ?? "").ToString();
+                result.Factura.ClienteApellido = (col(dr, "Apellido") ?? "").ToString();
+                result.Factura.VendedorNombre = (col(dr, "VendedorNombre") ?? "").ToString();
+                result.Factura.VendedorApellido = (col(dr, "VendedorApellido") ?? "").ToString();
+            }
+
+            // RS2: paquete/moneda (0..1 filas)
+            if (ds.Tables.Count > 1 && ds.Tables[1] != null && ds.Tables[1].Rows.Count > 0)
+            {
+                var dr = ds.Tables[1].Rows[0];
+                result.Factura.PaqueteDescripcion = (col(dr, "PaqueteDescripcion") ?? "").ToString();
+                var monedaVal = col(dr, "MonedaTipo");
+                if (monedaVal != null && monedaVal != DBNull.Value) result.Factura.MonedaTipo = Convert.ToInt32(monedaVal);
+            }
+
+            // RS3: facturaDetalle (pasajes)
+            if (ds.Tables.Count > 2 && ds.Tables[2] != null)
+            {
+                foreach (DataRow dr in ds.Tables[2].Rows)
+                {
+                    FacturaDetalle item = new FacturaDetalle();
+                    var pasajeIdVal = col2(dr, "PasajeID", "pasajeid");
+                    if (pasajeIdVal != null && pasajeIdVal != DBNull.Value) item.PasajeID = new Guid(pasajeIdVal.ToString());
+
+                    var pasajeroIdVal = col2(dr, "PasajeroID", "pasajeroid");
+                    if (pasajeroIdVal != null && pasajeroIdVal != DBNull.Value) item.PasajeroID = new Guid(pasajeroIdVal.ToString());
+
+                    var butacaIdVal = col2(dr, "ButacaID", "butacaid");
+                    if (butacaIdVal != null && butacaIdVal != DBNull.Value) item.ButacaID = new Guid(butacaIdVal.ToString());
+
+                    var viajeIdVal = col2(dr, "ViajeID", "viajeid");
+                    if (viajeIdVal != null && viajeIdVal != DBNull.Value) item.ViajeID = new Guid(viajeIdVal.ToString());
+
+                    var butacaNroVal = col(dr, "ButacaNro");
+                    if (butacaNroVal != null && butacaNroVal != DBNull.Value) item.ButacaNro = Convert.ToInt32(butacaNroVal);
+
+                    item.PasajeroNombre = (col(dr, "PasajeroNombre") ?? "").ToString();
+                    item.PasajeroApellido = (col(dr, "PasajeroApellido") ?? "").ToString();
+
+                    var habVal = col(dr, "HabitacionID");
+                    if (habVal != null && habVal != DBNull.Value) item.HabitacionID = new Guid(habVal.ToString());
+
+                    result.FacturaDetalle.Add(item);
+                }
+            }
+
+            // RS4: menores
+            if (ds.Tables.Count > 3 && ds.Tables[3] != null)
+            {
+                foreach (DataRow dr in ds.Tables[3].Rows)
+                {
+                    PasajeroMenorModel item = new PasajeroMenorModel();
+                    if (dr["id"] != DBNull.Value) item.PasajeroMenorID = Convert.ToInt32(dr["id"]);
+                    item.ApellidoMayor = dr["ApellidoMayor"]?.ToString();
+                    item.NombreMayor = dr["NombreMayor"]?.ToString();
+                    item.DocMayor = dr["DocMayor"]?.ToString();
+                    item.ApellidoMenor = dr["ApellidoMenor"]?.ToString();
+                    item.NomreMenor = dr["NomreMenor"]?.ToString();
+                    item.DocMenor = dr["DocMenor"]?.ToString();
+                    result.Menores.Add(item);
+                }
+            }
+
+            // RS5: items (detalle extendido)
+            if (ds.Tables.Count > 4 && ds.Tables[4] != null)
+            {
+                foreach (DataRow dr in ds.Tables[4].Rows)
+                {
+                    DBOFacturaDetalle item = new DBOFacturaDetalle();
+                    if (dr["Id"] != DBNull.Value) item.Id = Convert.ToInt32(dr["Id"]);
+                    if (dr["Fecha"] != DBNull.Value) item.Fecha = Convert.ToDateTime(dr["Fecha"]);
+                    item.Detalle = dr["Detalle"]?.ToString();
+                    if (dr["Cantidad"] != DBNull.Value) item.Cantidad = Convert.ToInt32(dr["Cantidad"]);
+                    if (dr["Precio"] != DBNull.Value) item.Precio = Convert.ToDouble(dr["Precio"]);
+                    result.Items.Add(item);
+                }
+            }
+
+            // Mantener el orden antiguo (por Detalle)
+            result.Items = result.Items.OrderBy(l => l.Detalle).ToList();
+            return result;
+        }
+
         public static FacturaStandard FacturaStandardByID(Guid FacturaID)
         {
             FacturaStandard Factura = new FacturaStandard();

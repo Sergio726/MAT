@@ -509,6 +509,31 @@ namespace MAT.MVC.Controllers.PersonaCliente
             
         }
 
+        /// <summary>
+        /// Endpoint optimizado para el popin DetalleFactura: 1 solo SP / 1 roundtrip.
+        /// Requiere el SP dbo.usp_MAT_Factura_GetDetallePopupByFacturaID (ver /database).
+        /// </summary>
+        public ActionResult DetalleFacturaFast(Guid facturaid)
+        {
+            try
+            {
+                ViewBag.Error = "";
+
+                var data = FacturaMetod.GetDetallePopupByFacturaID(facturaid);
+                ViewBag.FacturaDetalle = data.FacturaDetalle ?? new List<FacturaDetalle>();
+                ViewBag.ListMenores = data.Menores ?? new List<PasajeroMenorModel>();
+                ViewBag.ExtendFacturaDetalle = data.Items ?? new List<DBOFacturaDetalle>();
+
+                // Reutilizamos la misma vista parcial para minimizar cambios UI.
+                return PartialView("DetalleFactura", data.Factura ?? new FacturaStandard());
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+                return View("Error", e);
+            }
+        }
+
         public static List<PasajeroMenorModel> GetPasajeroMenorByFacturaID(Guid facturaid)
         {
             SqlParameter[] dbParams = new SqlParameter[]
