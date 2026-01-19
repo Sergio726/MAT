@@ -17,7 +17,8 @@ using System.Web.Helpers;
 using MAT.MVC.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Caching;
+using System.Web;
+using System.Web.Caching;
 using Newtonsoft.Json;
 
 namespace MAT.MVC.Controllers.Viaje
@@ -522,9 +523,9 @@ namespace MAT.MVC.Controllers.Viaje
             try
             {
                 const string cacheKey = "MAT.ViajesPorVencer.items.v1";
-                var cache = MemoryCache.Default;
 
-                var cached = cache.Get(cacheKey) as List<MAT.MVC.Models.ViajePorVencerDto>;
+                // Cache server-side sin depender de System.Runtime.Caching (evita problemas de referencia)
+                var cached = HttpRuntime.Cache[cacheKey] as List<MAT.MVC.Models.ViajePorVencerDto>;
                 if (cached != null)
                 {
                     items = cached;
@@ -532,10 +533,13 @@ namespace MAT.MVC.Controllers.Viaje
                 else
                 {
                     items = ViajeMethod.GetViajesPorVencerDto(7);
-                    cache.Set(cacheKey, items, new CacheItemPolicy
-                    {
-                        AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
-                    });
+                    HttpRuntime.Cache.Insert(
+                        cacheKey,
+                        items,
+                        dependencies: null,
+                        absoluteExpiration: DateTime.UtcNow.AddMinutes(5),
+                        slidingExpiration: Cache.NoSlidingExpiration
+                    );
                 }
             }
             catch (Exception e)
