@@ -419,14 +419,21 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
                         }
                         
                         var facturaId = null;
+                        // Buscar en el contenedor principal
                         var $container = $dlg.find(".factura-detail-container");
                         if ($container.length && $container.data("facturaid")) {
                             facturaId = $container.data("facturaid");
                         } else {
-                            // Fallback: buscar en data attributes de botones
-                            var $btn = $dlg.find("[data-facturaid]").first();
-                            if ($btn.length) {
-                                facturaId = $btn.data("facturaid");
+                            // Buscar dentro de #divPopupDetalleFactura (donde se carga el contenido)
+                            var $popupContainer = $dlg.find("#divPopupDetalleFactura .factura-detail-container");
+                            if ($popupContainer.length && $popupContainer.data("facturaid")) {
+                                facturaId = $popupContainer.data("facturaid");
+                            } else {
+                                // Fallback: buscar en data attributes de botones
+                                var $btn = $dlg.find("[data-facturaid]").first();
+                                if ($btn.length) {
+                                    facturaId = $btn.data("facturaid");
+                                }
                             }
                         }
                         
@@ -521,7 +528,7 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
                         
                         // También intentar periódicamente como fallback (por si el observer no funciona)
                         var attempts = 0;
-                        var maxAttempts = 20; // 2 segundos máximo (20 * 100ms)
+                        var maxAttempts = 50; // 5 segundos máximo (50 * 100ms)
                         intervalId = setInterval(function() {
                             attempts++;
                             if (tryAddCopyButton() || attempts >= maxAttempts) {
