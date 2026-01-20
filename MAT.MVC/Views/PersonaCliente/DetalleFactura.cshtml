@@ -59,6 +59,30 @@
         font-weight: 600;
         margin-left: 0.25rem;
     }
+    /* Icono de copiar ID en titlebar del dialog */
+    .ui-dialog-titlebar-copy-id {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        margin-left: 0.5rem;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: var(--text-secondary, #6b7280);
+        cursor: pointer;
+        border-radius: 0.25rem;
+        transition: all 0.2s ease;
+        font-size: 0.875rem;
+    }
+    .ui-dialog-titlebar-copy-id:hover {
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--primary-color, #e91e63);
+    }
+    .ui-dialog-titlebar-copy-id:active {
+        transform: scale(0.95);
+    }
     .factura-section {
         margin-bottom: 1rem;
     }
@@ -243,7 +267,7 @@
     }
 </style>
 
-<div class="factura-detail-container">
+<div class="factura-detail-container" data-facturaid="@FacturaID">
     @{
         string sUSD = "";
         if (Model.MonedaTipo != 1)

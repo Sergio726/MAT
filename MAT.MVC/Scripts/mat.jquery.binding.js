@@ -606,6 +606,14 @@ $(document).on("click", "#btn-imprimirvouchers", function () {
 });
 
 function imprimirVoucher(facturaId, TipoVoucher) {
+    // Evitar dialogs modales anidados (overlay/z-index) que pueden dejar el diálogo "sin clicks".
+    // Una vez elegido el tipo, cerramos el selector antes de mostrar la confirmación.
+    try {
+        if ($("#divSelectTipoVoucher").length && $("#divSelectTipoVoucher").hasClass("ui-dialog-content")) {
+            $("#divSelectTipoVoucher").dialog("close");
+        }
+    } catch (e0) { }
+
     var bInfoAdicional = $("#chkInfoAdicional").is(":checked");
     $.ajax({
         url: "/PersonaCliente/Voucher_GetNrPrintByFacturaID",
@@ -617,26 +625,62 @@ function imprimirVoucher(facturaId, TipoVoucher) {
                 if (parseInt(response[1]) > 0) {
 
                     var msg = "<center><span><b>Este Voucher se imprimió " + response[1] + " veces.</b></br> Desea imprimirlo nuevamente?</span></center>";
+
+                    // Si el diálogo ya fue inicializado antes, destruirlo para evitar overlays/handlers colgados.
+                    try {
+                        if ($("#Voucher_dialog-message").hasClass("ui-dialog-content")) {
+                            $("#Voucher_dialog-message").dialog("destroy");
+                        }
+                    } catch (e1) { }
+
                     $("#Voucher_dialog-message").html(msg);
                     $("#Voucher_dialog-message").dialog({
                         modal: true,
+                        resizable: false,
+                        draggable: false,
+                        closeOnEscape: true,
+                        dialogClass: "mat-dialog mat-dialog--brandtitle",
                         buttons: {
                             Ok: function () {
-                                // No remover el nodo del DOM: se reutiliza si el usuario vuelve a imprimir.
-                                try { $("#divSelectTipoVoucher").dialog("close"); } catch (e) { }
-                                $(this).dialog("close");
-                                showVoucher(facturaId, TipoVoucher, bInfoAdicional);
+                                var $dlg = $(this);
+                                // Cerrar primero, luego imprimir (evita overlays bloqueando si el popup/print falla).
+                                $dlg.dialog("close");
+                                setTimeout(function () {
+                                    try { showVoucher(facturaId, TipoVoucher, bInfoAdicional); } catch (e2) { }
+                                }, 0);
                             },
                             Cancel: function () {
-                                try { $("#divSelectTipoVoucher").dialog("close"); } catch (e) { }
                                 $(this).dialog("close");
                             }
+                        },
+                        open: function () {
+                            // Defensivo: asegurar que el botón X cierre (hay overlays/z-index custom en el proyecto)
+                            var $dlg = $(this);
+                            try {
+                                var $w = $dlg.dialog("widget");
+                                $w.find(".ui-dialog-titlebar-close")
+                                    .off("click.matForceCloseVoucher")
+                                    .on("click.matForceCloseVoucher", function (e) {
+                                        e.preventDefault();
+                                        $dlg.dialog("close");
+                                    });
+                                $dlg.dialog("moveToTop");
+                            } catch (e3) { }
+                        },
+                        close: function () {
+                            // Limpiar wrapper/overlay correctamente sin remover el div del DOM (se reutiliza).
+                            try { $(this).dialog("destroy"); } catch (e4) { }
                         }
                     });
                 }
                 else {
-                    showVoucher(facturaId, TipoVoucher, bInfoAdicional);
-                    $("#divSelectTipoVoucher").dialog("close");
+                    // Cerrar primero (por si window.open/print falla por popup blocker).
+                    try {
+                        if ($("#divSelectTipoVoucher").length && $("#divSelectTipoVoucher").hasClass("ui-dialog-content")) {
+                            $("#divSelectTipoVoucher").dialog("close");
+                        }
+                    } catch (e5) { }
+                    try { showVoucher(facturaId, TipoVoucher, bInfoAdicional); } catch (e6) { }
                 }
 
             }
@@ -649,7 +693,17 @@ function showVoucher(facturaId, TipoVoucher, bInfoAdicional)
     var url = "/PersonaCliente/Voucher?facturaid=" + facturaId + "&sTipoVoucher=" + TipoVoucher + "&bInfoAdicional=" + bInfoAdicional;
     var title = "Vouchers";
     var id = "Vouchers";
-    window.open(url, '_blank').print();
+    // Popups/print pueden ser bloqueados por el navegador: evitar excepciones que dejen overlays abiertos.
+    var w = null;
+    try { w = window.open(url, '_blank'); } catch (e) { w = null; }
+    if (w && typeof w.print === "function") {
+        try { w.focus(); } catch (e2) { }
+        try { w.print(); } catch (e3) { }
+    } else {
+        try {
+            (window.alertInfo || window.alert)("No se pudo abrir la ventana de impresión. Verifique el bloqueador de ventanas emergentes (popups).", "Atención");
+        } catch (e4) { }
+    }
 }
 
 $(document).on("click", "#btn-notacredito", function () {

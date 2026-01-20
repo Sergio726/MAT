@@ -382,6 +382,157 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
                 var $wPagos = $("#" + dialogid).dialog("widget");
                 if ($wPagos && $wPagos.length) $wPagos.addClass("mat-pagos-dialog");
             }
+
+            // Detalle Factura: agregar icono de copiar ID en titlebar
+            // Nota: el contenido se carga de forma asíncrona, por lo que debemos esperar a que esté disponible
+            if (dialogid === "Detalles") {
+                try {
+                    var $dlg = $("#" + dialogid);
+                    var $widget = $dlg.dialog("widget");
+                    var $titlebar = $widget.find(".ui-dialog-titlebar");
+                    
+                    // Remover icono anterior si existe (por si se reabre el dialog)
+                    $titlebar.find(".ui-dialog-titlebar-copy-id").remove();
+                    
+                    // Variable de control para evitar agregar múltiples botones
+                    var buttonAdded = false;
+                    var observer = null;
+                    var intervalId = null;
+                    
+                    // Función para limpiar observers/intervals
+                    function cleanup() {
+                        if (observer) {
+                            observer.disconnect();
+                            observer = null;
+                        }
+                        if (intervalId) {
+                            clearInterval(intervalId);
+                            intervalId = null;
+                        }
+                    }
+                    
+                    // Función para agregar el icono cuando el contenido esté disponible
+                    function tryAddCopyButton() {
+                        // Si ya se agregó el botón, no hacer nada
+                        if (buttonAdded || $titlebar.find(".ui-dialog-titlebar-copy-id").length > 0) {
+                            return true;
+                        }
+                        
+                        var facturaId = null;
+                        var $container = $dlg.find(".factura-detail-container");
+                        if ($container.length && $container.data("facturaid")) {
+                            facturaId = $container.data("facturaid");
+                        } else {
+                            // Fallback: buscar en data attributes de botones
+                            var $btn = $dlg.find("[data-facturaid]").first();
+                            if ($btn.length) {
+                                facturaId = $btn.data("facturaid");
+                            }
+                        }
+                        
+                        if (facturaId) {
+                            // Ya tenemos el ID, agregar el botón
+                            var $copyBtn = $("<button/>", {
+                                type: "button",
+                                class: "ui-dialog-titlebar-copy-id",
+                                title: "Copiar ID de factura al portapapeles",
+                                "aria-label": "Copiar ID de factura"
+                            }).html('<i class="bi bi-clipboard"></i>');
+                            
+                            $copyBtn.on("click", function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                
+                                var idToCopy = facturaId.toString();
+                                var $btn = $(this);
+                                
+                                // Función para mostrar feedback visual
+                                function showFeedback() {
+                                    var $icon = $btn.find("i");
+                                    var originalClass = $icon.attr("class");
+                                    $icon.removeClass("bi-clipboard").addClass("bi-check");
+                                    $btn.css("color", "#10b981");
+                                    setTimeout(function() {
+                                        $icon.attr("class", originalClass);
+                                        $btn.css("color", "");
+                                    }, 1500);
+                                }
+                                
+                                // Función fallback para navegadores antiguos
+                                function fallbackCopy(text) {
+                                    var textArea = document.createElement("textarea");
+                                    textArea.value = text;
+                                    textArea.style.position = "fixed";
+                                    textArea.style.opacity = "0";
+                                    document.body.appendChild(textArea);
+                                    textArea.select();
+                                    try {
+                                        document.execCommand('copy');
+                                        showFeedback();
+                                    } catch (err) {
+                                        console.error("Error en fallback copy:", err);
+                                    }
+                                    document.body.removeChild(textArea);
+                                }
+                                
+                                // Intentar usar Clipboard API moderna
+                                if (navigator.clipboard && navigator.clipboard.writeText) {
+                                    navigator.clipboard.writeText(idToCopy).then(function() {
+                                        showFeedback();
+                                    }).catch(function(err) {
+                                        console.error("Error al copiar:", err);
+                                        fallbackCopy(idToCopy);
+                                    });
+                                } else {
+                                    // Fallback para navegadores antiguos
+                                    fallbackCopy(idToCopy);
+                                }
+                            });
+                            
+                            // Insertar antes del botón cerrar
+                            var $closeBtn = $titlebar.find(".ui-dialog-titlebar-close");
+                            if ($closeBtn.length) {
+                                $copyBtn.insertBefore($closeBtn);
+                            } else {
+                                $titlebar.append($copyBtn);
+                            }
+                            
+                            buttonAdded = true;
+                            cleanup(); // Limpiar observers/intervals
+                            return true; // Éxito
+                        }
+                        return false; // Aún no está disponible
+                    }
+                    
+                    // Intentar inmediatamente (por si el contenido ya está cargado)
+                    if (!tryAddCopyButton()) {
+                        // Si no está disponible, usar MutationObserver para detectar cuando se carga el contenido
+                        observer = new MutationObserver(function(mutations) {
+                            if (tryAddCopyButton()) {
+                                cleanup(); // Ya encontramos el ID, limpiar todo
+                            }
+                        });
+                        
+                        // Observar cambios en el contenido del dialog
+                        observer.observe($dlg[0], {
+                            childList: true,
+                            subtree: true
+                        });
+                        
+                        // También intentar periódicamente como fallback (por si el observer no funciona)
+                        var attempts = 0;
+                        var maxAttempts = 20; // 2 segundos máximo (20 * 100ms)
+                        intervalId = setInterval(function() {
+                            attempts++;
+                            if (tryAddCopyButton() || attempts >= maxAttempts) {
+                                cleanup();
+                            }
+                        }, 100);
+                    }
+                } catch (e) {
+                    console.error("Error al agregar icono de copiar ID:", e);
+                }
+            }
         },
         close: function () {
             $(document).off('click.modalOverlay');
