@@ -106,11 +106,40 @@ namespace MAT.MVC.Controllers.Reserva
             return Json(pasajeros, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Búsqueda rápida de clientes por nombre, apellido o DNI.
+        /// Optimizado: usa stored procedure dbo.usp_MAT_PersonaCliente_Search en lugar de cargar todos en memoria.
+        /// </summary>
         public JsonResult QuickClienteSearch(string query)
         {
-            PersonaClienteService pasajeroService = new PersonaClienteService();
-            List<Entities.PersonaCliente> clientes = pasajeroService.GetAll().Where(p => p.NroDocumento.Contains(query) || p.Nombre.ToUpper().Contains(query.ToUpper()) || p.Apellido.ToUpper().Contains(query.ToUpper())).ToList();
-            return Json(clientes, JsonRequestBehavior.AllowGet);
+            var result = new List<object>();
+            
+            if (string.IsNullOrWhiteSpace(query) || query.Length < 2)
+            {
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+
+            try
+            {
+                // Usar el stored procedure optimizado
+                var clientes = MAT.MVC.Models.PersonaClienteMethod.PersonaClienteSearchByNombreDNI(query);
+                
+                // Limitar resultados para autocomplete (máximo 20)
+                result = clientes.Take(20).Select(c => new
+                {
+                    ClienteId = c.PersonaId,
+                    Nombre = c.Nombre,
+                    Apellido = c.Apellido,
+                    NroDocumento = c.NroDocumento,
+                    Telefono = c.Telefono
+                }).ToList<object>();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error en QuickClienteSearch: {ex.Message}");
+            }
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult jRenovarPreReserva(string FacturaID)

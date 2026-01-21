@@ -3,284 +3,6 @@
 @using MAT.Utilities
 @model ReservaModel
 
-<style>
-    .reserva-container {
-        padding: 1rem;
-    }
-    .reserva-layout {
-        display: flex;
-        gap: 1.25rem;
-        align-items: flex-start;
-    }
-    .reserva-form {
-        flex: 1;
-        min-width: 0;
-    }
-    .reserva-total {
-        width: 340px;
-        flex-shrink: 0;
-    }
-    .reserva-info-card {
-        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
-        border-radius: 0.75rem;
-        padding: 1.125rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    .reserva-info-icon {
-        width: 40px;
-        height: 40px;
-        background: white;
-        border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-color, #e91e63);
-        font-size: 1.25rem;
-    }
-    .reserva-info-content {
-        flex: 1;
-    }
-    .reserva-info-label {
-        font-size: 0.7rem;
-        color: #9d174d;
-        text-transform: uppercase;
-        font-weight: 600;
-    }
-    .reserva-info-value {
-        font-size: 1.375rem;
-        font-weight: 700;
-        color: #831843;
-    }
-    .reserva-form-section {
-        margin-bottom: 1.25rem;
-    }
-    .reserva-section-title {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        padding-bottom: 0.5rem;
-        margin-bottom: 0.75rem;
-        border-bottom: 2px solid var(--primary-color, #e91e63);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .reserva-section-title i {
-        color: var(--primary-color, #e91e63);
-    }
-    .reserva-form-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.875rem;
-    }
-    .reserva-form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    .reserva-form-group.full-width {
-        grid-column: span 2;
-    }
-    .reserva-form-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-secondary, #6b7280);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-    }
-    .reserva-form-label i {
-        color: var(--primary-color, #e91e63);
-        font-size: 0.8rem;
-    }
-    .reserva-form-input,
-    .reserva-form-select,
-    .reserva-form-textarea {
-        width: 100%;
-        padding: 0.625rem 0.875rem;
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        color: var(--text-primary, #1f2937);
-        background: white;
-        transition: all 0.2s ease;
-    }
-    .reserva-form-input:focus,
-    .reserva-form-select:focus,
-    .reserva-form-textarea:focus {
-        outline: none;
-        border-color: var(--primary-color, #e91e63);
-        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
-    }
-    .reserva-form-input:disabled,
-    .reserva-form-select:disabled {
-        background: var(--bg-secondary, #f9fafb);
-        color: var(--text-secondary, #9ca3af);
-        cursor: not-allowed;
-    }
-    .reserva-form-textarea {
-        min-height: 70px;
-        resize: vertical;
-    }
-    .radio-group {
-        display: flex;
-        gap: 1.25rem;
-        padding: 0.375rem 0;
-    }
-    .radio-option {
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-        cursor: pointer;
-        font-size: 0.875rem;
-        color: var(--text-primary, #374151);
-    }
-    .radio-option input[type="radio"] {
-        accent-color: var(--primary-color, #e91e63);
-    }
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.375rem 0;
-    }
-    .checkbox-group input[type="checkbox"] {
-        accent-color: var(--primary-color, #e91e63);
-        width: 16px;
-        height: 16px;
-    }
-    .checkbox-group label {
-        font-size: 0.875rem;
-        color: var(--text-primary, #374151);
-        cursor: pointer;
-    }
-    .descuento-fields {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-    .descuento-fields input {
-        flex: 1;
-    }
-    .reserva-total-card {
-        background: white;
-        border-radius: 0.75rem;
-        padding: 1.125rem;
-        border: 1px solid var(--border-color, #e5e7eb);
-        position: sticky;
-        top: 0.75rem;
-    }
-    .reserva-total-amount {
-        text-align: center;
-        padding: 1rem;
-        background: var(--bg-secondary, #f9fafb);
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-    }
-    .reserva-total-label {
-        font-size: 0.75rem;
-        color: var(--text-secondary, #6b7280);
-        text-transform: uppercase;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-    .reserva-total-value {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: var(--primary-color, #e91e63);
-    }
-    .reserva-total-usd {
-        display: none;
-        font-size: 0.875rem;
-        color: var(--text-secondary, #6b7280);
-        margin-top: 0.25rem;
-    }
-    .cotizador-wrapper {
-        display: none;
-        margin-top: 1rem;
-    }
-    .cotizador-wrapper.visible {
-        display: block;
-    }
-    .cotizador-loading {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-    }
-    .reserva-actions {
-        display: flex;
-        gap: 0.75rem;
-        margin-top: 1.25rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border-color, #e5e7eb);
-        position: sticky;
-        bottom: 0;
-        background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,1) 55%);
-        backdrop-filter: blur(6px);
-        padding-bottom: 0.75rem;
-    }
-    .btn-reserva {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.375rem;
-        padding: 0.75rem 1.25rem;
-        border-radius: 0.5rem;
-        font-weight: 600;
-        font-size: 0.875rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .btn-reserva-primary {
-        background: var(--primary-color, #e91e63);
-        color: white;
-    }
-    .btn-reserva-primary:hover {
-        background: var(--primary-hover, #d81b60);
-        transform: translateY(-1px);
-    }
-    .btn-reserva-secondary {
-        background: var(--bg-secondary, #f3f4f6);
-        color: var(--text-primary, #374151);
-        border: 1px solid var(--border-color, #e5e7eb);
-    }
-    .btn-reserva-secondary:hover {
-        background: var(--border-color, #e5e7eb);
-    }
-    .loading-spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid var(--border-color, #e5e7eb);
-        border-top-color: var(--primary-color, #e91e63);
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-    }
-    @@keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-    @@media (max-width: 768px) {
-        .reserva-layout {
-            flex-direction: column;
-        }
-        .reserva-total {
-            width: 100%;
-        }
-        .reserva-form-grid {
-            grid-template-columns: 1fr;
-        }
-        .reserva-form-group.full-width {
-            grid-column: span 1;
-        }
-    }
-</style>
-
 <div class="reserva-container">
     <div class="reserva-layout">
         <!-- Formulario Principal -->
@@ -305,10 +27,24 @@
                 <div class="reserva-form-grid">
                     <div class="reserva-form-group full-width">
                         <label class="reserva-form-label">
-                            <i class="bi bi-search"></i>
+                            <i class="bi bi-person-badge"></i>
                             Buscar Cliente
                         </label>
-                        <input type="text" id="txt-busqueda-cliente" class="reserva-form-input" placeholder="Ingrese nombre o DNI..." />
+                        <div class="cliente-search-wrapper" id="cliente-search-wrapper">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" id="txt-busqueda-cliente" class="reserva-form-input" placeholder="Escriba nombre, apellido o DNI..." autocomplete="off" />
+                            <div class="search-loading"></div>
+                        </div>
+                        <div class="cliente-selected" id="cliente-selected">
+                            <div class="cliente-selected-avatar" id="cliente-avatar">--</div>
+                            <div class="cliente-selected-info">
+                                <div class="cliente-selected-name" id="cliente-nombre">-</div>
+                                <div class="cliente-selected-dni" id="cliente-dni">DNI: -</div>
+                            </div>
+                            <button type="button" class="cliente-selected-remove" id="btn-remove-cliente" title="Quitar cliente">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
                         <input type="hidden" id="Cliente" name="Cliente" />
                     </div>
                 </div>
@@ -475,27 +211,95 @@
             loadCotizador();
         }
 
-        // Client autocomplete
+        // Client autocomplete mejorado
         $("#txt-busqueda-cliente").autocomplete({
-            minLength: 3,
+            minLength: 2,
+            delay: 300,
             source: function (request, response) {
+                // Mostrar loading
+                $("#cliente-search-wrapper").addClass("loading");
+                
                 $.ajax({
                     url: "/Reserva/QuickClienteSearch",
                     data: { query: request.term },
                     success: function (data) {
+                        $("#cliente-search-wrapper").removeClass("loading");
+                        
+                        if (!data || data.length === 0) {
+                            response([{ empty: true }]);
+                            return;
+                        }
+                        
                         response($.map(data, function (item) {
+                            var iniciales = ((item.Nombre || "").charAt(0) + (item.Apellido || "").charAt(0)).toUpperCase();
                             return {
-                                label: item.Nombre + " " + item.Apellido + " | DNI " + item.NroDocumento,
+                                label: item.Nombre + " " + item.Apellido,
                                 value: item.Nombre + " " + item.Apellido,
-                                id: item.ClienteId
-                            }
+                                id: item.ClienteId,
+                                nombre: item.Nombre,
+                                apellido: item.Apellido,
+                                dni: item.NroDocumento,
+                                telefono: item.Telefono,
+                                iniciales: iniciales
+                            };
                         }));
+                    },
+                    error: function () {
+                        $("#cliente-search-wrapper").removeClass("loading");
+                        response([]);
                     }
                 });
             },
-            select: function (event, ul) {
-                $("#Cliente").val(ul.item.id);
+            select: function (event, ui) {
+                if (ui.item.empty) {
+                    event.preventDefault();
+                    return false;
+                }
+                
+                // Guardar ID
+                $("#Cliente").val(ui.item.id);
+                
+                // Mostrar cliente seleccionado
+                $("#cliente-avatar").text(ui.item.iniciales);
+                $("#cliente-nombre").text(ui.item.nombre + " " + ui.item.apellido);
+                $("#cliente-dni").html('<span class="badge">DNI</span> ' + ui.item.dni);
+                $("#cliente-selected").addClass("visible");
+                
+                // Ocultar input de búsqueda
+                $("#txt-busqueda-cliente").val("").hide();
+                
+                return false;
+            },
+            open: function () {
+                // Aplicar clase personalizada al menú
+                $(this).autocomplete("widget").addClass("cliente-autocomplete");
             }
+        }).autocomplete("instance")._renderItem = function (ul, item) {
+            // Renderizado personalizado de cada item
+            if (item.empty) {
+                return $("<li>")
+                    .append('<div class="cliente-autocomplete-empty"><i class="bi bi-person-x"></i>No se encontraron clientes</div>')
+                    .appendTo(ul);
+            }
+            
+            var html = '<div class="ui-menu-item-wrapper">' +
+                '<div class="cliente-autocomplete-avatar">' + item.iniciales + '</div>' +
+                '<div class="cliente-autocomplete-info">' +
+                    '<div class="cliente-autocomplete-name">' + item.nombre + ' ' + item.apellido + '</div>' +
+                    '<div class="cliente-autocomplete-dni"><span class="badge">DNI</span> ' + item.dni + '</div>' +
+                '</div>' +
+            '</div>';
+            
+            return $("<li>")
+                .append(html)
+                .appendTo(ul);
+        };
+        
+        // Botón para quitar cliente seleccionado
+        $("#btn-remove-cliente").on("click", function () {
+            $("#Cliente").val("");
+            $("#cliente-selected").removeClass("visible");
+            $("#txt-busqueda-cliente").show().val("").focus();
         });
 
         // Comprobante toggle

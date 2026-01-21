@@ -11,7 +11,6 @@ div#container {
 	clear: both;
 	font-size: 11px;
 	margin: auto;
-    margin-left:-6em !important;
 	overflow: hidden;
 	position: relative;
 	width: 900px;
@@ -239,14 +238,14 @@ div#container {
 #coche51_61 .piso_superior .bar.bus-marker,
 #coche51_61 .piso_superior_edicion .bar.bus-marker,
 #coche51_61 .new_piso_superior .bar.bus-marker {
-    left: 210px !important; /* seat_03 */
+    left: 220px !important; /* seat_03 + 10px */
     top: 20px !important;  /* fila A */
 }
 
 #coche51_61 .piso_superior .escalera.bus-marker,
 #coche51_61 .piso_superior_edicion .escalera.bus-marker,
 #coche51_61 .new_piso_superior .escalera.bus-marker {
-    left: 210px !important; /* seat_03 */
+    left: 220px !important; /* seat_03 + 10px */
     top: 70px !important;   /* fila B */
 }
 
@@ -254,8 +253,8 @@ div#container {
 #coche51_61 .piso_superior .tv1.bus-marker,
 #coche51_61 .piso_superior_edicion .tv1.bus-marker,
 #coche51_61 .new_piso_superior .tv1.bus-marker {
-    left: 80px !important;  /* sigue el orden original tv1..tv4 */
-    top: 125px !important;  /* centro del pasillo: gap entre 120 y 180 */
+    left: 113px !important;
+    top: 125px !important;
 }
 
 #coche51_61 .piso_superior .tv2.bus-marker,
@@ -303,7 +302,7 @@ div#container {
 #coche51_61 .piso_inferior .tv1.bus-marker,
 #coche51_61 .piso_inferior_edicion .tv1.bus-marker,
 #coche51_61 .new_piso_inferior .tv1.bus-marker {
-    left: 160px !important;
+    left: 121px !important;
     top: 100px !important;
 }
 
