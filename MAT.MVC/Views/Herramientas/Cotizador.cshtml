@@ -1,102 +1,480 @@
-﻿<div  class="custom_margin_5" >
-    <fieldset class="customborder">
-        <legend>Cotizacion USD freeway.com.ar</legend>
-                
-        <!--Cotizacion por operador TN-->
-        <div class="custom_margin_bottom_10">
-            <input type="radio" name="rCotizacion" value="TN" checked class="custom_vertical_align_bottom" onclick="javascript: checkTN();" />
-            <span>FREEWAY CAMBIO 1 U$D = </span><span id="sCotizacionTN" class="custom_font_weigh_bold custom_cursor_progress">Conectando...</span>
-            <br /><br />
-            <a class="link custom_margin_top_10" href="http://freeway.com.ar/" target="_blank">(Ver en FREEWAY)</a>
+<div class="cotizador-container">
+    <div class="cotizador-header">
+        <div class="cotizador-icon">
+            <i class="bi bi-currency-exchange"></i>
         </div>
-        <div class="custom_margin_bottom_15">
-            <input type="radio" name="rCotizacion" value="personalizado" onclick="javascript: unCheckTN();" />
-            <span id="sCotizacionManual" class="custom_color_disabled">EDITAR 1 U$D = </span>
-            <input type="text" id="txtCotizacion" class="money form-field custom_width_70" disabled="disabled"/>
+        <div class="cotizador-title">
+            <h4>Cotización USD</h4>
+            <span class="cotizador-source">dolarapi.com</span>
         </div>
-        <div class="form-label custom_line_height_28">ARS</div>
-        <div class="form-field"><input type="text" id="MontoInt" class="money" /></div>
-        <div class="form-label custom_line_height_28">USD</div>
-        <div class="form-field"><input type="text" name="Descuento" id="MontoOut" class="money"/></div>
-        <div class="form-label"></div>
-        <div class="custom_float_right custom_margin_top_5">
-            <input type="button" onclick="javascript: calcularCotizacion();" value="Calcular" class="btn btn-small btn-inverse">
-            <input type="button" id="btnCargarMonto" onclick="javascript: cargarMonto();" value="Cargar Monto" data-toggle="tooltip" title="Tomar el valor el valor calculado como monto a abonar." class="btn btn-small btn-inverse hide">
+    </div>
+
+    <div class="cotizador-body">
+        <!-- Opciones de cotización -->
+        <div class="cotizador-options">
+            <label class="cotizador-radio-card active" id="radioCardOficial">
+                <input type="radio" name="rCotizacion" value="oficial" checked onclick="selectCotizacion('oficial');" />
+                <div class="radio-card-content">
+                    <div class="radio-card-header">
+                        <i class="bi bi-bank"></i>
+                        <span>Dólar Oficial</span>
+                    </div>
+                    <div class="radio-card-value">
+                        <span class="currency-label">Venta:</span>
+                        <span id="sCotizacionOficial" class="currency-value loading">Cargando...</span>
+                    </div>
+                </div>
+            </label>
+
+            <label class="cotizador-radio-card" id="radioCardBlue">
+                <input type="radio" name="rCotizacion" value="blue" onclick="selectCotizacion('blue');" />
+                <div class="radio-card-content">
+                    <div class="radio-card-header">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Dólar Blue</span>
+                    </div>
+                    <div class="radio-card-value">
+                        <span class="currency-label">Venta:</span>
+                        <span id="sCotizacionBlue" class="currency-value loading">Cargando...</span>
+                    </div>
+                </div>
+            </label>
+
+            <label class="cotizador-radio-card" id="radioCardManual">
+                <input type="radio" name="rCotizacion" value="personalizado" onclick="selectCotizacion('personalizado');" />
+                <div class="radio-card-content">
+                    <div class="radio-card-header">
+                        <i class="bi bi-pencil-square"></i>
+                        <span>Cotización Manual</span>
+                    </div>
+                    <div class="radio-card-value">
+                        <span class="currency-label">1 USD =</span>
+                        <input type="text" id="txtCotizacion" class="cotizador-input-inline money" disabled placeholder="0,00" />
+                    </div>
+                </div>
+            </label>
         </div>
-                
-        <div id="divError" class="msgError custom_font_size_12 custom_line_height_16 hide custom_margin_top_35">
-            
+        
+        <div class="cotizador-api-info">
+            <a class="cotizador-link" href="https://dolarapi.com" target="_blank">
+                <i class="bi bi-box-arrow-up-right"></i> dolarapi.com
+            </a>
+            <span class="cotizador-last-update" id="lastUpdate"></span>
         </div>
 
-    </fieldset>
+        <!-- Calculadora -->
+        <div class="cotizador-calculator">
+            <div class="cotizador-field">
+                <label class="cotizador-label">
+                    <span class="currency-badge ars">ARS</span>
+                    Pesos Argentinos
+                </label>
+                <div class="cotizador-input-wrapper">
+                    <span class="input-prefix">$</span>
+                    <input type="text" id="MontoInt" class="cotizador-input money" placeholder="0,00" />
+                </div>
+            </div>
+
+            <div class="cotizador-swap">
+                <i class="bi bi-arrow-left-right"></i>
+            </div>
+
+            <div class="cotizador-field">
+                <label class="cotizador-label">
+                    <span class="currency-badge usd">USD</span>
+                    Dólares
+                </label>
+                <div class="cotizador-input-wrapper">
+                    <span class="input-prefix">$</span>
+                    <input type="text" id="MontoOut" class="cotizador-input money" placeholder="0,00" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="cotizador-actions">
+            <button type="button" onclick="calcularCotizacion();" class="btn-cotizador btn-cotizador-primary">
+                <i class="bi bi-calculator"></i>
+                Calcular
+            </button>
+            <button type="button" id="btnCargarMonto" onclick="cargarMonto();" class="btn-cotizador btn-cotizador-secondary" style="display:none;" title="Tomar el valor calculado como monto a abonar">
+                <i class="bi bi-check-lg"></i>
+                Cargar Monto
+            </button>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div id="divError" class="cotizador-error" style="display:none;"></div>
+    </div>
+
     <input type="hidden" id="hdnPersonID" name="PersonaID">
     <input type="hidden" id="hdnViajeID" name="ViajeID">
     <input type="hidden" id="hdnCotizacion" />
 </div>
 
+<style>
+    .cotizador-container {
+        background: white;
+        border-radius: 0.625rem;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    }
+    .cotizador-header {
+        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+    }
+    .cotizador-icon {
+        width: 36px;
+        height: 36px;
+        background: white;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--brand-primary, #e91e63);
+        font-size: 1.125rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .cotizador-title h4 {
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #831843;
+    }
+    .cotizador-source {
+        font-size: 0.625rem;
+        color: #9d174d;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .cotizador-body {
+        padding: 1rem;
+    }
+    .cotizador-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .cotizador-radio-card {
+        display: block;
+        padding: 0.625rem 0.875rem;
+        border: 2px solid var(--border-color, #e5e7eb);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+    }
+    .cotizador-radio-card:hover {
+        border-color: var(--brand-primary, #e91e63);
+        background: #fdf2f8;
+    }
+    .cotizador-radio-card.active {
+        border-color: var(--brand-primary, #e91e63);
+        background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+    }
+    .cotizador-radio-card input[type="radio"] {
+        display: none;
+    }
+    .radio-card-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+    .radio-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-primary, #374151);
+    }
+    .radio-card-header i {
+        color: var(--brand-primary, #e91e63);
+        font-size: 0.875rem;
+    }
+    .radio-card-value {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+    .currency-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary, #6b7280);
+    }
+    .currency-value {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--brand-primary, #e91e63);
+    }
+    .currency-value.loading {
+        font-size: 0.8rem;
+        font-weight: 400;
+        color: var(--text-secondary, #6b7280);
+        font-style: italic;
+    }
+    .cotizador-link {
+        font-size: 0.7rem;
+        color: var(--brand-primary, #e91e63);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .cotizador-link:hover {
+        text-decoration: underline;
+    }
+    .cotizador-input-inline {
+        width: 90px;
+        padding: 0.375rem 0.5rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--brand-primary, #e91e63);
+        text-align: right;
+        background: white;
+    }
+    .cotizador-input-inline:disabled {
+        background: var(--bg-secondary, #f9fafb);
+        color: var(--text-secondary, #9ca3af);
+    }
+    .cotizador-input-inline:focus {
+        outline: none;
+        border-color: var(--brand-primary, #e91e63);
+        box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.15);
+    }
+    .cotizador-calculator {
+        display: flex;
+        align-items: flex-end;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .cotizador-field {
+        flex: 1;
+    }
+    .cotizador-label {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.65rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+    }
+    .currency-badge {
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+        font-size: 0.55rem;
+        font-weight: 700;
+    }
+    .currency-badge.ars {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+    .currency-badge.usd {
+        background: #d1fae5;
+        color: #059669;
+    }
+    .cotizador-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .cotizador-input-wrapper .input-prefix {
+        position: absolute;
+        left: 0.5rem;
+        color: var(--text-secondary, #9ca3af);
+        font-size: 0.75rem;
+        pointer-events: none;
+    }
+    .cotizador-input {
+        width: 100%;
+        min-width: 110px;
+        padding: 0.5rem 0.625rem 0.5rem 1.5rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        background: white;
+        text-align: right;
+        transition: all 0.2s ease;
+    }
+    .cotizador-input:focus {
+        outline: none;
+        border-color: var(--brand-primary, #e91e63);
+        box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.1);
+    }
+    .cotizador-swap {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary, #9ca3af);
+        flex-shrink: 0;
+        margin-bottom: 0.25rem;
+        font-size: 0.875rem;
+    }
+    .cotizador-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .btn-cotizador {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        font-weight: 600;
+        font-size: 0.75rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .btn-cotizador-primary {
+        background: var(--brand-primary, #e91e63);
+        color: white;
+    }
+    .btn-cotizador-primary:hover {
+        background: var(--brand-primary-hover, #d81b60);
+        transform: translateY(-1px);
+    }
+    .btn-cotizador-secondary {
+        background: var(--bg-secondary, #f3f4f6);
+        color: var(--text-primary, #374151);
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+    .btn-cotizador-secondary:hover {
+        background: var(--border-color, #e5e7eb);
+    }
+    .cotizador-error {
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 0.5rem;
+        color: #dc2626;
+        font-size: 0.8rem;
+    }
+    .cotizador-api-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.375rem 0.625rem;
+        background: var(--bg-secondary, #f9fafb);
+        border-radius: 0.25rem;
+        margin-bottom: 0.75rem;
+    }
+    .cotizador-last-update {
+        font-size: 0.6rem;
+        color: var(--text-secondary, #9ca3af);
+    }
+</style>
+
 <script type="text/javascript">
+    // Variables globales para almacenar cotizaciones
+    var cotizaciones = {
+        oficial: null,
+        blue: null
+    };
+
     $(document).ready(function () {
         registerFormatNumber();
         $('.money').mask("#.##0,00", { reverse: true });
     });
     
-    
     var mode = "@ViewBag.Mode";
     if (mode == "1") {
-        $("#btnCargarMonto").removeClass("hide");
+        $("#btnCargarMonto").show();
     }
 
-    //Cargar cotizacion del dolar
-    GetCotizacionTN();
+    // Cargar cotizaciones al iniciar
+    cargarCotizaciones();
 
-
-    function GetCotizacionTN() {
+    function cargarCotizaciones() {
+        // Cargar dólar oficial
         $.ajax({
-
-            //url: 'https://cors.io/?http://freeway.com.ar/',
-            url: 'http://online.zeusgroup.net/pyth-decorator/get?path=freeway/cotizacion-del-dia.json',
+            url: 'https://dolarapi.com/v1/dolares/oficial',
             type: 'GET',
-            crossDomain: true,
             dataType: 'json',
             success: function (data) {
-                //$("#sCotizacionTN").text($(data).find('strong').html().replace('&nbsp;', '').replace('<strong>', '').replace('</strong>', ''));
-                //$("#sCotizacionTN").text().replace('<strong>', '').replace('</strong>', '');
-                //$("#sCotizacionTN").addClass("custom_font_size_14");
-                //$("#sCotizacionTN").removeClass("custom_cursor_progress");
-
-                //debugger
-                var sdolar = data.dolar;
-                $("#sCotizacionTN").text(sdolar.substring(sdolar.indexOf('Terrestre') + 10, sdolar.indexOf('Terrestre') + 15).replace('.',','));
-                $("#sCotizacionTN").addClass("custom_font_size_14");
-                $("#sCotizacionTN").removeClass("custom_cursor_progress");
-               
+                cotizaciones.oficial = data.venta;
+                var formattedValue = formatearCotizacion(data.venta);
+                $("#sCotizacionOficial").text("$" + formattedValue).removeClass("loading");
+                actualizarHoraUpdate(data.fechaActualizacion);
             },
             error: function (e) {
-                console.log(e);
-                $("#sCotizacionTN").removeClass("custom_font_size_14");
-                $("#sCotizacionTN").text("No se puede conectar con http://tnoperador.tur.ar");
+                console.log("Error al cargar dólar oficial:", e);
+                $("#sCotizacionOficial").text("Sin conexión").removeClass("loading").css("color", "#dc2626");
             }
-
         });
 
+        // Cargar dólar blue
+        $.ajax({
+            url: 'https://dolarapi.com/v1/dolares/blue',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                cotizaciones.blue = data.venta;
+                var formattedValue = formatearCotizacion(data.venta);
+                $("#sCotizacionBlue").text("$" + formattedValue).removeClass("loading");
+            },
+            error: function (e) {
+                console.log("Error al cargar dólar blue:", e);
+                $("#sCotizacionBlue").text("Sin conexión").removeClass("loading").css("color", "#dc2626");
+            }
+        });
     }
 
-    function checkTN() {
-        $("#txtCotizacion").attr("disabled", true);
-        $("#sCotizacionTN").removeClass("custom_color_disabled");
-        $("#sCotizacionManual").addClass("custom_color_disabled");
+    function formatearCotizacion(valor) {
+        if (!valor) return "0,00";
+        return valor.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    function unCheckTN() {
-        $("#txtCotizacion").attr("disabled", false);
-        $("#sCotizacionTN").addClass("custom_color_disabled");
-        $("#sCotizacionManual").removeClass("custom_color_disabled");
+    function actualizarHoraUpdate(fechaISO) {
+        if (!fechaISO) return;
+        try {
+            var fecha = new Date(fechaISO);
+            var opciones = { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' };
+            $("#lastUpdate").text("Actualizado: " + fecha.toLocaleString('es-AR', opciones));
+        } catch (e) {
+            console.log("Error al parsear fecha:", e);
+        }
+    }
+
+    function selectCotizacion(tipo) {
+        // Actualizar visual de radio cards
+        $(".cotizador-radio-card").removeClass("active");
+        
+        switch(tipo) {
+            case 'oficial':
+                $("#radioCardOficial").addClass("active");
+                $("#txtCotizacion").attr("disabled", true);
+                break;
+            case 'blue':
+                $("#radioCardBlue").addClass("active");
+                $("#txtCotizacion").attr("disabled", true);
+                break;
+            case 'personalizado':
+                $("#radioCardManual").addClass("active");
+                $("#txtCotizacion").attr("disabled", false).focus();
+                break;
+        }
     }
 
     function calcularCotizacion() {
         var sourceCotizacion = $("input[name='rCotizacion']:checked").val();
+        
         if ($("#txtCotizacion").val() == "" && sourceCotizacion == "personalizado") {
-
             $("#txtCotizacion").val(0);
             $("#MontoInt").val(0);
             $("#MontoOut").val(0);
@@ -105,85 +483,75 @@
         if ($("#MontoInt").val() == "") {
             $("#MontoInt").val(0);
         }
-
         if ($("#MontoOut").val() == "") {
             $("#MontoOut").val(0);
         }
 
+        var dCotizacion = 0;
+        
         switch (sourceCotizacion) {
-            case "TN": //calcular cotizacion con valores del servidor TN
-                var sCotizacion = $("#sCotizacionTN").text();
-                if (sCotizacion.indexOf("No se puede conectar") >= 0) {
-                    $("#divError").html("No es posible conectar con el servidor de http://tnoperador.tur.ar <br/> Por favor elija elija editar la cotizacion.")
-                    $("#divError").show().removeClass("hide");
-                    $("#divError").fadeOut(14000);
-                    $("#txtCotizacion").val("");
-                    $("#MontoInt").val("");
-                    $("#MontoOut").val("");
+            case "oficial":
+                if (!cotizaciones.oficial) {
+                    mostrarError("No se pudo obtener la cotización del dólar oficial. Use cotización manual.");
+                    return;
                 }
-                else {
-                    var dCotizacion = sCotizacion.replace('$', '').replace(',', '.');
-                    //var dCotizacion = sCotizacion.replace('$', '');
-                    var dARG = parseFloat($("#MontoInt").val().replace(',', '#').replace('.', '').replace('#', '.'));
-                    var dUSD = parseFloat($("#MontoOut").val().replace(',', '#').replace('.', '').replace('#', '.'));
-
-                    if (dARG == 0) {
-                        dtotal = dUSD * dCotizacion;
-                        var rTotal = formatNumberMoney(dtotal).replace('$', '')
-                        $("#MontoInt").val(rTotal);
-                    }
-                    else {
-                        dtotal = dARG / dCotizacion;
-                        var rTotal = formatNumberMoney(dtotal).replace('$', '')
-                        $("#MontoOut").val(rTotal);
-                    }
-                    //$("#hdnCotizacion").val(dCotizacion.replace(',', '#').replace('.', '').replace('#', '.'));
-                    $("#hdnCotizacion").val($("#sCotizacionTN").text());
+                dCotizacion = cotizaciones.oficial;
+                $("#hdnCotizacion").val(dCotizacion);
+                break;
+                
+            case "blue":
+                if (!cotizaciones.blue) {
+                    mostrarError("No se pudo obtener la cotización del dólar blue. Use cotización manual.");
+                    return;
                 }
+                dCotizacion = cotizaciones.blue;
+                $("#hdnCotizacion").val(dCotizacion);
                 break;
 
             case "personalizado":
+                dCotizacion = parseFloat($("#txtCotizacion").val().replace(',', '#').replace('.', '').replace('#', '.'));
+                if (isNaN(dCotizacion) || dCotizacion <= 0) {
+                    mostrarError("Ingrese una cotización válida.");
+                    return;
+                }
                 $("#hdnCotizacion").val($("#txtCotizacion").val());
-                var dCotizacion = parseFloat($("#txtCotizacion").val().replace(',', '#').replace('.', '').replace('#', '.'));
-                var dARG = parseFloat($("#MontoInt").val().replace(',', '#').replace('.', '').replace('#', '.'));
-                var dUSD = parseFloat($("#MontoOut").val().replace(',', '#').replace('.', '').replace('#', '.'));
-                var dtotal = 0;
-
-                if (dARG == 0) {
-                    dtotal = dUSD * dCotizacion;
-                    //dtotal = dtotal.replace('.', ',').replace(',', '.');
-                    var rTotal = formatNumberMoney(dtotal).replace('$','')
-                    $("#MontoInt").val(rTotal);
-                }
-                else {
-                    dtotal = dARG / dCotizacion;
-                    var rTotal = formatNumberMoney(dtotal).replace('$', '')
-                    //dtotal = dtotal.replace('.', ',').replace(',', '.');
-                    $("#MontoOut").val(rTotal);
-                }
-                                
                 break;
-
         }
 
+        // Realizar el cálculo
+        var dARG = parseFloat($("#MontoInt").val().replace(',', '#').replace('.', '').replace('#', '.')) || 0;
+        var dUSD = parseFloat($("#MontoOut").val().replace(',', '#').replace('.', '').replace('#', '.')) || 0;
+        var dtotal = 0;
+
+        if (dARG == 0 && dUSD > 0) {
+            // Convertir USD a ARS
+            dtotal = dUSD * dCotizacion;
+            var rTotal = formatNumberMoney(dtotal).replace('$', '');
+            $("#MontoInt").val(rTotal);
+        } else if (dARG > 0) {
+            // Convertir ARS a USD
+            dtotal = dARG / dCotizacion;
+            var rTotal = formatNumberMoney(dtotal).replace('$', '');
+            $("#MontoOut").val(rTotal);
+        }
     }
 
-    function cargarMonto()
-    {
-        calcularCotizacion();
+    function mostrarError(mensaje) {
+        $("#divError").html('<i class="bi bi-exclamation-triangle"></i> ' + mensaje).show();
+        setTimeout(function() { $("#divError").fadeOut(); }, 8000);
+    }
 
+    function cargarMonto() {
+        calcularCotizacion();
         var tipoMoneda = $("#sMonedaTipo option:selected").text().trim();
 
         switch (tipoMoneda) {
             case "ARS":
                 $("#txtPago").val($("#MontoInt").val());
                 break;
-
             case "USD":
                 $("#txtPago").val($("#MontoOut").val());
                 break;
-
         }
     }
-
 </script>

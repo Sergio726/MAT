@@ -2689,12 +2689,14 @@ div.bnn_floating-banner.hidden {
 
 /* Dialog wide (FormReserva) */
 .ui-dialog.mat-dialog--formreserva {
-    max-width: 1200px !important;
+    max-width: 1400px !important;
     width: calc(100vw - 24px) !important;
 }
 
 .ui-dialog.mat-dialog--formreserva .ui-dialog-content {
     padding: 0 !important; /* el padding lo maneja el contenido */
+    max-height: calc(100vh - 120px) !important;
+    overflow-y: auto !important;
 }
 
 /* Estilos para el modal de Seleccionar Pasajero */
@@ -7317,7 +7319,7 @@ ul.viajes-lista li .viaje-container h4 {
     min-width: 0;
 }
 .reserva-total {
-    width: 340px;
+    width: 480px;
     flex-shrink: 0;
 }
 .reserva-info-card {
@@ -7784,6 +7786,8 @@ ul.viajes-lista li .viaje-container h4 {
     }
     .reserva-total {
         width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
     }
     .reserva-form-grid {
         grid-template-columns: 1fr;
