@@ -396,7 +396,11 @@
     <Compile Include="Controllers\PersonaVendedor\PersonaVendedorController.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\admin.modern.css" />
+    <Content Include="Content\bootstrap-5.3.2.min.css" />
+    <Content Include="Content\bootstrap-icons.css" />
     <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\examples\atribucion_ventas.jsx" />
     <Content Include="Content\magicsearch\jquery.magicsearch.css" />
     <Content Include="Content\magicsearch\jquery.magicsearch.min.css" />
     <Content Include="Content\magicsearch\normalize.css" />
@@ -416,7 +420,14 @@
     <Content Include="Content\mat.splash.css" />
     <Content Include="Content\mat.styles.css" />
     <Content Include="Content\mat.styles.custom.css" />
+    <Content Include="Content\modern-account.css" />
+    <Content Include="Content\modern-dashboard.css" />
+    <Content Include="Content\modern-datatable.css" />
+    <Content Include="Content\modern-layout.css" />
+    <Content Include="Content\modern-menu.css" />
+    <Content Include="Content\modern-topbar.css" />
     <Content Include="Content\preset.css" />
+    <Content Include="Content\saas-variables.css" />
     <Content Include="Content\style-light-admin.css" />
     <Content Include="Content\style-light.css" />
     <Content Include="Content\tabla.admin.css" />
@@ -582,6 +593,7 @@
     <Content Include="entlib.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\bootstrap-5.3.2.bundle.min.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\common.js" />
     <Content Include="Scripts\dataTable\dataTables.rowGroup.min.js" />
@@ -600,6 +612,8 @@
     <Content Include="Content\mat.manifiesto.print.css" />
     <Content Include="Content\mat.tblVinculacionMenor.css" />
     <Content Include="Content\mat.loguin.css" />
+    <Content Include="Content\fonts\bootstrap-icons.woff" />
+    <Content Include="Content\fonts\bootstrap-icons.woff2" />
     <None Include="Properties\PublishProfiles\MAT.Demo.pubxml" />
     <None Include="Properties\PublishProfiles\MAT.DEV.pubxml" />
     <None Include="Properties\PublishProfiles\MAT.MVC.pubxml" />
@@ -608,6 +622,9 @@
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
+    <Content Include="Scripts\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery-migrate-3.4.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.13.2.min.js" />
     <Content Include="Scripts\jquery.magicsearch.js" />
     <Content Include="Scripts\jquery.mask.js" />
     <Content Include="Scripts\jquery.timepicker\.gitignore" />
@@ -641,6 +658,7 @@
     <Content Include="Scripts\mat.jquery.binding.js" />
     <Content Include="Scripts\mat.jquery.functions.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\modernizr-2.8.3.min.js" />
     <Content Include="Scripts\preset.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
@@ -847,6 +865,7 @@
     <Content Include="Views\Presupuesto\Create.cshtml" />
     <Content Include="Views\Presupuesto\Index.cshtml" />
     <Content Include="Views\Presupuesto\Seguimiento.cshtml" />
+    <Content Include="_AppStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
