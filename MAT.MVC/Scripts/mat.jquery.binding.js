@@ -1,4 +1,4 @@
-$(document).on("click", "#btn-resumen-linea", function () {
+﻿$(document).on("click", "#btn-resumen-linea", function () {
     var dataid = $(this).data("comprobanteid");
     var url = "/CuentaCorriente/DetalleComprobante?id=" + dataid;
     var dialogid = "DetalleComprobante";
@@ -533,6 +533,36 @@ $(document).on("click", "#btn-distribucion-habitaciones", function () {
     window.open(url, '_blank');
 });
 
+// Función auxiliar para cerrar diálogos forzadamente (resuelve problemas con CSS que impiden el cierre)
+// Se asigna a window para garantizar acceso global incluso si el script está en un bundle o closure
+window.forceCloseDialog = function forceCloseDialog(selector) {
+    try {
+        var $el = $(selector);
+        var dialog = $el.closest('.ui-dialog');
+
+        // Ocultar el diálogo con !important para forzar el cierre
+        if (dialog.length) {
+            dialog[0].style.setProperty('display', 'none', 'important');
+        }
+
+        // Remover el overlay asociado a este diálogo
+        var dialogId = $el.attr('id');
+        if (dialogId) {
+            // Buscar overlays que estén justo antes del diálogo
+            dialog.prev('.ui-widget-overlay').each(function() {
+                this.style.setProperty('display', 'none', 'important');
+            });
+        }
+
+        // Intentar destruir el diálogo de jQuery UI
+        if ($el.data('ui-dialog')) {
+            $el.dialog('destroy');
+        }
+    } catch (e) {
+        console.log('Error al cerrar diálogo:', e);
+    }
+}
+
 $(document).on("click", "#btn-imprimirvouchers", function () {
     var facturaId = $(this).data("facturaid");
 
@@ -556,12 +586,13 @@ $(document).on("click", "#btn-imprimirvouchers", function () {
             var $dlg = $(this);
             try {
                 var $w = $dlg.dialog("widget");
-                // Asegurar que el botón X cierre (defensivo contra overlays / estilos)
+                // Asegurar que el botón X cierre usando forceCloseDialog
                 $w.find(".ui-dialog-titlebar-close")
                     .off("click.matForceClose")
                     .on("click.matForceClose", function (e) {
                         e.preventDefault();
-                        $dlg.dialog("close");
+                        e.stopPropagation();
+                        forceCloseDialog("#divSelectTipoVoucher");
                     });
 
                 // Mantenerlo arriba del stack (nested dialogs)
@@ -606,14 +637,6 @@ $(document).on("click", "#btn-imprimirvouchers", function () {
 });
 
 function imprimirVoucher(facturaId, TipoVoucher) {
-    // Evitar dialogs modales anidados (overlay/z-index) que pueden dejar el diálogo "sin clicks".
-    // Una vez elegido el tipo, cerramos el selector antes de mostrar la confirmación.
-    try {
-        if ($("#divSelectTipoVoucher").length && $("#divSelectTipoVoucher").hasClass("ui-dialog-content")) {
-            $("#divSelectTipoVoucher").dialog("close");
-        }
-    } catch (e0) { }
-
     var bInfoAdicional = $("#chkInfoAdicional").is(":checked");
     $.ajax({
         url: "/PersonaCliente/Voucher_GetNrPrintByFacturaID",
@@ -625,62 +648,26 @@ function imprimirVoucher(facturaId, TipoVoucher) {
                 if (parseInt(response[1]) > 0) {
 
                     var msg = "<center><span><b>Este Voucher se imprimió " + response[1] + " veces.</b></br> Desea imprimirlo nuevamente?</span></center>";
-
-                    // Si el diálogo ya fue inicializado antes, destruirlo para evitar overlays/handlers colgados.
-                    try {
-                        if ($("#Voucher_dialog-message").hasClass("ui-dialog-content")) {
-                            $("#Voucher_dialog-message").dialog("destroy");
-                        }
-                    } catch (e1) { }
-
                     $("#Voucher_dialog-message").html(msg);
                     $("#Voucher_dialog-message").dialog({
                         modal: true,
-                        resizable: false,
-                        draggable: false,
-                        closeOnEscape: true,
-                        dialogClass: "mat-dialog mat-dialog--brandtitle",
                         buttons: {
                             Ok: function () {
-                                var $dlg = $(this);
-                                // Cerrar primero, luego imprimir (evita overlays bloqueando si el popup/print falla).
-                                $dlg.dialog("close");
-                                setTimeout(function () {
-                                    try { showVoucher(facturaId, TipoVoucher, bInfoAdicional); } catch (e2) { }
-                                }, 0);
+                                // No remover el nodo del DOM: se reutiliza si el usuario vuelve a imprimir.
+                                forceCloseDialog("#divSelectTipoVoucher");
+                                $(this).dialog("close");
+                                showVoucher(facturaId, TipoVoucher, bInfoAdicional);
                             },
                             Cancel: function () {
+                                forceCloseDialog("#divSelectTipoVoucher");
                                 $(this).dialog("close");
                             }
-                        },
-                        open: function () {
-                            // Defensivo: asegurar que el botón X cierre (hay overlays/z-index custom en el proyecto)
-                            var $dlg = $(this);
-                            try {
-                                var $w = $dlg.dialog("widget");
-                                $w.find(".ui-dialog-titlebar-close")
-                                    .off("click.matForceCloseVoucher")
-                                    .on("click.matForceCloseVoucher", function (e) {
-                                        e.preventDefault();
-                                        $dlg.dialog("close");
-                                    });
-                                $dlg.dialog("moveToTop");
-                            } catch (e3) { }
-                        },
-                        close: function () {
-                            // Limpiar wrapper/overlay correctamente sin remover el div del DOM (se reutiliza).
-                            try { $(this).dialog("destroy"); } catch (e4) { }
                         }
                     });
                 }
                 else {
-                    // Cerrar primero (por si window.open/print falla por popup blocker).
-                    try {
-                        if ($("#divSelectTipoVoucher").length && $("#divSelectTipoVoucher").hasClass("ui-dialog-content")) {
-                            $("#divSelectTipoVoucher").dialog("close");
-                        }
-                    } catch (e5) { }
-                    try { showVoucher(facturaId, TipoVoucher, bInfoAdicional); } catch (e6) { }
+                    showVoucher(facturaId, TipoVoucher, bInfoAdicional);
+                    forceCloseDialog("#divSelectTipoVoucher");
                 }
 
             }
@@ -693,17 +680,7 @@ function showVoucher(facturaId, TipoVoucher, bInfoAdicional)
     var url = "/PersonaCliente/Voucher?facturaid=" + facturaId + "&sTipoVoucher=" + TipoVoucher + "&bInfoAdicional=" + bInfoAdicional;
     var title = "Vouchers";
     var id = "Vouchers";
-    // Popups/print pueden ser bloqueados por el navegador: evitar excepciones que dejen overlays abiertos.
-    var w = null;
-    try { w = window.open(url, '_blank'); } catch (e) { w = null; }
-    if (w && typeof w.print === "function") {
-        try { w.focus(); } catch (e2) { }
-        try { w.print(); } catch (e3) { }
-    } else {
-        try {
-            (window.alertInfo || window.alert)("No se pudo abrir la ventana de impresión. Verifique el bloqueador de ventanas emergentes (popups).", "Atención");
-        } catch (e4) { }
-    }
+    window.open(url, '_blank').print();
 }
 
 $(document).on("click", "#btn-notacredito", function () {
@@ -995,128 +972,48 @@ $(document).on("click", "#btnReservarHabitacion", function () {
     
     var divLoading = "<div id='divFullLoading'></div>";
     $("#divReservaHabitacion").append(divLoading);
-    
+    //debugger
     $.ajax({
         url: "/ReservaHabitacion/SetReserva",
         data: { Desde: Desde, Hasta: Hasta, horadesde: HoraDesde, horahasta: HoraHasta, viajeid: viajeid, HabitacionID: HabitacionID, PasajeroID: PasajeroID, PasajeID:PasajeID },
         dataType: "text",
         success: function (data) {
-            try {
-                // Remover loading
-                $("#divFullLoading").remove();
-                
-                // Validar que data existe y tiene contenido
-                if (!data || typeof data !== 'string') {
-                    console.error("Error: Respuesta inválida del servidor", data);
-                    (window.alertError || window.alert)("Error: Respuesta inválida del servidor. Por favor, intente nuevamente.", "Error");
-                    return;
-                }
-                
-                var resultado = "";
-                var IdPasaje = "";
-                
-                // Validar longitud antes de acceder a caracteres
-                if (data.length >= 4) {
-                    for (var i = 0; i < 4; i++) {
-                        resultado = resultado + data[i];
-                    }
-                } else {
-                    console.error("Error: Respuesta demasiado corta", data);
-                    (window.alertError || window.alert)("Error: Respuesta del servidor incompleta. Por favor, intente nuevamente.", "Error");
-                    return;
-                }
-                
-                // Extraer PasajeID si existe (solo si la respuesta tiene al menos 42 caracteres)
-                if (data.length >= 42) {
-                    for (var i = 6; i <= 41; i++) {
-                        IdPasaje = IdPasaje + data[i];
-                    }
-                }
-                
-                // Cerrar diálogos de forma segura
-                try {
-                    if ($('#divReserva').length && $('#divReserva').hasClass('ui-dialog-content')) {
-                        $('#divReserva').dialog('close');
-                    }
-                } catch (e) {
-                    console.warn("Error al cerrar divReserva:", e);
-                }
-                
-                try {
-                    if ($('#idResHab').length && $('#idResHab').hasClass('ui-dialog-content')) {
-                        $('#idResHab').dialog('close');
-                    }
-                } catch (e) {
-                    console.warn("Error al cerrar idResHab:", e);
-                }
-                
-                if (resultado == "true") {
-                    // Llamar a funciones solo si existen
-                    try {
-                        if (typeof fnFiltrarHabitacionCambio === 'function') {
-                            fnFiltrarHabitacionCambio();
-                        }
-                    } catch (e) {
-                        console.warn("Error al llamar fnFiltrarHabitacionCambio:", e);
-                    }
-                    
-                    var pathname = window.location.pathname;
-                    
-                    if (pathname == "/Reserva/Index") {
-                        (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
-                    }
-                    else {
-                        try {
-                            if (typeof PopupDetalleFactura_Load === 'function') {
-                                PopupDetalleFactura_Load();
-                            } else if (typeof window.PopupDetalleFactura_Load === 'function') {
-                                window.PopupDetalleFactura_Load();
-                            }
-                        } catch (e) {
-                            console.warn("Error al llamar PopupDetalleFactura_Load:", e);
-                        }
-                        (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
-                    }
-                    
-                    // Recargar después de un breve delay para permitir que se muestre el mensaje
-                    setTimeout(function() {
-                        window.location.reload(true);
-                    }, 500);
+           
+            var resultado = "";
+            var IdPasaje = "";
+            //var countData = data.length;
+
+            for (var i = 0; i < 4; i++) {
+                resultado = resultado + data[i];
+            }
+
+            for (var i = 6; i <= 41; i++) {
+                IdPasaje = IdPasaje + data[i];
+            }
+           
+            $('#divReserva').dialog('close');
+
+            if (resultado == "true") {
+                fnFiltrarHabitacionCambio();
+                setTimeout(5000);
+
+                var pathname = window.location.pathname;
+
+                if (pathname == "/Reserva/Index") {
+                    (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
                 }
                 else {
-                    console.error("Error en reserva. Resultado:", resultado, "Respuesta completa:", data);
-                    (window.alertError || window.alert)("No se pudo realizar la reserva.", "Error");
+                    PopupDetalleFactura_Load();
+                    (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
                 }
-            } catch (error) {
-                console.error("Error al procesar respuesta de reserva:", error);
-                $("#divFullLoading").remove();
-                (window.alertError || window.alert)("Error inesperado al procesar la reserva. Por favor, intente nuevamente.", "Error");
+                window.location.reload(true);
             }
-        },
-        error: function(xhr, status, error) {
-            try {
-                $("#divFullLoading").remove();
-            } catch (e) {
-                console.warn("Error al remover loading:", e);
+            else {
+                (window.alertError || window.alert)("No se pudo realizar la reserva.", "Error");
             }
+
             
-            console.error("Error en petición AJAX de reserva:", {
-                status: status,
-                error: error,
-                responseText: xhr.responseText,
-                statusCode: xhr.status
-            });
-            
-            var errorMessage = "Error al comunicarse con el servidor.";
-            if (xhr.status === 0) {
-                errorMessage = "Error de conexión. Verifique su conexión a internet.";
-            } else if (xhr.status >= 500) {
-                errorMessage = "Error del servidor. Por favor, contacte al administrador.";
-            } else if (xhr.status === 404) {
-                errorMessage = "Servicio no encontrado. Por favor, contacte al administrador.";
-            }
-            
-            (window.alertError || window.alert)(errorMessage, "Error");
+            $('#idResHab').dialog('close');
         }
     });
 
