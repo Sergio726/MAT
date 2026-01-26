@@ -9,6 +9,10 @@ header, footer, nav, section {
     display: block;
 }
 
+/* Hidden dialogs - used for jQuery UI dialog containers before initialization */
+.dialog-hidden {
+    display: none;
+}
 
 /* Styles for basic forms
 -----------------------------------------------------------*/

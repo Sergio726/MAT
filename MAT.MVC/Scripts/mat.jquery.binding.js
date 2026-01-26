@@ -558,6 +558,10 @@ window.forceCloseDialog = function forceCloseDialog(selector) {
         if ($el.data('ui-dialog')) {
             $el.dialog('destroy');
         }
+
+        // Ocultar el elemento original después de destruir el diálogo
+        // Esto previene que el div quede visible si no tiene CSS que lo oculte
+        $el.hide();
     } catch (e) {
         console.log('Error al cerrar diálogo:', e);
     }
