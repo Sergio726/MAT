@@ -1,4 +1,4 @@
-﻿@*@model List<MAT.MVC.Models.PasajeModel>*@
+@*@model List<MAT.MVC.Models.PasajeModel>*@
 @model List<ReservaStandard>
 
 @using MAT.MVC.Models
@@ -614,7 +614,14 @@
 
 
     function showPreReservas() {
-        $("#divPreReservas").dialog({
+        var $dialog = $("#divPreReservas");
+        
+        // Si el diálogo ya existe, destruirlo primero para evitar conflictos
+        if ($dialog.hasClass('ui-dialog-content')) {
+            $dialog.dialog('destroy');
+        }
+        
+        $dialog.dialog({
             autoOpen: false,
             modal: true,
             width: "70%",
@@ -627,9 +634,23 @@
             draggable: true,
             classes: {
                 "ui-dialog": "modern-dialog-prereservas"
+            },
+            open: function() {
+                // Asegurar que el botón de cerrar funcione correctamente
+                var $closeBtn = $(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close');
+                $closeBtn.off('click').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $dialog.dialog('close');
+                });
+            },
+            close: function() {
+                // Limpiar eventos al cerrar
+                $(this).dialog('destroy');
             }
         });
-        $("#divPreReservas").dialog("open");
+        
+        $dialog.dialog("open");
     }
     function reNewReserva(FacturaID) {
         if (FacturaID !="") {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -353,20 +353,70 @@ namespace MAT.MVC.Controllers.Reserva
             string[] sResult = new string[2];
             DataSet ds = new DataSet();
             string json = "";
+            
             try
             {
+                // Validar que ViajeID no esté vacío
+                if (string.IsNullOrWhiteSpace(ViajeID))
+                {
+                    sResult[0] = "";
+                    sResult[1] = "Error: No se proporcionó un ID de viaje válido.";
+                    return Json(new
+                    {
+                        jsTable = sResult[0],
+                        Error = sResult[1]
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                // Validar que ViajeID sea un GUID válido
+                Guid viajeGuid;
+                if (!Guid.TryParse(ViajeID, out viajeGuid))
+                {
+                    sResult[0] = "";
+                    sResult[1] = "Error: El ID de viaje proporcionado no es válido.";
+                    return Json(new
+                    {
+                        jsTable = sResult[0],
+                        Error = sResult[1]
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
                 ds = MVC.Models.ListaEsperaModel.Method.GetListaEspera(ViajeID);
+                
+                // Validar que el DataSet no sea null
+                if (ds == null)
+                {
+                    sResult[0] = "";
+                    sResult[1] = "Error: No se pudieron obtener los datos de la lista de espera.";
+                    return Json(new
+                    {
+                        jsTable = sResult[0],
+                        Error = sResult[1]
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
                 json = JsonConvert.SerializeObject(ds, Formatting.Indented);
                 
                 sResult[0] = json;
                 sResult[1] = "";
+            }
+            catch (FormatException fe)
+            {
+                // Error específico de formato (GUID inválido)
+                sResult[0] = "";
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(fe, "ReservaController.GetWatinList - Formato inválido");
+            }
+            catch (SqlException sqlEx)
+            {
+                // Error específico de base de datos
+                sResult[0] = "";
+                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(sqlEx, "ReservaController.GetWatinList - Error de base de datos");
             }
             catch (Exception e)
             {
                 sResult[0] = "";
                 sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.GetWatinList");
             }
-
 
             return Json(new
             {

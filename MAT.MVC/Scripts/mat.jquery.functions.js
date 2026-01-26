@@ -1,4 +1,4 @@
-﻿function SelectDate() {
+function SelectDate() {
 
 }
 
@@ -335,6 +335,17 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
         open: function() {
             ModalConfig.setupOverlayClose(dialogid);
 
+            // Asegurar que el botón de cerrar funcione correctamente para todos los diálogos
+            var $dialog = $(this);
+            var $closeBtn = $dialog.closest('.ui-dialog').find('.ui-dialog-titlebar-close');
+            if ($closeBtn.length) {
+                $closeBtn.off('click.matDialogClose').on('click.matDialogClose', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $dialog.dialog('close');
+                });
+            }
+
             // Fullscreen por defecto para SeleccionarPasajero (maximiza el popin)
             if (dialogid === "SeleccionPasajero") {
                 ModalConfig.setupFullscreen(dialogid, true);
@@ -577,6 +588,17 @@ function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize, optio
         closeOnEscape: true,
         open: function() {
             ModalConfig.setupOverlayClose(dialogid);
+            
+            // Asegurar que el botón de cerrar funcione correctamente
+            var $dialog = $(this);
+            var $closeBtn = $dialog.closest('.ui-dialog').find('.ui-dialog-titlebar-close');
+            if ($closeBtn.length) {
+                $closeBtn.off('click.matDialogClose').on('click.matDialogClose', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $dialog.dialog('close');
+                });
+            }
         },
         close: function () {
             $(document).off('click.modalOverlay');
@@ -649,6 +671,17 @@ function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
         closeOnEscape: true,
         open: function() {
             ModalConfig.setupOverlayClose(dialogid);
+            
+            // Asegurar que el botón de cerrar funcione correctamente
+            var $dialog = $(this);
+            var $closeBtn = $dialog.closest('.ui-dialog').find('.ui-dialog-titlebar-close');
+            if ($closeBtn.length) {
+                $closeBtn.off('click.matDialogClose').on('click.matDialogClose', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $dialog.dialog('close');
+                });
+            }
 
             if (dialogid === "FormReserva") {
                 var $dlg = $("#" + dialogid);

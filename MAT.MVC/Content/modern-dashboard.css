@@ -341,7 +341,8 @@
     text-align: center !important;
     padding: 0.75rem !important;
     border-radius: 6px !important;
-    color: var(--text-primary) !important;
+    color: #1f2937 !important;
+    font-weight: 600 !important;
     transition: all 0.2s ease !important;
 }
 
@@ -361,6 +362,23 @@
     background: var(--brand-primary) !important;
     color: white !important;
     font-weight: 600 !important;
+}
+
+/* Días deshabilitados (sin viajes disponibles) */
+.modern-calendar-container .ui-datepicker-calendar td.ui-state-disabled a,
+.modern-calendar-container .ui-datepicker-calendar td.ui-state-disabled span {
+    color: #9ca3af !important;
+    opacity: 0.6 !important;
+    font-weight: normal !important;
+    cursor: not-allowed !important;
+}
+
+/* Días de otros meses */
+.modern-calendar-container .ui-datepicker-calendar td.ui-datepicker-other-month span,
+.modern-calendar-container .ui-datepicker-calendar td.ui-datepicker-other-month a {
+    color: #d1d5db !important;
+    opacity: 0.5 !important;
+    font-weight: normal !important;
 }
 
 /* Estilos para la sección de viajes */

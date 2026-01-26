@@ -1,4 +1,4 @@
-﻿$(document).on("click", "#btn-resumen-linea", function () {
+$(document).on("click", "#btn-resumen-linea", function () {
     var dataid = $(this).data("comprobanteid");
     var url = "/CuentaCorriente/DetalleComprobante?id=" + dataid;
     var dialogid = "DetalleComprobante";
@@ -995,48 +995,128 @@ $(document).on("click", "#btnReservarHabitacion", function () {
     
     var divLoading = "<div id='divFullLoading'></div>";
     $("#divReservaHabitacion").append(divLoading);
-    //debugger
+    
     $.ajax({
         url: "/ReservaHabitacion/SetReserva",
         data: { Desde: Desde, Hasta: Hasta, horadesde: HoraDesde, horahasta: HoraHasta, viajeid: viajeid, HabitacionID: HabitacionID, PasajeroID: PasajeroID, PasajeID:PasajeID },
         dataType: "text",
         success: function (data) {
-           
-            var resultado = "";
-            var IdPasaje = "";
-            //var countData = data.length;
-
-            for (var i = 0; i < 4; i++) {
-                resultado = resultado + data[i];
-            }
-
-            for (var i = 6; i <= 41; i++) {
-                IdPasaje = IdPasaje + data[i];
-            }
-           
-            $('#divReserva').dialog('close');
-
-            if (resultado == "true") {
-                fnFiltrarHabitacionCambio();
-                setTimeout(5000);
-
-                var pathname = window.location.pathname;
-
-                if (pathname == "/Reserva/Index") {
-                    (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
+            try {
+                // Remover loading
+                $("#divFullLoading").remove();
+                
+                // Validar que data existe y tiene contenido
+                if (!data || typeof data !== 'string') {
+                    console.error("Error: Respuesta inválida del servidor", data);
+                    (window.alertError || window.alert)("Error: Respuesta inválida del servidor. Por favor, intente nuevamente.", "Error");
+                    return;
+                }
+                
+                var resultado = "";
+                var IdPasaje = "";
+                
+                // Validar longitud antes de acceder a caracteres
+                if (data.length >= 4) {
+                    for (var i = 0; i < 4; i++) {
+                        resultado = resultado + data[i];
+                    }
+                } else {
+                    console.error("Error: Respuesta demasiado corta", data);
+                    (window.alertError || window.alert)("Error: Respuesta del servidor incompleta. Por favor, intente nuevamente.", "Error");
+                    return;
+                }
+                
+                // Extraer PasajeID si existe (solo si la respuesta tiene al menos 42 caracteres)
+                if (data.length >= 42) {
+                    for (var i = 6; i <= 41; i++) {
+                        IdPasaje = IdPasaje + data[i];
+                    }
+                }
+                
+                // Cerrar diálogos de forma segura
+                try {
+                    if ($('#divReserva').length && $('#divReserva').hasClass('ui-dialog-content')) {
+                        $('#divReserva').dialog('close');
+                    }
+                } catch (e) {
+                    console.warn("Error al cerrar divReserva:", e);
+                }
+                
+                try {
+                    if ($('#idResHab').length && $('#idResHab').hasClass('ui-dialog-content')) {
+                        $('#idResHab').dialog('close');
+                    }
+                } catch (e) {
+                    console.warn("Error al cerrar idResHab:", e);
+                }
+                
+                if (resultado == "true") {
+                    // Llamar a funciones solo si existen
+                    try {
+                        if (typeof fnFiltrarHabitacionCambio === 'function') {
+                            fnFiltrarHabitacionCambio();
+                        }
+                    } catch (e) {
+                        console.warn("Error al llamar fnFiltrarHabitacionCambio:", e);
+                    }
+                    
+                    var pathname = window.location.pathname;
+                    
+                    if (pathname == "/Reserva/Index") {
+                        (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
+                    }
+                    else {
+                        try {
+                            if (typeof PopupDetalleFactura_Load === 'function') {
+                                PopupDetalleFactura_Load();
+                            } else if (typeof window.PopupDetalleFactura_Load === 'function') {
+                                window.PopupDetalleFactura_Load();
+                            }
+                        } catch (e) {
+                            console.warn("Error al llamar PopupDetalleFactura_Load:", e);
+                        }
+                        (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
+                    }
+                    
+                    // Recargar después de un breve delay para permitir que se muestre el mensaje
+                    setTimeout(function() {
+                        window.location.reload(true);
+                    }, 500);
                 }
                 else {
-                    PopupDetalleFactura_Load();
-                    (window.alertSuccess || window.alert)("Reserva exitosa.", "Éxito");
+                    console.error("Error en reserva. Resultado:", resultado, "Respuesta completa:", data);
+                    (window.alertError || window.alert)("No se pudo realizar la reserva.", "Error");
                 }
-                window.location.reload(true);
+            } catch (error) {
+                console.error("Error al procesar respuesta de reserva:", error);
+                $("#divFullLoading").remove();
+                (window.alertError || window.alert)("Error inesperado al procesar la reserva. Por favor, intente nuevamente.", "Error");
             }
-            else {
-                (window.alertError || window.alert)("No se pudo realizar la reserva.", "Error");
+        },
+        error: function(xhr, status, error) {
+            try {
+                $("#divFullLoading").remove();
+            } catch (e) {
+                console.warn("Error al remover loading:", e);
             }
-
             
-            $('#idResHab').dialog('close');
+            console.error("Error en petición AJAX de reserva:", {
+                status: status,
+                error: error,
+                responseText: xhr.responseText,
+                statusCode: xhr.status
+            });
+            
+            var errorMessage = "Error al comunicarse con el servidor.";
+            if (xhr.status === 0) {
+                errorMessage = "Error de conexión. Verifique su conexión a internet.";
+            } else if (xhr.status >= 500) {
+                errorMessage = "Error del servidor. Por favor, contacte al administrador.";
+            } else if (xhr.status === 404) {
+                errorMessage = "Servicio no encontrado. Por favor, contacte al administrador.";
+            }
+            
+            (window.alertError || window.alert)(errorMessage, "Error");
         }
     });
 

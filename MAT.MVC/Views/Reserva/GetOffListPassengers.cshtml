@@ -293,56 +293,131 @@
 
     var tblWaitingList;
     function Load_tblWaitingList(ViajeID) {
-        if (tblWaitingList != undefined) {
-            tblWaitingList.clear();
-            tblWaitingList.draw();
-            tblWaitingList.destroy();
+        // Validar que ViajeID existe
+        if (!ViajeID || ViajeID.trim() === '') {
+            (window.alertError || window.alert)("Error: No se proporcionó un ID de viaje válido.", "Error");
+            console.error("Load_tblWaitingList: ViajeID vacío o inválido");
+            return;
         }
 
-        var jTables = '';
+        // Destruir tabla existente si existe
+        if (tblWaitingList != undefined) {
+            try {
+                tblWaitingList.clear();
+                tblWaitingList.draw();
+                tblWaitingList.destroy();
+            } catch (e) {
+                console.warn("Error al destruir tabla existente:", e);
+            }
+        }
 
         $.ajax({
             url: "/Reserva/GetWatinList",
             data: { ViajeID: ViajeID },
             dataType: "json",
             success: function (data) {
-                if (data.Error == "") {
-                    jTables = JSON.parse(data.jsTable);
-                } else {
-                    (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
-                    console.log(data.Error);
-                }
-
-                tblWaitingList = $("#tblWaitingList").DataTable({
-                    "data": jTables.Table,
-                    "columns": [
-                        { "data": "Cliente" },
-                        { "data": "Vendedor" },
-                        { "data": "Fecha" },
-                        { "data": "Observacion", "className": "col-observacion" },
-                        {
-                            "data": "Opciones",
-                            "mRender": function (data, type, row) {
-                                return '<button type="button" class="btn-delete-row" LinkId="' + row.Id + '" onclick="deleteItemRow(this);" title="Quitar"><i class="bi bi-x-lg"></i></button>';
-                            }
-                        }
-                    ],
-                    "columnDefs": [
-                        { "targets": 0, "width": "22%" },
-                        { "targets": 1, "width": "14%" },
-                        { "targets": 2, "width": "10%" },
-                        { "targets": 3, "width": "50%" }, /* Observaciones más grande */
-                        { "targets": 4, "width": "4%", "orderable": false }
-                    ],
-                    "bAutoWidth": false,
-                    "pageLength": 25,
-                    "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+                try {
+                    // Verificar si hay error
+                    if (data.Error && data.Error.trim() !== "") {
+                        console.error("Error al cargar lista de espera:", data.Error);
+                        var errorMsg = data.Error;
+                        // Mostrar el mensaje de error completo si está disponible
+                        (window.alertError || window.alert)(errorMsg, "Error");
+                        return; // Salir temprano, no crear la tabla
                     }
+
+                    // Validar que jsTable existe y no está vacío
+                    if (!data.jsTable || data.jsTable.trim() === '') {
+                        console.warn("Respuesta vacía del servidor");
+                        // Crear tabla vacía en lugar de fallar
+                        var emptyData = { Table: [] };
+                        initializeDataTable(emptyData);
+                        return;
+                    }
+
+                    // Parsear JSON de forma segura
+                    var jTables;
+                    try {
+                        jTables = JSON.parse(data.jsTable);
+                    } catch (parseError) {
+                        console.error("Error al parsear JSON:", parseError);
+                        console.error("JSON recibido:", data.jsTable);
+                        (window.alertError || window.alert)("Error al procesar los datos recibidos. Por favor, intente nuevamente.", "Error");
+                        return;
+                    }
+
+                    // Validar estructura de datos
+                    if (!jTables || !jTables.Table) {
+                        console.error("Estructura de datos inválida:", jTables);
+                        (window.alertError || window.alert)("Error: Estructura de datos inválida. Por favor, contacte al administrador.", "Error");
+                        return;
+                    }
+
+                    // Inicializar DataTable con los datos válidos
+                    initializeDataTable(jTables);
+                } catch (error) {
+                    console.error("Error inesperado al procesar respuesta:", error);
+                    (window.alertError || window.alert)("Ha ocurrido un error inesperado. Por favor, intente nuevamente.", "Error");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error en petición AJAX:", {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText,
+                    statusCode: xhr.status
                 });
+                
+                var errorMessage = "Error al comunicarse con el servidor.";
+                if (xhr.status === 0) {
+                    errorMessage = "Error de conexión. Verifique su conexión a internet.";
+                } else if (xhr.status >= 500) {
+                    errorMessage = "Error del servidor. Por favor, contacte al administrador.";
+                } else if (xhr.status === 404) {
+                    errorMessage = "Servicio no encontrado. Por favor, contacte al administrador.";
+                } else if (xhr.status === 400) {
+                    errorMessage = "Solicitud inválida. Verifique los datos e intente nuevamente.";
+                }
+                
+                (window.alertError || window.alert)(errorMessage, "Error");
             }
         });
-    };
+    }
+
+    function initializeDataTable(jTables) {
+        try {
+            tblWaitingList = $("#tblWaitingList").DataTable({
+                "data": jTables.Table || [],
+                "columns": [
+                    { "data": "Cliente" },
+                    { "data": "Vendedor" },
+                    { "data": "Fecha" },
+                    { "data": "Observacion", "className": "col-observacion" },
+                    {
+                        "data": "Opciones",
+                        "mRender": function (data, type, row) {
+                            return '<button type="button" class="btn-delete-row" LinkId="' + row.Id + '" onclick="deleteItemRow(this);" title="Quitar"><i class="bi bi-x-lg"></i></button>';
+                        }
+                    }
+                ],
+                "columnDefs": [
+                    { "targets": 0, "width": "22%" },
+                    { "targets": 1, "width": "14%" },
+                    { "targets": 2, "width": "10%" },
+                    { "targets": 3, "width": "50%" }, /* Observaciones más grande */
+                    { "targets": 4, "width": "4%", "orderable": false }
+                ],
+                "bAutoWidth": false,
+                "pageLength": 25,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+                }
+            });
+        } catch (error) {
+            console.error("Error al inicializar DataTable:", error);
+            (window.alertError || window.alert)("Error al inicializar la tabla. Por favor, intente nuevamente.", "Error");
+        }
+    }
 
     function deleteItemRow(link) {
         RowId = $(link).attr('linkid').toString();
