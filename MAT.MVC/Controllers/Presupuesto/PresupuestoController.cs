@@ -732,11 +732,33 @@ namespace MAT.MVC.Controllers.Presupuesto
 
                 MATLogger.Log($"PresupuestoController.GetDetalle - Presupuesto encontrado: {presupuesto.CodigoSeguimiento}", 2);
 
+                // Obtener datos del cliente por DNI
+                string clienteNombre = string.Empty;
+                string clienteTelefono = string.Empty;
+                if (!string.IsNullOrWhiteSpace(presupuesto.DniCliente))
+                {
+                    try
+                    {
+                        var cliente = PersonaClienteMethod.PersonaClienteGetByDNI(presupuesto.DniCliente);
+                        if (cliente != null && !string.IsNullOrEmpty(cliente.PersonaId))
+                        {
+                            clienteNombre = $"{cliente.Apellido} {cliente.Nombre}".Trim();
+                            clienteTelefono = !string.IsNullOrWhiteSpace(cliente.Celular) ? cliente.Celular : cliente.Telefono;
+                        }
+                    }
+                    catch (Exception exCliente)
+                    {
+                        MATLogger.Log($"Error al obtener datos del cliente: {exCliente.Message}", 1);
+                    }
+                }
+
                 var resultado = new
                 {
                     presupuestoId = presupuesto.PresupuestoID.ToString(),
                     codigoSeguimiento = presupuesto.CodigoSeguimiento,
                     dniCliente = presupuesto.DniCliente,
+                    clienteNombre = clienteNombre,
+                    clienteTelefono = clienteTelefono,
                     vendedorOrigenNombre = presupuesto.VendedorOrigenNombre ?? string.Empty,
                     vendedorIdOrigen = presupuesto.VendedorIdOrigen.ToString(),
                     montoPactado = presupuesto.MontoPactado,

@@ -788,11 +788,27 @@
         // Grid de información
         html += '<div class="row g-4 mb-4">';
         
-        // Información del cliente
-        html += '<div class="col-md-6">';
+        // Información del cliente - DNI, Nombre y Teléfono
+        html += '<div class="col-md-12">';
         html += '<div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">';
-        html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">DNI Cliente</div>';
-        html += '<div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">' + (p.dniCliente || 'N/A') + '</div>';
+        html += '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.75rem;">Datos del Cliente</div>';
+        html += '<div class="row g-3">';
+        // DNI
+        html += '<div class="col-md-4">';
+        html += '<div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.25rem;">DNI</div>';
+        html += '<div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">' + (p.dniCliente || '-') + '</div>';
+        html += '</div>';
+        // Nombre
+        html += '<div class="col-md-4">';
+        html += '<div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.25rem;">Nombre</div>';
+        html += '<div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">' + (p.clienteNombre || '-') + '</div>';
+        html += '</div>';
+        // Teléfono
+        html += '<div class="col-md-4">';
+        html += '<div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.25rem;">Teléfono</div>';
+        html += '<div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">' + (p.clienteTelefono || '-') + '</div>';
+        html += '</div>';
+        html += '</div>';
         html += '</div>';
         html += '</div>';
         
@@ -879,22 +895,68 @@
         // Botones de acción
         html += '<div class="d-flex justify-content-end gap-2 mt-4" style="border-top: 2px solid var(--border-color); padding-top: 1.5rem;">';
         html += '<button class="btn-modern btn-modern-secondary" onclick="copiarCodigo(\'' + p.codigoSeguimiento + '\')"><i class="bi bi-clipboard"></i> Copiar Código</button>';
-        html += '<button class="btn-modern btn-modern-secondary" onclick="$(\'#modalDetallePresupuesto\').dialog(\'close\')"><i class="bi bi-x-lg"></i> Cerrar</button>';
+        html += '<button class="btn-modern btn-modern-secondary" onclick="cerrarModalDetalle()"><i class="bi bi-x-lg"></i> Cerrar</button>';
         html += '</div>';
 
         html += '</div>';
 
         $('#contenidoDetallePresupuesto').html(html);
-        
+
+        // Destruir diálogo previo si existe
+        if ($('#modalDetallePresupuesto').data('ui-dialog')) {
+            $('#modalDetallePresupuesto').dialog('destroy');
+        }
+
         $('#modalDetallePresupuesto').dialog({
-            title: '<i class="bi bi-file-earmark-text"></i> Detalle de Presupuesto',
+            title: 'Detalle de Presupuesto',
             modal: true,
             width: '70%',
             maxWidth: '900px',
             resizable: true,
             position: { my: 'center', at: 'center', of: window },
-            dialogClass: 'modern-dialog'
+            dialogClass: 'modern-dialog',
+            close: function() {
+                // Limpiar overlay al cerrar
+                $('.ui-widget-overlay').remove();
+            },
+            open: function() {
+                // Agregar icono al título después de que se abra el diálogo
+                var $dialog = $(this).closest('.ui-dialog');
+                var $titlebar = $dialog.find('.ui-dialog-title');
+                if ($titlebar.find('i').length === 0) {
+                    $titlebar.prepend('<i class="bi bi-file-earmark-text" style="margin-right: 8px;"></i>');
+                }
+
+                // Reasignar el evento del botón X para usar cerrarModalDetalle
+                $dialog.find('.ui-dialog-titlebar-close').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    cerrarModalDetalle();
+                });
+            }
         });
+    }
+
+    function cerrarModalDetalle() {
+        // Ocultar el diálogo y el overlay con !important para forzar el cierre
+        var dialog = document.querySelector('.ui-dialog');
+        var overlay = document.querySelector('.ui-widget-overlay');
+
+        if (dialog) {
+            dialog.style.setProperty('display', 'none', 'important');
+        }
+        if (overlay) {
+            overlay.style.setProperty('display', 'none', 'important');
+        }
+
+        // Destruir el diálogo de jQuery UI si existe
+        try {
+            if ($('#modalDetallePresupuesto').data('ui-dialog')) {
+                $('#modalDetallePresupuesto').dialog('destroy');
+            }
+        } catch (e) {
+            console.log('Error al destruir dialog:', e);
+        }
     }
 
     function copiarCodigo(codigo) {
