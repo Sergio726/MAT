@@ -500,7 +500,7 @@
                 <i class="bi bi-cash-stack"></i>
                 Pago Total
             </a>
-            <a href="#" id="btn-descuentoRecargo" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-secondary" onclick="javascript: $('#divDescuentoRecargo').dialog({width: 400,modal: true});">
+            <a href="#" id="btn-descuentoRecargo" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-secondary" onclick="javascript: $('#divDescuentoRecargo').removeClass('dialog-hidden').dialog({width: 400, modal: true, close: function() { $(this).addClass('dialog-hidden').dialog('destroy'); }});">
                 <i class="bi bi-percent"></i>
                 Descuento/Recargo
             </a>
@@ -580,6 +580,16 @@
 
 <script type="text/javascript">
     $(function () {
+        // Cerrar diálogos hijos cuando el padre (#Detalles) se cierre
+        $("#Detalles").on("dialogclose", function() {
+            if ($("#divDescuentoRecargo").length && $("#divDescuentoRecargo").hasClass("ui-dialog-content")) {
+                $("#divDescuentoRecargo").addClass("dialog-hidden").dialog("destroy");
+            }
+            if ($("#divSelectTipoVoucher").length && $("#divSelectTipoVoucher").hasClass("ui-dialog-content")) {
+                $("#divSelectTipoVoucher").addClass("dialog-hidden").dialog("destroy");
+            }
+        });
+
         if ($(".btn-editar-habitacion").length != $(".btn-editar-butaca").length) {
             (window.alertInfo || window.alert)("Opción Imprimir Voucher no disponible. Debe reservar las habitaciones para el/los pasajero/s correspondientes.", "Atención");
             $("#btn-imprimirvouchers").hide();
