@@ -451,6 +451,21 @@
         }
     }
 
+    // Helper para parsear montos con formato ARS (ej: "1.234.567,89")
+    function parseMonto(value) {
+        if (!value) return 0;
+
+        // Normalizar: quitar todos los separadores de miles y usar punto como separador decimal
+        var normalized = value
+            .toString()
+            .trim()
+            .replace(/\./g, '')   // quitar TODOS los puntos (miles)
+            .replace(',', '.');   // cambiar coma decimal por punto
+
+        var parsed = parseFloat(normalized);
+        return isNaN(parsed) ? 0 : parsed;
+    }
+
     function selectCotizacion(tipo) {
         // Actualizar visual de radio cards
         $(".cotizador-radio-card").removeClass("active");
@@ -509,7 +524,7 @@
                 break;
 
             case "personalizado":
-                dCotizacion = parseFloat($("#txtCotizacion").val().replace(',', '#').replace('.', '').replace('#', '.'));
+                dCotizacion = parseMonto($("#txtCotizacion").val());
                 if (isNaN(dCotizacion) || dCotizacion <= 0) {
                     mostrarError("Ingrese una cotización válida.");
                     return;
@@ -519,8 +534,8 @@
         }
 
         // Realizar el cálculo
-        var dARG = parseFloat($("#MontoInt").val().replace(',', '#').replace('.', '').replace('#', '.')) || 0;
-        var dUSD = parseFloat($("#MontoOut").val().replace(',', '#').replace('.', '').replace('#', '.')) || 0;
+        var dARG = parseMonto($("#MontoInt").val());
+        var dUSD = parseMonto($("#MontoOut").val());
         var dtotal = 0;
 
         if (dARG == 0 && dUSD > 0) {
