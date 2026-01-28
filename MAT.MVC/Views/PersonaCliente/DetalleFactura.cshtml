@@ -161,6 +161,40 @@
         opacity: 0.6;
         cursor: not-allowed;
     }
+    .btn-cambiar-pasajero {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+    .btn-cambiar-pasajero:hover {
+        background: #2563eb;
+        color: white;
+    }
+    .pasajero-resultado-item {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .pasajero-resultado-item:hover {
+        background: var(--bg-secondary, #f3f4f6);
+    }
+    .pasajero-resultado-item.selected {
+        background: #dbeafe;
+        border-left: 3px solid #2563eb;
+    }
+    .pasajero-resultado-item:last-child {
+        border-bottom: none;
+    }
+    .pasajero-resultado-nombre {
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        font-size: 0.875rem;
+    }
+    .pasajero-resultado-detalle {
+        font-size: 0.75rem;
+        color: var(--text-secondary, #6b7280);
+        margin-top: 0.25rem;
+    }
     .factura-actions {
         display: flex;
         flex-wrap: wrap;
@@ -364,6 +398,9 @@
                         <td>@item.PasajeroNombre @item.PasajeroApellido</td>
                         <td>
                             <div style="display: flex; gap: 0.25rem;">
+                                <a href="#" class="btn-action-icon btn-cambiar-pasajero" data-pasaje="@item.PasajeID" data-pasajero-actual="@item.PasajeroNombre @item.PasajeroApellido" data-pasajero-id="@item.PasajeroID" title="Cambiar Pasajero">
+                                    <i class="bi bi-person-badge"></i>
+                                </a>
                                 <a href="#" class="btn-action-icon btn-editar-butaca" id="btn-editar-butaca" data-anterior="@item.ButacaID" data-pasaje="@item.PasajeID" title="Editar Butaca">
                                     <i class="bi bi-pencil"></i>
                                 </a>
@@ -540,8 +577,6 @@
     </div>
 </div>
 
-<div id="Voucher_dialog-message" title="Atencion">
-</div>
 
 <div id="divDescuentoRecargo" title="Descuento/Recargo" class="dialog-hidden">
     <div class="dialog-content">
@@ -575,6 +610,53 @@
     </div>
 </div>
 
+<!-- Dialogo: Código de seguridad para eliminar pasajero -->
+<div id="divEliminarPasajeroCodigo" title="Código de seguridad" class="dialog-hidden">
+    <div class="dialog-content">
+        <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 1rem;">
+            Para eliminar al pasajero de la factura, ingrese el código de seguridad asignado por el administrador del sistema.
+        </p>
+        <div class="form-group">
+            <label for="txtCodigoEliminarPasajero">Código de seguridad</label>
+            <input type="password" id="txtCodigoEliminarPasajero" autocomplete="off" />
+        </div>
+        <input type="hidden" id="hdnEliminarPasajero_PasajeID" />
+        <input type="hidden" id="hdnEliminarPasajero_FacturaID" />
+        <div style="margin-top: 1rem; text-align: right;">
+            <button type="button" id="btnConfirmarEliminarPasajero" class="btn-factura btn-factura-danger">
+                <i class="bi bi-trash"></i>
+                Eliminar pasajero
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Dialogo: Cambiar pasajero -->
+<div id="divCambiarPasajero" title="Cambiar Pasajero" class="dialog-hidden">
+    <div class="dialog-content">
+        <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 1rem;">
+            Busque y seleccione el nuevo pasajero que ocupará esta butaca.
+        </p>
+        <div class="form-group">
+            <label for="txtBuscarPasajero">Buscar pasajero (nombre, apellido o documento)</label>
+            <input type="text" id="txtBuscarPasajero" placeholder="Ingrese nombre, apellido o documento..." autocomplete="off" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.375rem; font-size: 0.875rem;" />
+        </div>
+        <div id="divResultadosPasajeros" style="max-height: 300px; overflow-y: auto; margin-top: 1rem; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.375rem; padding: 0.5rem;">
+            <p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;">
+                Ingrese al menos 2 caracteres para buscar
+            </p>
+        </div>
+        <input type="hidden" id="hdnCambiarPasajero_PasajeID" />
+        <input type="hidden" id="hdnCambiarPasajero_PasajeroActualID" />
+        <div style="margin-top: 1rem; text-align: right;">
+            <button type="button" id="btnConfirmarCambiarPasajero" class="btn-factura btn-factura-primary" disabled>
+                <i class="bi bi-check-lg"></i>
+                Confirmar cambio
+            </button>
+        </div>
+    </div>
+</div>
+
 <input type="hidden" id="hdnTotalPagos" value="@dTotalPagos" />
 <input type="hidden" id="hdnViajeMonedaTipo" value="@Model.MonedaTipo" />
 
@@ -587,6 +669,12 @@
             }
             if ($("#divSelectTipoVoucher").length && $("#divSelectTipoVoucher").hasClass("ui-dialog-content")) {
                 $("#divSelectTipoVoucher").addClass("dialog-hidden").dialog("destroy");
+            }
+            if ($("#divEliminarPasajeroCodigo").length && $("#divEliminarPasajeroCodigo").hasClass("ui-dialog-content")) {
+                $("#divEliminarPasajeroCodigo").addClass("dialog-hidden").dialog("destroy");
+            }
+            if ($("#divCambiarPasajero").length && $("#divCambiarPasajero").hasClass("ui-dialog-content")) {
+                $("#divCambiarPasajero").addClass("dialog-hidden").dialog("destroy");
             }
         });
 
@@ -637,70 +725,241 @@
             var facturaID = $(this).data("factura");
             var pasajeroNombre = $(this).data("pasajero");
 
+            // Guardar IDs seleccionados y abrir popin para pedir código
+            $("#hdnEliminarPasajero_PasajeID").val(pasajeID);
+            $("#hdnEliminarPasajero_FacturaID").val(facturaID);
+            $("#txtCodigoEliminarPasajero").val("");
+
+            $("#divEliminarPasajeroCodigo")
+                .removeClass("dialog-hidden")
+                .dialog({
+                    modal: true,
+                    width: 420,
+                    resizable: false,
+                    close: function () {
+                        $("#divEliminarPasajeroCodigo").addClass("dialog-hidden").dialog("destroy");
+                    }
+                });
+
+            return false;
+        });
+
+        // Confirmar eliminación de pasajero (con código)
+        $(document).on("click", "#btnConfirmarEliminarPasajero", function (e) {
+            e.preventDefault();
+
+            var pasajeID = $("#hdnEliminarPasajero_PasajeID").val();
+            var facturaID = $("#hdnEliminarPasajero_FacturaID").val();
+            var code = $("#txtCodigoEliminarPasajero").val();
+
+            if (!code) {
+                return (window.alertInfo || window.alert)("Debe ingresar el código de seguridad.", "Validación");
+            }
+
             var $btn = $(this);
             var originalHtml = $btn.html();
 
-            confirm(
-                "¿Está seguro que desea eliminar al pasajero " + pasajeroNombre + " de esta factura?\n\nEsta acción:\n- Eliminará el pasajero de la factura\n- Liberará la butaca asignada\n- Liberará la habitación si tiene una asignada\n- Actualizará el monto total de la factura\n\nEsta acción no se puede deshacer.",
-                "Atención",
-                function () {
-                    // OK
-                    var $dlg = $(this);
-                    $dlg.dialog("close");
-                    $dlg.remove();
+            $btn.html('<i class="bi bi-hourglass-split"></i>').prop("disabled", true);
 
-                    // Mostrar loading
-                    $btn.html('<i class="bi bi-hourglass-split"></i>').prop('disabled', true);
-
-                    $.ajax({
-                        url: "/PersonaCliente/EliminarPasajeroDeFactura",
-                        type: "POST",
-                        data: {
-                            pasajeID: pasajeID,
-                            facturaID: facturaID
-                        },
-                        success: function (data) {
-                            if (data[0] == "Done.") {
-                                // Mostrar mensaje de éxito de manera moderna
-                                if (typeof ShowSuccessMessage === 'function') {
-                                    ShowSuccessMessage(data[1], 'Operación Exitosa', function () {
-                                        if (typeof window.PopupDetalleFactura_Load === 'function') {
-                                            window.PopupDetalleFactura_Load();
-                                        } else if (typeof PopupDetalleFactura_Load === 'function') {
-                                            PopupDetalleFactura_Load();
-                                        } else {
-                                            location.reload();
-                                        }
-                                    });
-                                } else {
-                                    (window.alertSuccess || window.alert)(data[1], "Éxito");
-                                    if (typeof window.PopupDetalleFactura_Load === 'function') {
-                                        window.PopupDetalleFactura_Load();
-                                    } else if (typeof PopupDetalleFactura_Load === 'function') {
-                                        PopupDetalleFactura_Load();
-                                    } else {
-                                        location.reload();
-                                    }
-                                }
-                            } else {
-                                (window.alertError || window.alert)("Error: " + data[1], "Error");
-                                $btn.html(originalHtml).prop('disabled', false);
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            (window.alertError || window.alert)("Error al eliminar el pasajero. Por favor, intente nuevamente.", "Error");
-                            console.error("Error:", error);
-                            $btn.html(originalHtml).prop('disabled', false);
-                        }
-                    });
+            $.ajax({
+                url: "/PersonaCliente/EliminarPasajeroDeFactura",
+                type: "POST",
+                data: {
+                    pasajeID: pasajeID,
+                    facturaID: facturaID,
+                    code: code
                 },
-                function () {
-                    // Cancel
-                    var $dlg = $(this);
-                    $dlg.dialog("close");
-                    $dlg.remove();
+                success: function (data) {
+                    if (data[0] == "Done.") {
+                        $("#divEliminarPasajeroCodigo").dialog("close");
+                        if (typeof ShowSuccessMessage === "function") {
+                            ShowSuccessMessage(data[1], "Operación Exitosa", function () {
+                                if (typeof window.PopupDetalleFactura_Load === "function") {
+                                    window.PopupDetalleFactura_Load();
+                                } else if (typeof PopupDetalleFactura_Load === "function") {
+                                    PopupDetalleFactura_Load();
+                                } else {
+                                    location.reload();
+                                }
+                            });
+                        } else {
+                            (window.alertSuccess || window.alert)(data[1], "Éxito");
+                            if (typeof window.PopupDetalleFactura_Load === "function") {
+                                window.PopupDetalleFactura_Load();
+                            } else if (typeof PopupDetalleFactura_Load === "function") {
+                                PopupDetalleFactura_Load();
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    } else {
+                        (window.alertError || window.alert)("Error: " + data[1], "Error");
+                        $btn.html(originalHtml).prop("disabled", false);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    (window.alertError || window.alert)("Error al eliminar el pasajero. Por favor, intente nuevamente.", "Error");
+                    console.error("Error:", error);
+                    $btn.html(originalHtml).prop("disabled", false);
                 }
-            );
+            });
+
+            return false;
+        });
+
+        // Manejar click en botón cambiar pasajero
+        $(document).on("click", ".btn-cambiar-pasajero", function (e) {
+            e.preventDefault();
+            var pasajeID = $(this).data("pasaje");
+            var pasajeroActualID = $(this).data("pasajero-id");
+            var pasajeroActualNombre = $(this).data("pasajero-actual");
+
+            // Guardar IDs y limpiar formulario
+            $("#hdnCambiarPasajero_PasajeID").val(pasajeID);
+            $("#hdnCambiarPasajero_PasajeroActualID").val(pasajeroActualID);
+            $("#txtBuscarPasajero").val("");
+            $("#divResultadosPasajeros").html('<p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;">Ingrese al menos 2 caracteres para buscar</p>');
+            $("#btnConfirmarCambiarPasajero").prop("disabled", true);
+
+            $("#divCambiarPasajero")
+                .removeClass("dialog-hidden")
+                .dialog({
+                    modal: true,
+                    width: 500,
+                    resizable: false,
+                    close: function () {
+                        $("#divCambiarPasajero").addClass("dialog-hidden").dialog("destroy");
+                    }
+                });
+
+            // Focus en el campo de búsqueda
+            setTimeout(function() {
+                $("#txtBuscarPasajero").focus();
+            }, 100);
+
+            return false;
+        });
+
+        // Búsqueda de pasajeros con debounce
+        var buscarPasajeroTimeout;
+        $(document).on("input", "#txtBuscarPasajero", function () {
+            var searchTerm = $(this).val().trim();
+            var $resultados = $("#divResultadosPasajeros");
+            var $btnConfirmar = $("#btnConfirmarCambiarPasajero");
+
+            clearTimeout(buscarPasajeroTimeout);
+
+            if (searchTerm.length < 2) {
+                $resultados.html('<p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;">Ingrese al menos 2 caracteres para buscar</p>');
+                $btnConfirmar.prop("disabled", true);
+                return;
+            }
+
+            buscarPasajeroTimeout = setTimeout(function () {
+                $resultados.html('<p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;"><i class="bi bi-hourglass-split"></i> Buscando...</p>');
+
+                $.ajax({
+                    url: "/PersonaCliente/GetClientesTop",
+                    type: "POST",
+                    data: { searchTerm: searchTerm },
+                    success: function (response) {
+                        if (response.success && response.data && response.data.length > 0) {
+                            var html = '';
+                            response.data.forEach(function (pasajero) {
+                                html += '<div class="pasajero-resultado-item" data-pasajero-id="' + pasajero.PersonaId + '" data-pasajero-nombre="' + (pasajero.Nombre || '') + ' ' + (pasajero.Apellido || '') + '">';
+                                html += '<div class="pasajero-resultado-nombre">' + (pasajero.Nombre || '') + ' ' + (pasajero.Apellido || '') + '</div>';
+                                html += '<div class="pasajero-resultado-detalle">';
+                                if (pasajero.NroDocumento) html += 'Doc: ' + pasajero.NroDocumento;
+                                if (pasajero.Telefono) html += (pasajero.NroDocumento ? ' | ' : '') + 'Tel: ' + pasajero.Telefono;
+                                if (pasajero.Celular) html += (pasajero.NroDocumento || pasajero.Telefono ? ' | ' : '') + 'Cel: ' + pasajero.Celular;
+                                html += '</div>';
+                                html += '</div>';
+                            });
+                            $resultados.html(html);
+                        } else {
+                            $resultados.html('<p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;">No se encontraron resultados</p>');
+                        }
+                        $btnConfirmar.prop("disabled", true);
+                    },
+                    error: function () {
+                        $resultados.html('<p style="text-align: center; color: #dc2626; font-size: 0.8rem; margin: 1rem 0;">Error al buscar pasajeros. Intente nuevamente.</p>');
+                        $btnConfirmar.prop("disabled", true);
+                    }
+                });
+            }, 300);
+        });
+
+        // Seleccionar pasajero de los resultados
+        var pasajeroSeleccionadoID = null;
+        $(document).on("click", ".pasajero-resultado-item", function () {
+            $(".pasajero-resultado-item").removeClass("selected");
+            $(this).addClass("selected");
+            pasajeroSeleccionadoID = $(this).data("pasajero-id");
+            $("#btnConfirmarCambiarPasajero").prop("disabled", false);
+        });
+
+        // Confirmar cambio de pasajero
+        $(document).on("click", "#btnConfirmarCambiarPasajero", function (e) {
+            e.preventDefault();
+
+            var pasajeID = $("#hdnCambiarPasajero_PasajeID").val();
+            var nuevoPasajeroID = pasajeroSeleccionadoID;
+
+            if (!nuevoPasajeroID) {
+                return (window.alertInfo || window.alert)("Debe seleccionar un pasajero de la lista.", "Validación");
+            }
+
+            var pasajeroActualID = $("#hdnCambiarPasajero_PasajeroActualID").val();
+            if (nuevoPasajeroID === pasajeroActualID) {
+                return (window.alertInfo || window.alert)("Debe seleccionar un pasajero diferente al actual.", "Validación");
+            }
+
+            var $btn = $(this);
+            var originalHtml = $btn.html();
+
+            $btn.html('<i class="bi bi-hourglass-split"></i>').prop("disabled", true);
+
+            $.ajax({
+                url: "/PersonaCliente/CambiarPasajeroDePasaje",
+                type: "POST",
+                data: {
+                    pasajeID: pasajeID,
+                    nuevoPasajeroID: nuevoPasajeroID
+                },
+                success: function (data) {
+                    if (data[0] == "Done.") {
+                        $("#divCambiarPasajero").dialog("close");
+                        if (typeof ShowSuccessMessage === "function") {
+                            ShowSuccessMessage(data[1], "Operación Exitosa", function () {
+                                if (typeof window.PopupDetalleFactura_Load === "function") {
+                                    window.PopupDetalleFactura_Load();
+                                } else if (typeof PopupDetalleFactura_Load === "function") {
+                                    PopupDetalleFactura_Load();
+                                } else {
+                                    location.reload();
+                                }
+                            });
+                        } else {
+                            (window.alertSuccess || window.alert)(data[1], "Éxito");
+                            if (typeof window.PopupDetalleFactura_Load === "function") {
+                                window.PopupDetalleFactura_Load();
+                            } else if (typeof PopupDetalleFactura_Load === "function") {
+                                PopupDetalleFactura_Load();
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    } else {
+                        (window.alertError || window.alert)("Error: " + data[1], "Error");
+                        $btn.html(originalHtml).prop("disabled", false);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    (window.alertError || window.alert)("Error al cambiar el pasajero. Por favor, intente nuevamente.", "Error");
+                    console.error("Error:", error);
+                    $btn.html(originalHtml).prop("disabled", false);
+                }
+            });
 
             return false;
         });
