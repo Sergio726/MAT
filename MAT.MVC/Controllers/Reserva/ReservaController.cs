@@ -150,6 +150,17 @@ namespace MAT.MVC.Controllers.Reserva
                             sResult = sResult
                         },JsonRequestBehavior.AllowGet);
         }
+
+        /// <summary>
+        /// Devuelve el HTML de la sección de pre-reservas vencidas para actualizar la UI sin recargar la página.
+        /// </summary>
+        [Authorize]
+        public ActionResult GetPreReservasSection(string viajeId)
+        {
+            if (string.IsNullOrEmpty(viajeId)) return Content("");
+            ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeId);
+            return PartialView("_PreReservasSection");
+        }
         public ActionResult SeleccionarPasajero(Guid paqueteid, string piso)
         {
             try

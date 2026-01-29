@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -746,7 +746,6 @@
     <Content Include="Views\PasajeroViaje\Manifiesto.cshtml" />
     <Content Include="Views\Busqueda\Perfil.cshtml" />
     <Content Include="Views\Busqueda\Card.cshtml" />
-    <Content Include="Views\PersonaCliente\PartialCuentaCorriente.cshtml" />
     <Content Include="Views\PersonaCliente\PartialFacturas.cshtml" />
     <Content Include="Views\PersonaPasajero\PartialPasajerosHistorial.cshtml" />
     <Content Include="Views\PersonaVendedor\PartialHistorialPagos.cshtml" />

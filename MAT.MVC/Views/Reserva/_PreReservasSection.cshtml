@@ -1,0 +1,57 @@
+@using MAT.MVC.Models
+@if (ViewBag.PreReservas != null && ViewBag.PreReservas.Count > 0)
+{
+    <div class="modern-alert modern-alert-warning">
+        <div class="modern-alert-content">
+            <i class="bi bi-exclamation-triangle"></i>
+            <a href="javascript: showPreReservas();" class="modern-alert-link" title="Ver Pre Reservas Vencidas">
+                EXISTEN PRE-RESERVAS VENCIDAS (@ViewBag.PreReservas.Count)
+            </a>
+        </div>
+    </div>
+
+    <div id="divPreReservas" title="Pre Reservas Vencidas" style="display:none;">
+        <div class="modern-prereservas-container">
+            <div class="modern-prereservas-header">
+                <h3><i class="bi bi-exclamation-triangle"></i> Pre Reservas Vencidas</h3>
+                <p class="modern-prereservas-subtitle">Seleccione una acción para cada pre-reserva vencida</p>
+            </div>
+            <div class="modern-prereservas-table-container">
+                <table class="modern-prereservas-table">
+                    <thead>
+                        <tr>
+                            <th>Butaca</th>
+                            <th>Pasajero</th>
+                            <th>Fecha de Pre Reserva</th>
+                            <th>Vencimiento</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (PreReserva item in ViewBag.PreReservas)
+                        {
+                            <tr>
+                                <td><span class="badge-buttaca">@item.NroButaca</span></td>
+                                <td><strong>@item.FullName</strong></td>
+                                <td>@item.FechaPreReserva.ToShortDateString()</td>
+                                <td><span class="text-danger">@item.VencimientoPreReserva.ToShortDateString()</span></td>
+                                <td class="text-center">
+                                    <div class="modern-prereservas-actions">
+                                        <button type="button" class="btn-action btn-action-renew" onclick="reNewReserva('@item.FacturaID');" title="Renovar Pre Reserva">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                            <span>Renovar</span>
+                                        </button>
+                                        <button type="button" class="btn-action btn-action-delete" onclick="deleteReserva('@item.FacturaID','@item.ClienteID');" title="Baja de Pre Reserva">
+                                            <i class="bi bi-trash"></i>
+                                            <span>Eliminar</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

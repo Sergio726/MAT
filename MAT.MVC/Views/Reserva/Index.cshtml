@@ -465,6 +465,7 @@
             </div>
             }
 
+            <div id="preReservasSection">
             @if (ViewBag.PreReservas != null && ViewBag.PreReservas.Count > 0)
             {
             <div class="modern-alert modern-alert-warning">
@@ -521,6 +522,7 @@
                 </div>
             </div>
             }
+            </div>
 
         </div>
 
@@ -653,25 +655,31 @@
         $dialog.dialog("open");
     }
     function reNewReserva(FacturaID) {
-        if (FacturaID !="") {
+        if (FacturaID !== "") {
             $.ajax({
                 url: "/Reserva/jRenovarPreReserva",
-                data: { "FacturaID": FacturaID},
+                data: { "FacturaID": FacturaID },
                 dataType: "json",
                 success: function (data) {
-           
                     if (data.sResult === "Done.") {
                         $("#divPreReservas").dialog("close");
-                        confirm("Pre Reserva Renovada.", "Operación Exitosa");
-                        setTimeout(function () { location.reload(); }, 1000);
-                        
+                        (window.alertSuccess || window.alert)("Pre Reserva Renovada.", "Operación Exitosa");
+                        // Actualizar la sección de pre-reservas sin recargar la página
+                        var viajeId = $("#hdnViajeID").val();
+                        if (viajeId) {
+                            $.get("/Reserva/GetPreReservasSection", { viajeId: viajeId }, function (html) {
+                                $("#preReservasSection").html(html);
+                            });
+                        }
                     }
                     else {
-                        (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
+                        (window.alertError || window.alert)(data.sResult || "Ha ocurrido un error, por favor intente nuevamente.", "Error");
                     }
-
+                },
+                error: function (xhr, status, err) {
+                    (window.alertError || window.alert)("Error al renovar la pre-reserva. Por favor intente nuevamente.", "Error");
                 }
-            })
+            });
         }
     }
 

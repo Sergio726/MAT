@@ -246,12 +246,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
             MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
             MAT.Entities.Cliente Cliente = SCliente.Get(new ClienteKey(Id));
 
-
-            #region comentada
             try
             {
-
-                #region Actualizar Persona
                 if (!string.IsNullOrEmpty(collection.Get("Apellido"))) Persona.Apellido = collection.Get("Apellido").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Nombre"))) Persona.Nombre = collection.Get("Nombre").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("TipoDocumento"))) Persona.TipoDocumento = Convert.ToInt32(collection.Get("TipoDocumento").ToString());
@@ -268,9 +264,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) Persona.Nacionalidad = collection.Get("Nacionalidad").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) Persona.PaisResidencia = collection.Get("PaisResidencia").ToString();
                 SPersona.Update(Persona);
-                #endregion
 
-                #region Actualizar Cliente
                 if (!string.IsNullOrEmpty(collection.Get("RazonSocial"))) Cliente.RazonSocial = collection.Get("RazonSocial").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Cuit"))) Cliente.Cuit = collection.Get("Cuit").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Moneda"))) Cliente.Moneda = collection.Get("Moneda").ToString();
@@ -282,43 +276,14 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("Idioma"))) Cliente.Idioma = collection.Get("Idioma").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Promotor"))) Cliente.Promotor = collection.Get("Promotor").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Observacion"))) Cliente.Observacion = collection.Get("Observacion").ToString();
-
                 SCliente.Update(Cliente);
-
-                #endregion
-
-                #region Actualizar PersonaCliente
-                PersonaCliente.Apellido = Persona.Apellido;
-                PersonaCliente.Nombre = Persona.Nombre;
-                PersonaCliente.TipoDocumento = Persona.TipoDocumento;
-                PersonaCliente.NroDocumento = Persona.NroDocumento;
-                PersonaCliente.LocalidadId = Persona.LocalidadId;
-                PersonaCliente.Telefono = Persona.Telefono;
-                PersonaCliente.Email = Persona.Email;
-                PersonaCliente.FechaNacimiento = Persona.FechaNacimiento;
-                PersonaCliente.Sexo = Persona.Sexo;
-                PersonaCliente.RazonSocial = Cliente.RazonSocial;
-                PersonaCliente.Cuit = Cliente.Cuit;
-                PersonaCliente.Moneda = Cliente.Moneda;
-                PersonaCliente.Empresa = Cliente.Empresa;
-                PersonaCliente.FormaPago = Cliente.FormaPago;
-                PersonaCliente.CondicionIva = Cliente.CondicionIva;
-                PersonaCliente.VendedorId = Cliente.VendedorId;
-                PersonaCliente.Fax = Cliente.Fax;
-                PersonaCliente.Web = Cliente.Web;
-                PersonaCliente.Idioma = Cliente.Idioma;
-                PersonaCliente.Promotor = Cliente.Promotor;
-
-
-                #endregion
             }
             catch (Exception e)
             {
                 ViewBag.Error = e.Message;
             }
-            #endregion
 
-            return RedirectToAction("Details/" + (Persona.PersonaId) + "/", "PersonaCliente");
+            return RedirectToAction("Details", "PersonaCliente", new { Id = Persona.PersonaId });
         }
 
         [Authorize]
@@ -438,12 +403,6 @@ namespace MAT.MVC.Controllers.PersonaCliente
         {
             ViewBag.ClienteID = clienteid;
             return View();
-        }
-
-        public ActionResult PartialCuentaCorriente(Guid clienteid)
-        {
-            
-            return PartialView();
         }
 
         [Authorize]   
@@ -613,18 +572,6 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
 
             return iResult;
-        }
-
-        public static void LiberarHabitacionesByPasajeID(Guid PasajeID)
-        {
-           
-            SqlParameter[] dbParams = new SqlParameter[]
-                {                    
-                    DBHelper.MakeParam("@PasajeID", SqlDbType.VarChar, 0, Convert.ToString(PasajeID)),
-                };
-
-            DBHelper.ExecuteNonQuery("dbo.usp_MAT_PersonaCliente_EliminarVenta_LiberarHabitacionesByPasajeID", dbParams);
-          
         }
 
         public static string EliminarFactura(Guid facturaid)
@@ -877,27 +824,10 @@ namespace MAT.MVC.Controllers.PersonaCliente
             try
             {
                 int ExistDNI = MAT.MVC.Models.PersonaClienteMethod.IfExistDNI(dni);
-                //PersonaService personaService = new PersonaService();
-                //Entities.Persona _persona = personaService.GetAll().Where(per => per.NroDocumento.Equals(dni) || per.NroDocumento.Equals(string.Format("{0:99.999.999}", dni)) || per.NroDocumento.Equals(dni.Replace(".", ""))).FirstOrDefault();
-
                 if (ExistDNI == 0)
-                {
                     sResult[0] = "False";
-                }
                 else
-                {
                     sResult[0] = "True";
-                }
-
-                //if (_persona == null)
-                //{
-                //    sResult[0] = "False";
-                //}
-                //else
-                //{
-                //    sResult[0] = "True";
-                //}
-               
                 sResult[1] = "Done.";
             }
             catch (Exception e)
@@ -912,13 +842,6 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 Result = sResult[1]
             }, JsonRequestBehavior.AllowGet);
         }
-
-        //public string ExistDni(string dni)
-        //{
-        //    PersonaService personaService = new PersonaService();
-        //    Entities.Persona _persona = personaService.GetAll().Where(per => per.NroDocumento.Equals(dni) || per.NroDocumento.Equals(string.Format("{0:99.999.999}", dni)) || per.NroDocumento.Equals(dni.Replace(".", ""))).FirstOrDefault();
-        //    return _persona == null ? "False" : "True";
-        //}
 
         [Authorize]
         public ActionResult Voucher(Guid facturaid, string sTipoVoucher = "Individual", bool bInfoAdicional = false)
@@ -984,49 +907,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 sResult[1] = e.Message;
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
-        } 
-
-        // [InitializeSimpleMembership]
-        //public bool CancelarPago(Guid movimientoid)
-        //{
-        //    Guid VendedorID = MATContext.CurrentVendedor.VendedorId;
-        //    if (MAT.MVC.Models.FacturaMetod.DeletePago(movimientoid, VendedorID))
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
-        //public bool CancelarNota(Guid movimientoid)
-        //{
-        //    HistorialService historialService = new HistorialService();
-        //    MovimientoCuentaService movimientoService = new MovimientoCuentaService();
-        //    CuentaCorrienteService ccService = new CuentaCorrienteService();
-        //    Entities.CuentaCorriente cc = new Entities.CuentaCorriente();
-        //    Entities.MovimientoCuenta movimiento = movimientoService.GetByMovimientoId(movimientoid);
-        //    NotaService notaService = new NotaService();
-        //    if (movimiento.NotaId.HasValue)
-        //    {
-        //        Entities.Nota nota = notaService.GetByNotaId(movimiento.NotaId.Value);
-        //        cc = ccService.GetByCuentaCorrienteId(movimiento.CuentaCorrienteId.Value);
-
-        //        Entities.Historial nuevahistoria = new Historial();
-        //        nuevahistoria.Tabla = (int)eTabla.Nota;
-        //        nuevahistoria.Operacion = (int)eOperacion.Baja;
-        //        nuevahistoria.Monto = nota.MontoNota.Value;
-        //        nuevahistoria.FechaHoraRegistro = DateTime.Now;
-        //        nuevahistoria.Cliente = cc.ClienteId;
-        //        nuevahistoria.HistorialId = Guid.NewGuid();
-        //        if (MATContext.CurrentVendedor != null) nuevahistoria.Vendedor = MATContext.CurrentVendedor.VendedorId;
-        //        historialService.Insert(nuevahistoria);
-
-        //        movimientoService.Delete(movimientoid);
-        //        notaService.Delete(movimiento.NotaId.Value);
-        //        ccService.Delete(cc);
-        //        return true;
-        //    }
-        //    return false;
-        //}
+        }
 
         public ActionResult EliminarVenta(string facturaid, string clienteid)
         {
@@ -1249,86 +1130,40 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 return PartialView(model);
             }
         }
-        //public void Actualizar(Guid HotelId)
-        //{
-        //    MAT.Services.HabitacionService SHabitacion = new Services.HabitacionService();
-        //    IList<MAT.Entities.Habitacion> EHabitacion = SHabitacion.GetByHotelId(HotelId);
 
-        //    //Actualizo estado de habitacion
-        //    foreach (var item in EHabitacion)
-        //    {
-        //        MAT.Services.VConsultaReservaHabitacionService SConsulta = new VConsultaReservaHabitacionService();
-        //        IList<MAT.Entities.VConsultaReservaHabitacion> EConsulta = SConsulta.GetAll().Where(h => h.HabitacionId == item.HabitacionId && h.Expiro == false).ToList();
+        /// <summary>
+        /// Confirma el cambio de habitación para un pasaje en un viaje. El JS envía pasajeid, viajeid, nuevahabitacion.
+        /// </summary>
+        [HttpPost]
+        public ContentResult ConfirmarCambioHabitacion(string pasajeid, string viajeid, string nuevahabitacion)
+        {
+            bool result = false;
+            try
+            {
+                if (string.IsNullOrEmpty(pasajeid) || string.IsNullOrEmpty(viajeid) || string.IsNullOrEmpty(nuevahabitacion))
+                    return Content("False");
 
-        //        //Recorro las habitaciones del hotel seleccionado
-        //        foreach (var item1 in EConsulta)
-        //        {
-        //            DateTime FechaHoy = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-        //            DateTime FechaHasta = Convert.ToDateTime(item1.Hasta.Value.ToShortDateString());
+                Guid _pasajeid = new Guid(pasajeid);
+                Guid _viajeid = new Guid(viajeid);
+                Guid _nuevahabitacion = new Guid(nuevahabitacion);
 
-        //            if (FechaHoy > FechaHasta)
-        //            {
-        //                //Actualizar Estado de Habitacion
-        //                MAT.Entities.Habitacion EHabitacionA = SHabitacion.GetByHabitacionId(item1.HabitacionId.Value);
-        //                EHabitacionA.Ocupacion = EHabitacionA.Ocupacion - 1;
-        //                SHabitacion.Update(EHabitacionA);
-
-        //                if (EHabitacionA.Capacidad > EHabitacionA.Ocupacion)
-        //                {
-        //                    EHabitacionA.Estado = 0;//habitacion sin completar
-        //                    SHabitacion.Update(EHabitacionA);
-        //                }
-
-        //                MAT.Services.ReservaHabitacionService SReserva = new ReservaHabitacionService();
-        //                MAT.Entities.ReservaHabitacion EReserva = SReserva.GetByReservaHabitacionId(item1.ReservaHabitacionId);
-        //                EReserva.Expiro = true;//cambia el estado de la reserva 
-        //                SReserva.Update(EReserva);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public bool ConfirmarCambioHabitacion(string anteriorid, string pasajeid, string viajeid, string nuevahabitacion)
-        //public bool ConfirmarCambioHabitacion(string pasajeid, string viajeid, string nuevahabitacion)
-        //{
-        //    bool result = false;
-        //    try
-        //    {
-        //        Guid _anteriorid = new Guid();
-        //        Guid _pasajeid = new Guid();
-        //        Guid _viajeid = new Guid();
-        //        Guid _nuevahabitacion = new Guid();
-        //        //if (anteriorid != null || anteriorid != "")
-        //        //{
-        //        //    _anteriorid = new Guid(anteriorid);
-        //        //}
-        //        if (pasajeid != null || pasajeid != "")
-        //        {
-        //            _pasajeid = new Guid(pasajeid);
-        //        }
-        //        if (viajeid != null || viajeid != "")
-        //        {
-        //            _viajeid = new Guid(viajeid);
-        //        }
-        //        if (nuevahabitacion != null || nuevahabitacion != "" )
-        //        {
-        //            _nuevahabitacion = new Guid(nuevahabitacion);
-        //        }
-                
-        //        ReservaHabitacionService reservaService = new ReservaHabitacionService();
-        //        //ReservaHabitacion reserva = reservaService.GetByPasajeId(_pasajeid).Where(re => re.ViajeId.Value == _viajeid).FirstOrDefault();
-        //        ReservaHabitacion reserva = reservaService.GetByPasajeId(_pasajeid).Where(re => re.ViajeId.Value == _viajeid).Where(hab => hab.HabitacionId.Value == _anteriorid).FirstOrDefault();
-        //        reserva.HabitacionId = _nuevahabitacion;
-        //        reservaService.Update(reserva);
-        //        result = true;
-        //    }
-        //    catch 
-        //    {
-
-        //        result = false;
-        //    }
-        //    return result;
-        //}
+                var reservaService = new ReservaHabitacionService();
+                var reserva = reservaService.GetByPasajeId(_pasajeid)
+                    .Where(re => re.ViajeId.HasValue && re.ViajeId.Value == _viajeid)
+                    .FirstOrDefault();
+                if (reserva != null)
+                {
+                    reserva.HabitacionId = _nuevahabitacion;
+                    reservaService.Update(reserva);
+                    result = true;
+                }
+            }
+            catch
+            {
+                result = false;
+            }
+            return Content(result ? "True" : "False");
+        }
 
         public static List<string> GetAllOcupacion()
         {
