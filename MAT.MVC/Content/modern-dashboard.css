@@ -2717,6 +2717,29 @@ div.bnn_floating-banner.hidden {
     overflow-y: auto !important;
 }
 
+/* Dialog Observaciones del Viaje - Minimalista y Amplio */
+.ui-dialog.mat-dialog--observaciones {
+    max-width: 1200px !important;
+    width: calc(100vw - 48px) !important;
+}
+
+.ui-dialog.mat-dialog--observaciones .ui-dialog-titlebar {
+    padding: 0.625rem 1rem !important;
+    background: var(--white) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.ui-dialog.mat-dialog--observaciones .ui-dialog-title {
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+}
+
+.ui-dialog.mat-dialog--observaciones .ui-dialog-content {
+    padding: 0 !important;
+    max-height: calc(100vh - 150px) !important;
+    overflow-y: auto !important;
+}
+
 /* Estilos para el modal de Seleccionar Pasajero */
 /* ============================================
    NUEVO DISEÑO MODERNO PARA SELECCIONAR PASAJERO
@@ -4279,7 +4302,7 @@ div.bnn_floating-banner.hidden {
 }
 
 /* ============================================
-   MODAL DE OBSERVACIONES DEL VIAJE
+   MODAL DE OBSERVACIONES DEL VIAJE - MINIMALISTA
    ============================================ */
 
 .modern-observaciones-container {
@@ -4290,113 +4313,128 @@ div.bnn_floating-banner.hidden {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 2rem;
-    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
-    border-bottom: 2px solid var(--border-color);
+    padding: 0.875rem 1.25rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--border-color);
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .modern-observaciones-title {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .modern-observaciones-title i {
-    font-size: 1.75rem;
+    font-size: 1.125rem;
     color: var(--brand-primary);
 }
 
 .modern-observaciones-title h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--text-primary);
     margin: 0;
 }
 
 .modern-observaciones-actions {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem;
     align-items: center;
 }
 
 .btn-modern-observacion {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.25rem;
+    gap: 0.375rem;
+    padding: 0.4rem 0.875rem;
     border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     white-space: nowrap;
 }
 
 .btn-modern-observacion i {
-    font-size: 1rem;
+    font-size: 0.8125rem;
 }
 
-.btn-modern-observacion-primary {
-    background: var(--brand-primary);
-    color: var(--white);
+.btn-modern-observacion-primary,
+.btn-modern-observacion.btn-modern-observacion-primary {
+    background: var(--brand-primary) !important;
+    color: #ffffff !important;
 }
 
-.btn-modern-observacion-primary:hover {
-    background: #c92a5f;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.3);
+.btn-modern-observacion-primary span,
+.btn-modern-observacion-primary i,
+.btn-modern-observacion.btn-modern-observacion-primary span,
+.btn-modern-observacion.btn-modern-observacion-primary i,
+.btn-modern-observacion-primary *,
+.modern-observaciones-actions .btn-modern-observacion-primary,
+.modern-observaciones-actions .btn-modern-observacion-primary span,
+.modern-observaciones-actions .btn-modern-observacion-primary i {
+    color: #ffffff !important;
+}
+
+.btn-modern-observacion-primary:hover,
+.btn-modern-observacion.btn-modern-observacion-primary:hover {
+    background: #c92a5f !important;
+    box-shadow: 0 2px 6px rgba(230, 51, 117, 0.25);
 }
 
 .btn-modern-observacion-secondary {
-    background: var(--white);
+    background: var(--bg-main);
     color: var(--text-primary);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
 }
 
 .btn-modern-observacion-secondary:hover {
-    background: var(--bg-main);
+    background: var(--white);
     border-color: var(--brand-primary);
     color: var(--brand-primary);
-    transform: translateY(-1px);
 }
 
 .modern-observaciones-content {
-    padding: 1.5rem 2rem;
+    padding: 0.75rem 1rem;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .modern-observaciones-table-wrapper {
-    min-height: 200px;
+    min-height: 150px;
 }
 
-/* Estilos modernos para la tabla de observaciones - REFACTORIZADA */
+/* Estilos modernos para la tabla de observaciones */
 .modern-table-observaciones {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background: var(--white);
+    font-size: 0.8125rem;
 }
 
 .modern-table-observaciones thead th {
-    background: var(--bg-main);
-    color: var(--text-primary);
-    font-weight: 600;
-    font-size: 0.8125rem;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.6875rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 1rem 1.25rem;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
     border-bottom: 2px solid var(--border-color);
     text-align: left;
 }
 
 .modern-table-observaciones tbody td {
-    padding: 1.25rem 1.25rem;
-    vertical-align: top;
-    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
     color: var(--text-primary);
-    font-size: 0.9375rem;
-    line-height: 1.6;
+    font-size: 0.8125rem;
+    line-height: 1.4;
 }
 
 .modern-table-observaciones tbody tr {
@@ -4405,8 +4443,17 @@ div.bnn_floating-banner.hidden {
 }
 
 .modern-table-observaciones tbody tr:hover {
-    background-color: rgba(230, 51, 117, 0.05);
-    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.08);
+    background-color: #fdf2f8;
+}
+
+.modern-table-observaciones tbody tr.odd,
+.modern-table-observaciones tbody tr.even {
+    background-color: var(--white);
+}
+
+.modern-table-observaciones tbody tr.odd:hover,
+.modern-table-observaciones tbody tr.even:hover {
+    background-color: #fdf2f8;
 }
 
 /* Wrapper de DataTables */
@@ -4418,131 +4465,143 @@ div.bnn_floating-banner.hidden {
     font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
 }
 
-/* Badge de categoría - Fucsia */
-.badge-categoria {
+/* Badge de categoría - Moderno y elegante */
+.badge-categoria,
+span.badge-categoria,
+.modern-table-observaciones .badge-categoria {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    padding: 0.5rem 0.875rem;
-    background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%);
-    color: var(--white);
-    border-radius: 8px;
-    font-size: 0.8125rem;
+    padding: 0.375rem 0.75rem;
+    background: linear-gradient(135deg, var(--brand-primary) 0%, #d64d7a 100%) !important;
+    color: #ffffff !important;
+    border-radius: 20px;
+    font-size: 0.6875rem;
     font-weight: 600;
     white-space: nowrap;
-    box-shadow: 0 2px 6px rgba(230, 51, 117, 0.25);
-    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    box-shadow: 0 2px 4px rgba(230, 51, 117, 0.25);
 }
 
-.badge-categoria:hover {
+.badge-categoria *,
+span.badge-categoria *,
+.modern-table-observaciones .badge-categoria * {
+    color: #ffffff !important;
+}
+
+.badge-categoria:hover,
+span.badge-categoria:hover {
+    background: linear-gradient(135deg, #c92a5f 0%, #b8426b 100%) !important;
+    box-shadow: 0 4px 8px rgba(230, 51, 117, 0.3);
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(230, 51, 117, 0.35);
 }
 
-.badge-categoria::before {
-    content: "\f3fd";
+.badge-categoria::before,
+span.badge-categoria::before {
+    content: "\f4ad";
     font-family: "bootstrap-icons";
-    font-size: 0.875rem;
+    font-size: 0.75rem;
+    color: #ffffff !important;
 }
 
-/* Detalle de observación */
+/* Detalle de observación - Moderno */
 .modern-observaciones-detalle {
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    color: var(--text-primary);
-    white-space: pre-wrap;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    white-space: normal;
     word-wrap: break-word;
     font-weight: 400;
-    max-width: 500px;
+    max-width: 200px;
 }
 
-/* Fecha de observación */
+/* Celdas de la tabla - todas centradas verticalmente */
+.modern-table-observaciones tbody td {
+    vertical-align: middle;
+}
+
+/* Fecha de observación - Moderno limpio */
 .modern-observaciones-fecha {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.modern-observaciones-fecha-date {
+    font-size: 0.8125rem;
+    font-weight: 600;
     color: var(--text-primary);
-    font-weight: 500;
+    letter-spacing: -0.01em;
 }
 
-.modern-observaciones-fecha i {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
+.modern-observaciones-fecha-time {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    font-weight: 400;
 }
 
-/* Vendedor */
+/* Vendedor - Moderno limpio */
 .modern-observaciones-vendedor {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--text-primary);
     font-weight: 500;
-    margin-bottom: 0.5rem;
 }
 
 .modern-observaciones-vendedor i {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
+    display: none;
 }
 
-/* Info de actualización */
+/* Info de actualización - Compacto */
 .modern-observaciones-update-info {
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+    padding-top: 0.25rem;
     border-top: 1px solid var(--border-color);
 }
 
 .modern-observaciones-update-info small {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+    gap: 0.25rem;
+    font-size: 0.625rem;
+    color: var(--text-muted);
 }
 
 .modern-observaciones-update-info i {
-    font-size: 0.75rem;
+    font-size: 0.625rem;
 }
 
-/* Acciones inline */
+/* Acciones inline - Compacto */
 .modern-observaciones-actions-inline {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.375rem;
     justify-content: flex-start;
 }
 
 .modern-observaciones-actions-inline .btn-action-observacion {
-    padding: 0.5rem;
-    min-width: 36px;
-    height: 36px;
+    padding: 0.375rem;
+    min-width: 28px;
+    height: 28px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.75rem;
 }
 
 .modern-observaciones-actions-inline .btn-action-observacion span {
     display: none;
 }
 
-/* Badge de pasajeros */
+/* Badge de pasajeros - Moderno limpio */
 .badge-pasajero {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.375rem 0.75rem;
-    background: var(--bg-main);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
+    display: inline-block;
     font-size: 0.8125rem;
+    color: var(--text-primary);
     font-weight: 500;
 }
 
 .badge-pasajero i {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+    display: none;
 }
 
 /* Mensaje de error moderno */
@@ -4699,7 +4758,12 @@ div.bnn_floating-banner.hidden {
 
 .btn-modern-primary {
     background: var(--brand-primary);
-    color: var(--white);
+    color: #ffffff !important;
+}
+
+.btn-modern-primary span,
+.btn-modern-primary i {
+    color: #ffffff !important;
 }
 
 .btn-modern-primary:hover {
@@ -5190,74 +5254,97 @@ div.bnn_floating-banner.hidden {
 .btn-action-observacion {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.5rem;
     border: none;
-    border-radius: 8px;
-    font-size: 0.8125rem;
-    font-weight: 600;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     white-space: nowrap;
 }
 
 .btn-action-observacion i {
-    font-size: 0.9375rem;
+    font-size: 0.75rem;
 }
 
 .btn-action-edit {
-    background: #3b82f6;
-    color: var(--white);
+    background: transparent;
+    color: #64748b;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
 }
 
 .btn-action-edit:hover {
-    background: #2563eb;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    background: #3b82f6;
+    color: #ffffff;
+    transform: scale(1.1);
 }
 
 .btn-action-delete {
-    background: #ef4444;
-    color: var(--white);
+    background: transparent;
+    color: #64748b;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
 }
 
 .btn-action-delete:hover {
-    background: #dc2626;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    background: #ef4444;
+    color: #ffffff;
+    transform: scale(1.1);
 }
 
-/* DataTables controls modernos */
+/* DataTables controls modernos - Minimalista */
 #tblObservaciones_wrapper .dataTables_length,
 #tblObservaciones_wrapper .dataTables_filter {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 #tblObservaciones_wrapper .dataTables_length label,
 #tblObservaciones_wrapper .dataTables_filter label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--text-primary);
-    font-weight: 500;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 400;
 }
 
 #tblObservaciones_wrapper .dataTables_length select,
 #tblObservaciones_wrapper .dataTables_filter input {
-    padding: 0.5rem 0.75rem;
+    padding: 0.375rem 0.5rem;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 0.875rem;
-    margin: 0 0.5rem;
-    transition: all 0.2s ease;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin: 0 0.375rem;
+    transition: all 0.15s ease;
 }
 
 #tblObservaciones_wrapper .dataTables_length select:focus,
 #tblObservaciones_wrapper .dataTables_filter input:focus {
     outline: none;
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
+    box-shadow: 0 0 0 2px rgba(230, 51, 117, 0.08);
+}
+
+#tblObservaciones_wrapper .dataTables_info {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+}
+
+#tblObservaciones_wrapper .dataTables_paginate {
+    font-size: 0.75rem;
+}
+
+#tblObservaciones_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6875rem;
 }
 
 #tblObservaciones_wrapper .dataTables_info {

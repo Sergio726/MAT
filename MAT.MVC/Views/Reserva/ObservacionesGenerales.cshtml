@@ -89,8 +89,8 @@ else
                     </td>
                     <td>
                         <div class="modern-observaciones-fecha">
-                            <i class="bi bi-calendar3"></i>
-                            <span>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</span>
+                            <span class="modern-observaciones-fecha-date">@item.Fecha.ToString("dd/MM/yyyy")</span>
+                            <span class="modern-observaciones-fecha-time">@item.Fecha.ToString("HH:mm") hs</span>
                         </div>
                     </td>
                     <td>
@@ -101,20 +101,16 @@ else
                     <td>
                         @if (item.Pasajeros.Count != 0)
                         {
-                            <span class="badge-pasajero">
-                                <i class="bi bi-person"></i>
-                                <span>@item.Pasajeros.First().Pasajero</span>
-                            </span>
+                            <span class="badge-pasajero">@item.Pasajeros.First().Pasajero</span>
                         }
                         else
                         {
-                            <span class="table-text-muted">-</span>
+                            <span class="table-text-muted">—</span>
                         }
                     </td>
                     <td>
                         <div class="modern-observaciones-vendedor">
-                            <i class="bi bi-person-badge"></i>
-                            <span>@item.Vendedor</span>
+                            @item.Vendedor
                         </div>
                         @if (item.Update.ToString() != "1/1/0001 00:00:00" && item.Update.ToString() != "01/01/0001 12:00:00 a.m.")
                         {
