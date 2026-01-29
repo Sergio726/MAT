@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,6 +18,7 @@ using System.Text;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using MAT.MVC.Infrastructure;
+using System.Configuration;
 
 namespace MAT.MVC.Controllers.PersonaCliente
 {
@@ -1072,11 +1073,22 @@ namespace MAT.MVC.Controllers.PersonaCliente
 
         [HttpPost]
         [Authorize]
-        public JsonResult EliminarPasajeroDeFactura(Guid pasajeID, Guid facturaID)
+        public JsonResult EliminarPasajeroDeFactura(Guid pasajeID, Guid facturaID, string code)
         {
             string[] sResult = new string[2];
             try
             {
+                // Validar código de seguridad contra valores configurados en Web.config
+                var code1 = ConfigurationManager.AppSettings["PersonaClienteCode"];
+                var code2 = ConfigurationManager.AppSettings["PersonaClienteCode2"];
+                
+                if (string.IsNullOrWhiteSpace(code) || !(code.Equals(code1) || code.Equals(code2)))
+                {
+                    sResult[0] = "Error.";
+                    sResult[1] = "Código de seguridad incorrecto. Verifique el código ingresado.";
+                    return Json(sResult, JsonRequestBehavior.AllowGet);
+                }
+
                 // Desvincular menores de la factura antes de eliminar el pasajero
                 EliminarVinculoPasajeroMenor(facturaID);
                 
@@ -1109,6 +1121,47 @@ namespace MAT.MVC.Controllers.PersonaCliente
             {
                 sResult[0] = "Error.";
                 sResult[1] = "Error al eliminar el pasajero: " + e.Message;
+            }
+            
+            return Json(sResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult CambiarPasajeroDePasaje(Guid pasajeID, Guid nuevoPasajeroID)
+        {
+            string[] sResult = new string[2];
+            try
+            {
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@PasajeID", SqlDbType.UniqueIdentifier, 0, pasajeID),
+                    DBHelper.MakeParam("@NuevoPasajeroID", SqlDbType.UniqueIdentifier, 0, nuevoPasajeroID),
+                    DBHelper.MakeParam("@Result", SqlDbType.VarChar, 100, "")
+                };
+                
+                // Configurar parámetro de salida
+                dbParams[2].Direction = ParameterDirection.Output;
+                
+                DBHelper.ExecuteNonQuery("dbo.usp_MAT_Pasaje_CambiarPasajero", dbParams);
+                
+                string result = dbParams[2].Value != null ? dbParams[2].Value.ToString() : "Error: No se recibió respuesta del procedimiento.";
+                
+                if (result == "Done.")
+                {
+                    sResult[0] = "Done.";
+                    sResult[1] = "Pasajero cambiado correctamente. La factura ha sido actualizada.";
+                }
+                else
+                {
+                    sResult[0] = "Error.";
+                    sResult[1] = result;
+                }
+            }
+            catch (Exception e)
+            {
+                sResult[0] = "Error.";
+                sResult[1] = "Error al cambiar el pasajero: " + e.Message;
             }
             
             return Json(sResult, JsonRequestBehavior.AllowGet);

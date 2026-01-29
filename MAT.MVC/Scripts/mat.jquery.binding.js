@@ -1,4 +1,4 @@
-﻿$(document).on("click", "#btn-resumen-linea", function () {
+$(document).on("click", "#btn-resumen-linea", function () {
     var dataid = $(this).data("comprobanteid");
     var url = "/CuentaCorriente/DetalleComprobante?id=" + dataid;
     var dialogid = "DetalleComprobante";
@@ -640,51 +640,114 @@ $(document).on("click", "#btn-imprimirvouchers", function () {
     
 });
 
+// Función para mostrar mensaje temporal (toast) que se desvanece automáticamente
+function showTemporaryMessage(message, duration) {
+    duration = duration || 5000; // Por defecto 5 segundos
+    
+    // Remover toast anterior si existe
+    $("#voucher-toast-message").remove();
+    
+    // Crear elemento toast
+    var $toast = $('<div id="voucher-toast-message" style="position: fixed; top: 20px; right: 20px; z-index: 10003; background: #1f2937; color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); min-width: 300px; max-width: 400px; opacity: 0; transition: opacity 0.3s ease;">' +
+        '<div style="display: flex; align-items: center; gap: 0.75rem;">' +
+        '<i class="bi bi-info-circle" style="font-size: 1.25rem; color: #60a5fa; flex-shrink: 0;"></i>' +
+        '<div style="flex: 1; font-size: 0.875rem; line-height: 1.5;">' + message + '</div>' +
+        '</div>' +
+        '</div>');
+    
+    $("body").append($toast);
+    
+    // Mostrar con animación
+    setTimeout(function() {
+        $toast.css("opacity", "1");
+    }, 10);
+    
+    // Ocultar y remover después del tiempo especificado
+    setTimeout(function() {
+        $toast.css("opacity", "0");
+        setTimeout(function() {
+            $toast.remove();
+        }, 300); // Tiempo de la animación de fade out
+    }, duration);
+}
+
 function imprimirVoucher(facturaId, TipoVoucher) {
     var bInfoAdicional = $("#chkInfoAdicional").is(":checked");
     $.ajax({
         url: "/PersonaCliente/Voucher_GetNrPrintByFacturaID",
         data: { facturaId: facturaId },
-        dataType: "html",
+        // El controlador devuelve JsonResult, pero algunos navegadores lo exponen como string.
+        // Soportamos ambos casos (string o array JSON).
+        dataType: "text",
         success: function (data) {
-            var response = eval(data);
-            if (response[0] === "Done.") {
-                if (parseInt(response[1]) > 0) {
-
-                    var msg = "<center><span><b>Este Voucher se imprimió " + response[1] + " veces.</b></br> Desea imprimirlo nuevamente?</span></center>";
-                    $("#Voucher_dialog-message").html(msg);
-                    $("#Voucher_dialog-message").dialog({
-                        modal: true,
-                        buttons: {
-                            Ok: function () {
-                                // No remover el nodo del DOM: se reutiliza si el usuario vuelve a imprimir.
-                                forceCloseDialog("#divSelectTipoVoucher");
-                                $(this).dialog("close");
-                                showVoucher(facturaId, TipoVoucher, bInfoAdicional);
-                            },
-                            Cancel: function () {
-                                forceCloseDialog("#divSelectTipoVoucher");
-                                $(this).dialog("close");
-                            }
-                        }
-                    });
+            var response = null;
+            try {
+                // Si ya viene como array/objeto, usarlo directo; si viene como string, parsear.
+                if (typeof data === "string") {
+                    response = JSON.parse(data);
+                } else {
+                    response = data;
                 }
-                else {
-                    showVoucher(facturaId, TipoVoucher, bInfoAdicional);
-                    forceCloseDialog("#divSelectTipoVoucher");
-                }
-
+            } catch (e) {
+                console.error("Error parseando respuesta de Voucher_GetNrPrintByFacturaID:", e, data);
+                (window.alertError || window.alert)("Error al procesar la respuesta del servidor. Por favor, intente nuevamente.", "Error");
+                forceCloseDialog("#divSelectTipoVoucher");
+                return;
             }
+
+            if (response && response.length >= 2 && response[0] === "Done.") {
+                var vecesImpreso = parseInt(response[1], 10);
+                if (isNaN(vecesImpreso)) {
+                    vecesImpreso = 0;
+                }
+
+                // Cerrar diálogo de selección de tipo
+                forceCloseDialog("#divSelectTipoVoucher");
+
+                // Mostrar mensaje temporal con la información (solo si ya se imprimió antes)
+                if (vecesImpreso > 0) {
+                    var mensaje = "Este Voucher se imprimió " + vecesImpreso + "veces" + ". Imprimiendo nuevamente...";
+                    showTemporaryMessage(mensaje, 10000);
+                }
+
+                // Imprimir el voucher directamente sin confirmación
+                showVoucher(facturaId, TipoVoucher, bInfoAdicional);
+            } else {
+                // Si hay error, mostrar mensaje y cerrar diálogo
+                var errorMsg = (response && response.length >= 2) ? response[1] : "Error al obtener información del voucher";
+                (window.alertError || window.alert)("Error: " + errorMsg, "Error");
+                forceCloseDialog("#divSelectTipoVoucher");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error en imprimirVoucher:", error);
+            (window.alertError || window.alert)("Error al procesar la solicitud. Por favor, intente nuevamente.", "Error");
+            forceCloseDialog("#divSelectTipoVoucher");
         }
     });
 }
 
 function showVoucher(facturaId, TipoVoucher, bInfoAdicional)
 {
-    var url = "/PersonaCliente/Voucher?facturaid=" + facturaId + "&sTipoVoucher=" + TipoVoucher + "&bInfoAdicional=" + bInfoAdicional;
-    var title = "Vouchers";
-    var id = "Vouchers";
-    window.open(url, '_blank').print();
+    try {
+        var url = "/PersonaCliente/Voucher?facturaid=" + encodeURIComponent(facturaId) + "&sTipoVoucher=" + encodeURIComponent(TipoVoucher) + "&bInfoAdicional=" + (bInfoAdicional ? "true" : "false");
+        var printWindow = window.open(url, '_blank');
+        
+        if (printWindow) {
+            // Esperar a que la ventana cargue antes de imprimir
+            printWindow.onload = function() {
+                setTimeout(function() {
+                    printWindow.print();
+                }, 500);
+            };
+        } else {
+            // Si el navegador bloqueó la ventana emergente, mostrar mensaje
+            (window.alertInfo || window.alert)("Por favor, permita las ventanas emergentes para imprimir el voucher.", "Atención");
+        }
+    } catch (e) {
+        console.error("Error al abrir ventana de voucher:", e);
+        (window.alertError || window.alert)("Error al abrir el voucher. Por favor, intente nuevamente.", "Error");
+    }
 }
 
 $(document).on("click", "#btn-notacredito", function () {
