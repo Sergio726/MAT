@@ -1,4 +1,4 @@
-﻿using MAT.Utilities;
+using MAT.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -46,6 +46,7 @@ namespace MAT.MVC.Models
         public Guid ClienteID { get; set; }
         public string FullName { get; set; }
         public decimal Monto { get; set; }
+        public DateTime? UltimaFecha { get; set; }
     }
 
     public class PersonaClienteMethod
@@ -269,7 +270,9 @@ namespace MAT.MVC.Models
                     _item.ClienteID = new Guid(_reader["ClienteID"].ToString());
                     _item.FullName = _reader["FullName"].ToString();
                     _item.Monto = Convert.ToDecimal(_reader["Monto"].ToString());
-                    
+                    _item.UltimaFecha = _reader["UltimaFecha"] != DBNull.Value && _reader["UltimaFecha"] != null
+                        ? Convert.ToDateTime(_reader["UltimaFecha"])
+                        : (DateTime?)null;
                     _List.Add(_item);
                 }
             }
