@@ -406,7 +406,10 @@ namespace MAT.MVC.Controllers.Reserva
                     }, JsonRequestBehavior.AllowGet);
                 }
 
-                json = JsonConvert.SerializeObject(ds, Formatting.Indented);
+                // Convertir DataSet a estructura { Table: [...] } para evitar fallos de serialización de DataSet (DBNull, tipos especiales)
+                var tableList = DataTableToDictionaryList(ds.Tables.Count > 0 ? ds.Tables[0] : null);
+                var payload = new { Table = tableList };
+                json = JsonConvert.SerializeObject(payload, Formatting.Indented);
                 
                 sResult[0] = json;
                 sResult[1] = "";
@@ -434,6 +437,26 @@ namespace MAT.MVC.Controllers.Reserva
                 jsTable = sResult[0],
                 Error = sResult[1]
             }, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// Convierte un DataTable en lista de diccionarios para serialización JSON segura (evita DBNull y tipos problemáticos).
+        /// </summary>
+        private static List<Dictionary<string, object>> DataTableToDictionaryList(DataTable dt)
+        {
+            var list = new List<Dictionary<string, object>>();
+            if (dt == null) return list;
+            foreach (DataRow row in dt.Rows)
+            {
+                var dict = new Dictionary<string, object>();
+                foreach (DataColumn col in dt.Columns)
+                {
+                    var val = row[col];
+                    dict[col.ColumnName] = (val == null || val == DBNull.Value) ? null : val;
+                }
+                list.Add(dict);
+            }
+            return list;
         }
 
         public JsonResult PersonaAutocomplete(string sParam, string sViajeID)
