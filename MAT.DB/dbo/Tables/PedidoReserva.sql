@@ -1,0 +1,26 @@
+﻿CREATE TABLE [dbo].[PedidoReserva] (
+    [Id]                             UNIQUEIDENTIFIER NOT NULL,
+    [ViajeId]                        UNIQUEIDENTIFIER NOT NULL,
+    [VendedorId]                     UNIQUEIDENTIFIER NOT NULL,
+    [ClienteId]                      UNIQUEIDENTIFIER NOT NULL,
+    [Observaciones]                  VARCHAR (8000)   NULL,
+    [Condicion]                      VARCHAR (50)     NULL,
+    [MonedaTipo]                     INT              NULL,
+    [DescuentoDetalle]               VARCHAR (200)    NULL,
+    [DescuentoMonto]                 MONEY            NULL,
+    [DescuentoIsDescuento]           BIT              NULL,
+    [PagoMonto]                      MONEY            NULL,
+    [PagoMontoRecibidoMonedaTipo]    INT              NULL,
+    [PagoMontoEquivalente]           MONEY            NULL,
+    [PagoMontoEquivalenteMonedaTipo] INT              NULL,
+    [PagoMontoEquivalenteCotizacion] MONEY            NULL,
+    [PagoNroRecibo]                  VARCHAR (50)     NULL,
+    [PagoTransaccionId]              VARCHAR (50)     NULL,
+    [PagoTipoPago]                   INT              NULL,
+    [PagoNroFactura]                 VARCHAR (50)     NULL,
+    [FacturaId]                      UNIQUEIDENTIFIER NOT NULL,
+    [CreatedOn]                      DATETIME         NOT NULL,
+    [ExpirationOn]                   DATETIME         NOT NULL,
+    CONSTRAINT [PK_PedidoReserva] PRIMARY KEY NONCLUSTERED ([Id] ASC)
+);
+

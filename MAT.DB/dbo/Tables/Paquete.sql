@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[Paquete] (
+    [PaqueteID]             UNIQUEIDENTIFIER CONSTRAINT [DF_Paquete_PaqueteID] DEFAULT (newid()) NOT NULL,
+    [Descripcion]           VARCHAR (100)    NOT NULL,
+    [PrecioCama]            FLOAT (53)       NULL,
+    [Moneda]                INT              NULL,
+    [Iva]                   VARCHAR (50)     NULL,
+    [Alicuota]              VARCHAR (50)     NULL,
+    [Temporada]             INT              NULL,
+    [Cotizacion]            FLOAT (53)       NULL,
+    [Codigo]                VARCHAR (50)     NULL,
+    [DestinoID]             INT              NOT NULL,
+    [PrecioSemiCama]        FLOAT (53)       NULL,
+    [Foto]                  VARCHAR (200)    NULL,
+    [ServiciosParticulares] VARCHAR (MAX)    NULL,
+    [FechaCreacion]         DATETIME         DEFAULT (getdate()) NULL,
+    [LastUpdate]            DATETIME         DEFAULT (getdate()) NOT NULL,
+    [ImageId]               INT              NULL,
+    [GalleryId]             INT              NULL,
+    CONSTRAINT [PK_Paquete] PRIMARY KEY CLUSTERED ([PaqueteID] ASC),
+    CONSTRAINT [FK_Paquete_Gallery] FOREIGN KEY ([GalleryId]) REFERENCES [dbo].[Gallery] ([Id]),
+    CONSTRAINT [FK_Paquete_Image] FOREIGN KEY ([ImageId]) REFERENCES [dbo].[Image] ([Id]),
+    CONSTRAINT [FK_Paquete_Localidad] FOREIGN KEY ([DestinoID]) REFERENCES [dbo].[Localidad] ([ID]),
+    CONSTRAINT [FK_Paquete_MonedaTipo] FOREIGN KEY ([Moneda]) REFERENCES [dbo].[MonedaTipo] ([Id])
+);
+
