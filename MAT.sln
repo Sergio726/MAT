@@ -1,6 +1,8 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Entities", "MAT.Entities\MAT.Entities.csproj", "{20E43088-4618-4F4A-B8AD-FC31B50D94CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Data", "MAT.Data\MAT.Data.csproj", "{041C1BBE-0BFB-4D45-8125-9AB0BBC09A92}"
@@ -49,6 +51,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 		References\nunit.framework.dll = References\nunit.framework.dll
 		References\UniversalTypeConverter.dll = References\UniversalTypeConverter.dll
 		References\UniversalTypeConverter.XML = References\UniversalTypeConverter.XML
+	EndProjectSection
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MAT.DB", "MAT.DB\MAT.DB.sqlproj", "{C69A8453-365A-4564-9C32-3C24C2C9AC3B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DOCUMENTACION", "DOCUMENTACION", "{D0C1D2E3-F4A5-4B6C-8D7E-9F0A1B2C3D4E}"
+	ProjectSection(SolutionItems) = preProject
+		DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md = DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md
+		DOCUMENTACION\MAT_DB.md = DOCUMENTACION\MAT_DB.md
+		DOCUMENTACION\README.md = DOCUMENTACION\README.md
+		DOCUMENTACION\RESUMEN_EJECUTIVO_MAT2026.md = DOCUMENTACION\RESUMEN_EJECUTIVO_MAT2026.md
+		DOCUMENTACION\RESUMEN_FASE1_2026-01-04.md = DOCUMENTACION\RESUMEN_FASE1_2026-01-04.md
+		DOCUMENTACION\TEST_FASE1_2026-01-04.md = DOCUMENTACION\TEST_FASE1_2026-01-04.md
+		DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md = DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md
 	EndProjectSection
 EndProject
 Global
@@ -106,10 +121,20 @@ Global
 		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.GenerateDebug|Any CPU.Build.0 = Debug|Any CPU
 		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.GenerateDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.GenerateDebug|Any CPU.Build.0 = Debug|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.GenerateDebug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {86294F2F-9E75-41F6-B3C0-F5598C06DB0C}
 	EndGlobalSection
 EndGlobal

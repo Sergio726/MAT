@@ -13,7 +13,7 @@
     </RootPath>
     <RootNamespace>MAT.DB</RootNamespace>
     <AssemblyName>MAT.DB</AssemblyName>
-    <ModelCollation>1033, CI</ModelCollation>
+    <ModelCollation>1033,CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -22,6 +22,8 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
+    <DefaultFilegroup>PRIMARY</DefaultFilegroup>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -56,5 +58,1128 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Views\" />
+    <Folder Include="Security\" />
+    <Folder Include="dbo\Functions\" />
+    <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\User Defined Types\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\ReservaHabitacion.sql" />
+    <Build Include="dbo\Tables\Servicio.sql" />
+    <Build Include="dbo\Tables\MonedaTipo.sql" />
+    <Build Include="dbo\Tables\Transporte.sql" />
+    <Build Include="dbo\Tables\Vendedor.sql" />
+    <Build Include="dbo\Tables\ViajeHotel.sql" />
+    <Build Include="dbo\Tables\Voucher.sql" />
+    <Build Include="dbo\Tables\Adicional.sql" />
+    <Build Include="dbo\Tables\AuditFactura.sql" />
+    <Build Include="dbo\Tables\Butaca.sql" />
+    <Build Include="dbo\Tables\Ciudad.sql" />
+    <Build Include="dbo\Tables\User.sql" />
+    <Build Include="dbo\Tables\suscriptores.sql" />
+    <Build Include="dbo\Tables\Cliente.sql" />
+    <Build Include="dbo\Tables\CreditoCliente.sql" />
+    <Build Include="dbo\Tables\PasajeSeleccionado.sql" />
+    <Build Include="dbo\Tables\ViajeAudit.sql" />
+    <Build Include="dbo\Tables\Cuenta.sql" />
+    <Build Include="dbo\Tables\Payment.sql" />
+    <Build Include="dbo\Tables\PaymentDetail.sql" />
+    <Build Include="dbo\Tables\CuentaCorriente.sql" />
+    <Build Include="dbo\Tables\PedidoReserva.sql" />
+    <Build Include="dbo\Tables\Debito.sql" />
+    <Build Include="dbo\Tables\PagoDetalle.sql" />
+    <Build Include="dbo\Tables\Departamento.sql" />
+    <Build Include="dbo\Tables\DetalleFactura.sql" />
+    <Build Include="dbo\Tables\TransHotelHabitacionViaje.sql" />
+    <Build Include="dbo\Tables\EstadoFactura.sql" />
+    <Build Include="dbo\Tables\EstadoPasaje.sql" />
+    <Build Include="dbo\Tables\Excursion.sql" />
+    <Build Include="dbo\Tables\Factura.sql" />
+    <Build Include="dbo\Tables\Habitacion.sql" />
+    <Build Include="dbo\Tables\PlantillaDistribucionHabitacion.sql" />
+    <Build Include="dbo\Tables\Country.sql" />
+    <Build Include="dbo\Tables\HabitacionTipo.sql" />
+    <Build Include="dbo\Tables\TransPlantillaDistribucionHabitacion.sql" />
+    <Build Include="dbo\Tables\Department.sql" />
+    <Build Include="dbo\Tables\Historial.sql" />
+    <Build Include="dbo\Tables\foto_galeria.sql" />
+    <Build Include="dbo\Tables\Hotel.sql" />
+    <Build Include="dbo\Tables\fotos.sql" />
+    <Build Include="dbo\Tables\Localidad.sql" />
+    <Build Include="dbo\Tables\galeria_paquete.sql" />
+    <Build Include="dbo\Tables\MovimientoCuenta.sql" />
+    <Build Include="dbo\Tables\galerias.sql" />
+    <Build Include="dbo\Tables\Gallery.sql" />
+    <Build Include="dbo\Tables\Nota.sql" />
+    <Build Include="dbo\Tables\GalleryImage.sql" />
+    <Build Include="dbo\Tables\Pago.sql" />
+    <Build Include="dbo\Tables\Image.sql" />
+    <Build Include="dbo\Tables\Location.sql" />
+    <Build Include="dbo\Tables\PagoTipo.sql" />
+    <Build Include="dbo\Tables\paquetesPublic.sql" />
+    <Build Include="dbo\Tables\Pais.sql" />
+    <Build Include="dbo\Tables\PaymentMethod.sql" />
+    <Build Include="dbo\Tables\Paquete.sql" />
+    <Build Include="dbo\Tables\Property.sql" />
+    <Build Include="dbo\Tables\Viaje.sql" />
+    <Build Include="dbo\Tables\PropertyCategory.sql" />
+    <Build Include="dbo\Tables\ObservacionViajeCategoria.sql" />
+    <Build Include="dbo\Tables\PropertyType.sql" />
+    <Build Include="dbo\Tables\ObservacionViaje.sql" />
+    <Build Include="dbo\Tables\Provider.sql" />
+    <Build Include="dbo\Tables\PaqueteAdicional.sql" />
+    <Build Include="dbo\Tables\Province.sql" />
+    <Build Include="dbo\Tables\ListaEspera.sql" />
+    <Build Include="dbo\Tables\PaqueteExcursion.sql" />
+    <Build Include="dbo\Tables\Room.sql" />
+    <Build Include="dbo\Tables\RoomType.sql" />
+    <Build Include="dbo\Tables\PaquetePrecio.sql" />
+    <Build Include="dbo\Tables\ScriptLog.sql" />
+    <Build Include="dbo\Tables\PaqueteServicio.sql" />
+    <Build Include="dbo\Tables\Seat.sql" />
+    <Build Include="dbo\Tables\SeatFloor.sql" />
+    <Build Include="dbo\Tables\Pasaje.sql" />
+    <Build Include="dbo\Tables\SeatLocation.sql" />
+    <Build Include="dbo\Tables\PasajeAdicional.sql" />
+    <Build Include="dbo\Tables\SeatPosition.sql" />
+    <Build Include="dbo\Tables\SeatType.sql" />
+    <Build Include="dbo\Tables\Pasajero.sql" />
+    <Build Include="dbo\Tables\PasajeroMenor.sql" />
+    <Build Include="dbo\Tables\TaxCondition.sql" />
+    <Build Include="dbo\Tables\Persona.sql" />
+    <Build Include="dbo\Tables\Transport.sql" />
+    <Build Include="dbo\Tables\Planilla.sql" />
+    <Build Include="dbo\Tables\temporal.sql" />
+    <Build Include="dbo\Tables\TransportType.sql" />
+    <Build Include="dbo\Tables\PlanillaHabitacionItem.sql" />
+    <Build Include="dbo\Tables\PlanillaServicioItem.sql" />
+    <Build Include="dbo\Tables\AuditReservaHabitacion.sql" />
+    <Build Include="dbo\Tables\Precio.sql" />
+    <Build Include="dbo\Tables\PrecioHabitacion.sql" />
+    <Build Include="dbo\Tables\PrecioServicio.sql" />
+    <Build Include="dbo\Tables\Proveedor.sql" />
+    <Build Include="dbo\Tables\Provincia.sql" />
+    <Build Include="dbo\Views\PersonaPasajero.sql" />
+    <Build Include="dbo\Views\PersonaProveedor.sql" />
+    <Build Include="dbo\Views\PersonaVendedor.sql" />
+    <Build Include="dbo\Views\Reserva.sql" />
+    <Build Include="dbo\Views\vConsultaReservaHabitacion.sql" />
+    <Build Include="dbo\Views\vLocalidad.sql" />
+    <Build Include="dbo\Views\vPersona.sql" />
+    <Build Include="dbo\Views\PasajeroViaje.sql" />
+    <Build Include="dbo\Views\PersonaCliente.sql" />
+    <Build Include="Security\matuser.sql" />
+    <Build Include="Security\matuser_1.sql" />
+    <Build Include="Security\RoleMemberships.sql" />
+    <Build Include="dbo\Functions\fn_MAT_SaldoFactura.sql" />
+    <Build Include="dbo\Functions\FilteredIndexFragmentation.sql" />
+    <Build Include="dbo\Functions\Split.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_HabitacionTipo_GetByTipoId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_GetByExcursionId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_DropDown.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_GetByProveedorId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_EsquemaDistribucion.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_EsquemaDistribucion_CantPax.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_CreditoCliente_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Nota_GetNotaByID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_GetByPasajeroId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_MonedaTipo_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Nota_IsertNewNota.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Servicios_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Pago_DeletePago.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetByClienteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Pago_GetPagosByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajero_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetByFacturaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Pago_GetPagosByViaje.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeroViaje_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetByVendedorId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Paquete_GetPaquetes.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeroViaje_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Paquete_NewPaquete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeroViaje_GetByViajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureFactura_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Adicional_GetByIds.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Paquete_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Precio_GetByIds.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_Create.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_DeleteReservaHotel.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_DesvincularMenor.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_GetByPersonaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_GetByHabitacionId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_EliminarVenta_LiberarHabitaciones.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_GetByHotelId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_GetByPersonaID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersona_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_GetPasajeroMenorByFactura.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaCliente_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHabitacion_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_RegistroPago_NuevoPago.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaCliente_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_CambioButacas.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaPasajero_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\errorHandler.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_DetalleFactura.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaPasajero_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\Legacy_Migration_RollBack.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaProveedor_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\01_Country.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_ExtenderPreReserva.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaProveedor_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\02_Province.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetClientesDisponibles.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaVendedor_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureHotel_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\03_Department.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetMayoresDisponibles.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePersonaVendedor_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\04_Location.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetMenoresDisponibles.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\05_RoomType.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetPaqueteByPaqueteID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetPasajeByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetPasajeroMenor.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_GetByPrecioId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetReservasVencidas.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_GetById.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_NuevaReserva.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_UpdatePasajeAdicionalesVoucher.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePrecio_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_VincularMenor.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ViajeAudit_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureLocalidad_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_VincularMenorByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ReservaHabitacion_GetByPasajeroID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ReservaHabitacion_NuevaReserva.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_GetByProveedorId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ViajeAudit_Cancel.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_SaldoFactura.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByCuentaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Servicio_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByFacturaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Transporte_GetListTransporte.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByMovimientoId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_DDViaje.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByNotaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_GetFechaViajeByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetByPagoId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_GetViajeByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_GetViajesByDateYear.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_GetById.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_NewViaje.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureMovimientoCuenta_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_ViajeHotel_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureProvincia_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_ViajeHotel_GetByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReserva_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_VincularHotelViaje.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReserva_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_GetByClienteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Voucher_GetHotelByPasajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_GetByNotaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Voucher_GetNrPrintByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_GetByVendedorId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PagoDetalle_GetByPagoID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Voucher_GetVoucherByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_DeleteViaje.sql" />
+    <Build Include="dbo\Stored Procedures\04_Enumerators.sql" />
+    <Build Include="dbo\Stored Procedures\usp_Paquete_GetDestinoByPaqueteID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetByHabitacionId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_PaquetePrecio_GetAllByFacturaId.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Clientes_Search.sql" />
+    <Build Include="dbo\Stored Procedures\usp_PasajeroViaje_GetByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetByPasajeId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PasajeroViaje_GetByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureNota_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_Update.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_DetalleFactura_SetPrecio.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Dashboard_Viajes_LugaresDisponibles.sql" />
+    <Build Include="dbo\Stored Procedures\usp_Provincia_GetAllByPaisID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetByReservaHabitacionId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_CheckNombre.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Pago_GetTotalPagoByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_GetHabitacionDisponiblesByViaje.sql" />
+    <Build Include="dbo\Stored Procedures\usp_RecommendedIndexSQL.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_ActualizarEstados.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Personas_AddPasajero.sql" />
+    <Build Include="dbo\Stored Procedures\usp_Viaje_ViajeHotel_IngresoEgreso_Set.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_ViajeHotel_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Personas_Search.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Pago_GetPagosByFecha.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetByPagoId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_TransHotelHabitacionViaje_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_Pagos.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetByVendedorId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_TransHotelHabitacionViaje_GetDistribucionHab.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_RankingCompras.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_TransHotelHabitacionViaje_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_Ventas.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_EliminarFactura.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetByHotelId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePago_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetAdicionalesByViajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetByProveedorId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Excursiones_GetToAdd.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetPaymentPreferences.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetByServicioId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\ups_MAT_PaqueteExcursion_InsertNew.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetReservas.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetByTransporteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\ups_MAT_PaqueteExcursion_GetByPaqueteID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_RegistrarPago.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_GetByPaisId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PlantillaDistribucion_Create.sql" />
+    <Build Include="dbo\Stored Procedures\ups_MAT_PaqueteExcursion_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_Reservar.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PlantillaDistribucionHabitacion_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viajes_GetListHotel.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureServicio_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_TransHotelHabitacionViaje_InsertByPlantilla.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ViajeHotel_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePais_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PlantillaDistribucion_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_GetByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_GetByTransporteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_GetByDestinoId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Persona_GetByDNI.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_GetByPaqueteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureTransporte_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurevConsultaReservaHabitacion_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurevConsultaReservaHabitacion_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquete_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_GetByVendedorId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_GetByAdicionalId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_GetByPaqueteAdicionalId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetDetalleViaje.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_GetByPaqueteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVendedor_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteAdicional_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_GetByBusId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_GetByPaqueteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_GetByViajeId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_GetByExcursionId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_GetByPaqueteExcursionId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_GetByPaqueteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureViaje_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurevLocalidad_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_GetByAdicionalId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurevLocalidad_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteExcursion_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ObservacionViaje_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ObservacionViaje_Update.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_Reserva_GetSenasByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ObservacionViaje_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureAdicional_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ObservacionViaje_GetByViaje.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_GetByVendedorId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_InsertNew.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_GetByPaqueteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ObservacionViaje_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_GetByVoucherId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_GetByPaquetePrecioId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ObservacionViajeCategoria_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_SearchCliente.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_GetByPrecioId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_GetByButacaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_SelectByViajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_GetByTransporteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Precio_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedureVoucher_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_CountListaEsperaByViajeId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_Precio_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurevPersona_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaquetePrecio_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Precio_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurevPersona_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureButaca_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Precio_Update.sql" />
+    <Build Include="dbo\Stored Procedures\DefragmentaIndices.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_Precio_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_Factura_Audit.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_Factura_DetalleFacturaByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetByPaqueteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_GetAllOcupacion.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetByPaqueteServicioId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_GetByClienteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_GetInfoByLocalidadId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetByServicioId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_GetByTipoId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_helpindexSQL.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_indexing_pivot.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_Localidad_GetByIdDepartamento.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCliente_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_GetViajeByDate.sql" />
+    <Build Include="dbo\Stored Procedures\usp_Localidad_GetByIdProvincia.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Paquetes_VinculosByPaqueteID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Admin_AuditoriaFacturas.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_CreditoCliente_GetMovimientoNotaCreditoByClienteID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_DetalleFactura_AgregarDescuentoRecargo.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByButacaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_GetByClienteId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_Search.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_External_Packages_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByFacturaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_GetByCuentaId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\MAT_PersonaCliente_Search.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_ActualizarEstadosByMovimientoID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByPasajeId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_BorrarUnPago.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByPasajeroId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_GetPasajerosByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_DeleteFactura.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByPrecioId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureCuenta_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_EliminarVenta_LiberarHabitacionesByPasajeID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_GetDetalleByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByViajeId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureDatosPaquete_Get.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_Search.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_GetFacturaByClienteID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByVoucherId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_GetFacturaClienteByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_GetListFacturaIDByViajeByClienteID.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_AuditReservaHabitacion_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_GetById.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_EditHabitacion.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_GetPaged.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_GetByHotelId.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Insert.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureDepartamento_Update.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_GetHabitacionDisponibilidad.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_GetByAdicionalId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Delete.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_NewHabitacion.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_GetByPasajeAdicionalId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Find.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_HabitacionTipo_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\_ProcedurePasajeAdicional_GetByPasajeId.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\Stored Procedures\_ProcedureExcursion_Get_List.sql">
+      <AnsiNulls>Off</AnsiNulls>
+    </Build>
+    <Build Include="dbo\User Defined Types\tvp_uniqueidentifier.sql" />
+    <Build Include="dbo\User Defined Types\tvp_int.sql" />
+    <Build Include="dbo\User Defined Types\tvp_AdicionalIDTableType.sql" />
+    <Build Include="dbo\User Defined Types\tvp_PrecioIDTableType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SqlSchemaCompare.scmp" />
   </ItemGroup>
 </Project>
