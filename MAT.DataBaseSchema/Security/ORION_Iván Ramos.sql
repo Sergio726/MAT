@@ -1,3 +1,0 @@
-﻿CREATE LOGIN [ORION\Iván Ramos]
-    FROM WINDOWS WITH DEFAULT_LANGUAGE = [us_english];
-
