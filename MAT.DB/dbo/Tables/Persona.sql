@@ -22,8 +22,31 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Persona__PersonaID]
     ON [dbo].[Persona]([PersonaID] ASC)
     INCLUDE([Apellido], [Nombre]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Persona_Telefono]
+    ON [dbo].[Persona]([Telefono] ASC, [Celular] ASC) WHERE ([Telefono] IS NOT NULL);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Persona_NroDocumento]
+    ON [dbo].[Persona]([NroDocumento] ASC) WHERE ([NroDocumento] IS NOT NULL);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Persona_Celular]
+    ON [dbo].[Persona]([Celular] ASC) WHERE ([Celular] IS NOT NULL);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Persona_Apellido_Nombre]
+    ON [dbo].[Persona]([Apellido] ASC, [Nombre] ASC)
+    INCLUDE([PersonaID], [NroDocumento], [Telefono], [Celular], [LocalidadID], [Nacionalidad], [PaisResidencia]);
 

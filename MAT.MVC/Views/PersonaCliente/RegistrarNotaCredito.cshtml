@@ -4,9 +4,19 @@
 
 @if (ViewBag.Error != null)
 {
-    <script type="text/javascript">
-        console.log("@ViewBag.Error");
-    </script>
+    <div class="modal-form mat-nc mat-nc-error-state">
+        <div class="mat-nc-error-icon">
+            <i class="bi bi-info-circle"></i>
+        </div>
+        <p class="mat-nc-error-message">@ViewBag.Error</p>
+        <p class="mat-nc-error-hint">Puede emitir una nota de crédito cuando el pasajero decide no viajar o alguno de los pasajeros de la factura no viaja, siempre que el viaje haya sido pagado en su totalidad.</p>
+        <div class="modal-form-actions">
+            <button type="button" id="btn-notacredito-cerrar" class="btn btn-secondary">
+                <i class="bi bi-x-lg"></i>
+                Cerrar
+            </button>
+        </div>
+    </div>
     return;
 }
 <div class="modal-form mat-nc">
@@ -37,34 +47,46 @@
             </div>
         </div>
 
-        <div class="modal-form-row">
-            <div class="modal-form-group">
+        <div class="mat-nc-fields">
+            <div class="mat-nc-field">
                 <label class="modal-form-label" for="NroNota">
-                    <i class="bi bi-hash me-1 text-brand"></i>
-                    N° de nota <span class="text-danger">*</span>
+                    <i class="bi bi-lock-fill me-1"></i>
+                    N° de nota <span class="mat-nc-badge-label">(solo lectura)</span>
                 </label>
-                <input type="text" id="NroNota" name="NroNota" class="modal-form-control" placeholder="Ingrese número de nota" />
+                <div class="mat-nc-nro-nota" id="NroNotaDisplay">@(Model.NroNota ?? "")</div>
+                <input type="hidden" id="NroNota" name="NroNota" value="@(Model.NroNota ?? "")" />
                 <div class="mat-field-error" data-for="NroNota"></div>
             </div>
 
-            <div class="modal-form-group">
+            <div class="mat-nc-field mat-nc-field-credito">
                 <label class="modal-form-label" for="MontoNota">
-                    <i class="bi bi-currency-dollar me-1 text-brand"></i>
-                    Monto de nota de crédito <span class="text-danger">*</span>
+                    <i class="bi bi-currency-dollar me-1"></i>
+                    Crédito para próximas compras <span class="text-danger">*</span>
                 </label>
-                <input type="text" id="MontoNota" name="MontoNota" class="modal-form-control money" value="@String.Format("{0:N2}", Model.MontoNota)" />
+                <span class="mat-nc-badge mat-nc-badge-sugerido">Sugerido: @string.Format("{0:P0}", ViewBag.PorcentajeCreditoSugerido ?? 0) según días</span>
+                <input type="text" id="MontoNota" name="MontoNota" class="modal-form-control money mat-nc-input-credito" value="@String.Format("{0:N2}", Model.MontoNota)" />
                 <div class="mat-field-error" data-for="MontoNota"></div>
             </div>
-        </div>
 
-        <div class="modal-form-row">
-            <div class="modal-form-group">
+            <div class="mat-nc-field mat-nc-field-retencion">
                 <label class="modal-form-label" for="MontoRetencion">
-                    <i class="bi bi-percent me-1 text-brand"></i>
-                    Monto a retener <span class="text-danger">*</span>
+                    <i class="bi bi-percent me-1"></i>
+                    Monto retenido <span class="text-danger">*</span>
                 </label>
-                <input type="text" id="MontoRetencion" name="MontoRetencion" class="modal-form-control money" value="@String.Format("{0:N2}", Model.MontoRetencion)" />
+                <span class="mat-nc-badge mat-nc-badge-sugerido">Sugerido: @string.Format("{0:P0}", ViewBag.PorcentajeRetencionSugerido ?? 0) según días</span>
+                <span class="mat-nc-badge mat-nc-badge-retencion">No se devuelve: ya utilizado en gastos operativos</span>
+                <input type="text" id="MontoRetencion" name="MontoRetencion" class="modal-form-control money mat-nc-input-retencion" value="@String.Format("{0:N2}", Model.MontoRetencion)" />
                 <div class="mat-field-error" data-for="MontoRetencion"></div>
+            </div>
+
+            <div class="mat-nc-field mat-nc-field-devolucion">
+                <label class="modal-form-label" for="MontoDevolucion">
+                    <i class="bi bi-cash-coin me-1"></i>
+                    Devolución al cliente
+                </label>
+                <span class="mat-nc-badge mat-nc-badge-hint">Mov. negativo en pagos</span>
+                <input type="text" id="MontoDevolucion" name="MontoDevolucion" class="modal-form-control money mat-nc-input-devolucion" value="@String.Format("{0:N2}", Model.MontoDevolucion)" />
+                <div class="mat-field-error" data-for="MontoDevolucion"></div>
             </div>
         </div>
 
@@ -79,10 +101,24 @@
             </div>
         </div>
 
+        <div class="mat-nc-instrucciones">
+            <div class="mat-nc-instrucciones-title">
+                <i class="bi bi-info-circle"></i>
+                Instrucciones de uso del crédito
+            </div>
+            <ul class="mat-nc-instrucciones-list">
+                <li><strong>Monto retenido:</strong> dinero que no se le puede devolver al cliente porque ya se utilizó en gastos operativos.</li>
+                <li>El crédito puede usarse como forma de pago en futuras reservas o compras.</li>
+                <li>Al registrar un pago, seleccione <strong>Nota de Crédito</strong> como forma de pago; el monto se descontará del saldo disponible del cliente.</li>
+                <li>El cliente puede consultar su saldo de crédito en la cuenta corriente.</li>
+            </ul>
+        </div>
+
         <input type="hidden" value="@Model.Dias" id="Dias" name="Dias" />
         <input type="hidden" value="@Model.ClienteID" id="ClienteID" name="ClienteID" />
         <input type="hidden" value="@ViewBag.FacturaID" id="FacturaID" name="FacturaID" />
         <input type="hidden" value="@ViewBag.TotalPagos" id="hdnTotalPagos" name="hdnTotalPagos" />
+        <input type="hidden" value="@ViewBag.MontoFactura" id="hdnMontoFactura" name="hdnMontoFactura" />
     </form>
 
     <div class="modal-form-actions">

@@ -1,2 +1,2 @@
-﻿CREATE USER [matuser] FOR LOGIN [matuser];
+﻿CREATE USER [matuser];
 

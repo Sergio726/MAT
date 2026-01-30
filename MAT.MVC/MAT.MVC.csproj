@@ -837,6 +837,7 @@
     <Content Include="Views\PersonaCliente\partialHistorialdePagosByFactura.cshtml" />
     <Content Include="Views\NotaCredito\partialMovimientoNotaCredito.cshtml" />
     <Content Include="Views\NotaCredito\partialNotaCredito.cshtml" />
+    <Content Include="Views\NotaCredito\Imprimir.cshtml" />
     <Content Include="Views\Factura\Index.cshtml" />
     <Content Include="Views\Factura\FacturaResultSearch.cshtml" />
     <Content Include="Views\Factura\FacturaMoreDetails.cshtml" />

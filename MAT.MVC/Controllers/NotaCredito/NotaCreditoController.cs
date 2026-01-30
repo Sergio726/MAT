@@ -1,4 +1,4 @@
-﻿using MAT.MVC.Models;
+using MAT.MVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +43,23 @@ namespace MAT.MVC.Controllers
                 ViewBag.Error = e.Message;
             }
             return PartialView(_model);
+        }
+
+        /// <summary>
+        /// Vista completa de la nota de crédito para imprimir o guardar como PDF.
+        /// </summary>
+        public ActionResult Imprimir(Guid NotaID)
+        {
+            NotaCreditoModel _model = null;
+            try
+            {
+                _model = NotaCreditoMethod.GetNotaByID(NotaID);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+            }
+            return View(_model ?? new NotaCreditoModel());
         }
 
         public JsonResult getCreditoDisponible(Guid ClienteID)

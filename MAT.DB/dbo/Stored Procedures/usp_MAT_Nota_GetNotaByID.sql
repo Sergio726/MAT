@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Nota_GetNotaByID](@NotaID UNIQUEIDENTIFIER)
+CREATE PROCEDURE [dbo].[usp_MAT_Nota_GetNotaByID](@NotaID UNIQUEIDENTIFIER)
 AS
 	/*-- =============================================   
   -- Author:    Garcia Sergio   
@@ -14,6 +14,7 @@ BEGIN
 		   n.Fecha,
 		   n.MontoNota,
 		   n.MontoRetencion,
+		   n.MontoDevolucion,
 		   n.NroNota,
 		   n.PorcentajeRetencion,
 		   Vendedor = p.FullName,

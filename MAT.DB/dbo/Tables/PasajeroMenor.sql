@@ -8,3 +8,9 @@
     CONSTRAINT [fk_cliente_pasajero] FOREIGN KEY ([pasajeroid]) REFERENCES [dbo].[Cliente] ([ClienteID])
 );
 
+
+GO
+CREATE NONCLUSTERED INDEX [IX_PasajeroMenor_PasajeID_Include_Personas]
+    ON [dbo].[PasajeroMenor]([pasajeid] ASC)
+    INCLUDE([pasajeroid], [menorid]);
+

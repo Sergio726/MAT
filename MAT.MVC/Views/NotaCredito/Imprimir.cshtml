@@ -1,0 +1,85 @@
+@model MAT.MVC.Models.NotaCreditoModel
+@{
+    Layout = null;
+    var titulo = "Nota de Crédito " + (Model?.NroNota ?? "");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@titulo</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; color: #1f2937; padding: 24px; max-width: 700px; margin: 0 auto; }
+        .nc-header { border-bottom: 2px solid #e91e63; padding-bottom: 12px; margin-bottom: 20px; }
+        .nc-title { font-size: 1.5rem; font-weight: 700; color: #e91e63; }
+        .nc-subtitle { font-size: 0.875rem; color: #6b7280; margin-top: 4px; }
+        .nc-grid { display: table; width: 100%; }
+        .nc-row { display: table-row; }
+        .nc-label { display: table-cell; padding: 8px 12px 8px 0; font-weight: 600; color: #6b7280; width: 220px; }
+        .nc-value { display: table-cell; padding: 8px 0; }
+        .nc-value.monto { font-weight: 600; color: #059669; }
+        .nc-value.retencion { color: #dc2626; }
+        .nc-value.devolucion { color: #2563eb; }
+        .nc-footer { margin-top: 28px; font-size: 0.8125rem; color: #6b7280; }
+        @@media print {
+            body { padding: 16px; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    @if (ViewBag.Error != null)
+    {
+        <p class="nc-value">@ViewBag.Error</p>
+        return;
+    }
+    <div class="nc-header">
+        <div class="nc-title">Nota de Crédito</div>
+        <div class="nc-subtitle">@(Model?.NroNota ?? "-")</div>
+    </div>
+    <div class="nc-grid">
+        <div class="nc-row">
+            <div class="nc-label">N° de nota</div>
+            <div class="nc-value">@(Model?.NroNota ?? "-")</div>
+        </div>
+        <div class="nc-row">
+            <div class="nc-label">Fecha</div>
+            <div class="nc-value">@(Model?.Fecha.ToString("dd/MM/yyyy") ?? "-")</div>
+        </div>
+        <div class="nc-row">
+            <div class="nc-label">Crédito para próximas compras</div>
+            <div class="nc-value monto">@string.Format("{0:C}", Model?.MontoNota ?? 0)</div>
+        </div>
+        <div class="nc-row">
+            <div class="nc-label">Monto retenido</div>
+            <div class="nc-value retencion">@string.Format("{0:C}", Model?.MontoRetencion ?? 0)</div>
+        </div>
+        @if (Model != null && Model.MontoDevolucion > 0)
+        {
+            <div class="nc-row">
+                <div class="nc-label">Devolución al cliente</div>
+                <div class="nc-value devolucion">@string.Format("{0:C}", Model.MontoDevolucion)</div>
+            </div>
+        }
+        <div class="nc-row">
+            <div class="nc-label">Vendedor</div>
+            <div class="nc-value">@(Model?.Vendedor ?? "-")</div>
+        </div>
+        <div class="nc-row">
+            <div class="nc-label">Detalle</div>
+            <div class="nc-value">@(Model?.Detalle ?? "-")</div>
+        </div>
+    </div>
+    <div class="nc-footer no-print">
+        <p>Use la función imprimir del navegador (Ctrl+P) para imprimir o guardar como PDF.</p>
+    </div>
+    <script>
+        (function () {
+            if (window.opener) return;
+            var q = window.location.search;
+            if (q.indexOf('print=1') !== -1) window.print();
+        })();
+    </script>
+</body>
+</html>

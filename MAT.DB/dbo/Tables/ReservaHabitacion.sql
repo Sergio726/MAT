@@ -17,3 +17,9 @@
     CONSTRAINT [FK_ReservaHabitacion_Persona] FOREIGN KEY ([PasajeroID]) REFERENCES [dbo].[Persona] ([PersonaID])
 );
 
+
+GO
+CREATE NONCLUSTERED INDEX [IX_ReservaHabitacion_PasajeID_Include_Habitacion]
+    ON [dbo].[ReservaHabitacion]([PasajeID] ASC)
+    INCLUDE([HabitacionID]);
+

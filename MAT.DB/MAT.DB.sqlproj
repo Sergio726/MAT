@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -228,6 +228,7 @@
     </Build>
     <Build Include="dbo\Stored Procedures\usp_MAT_MonedaTipo_GetAll.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Nota_IsertNewNota.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Nota_GetNextNroNota.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedurePasajero_GetPaged.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>
@@ -1178,6 +1179,19 @@
     <Build Include="dbo\User Defined Types\tvp_int.sql" />
     <Build Include="dbo\User Defined Types\tvp_AdicionalIDTableType.sql" />
     <Build Include="dbo\User Defined Types\tvp_PrecioIDTableType.sql" />
+    <Build Include="dbo\Tables\Presupuesto.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_UpdateEstado.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_GetByDni.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_GetByCodigo.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_Expirados.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_GetTop.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Pasaje_CambiarPasajero.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_SelectByViajeId_Active.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_Delete_Soft.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_GetDetallePopupByFacturaID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Factura_EliminarPasajero.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare.scmp" />

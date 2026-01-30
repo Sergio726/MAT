@@ -20,6 +20,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Pasaje__ViajeID]
     ON [dbo].[Pasaje]([ViajeID] ASC)
@@ -30,4 +32,10 @@ GO
 CREATE NONCLUSTERED INDEX [IX_Pasaje_FacturaID_PasajeroIDViajeID]
     ON [dbo].[Pasaje]([FacturaID] ASC)
     INCLUDE([PasajeroID], [ViajeID]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Pasaje_FacturaID_Include_Core]
+    ON [dbo].[Pasaje]([FacturaID] ASC)
+    INCLUDE([PasajeID], [ViajeID], [PasajeroID], [ButacaID]);
 

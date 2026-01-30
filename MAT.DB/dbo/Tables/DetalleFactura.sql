@@ -12,8 +12,16 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_DetalleFactura_FacturaID]
     ON [dbo].[DetalleFactura]([FacturaID] ASC)
     INCLUDE([Precio]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_DetalleFactura_FacturaID_Include_Items]
+    ON [dbo].[DetalleFactura]([FacturaID] ASC)
+    INCLUDE([Precio], [Fecha], [Detalle], [Cantidad]);
 

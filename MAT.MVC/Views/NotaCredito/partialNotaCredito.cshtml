@@ -79,11 +79,15 @@
     return;
 }
 
-<div class="nota-credito-detail-container">
+<div class="nota-credito-detail-container" data-notaid="@Model.NotaID">
     <div class="print-action-row">
-        <a href="javascript: printNota();" class="btn-print" title="Imprimir comprobante de Nota de Crédito">
+        <a href="javascript: printNota();" class="btn-print" title="Imprimir o guardar como PDF">
             <i class="bi bi-printer"></i>
-            Imprimir
+            Imprimir / PDF
+        </a>
+        <a href="/NotaCredito/Imprimir?NotaID=@Model.NotaID" target="_blank" class="btn-print" title="Abrir en nueva ventana para imprimir o guardar como PDF">
+            <i class="bi bi-file-earmark-pdf"></i>
+            Abrir para PDF
         </a>
     </div>
 
@@ -119,7 +123,16 @@
             </div>
             <div class="nota-detail-value retencion">@string.Format("{0:C}", Model.MontoRetencion)</div>
         </div>
-
+        @if (Model.MontoDevolucion > 0)
+        {
+            <div class="nota-detail-item">
+                <div class="nota-detail-label">
+                    <i class="bi bi-cash-coin"></i>
+                    Devolución al cliente
+                </div>
+                <div class="nota-detail-value">@string.Format("{0:C}", Model.MontoDevolucion)</div>
+            </div>
+        }
         <div class="nota-detail-item">
             <div class="nota-detail-label">
                 <i class="bi bi-hash"></i>

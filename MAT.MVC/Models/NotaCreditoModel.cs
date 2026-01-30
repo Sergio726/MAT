@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -22,8 +22,10 @@ namespace MAT.MVC.Models
         public Guid VendedorID { get; set; }
         public string NroNota { get; set; }
         public decimal MontoNota { get; set; }
+        public decimal PorcentajeDevolucion { get; set; }
+        public decimal MontoDevolucion { get; set; }
         public string Vendedor { get; set; }
-        public string Detalle { get; set; }       
+        public string Detalle { get; set; }
     }
 
     public class MovimientoNotaCredito 
@@ -69,11 +71,20 @@ namespace MAT.MVC.Models
 
             return _model;
         }
+
+        /// <summary>
+        /// Obtiene el próximo número de nota de crédito (formato NC-YYYY-NNNN).
+        /// </summary>
+        public static string GetNextNroNota()
+        {
+            object result = DBHelper.ExecuteScalar("dbo.usp_MAT_Nota_GetNextNroNota", new SqlParameter[0]);
+            return result != null && result != DBNull.Value ? result.ToString().Trim() : string.Empty;
+        }
                 
         public static void InsertNewNota(NotaCreditoModel _model, Guid FacturaID)
         {
             SqlParameter[] dbParams = new SqlParameter[]
-                    {                    
+                    {
                         DBHelper.MakeParam("@PorcentajeRetencion", SqlDbType.Float, 0, _model.PorcentajeRetencion),
                         DBHelper.MakeParam("@MontoRetencion", SqlDbType.Float, 0, _model.MontoRetencion),
                         DBHelper.MakeParam("@Dias", SqlDbType.Int, 0, _model.Dias),
@@ -82,9 +93,10 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@NroNota", SqlDbType.VarChar, 0, _model.NroNota),
                         DBHelper.MakeParam("@MontoNota", SqlDbType.Float, 0, _model.MontoNota),
                         DBHelper.MakeParam("@FacturaID", SqlDbType.UniqueIdentifier, 0, FacturaID),
-                        DBHelper.MakeParam("@Detalle", SqlDbType.VarChar, 1000, _model.Detalle)
+                        DBHelper.MakeParam("@Detalle", SqlDbType.VarChar, 1000, _model.Detalle),
+                        DBHelper.MakeParam("@MontoDevolucion", SqlDbType.Float, 0, _model.MontoDevolucion)
                     };
-            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Nota_InsertNewNota", dbParams);
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Nota_IsertNewNota", dbParams);
         }
 
         public static List<MovimientoNotaCredito> GetMovimientoNotaCreditoByClienteID(Guid ClienteID, out string sCliente)
@@ -139,7 +151,8 @@ namespace MAT.MVC.Models
                 _nota.PorcentajeRetencion = Convert.ToDecimal(_reader["PorcentajeRetencion"]);
                 _nota.Vendedor = _reader["Vendedor"].ToString();
                 _nota.Detalle = _reader["Detalle"].ToString();
-                
+                if (_reader["MontoDevolucion"] != DBNull.Value && _reader["MontoDevolucion"] != null)
+                    _nota.MontoDevolucion = Convert.ToDecimal(_reader["MontoDevolucion"]);
             }
 
             return _nota;

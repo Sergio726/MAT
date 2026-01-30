@@ -1,32 +1,40 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Pago_GetPagosByViaje](@ViajeID uniqueidentifier)
+﻿CREATE PROCEDURE [dbo].[usp_MAT_Pago_GetPagosByViaje]
+    @ViajeID UNIQUEIDENTIFIER
 AS
-/*-- =============================================   
----- Author:    Garcia Sergio   
----- Create date: 10-02-2017   
----- Description:  get ALL Pagos by ViajeID
-     
-	 2017-12-01 Garcia Sergio add distinct   
----- =============================================*/ 
-		SET nocount, xact_abort ON; 
-		SET TRANSACTION isolation level READ uncommitted; 
+/*
+-- =============================================
+-- Author:        Garcia Sergio
+-- Create date:   10-02-2017
+-- Description:   Get ALL Pagos by ViajeID
+--                2017-12-01 Garcia Sergio added DISTINCT
+-- =============================================
+*/
+
+SET NOCOUNT, XACT_ABORT ON;
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
 BEGIN
-	select distinct p.PagoID,
-		   p.FechaPago,
-		   p.Monto,
-		   p.TransaccionID,
-		   p.NroRecibo,
-		   TipoPagoDescripcion = pt.Descripcion,
-		   Cliente = per.Apellido + ' ' + per.Nombre
-	from dbo.Pasaje pj
-	inner join dbo.Factura f
-		on pj.FacturaID = f.FacturaID
-	inner join dbo.MovimientoCuenta mc
-		on mc.FacturaID = f.FacturaID
-	inner join dbo.Pago p
-		on mc.PagoID = p.PagoID
-	left join dbo.PagoTipo pt
-		on pt.Id = p.TipoPago
-	inner join dbo.Persona per
-		on f.ClienteID = per.PersonaID
-	where pj.ViajeID = @ViajeID	
+
+    SELECT DISTINCT
+        p.PagoID,
+        p.FechaPago,
+        p.Monto,
+        p.TransaccionID,
+        p.NroRecibo,
+        TipoPagoDescripcion = pt.Descripcion,
+        Cliente = per.Apellido + ' ' + per.Nombre
+    FROM dbo.Pasaje pj
+    INNER JOIN dbo.Factura f 
+        ON pj.FacturaID = f.FacturaID
+    INNER JOIN dbo.MovimientoCuenta mc 
+        ON mc.FacturaID = f.FacturaID
+    INNER JOIN dbo.Pago p 
+        ON mc.PagoID = p.PagoID
+    LEFT JOIN dbo.PagoTipo pt 
+        ON pt.Id = p.TipoPago
+    INNER JOIN dbo.Persona per 
+        ON f.ClienteID = per.PersonaID
+    WHERE pj.ViajeID = @ViajeID
+	ORDER BY p.FechaPago
+
 END

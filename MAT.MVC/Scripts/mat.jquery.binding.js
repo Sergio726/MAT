@@ -825,24 +825,26 @@ $(document).on("click", "#btn-retencion", function () {
     var nro = $("#NroNota").val().trim();
     var detalle = $("#DetalleNotaCredito").val().trim();
     var montoRetencion = parseMoney($("#MontoRetencion").val());
+    var montoDevolucion = parseMoney($("#MontoDevolucion").val());
     var totalPagos = parseMoney($("#hdnTotalPagos").val());
+    var totalFactura = parseMoney($("#hdnMontoFactura").val());
     var montoNota = parseMoney($("#MontoNota").val());
 
     var ok = true;
 
     if (!nro) {
-        setError("NroNota", "El número de nota es obligatorio.");
+        setError("NroNota", "El número de nota no pudo generarse. Recargue el formulario.");
         ok = false;
     }
     if (!$("#MontoNota").val().trim()) {
-        setError("MontoNota", "El monto de nota de crédito es obligatorio.");
+        setError("MontoNota", "El crédito para próximas compras es obligatorio.");
         ok = false;
     } else if (isNaN(montoNota)) {
         setError("MontoNota", "Ingrese un monto válido.");
         ok = false;
     }
     if (!$("#MontoRetencion").val().trim()) {
-        setError("MontoRetencion", "El monto a retener es obligatorio.");
+        setError("MontoRetencion", "El monto retenido es obligatorio.");
         ok = false;
     } else if (isNaN(montoRetencion)) {
         setError("MontoRetencion", "Ingrese un monto válido.");
@@ -852,15 +854,30 @@ $(document).on("click", "#btn-retencion", function () {
         setError("DetalleNotaCredito", "El detalle es obligatorio.");
         ok = false;
     }
+    if (!$("#MontoDevolucion").val().trim()) {
+        $("#MontoDevolucion").val("0");
+    } else if (!isNaN(montoDevolucion) && montoDevolucion < 0) {
+        setError("MontoDevolucion", "La devolución no puede ser negativa.");
+        ok = false;
+    }
 
     // Validaciones cruzadas (solo si hay números)
-    if (ok && !isNaN(totalPagos)) {
-        if (!isNaN(montoRetencion) && montoRetencion > totalPagos) {
+    var totalDisponible = !isNaN(totalPagos) ? totalPagos : (!isNaN(totalFactura) ? totalFactura : NaN);
+    if (ok && !isNaN(totalDisponible)) {
+        if (!isNaN(montoRetencion) && montoRetencion > totalDisponible) {
             setError("MontoRetencion", "El monto a retener no debe ser mayor al total de pagos.");
             ok = false;
         }
-        if (!isNaN(montoNota) && montoNota > totalPagos) {
-            setError("MontoNota", "El monto de la nota no debe ser mayor al total de pagos.");
+        if (!isNaN(montoNota) && montoNota > totalDisponible) {
+            setError("MontoNota", "El crédito no debe ser mayor al total de pagos.");
+            ok = false;
+        }
+        if (!isNaN(montoDevolucion) && montoDevolucion > totalDisponible) {
+            setError("MontoDevolucion", "La devolución no debe ser mayor al total de pagos.");
+            ok = false;
+        }
+        if (ok && !isNaN(montoDevolucion) && !isNaN(montoNota) && (montoDevolucion + montoNota) > totalDisponible) {
+            setError("MontoDevolucion", "Devolución + crédito no puede superar el total de pagos.");
             ok = false;
         }
     }
@@ -874,6 +891,7 @@ $(document).on("click", "#btn-retencion", function () {
 
     setLoading(true);
 
+    if (!$("#MontoDevolucion").val().trim()) $("#MontoDevolucion").val("0");
     var _data = $("#formNotaCredito").serializeArray();
     $.ajax({
         url: "/PersonaCliente/RegistrarNotaCredito",
@@ -911,6 +929,20 @@ $(document).on("keydown", "#NotaCredito input, #NotaCredito select", function (e
 $(document).on("click", "#btn-retencion-cancelar", function () {
     $("#NotaCredito").dialog("close");
 });
+
+$(document).on("click", "#btn-notacredito-cerrar", function () {
+    $("#NotaCredito").dialog("close");
+});
+
+window.printNota = function () {
+    var notaid = $("#popinNota .nota-credito-detail-container").data("notaid");
+    if (!notaid) notaid = $("#NotaCredito .nota-credito-detail-container").data("notaid");
+    if (notaid) {
+        window.open("/NotaCredito/Imprimir?NotaID=" + notaid, "_blank", "width=800,height=700");
+    } else {
+        (window.alertError || window.alert)("No se puede imprimir. Cierre y vuelva a abrir la nota.", "Atención");
+    }
+};
 
 $(document).on("click", "input[name=condicion]", function () {
     var condicion = $("input[name=condicion]:checked").val();

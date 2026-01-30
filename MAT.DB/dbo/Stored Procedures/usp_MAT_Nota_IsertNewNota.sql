@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE usp_MAT_Nota_IsertNewNota(@PorcentajeRetencion money = NULL, 
+CREATE PROCEDURE usp_MAT_Nota_IsertNewNota(@PorcentajeRetencion money = NULL, 
                                            @MontoRetencion      money = NULL, 
                                            @Dias                INT = NULL, 
                                            @ClienteID           UNIQUEIDENTIFIER, 
@@ -6,7 +6,8 @@
                                            @NroNota             VARCHAR(50), 
                                            @MontoNota           money,
 										   @FacturaID UNIQUEIDENTIFIER,
-										   @Detalle varchar(1000)) 
+										   @Detalle varchar(1000),
+										   @MontoDevolucion     money = NULL)
 AS 
   /*-- =============================================   
   -- Author:    Garcia Sergio   
@@ -14,6 +15,7 @@ AS
   -- Description:  insert nota credito 
      2018-03-07		Garcia Sergio add @Detalle
 	 2018-06-02		Garcia Sergio: add Moneda Tipo, default Argentinos
+	 2026			add @MontoDevolucion: movimiento negativo en Pago (devolución por nota de crédito)
   -- =============================================*/ 
   BEGIN 
       SET nocount, xact_abort ON; 
@@ -22,6 +24,7 @@ AS
       BEGIN try 
 	
 		 declare @NotaID UNIQUEIDENTIFIER
+		 SET @MontoDevolucion = ISNULL(@MontoDevolucion, 0)
 
 		 begin tran 
 		 set @NotaID = NEWID()
@@ -34,6 +37,7 @@ AS
                        VendedorID, 
                        NroNota, 
                        MontoNota,
+					   MontoDevolucion,
 					   Detalle) 
           VALUES      (@NotaID,
 					   @PorcentajeRetencion, 
@@ -43,6 +47,7 @@ AS
                        @VendedorID, 
                        @NroNota, 
                        @MontoNota,
+					   @MontoDevolucion,
 					   @Detalle)
 
 		 
@@ -54,6 +59,29 @@ AS
 
 		insert into dbo.CreditoCliente (NotaCreditoID,VendedorID,ClienteID,Monto,Descripcion,IsInput)
 								values (@NotaID,@VendedorID,@ClienteID,@MontoNota,'NOTA DE CREDITO POR FACTURA ' + @NroFactura,1)
+
+		/* Movimiento negativo en Pago: devolución por nota de crédito */
+		IF @MontoDevolucion > 0
+		BEGIN
+			DECLARE @PagoIDDevolucion UNIQUEIDENTIFIER = NEWID()
+			DECLARE @MovimientoIDDevolucion UNIQUEIDENTIFIER = NEWID()
+			DECLARE @CuentaID UNIQUEIDENTIFIER
+			DECLARE @TipoPagoDevolucion INT
+
+			SELECT @TipoPagoDevolucion = Id FROM dbo.PagoTipo WHERE Descripcion = 'Devolución'
+			IF @TipoPagoDevolucion IS NOT NULL
+			BEGIN
+				SELECT @CuentaID = c.CuentaID FROM dbo.Cuenta c WHERE c.ClienteID = @ClienteID
+
+				INSERT INTO dbo.Pago (PagoID, FechaPago, Monto, NroRecibo, TipoPago, VendedorId)
+				VALUES (@PagoIDDevolucion, GETDATE(), -@MontoDevolucion,
+					'Devolución por nota de crédito N° ' + @NroNota,
+					@TipoPagoDevolucion, @VendedorID)
+
+				INSERT INTO dbo.MovimientoCuenta (MovimientoID, CuentaID, PagoID, FacturaID, FechaRegistro)
+				VALUES (@MovimientoIDDevolucion, @CuentaID, @PagoIDDevolucion, @FacturaID, GETDATE())
+			END
+		END
 
 		/*------------insert nota in movimientos------------*/
 			if exists(SELECT * FROM   dbo.MovimientoCuenta mc WHERE  mc.FacturaID = @FacturaID )
