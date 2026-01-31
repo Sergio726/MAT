@@ -5046,6 +5046,14 @@ span.badge-categoria::before {
     gap: 0.5rem;
 }
 
+.modern-detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
 .modern-detail-value {
     padding: 0.75rem 1rem;
     background: var(--bg-main);
@@ -5056,6 +5064,68 @@ span.badge-categoria::before {
     min-height: 2.75rem;
     display: flex;
     align-items: center;
+}
+
+.modern-detail-value.empty {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Botones de estado (Activar/Desactivar) en formularios */
+.btn-status-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-status {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-status:hover {
+    transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-status-active {
+    background: var(--brand-success, #22c55e);
+    color: var(--white);
+}
+
+.btn-status-active:hover {
+    background: #16a34a;
+}
+
+.btn-status-inactive {
+    background: #ef4444;
+    color: var(--white);
+}
+
+.btn-status-inactive:hover {
+    background: #dc2626;
+}
+
+/* Badge tipo de cliente (Details) */
+.client-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--brand-primary);
+    color: var(--white);
 }
 
 /* Tablas modernas genéricas */
@@ -5210,6 +5280,92 @@ span.badge-categoria::before {
 .modern-alert-error i {
     font-size: 1.25rem;
     color: #ef4444;
+}
+
+/* Banner de validación temporal (formularios) */
+.validation-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-left: 4px solid #f59e0b;
+    border-radius: 8px;
+    color: #92400e;
+    font-size: 0.9375rem;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+    animation: validation-banner-in 0.3s ease;
+}
+
+.validation-banner.hidden {
+    display: none !important;
+}
+
+.validation-banner-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.validation-banner-content strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #b45309;
+}
+
+.validation-banner-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    list-style: disc;
+}
+
+.validation-banner-list li {
+    margin-bottom: 0.25rem;
+}
+
+.validation-banner-close {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #92400e;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.validation-banner-close:hover {
+    background: rgba(245, 158, 11, 0.2);
+    color: #b45309;
+}
+
+.validation-banner-close:focus {
+    outline: 2px solid #f59e0b;
+    outline-offset: 2px;
+}
+
+@keyframes validation-banner-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Indicador de campo obligatorio en formularios */
+.field-required,
+.modern-form-label .field-required {
+    color: #dc2626;
+    font-weight: 700;
+    margin-left: 0.125rem;
 }
 
 /* Responsive */

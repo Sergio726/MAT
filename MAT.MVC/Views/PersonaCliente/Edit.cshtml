@@ -7,118 +7,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .modern-form-section {
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-    }
-    .modern-form-section:last-of-type {
-        border-bottom: none;
-        margin-bottom: 1rem;
-    }
-    .modern-form-section-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .modern-form-section-title i {
-        color: var(--primary-color, #e91e63);
-    }
-    .form-grid-3 {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-    }
-    .form-grid-2 {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    .form-grid-4 {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
-    }
-    @@media (max-width: 992px) {
-        .form-grid-3, .form-grid-4 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    @@media (max-width: 576px) {
-        .form-grid-2, .form-grid-3, .form-grid-4 {
-            grid-template-columns: 1fr;
-        }
-    }
-    .localidad-container {
-        display: flex;
-        gap: 0.5rem;
-        align-items: flex-end;
-    }
-    .localidad-container select {
-        flex: 1;
-    }
-    .btn-add-localidad {
-        width: 40px;
-        height: 40px;
-        border-radius: 0.5rem;
-        border: 1px solid var(--border-color, #e5e7eb);
-        background: var(--bg-secondary, #f8f9fa);
-        color: var(--primary-color, #e91e63);
-        font-size: 1.25rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-    .btn-add-localidad:hover {
-        background: var(--primary-color, #e91e63);
-        color: white;
-    }
-    .status-buttons {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-    }
-    .status-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 2px solid transparent;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-    .status-btn-active {
-        background: #22c55e;
-        color: white;
-    }
-    .status-btn-active:hover {
-        background: #16a34a;
-        transform: scale(1.1);
-    }
-    .status-btn-inactive {
-        background: #ef4444;
-        color: white;
-    }
-    .status-btn-inactive:hover {
-        background: #dc2626;
-        transform: scale(1.1);
-    }
-</style>
-
 <div class="modern-page-container">
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-person-gear"></i>
-            <span>Editar Cliente</span>
+            <span>Editar cliente</span>
         </h2>
     </div>
 
@@ -130,355 +23,272 @@
         </div>
     }
 
-    <div class="modern-form-container">
-        @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmEditCliente", id = "frmEditCliente" }))
-        {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            @Html.HiddenFor(model => model.PersonaId)
-            @Html.HiddenFor(model => model.LocalidadId)
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmEditCliente", id = "frmEditCliente" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.PersonaId)
+        @Html.HiddenFor(model => model.LocalidadId)
 
-            <!-- Seccion: Datos Personales -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-person"></i>
-                    <span>Datos Personales</span>
-                </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-person-badge"></i>
-                            @Html.LabelFor(model => model.Apellido)
-                        </label>
-                        @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido del cliente" })
-                        @Html.ValidationMessageFor(model => model.Apellido, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-person"></i>
-                            @Html.LabelFor(model => model.Nombre)
-                        </label>
-                        @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre del cliente" })
-                        @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-gender-ambiguous"></i>
-                            @Html.LabelFor(model => model.Sexo)
-                        </label>
-                        @Html.DropDownListFor(model => model.Sexo, eSexo.Femenino.ToSelectList(), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-card-list"></i>
-                            <span>Tipo de Documento</span>
-                        </label>
-                        @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(Model.TipoDocumento.ToString()), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-123"></i>
-                            @Html.LabelFor(model => model.NroDocumento)
-                        </label>
-                        @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "00.000.000" })
-                        @Html.ValidationMessageFor(model => model.NroDocumento, "", new { @class = "text-danger" })
-                        <input type="hidden" value="@(Model.NroDocumento)" id="hdnNroDocumento" />
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-calendar-heart"></i>
-                            @Html.LabelFor(model => model.FechaNacimiento)
-                        </label>
-                        <input type="text" id="FechaNacimiento" name="FechaNacimiento"
-                               value="@(Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy") : "")"
-                               class="modern-form-input datepicker" placeholder="dd/mm/aaaa" />
-                        @Html.ValidationMessageFor(model => model.FechaNacimiento, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-flag"></i>
-                            @Html.LabelFor(model => model.Nacionalidad)
-                        </label>
-                        @Html.TextBoxFor(model => model.Nacionalidad, new { @class = "modern-form-input", placeholder = "ARG" })
-                        @Html.ValidationMessageFor(model => model.Nacionalidad, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-globe-americas"></i>
-                            @Html.LabelFor(model => model.PaisResidencia)
-                        </label>
-                        @Html.TextBoxFor(model => model.PaisResidencia, new { @class = "modern-form-input", placeholder = "ARG" })
-                        @Html.ValidationMessageFor(model => model.PaisResidencia, "", new { @class = "text-danger" })
-                    </div>
-                </div>
+        <div id="validation-banner-edit" class="validation-banner hidden" role="alert" aria-live="polite">
+            <div class="validation-banner-content">
+                <strong>Revise los siguientes puntos antes de continuar:</strong>
+                <ul class="validation-banner-list"></ul>
             </div>
+            <button type="button" class="validation-banner-close" aria-label="Cerrar mensaje" title="Cerrar">×</button>
+        </div>
 
-            <!-- Seccion: Contacto -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-telephone"></i>
-                    <span>Informacion de Contacto</span>
+        <p class="text-secondary small mb-3">Los campos marcados con <span class="field-required">*</span> son obligatorios.</p>
+
+        <div class="d-flex flex-column gap-3">
+            <!-- Datos personales -->
+            <section class="modern-card" aria-labelledby="heading-datos-personales">
+                <div class="modern-card-header">
+                    <h3 id="heading-datos-personales" class="modern-card-title">
+                        <i class="bi bi-person me-2"></i>
+                        <span>Datos personales</span>
+                    </h3>
                 </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-house-door"></i>
-                            @Html.LabelFor(model => model.Domicilio)
-                        </label>
-                        @Html.TextBoxFor(model => model.Domicilio, new { @class = "modern-form-input", placeholder = "Direccion completa" })
-                        @Html.ValidationMessageFor(model => model.Domicilio, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-telephone"></i>
-                            @Html.LabelFor(model => model.Telefono)
-                        </label>
-                        @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Telefono fijo" })
-                        @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-phone"></i>
-                            @Html.LabelFor(model => model.Celular)
-                        </label>
-                        @Html.TextBoxFor(model => model.Celular, new { @class = "modern-form-input", placeholder = "Celular" })
-                        @Html.ValidationMessageFor(model => model.Celular, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-envelope"></i>
-                            @Html.LabelFor(model => model.Email)
-                        </label>
-                        @Html.TextBoxFor(model => model.Email, new { @class = "modern-form-input", placeholder = "correo@ejemplo.com", type = "email" })
-                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-printer"></i>
-                            @Html.LabelFor(model => model.Fax)
-                        </label>
-                        @Html.TextBoxFor(model => model.Fax, new { @class = "modern-form-input", placeholder = "Fax (opcional)" })
-                        @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-globe"></i>
-                            @Html.LabelFor(model => model.Web)
-                        </label>
-                        @Html.TextBoxFor(model => model.Web, new { @class = "modern-form-input", placeholder = "www.ejemplo.com" })
-                        @Html.ValidationMessageFor(model => model.Web, "", new { @class = "text-danger" })
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Apellido)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido del cliente" })
+                            @Html.ValidationMessageFor(model => model.Apellido, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Nombre)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre del cliente" })
+                            @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Sexo)</label>
+                            @Html.DropDownListFor(model => model.Sexo, eSexo.Femenino.ToSelectList(), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Tipo de documento</label>
+                            @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(Model.TipoDocumento.ToString()), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.NroDocumento)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "00.000.000" })
+                            @Html.ValidationMessageFor(model => model.NroDocumento, "", new { @class = "text-danger" })
+                            <input type="hidden" value="@(Model.NroDocumento)" id="hdnNroDocumento" />
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.FechaNacimiento)<span class="field-required" aria-hidden="true"> *</span></label>
+                            <input type="text" id="FechaNacimiento" name="FechaNacimiento" value="@(Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy") : "")" class="modern-form-input datepicker" placeholder="dd/mm/aaaa" />
+                            @Html.ValidationMessageFor(model => model.FechaNacimiento, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Nacionalidad)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.Nacionalidad, new { @class = "modern-form-input", placeholder = "ARG" })
+                            @Html.ValidationMessageFor(model => model.Nacionalidad, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.PaisResidencia)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.PaisResidencia, new { @class = "modern-form-input", placeholder = "ARG" })
+                            @Html.ValidationMessageFor(model => model.PaisResidencia, "", new { @class = "text-danger" })
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Seccion: Ubicacion -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-geo-alt"></i>
-                    <span>Ubicacion</span>
+            <!-- Información de contacto -->
+            <section class="modern-card" aria-labelledby="heading-contacto">
+                <div class="modern-card-header">
+                    <h3 id="heading-contacto" class="modern-card-title">
+                        <i class="bi bi-telephone me-2"></i>
+                        <span>Información de contacto</span>
+                    </h3>
                 </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-map"></i>
-                            @Html.LabelFor(model => model.Provincia)
-                        </label>
-                        @if (Model.Provincia.HasValue)
-                        {
-                            @Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntitiesLocalidades("Provincia", Model.Provincia.Value), new { @class = "modern-form-select" })
-                        }
-                        else
-                        {
-                            @Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntities("Provincia"), new { @class = "modern-form-select" })
-                        }
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Domicilio)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.Domicilio, new { @class = "modern-form-input", placeholder = "Dirección completa" })
+                            @Html.ValidationMessageFor(model => model.Domicilio, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Telefono)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Teléfono fijo" })
+                            @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Celular)</label>
+                            @Html.TextBoxFor(model => model.Celular, new { @class = "modern-form-input", placeholder = "Celular" })
+                            @Html.ValidationMessageFor(model => model.Celular, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Email)</label>
+                            @Html.TextBoxFor(model => model.Email, new { @class = "modern-form-input", placeholder = "correo@ejemplo.com", type = "email" })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Fax)</label>
+                            @Html.TextBoxFor(model => model.Fax, new { @class = "modern-form-input", placeholder = "Fax (opcional)" })
+                            @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Web)</label>
+                            @Html.TextBoxFor(model => model.Web, new { @class = "modern-form-input", placeholder = "www.ejemplo.com" })
+                            @Html.ValidationMessageFor(model => model.Web, "", new { @class = "text-danger" })
+                        </div>
                     </div>
+                </div>
+            </section>
 
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-pin-map"></i>
-                            <span>Departamento</span>
-                        </label>
-                        <select id="ddDepartamento" class="modern-form-select" onchange="LoadLocalidad();">
-                            <option value="0">SELECCIONE UN DEPARTAMENTO</option>
-                        </select>
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-geo"></i>
-                            <span>Localidad</span>
-                        </label>
-                        <div class="localidad-container">
-                            <select id="ddLocalidad" class="modern-form-select" onchange="ChangeLocalidad(this);">
-                                <option value="0">SELECCIONE UNA LOCALIDAD</option>
+            <!-- Ubicación -->
+            <section class="modern-card" aria-labelledby="heading-ubicacion">
+                <div class="modern-card-header">
+                    <h3 id="heading-ubicacion" class="modern-card-title">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        <span>Ubicación</span>
+                    </h3>
+                </div>
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Provincia)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @if (Model.Provincia.HasValue)
+                            {
+                                @Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntitiesLocalidades("Provincia", Model.Provincia.Value), new { @class = "modern-form-select" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntities("Provincia"), new { @class = "modern-form-select" })
+                            }
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Departamento<span class="field-required" aria-hidden="true"> *</span></label>
+                            <select id="ddDepartamento" class="modern-form-select" onchange="LoadLocalidad();">
+                                <option value="0">SELECCIONE UN DEPARTAMENTO</option>
                             </select>
-                            <button type="button" id="lnk-Agregar-Localidad" class="btn-add-localidad" title="Agregar Localidad">
-                                <i class="bi bi-plus"></i>
-                            </button>
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Localidad<span class="field-required" aria-hidden="true"> *</span></label>
+                            <div class="d-flex gap-2 align-items-end">
+                                <select id="ddLocalidad" class="modern-form-select flex-grow-1" onchange="ChangeLocalidad(this);">
+                                    <option value="0">SELECCIONE UNA LOCALIDAD</option>
+                                </select>
+                                <button type="button" id="lnk-Agregar-Localidad" class="btn-modern-icon" title="Agregar localidad">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Seccion: Datos Fiscales -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-receipt"></i>
-                    <span>Datos Fiscales y Empresa</span>
+            <!-- Datos fiscales y empresa -->
+            <section class="modern-card" aria-labelledby="heading-fiscales">
+                <div class="modern-card-header">
+                    <h3 id="heading-fiscales" class="modern-card-title">
+                        <i class="bi bi-receipt me-2"></i>
+                        <span>Datos fiscales y empresa</span>
+                    </h3>
                 </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-building"></i>
-                            @Html.LabelFor(model => model.RazonSocial)
-                        </label>
-                        @Html.TextBoxFor(model => model.RazonSocial, new { @class = "modern-form-input", placeholder = "Razon social (opcional)" })
-                        @Html.ValidationMessageFor(model => model.RazonSocial, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-upc"></i>
-                            <span>CUIT/CUIL</span>
-                        </label>
-                        @Html.TextBoxFor(model => model.Cuit, new { @class = "modern-form-input", placeholder = "00-00000000-0" })
-                        @Html.ValidationMessageFor(model => model.Cuit, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-briefcase"></i>
-                            <span>Empresa</span>
-                        </label>
-                        @Html.TextBoxFor(model => model.Empresa, new { @class = "modern-form-input", placeholder = "Nombre de empresa (opcional)" })
-                        @Html.ValidationMessageFor(model => model.Empresa, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-file-earmark-text"></i>
-                            @Html.LabelFor(model => model.CondicionIva)
-                        </label>
-                        @{
-                            string sItemSelected = "5";
-                            if (Model.CondicionIva.ToString() != "")
-                            {
-                                sItemSelected = Model.CondicionIva.ToString();
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.RazonSocial)</label>
+                            @Html.TextBoxFor(model => model.RazonSocial, new { @class = "modern-form-input", placeholder = "Razón social (opcional)" })
+                            @Html.ValidationMessageFor(model => model.RazonSocial, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">CUIT/CUIL</label>
+                            @Html.TextBoxFor(model => model.Cuit, new { @class = "modern-form-input", placeholder = "00-00000000-0" })
+                            @Html.ValidationMessageFor(model => model.Cuit, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Empresa</label>
+                            @Html.TextBoxFor(model => model.Empresa, new { @class = "modern-form-input", placeholder = "Nombre de empresa (opcional)" })
+                            @Html.ValidationMessageFor(model => model.Empresa, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.CondicionIva)</label>
+                            @{
+                                string sItemSelected = "5";
+                                if (Model.CondicionIva.ToString() != "") { sItemSelected = Model.CondicionIva.ToString(); }
                             }
-                        }
-                        @Html.DropDownListFor(model => model.CondicionIva, eCondicionIVA.Consumidor_Final.ToSelectList(sItemSelected), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-credit-card"></i>
-                            <span>Forma de Pago</span>
-                        </label>
-                        @Html.DropDownListFor(model => model.FormaPago, eFormaPago.Contado.ToSelectList(Model.FormaPago.ToString()), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-tag"></i>
-                            @Html.LabelFor(model => model.TipoId)
-                        </label>
-                        @Html.DropDownListFor(model => model.TipoId, eTipoCliente.Mayorista.ToSelectList(Model.TipoId.ToString()), new { @class = "modern-form-select" })
-                    </div>
-                </div>
-            </div>
-
-            <!-- Seccion: Informacion Adicional -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-info-circle"></i>
-                    <span>Informacion Adicional</span>
-                </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-person-workspace"></i>
-                            @Html.LabelFor(model => model.Ocupacion)
-                        </label>
-                        <select id="Ocupacion" name="Ocupacion" class="modern-form-select">
-                            <option value="">SELECCIONE UNA OCUPACION</option>
-                            @foreach (var item in ViewBag.ListOcupacion)
-                            {
-                                <option value="@item.ToString()" @(Model.Ocupacion == item.ToString() ? "selected" : "")>@item.ToString()</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-translate"></i>
-                            @Html.LabelFor(model => model.Idioma)
-                        </label>
-                        @Html.TextBoxFor(model => model.Idioma, new { @class = "modern-form-input", placeholder = "Idioma preferido" })
-                        @Html.ValidationMessageFor(model => model.Idioma, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-megaphone"></i>
-                            @Html.LabelFor(model => model.Promotor)
-                        </label>
-                        @Html.TextBoxFor(model => model.Promotor, new { @class = "modern-form-input", placeholder = "Promotor (opcional)" })
-                        @Html.ValidationMessageFor(model => model.Promotor, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-toggle-on"></i>
-                            <span>Estado Cuenta Corriente</span>
-                        </label>
-                        <div class="status-buttons">
-                            <button type="button" id="btnActivar" class="status-btn status-btn-active" title="Activar Cuenta Corriente">
-                                <i class="bi bi-check-lg"></i>
-                            </button>
-                            <button type="button" id="btnDesactivar" class="status-btn status-btn-inactive" title="Desactivar Cuenta Corriente">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
+                            @Html.DropDownListFor(model => model.CondicionIva, eCondicionIVA.Consumidor_Final.ToSelectList(sItemSelected), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Forma de pago</label>
+                            @Html.DropDownListFor(model => model.FormaPago, eFormaPago.Contado.ToSelectList(Model.FormaPago.ToString()), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.TipoId)</label>
+                            @Html.DropDownListFor(model => model.TipoId, eTipoCliente.Mayorista.ToSelectList(Model.TipoId.ToString()), new { @class = "modern-form-select" })
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="form-grid-2" style="margin-top: 1rem;">
-                    <div class="modern-form-group" style="grid-column: 1 / -1;">
-                        <label class="modern-form-label">
-                            <i class="bi bi-chat-left-text"></i>
-                            @Html.LabelFor(model => model.Observacion)
-                        </label>
-                        @Html.TextAreaFor(model => model.Observacion, new { @class = "modern-form-input", rows = 3, placeholder = "Observaciones adicionales sobre el cliente..." })
-                        @Html.ValidationMessageFor(model => model.Observacion, "", new { @class = "text-danger" })
+            <!-- Información adicional -->
+            <section class="modern-card" aria-labelledby="heading-adicional">
+                <div class="modern-card-header">
+                    <h3 id="heading-adicional" class="modern-card-title">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <span>Información adicional</span>
+                    </h3>
+                </div>
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Ocupacion)</label>
+                            <select id="Ocupacion" name="Ocupacion" class="modern-form-select">
+                                <option value="">SELECCIONE UNA OCUPACIÓN</option>
+                                @foreach (var item in ViewBag.ListOcupacion)
+                                {
+                                    <option value="@item.ToString()" @(Model.Ocupacion == item.ToString() ? "selected" : "")>@item.ToString()</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Idioma)</label>
+                            @Html.TextBoxFor(model => model.Idioma, new { @class = "modern-form-input", placeholder = "Idioma preferido" })
+                            @Html.ValidationMessageFor(model => model.Idioma, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Promotor)</label>
+                            @Html.TextBoxFor(model => model.Promotor, new { @class = "modern-form-input", placeholder = "Promotor (opcional)" })
+                            @Html.ValidationMessageFor(model => model.Promotor, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Estado cuenta corriente</label>
+                            <div class="btn-status-group">
+                                <button type="button" id="btnActivar" class="btn-status btn-status-active" title="Activar cuenta corriente">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                                <button type="button" id="btnDesactivar" class="btn-status btn-status-inactive" title="Desactivar cuenta corriente">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modern-form-row mt-2">
+                        <div class="modern-form-group modern-form-group-full">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Observacion)</label>
+                            @Html.TextAreaFor(model => model.Observacion, new { @class = "modern-form-input", rows = 3, placeholder = "Observaciones adicionales..." })
+                            @Html.ValidationMessageFor(model => model.Observacion, "", new { @class = "text-danger" })
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Botones de Accion -->
-            <div class="modern-form-actions">
+            <div class="modern-form-actions pt-2">
                 <a href="@Url.Action("Index", "PersonaCliente")" class="btn-modern btn-modern-secondary">
                     <i class="bi bi-arrow-left"></i>
-                    <span>Volver a Lista de Clientes</span>
+                    <span>Volver a lista de clientes</span>
                 </a>
                 <button type="button" class="btn-modern btn-modern-primary" onclick="sendForm();">
                     <i class="bi bi-check-circle"></i>
-                    <span>Guardar Cambios</span>
+                    <span>Guardar cambios</span>
                 </button>
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>
 
 @section Scripts {
@@ -488,7 +298,26 @@
 <script type="text/javascript">
     var vLocalidadid = "";
 
+    window.showValidationBannerEdit = function (messages) {
+        var $banner = $("#validation-banner-edit");
+        var $list = $banner.find(".validation-banner-list");
+        $list.empty();
+        if (Array.isArray(messages)) {
+            messages.forEach(function (msg) { $list.append("<li>" + msg + "</li>"); });
+        } else {
+            $list.append("<li>" + messages + "</li>");
+        }
+        $banner.removeClass("hidden");
+        $banner[0].scrollIntoView({ behavior: "smooth", block: "start" });
+        clearTimeout(window._validationBannerEditTimer);
+        window._validationBannerEditTimer = setTimeout(function () { $banner.addClass("hidden"); }, 10000);
+    };
+
     $(document).ready(function () {
+        $("#validation-banner-edit .validation-banner-close").on("click", function () {
+            $("#validation-banner-edit").addClass("hidden");
+            if (window._validationBannerEditTimer) clearTimeout(window._validationBannerEditTimer);
+        });
         var ClienteId = $('#PersonaId').val();
         verificarCTA(ClienteId, "Verificar");
 
@@ -636,39 +465,26 @@
     }
 
     function sendForm() {
-        if ($("#Apellido").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese el apellido de la persona.", "Validación");
+        var errors = [];
+        if ($("#Apellido").val().trim() === "") errors.push("Ingrese el apellido de la persona.");
+        if ($("#Nombre").val().trim() === "") errors.push("Ingrese el nombre de la persona.");
+        if ($("#NroDocumento").val().trim() === "") errors.push("Ingrese el número de documento de la persona.");
+        if ($("#Domicilio").val().trim() === "") errors.push("Ingrese el domicilio de la persona.");
+        if ($("#Telefono").val().trim() === "") errors.push("Ingrese el teléfono de la persona.");
+        if ($("#FechaNacimiento").val().trim() === "") errors.push("Ingrese la fecha de nacimiento.");
+        if ($("#Provincia").val().trim() === "0" || $("#Provincia").val().trim() === "") errors.push("Seleccione una provincia.");
+        if ($("#ddDepartamento").val().trim() === "0" || $("#ddDepartamento").val().trim() === "") errors.push("Seleccione un departamento.");
+        if ($("#ddLocalidad").val().trim() === "0" || $("#ddLocalidad").val().trim() === "") errors.push("Seleccione una localidad.");
+        if ($("#Nacionalidad").val().trim() === "") errors.push("Ingrese la nacionalidad de la persona.");
+        if ($("#PaisResidencia").val().trim() === "") errors.push("Ingrese el país de residencia.");
+        if (errors.length > 0) {
+            if (typeof window.showValidationBannerEdit === "function" && $("#validation-banner-edit").length) {
+                window.showValidationBannerEdit(errors);
+            } else {
+                (window.alertInfo || window.alert)(errors.join("\n"), "Validación");
+            }
+            return;
         }
-        if ($("#Nombre").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese el nombre de la persona.", "Validación");
-        }
-        if ($("#NroDocumento").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese el número de documento de la persona.", "Validación");
-        }
-        if ($("#Domicilio").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese el domicilio de la persona.", "Validación");
-        }
-        if ($("#Telefono").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese el teléfono de la persona.", "Validación");
-        }
-        if ($("#FechaNacimiento").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese la fecha de nacimiento.", "Validación");
-        }
-        if ($("#Provincia").val().trim() == "0") {
-            return (window.alertInfo || window.alert)("Por favor seleccione una Provincia.", "Validación");
-        }
-        if ($("#ddDepartamento").val().trim() == "0") {
-            return (window.alertInfo || window.alert)("Por favor seleccione un Departamento.", "Validación");
-        }
-        if ($("#ddLocalidad").val().trim() == "0") {
-            return (window.alertInfo || window.alert)("Por favor seleccione una localidad.", "Validación");
-        }
-        if ($("#Nacionalidad").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese la nacionalidad de la persona.", "Validación");
-        }
-        if ($("#PaisResidencia").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese un país de residencia.", "Validación");
-        }
-        $("#frmEditCliente").submit();
+        document.getElementById("frmEditCliente").submit();
     }
 </script>

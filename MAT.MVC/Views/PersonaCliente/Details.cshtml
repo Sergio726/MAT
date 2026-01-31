@@ -6,402 +6,214 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .details-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 1.5rem;
-    }
-    .details-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    .details-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin: 0;
-    }
-    .details-title i {
-        color: var(--primary-color, #e91e63);
-        font-size: 1.75rem;
-    }
-    .details-actions {
-        display: flex;
-        gap: 0.75rem;
-    }
-    .details-section {
-        background: white;
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    .section-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        margin-bottom: 1.25rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 2px solid var(--primary-color, #e91e63);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .section-title i {
-        color: var(--primary-color, #e91e63);
-    }
-    .details-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1rem;
-    }
-    .detail-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    .detail-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-secondary, #6b7280);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    .detail-value {
-        font-size: 0.95rem;
-        color: var(--text-primary, #1f2937);
-        padding: 0.5rem 0.75rem;
-        background: var(--bg-secondary, #f9fafb);
-        border-radius: 0.5rem;
-        min-height: 2.25rem;
-        display: flex;
-        align-items: center;
-    }
-    .detail-value.empty {
-        color: var(--text-secondary, #9ca3af);
-        font-style: italic;
-    }
-    .detail-value i {
-        margin-right: 0.5rem;
-        color: var(--primary-color, #e91e63);
-    }
-    .btn-modern {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.625rem 1.25rem;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        font-size: 0.875rem;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        border: none;
-        cursor: pointer;
-    }
-    .btn-primary {
-        background: var(--primary-color, #e91e63);
-        color: white;
-    }
-    .btn-primary:hover {
-        background: var(--primary-hover, #d81b60);
-        color: white;
-        text-decoration: none;
-    }
-    .btn-secondary {
-        background: var(--bg-secondary, #f3f4f6);
-        color: var(--text-primary, #374151);
-        border: 1px solid var(--border-color, #e5e7eb);
-    }
-    .btn-secondary:hover {
-        background: var(--border-color, #e5e7eb);
-        color: var(--text-primary, #374151);
-        text-decoration: none;
-    }
-    .client-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        background: var(--primary-color, #e91e63);
-        color: white;
-    }
-    @@media (max-width: 768px) {
-        .details-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .details-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-<div class="details-container">
-    <div class="details-header">
-        <h1 class="details-title">
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
             <i class="bi bi-person-vcard"></i>
-            @Model.Apellido, @Model.Nombre
-            <span class="client-badge">
+            <span>@Model.Apellido, @Model.Nombre</span>
+            <span class="client-type-badge ms-2">
                 <i class="bi bi-tag-fill"></i>
                 @(((eTipoCliente)Model.TipoId).ToString())
             </span>
-        </h1>
-        <div class="details-actions">
-            @Html.ActionLink("Editar", "Edit", new { id = Model.PersonaId }, new { @class = "btn-modern btn-primary" })
-            @Html.ActionLink("Volver", "Index", null, new { @class = "btn-modern btn-secondary" })
+        </h2>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("Edit", "PersonaCliente", new { id = Model.PersonaId })" class="btn-modern btn-modern-primary">
+                <i class="bi bi-pencil"></i>
+                <span>Editar</span>
+            </a>
+            <a href="@Url.Action("Index", "PersonaCliente")" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-arrow-left"></i>
+                <span>Volver a lista de clientes</span>
+            </a>
         </div>
     </div>
 
-    <!-- Seccion: Datos Personales -->
-    <div class="details-section">
-        <h2 class="section-title">
-            <i class="bi bi-person-fill"></i>
-            Datos Personales
-        </h2>
-        <div class="details-grid">
-            <div class="detail-item">
-                <span class="detail-label">ID Cliente</span>
-                <span class="detail-value">
-                    <i class="bi bi-hash"></i>
-                    @Model.PersonaId
-                </span>
+    <div class="d-flex flex-column gap-3">
+        <!-- Datos personales -->
+        <section class="modern-card" aria-labelledby="heading-datos-personales">
+            <div class="modern-card-header">
+                <h3 id="heading-datos-personales" class="modern-card-title">
+                    <i class="bi bi-person me-2"></i>
+                    <span>Datos personales</span>
+                </h3>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Apellido</span>
-                <span class="detail-value">@(string.IsNullOrEmpty(Model.Apellido) ? "Sin definir" : Model.Apellido)</span>
+            <div class="modern-card-content">
+                <div class="modern-detail-grid">
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">ID Cliente</span>
+                        <span class="modern-detail-value">@Model.PersonaId</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Apellido</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Apellido) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Apellido) ? "Sin definir" : Model.Apellido)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Nombre</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Nombre) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Nombre) ? "Sin definir" : Model.Nombre)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Tipo de documento</span>
+                        <span class="modern-detail-value">@(((eTipoDocumento)Model.TipoDocumento).ToString())</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">N° de documento</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.NroDocumento) ? "empty" : "")">@(string.IsNullOrEmpty(Model.NroDocumento) ? "Sin definir" : Model.NroDocumento)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Fecha de nacimiento</span>
+                        <span class="modern-detail-value">@(Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy") : "Sin definir")</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Sexo</span>
+                        <span class="modern-detail-value">@(((eSexo)Model.Sexo).ToString())</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Nacionalidad</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Nacionalidad) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Nacionalidad) ? "Sin definir" : Model.Nacionalidad)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">País de residencia</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.PaisResidencia) ? "empty" : "")">@(string.IsNullOrEmpty(Model.PaisResidencia) ? "Sin definir" : Model.PaisResidencia)</span>
+                    </div>
+                </div>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Nombre</span>
-                <span class="detail-value">@(string.IsNullOrEmpty(Model.Nombre) ? "Sin definir" : Model.Nombre)</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Tipo de Documento</span>
-                <span class="detail-value">@(((eTipoDocumento)Model.TipoDocumento).ToString())</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">N° de Documento</span>
-                <span class="detail-value">
-                    <i class="bi bi-card-text"></i>
-                    @(string.IsNullOrEmpty(Model.NroDocumento) ? "Sin definir" : Model.NroDocumento)
-                </span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Fecha de Nacimiento</span>
-                <span class="detail-value">
-                    <i class="bi bi-calendar-event"></i>
-                    @(Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy") : "Sin definir")
-                </span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Sexo</span>
-                <span class="detail-value">@(((eSexo)Model.Sexo).ToString())</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Nacionalidad</span>
-                <span class="detail-value">@(string.IsNullOrEmpty(Model.Nacionalidad) ? "Sin definir" : Model.Nacionalidad)</span>
-            </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Seccion: Contacto -->
-    <div class="details-section">
-        <h2 class="section-title">
-            <i class="bi bi-telephone-fill"></i>
-            Informacion de Contacto
-        </h2>
-        <div class="details-grid">
-            <div class="detail-item">
-                <span class="detail-label">Telefono</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Telefono) ? "empty" : "")">
-                    @if (!string.IsNullOrEmpty(Model.Telefono))
-                    {
-                        <i class="bi bi-telephone"></i>
-                    }
-                    @(string.IsNullOrEmpty(Model.Telefono) ? "Sin definir" : Model.Telefono)
-                </span>
+        <!-- Información de contacto -->
+        <section class="modern-card" aria-labelledby="heading-contacto">
+            <div class="modern-card-header">
+                <h3 id="heading-contacto" class="modern-card-title">
+                    <i class="bi bi-telephone me-2"></i>
+                    <span>Información de contacto</span>
+                </h3>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Celular</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Celular) ? "empty" : "")">
-                    @if (!string.IsNullOrEmpty(Model.Celular))
-                    {
-                        <i class="bi bi-phone"></i>
-                    }
-                    @(string.IsNullOrEmpty(Model.Celular) ? "Sin definir" : Model.Celular)
-                </span>
+            <div class="modern-card-content">
+                <div class="modern-detail-grid">
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Domicilio</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Domicilio) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Domicilio) ? "Sin definir" : Model.Domicilio)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Teléfono</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Telefono) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Telefono) ? "Sin definir" : Model.Telefono)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Celular</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Celular) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Celular) ? "Sin definir" : Model.Celular)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Email</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Email) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Email) ? "Sin definir" : Model.Email)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Fax</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Fax) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Fax) ? "Sin definir" : Model.Fax)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Web</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Web) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Web) ? "Sin definir" : Model.Web)</span>
+                    </div>
+                </div>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Email</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Email) ? "empty" : "")">
-                    @if (!string.IsNullOrEmpty(Model.Email))
-                    {
-                        <i class="bi bi-envelope"></i>
-                    }
-                    @(string.IsNullOrEmpty(Model.Email) ? "Sin definir" : Model.Email)
-                </span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Fax</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Fax) ? "empty" : "")">
-                    @(string.IsNullOrEmpty(Model.Fax) ? "Sin definir" : Model.Fax)
-                </span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Web</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Web) ? "empty" : "")">
-                    @if (!string.IsNullOrEmpty(Model.Web))
-                    {
-                        <i class="bi bi-globe"></i>
-                    }
-                    @(string.IsNullOrEmpty(Model.Web) ? "Sin definir" : Model.Web)
-                </span>
-            </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Seccion: Ubicacion -->
-    <div class="details-section">
-        <h2 class="section-title">
-            <i class="bi bi-geo-alt-fill"></i>
-            Ubicacion
-        </h2>
-        <div class="details-grid">
-            <div class="detail-item">
-                <span class="detail-label">Domicilio</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Domicilio) ? "empty" : "")">
-                    @if (!string.IsNullOrEmpty(Model.Domicilio))
-                    {
-                        <i class="bi bi-house"></i>
-                    }
-                    @(string.IsNullOrEmpty(Model.Domicilio) ? "Sin definir" : Model.Domicilio)
-                </span>
+        <!-- Ubicación -->
+        <section class="modern-card" aria-labelledby="heading-ubicacion">
+            <div class="modern-card-header">
+                <h3 id="heading-ubicacion" class="modern-card-title">
+                    <i class="bi bi-geo-alt me-2"></i>
+                    <span>Ubicación</span>
+                </h3>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Localidad</span>
-                <span class="detail-value">@Helper.ToSelectItem("Localidad", Model.LocalidadId.ToString())</span>
+            <div class="modern-card-content">
+                <div class="modern-detail-grid">
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Provincia</span>
+                        <span class="modern-detail-value @(!Model.Provincia.HasValue ? "empty" : "")">
+                            @if (Model.Provincia.HasValue) { @Helper.ToSelectItem("Provincia", Model.Provincia.Value.ToString()) } else { <span>Sin definir</span> }
+                        </span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Localidad</span>
+                        <span class="modern-detail-value">@Helper.ToSelectItem("Localidad", Model.LocalidadId.ToString())</span>
+                    </div>
+                </div>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Provincia</span>
-                <span class="detail-value">
-                    @if (Model.Provincia.HasValue)
-                    {
-                        @Helper.ToSelectItem("Provincia", Model.Provincia.Value.ToString())
-                    }
-                    else
-                    {
-                        <span class="empty">Sin definir</span>
-                    }
-                </span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Pais de Residencia</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.PaisResidencia) ? "empty" : "")">
-                    @(string.IsNullOrEmpty(Model.PaisResidencia) ? "Sin definir" : Model.PaisResidencia)
-                </span>
-            </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Seccion: Datos Fiscales -->
-    <div class="details-section">
-        <h2 class="section-title">
-            <i class="bi bi-receipt"></i>
-            Datos Fiscales
-        </h2>
-        <div class="details-grid">
-            <div class="detail-item">
-                <span class="detail-label">Razon Social</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.RazonSocial) ? "empty" : "")">
-                    @(string.IsNullOrEmpty(Model.RazonSocial) ? "Sin definir" : Model.RazonSocial)
-                </span>
+        <!-- Datos fiscales y empresa -->
+        <section class="modern-card" aria-labelledby="heading-fiscales">
+            <div class="modern-card-header">
+                <h3 id="heading-fiscales" class="modern-card-title">
+                    <i class="bi bi-receipt me-2"></i>
+                    <span>Datos fiscales y empresa</span>
+                </h3>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">CUIT/CUIL</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Cuit) ? "empty" : "")">
-                    @(string.IsNullOrEmpty(Model.Cuit) ? "Sin definir" : Model.Cuit)
-                </span>
+            <div class="modern-card-content">
+                <div class="modern-detail-grid">
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Razón social</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.RazonSocial) ? "empty" : "")">@(string.IsNullOrEmpty(Model.RazonSocial) ? "Sin definir" : Model.RazonSocial)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">CUIT/CUIL</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Cuit) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Cuit) ? "Sin definir" : Model.Cuit)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Condición IVA</span>
+                        <span class="modern-detail-value">@(((eCondicionIVA)Model.CondicionIva).GetDescription())</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Forma de pago</span>
+                        <span class="modern-detail-value">@(((eFormaPago)Model.FormaPago).ToString())</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Empresa</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Empresa) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Empresa) ? "Sin definir" : Model.Empresa)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Ocupación</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Ocupacion) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Ocupacion) ? "Sin definir" : Model.Ocupacion)</span>
+                    </div>
+                </div>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Condicion de IVA</span>
-                <span class="detail-value">@(((eCondicionIVA)Model.CondicionIva).GetDescription())</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Forma de Pago</span>
-                <span class="detail-value">@(((eFormaPago)Model.FormaPago).ToString())</span>
-            </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Seccion: Informacion Laboral -->
-    <div class="details-section">
-        <h2 class="section-title">
-            <i class="bi bi-briefcase-fill"></i>
-            Informacion Laboral
-        </h2>
-        <div class="details-grid">
-            <div class="detail-item">
-                <span class="detail-label">Empresa</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Empresa) ? "empty" : "")">
-                    @(string.IsNullOrEmpty(Model.Empresa) ? "Sin definir" : Model.Empresa)
-                </span>
+        <!-- Información adicional -->
+        <section class="modern-card" aria-labelledby="heading-adicional">
+            <div class="modern-card-header">
+                <h3 id="heading-adicional" class="modern-card-title">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <span>Información adicional</span>
+                </h3>
             </div>
-            <div class="detail-item">
-                <span class="detail-label">Ocupacion</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Ocupacion) ? "empty" : "")">
-                    @(string.IsNullOrEmpty(Model.Ocupacion) ? "Sin definir" : Model.Ocupacion)
-                </span>
+            <div class="modern-card-content">
+                <div class="modern-detail-grid">
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Tipo de cliente</span>
+                        <span class="modern-detail-value">@(((eTipoCliente)Model.TipoId).ToString())</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Vendedor asignado</span>
+                        <span class="modern-detail-value">@(Model.VendedorId.HasValue ? Helper.GetVendedorName(Model.VendedorId.Value) : "Sin asignar")</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Idioma</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Idioma) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Idioma) ? "Sin definir" : Model.Idioma)</span>
+                    </div>
+                    <div class="modern-detail-group">
+                        <span class="modern-detail-label">Promotor</span>
+                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Promotor) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Promotor) ? "Sin definir" : Model.Promotor)</span>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Observacion))
+                {
+                    <div class="modern-detail-group mt-3">
+                        <span class="modern-detail-label">Observaciones</span>
+                        <span class="modern-detail-value" style="white-space: pre-wrap;">@Model.Observacion</span>
+                    </div>
+                }
             </div>
-        </div>
-    </div>
-
-    <!-- Seccion: Informacion Adicional -->
-    <div class="details-section">
-        <h2 class="section-title">
-            <i class="bi bi-info-circle-fill"></i>
-            Informacion Adicional
-        </h2>
-        <div class="details-grid">
-            <div class="detail-item">
-                <span class="detail-label">Vendedor Asignado</span>
-                <span class="detail-value">
-                    <i class="bi bi-person-badge"></i>
-                    @(Model.VendedorId.HasValue ? Helper.GetVendedorName(Model.VendedorId.Value) : "Sin asignar")
-                </span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Tipo de Cliente</span>
-                <span class="detail-value">@(((eTipoCliente)Model.TipoId).ToString())</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Idioma</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Idioma) ? "empty" : "")">
-                    @(string.IsNullOrEmpty(Model.Idioma) ? "Sin definir" : Model.Idioma)
-                </span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Promotor</span>
-                <span class="detail-value @(string.IsNullOrEmpty(Model.Promotor) ? "empty" : "")">
-                    @(string.IsNullOrEmpty(Model.Promotor) ? "Sin definir" : Model.Promotor)
-                </span>
-            </div>
-        </div>
-        @if (!string.IsNullOrEmpty(Model.Observacion))
-        {
-            <div class="detail-item" style="margin-top: 1rem;">
-                <span class="detail-label">Observaciones</span>
-                <span class="detail-value" style="white-space: pre-wrap;">@Model.Observacion</span>
-            </div>
-        }
+        </section>
     </div>
 </div>

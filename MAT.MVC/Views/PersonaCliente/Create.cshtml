@@ -7,86 +7,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .modern-form-section {
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-    }
-    .modern-form-section:last-of-type {
-        border-bottom: none;
-        margin-bottom: 1rem;
-    }
-    .modern-form-section-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .modern-form-section-title i {
-        color: var(--primary-color, #e91e63);
-    }
-    .form-grid-3 {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-    }
-    .form-grid-2 {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    .form-grid-4 {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
-    }
-    @@media (max-width: 992px) {
-        .form-grid-3, .form-grid-4 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    @@media (max-width: 576px) {
-        .form-grid-2, .form-grid-3, .form-grid-4 {
-            grid-template-columns: 1fr;
-        }
-    }
-    .localidad-container {
-        display: flex;
-        gap: 0.5rem;
-        align-items: flex-end;
-    }
-    .localidad-container select {
-        flex: 1;
-    }
-    .btn-add-localidad {
-        width: 40px;
-        height: 40px;
-        border-radius: 0.5rem;
-        border: 1px solid var(--border-color, #e5e7eb);
-        background: var(--bg-secondary, #f8f9fa);
-        color: var(--primary-color, #e91e63);
-        font-size: 1.25rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-    }
-    .btn-add-localidad:hover {
-        background: var(--primary-color, #e91e63);
-        color: white;
-    }
-</style>
-
 <div class="modern-page-container">
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-person-plus"></i>
-            <span>Nuevo Cliente</span>
+            <span>Nuevo cliente</span>
         </h2>
     </div>
 
@@ -98,321 +23,248 @@
         </div>
     }
 
-    <div class="modern-form-container">
-        @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmCreateCliente", id = "frmCreateCliente" }))
-        {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmCreateCliente", id = "frmCreateCliente" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <!-- Seccion: Datos Personales -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-person"></i>
-                    <span>Datos Personales</span>
-                </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-person-badge"></i>
-                            @Html.LabelFor(model => model.Apellido)
-                        </label>
-                        @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido del cliente" })
-                        @Html.ValidationMessageFor(model => model.Apellido, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-person"></i>
-                            @Html.LabelFor(model => model.Nombre)
-                        </label>
-                        @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre del cliente" })
-                        @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-gender-ambiguous"></i>
-                            @Html.LabelFor(model => model.Sexo)
-                        </label>
-                        @Html.DropDownListFor(model => model.Sexo, eSexo.Femenino.ToSelectList(), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-card-list"></i>
-                            <span>Tipo de Documento</span>
-                        </label>
-                        @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-123"></i>
-                            @Html.LabelFor(model => model.NroDocumento)
-                        </label>
-                        @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "00.000.000" })
-                        @Html.ValidationMessageFor(model => model.NroDocumento, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-calendar-heart"></i>
-                            @Html.LabelFor(model => model.FechaNacimiento)
-                        </label>
-                        @Html.TextBoxFor(model => model.FechaNacimiento, "{0:dd/MM/yyyy}", new { @class = "modern-form-input datepicker", placeholder = "dd/mm/aaaa" })
-                        @Html.ValidationMessageFor(model => model.FechaNacimiento, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-flag"></i>
-                            @Html.LabelFor(model => model.Nacionalidad)
-                        </label>
-                        @Html.TextBoxFor(model => model.Nacionalidad, new { @class = "modern-form-input", placeholder = "ARG" })
-                        @Html.ValidationMessageFor(model => model.Nacionalidad, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-globe-americas"></i>
-                            @Html.LabelFor(model => model.PaisResidencia)
-                        </label>
-                        @Html.TextBoxFor(model => model.PaisResidencia, new { @class = "modern-form-input", placeholder = "ARG" })
-                        @Html.ValidationMessageFor(model => model.PaisResidencia, "", new { @class = "text-danger" })
-                    </div>
-                </div>
+        <div id="validation-banner-create" class="validation-banner hidden" role="alert" aria-live="polite">
+            <div class="validation-banner-content">
+                <strong>Revise los siguientes puntos antes de continuar:</strong>
+                <ul class="validation-banner-list"></ul>
             </div>
+            <button type="button" class="validation-banner-close" aria-label="Cerrar mensaje" title="Cerrar">×</button>
+        </div>
 
-            <!-- Seccion: Contacto -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-telephone"></i>
-                    <span>Informacion de Contacto</span>
+        <p class="text-secondary small mb-3">Los campos marcados con <span class="field-required">*</span> son obligatorios.</p>
+
+        <div class="d-flex flex-column gap-3">
+            <!-- Grupo: Datos personales -->
+            <section class="modern-card" aria-labelledby="heading-datos-personales">
+                <div class="modern-card-header">
+                    <h3 id="heading-datos-personales" class="modern-card-title">
+                        <i class="bi bi-person me-2"></i>
+                        <span>Datos personales</span>
+                    </h3>
                 </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-house-door"></i>
-                            @Html.LabelFor(model => model.Domicilio)
-                        </label>
-                        @Html.TextBoxFor(model => model.Domicilio, new { @class = "modern-form-input", placeholder = "Direccion completa" })
-                        @Html.ValidationMessageFor(model => model.Domicilio, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-telephone"></i>
-                            @Html.LabelFor(model => model.Telefono)
-                        </label>
-                        @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Telefono fijo" })
-                        @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-phone"></i>
-                            @Html.LabelFor(model => model.Celular)
-                        </label>
-                        @Html.TextBoxFor(model => model.Celular, new { @class = "modern-form-input", placeholder = "Celular" })
-                        @Html.ValidationMessageFor(model => model.Celular, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-envelope"></i>
-                            @Html.LabelFor(model => model.Email)
-                        </label>
-                        @Html.TextBoxFor(model => model.Email, new { @class = "modern-form-input", placeholder = "correo@ejemplo.com", type = "email" })
-                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-printer"></i>
-                            @Html.LabelFor(model => model.Fax)
-                        </label>
-                        @Html.TextBoxFor(model => model.Fax, new { @class = "modern-form-input", placeholder = "Fax (opcional)" })
-                        @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-globe"></i>
-                            @Html.LabelFor(model => model.Web)
-                        </label>
-                        @Html.TextBoxFor(model => model.Web, new { @class = "modern-form-input", placeholder = "www.ejemplo.com" })
-                        @Html.ValidationMessageFor(model => model.Web, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </div>
-
-            <!-- Seccion: Ubicacion -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-geo-alt"></i>
-                    <span>Ubicacion</span>
-                </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-map"></i>
-                            @Html.LabelFor(model => model.Provincia)
-                        </label>
-                        @Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntities("Provincia"), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-pin-map"></i>
-                            <span>Departamento</span>
-                        </label>
-                        <select id="ddDepartamento" class="modern-form-select" onchange="LoadLocalidad();">
-                            <option>SELECCIONE UN DEPARTAMENTO</option>
-                        </select>
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-geo"></i>
-                            <span>Localidad</span>
-                        </label>
-                        <div class="localidad-container">
-                            <select id="ddLocalidad" name="LocalidadId" class="modern-form-select">
-                                <option>SELECCIONE UNA LOCALIDAD</option>
-                            </select>
-                            <button type="button" id="lnk-Agregar-Localidad" class="btn-add-localidad" title="Agregar Localidad">
-                                <i class="bi bi-plus"></i>
-                            </button>
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Apellido)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido del cliente" })
+                            @Html.ValidationMessageFor(model => model.Apellido, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Nombre)</label>
+                            @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre del cliente" })
+                            @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Sexo)</label>
+                            @Html.DropDownListFor(model => model.Sexo, eSexo.Femenino.ToSelectList(), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Tipo de documento</label>
+                            @Html.DropDownListFor(model => model.TipoDocumento, eTipoDocumento.DNI.ToSelectList(), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.NroDocumento)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "00.000.000" })
+                            @Html.ValidationMessageFor(model => model.NroDocumento, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.FechaNacimiento)</label>
+                            @Html.TextBoxFor(model => model.FechaNacimiento, "{0:dd/MM/yyyy}", new { @class = "modern-form-input datepicker", placeholder = "dd/mm/aaaa" })
+                            @Html.ValidationMessageFor(model => model.FechaNacimiento, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Nacionalidad)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.Nacionalidad, new { @class = "modern-form-input", placeholder = "ARG" })
+                            @Html.ValidationMessageFor(model => model.Nacionalidad, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.PaisResidencia)</label>
+                            @Html.TextBoxFor(model => model.PaisResidencia, new { @class = "modern-form-input", placeholder = "ARG" })
+                            @Html.ValidationMessageFor(model => model.PaisResidencia, "", new { @class = "text-danger" })
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Seccion: Datos Fiscales -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-receipt"></i>
-                    <span>Datos Fiscales y Empresa</span>
+            <!-- Grupo: Información de contacto -->
+            <section class="modern-card" aria-labelledby="heading-contacto">
+                <div class="modern-card-header">
+                    <h3 id="heading-contacto" class="modern-card-title">
+                        <i class="bi bi-telephone me-2"></i>
+                        <span>Información de contacto</span>
+                    </h3>
                 </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-building"></i>
-                            @Html.LabelFor(model => model.RazonSocial)
-                        </label>
-                        @Html.TextBoxFor(model => model.RazonSocial, new { @class = "modern-form-input", placeholder = "Razon social (opcional)" })
-                        @Html.ValidationMessageFor(model => model.RazonSocial, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-upc"></i>
-                            <span>CUIT/CUIL</span>
-                        </label>
-                        @Html.TextBoxFor(model => model.Cuit, new { @class = "modern-form-input", placeholder = "00-00000000-0" })
-                        @Html.ValidationMessageFor(model => model.Cuit, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-briefcase"></i>
-                            <span>Empresa</span>
-                        </label>
-                        @Html.TextBoxFor(model => model.Empresa, new { @class = "modern-form-input", placeholder = "Nombre de empresa (opcional)" })
-                        @Html.ValidationMessageFor(model => model.Empresa, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-file-earmark-text"></i>
-                            @Html.LabelFor(model => model.CondicionIva)
-                        </label>
-                        @Html.DropDownListFor(model => model.CondicionIva, eCondicionIVA.Consumidor_Final.ToSelectList(), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-credit-card"></i>
-                            <span>Forma de Pago</span>
-                        </label>
-                        @Html.DropDownListFor(model => model.FormaPago, eFormaPago.Contado.ToSelectList(), new { @class = "modern-form-select" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-tag"></i>
-                            @Html.LabelFor(model => model.TipoId)
-                        </label>
-                        @Html.DropDownListFor(model => model.TipoId, eTipoCliente.Mayorista.ToSelectList(), new { @class = "modern-form-select" })
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Domicilio)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.TextBoxFor(model => model.Domicilio, new { @class = "modern-form-input", placeholder = "Dirección completa" })
+                            @Html.ValidationMessageFor(model => model.Domicilio, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Telefono)</label>
+                            @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Teléfono fijo" })
+                            @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Celular)</label>
+                            @Html.TextBoxFor(model => model.Celular, new { @class = "modern-form-input", placeholder = "Celular" })
+                            @Html.ValidationMessageFor(model => model.Celular, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Email)</label>
+                            @Html.TextBoxFor(model => model.Email, new { @class = "modern-form-input", placeholder = "correo@ejemplo.com", type = "email" })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Fax)</label>
+                            @Html.TextBoxFor(model => model.Fax, new { @class = "modern-form-input", placeholder = "Fax (opcional)" })
+                            @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Web)</label>
+                            @Html.TextBoxFor(model => model.Web, new { @class = "modern-form-input", placeholder = "www.ejemplo.com" })
+                            @Html.ValidationMessageFor(model => model.Web, "", new { @class = "text-danger" })
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Seccion: Informacion Adicional -->
-            <div class="modern-form-section">
-                <div class="modern-form-section-title">
-                    <i class="bi bi-info-circle"></i>
-                    <span>Informacion Adicional</span>
+            <!-- Grupo: Ubicación -->
+            <section class="modern-card" aria-labelledby="heading-ubicacion">
+                <div class="modern-card-header">
+                    <h3 id="heading-ubicacion" class="modern-card-title">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        <span>Ubicación</span>
+                    </h3>
                 </div>
-                <div class="form-grid-3">
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-person-workspace"></i>
-                            @Html.LabelFor(model => model.Ocupacion)
-                        </label>
-                        <select id="Ocupacion" name="Ocupacion" class="modern-form-select">
-                            <option value="">SELECCIONE UNA OCUPACION</option>
-                            @foreach (var item in ViewBag.ListOcupacion)
-                            {
-                                <option value="@item.ToString()">@item.ToString()</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-translate"></i>
-                            @Html.LabelFor(model => model.Idioma)
-                        </label>
-                        @Html.TextBoxFor(model => model.Idioma, new { @class = "modern-form-input", placeholder = "Idioma preferido" })
-                        @Html.ValidationMessageFor(model => model.Idioma, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="modern-form-group">
-                        <label class="modern-form-label">
-                            <i class="bi bi-megaphone"></i>
-                            @Html.LabelFor(model => model.Promotor)
-                        </label>
-                        @Html.TextBoxFor(model => model.Promotor, new { @class = "modern-form-input", placeholder = "Promotor (opcional)" })
-                        @Html.ValidationMessageFor(model => model.Promotor, "", new { @class = "text-danger" })
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Provincia)<span class="field-required" aria-hidden="true"> *</span></label>
+                            @Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntities("Provincia"), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Departamento</label>
+                            <select id="ddDepartamento" class="modern-form-select" onchange="LoadLocalidad();">
+                                <option>SELECCIONE UN DEPARTAMENTO</option>
+                            </select>
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Localidad<span class="field-required" aria-hidden="true"> *</span></label>
+                            <div class="d-flex gap-2 align-items-end">
+                                <select id="ddLocalidad" name="LocalidadId" class="modern-form-select flex-grow-1">
+                                    <option>SELECCIONE UNA LOCALIDAD</option>
+                                </select>
+                                <button type="button" id="lnk-Agregar-Localidad" class="btn-modern-icon" title="Agregar localidad">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="form-grid-2" style="margin-top: 1rem;">
-                    <div class="modern-form-group" style="grid-column: 1 / -1;">
-                        <label class="modern-form-label">
-                            <i class="bi bi-chat-left-text"></i>
-                            @Html.LabelFor(model => model.Observacion)
-                        </label>
-                        @Html.TextAreaFor(model => model.Observacion, new { @class = "modern-form-input", rows = 3, placeholder = "Observaciones adicionales sobre el cliente..." })
-                        @Html.ValidationMessageFor(model => model.Observacion, "", new { @class = "text-danger" })
+            <!-- Grupo: Datos fiscales y empresa -->
+            <section class="modern-card" aria-labelledby="heading-fiscales">
+                <div class="modern-card-header">
+                    <h3 id="heading-fiscales" class="modern-card-title">
+                        <i class="bi bi-receipt me-2"></i>
+                        <span>Datos fiscales y empresa</span>
+                    </h3>
+                </div>
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.RazonSocial)</label>
+                            @Html.TextBoxFor(model => model.RazonSocial, new { @class = "modern-form-input", placeholder = "Razón social (opcional)" })
+                            @Html.ValidationMessageFor(model => model.RazonSocial, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">CUIT/CUIL</label>
+                            @Html.TextBoxFor(model => model.Cuit, new { @class = "modern-form-input", placeholder = "00-00000000-0" })
+                            @Html.ValidationMessageFor(model => model.Cuit, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Empresa</label>
+                            @Html.TextBoxFor(model => model.Empresa, new { @class = "modern-form-input", placeholder = "Nombre de empresa (opcional)" })
+                            @Html.ValidationMessageFor(model => model.Empresa, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.CondicionIva)</label>
+                            @Html.DropDownListFor(model => model.CondicionIva, eCondicionIVA.Consumidor_Final.ToSelectList(), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">Forma de pago</label>
+                            @Html.DropDownListFor(model => model.FormaPago, eFormaPago.Contado.ToSelectList(), new { @class = "modern-form-select" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.TipoId)</label>
+                            @Html.DropDownListFor(model => model.TipoId, eTipoCliente.Mayorista.ToSelectList(), new { @class = "modern-form-select" })
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Botones de Accion -->
-            <div class="modern-form-actions">
+            <!-- Grupo: Información adicional -->
+            <section class="modern-card" aria-labelledby="heading-adicional">
+                <div class="modern-card-header">
+                    <h3 id="heading-adicional" class="modern-card-title">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <span>Información adicional</span>
+                    </h3>
+                </div>
+                <div class="modern-card-content">
+                    <div class="modern-form-row">
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Ocupacion)</label>
+                            <select id="Ocupacion" name="Ocupacion" class="modern-form-select">
+                                <option value="">SELECCIONE UNA OCUPACIÓN</option>
+                                @foreach (var item in ViewBag.ListOcupacion)
+                                {
+                                    <option value="@item.ToString()">@item.ToString()</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Idioma)</label>
+                            @Html.TextBoxFor(model => model.Idioma, new { @class = "modern-form-input", placeholder = "Idioma preferido" })
+                            @Html.ValidationMessageFor(model => model.Idioma, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modern-form-group">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Promotor)</label>
+                            @Html.TextBoxFor(model => model.Promotor, new { @class = "modern-form-input", placeholder = "Promotor (opcional)" })
+                            @Html.ValidationMessageFor(model => model.Promotor, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="modern-form-row mt-2">
+                        <div class="modern-form-group modern-form-group-full">
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Observacion)</label>
+                            @Html.TextAreaFor(model => model.Observacion, new { @class = "modern-form-input", rows = 3, placeholder = "Observaciones adicionales..." })
+                            @Html.ValidationMessageFor(model => model.Observacion, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Acciones del formulario -->
+            <div class="modern-form-actions pt-2">
                 <a href="/PersonaCliente/Index/" class="btn-modern btn-modern-secondary">
                     <i class="bi bi-arrow-left"></i>
-                    <span>Volver a Lista de Clientes</span>
+                    <span>Volver a lista de clientes</span>
                 </a>
                 <button type="button" id="btnAgregarCliente" class="btn-modern btn-modern-primary">
                     <i class="bi bi-check-circle"></i>
-                    <span>Agregar Cliente</span>
+                    <span>Agregar cliente</span>
                 </button>
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>
 
 @section Scripts {
@@ -420,58 +272,69 @@
 }
 
 <script type="text/javascript">
+    window.showValidationBannerCreate = function (messages) {
+        var $banner = $("#validation-banner-create");
+        var $list = $banner.find(".validation-banner-list");
+        $list.empty();
+        if (Array.isArray(messages)) {
+            messages.forEach(function (msg) { $list.append("<li>" + msg + "</li>"); });
+        } else {
+            $list.append("<li>" + messages + "</li>");
+        }
+        $banner.removeClass("hidden");
+        $banner[0].scrollIntoView({ behavior: "smooth", block: "start" });
+        clearTimeout(window._validationBannerCreateTimer);
+        window._validationBannerCreateTimer = setTimeout(function () { $banner.addClass("hidden"); }, 10000);
+    };
+
     $(document).ready(function () {
-        // Valores por defecto
+        $("#validation-banner-create .validation-banner-close").on("click", function () {
+            $("#validation-banner-create").addClass("hidden");
+            if (window._validationBannerCreateTimer) clearTimeout(window._validationBannerCreateTimer);
+        });
+
         $("#CondicionIva").val("5");
         $("#Provincia").val("16");
         $("#TipoId").val("2");
         $("#Nacionalidad").val("ARG");
         $("#PaisResidencia").val("ARG");
 
-        // Validacion de telefono (solo numeros y caracteres especiales)
         $("#Telefono, #Celular").keypress(function (tecla) {
             var keys = [0, 40, 42, 45, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 127];
             if (keys.indexOf(tecla.charCode) < 0) return false;
         });
 
-        // Cargar departamentos iniciales (Salta)
-        var IdProvincia = 16;
+        var idProvincia = 16;
         $.ajax({
             type: "POST",
             url: "/Localidad/GetDepartamento",
-            data: { "sIdProvincia": IdProvincia },
+            data: { sIdProvincia: idProvincia },
             dataType: "json",
             success: function (response) {
-                if (response.Result == "Done.") {
+                if (response.Result === "Done.") {
                     var list = eval(response.LDepartamento);
-                    $('#ddDepartamento option').remove();
+                    $("#ddDepartamento option").remove();
                     document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
                     for (var i = 0; i < list.length; i++) {
-                        var sValue = list[i].IdDepartamento;
-                        var sName = list[i].Nombre;
-                        document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(sName, sValue);
+                        document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(list[i].Nombre, list[i].IdDepartamento);
                     }
-                    $("#ddDepartamento").val(445); // Salta-Capital
-
-                    // Cargar localidades
-                    var IdDepartamento = $("#ddDepartamento").val();
-                    if (parseInt(IdDepartamento) > 0) {
+                    $("#ddDepartamento").val("445");
+                    var idDepto = $("#ddDepartamento").val();
+                    if (parseInt(idDepto, 10) > 0) {
                         $.ajax({
                             type: "POST",
                             url: "/Localidad/GetLocalidad",
-                            data: { "sIdDepartamento": IdDepartamento },
+                            data: { sIdDepartamento: idDepto },
                             dataType: "json",
-                            success: function (response) {
-                                if (response.Result == "Done.") {
-                                    var list = eval(response.LLocalidad);
-                                    $('#ddLocalidad option').remove();
+                            success: function (r) {
+                                if (r.Result === "Done.") {
+                                    var locs = eval(r.LLocalidad);
+                                    $("#ddLocalidad option").remove();
                                     document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
-                                    for (var i = 0; i < list.length; i++) {
-                                        var sValue = list[i].Id;
-                                        var sName = list[i].Nombre;
-                                        document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(sName, sValue);
+                                    for (var j = 0; j < locs.length; j++) {
+                                        document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(locs[j].Nombre, locs[j].Id);
                                     }
-                                    $("#ddLocalidad").val(5445); // Capital
+                                    $("#ddLocalidad").val("5445");
                                 }
                             }
                         });
@@ -480,41 +343,35 @@
             }
         });
 
-        // Cambio de provincia
         $("#Provincia").change(function () {
-            var IdProvincia = $("#Provincia").val();
-            LoadDepartamento(IdProvincia);
+            LoadDepartamento($(this).val());
         });
 
-        // Datepicker
         $(".datepicker").datepicker({
             changeMonth: true,
             changeYear: true,
-            yearRange: '-100:+2',
-            dateFormat: 'dd/mm/yy'
+            yearRange: "-100:+2",
+            dateFormat: "dd/mm/yy"
         });
 
-        // Mascaras
         $("#NroDocumento").mask("99.999.999");
         $("#Cuit").mask("99-99999999-9");
     });
 
-    function LoadDepartamento(IdProvincia) {
-        if (parseInt(IdProvincia) > 0) {
+    function LoadDepartamento(idProvincia) {
+        if (parseInt(idProvincia, 10) > 0) {
             $.ajax({
                 type: "POST",
                 url: "/Localidad/GetDepartamento",
-                data: { "sIdProvincia": IdProvincia },
+                data: { sIdProvincia: idProvincia },
                 dataType: "json",
                 success: function (response) {
-                    if (response.Result == "Done.") {
+                    if (response.Result === "Done.") {
                         var list = eval(response.LDepartamento);
-                        $('#ddDepartamento option').remove();
+                        $("#ddDepartamento option").remove();
                         document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
                         for (var i = 0; i < list.length; i++) {
-                            var sValue = list[i].IdDepartamento;
-                            var sName = list[i].Nombre;
-                            document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(sName, sValue);
+                            document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(list[i].Nombre, list[i].IdDepartamento);
                         }
                     }
                 }
@@ -523,22 +380,20 @@
     }
 
     function LoadLocalidad() {
-        var IdDepartamento = $("#ddDepartamento").val();
-        if (parseInt(IdDepartamento) > 0) {
+        var idDepto = $("#ddDepartamento").val();
+        if (parseInt(idDepto, 10) > 0) {
             $.ajax({
                 type: "POST",
                 url: "/Localidad/GetLocalidad",
-                data: { "sIdDepartamento": IdDepartamento },
+                data: { sIdDepartamento: idDepto },
                 dataType: "json",
                 success: function (response) {
-                    if (response.Result == "Done.") {
+                    if (response.Result === "Done.") {
                         var list = eval(response.LLocalidad);
-                        $('#ddLocalidad option').remove();
+                        $("#ddLocalidad option").remove();
                         document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
                         for (var i = 0; i < list.length; i++) {
-                            var sValue = list[i].Id;
-                            var sName = list[i].Nombre;
-                            document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(sName, sValue);
+                            document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(list[i].Nombre, list[i].Id);
                         }
                     }
                 }
