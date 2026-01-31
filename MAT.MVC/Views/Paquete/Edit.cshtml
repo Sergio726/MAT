@@ -244,42 +244,101 @@
         color: var(--text-primary, #374151);
         text-decoration: none;
     }
-    /* Dialog Styles */
-    .dialog-form-grid {
-        display: grid;
-        gap: 0.75rem;
+    /* Modal Seleccionar Destino */
+    .modal-destino-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 9998;
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 2rem 1rem;
+        overflow-y: auto;
     }
-    .dialog-form-group {
+    .modal-destino-overlay.is-open {
         display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
     }
-    .dialog-form-label {
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--text-secondary, #6b7280);
-    }
-    .dialog-form-label .required {
-        color: #ef4444;
-    }
-    .dialog-form-select {
+    .modal-destino-box {
         width: 100%;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
+        max-width: 520px;
+        margin: auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        z-index: 9999;
+        overflow: hidden;
+        flex-shrink: 0;
     }
-    .dialog-form-select:focus {
+    .modal-destino-titlebar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        background: var(--brand-primary, #e91e63);
+        color: white;
+        font-weight: 600;
+        font-size: 1.0625rem;
+    }
+    .modal-destino-titlebar i { margin-right: 0.5rem; }
+    .modal-destino-close {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 0.35rem;
+        opacity: 0.9;
+        border-radius: 6px;
+    }
+    .modal-destino-close:hover { opacity: 1; background: rgba(255,255,255,0.15); }
+    .modal-destino-body {
+        padding: 1.25rem 1.25rem 0;
+    }
+    .modal-destino-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .modal-destino-group.full-width { grid-column: 1 / -1; }
+    .modal-destino-label {
+        display: block;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 0.35rem;
+    }
+    .modal-destino-label .required { color: #dc2626; }
+    .modal-destino-select {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border: 2px solid var(--border-color, #e5e7eb);
+        border-radius: 8px;
+        font-size: 0.8rem;
+        background: white;
+        color: #85878b;
+    }
+    .modal-destino-select:focus {
         outline: none;
-        border-color: var(--primary-color, #e91e63);
+        border-color: var(--brand-primary, #e91e63);
     }
-    .dialog-form-select.fieldError {
-        border-color: #ef4444;
+    .modal-destino-select.fieldError {
+        border-color: #dc2626;
         background: #fef2f2;
     }
-    .dialog-actions {
-        margin-top: 1rem;
-        text-align: right;
+    .modal-destino-footer {
+        padding: 1rem 1.25rem 1.25rem;
+        border-top: 1px solid var(--border-color, #e5e7eb);
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+    @@media (max-width: 520px) {
+        .modal-destino-grid { grid-template-columns: 1fr; }
     }
     @@media (max-width: 640px) {
         .paquete-form-grid {
@@ -394,9 +453,9 @@
                         </label>
                         <div class="destino-input-group">
                             <input type="text" maxlength="50" id="txtDestino" name="txtDestino" class="paquete-form-input valtxt" readonly placeholder="Seleccionar destino..." value="@Destino" />
-                            <a href="javascript:void(0);" onclick="javascript:selectDestino();" title="Seleccionar Destino" class="btn-destino" id="divLocation">
+                            <button type="button" title="Seleccionar destino" class="btn-destino" id="btnSeleccionarDestino" aria-label="Seleccionar destino">
                                 <i class="bi bi-geo-alt-fill"></i>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -464,49 +523,53 @@
     </div>
 </div>
 
-<!-- Dialog para seleccionar destino -->
-<div id="divDestino" style="display:none;" title="Seleccionar Destino">
-    <div class="dialog-form-grid">
-        <div class="dialog-form-group">
-            <label class="dialog-form-label">
-                Pais <span class="required">*</span>
-            </label>
-            <select id="ddPais" name="Pais" class="dialog-form-select">
-                <option value="0">SELECCIONE UN PAIS</option>
-                @foreach (MAT.Entities.Pais Item in ViewBag.ListPais)
-                {
-                    <option value="@Item.PaisId.ToString()" @(Item.Descripcion == "ARGENTINA" ? "selected" : "")>@Item.Descripcion</option>
-                }
-            </select>
+<!-- Modal Seleccionar Destino -->
+<div id="modalDestinoOverlay" class="modal-destino-overlay" role="dialog" aria-labelledby="modalDestinoTitle" aria-modal="true">
+    <div class="modal-destino-box" id="modalDestinoBox">
+        <div class="modal-destino-titlebar">
+            <span id="modalDestinoTitle"><i class="bi bi-geo-alt-fill"></i> Seleccionar destino</span>
+            <button type="button" class="modal-destino-close" id="btnModalDestinoCerrar" title="Cerrar" aria-label="Cerrar">&times;</button>
         </div>
-        <div class="dialog-form-group">
-            <label class="dialog-form-label">
-                Provincia <span class="required">*</span>
-            </label>
-            <select id="ddProvincia" name="Provincia" class="dialog-form-select">
-                <option value="0">SELECCIONE UNA PROVINCIA</option>
-            </select>
+        <div class="modal-destino-body">
+            <div class="modal-destino-grid" id="divDestinoForm">
+                <div class="modal-destino-group">
+                    <label class="modal-destino-label" for="ddPais">País <span class="required">*</span></label>
+                    <select id="ddPais" name="Pais" class="modal-destino-select">
+                        <option value="0">SELECCIONE UN PAÍS</option>
+                        @foreach (MAT.Entities.Pais Item in ViewBag.ListPais)
+                        {
+                            <option value="@Item.PaisId.ToString()" @(Item.Descripcion == "ARGENTINA" ? "selected" : "")>@Item.Descripcion</option>
+                        }
+                    </select>
+                </div>
+                <div class="modal-destino-group">
+                    <label class="modal-destino-label" for="ddProvincia">Provincia <span class="required">*</span></label>
+                    <select id="ddProvincia" name="Provincia" class="modal-destino-select">
+                        <option value="0">SELECCIONE UNA PROVINCIA</option>
+                    </select>
+                </div>
+                <div class="modal-destino-group">
+                    <label class="modal-destino-label" for="ddDepartamento">Departamento <span class="required">*</span></label>
+                    <select id="ddDepartamento" class="modal-destino-select">
+                        <option value="0">SELECCIONE UN DEPARTAMENTO</option>
+                    </select>
+                </div>
+                <div class="modal-destino-group">
+                    <label class="modal-destino-label" for="ddLocalidad">Localidad <span class="required">*</span></label>
+                    <select id="ddLocalidad" class="modal-destino-select">
+                        <option value="0">SELECCIONE UNA LOCALIDAD</option>
+                    </select>
+                </div>
+            </div>
         </div>
-        <div class="dialog-form-group">
-            <label class="dialog-form-label">
-                Departamento <span class="required">*</span>
-            </label>
-            <select id="ddDepartamento" class="dialog-form-select" onchange="javascript: LoadLocalidad();">
-                <option value="0">SELECCIONE UN DEPARTAMENTO</option>
-            </select>
-        </div>
-        <div class="dialog-form-group">
-            <label class="dialog-form-label">
-                Localidad <span class="required">*</span>
-            </label>
-            <select id="ddLocalidad" class="dialog-form-select">
-                <option value="0">SELECCIONE UNA LOCALIDAD</option>
-            </select>
-        </div>
-        <div class="dialog-actions">
-            <button type="button" class="btn-modern btn-primary" onclick="javascript: setDestino();">
+        <div class="modal-destino-footer">
+            <button type="button" class="btn-modern btn-modern-secondary" id="btnModalDestinoCancelar">
+                <i class="bi bi-x-lg"></i>
+                <span>Cancelar</span>
+            </button>
+            <button type="button" class="btn-modern btn-modern-primary" id="btnModalDestinoAceptar">
                 <i class="bi bi-check-lg"></i>
-                Aceptar
+                <span>Aceptar</span>
             </button>
         </div>
     </div>
@@ -521,8 +584,11 @@
         $("input[type='text']").keypress(function () {
             $(this).removeClass("fieldError");
         });
-        $("#divDestino select").change(function () {
+        $("#ddPais, #ddProvincia, #ddDepartamento, #ddLocalidad").change(function () {
             $(this).removeClass("fieldError");
+        });
+        $("#ddDepartamento").change(function () {
+            LoadLocalidad();
         });
 
         $("#chkPublicWeb").change(function () {
@@ -732,38 +798,70 @@
         }
     }
 
-    function selectDestino() {
-        $("#divDestino").dialog({
-            autoOpen: false,
-            modal: true,
-            width: "45%",
-            position: { my: 'top', at: 'top', of: window },
-            closeOnEscape: true,
-        });
-        $("#divDestino").dialog("open");
+    var modalDestinoOverlay = document.getElementById("modalDestinoOverlay");
+    var modalDestinoBox = document.getElementById("modalDestinoBox");
+
+    function openDestinoModal() {
+        if (modalDestinoOverlay) {
+            modalDestinoOverlay.classList.add("is-open");
+            document.body.style.overflow = "hidden";
+        }
     }
 
+    function closeDestinoModal() {
+        if (modalDestinoOverlay) {
+            modalDestinoOverlay.classList.remove("is-open");
+            document.body.style.overflow = "";
+        }
+    }
+
+    $(document).ready(function () {
+        $("#btnSeleccionarDestino").on("click", function () {
+            openDestinoModal();
+        });
+        $("#btnModalDestinoCerrar, #btnModalDestinoCancelar").on("click", function () {
+            closeDestinoModal();
+        });
+        $("#btnModalDestinoAceptar").on("click", function () {
+            setDestino();
+        });
+        $(modalDestinoOverlay).on("click", function (e) {
+            if (e.target === modalDestinoOverlay) {
+                closeDestinoModal();
+            }
+        });
+        $(document).on("keydown", function (e) {
+            if (e.key === "Escape" && modalDestinoOverlay && modalDestinoOverlay.classList.contains("is-open")) {
+                closeDestinoModal();
+            }
+        });
+        $(modalDestinoBox).on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+
     function setDestino() {
+        var selects = $("#ddPais, #ddProvincia, #ddDepartamento, #ddLocalidad");
         var b = true;
-        $.each($("#divDestino select"), function (i, l) {
-            if ($(this).val().replace(/^\s+|\s+$/g, "") == "0") {
-                $(this).addClass("fieldError");
+        selects.removeClass("fieldError");
+        $.each(selects, function (i, el) {
+            if ($(el).val().replace(/^\s+|\s+$/g, "") === "0") {
+                $(el).addClass("fieldError");
                 b = false;
             }
         });
-
         if (!b) {
-            return (window.alertInfo || window.alert)("Los campos remarcados son obligatorios. Por favor complete la selección.", "Validación")
-        } else {
-            var sPais = $("#ddPais option:selected").text();
-            var sProvincia = $("#ddProvincia option:selected").text();
-            var sDepartamento = $("#ddDepartamento option:selected").text();
-            var sLocalidad = $("#ddLocalidad option:selected").text();
-            var DestinoID = $("#ddLocalidad").val();
-            $("#txtDestino").val(sPais + ", " + sProvincia + ", " + sDepartamento + ", " + sLocalidad);
-            $("#txtDestino").removeClass("fieldError");
-            $("#divDestino").dialog("close");
-            $("#DestinoID").val(DestinoID);
+            (window.alertInfo || window.alert)("Complete la selección de País, Provincia, Departamento y Localidad.", "Validación");
+            return;
         }
+        var sPais = $("#ddPais option:selected").text();
+        var sProvincia = $("#ddProvincia option:selected").text();
+        var sDepartamento = $("#ddDepartamento option:selected").text();
+        var sLocalidad = $("#ddLocalidad option:selected").text();
+        var DestinoID = $("#ddLocalidad").val();
+        $("#txtDestino").val(sPais + ", " + sProvincia + ", " + sDepartamento + ", " + sLocalidad);
+        $("#txtDestino").removeClass("fieldError");
+        $("#DestinoID").val(DestinoID);
+        closeDestinoModal();
     }
 </script>
