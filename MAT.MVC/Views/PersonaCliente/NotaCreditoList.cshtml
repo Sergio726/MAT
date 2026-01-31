@@ -5,6 +5,27 @@
     .nota-credito-header {
         margin-bottom: 1rem;
     }
+    .nota-credito-filters {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
+    }
+    .nota-credito-filters label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary, #6b7280);
+        cursor: pointer;
+    }
+    .nota-credito-filters input[type="checkbox"] {
+        width: 1rem;
+        height: 1rem;
+        cursor: pointer;
+    }
     .nota-credito-title {
         font-size: 1.25rem;
         font-weight: 600;
@@ -152,6 +173,12 @@
     }
     else
     {
+        <div class="nota-credito-filters">
+            <label for="chkSoloCreditoPositivo">
+                <input type="checkbox" id="chkSoloCreditoPositivo" value="1" />
+                Solo crédito &gt; 0
+            </label>
+        </div>
         <div class="table-container">
             <table id="tblCretitoClienteList" class="display">
                 <thead>
@@ -184,7 +211,7 @@
                 var jTables = eval(dataSet);
                 var jt = jTables;
 
-                $("#tblCretitoClienteList").DataTable({
+                var table = $("#tblCretitoClienteList").DataTable({
                     "aaData": jt,
                     "columns": [
                         {
@@ -226,6 +253,18 @@
                         "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
                     }
                 });
+
+                $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                    if (settings.nTable.id !== "tblCretitoClienteList") return true;
+                    if (!$("#chkSoloCreditoPositivo").is(":checked")) return true;
+                    var row = settings.aoData[dataIndex]._aData;
+                    var monto = parseFloat(row.Monto);
+                    return !isNaN(monto) && monto > 0;
+                });
+
+                $("#chkSoloCreditoPositivo").on("change", function () {
+                    table.draw();
+                });
             });
 
             function cerrarPopupMovimientosNota() {
@@ -253,8 +292,7 @@
             function loadDivMovimientoNotaCredito(ClienteID, clienteNombre) {
                 var $overlay = $("#modalMovimientosNotaCreditoOverlay");
                 var $content = $("#divContentMovimientoNotaCredito");
-                var $title = $("#modalMovimientosNotaCreditoTitle");
-                if (clienteNombre) $title.text(clienteNombre); else $title.text("Movimientos Nota de Crédito");
+                $("#modalMovimientosNotaCreditoTitle").text("Notas de Credito");
 
                 $content.html(
                     '<div style="display: flex; align-items: center; justify-content: center; padding: 2rem; color: #9ca3af;">' +

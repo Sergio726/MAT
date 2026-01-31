@@ -25,6 +25,7 @@ namespace MAT.MVC.Models
         public decimal PorcentajeDevolucion { get; set; }
         public decimal MontoDevolucion { get; set; }
         public string Vendedor { get; set; }
+        public string Cliente { get; set; }
         public string Detalle { get; set; }
     }
 
@@ -142,7 +143,7 @@ namespace MAT.MVC.Models
 
             while (_reader.Read())
             {
-
+                _nota.NotaID = NotaID;
                 _nota.Dias = Convert.ToInt32(_reader["Dias"]);
                 _nota.Fecha = Convert.ToDateTime(_reader["Fecha"]);
                 _nota.MontoNota = Convert.ToDecimal(_reader["MontoNota"]);
@@ -150,6 +151,7 @@ namespace MAT.MVC.Models
                 _nota.NroNota = _reader["NroNota"].ToString();
                 _nota.PorcentajeRetencion = Convert.ToDecimal(_reader["PorcentajeRetencion"]);
                 _nota.Vendedor = _reader["Vendedor"].ToString();
+                _nota.Cliente = _reader["Cliente"] != DBNull.Value && _reader["Cliente"] != null ? _reader["Cliente"].ToString() : null;
                 _nota.Detalle = _reader["Detalle"].ToString();
                 if (_reader["MontoDevolucion"] != DBNull.Value && _reader["MontoDevolucion"] != null)
                     _nota.MontoDevolucion = Convert.ToDecimal(_reader["MontoDevolucion"]);
