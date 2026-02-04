@@ -354,9 +354,13 @@ function asignarPasajerosAButacas() {
         var primerPasajero = window.infoReservaModal.pasajeros[0];
         asignarPasajeroAButaca(butacaId, primerPasajero.id, window.infoReservaModal.precioId, window.infoReservaModal.adicionales);
         
-        // Si hay más pasajeros, mostrar mensaje
-        if (window.infoReservaModal.pasajeros.length > 1) {
-            (window.alertInfo || window.alert)('Pasajero asignado a la butaca. ' + (window.infoReservaModal.pasajeros.length - 1) + ' pasajero(s) disponible(s) para asignar a otras butacas.', 'Atención');
+        // Si hay más pasajeros, mostrar mensaje (restantes por asignar)
+        var restantes = Math.max(0, window.infoReservaModal.pasajeros.length - 1);
+        if (restantes > 0) {
+            var texto = restantes === 1
+                ? 'Se asignó un pasajero a la butaca. Queda 1 pasajero por asignar a una butaca.'
+                : 'Se asignó un pasajero a la butaca. Quedan ' + restantes + ' pasajeros por asignar a butacas.';
+            (window.alertInfo || window.alert)(texto, 'Atención');
         }
     }
     
@@ -396,10 +400,17 @@ function asignarPasajeroAButaca(butacaId, pasajeroId, precioId, adicionales) {
     butaca.attr("data-adicionales", adicionales || '');
     butaca.data("adicionales", adicionales || '');
     
-    // Remover clase disponible, agregar clase asignada
-    butaca.removeClass('disponible');
+    // Remover clase disponible, agregar clase asignada y disparar efecto de selección
+    butaca.removeClass('disponible butaca-asignada-efecto');
     butaca.addClass('butaca-asignada');
-    
+    butaca.addClass('butaca-asignada-efecto');
+    butaca[0].offsetHeight; // reflow para que la animación arranque
+    setTimeout(function () {
+        butaca.removeClass('butaca-asignada-efecto');
+        // Activar latido continuo hasta que el usuario haga clic en Reservar
+        $("#panel-bus").addClass("butacas-con-latido");
+    }, 650);
+
     // Actualizar tooltip/title
     var nombreCompleto = pasajeroInfo ? (pasajeroInfo.apellido + ', ' + pasajeroInfo.nombre) : 'Pasajero asignado';
     butaca.attr('title', nombreCompleto);
@@ -420,9 +431,12 @@ function liberarButaca(butacaId) {
     if (!butaca.length) {
         return;
     }
-    
+
     butaca.removeClass('butaca-asignada');
     butaca.addClass('disponible');
+    if ($("#panel-bus a.butaca-asignada").length === 0) {
+        $("#panel-bus").removeClass("butacas-con-latido");
+    }
     butaca.removeData('pasajero');
     butaca.removeData('precio');
     butaca.removeData('adicionales');

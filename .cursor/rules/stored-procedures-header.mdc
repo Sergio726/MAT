@@ -1,0 +1,69 @@
+---
+description: En stored procedures, agregar/actualizar bloque de cabecera con fecha, autor Seba Garcia y detalle del cambio
+globs: "**/Stored Procedures/*.sql"
+alwaysApply: false
+---
+
+# Cabecera en Stored Procedures
+
+Cada vez que **crees** o **modifiques** un stored procedure (archivo `.sql` en `Stored Procedures` o en `database/` que contenga `CREATE PROCEDURE` o `CREATE OR ALTER PROCEDURE`), debes:
+
+1. **Incluir o actualizar** un bloque de comentario justo después de `AS` (antes de `SET NOCOUNT` o del primer `BEGIN`).
+2. El bloque debe tener:
+   - **Fecha**: fecha actual en formato corto (ej. 03/02/2026 o 2026-02-03).
+   - **Autor**: Seba Garcia
+   - **Detalle del cambio**: una o más líneas describiendo qué se hizo (creación, corrección de duplicados, nuevo parámetro, etc.).
+
+## Formato del bloque
+
+```sql
+AS
+/*
+    Fecha: 03/02/2026
+    Autor: Seba Garcia
+    Detalle: [Descripción breve del cambio o creación]
+*/
+SET NOCOUNT ...
+```
+
+Si el SP ya tiene un bloque de comentario anterior (ej. "Autor: Sebastian Garcia", "Create date:", etc.), **actualízalo** para que quede con este formato y la fecha/detalle del último cambio.
+
+## Ejemplo al modificar
+
+Antes:
+```sql
+AS
+/*
+    Autor: Sebastian Garcia 19/01/2026
+    Consolidado optimizado para Popin DetalleFactura
+*/
+```
+
+Después de un cambio (ej. evitar duplicados en pasajeros):
+```sql
+AS
+/*
+    Fecha: 03/02/2026
+    Autor: Seba Garcia
+    Detalle: Evitar duplicados en listado de pasajeros; LEFT JOIN a ReservaHabitacion reemplazado por subconsulta agrupada por PasajeID.
+*/
+```
+
+## Ejemplo al crear uno nuevo
+
+```sql
+CREATE PROCEDURE [dbo].[usp_MAT_Ejemplo_Nuevo]
+(
+    @Id UNIQUEIDENTIFIER
+)
+AS
+/*
+    Fecha: 03/02/2026
+    Autor: Seba Garcia
+    Detalle: Creación del SP para [descripción del propósito].
+*/
+SET NOCOUNT, XACT_ABORT ON;
+...
+```
+
+Aplica esta regla en **MAT.DB\dbo\Stored Procedures\*.sql** y en **database\*.sql** cuando el archivo defina un stored procedure.

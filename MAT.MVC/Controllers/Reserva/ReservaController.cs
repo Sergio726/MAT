@@ -243,7 +243,7 @@ namespace MAT.MVC.Controllers.Reserva
             return PartialView(LPersonaCliente);
         }
 
-        // Endpoint para autocomplete - devuelve solo sugerencias (máximo 20)
+        // Endpoint para autocomplete - usa usp_MAT_PersonaCliente_GetTop (búsqueda en SP, solo clientes disponibles para el viaje)
         [HttpPost]
         public JsonResult BuscarPasajerosAutocomplete(Guid viajeid, string term)
         {
@@ -257,41 +257,33 @@ namespace MAT.MVC.Controllers.Reserva
 
                 SqlParameter[] dbParams = new SqlParameter[]
                 {
-                    DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(viajeid)),
+                    DBHelper.MakeParam("@SearchTerm", SqlDbType.NVarChar, 200, term ?? ""),
+                    DBHelper.MakeParam("@TopCount", SqlDbType.Int, 0, 20),
+                    DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, viajeid)
                 };
-                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetClientesDisponibles", dbParams))
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_GetTop", dbParams))
                 {
-                    string searchTerm = term.ToLower();
-                    int count = 0;
-                    int maxResults = 20;
-
-                    while (_reader.Read() && count < maxResults)
+                    while (_reader.Read())
                     {
-                        string apellido = _reader["Apellido"].ToString().ToLower();
-                        string nombre = _reader["Nombre"].ToString().ToLower();
-                        string nroDoc = _reader["NroDocumento"].ToString().ToLower();
-                        string nombreCompleto = _reader["Apellido"].ToString() + ", " + _reader["Nombre"].ToString();
+                        string apellido = _reader["Apellido"] != DBNull.Value ? _reader["Apellido"].ToString().Trim() : "";
+                        string nombre = _reader["Nombre"] != DBNull.Value ? _reader["Nombre"].ToString().Trim() : "";
+                        string nombreCompleto = apellido + (string.IsNullOrEmpty(apellido) && string.IsNullOrEmpty(nombre) ? "" : ", ") + nombre;
+                        string telefono = _reader["Telefono"] != DBNull.Value && !string.IsNullOrWhiteSpace(_reader["Telefono"].ToString())
+                            ? _reader["Telefono"].ToString()
+                            : (_reader["Celular"] != DBNull.Value ? _reader["Celular"].ToString() : "");
 
-                        // Buscar en apellido, nombre o documento
-                        if (apellido.Contains(searchTerm) || 
-                            nombre.Contains(searchTerm) || 
-                            nroDoc.Contains(searchTerm) ||
-                            nombreCompleto.ToLower().Contains(searchTerm))
+                        sugerencias.Add(new
                         {
-                            sugerencias.Add(new
-                            {
-                                id = _reader["ClienteID"].ToString(),
-                                label = nombreCompleto + " - DNI: " + _reader["NroDocumento"].ToString(),
-                                value = nombreCompleto,
-                                apellido = _reader["Apellido"].ToString(),
-                                nombre = _reader["Nombre"].ToString(),
-                                nroDocumento = _reader["NroDocumento"].ToString(),
-                                tipoDocumento = _reader["TipoDocumento"].ToString(),
-                                telefono = _reader["Telefono"].ToString(),
-                                email = _reader["Email"].ToString()
-                            });
-                            count++;
-                        }
+                            id = _reader["PersonaID"].ToString(),
+                            label = nombreCompleto + " - DNI: " + (_reader["NroDocumento"] != DBNull.Value ? _reader["NroDocumento"].ToString() : ""),
+                            value = nombreCompleto,
+                            apellido = apellido,
+                            nombre = nombre,
+                            nroDocumento = _reader["NroDocumento"] != DBNull.Value ? _reader["NroDocumento"].ToString() : "",
+                            tipoDocumento = _reader["TipoDocumento"] != DBNull.Value ? _reader["TipoDocumento"].ToString() : "1",
+                            telefono = telefono,
+                            email = _reader["Email"] != DBNull.Value ? _reader["Email"].ToString() : ""
+                        });
                     }
                 }
             }

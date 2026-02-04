@@ -62,7 +62,7 @@ BEGIN
     INNER JOIN dbo.Paquete pa ON v.PaqueteID = pa.PaqueteID
     WHERE pj.FacturaID = @FacturaId;
 
-    /* Resultset 3: Detalle pasajes (columnas mínimas para UI) */
+    /* Resultset 3: Detalle pasajes (columnas mínimas para UI). Una fila por pasaje (evitar duplicados por múltiples ReservaHabitacion). */
     SELECT
         p.PasajeID,
         p.PasajeroID,
@@ -71,12 +71,12 @@ BEGIN
         b.NroButaca      AS ButacaNro,
         ISNULL(per.Nombre,'')   AS PasajeroNombre,
         ISNULL(per.Apellido,'') AS PasajeroApellido,
-        CASE WHEN rh.HabitacionID IS NOT NULL THEN CONVERT(uniqueidentifier, '11111111-1111-1111-1111-111111111111') ELSE NULL END AS HabitacionID
+        CASE WHEN rh.PasajeID IS NOT NULL THEN CONVERT(uniqueidentifier, '11111111-1111-1111-1111-111111111111') ELSE NULL END AS HabitacionID
     FROM dbo.Pasaje p
     INNER JOIN dbo.Butaca b ON p.ButacaID = b.ButacaID
     INNER JOIN dbo.Viaje  v ON p.ViajeID  = v.ViajeID
     LEFT  JOIN dbo.Persona per ON p.PasajeroID = per.PersonaID
-    LEFT  JOIN dbo.ReservaHabitacion rh ON rh.PasajeID = p.PasajeID
+    LEFT  JOIN (SELECT PasajeID FROM dbo.ReservaHabitacion GROUP BY PasajeID) rh ON rh.PasajeID = p.PasajeID
     WHERE p.FacturaID = @FacturaId;
 
     /* Resultset 4: Menores (equivalente a usp_MAT_PersonaCliente_GetPasajeroMenorByFactura) */

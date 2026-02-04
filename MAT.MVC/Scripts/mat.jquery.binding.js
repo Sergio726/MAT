@@ -187,6 +187,7 @@ $(document).on("click", "#btnReservarPasaje", function () {
         success: function (data) {
 
             $("#divFullLoading").remove();
+            $("#panel-bus").removeClass("butacas-con-latido");
 
             var result = data == "True" ? true : false;
             $("#FormReserva").dialog("close");
@@ -265,6 +266,8 @@ $(document).on("click", "#btn-reservar", function () {
 */
 
 $(document).on("click", "#btn-reservar", function () {
+    // Quitar efecto de latido de las butacas al iniciar la reserva
+    $("#panel-bus").removeClass("butacas-con-latido");
     if ($("#panel-bus a.selected").size() > 0) {
         var pasajesList = new Hashtable();
         var pasajes = [];
@@ -340,6 +343,7 @@ $(document).on("click", "#btn-reservar", function () {
             contentType: "application/json; charset=utf-8",
             dataType: "html",
             success: function (result) {
+                $("#panel-bus").removeClass("butacas-con-latido");
                 var dialogid = "FormReserva";
                 var dialogtitle = "Reserva de Pasajes";
                 ShowFormDialogHTML(result, dialogid, dialogtitle, "wide");
@@ -454,6 +458,7 @@ $(document).on("click", "#btn-buscar-persona", function () {
         success: function (data) {
             var result = data == "True" ? true : false;
             $("#FormReserva").dialog("close");
+            $("#panel-bus").removeClass("butacas-con-latido");
             if (result) {
                 (window.alertSuccess || window.alert)("Reserva realizada correctamente.", "Éxito");
                 $("#panel-bus a.selected").addClass("reservado").removeClass("selected").off("click");

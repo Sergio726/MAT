@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_Factura_DetalleFacturaByFacturaID](@FacturaId uniqueidentifier)
+CREATE PROCEDURE [dbo].[usp_Factura_DetalleFacturaByFacturaID](@FacturaId uniqueidentifier)
 
 AS
 

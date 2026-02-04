@@ -1869,6 +1869,48 @@ div.bnn_floating-banner.hidden {
     position: relative;
 }
 
+/* Efecto de movimiento al seleccionar/asignar butaca */
+@keyframes butaca-seleccionada {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(230, 51, 117, 0);
+    }
+    25% {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 8px rgba(230, 51, 117, 0.4);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    75% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(230, 51, 117, 0);
+    }
+}
+
+#panel-bus a.butaca-asignada-efecto {
+    animation: butaca-seleccionada 0.55s ease-out forwards;
+}
+
+/* Latido continuo en butacas asignadas hasta hacer clic en Reservar */
+@keyframes butaca-latido {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(230, 51, 117, 0.35);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(230, 51, 117, 0.2);
+        transform: scale(1.06);
+    }
+}
+
+#panel-bus.butacas-con-latido a.butaca-asignada {
+    animation: butaca-latido 1.2s ease-in-out infinite;
+}
+
 #panel-bus a.butaca-asignada::after {
     content: '';
     position: absolute;
@@ -6487,6 +6529,17 @@ span.badge-categoria::before {
     color: var(--text-primary);
     word-wrap: break-word;
     flex: 1;
+}
+
+/* Resaltado de palabras coincidentes con la búsqueda (PersonaCliente/Index) */
+.modern-search-highlight {
+    background: linear-gradient(120deg, rgba(230, 51, 117, 0.25) 0%, rgba(230, 51, 117, 0.15) 100%);
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: 0.1em 0.25em;
+    border-radius: 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
 }
 
 /* Acciones de la tarjeta */

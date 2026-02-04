@@ -1,4 +1,4 @@
-﻿@model PagedList.IPagedList<MAT.Entities.PersonaCliente>
+@model PagedList.IPagedList<MAT.Entities.PersonaCliente>
 @using MAT.Enums
 @using MAT.Utilities
 @{
@@ -26,7 +26,7 @@
             <input type="text" 
                    id="searchClientes" 
                    class="modern-search-input" 
-                   placeholder="Buscar por nombre, apellido, documento, teléfono..." 
+                   placeholder="Buscar por palabras: nombre, apellido, documento, teléfono, celular, email" 
                    autocomplete="off" />
             <div id="searchLoading" class="modern-search-loading" style="display: none;">
                 <div class="spinner-border spinner-border-sm" role="status">
@@ -48,7 +48,7 @@
     <div id="emptyState" class="modern-empty-state" style="display: none;">
         <i class="bi bi-inbox"></i>
         <h4>No se encontraron clientes</h4>
-        <p class="text-muted">Intenta con otro término de búsqueda.</p>
+        <p class="text-muted">Probá con otras palabras (cada una se busca en nombre, apellido, documento, teléfono, celular o email).</p>
     </div>
 </div>
 
@@ -57,29 +57,22 @@
     var isSearching = false;
 
     $(document).ready(function () {
-        // Cargar top 10 clientes inicialmente
+        // Cargar primeros 12 clientes (sin búsqueda)
         loadClientes("");
 
-        // Búsqueda en tiempo real con debounce
+        // Búsqueda por palabras con debounce
         $("#searchClientes").on("input", function () {
             var searchTerm = $(this).val().trim();
-
-            // Limpiar timeout anterior
             clearTimeout(searchTimeout);
-
-            // Mostrar loading
             if (!isSearching) {
                 $("#searchLoading").show();
                 isSearching = true;
             }
-
-            // Debounce: esperar 300ms después de que el usuario deje de escribir
             searchTimeout = setTimeout(function () {
                 loadClientes(searchTerm);
             }, 300);
         });
 
-        // Limpiar búsqueda al hacer clic en el ícono
         $("#searchClientes").on("focus", function () {
             $(this).select();
         });
@@ -96,12 +89,12 @@
                 isSearching = false;
 
                 if (response.success && response.data && response.data.length > 0) {
-                    renderClientesCards(response.data);
+                    renderClientesCards(response.data, searchTerm || "");
                     $("#emptyState").hide();
                     $("#clientesContainer").show();
                 } else {
-                    $("#clientesContainer").hide();
                     $("#emptyState").show();
+                    $("#clientesContainer").hide();
                 }
             },
             error: function (xhr, status, error) {
@@ -120,7 +113,35 @@
         });
     }
 
-    function renderClientesCards(clientes) {
+    /** Palabras de búsqueda (sin vacías) para resaltar en tarjetas */
+    function getSearchWords(searchTerm) {
+        if (!searchTerm || !String(searchTerm).trim()) return [];
+        return String(searchTerm).trim().split(/\s+/).filter(Boolean);
+    }
+
+    /** Escapa caracteres especiales para usarlos en RegExp */
+    function escapeRegex(str) {
+        if (!str) return "";
+        return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    /** Devuelve HTML seguro con las palabras de búsqueda resaltadas (coincidencia insensible a mayúsculas). */
+    function highlightText(text, searchWords) {
+        if (!text) return "";
+        var safe = escapeHtml(text);
+        if (!searchWords || searchWords.length === 0) return safe;
+        var result = safe;
+        for (var i = 0; i < searchWords.length; i++) {
+            var word = searchWords[i];
+            if (!word) continue;
+            var re = new RegExp(escapeRegex(word), "gi");
+            result = result.replace(re, "<span class=\"modern-search-highlight\">$&</span>");
+        }
+        return result;
+    }
+
+    function renderClientesCards(clientes, searchTerm) {
+        var searchWords = getSearchWords(searchTerm);
         var html = '<div class="modern-clientes-cards">';
 
         $.each(clientes, function (index, cliente) {
@@ -128,12 +149,18 @@
             var nombre = cliente.Nombre || "";
             var fullName = apellido + (apellido && nombre ? ", " : "") + nombre;
             if (!fullName.trim()) fullName = "Sin nombre";
-            
+
             var documento = cliente.NroDocumento || "-";
             var telefono = cliente.Telefono || cliente.Celular || "-";
             var localidad = cliente.LocalidadNombre || "-";
             var nacionalidad = cliente.Nacionalidad || "-";
             var isTitular = cliente.IsTituarFactura == 1 || cliente.IsTituarFactura === true;
+
+            var nameHtml = highlightText(fullName, searchWords);
+            var docHtml = highlightText(documento, searchWords);
+            var telHtml = highlightText(telefono, searchWords);
+            var locHtml = highlightText(localidad, searchWords);
+            var nacHtml = highlightText(nacionalidad, searchWords);
 
             html += '<div class="modern-cliente-card">';
             html += '<div class="modern-cliente-card-header">';
@@ -141,7 +168,7 @@
             html += '<i class="bi bi-person-circle"></i>';
             html += '</div>';
             html += '<div class="modern-cliente-card-info">';
-            html += '<h4 class="modern-cliente-card-name">' + escapeHtml(fullName) + '</h4>';
+            html += '<h4 class="modern-cliente-card-name">' + nameHtml + '</h4>';
             if (isTitular) {
                 html += '<span class="badge badge-info" title="Titular de Facturas">';
                 html += '<i class="bi bi-receipt"></i> Titular de Facturas';
@@ -154,14 +181,14 @@
             html += '<div class="modern-cliente-card-field">';
             html += '<i class="bi bi-card-text"></i>';
             html += '<span class="field-label">Documento:</span>';
-            html += '<span class="field-value">' + escapeHtml(documento) + '</span>';
+            html += '<span class="field-value">' + docHtml + '</span>';
             html += '</div>';
 
             if (telefono !== "-") {
                 html += '<div class="modern-cliente-card-field">';
                 html += '<i class="bi bi-telephone"></i>';
                 html += '<span class="field-label">Teléfono:</span>';
-                html += '<span class="field-value">' + escapeHtml(telefono) + '</span>';
+                html += '<span class="field-value">' + telHtml + '</span>';
                 html += '</div>';
             }
 
@@ -169,7 +196,7 @@
                 html += '<div class="modern-cliente-card-field">';
                 html += '<i class="bi bi-geo-alt"></i>';
                 html += '<span class="field-label">Localidad:</span>';
-                html += '<span class="field-value">' + escapeHtml(localidad) + '</span>';
+                html += '<span class="field-value">' + locHtml + '</span>';
                 html += '</div>';
             }
 
@@ -177,7 +204,7 @@
                 html += '<div class="modern-cliente-card-field">';
                 html += '<i class="bi bi-flag"></i>';
                 html += '<span class="field-label">Nacionalidad:</span>';
-                html += '<span class="field-value">' + escapeHtml(nacionalidad) + '</span>';
+                html += '<span class="field-value">' + nacHtml + '</span>';
                 html += '</div>';
             }
 

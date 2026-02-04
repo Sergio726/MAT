@@ -1,4 +1,4 @@
-﻿@model MAT.MVC.Models.SeleccionarPasajeroModel
+@model MAT.MVC.Models.SeleccionarPasajeroModel
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -463,11 +463,14 @@
                 var primerPasajero = window.pasajerosSeleccionadosModal[0];
                 if (primerPasajero && typeof asignarPasajeroAButaca === 'function') {
                     asignarPasajeroAButaca(window.butacaActualSeleccionada, primerPasajero.id, precioId, adicionales.join(";"));
-                    
-                    // Si hay más pasajeros, mostrar mensaje
-                    if (window.pasajerosSeleccionadosModal.length > 1) {
-                        setTimeout(function() {
-                            (window.alertSuccess || window.alert)('Pasajero asignado a la butaca. ' + (window.pasajerosSeleccionadosModal.length - 1) + ' pasajero(s) disponible(s) para asignar a otras butacas.', 'Operación Exitosa');
+                    // Mensaje: cuántos pasajeros quedan por asignar (calcular ahora, no en el setTimeout)
+                    var restantes = Math.max(0, window.pasajerosSeleccionadosModal.length - 1);
+                    if (restantes > 0) {
+                        setTimeout(function () {
+                            var texto = restantes === 1
+                                ? 'Se asignó un pasajero a la butaca. Queda 1 pasajero por asignar a una butaca.'
+                                : 'Se asignó un pasajero a la butaca. Quedan ' + restantes + ' pasajeros por asignar a butacas.';
+                            (window.alertSuccess || window.alert)(texto, 'Operación exitosa');
                         }, 300);
                     }
                 }
