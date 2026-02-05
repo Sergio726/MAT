@@ -1,34 +1,46 @@
-﻿@*@model List<MAT.MVC.Models.PaqueteModel>*@
+@*@model List<MAT.MVC.Models.PaqueteModel>*@
 @model List<MAT.MVC.Models.ViajeModel>
 
-<section id="Viajes" class="Viajes-Default">
+<section id="Viajes" class="Viajes-Default modern-viajes-container">
     <ul class="viajes-lista">
         @foreach (var item in Model)
         {
-            <li data-image="">
-                <a href='#' class='btn_viaje' data-id="@item.ViajeID">
+            var textoCompleto = string.Format("{0} {1} {2} salida {3}",
+                item.PaqueteNombre ?? "",
+                item.Descripcion ?? "",
+                item.Origen ?? "",
+                item.FechaSalida ?? "").ToLowerInvariant();
+            <li class="viaje-card" data-searchable="@Html.Raw(HttpUtility.HtmlAttributeEncode(textoCompleto))">
+                <a href="#" class="btn_viaje" data-id="@item.ViajeID">
                     <div class="viaje-container">
-                        <h4>@item.PaqueteNombre</h4>
+                        <h4 class="viaje-titulo">@(item.PaqueteNombre ?? "-")</h4>
                         @if (!string.IsNullOrEmpty(item.Descripcion))
                         {
-                            <h5>@item.Descripcion</h5>
+                            <p class="viaje-descripcion">@item.Descripcion</p>
                         }
-                        else
+                        @if (!string.IsNullOrEmpty(item.Origen))
                         {
-                            <h5>-</h5>
+                            <p class="viaje-origen"><span class="viaje-meta-label">Origen:</span> @item.Origen</p>
                         }
-                        <h5>Destino: @item.Descripcion</h5>
-                        <h5>Salida: @item.FechaSalida.ToString()</h5>
+                        <div class="viaje-salida-wrap">
+                            <span class="viaje-meta-label">Salida</span>
+                            <span class="viaje-fecha-badge">@(item.FechaSalida ?? "-")</span>
+                        </div>
                     </div>
                 </a>
             </li>
-
         }
     </ul>
 </section>
 <script>
-    $('ul.viajes-lista').quickPagination({ pageSize: '4' })
-    $(".viajes-lista li").each(function () {
-        $(this).css("background-image", "url(" + $(this).data("image") + ")");
+    $(function () {
+        var $ul = $('#viajes-item ul.viajes-lista');
+        if ($ul.length) {
+            $ul.quickPagination({ pageSize: 4 });
+        }
+        $("#viajes-item .viajes-lista li").each(function () {
+            var img = $(this).data("image");
+            if (img) $(this).css("background-image", "url(" + img + ")");
+        });
     });
 </script>

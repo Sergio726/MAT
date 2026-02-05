@@ -1,28 +1,131 @@
-﻿@model IEnumerable<SelectListItem>
+@model IEnumerable<SelectListItem>
 
 @{
-    ViewBag.Title = "TodosLosViajesIndex";
+    ViewBag.Title = "Todos los Viajes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-    
-<div id="drop">
-    @Html.DropDownList("dropyear", Model)
+<div class="todos-viajes-header">
+    <div class="todos-viajes-toolbar">
+        <div class="todos-viajes-search-wrap">
+            <label for="viajes-search" class="visually-hidden">Buscar viajes</label>
+            <i class="bi bi-search todos-viajes-search-icon" aria-hidden="true"></i>
+            <input type="text"
+                   id="viajes-search"
+                   class="todos-viajes-search-input"
+                   placeholder="Buscar por paquete, destino, descripción o fecha..."
+                   autocomplete="off" />
+            <button type="button" class="todos-viajes-search-clear" id="viajes-search-clear" title="Limpiar búsqueda" aria-label="Limpiar búsqueda" style="display: none;">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="todos-viajes-year-wrap">
+            <label for="dropyear">Año</label>
+            @Html.DropDownList("dropyear", Model, new { @id = "dropyear", @class = "todos-viajes-year-select" })
+        </div>
+    </div>
+    <p class="todos-viajes-hint" id="viajes-search-hint">Escriba para filtrar por el texto de cada tarjeta. No se realizan nuevas cargas.</p>
 </div>
 
-<div id="viajes-item">
+<div id="viajes-item" class="todos-viajes-content"></div>
 
+<div id="viajes-sin-resultados" class="todos-viajes-sin-resultados" style="display: none;">
+    <i class="bi bi-search"></i>
+    <p>No hay viajes que coincidan con "<strong id="viajes-query-text"></strong>".</p>
+    <p class="todos-viajes-sin-resultados-hint">Pruebe con otras palabras o limpie el buscador.</p>
 </div>
 
 <script type="text/javascript">
     $(function () {
-        var idselected = $("#dropyear option:selected").val();
-        var url = "/Home/TodosLosViajes?yearfilter=" + idselected;
-        $("#viajes-item").load(url);
-    });
-    $(document).on("change", "#dropyear", function () {
-        var idselected = $("#dropyear option:selected").val();
-        var url = "/Home/TodosLosViajes?yearfilter=" + idselected;
-        $("#viajes-item").load(url);
+        var $search = $("#viajes-search");
+        var $clear = $("#viajes-search-clear");
+        var $hint = $("#viajes-search-hint");
+        var $sinResultados = $("#viajes-sin-resultados");
+        var $queryText = $("#viajes-query-text");
+
+        function loadViajes() {
+            var idselected = $("#dropyear option:selected").val();
+            var url = "/Home/TodosLosViajes?yearfilter=" + idselected;
+            $("#viajes-item").load(url, function () {
+                applyViajesFilter();
+            });
+        }
+
+        function getViajesList() {
+            return $("#viajes-item").find("ul.viajes-lista");
+        }
+
+        function applyViajesFilter() {
+            var q = $search.val().trim().toLowerCase();
+            var $container = $("#viajes-item");
+            var $ul = getViajesList();
+            if (!$ul.length) {
+                $sinResultados.hide();
+                return;
+            }
+
+            var $wrapper = $ul.parent();
+            var isWrapped = $wrapper.hasClass("simplePagerContainer");
+            var $pager = $container.find("ul.simplePagerNav");
+
+            if (q === "") {
+                $sinResultados.hide();
+                $ul.find("li").show();
+                if (!isWrapped) return;
+                $ul.unwrap();
+                $pager.remove();
+                $ul.quickPagination({ pageSize: 4 });
+                return;
+            }
+
+            var visibleCount = 0;
+            $ul.find("li").each(function () {
+                var text = $(this).text().toLowerCase();
+                var match = text.indexOf(q) !== -1;
+                $(this).toggle(match);
+                if (match) visibleCount++;
+            });
+
+            if (isWrapped) {
+                $ul.unwrap();
+                $pager.remove();
+            }
+
+            if (visibleCount === 0) {
+                $queryText.text($search.val().trim());
+                $sinResultados.show();
+            } else {
+                $sinResultados.hide();
+            }
+        }
+
+        loadViajes();
+
+        $("#dropyear").on("change", function () {
+            $search.val("");
+            $clear.hide();
+            loadViajes();
+        });
+
+        $search.on("input", function () {
+            var v = $(this).val().trim();
+            $clear.toggle(v.length > 0);
+            applyViajesFilter();
+        });
+
+        $clear.on("click", function () {
+            $search.val("").focus();
+            $clear.hide();
+            applyViajesFilter();
+        });
+
+        $search.on("keydown", function (e) {
+            if (e.key === "Escape") {
+                $search.val("");
+                $clear.hide();
+                applyViajesFilter();
+                $search.blur();
+            }
+        });
     });
 </script>
