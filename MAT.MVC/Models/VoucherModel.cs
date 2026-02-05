@@ -201,8 +201,10 @@ namespace MAT.MVC.Models
         public string PaqueteExcusionesOpcionales { get; set; }
         public int    TiempoConsentracion { get; set; }
         public string ViajeObservaciones { get; set; }
+        public string ViajeID { get; set; }
 
         public List<HotelStandard> Hoteles { get; set; }
+        public List<ItinerarioViajeModel> Itinerario { get; set; }
     }
 
     public class HotelStandard
@@ -336,6 +338,7 @@ namespace MAT.MVC.Models
                     item.PaqueteServicios = _reader["PaqueteServicios"].ToString();
                     item.PaqueteExcusiones = _reader["PaqueteExcusiones"].ToString();
                     item.PaqueteExcusionesOpcionales = _reader["PaqueteExcusionesOpcionales"].ToString();
+                    item.ViajeID = _reader["ViajeID"].ToString();
                     ListVoucher.Add(item);
                 }
             }
@@ -343,6 +346,7 @@ namespace MAT.MVC.Models
             foreach (Models.VoucherStandard item in ListVoucher)
 	        {
 		        item.Hoteles = GetHotelesByPasajeID(item.PasajePasajeID);
+                item.Itinerario = ItinerarioMethod.GetItinerarioByViajeID(item.ViajeID);
 	        }
              
 

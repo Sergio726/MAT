@@ -73,6 +73,7 @@ namespace MAT.MVC.Models
     }
 
     public class DetalleViaje {
+        public string ViajeID { get; set; }
         public string Descripcion { get; set; }
         public string Destino { get; set; }
         public string FechaSalida { get; set; }
@@ -85,6 +86,7 @@ namespace MAT.MVC.Models
         public string PaqueteExcusionesIncluidas { get; set; }
         public string PaqueteExcusionesOpcionales { get; set; }
         public string Observaciones { get; set; }
+        public List<ItinerarioViajeModel> Itinerario { get; set; }
     }
 
     public class PasajeroViaje {
