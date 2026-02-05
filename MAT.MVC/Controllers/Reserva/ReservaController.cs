@@ -1066,8 +1066,10 @@ namespace MAT.MVC.Controllers.Reserva
                     oDetalleViaje.PaqueteExcusionesOpcionales = item["PaqueteExcusionesOpcionales"].ToString();
                     oDetalleViaje.PaqueteServicios = item["PaqueteServicios"].ToString();
                     oDetalleViaje.Observaciones = item["Observaciones"].ToString();
-                    
+                    oDetalleViaje.ViajeID = sViajeID;
                 }
+
+                oDetalleViaje.Itinerario = ItinerarioMethod.GetItinerarioByViajeID(sViajeID);
             }
             catch (Exception e)
             {

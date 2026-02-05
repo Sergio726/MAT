@@ -301,6 +301,7 @@
     <Compile Include="Controllers\Home\HomeController.cs" />
     <Compile Include="Controllers\HotelHabitacionViaje\HotelHabitacionViajeController.cs" />
     <Compile Include="Controllers\Hotel\HotelController.cs" />
+    <Compile Include="Controllers\Itinerario\ItinerarioController.cs" />
     <Compile Include="Controllers\Localidad\LocalidadController.cs" />
     <Compile Include="Controllers\NotaCredito\NotaCreditoController.cs" />
     <Compile Include="Controllers\NuevaReserva\NuevaReservaController.cs" />
@@ -359,6 +360,7 @@
     <Compile Include="Models\HotelHabitacionViajeModel.cs" />
     <Compile Include="Models\HotelModel.cs" />
     <Compile Include="Models\InfopathModel.cs" />
+    <Compile Include="Models\ItinerarioModel.cs" />
     <Compile Include="Models\ListaEsperaModel.cs" />
     <Compile Include="Models\ListaFacturasModel.cs" />
     <Compile Include="Models\MonedaModel.cs" />
@@ -831,6 +833,7 @@
     <Content Include="Views\Reserva\PartialVinculacionMenor.cshtml" />
     <Content Include="Views\Reserva\PrintVinculacionMenor.cshtml" />
     <Content Include="Views\Viaje\ListViajes.cshtml" />
+    <Content Include="Views\Viaje\_ItinerarioSection.cshtml" />
     <Content Include="Views\Admin\AuditoriaFacturas.cshtml" />
     <Content Include="Views\PersonaCliente\HistorialdePagos.cshtml" />
     <Content Include="Views\PersonaCliente\partialHistorialdePagos.cshtml" />

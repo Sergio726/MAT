@@ -132,6 +132,92 @@
             </ul>
         </div>
     }
+
+    <!-- Itinerario del viaje -->
+    @if (Model.Itinerario != null && Model.Itinerario.Count > 0)
+    {
+        <div class="viaje-detalle-section">
+            <h4 class="viaje-section-title">
+                <i class="bi bi-signpost-2"></i>
+                <span>Itinerario del Viaje</span>
+            </h4>
+            <div class="itinerario-timeline">
+                @foreach (var paso in Model.Itinerario.OrderBy(x => x.Orden))
+                {
+                    <div class="itinerario-step">
+                        <div class="itinerario-step-marker">@paso.Orden</div>
+                        <div class="itinerario-step-content">
+                            <span class="itinerario-step-name">@paso.Nombre</span>
+                            @if (!string.IsNullOrEmpty(paso.HoraAprox))
+                            {
+                                <span class="itinerario-step-time">@paso.HoraAprox hs.</span>
+                            }
+                            @if (paso.DuracionMin.HasValue && paso.DuracionMin.Value > 0)
+                            {
+                                <span class="itinerario-step-duration">(@paso.DuracionMin min)</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <style>
+            .itinerario-timeline {
+                position: relative;
+                padding-left: 2rem;
+            }
+            .itinerario-timeline::before {
+                content: '';
+                position: absolute;
+                left: 0.75rem;
+                top: 0.5rem;
+                bottom: 0.5rem;
+                width: 2px;
+                background: linear-gradient(to bottom, #e91e63, #2A307D);
+            }
+            .itinerario-step {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.75rem;
+                padding: 0.5rem 0;
+                position: relative;
+            }
+            .itinerario-step-marker {
+                position: absolute;
+                left: -2rem;
+                width: 1.5rem;
+                height: 1.5rem;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #e91e63, #c2185b);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                font-size: 0.75rem;
+                z-index: 1;
+            }
+            .itinerario-step-content {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .itinerario-step-name {
+                font-weight: 500;
+                color: var(--text-primary, #1f2937);
+            }
+            .itinerario-step-time {
+                font-size: 0.875rem;
+                color: #e91e63;
+                font-weight: 500;
+            }
+            .itinerario-step-duration {
+                font-size: 0.75rem;
+                color: var(--text-secondary, #6b7280);
+            }
+        </style>
+    }
 </div>
 
 <input type="hidden" id="hdnPaqueteDesctripcion" value="@Model.Descripcion" />

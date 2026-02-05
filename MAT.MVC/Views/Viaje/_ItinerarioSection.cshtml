@@ -1,0 +1,522 @@
+@{
+    var viajeId = ViewBag.ViajeID as string ?? "";
+    var isDetail = ViewBag.Action == "detail";
+}
+
+<style>
+    .itinerario-section {
+        margin-top: 2rem;
+    }
+
+    .itinerario-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: relative;
+    }
+
+    .itinerario-list::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 30px;
+        bottom: 30px;
+        width: 2px;
+        background: linear-gradient(to bottom, #e91e63, #2A307D);
+    }
+
+    .itinerario-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        position: relative;
+    }
+
+    .itinerario-step-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e91e63, #c2185b);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+        z-index: 1;
+        box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3);
+    }
+
+    .itinerario-content {
+        flex: 1;
+        background: var(--bg-secondary, #f8f9fa);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+
+    .itinerario-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .itinerario-info {
+        flex: 1;
+    }
+
+    .itinerario-nombre {
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 0.25rem;
+    }
+
+    .itinerario-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary, #6b7280);
+    }
+
+    .itinerario-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .itinerario-observacion {
+        font-size: 0.875rem;
+        color: var(--text-secondary, #6b7280);
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+
+    .itinerario-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .itinerario-actions button {
+        padding: 0.25rem 0.5rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: all 0.2s;
+    }
+
+    .btn-edit-step {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-edit-step:hover {
+        background: #e5e7eb;
+    }
+
+    .btn-delete-step {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .btn-delete-step:hover {
+        background: #fecaca;
+    }
+
+    .btn-move-step {
+        background: #e0e7ff;
+        color: #4338ca;
+    }
+
+    .btn-move-step:hover {
+        background: #c7d2fe;
+    }
+
+    .itinerario-empty {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary, #6b7280);
+        background: var(--bg-secondary, #f8f9fa);
+        border-radius: 0.5rem;
+        border: 1px dashed var(--border-color, #e5e7eb);
+    }
+
+    .itinerario-add-form {
+        background: var(--bg-secondary, #f8f9fa);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+    }
+
+    .itinerario-form-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr auto;
+        gap: 0.75rem;
+        align-items: end;
+    }
+
+    .itinerario-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .itinerario-form-group label {
+        font-size: 0.75rem;
+        color: var(--text-secondary, #6b7280);
+        font-weight: 500;
+    }
+
+    .itinerario-form-group input,
+    .itinerario-form-group select {
+        padding: 0.5rem;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-add-step {
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #e91e63, #c2185b);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .btn-add-step:hover {
+        background: linear-gradient(135deg, #c2185b, #ad1457);
+        transform: translateY(-1px);
+    }
+
+    .btn-create-parada {
+        padding: 0.25rem 0.5rem;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 0.75rem;
+        margin-left: 0.5rem;
+    }
+
+    @@media (max-width: 768px) {
+        .itinerario-form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="modern-form-section itinerario-section">
+    <div class="modern-form-section-title">
+        <i class="bi bi-signpost-2"></i>
+        <span>Itinerario de Viaje</span>
+    </div>
+
+    @if (!isDetail && !string.IsNullOrEmpty(viajeId))
+    {
+        <div class="itinerario-add-form">
+            <div class="itinerario-form-row">
+                <div class="itinerario-form-group">
+                    <label>Parada</label>
+                    <div style="display: flex; align-items: center;">
+                        <select id="ddlItinerarioParada" class="modern-form-select" style="flex: 1;">
+                            <option value="">Seleccione una parada...</option>
+                        </select>
+                        <button type="button" class="btn-create-parada" onclick="showCreateParadaModal()" title="Crear nueva parada">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="itinerario-form-group">
+                    <label>Hora Aprox.</label>
+                    <input type="text" id="txtItinerarioHora" class="time" placeholder="HH:MM" maxlength="5" />
+                </div>
+                <div class="itinerario-form-group">
+                    <label>Duracion (min)</label>
+                    <input type="number" id="txtItinerarioDuracion" placeholder="0" min="0" />
+                </div>
+                <div class="itinerario-form-group">
+                    <label>Observacion</label>
+                    <input type="text" id="txtItinerarioObservacion" placeholder="Opcional" maxlength="200" />
+                </div>
+                <button type="button" class="btn-add-step" onclick="addItinerarioStep()">
+                    <i class="bi bi-plus-circle"></i> Agregar
+                </button>
+            </div>
+        </div>
+    }
+
+    <div id="itinerario-container">
+        <div class="itinerario-empty" id="itinerario-empty">
+            <i class="bi bi-signpost-split" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+            <span>No hay paradas definidas en el itinerario</span>
+        </div>
+        <ul class="itinerario-list" id="itinerario-list" style="display: none;"></ul>
+    </div>
+</div>
+
+<!-- Modal para crear nueva parada -->
+<div class="modal fade" id="modalCrearParada" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle"></i> Nueva Parada
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modern-form-group">
+                    <label class="modern-form-label">Nombre de la Parada *</label>
+                    <input type="text" id="txtNuevaParadaNombre" class="modern-form-input" placeholder="Ej: Terminal Central" maxlength="200" />
+                </div>
+                <div class="modern-form-group" style="margin-top: 1rem;">
+                    <label class="modern-form-label">Descripcion (opcional)</label>
+                    <input type="text" id="txtNuevaParadaDescripcion" class="modern-form-input" placeholder="Descripcion de la parada" maxlength="500" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern btn-modern-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn-modern btn-modern-primary" onclick="createNewParada()">Crear Parada</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var itinerarioViajeId = "@viajeId";
+    var isDetailView = @(isDetail.ToString().ToLower());
+    var paradasList = [];
+
+    $(document).ready(function () {
+        if (itinerarioViajeId && itinerarioViajeId !== "") {
+            loadItinerario();
+            loadParadas();
+        }
+
+        // Initialize time picker for itinerario
+        $("#txtItinerarioHora").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+    });
+
+    function loadParadas() {
+        $.ajax({
+            url: "/Itinerario/GetAllParadas",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                paradasList = data.items || [];
+                var ddl = $("#ddlItinerarioParada");
+                ddl.empty();
+                ddl.append('<option value="">Seleccione una parada...</option>');
+                $.each(paradasList, function (i, item) {
+                    ddl.append('<option value="' + item.ItinerarioID + '">' + item.Nombre + '</option>');
+                });
+            }
+        });
+    }
+
+    function loadItinerario() {
+        $.ajax({
+            url: "/Itinerario/GetByViajeID",
+            type: "GET",
+            data: { viajeId: itinerarioViajeId },
+            dataType: "json",
+            success: function (data) {
+                renderItinerario(data.items || []);
+            }
+        });
+    }
+
+    function renderItinerario(items) {
+        var container = $("#itinerario-list");
+        var emptyMsg = $("#itinerario-empty");
+
+        container.empty();
+
+        if (items.length === 0) {
+            emptyMsg.show();
+            container.hide();
+            return;
+        }
+
+        emptyMsg.hide();
+        container.show();
+
+        $.each(items, function (i, item) {
+            var html = '<li class="itinerario-item" data-id="' + item.ItinerarioViajeID + '" data-orden="' + item.Orden + '">';
+            html += '<div class="itinerario-step-number">' + item.Orden + '</div>';
+            html += '<div class="itinerario-content">';
+            html += '<div class="itinerario-header">';
+            html += '<div class="itinerario-info">';
+            html += '<div class="itinerario-nombre">' + item.Nombre + '</div>';
+            html += '<div class="itinerario-meta">';
+            if (item.HoraAprox) {
+                html += '<span class="itinerario-meta-item"><i class="bi bi-clock"></i> ' + item.HoraAprox + '</span>';
+            }
+            if (item.DuracionMin) {
+                html += '<span class="itinerario-meta-item"><i class="bi bi-hourglass-split"></i> ' + item.DuracionMin + ' min</span>';
+            }
+            html += '</div>';
+            if (item.Observacion) {
+                html += '<div class="itinerario-observacion">' + item.Observacion + '</div>';
+            }
+            html += '</div>';
+
+            if (!isDetailView) {
+                html += '<div class="itinerario-actions">';
+                if (i > 0) {
+                    html += '<button type="button" class="btn-move-step" onclick="moveStep(\'' + item.ItinerarioViajeID + '\', ' + (item.Orden - 1) + ')" title="Mover arriba"><i class="bi bi-chevron-up"></i></button>';
+                }
+                if (i < items.length - 1) {
+                    html += '<button type="button" class="btn-move-step" onclick="moveStep(\'' + item.ItinerarioViajeID + '\', ' + (item.Orden + 1) + ')" title="Mover abajo"><i class="bi bi-chevron-down"></i></button>';
+                }
+                html += '<button type="button" class="btn-delete-step" onclick="deleteStep(\'' + item.ItinerarioViajeID + '\')" title="Eliminar"><i class="bi bi-trash"></i></button>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+            html += '</div>';
+            html += '</li>';
+
+            container.append(html);
+        });
+    }
+
+    function addItinerarioStep() {
+        var itinerarioId = $("#ddlItinerarioParada").val();
+        var horaAprox = $("#txtItinerarioHora").val();
+        var duracionMin = $("#txtItinerarioDuracion").val();
+        var observacion = $("#txtItinerarioObservacion").val();
+
+        if (!itinerarioId) {
+            (window.alertInfo || window.alert)("Seleccione una parada para agregar al itinerario.", "Validacion");
+            return;
+        }
+
+        $.ajax({
+            url: "/Itinerario/AddStep",
+            type: "POST",
+            data: {
+                viajeId: itinerarioViajeId,
+                itinerarioId: itinerarioId,
+                orden: 0,
+                horaAprox: horaAprox,
+                duracionMin: duracionMin || null,
+                observacion: observacion
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.Mensaje === "Done.") {
+                    // Clear form
+                    $("#ddlItinerarioParada").val("");
+                    $("#txtItinerarioHora").val("");
+                    $("#txtItinerarioDuracion").val("");
+                    $("#txtItinerarioObservacion").val("");
+                    // Reload list
+                    loadItinerario();
+                } else {
+                    (window.alertError || window.alert)("Error al agregar la parada: " + data.Mensaje, "Error");
+                }
+            },
+            error: function () {
+                (window.alertError || window.alert)("Error al agregar la parada.", "Error");
+            }
+        });
+    }
+
+    function deleteStep(itinerarioViajeId) {
+        if (!confirm("¿Esta seguro que desea eliminar esta parada del itinerario?")) {
+            return;
+        }
+
+        $.ajax({
+            url: "/Itinerario/DeleteStep",
+            type: "POST",
+            data: { itinerarioViajeId: itinerarioViajeId },
+            dataType: "json",
+            success: function (data) {
+                if (data.Mensaje === "Done.") {
+                    loadItinerario();
+                } else {
+                    (window.alertError || window.alert)("Error al eliminar la parada: " + data.Mensaje, "Error");
+                }
+            },
+            error: function () {
+                (window.alertError || window.alert)("Error al eliminar la parada.", "Error");
+            }
+        });
+    }
+
+    function moveStep(itinerarioViajeId, newOrden) {
+        $.ajax({
+            url: "/Itinerario/ReorderSteps",
+            type: "POST",
+            data: {
+                itinerarioViajeId: itinerarioViajeId,
+                newOrden: newOrden
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.Mensaje === "Done.") {
+                    loadItinerario();
+                } else {
+                    (window.alertError || window.alert)("Error al reordenar: " + data.Mensaje, "Error");
+                }
+            },
+            error: function () {
+                (window.alertError || window.alert)("Error al reordenar.", "Error");
+            }
+        });
+    }
+
+    function showCreateParadaModal() {
+        $("#txtNuevaParadaNombre").val("");
+        $("#txtNuevaParadaDescripcion").val("");
+        $("#modalCrearParada").modal("show");
+    }
+
+    function createNewParada() {
+        var nombre = $("#txtNuevaParadaNombre").val().trim();
+        var descripcion = $("#txtNuevaParadaDescripcion").val().trim();
+
+        if (!nombre) {
+            (window.alertInfo || window.alert)("Ingrese el nombre de la parada.", "Validacion");
+            return;
+        }
+
+        $.ajax({
+            url: "/Itinerario/AddParada",
+            type: "POST",
+            data: {
+                nombre: nombre,
+                descripcion: descripcion
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.Mensaje === "Done.") {
+                    $("#modalCrearParada").modal("hide");
+                    loadParadas();
+                    // Select the new parada
+                    setTimeout(function () {
+                        $("#ddlItinerarioParada").val(data.ID);
+                    }, 500);
+                } else {
+                    (window.alertError || window.alert)("Error al crear la parada: " + data.Mensaje, "Error");
+                }
+            },
+            error: function () {
+                (window.alertError || window.alert)("Error al crear la parada.", "Error");
+            }
+        });
+    }
+</script>
