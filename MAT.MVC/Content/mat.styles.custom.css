@@ -713,230 +713,288 @@ div.wait {
 }
 
 /* ============================================================
-   POPIN: Nota de Crédito (Resumen superior)
-   - Sin estilos inline en el view
-   - Reusa variables modernas (saas-variables / modern-dashboard)
+   POPIN: Nota de Crédito - Estilos compartidos
    ============================================================ */
-.mat-nc-summary {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+/* Badge en el título del dialog */
+.mat-nc-title-badge {
+    display: inline-block;
+    color: #6b7280;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+/* Header con resumen (usado en ambos modales) */
+.mat-nc-header {
+    display: flex;
+    align-items: stretch;
     gap: 0.75rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.875rem 1rem;
+    margin: -1rem -1rem 1rem -1rem;
 }
-
-@media (max-width: 720px) {
-    .mat-nc-summary {
-        grid-template-columns: 1fr;
-    }
-}
-
-.mat-nc-summary-card {
-    background: var(--bg-secondary, #f3f4f6);
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 12px;
-    padding: 0.9rem 1rem;
-}
-
-.mat-nc-summary-label {
+.mat-nc-header-item {
+    flex: 1;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
+    padding: 0.5rem 0.75rem;
+    background: white;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+.mat-nc-header-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    background: rgba(233, 30, 99, 0.1);
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color, #e91e63);
+    font-size: 0.8125rem;
+}
+.mat-nc-header-data {
+    flex: 1;
+}
+.mat-nc-header-label {
+    font-size: 0.625rem;
+    font-weight: 600;
     text-transform: uppercase;
-    color: var(--text-secondary, #6b7280);
+    letter-spacing: 0.03em;
+    color: #64748b;
+}
+.mat-nc-header-value {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #1e293b;
 }
 
-.mat-nc-summary-label i {
-    color: var(--brand-primary, #e91e63);
-    font-size: 1rem;
+/* Sección de montos (cards) */
+.mat-nc-montos {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.mat-nc-monto {
+    flex: 1;
+    padding: 0.875rem;
+    border-radius: 0.5rem;
+    border: 1px solid;
+}
+.mat-nc-monto.credito {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+.mat-nc-monto.retencion {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+.mat-nc-monto.devolucion {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+.mat-nc-monto-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.625rem;
+}
+.mat-nc-monto-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6875rem;
+    color: white;
+    flex-shrink: 0;
+}
+.mat-nc-monto.credito .mat-nc-monto-icon { background: #16a34a; }
+.mat-nc-monto.retencion .mat-nc-monto-icon { background: #dc2626; }
+.mat-nc-monto.devolucion .mat-nc-monto-icon { background: #2563eb; }
+.mat-nc-monto-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+}
+.mat-nc-monto-badge {
+    margin-left: auto;
+    font-size: 0.625rem;
+    padding: 0.1875rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.mat-nc-monto.credito .mat-nc-monto-badge {
+    background: #dcfce7;
+    color: #166534;
+}
+.mat-nc-monto.retencion .mat-nc-monto-badge {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.mat-nc-monto.devolucion .mat-nc-monto-badge {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.mat-nc-monto-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+.mat-nc-monto.credito .mat-nc-monto-value { color: #16a34a; }
+.mat-nc-monto.retencion .mat-nc-monto-value { color: #dc2626; }
+.mat-nc-monto.devolucion .mat-nc-monto-value { color: #2563eb; }
+.mat-nc-monto-hint {
+    font-size: 0.6875rem;
+    color: #64748b;
 }
 
-.mat-nc-summary-value {
-    margin-top: 0.25rem;
-    font-weight: 800;
-    font-size: 1rem;
-    color: var(--text-primary, #111827);
+/* Información adicional (para vista de detalle) */
+.mat-nc-info-section {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.875rem;
+    margin-bottom: 1rem;
+}
+.mat-nc-info-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.625rem;
+}
+.mat-nc-info-row:last-child {
+    margin-bottom: 0;
+}
+.mat-nc-info-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.mat-nc-info-item.full {
+    flex: 1 1 100%;
+}
+.mat-nc-info-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #64748b;
+}
+.mat-nc-info-value {
+    font-size: 0.875rem;
+    color: #1e293b;
+    padding: 0.5rem 0.625rem;
+    background: white;
+    border-radius: 0.375rem;
+    border: 1px solid #e5e7eb;
 }
 
-/* Campos full-width dentro del layout flex del modal */
-.mat-nc-full {
-    flex: 1 1 100% !important;
-    min-width: 240px;
+/* Acciones del modal */
+.mat-nc-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+}
+.mat-nc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease;
+    text-decoration: none;
+}
+.mat-nc-btn-primary {
+    background: var(--primary-color, #e91e63);
+    color: white;
+}
+.mat-nc-btn-primary:hover {
+    background: #c2185b;
+    color: white;
+    text-decoration: none;
+}
+.mat-nc-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+.mat-nc-btn-secondary:hover {
+    background: #e5e7eb;
+    text-decoration: none;
 }
 
-/* Nota de crédito: estado no disponible (factura no pagada) */
+/* Estado de error */
 .mat-nc-error-state {
     text-align: center;
-    padding: 1.5rem 1rem;
+    padding: 2rem 1.5rem;
 }
 .mat-nc-error-icon {
-    font-size: 2.5rem;
-    color: var(--brand-primary, #e91e63);
-    margin-bottom: 0.75rem;
+    font-size: 3rem;
+    color: #f59e0b;
+    margin-bottom: 1rem;
 }
 .mat-nc-error-message {
     font-size: 1rem;
     font-weight: 600;
-    color: var(--text-primary, #1f2937);
+    color: #1f2937;
     margin: 0 0 0.5rem 0;
 }
 .mat-nc-error-hint {
     font-size: 0.875rem;
-    color: var(--text-secondary, #6b7280);
-    margin: 0 0 1.25rem 0;
-    line-height: 1.4;
+    color: #6b7280;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.5;
 }
 
-/* Nota de crédito: campo readonly y sugerencias */
-.mat-nc-readonly {
-    background: var(--bg-secondary, #f3f4f6) !important;
-    cursor: default;
-}
-
-/* Nota de crédito: grilla de campos alineados */
-.mat-nc-fields {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem 1rem;
-    align-items: start;
-}
-.mat-nc-field {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-.mat-nc-field .modal-form-control,
-.mat-nc-field .mat-nc-nro-nota {
-    min-height: 2.25rem;
-    box-sizing: border-box;
-}
-.mat-nc-field .modal-form-label {
-    margin-bottom: 0.2rem;
-}
-
-/* N° de nota: solo lectura (no editable) */
-.mat-nc-nro-nota {
-    display: flex;
-    align-items: center;
-    padding: 0.4rem 0.65rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #4b5563;
-    background: #e5e7eb;
-    border: 1px dashed #9ca3af;
-    border-radius: 0.375rem;
-    cursor: not-allowed;
-}
-.mat-nc-badge-label {
-    font-size: 0.65rem;
-    font-weight: 500;
-    color: #9ca3af;
-    margin-left: 0.2rem;
-}
-
-/* Colores por tipo de monto */
-.mat-nc-input-credito {
-    border-left: 3px solid #059669;
-    background: rgba(5, 150, 105, 0.04);
-}
-.mat-nc-input-retencion {
-    border-left: 3px solid #dc2626;
-    background: rgba(220, 38, 38, 0.04);
-}
-.mat-nc-input-devolucion {
-    border-left: 3px solid #2563eb;
-    background: rgba(37, 99, 235, 0.04);
-}
-.mat-nc-field-credito .modal-form-label i { color: #059669; }
-.mat-nc-field-retencion .modal-form-label i { color: #dc2626; }
-.mat-nc-field-devolucion .modal-form-label i { color: #2563eb; }
-
-@media (max-width: 520px) {
-    .mat-nc-fields {
-        grid-template-columns: 1fr;
+/* Responsive */
+@media (max-width: 600px) {
+    .mat-nc-header {
+        flex-direction: column;
+    }
+    .mat-nc-montos {
+        flex-direction: column;
     }
 }
 
-/* Nota de crédito: badges (descripciones pequeñas) */
-.mat-nc-badge {
-    display: inline-block;
-    font-size: 0.5625rem;
-    line-height: 1.2;
-    padding: 0.2rem 0.45rem;
-    margin-top: 0.15rem;
-    margin-bottom: 0.25rem;
-    border-radius: 0.25rem;
-    font-weight: 500;
-    max-width: 100%;
+/* Dialog popinNota (vista detalle) */
+.ui-dialog[aria-describedby="popinNota"] {
+    min-width: 520px !important;
 }
-.mat-nc-badge-sugerido {
-    color: #5b6b7c;
-    background: #eef1f5;
-    border: 1px solid #d1d9e2;
+.ui-dialog[aria-describedby="popinNota"] .ui-dialog-content {
+    padding: 1rem !important;
 }
-.mat-nc-badge-hint {
-    color: #4b5a6b;
-    background: #e8ecf2;
-    border: 1px solid #c5d0de;
+.ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar {
+    background: white !important;
+    border: none !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 0.75rem 1rem !important;
 }
-.mat-nc-badge-retencion {
-    color: #7f1d1d;
-    background: #fef2f2;
-    border: 1px solid #fecaca;
+.ui-dialog[aria-describedby="popinNota"] .ui-dialog-title {
+    color: var(--primary-color, #e91e63) !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
 }
-.mat-nc-hint,
-.mat-nc-sugerido {
-    display: inline-block;
-    font-size: 0.5625rem;
-    color: #7c8a9a;
-    margin-top: 0.15rem;
-    margin-bottom: 0.25rem;
-    line-height: 1.2;
-    padding: 0.2rem 0.45rem;
-    border-radius: 0.25rem;
-    background: #eef1f5;
-    border: 1px solid #d1d9e2;
+.ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar-close {
+    color: #6b7280 !important;
 }
-.mat-nc-sugerido {
-    color: #5b6b7c;
+.ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar-close:hover {
+    color: var(--primary-color, #e91e63) !important;
 }
 
-/* Nota de crédito: tarjeta amarilla de instrucciones (texto más chico) */
-.mat-nc-instrucciones {
-    margin-top: 1rem;
-    padding: 0.5rem 0.7rem;
-    background: #fefce8;
-    border: 1px solid #fde047;
-    border-radius: 0.4rem;
-    box-shadow: 0 1px 2px rgba(253, 224, 71, 0.12);
-}
-.mat-nc-instrucciones-title {
-    font-size: 0.6rem;
-    font-weight: 600;
-    color: #854d0e;
-    margin-bottom: 0.35rem;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-.mat-nc-instrucciones-title i {
-    color: #a16207;
-    font-size: 0.65rem;
-}
-.mat-nc-instrucciones-list {
-    margin: 0;
-    padding-left: 1rem;
-    font-size: 0.5625rem;
-    color: #713f12;
-    line-height: 1.35;
-}
-.mat-nc-instrucciones-list li {
-    margin-bottom: 0.15rem;
-}
-.mat-nc-instrucciones-list strong {
-    font-weight: 600;
-    color: #713f12;
+/* Vista detalle específica */
+.mat-nc-detail {
+    padding: 0;
 }
 
 /* Errores inline (sin alerts legacy) */
@@ -961,10 +1019,23 @@ div.wait {
 }
 
 .ui-dialog[aria-describedby="NotaCredito"] .mat-nc-summary {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.75rem;
 }
 
 .ui-dialog[aria-describedby="NotaCredito"] .is-invalid {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+}
+
+/* Estilos de validación para los nuevos inputs de monto */
+.mat-nc-monto-input.is-invalid {
+    border-color: #dc2626 !important;
+}
+.mat-nc-monto-input-wrap:has(.is-invalid) {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+}
+.mat-nc-detalle-input.is-invalid {
     border-color: #dc2626 !important;
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
 }

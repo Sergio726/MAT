@@ -3,185 +3,8 @@
     var notaIdStr = Model.NotaID != Guid.Empty ? Model.NotaID.ToString() : "";
     var fechaNotaStr = Model.Fecha != default(DateTime) ? Model.Fecha.ToString("dd/MM/yyyy HH:mm") : "—";
     var pctRetencion = Math.Round((Model.PorcentajeRetencion * 100), 2);
+    var nroNotaDisplay = !string.IsNullOrEmpty(Model.NroNota) ? Model.NroNota : "—";
 }
-<style>
-    /* Cabecera del popup Nota de Crédito: mismo formato que modalMovimientosNotaCredito */
-    .ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: 0.75rem 1rem !important;
-        background: var(--primary-color, #e91e63) !important;
-        border: none !important;
-        border-bottom: 1px solid rgba(0,0,0,0.08) !important;
-        color: white !important;
-        font-weight: 600 !important;
-        font-family: inherit !important;
-    }
-    .ui-dialog[aria-describedby="popinNota"] .ui-dialog-title {
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        color: white !important;
-        margin: 0 !important;
-        float: none !important;
-    }
-    .ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar-close {
-        background: transparent !important;
-        border: none !important;
-        color: white !important;
-        font-size: 1.5rem !important;
-        line-height: 1 !important;
-        padding: 0 0.25rem !important;
-        opacity: 0.9 !important;
-        cursor: pointer !important;
-    }
-    .ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar-close .ui-icon {
-        display: none !important;
-    }
-    .ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar-close::after {
-        content: "×";
-        color: white !important;
-        font-size: 1.5rem;
-        line-height: 1;
-        font-weight: 300;
-    }
-    .ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar-close:hover {
-        opacity: 1 !important;
-        background: transparent !important;
-        color: white !important;
-    }
-    .ui-dialog[aria-describedby="popinNota"] .ui-dialog-titlebar-close:hover::after {
-        color: white !important;
-    }
-
-    .nc-popup {
-        padding: 1rem 1.25rem;
-        min-width: 440px;
-    }
-    .nc-meta {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 0.75rem 1.25rem;
-        margin-bottom: 1rem;
-    }
-    .nc-meta-item {
-        font-size: 0.875rem;
-        color: #6b7280;
-    }
-    .nc-meta-item strong { color: #1f2937; }
-
-    .nc-card {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }
-    .nc-card-title {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-        margin-bottom: 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-    }
-    .nc-card-title i { color: #e91e63; }
-
-    .nc-montos {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 0.75rem;
-    }
-    .nc-monto-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    .nc-monto-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: #6b7280;
-    }
-    .nc-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0.4rem 0.65rem;
-        border-radius: 0.375rem;
-        font-size: 0.9375rem;
-        font-weight: 700;
-    }
-    .nc-badge-favor {
-        background: #d1fae5;
-        color: #059669;
-        border: 1px solid #6ee7b7;
-    }
-    .nc-badge-retencion {
-        background: #fee2e2;
-        color: #dc2626;
-        border: 1px solid #fca5a5;
-    }
-    .nc-badge-retencion .nc-pct {
-        font-size: 0.75rem;
-        font-weight: 600;
-        opacity: 0.9;
-    }
-    .nc-badge-devolucion {
-        background: #dbeafe;
-        color: #2563eb;
-        border: 1px solid #93c5fd;
-    }
-
-    .nc-datos-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    .nc-dato {
-        display: flex;
-        align-items: baseline;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-    }
-    .nc-dato-label {
-        color: #6b7280;
-        font-weight: 600;
-        min-width: 140px;
-    }
-    .nc-dato-value { color: #1f2937; }
-
-    .nc-actions {
-        margin-top: 1.25rem;
-        padding-top: 1rem;
-        border-top: 1px solid #e5e7eb;
-        display: flex;
-        justify-content: flex-end;
-    }
-    .btn-imprimir-pdf {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        padding: 0.5rem 1rem;
-        background: #f3f4f6;
-        color: #374151;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background 0.2s ease, border-color 0.2s ease;
-        text-decoration: none;
-    }
-    .btn-imprimir-pdf:hover {
-        background: #e5e7eb;
-        border-color: #d1d5db;
-        color: #1f2937;
-    }
-</style>
 
 @if (ViewBag.Error != null)
 {
@@ -189,69 +12,106 @@
     return;
 }
 
-<div class="nc-popup" data-notaid="@notaIdStr">
-    <div class="nc-meta">
-        <span class="nc-meta-item"><strong>N° de nota:</strong> @(Model.NroNota ?? "—")</span>
-        <span class="nc-meta-item"><strong>Fecha:</strong> @fechaNotaStr</span>
-        <span class="nc-meta-item"><strong>Cliente:</strong> @(Model.Cliente ?? "—")</span>
-    </div>
-
-    <div class="nc-card">
-        <div class="nc-card-title">
-            <i class="bi bi-currency-dollar"></i>
-            Montos
-        </div>
-        <div class="nc-montos">
-            <div class="nc-monto-item">
-                <span class="nc-monto-label">Monto a favor</span>
-                <span class="nc-badge nc-badge-favor">@string.Format("{0:C}", Model.MontoNota)</span>
+<div class="mat-nc-detail" data-notaid="@notaIdStr" data-nronota="@nroNotaDisplay">
+    <!-- Header con resumen -->
+    <div class="mat-nc-header">
+        <div class="mat-nc-header-item">
+            <div class="mat-nc-header-icon">
+                <i class="bi bi-person"></i>
             </div>
-            <div class="nc-monto-item">
-                <span class="nc-monto-label">Monto retenido</span>
-                <span class="nc-badge nc-badge-retencion">
-                    @string.Format("{0:C}", Model.MontoRetencion)
-                    <span class="nc-pct">(@(pctRetencion.ToString("0.##"))%)</span>
-                </span>
-            </div>
-            <div class="nc-monto-item">
-                <span class="nc-monto-label">Monto devuelto</span>
-                <span class="nc-badge nc-badge-devolucion">@string.Format("{0:C}", Model.MontoDevolucion)</span>
+            <div class="mat-nc-header-data">
+                <div class="mat-nc-header-label">Cliente</div>
+                <div class="mat-nc-header-value">@(Model.Cliente ?? "—")</div>
             </div>
         </div>
-    </div>
-
-    <div class="nc-card">
-        <div class="nc-card-title">
-            <i class="bi bi-info-circle"></i>
-            Datos
+        <div class="mat-nc-header-item">
+            <div class="mat-nc-header-icon">
+                <i class="bi bi-calendar3"></i>
+            </div>
+            <div class="mat-nc-header-data">
+                <div class="mat-nc-header-label">Fecha</div>
+                <div class="mat-nc-header-value">@fechaNotaStr</div>
+            </div>
         </div>
-        <div class="nc-datos-list">
-            <div class="nc-dato">
-                <span class="nc-dato-label">Cliente</span>
-                <span class="nc-dato-value">@(Model.Cliente ?? "—")</span>
+        <div class="mat-nc-header-item">
+            <div class="mat-nc-header-icon">
+                <i class="bi bi-clock-history"></i>
             </div>
-            <div class="nc-dato">
-                <span class="nc-dato-label">Días a la salida del viaje</span>
-                <span class="nc-dato-value">@Model.Dias días</span>
-            </div>
-            <div class="nc-dato">
-                <span class="nc-dato-label">Vendedor</span>
-                <span class="nc-dato-value">@(Model.Vendedor ?? "—")</span>
-            </div>
-            <div class="nc-dato">
-                <span class="nc-dato-label">Detalle</span>
-                <span class="nc-dato-value">@(Model.Detalle ?? "—")</span>
+            <div class="mat-nc-header-data">
+                <div class="mat-nc-header-label">Días a la salida</div>
+                <div class="mat-nc-header-value">@Model.Dias días</div>
             </div>
         </div>
     </div>
 
-    <div class="nc-actions">
+    <!-- Montos -->
+    <div class="mat-nc-montos">
+        <div class="mat-nc-monto credito">
+            <div class="mat-nc-monto-header">
+                <div class="mat-nc-monto-icon"><i class="bi bi-piggy-bank"></i></div>
+                <span class="mat-nc-monto-label">Crédito a favor</span>
+            </div>
+            <div class="mat-nc-monto-value">@string.Format("{0:C}", Model.MontoNota)</div>
+            <div class="mat-nc-monto-hint">Para futuras compras</div>
+        </div>
+
+        <div class="mat-nc-monto retencion">
+            <div class="mat-nc-monto-header">
+                <div class="mat-nc-monto-icon"><i class="bi bi-dash-circle"></i></div>
+                <span class="mat-nc-monto-label">Retenido</span>
+                <span class="mat-nc-monto-badge">@(pctRetencion.ToString("0.##"))%</span>
+            </div>
+            <div class="mat-nc-monto-value">@string.Format("{0:C}", Model.MontoRetencion)</div>
+            <div class="mat-nc-monto-hint">Gastos operativos</div>
+        </div>
+
+        <div class="mat-nc-monto devolucion">
+            <div class="mat-nc-monto-header">
+                <div class="mat-nc-monto-icon"><i class="bi bi-cash"></i></div>
+                <span class="mat-nc-monto-label">Devolución</span>
+            </div>
+            <div class="mat-nc-monto-value">@string.Format("{0:C}", Model.MontoDevolucion)</div>
+            <div class="mat-nc-monto-hint">Dinero al cliente</div>
+        </div>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="mat-nc-info-section">
+        <div class="mat-nc-info-row">
+            <div class="mat-nc-info-item">
+                <span class="mat-nc-info-label">Vendedor</span>
+                <span class="mat-nc-info-value">@(Model.Vendedor ?? "—")</span>
+            </div>
+        </div>
+        <div class="mat-nc-info-row">
+            <div class="mat-nc-info-item full">
+                <span class="mat-nc-info-label">Detalle</span>
+                <span class="mat-nc-info-value">@(Model.Detalle ?? "—")</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer con acciones -->
+    <div class="mat-nc-actions">
         @if (Model.NotaID != Guid.Empty)
         {
-            <a href="/NotaCredito/Imprimir?NotaID=@Model.NotaID" target="_blank" class="btn-imprimir-pdf" title="Abrir para imprimir o guardar como PDF">
+            <a href="/NotaCredito/Imprimir?NotaID=@Model.NotaID" target="_blank" class="mat-nc-btn mat-nc-btn-primary" title="Abrir para imprimir o guardar como PDF">
                 <i class="bi bi-file-earmark-pdf"></i>
-                Imprimir / Descargar PDF
+                Imprimir PDF
             </a>
         }
     </div>
 </div>
+
+<script type="text/javascript">
+    (function() {
+        var nroNota = "@Html.Raw(nroNotaDisplay)";
+        var $dialog = $("#popinNota").closest(".ui-dialog");
+        if ($dialog.length && nroNota && nroNota !== "—") {
+            var $title = $dialog.find(".ui-dialog-title");
+            if ($title.length) {
+                $title.html('Nota de Crédito <span class="mat-nc-title-badge">#' + nroNota + '</span>');
+            }
+        }
+    })();
+</script>
