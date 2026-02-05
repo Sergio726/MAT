@@ -126,7 +126,7 @@
                     <div class="div100 custom_diplay_block">
                         <fieldset>
                             <legend>
-                                <span class="custom_font_weigh_bold">HOTELERÍA</span>
+                                <span class="custom_font_weigh_bold">HOTELERIA</span>
                             </legend>
                             <ul>
                                 @if (item.Hoteles.Count > 0)
@@ -137,13 +137,46 @@
                                             <span class="custom_font_weigh_bold">Alojamiento:</span> @(r.Nombre ?? ""),
                                             <span class="custom_font_weigh_bold">Tel:</span> @(r.Telefono ?? ""),
                                             <span class="custom_font_weigh_bold">Direccion:</span> @(r.Direccion ?? ""),
-                                            <span class="custom_font_weigh_bold">Días de estadía:</span> @(r.DiasEstadia ?? "").
+                                            <span class="custom_font_weigh_bold">Dias de estadia:</span> @(r.DiasEstadia ?? "").
                                         </li>
                                     }
                                 }
                             </ul>
                         </fieldset>
                     </div>
+
+                    <!-- Itinerario -->
+                    @if (item.Itinerario != null && item.Itinerario.Count > 0)
+                    {
+                        <div class="div100 custom_diplay_block">
+                            <fieldset>
+                                <legend>
+                                    <span class="custom_font_weigh_bold">ITINERARIO DEL VIAJE</span>
+                                </legend>
+                                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                    @foreach (var paso in item.Itinerario.OrderBy(x => x.Orden))
+                                    {
+                                        <tr>
+                                            <td style="padding: 3px 8px; width: 30px; text-align: center; font-weight: bold; color: #E83A61;">@paso.Orden</td>
+                                            <td style="padding: 3px 8px; font-weight: 500;">@paso.Nombre</td>
+                                            <td style="padding: 3px 8px; width: 60px; text-align: center;">
+                                                @if (!string.IsNullOrEmpty(paso.HoraAprox))
+                                                {
+                                                    <span>@paso.HoraAprox hs.</span>
+                                                }
+                                            </td>
+                                            <td style="padding: 3px 8px; width: 60px; text-align: center; color: #666;">
+                                                @if (paso.DuracionMin.HasValue && paso.DuracionMin.Value > 0)
+                                                {
+                                                    <span>@paso.DuracionMin min</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            </fieldset>
+                        </div>
+                    }
 
                     <!-- Coordinator -->
                     <div class="div100">

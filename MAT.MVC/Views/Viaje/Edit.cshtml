@@ -336,6 +336,11 @@
 
             <input type="hidden" class="field-id" value="@Model.ViajeID" />
 
+            @if (ViewBag.Action != "new")
+            {
+                @Html.Partial("_ItinerarioSection", new ViewDataDictionary { { "ViajeID", Model.ViajeID }, { "Action", ViewBag.Action } })
+            }
+
             <!-- Botones de Acción -->
             <div class="modern-form-actions">
                 <a href="@Url.Action("Index", "Viaje")" class="btn-modern btn-modern-secondary">
