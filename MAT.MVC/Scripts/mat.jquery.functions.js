@@ -376,6 +376,12 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
                 if ($w && $w.length) $w.addClass("mat-dialog--formreserva");
             }
 
+            // Viaje/Hoteles > Editar ingreso/egreso: clase para estilos y datepicker por encima del modal (z-index en CSS)
+            if (dialogid === "setEgresoIngreso") {
+                var $wIngreso = $("#" + dialogid).dialog("widget");
+                if ($wIngreso && $wIngreso.length) $wIngreso.addClass("mat-dialog--ingreso-egreso");
+            }
+
             // ReservaHabitacion: titlebar con estilo "Seleccionar pasajero" (brand header)
             if (dialogid === "idResHab") {
                 var $wHab = $("#" + dialogid).dialog("widget");

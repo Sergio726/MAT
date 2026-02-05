@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[usp_MAT_Voucher_GetVoucherByFacturaID](@FacturaID	uniqueidentifier)
+﻿CREATE PROCEDURE [dbo].[usp_MAT_Voucher_GetVoucherByFacturaID](@FacturaID	uniqueidentifier)
 AS 
  /* -- ============================================= 
   -- Author:    Garcia Sergio 
