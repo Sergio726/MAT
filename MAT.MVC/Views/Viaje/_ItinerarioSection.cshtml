@@ -274,7 +274,7 @@
                 </div>
                 <div class="itinerario-form-group">
                     <label>Hora Aprox.</label>
-                    <input type="text" id="txtItinerarioHora" class="time" placeholder="HH:MM" maxlength="5" />
+                    <input type="text" id="txtItinerarioHora" class="time-itinerario" placeholder="HH:MM" maxlength="5" />
                 </div>
                 <div class="itinerario-form-group">
                     <label>Duracion (min)</label>
@@ -349,8 +349,8 @@
             width: '100%'
         });
 
-        // Initialize time picker for itinerario
-        $("#txtItinerarioHora").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+        // Initialize time picker for itinerario (using custom class to avoid main form validation)
+        $(".time-itinerario").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
     });
 
     function loadParadas() {
