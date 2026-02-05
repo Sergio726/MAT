@@ -1192,6 +1192,18 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_Delete_Soft.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Factura_GetDetallePopupByFacturaID.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Factura_EliminarPasajero.sql" />
+    <Build Include="dbo\Tables\Itinerario.sql" />
+    <Build Include="dbo\Tables\ItinerarioViaje.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Itinerario_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Itinerario_Update.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Itinerario_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Itinerario_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Itinerario_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_Update.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_GetByViajeID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_UpdateOrden.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare.scmp" />

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Voucher_GetVoucherByFacturaID](@FacturaID	uniqueidentifier)
+﻿ALTER PROCEDURE [dbo].[usp_MAT_Voucher_GetVoucherByFacturaID](@FacturaID	uniqueidentifier)
 AS 
  /* -- ============================================= 
   -- Author:    Garcia Sergio 
@@ -17,8 +17,9 @@ AS
       SET TRANSACTION isolation level READ uncommitted; 
 
 
-		SELECT pj.PasajeroID                             AS PasajePasajeroID, 
+		SELECT pj.PasajeroID                             AS PasajePasajeroID,
 			   pj.PasajeID                               AS PasajePasajeID,
+			   pj.ViajeID                                AS ViajeID,
 			   v.NroVoucher                              AS VoucherNroVoucher, 
 			   v.NrPrint								 AS VouvherNrPrint,
 			   CONVERT(VARCHAR(10), v.FechaEmision, 103) AS VoucherFechaEmision, 
