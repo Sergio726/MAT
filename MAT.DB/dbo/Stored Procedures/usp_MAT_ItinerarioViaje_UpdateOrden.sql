@@ -2,6 +2,12 @@ CREATE PROCEDURE [dbo].[usp_MAT_ItinerarioViaje_UpdateOrden]
     @ItinerarioViajeID UNIQUEIDENTIFIER,
     @NewOrden INT
 AS
+/*-- =============================================
+-- Author:    Mati Terradas
+-- Create date: 05-02-2026
+-- Description:  Reordena las paradas del itinerario de un viaje
+
+-- =============================================*/
 BEGIN
     SET NOCOUNT ON;
 

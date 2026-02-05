@@ -1,6 +1,12 @@
 CREATE PROCEDURE [dbo].[usp_MAT_ItinerarioViaje_GetByViajeID]
     @ViajeID VARCHAR(MAX)
 AS
+/*-- =============================================
+-- Author:    Mati Terradas
+-- Create date: 05-02-2026
+-- Description:  Obtiene el itinerario completo de un viaje
+
+-- =============================================*/
 BEGIN
     SET NOCOUNT ON;
 

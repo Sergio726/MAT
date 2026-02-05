@@ -6,6 +6,12 @@ CREATE PROCEDURE [dbo].[usp_MAT_ItinerarioViaje_Insert]
     @DuracionMin INT = NULL,
     @Observacion VARCHAR(200) = NULL
 AS
+/*-- =============================================
+-- Author:    Mati Terradas
+-- Create date: 05-02-2026
+-- Description:  Agrega una parada al itinerario de un viaje
+
+-- =============================================*/
 BEGIN
     SET NOCOUNT ON;
 

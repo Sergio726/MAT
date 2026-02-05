@@ -1,6 +1,12 @@
 CREATE PROCEDURE [dbo].[usp_MAT_ItinerarioViaje_Delete]
     @ItinerarioViajeID UNIQUEIDENTIFIER
 AS
+/*-- =============================================
+-- Author:    Mati Terradas
+-- Create date: 05-02-2026
+-- Description:  Elimina una parada del itinerario y reordena
+
+-- =============================================*/
 BEGIN
     SET NOCOUNT ON;
 
