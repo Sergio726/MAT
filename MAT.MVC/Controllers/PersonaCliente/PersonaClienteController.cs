@@ -734,12 +734,14 @@ namespace MAT.MVC.Controllers.PersonaCliente
                     return PartialView("RegistrarNotaCredito", new NotaCreditoModel());
                 }
 
-                DateTime dFecha = MVC.Models.ViajeMethod.GetFechaViajeByFacturaID(facturaid);
+                var (dFecha, viajeNombre) = MVC.Models.ViajeMethod.GetDatosViajeByFacturaID(facturaid);
                 NotaCreditoModel _model = new NotaCreditoModel();
                 ViewBag.FacturaID = facturaid;
                 _model = NotaCreditoMethod.CalcularNota(Convert.ToDecimal(sMonto), dFecha);
                 _model.ClienteID = clienteid;
                 _model.NroNota = NotaCreditoMethod.GetNextNroNota();
+                _model.ViajeFecha = dFecha != default(DateTime) ? (DateTime?)dFecha : null;
+                _model.ViajeNombre = viajeNombre;
                 ViewBag.MontoFactura = Convert.ToDecimal(sMonto);
                 ViewBag.TotalPagos = MAT.MVC.Models.PagoMethod.Pago_TotalPagosByFacturaID(facturaid);
                 ViewBag.PorcentajeRetencionSugerido = _model.PorcentajeRetencion;

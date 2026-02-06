@@ -1,4 +1,4 @@
-﻿using MAT.MVC.Common;
+using MAT.MVC.Common;
 using MAT.Utilities;
 using Newtonsoft.Json;
 using System;
@@ -548,22 +548,32 @@ namespace MAT.MVC.Models
 
         public static DateTime GetFechaViajeByFacturaID(Guid FacturaID)
         {
+            var (fecha, _) = GetDatosViajeByFacturaID(FacturaID);
+            return fecha;
+        }
+
+        /// <summary>
+        /// Obtiene fecha de salida y nombre/descripción del viaje asociado a una factura.
+        /// </summary>
+        public static (DateTime FechaSalida, string ViajeNombre) GetDatosViajeByFacturaID(Guid FacturaID)
+        {
             SqlParameter[] dbParams = new SqlParameter[]
-            {                    
+            {
                 DBHelper.MakeParam("@FacturaID", SqlDbType.UniqueIdentifier, 0, FacturaID)
-                        
             };
-            DateTime dFecha = new DateTime();
-            
+            DateTime dFecha = default;
+            string viajeNombre = null;
             using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Viaje_GetFechaViajeByFacturaID", dbParams))
             {
-                while (_reader.Read())
+                if (_reader.Read())
                 {
-                    dFecha = Convert.ToDateTime(_reader["FechaSalida"]);
-                    break;
+                    if (_reader["FechaSalida"] != DBNull.Value && _reader["FechaSalida"] != null)
+                        dFecha = Convert.ToDateTime(_reader["FechaSalida"]);
+                    if (_reader["ViajeNombre"] != DBNull.Value && _reader["ViajeNombre"] != null)
+                        viajeNombre = _reader["ViajeNombre"].ToString();
                 }
             }
-            return dFecha;
+            return (dFecha, viajeNombre ?? string.Empty);
         }
 
         public static DataSet GetAvailableHoteles(Guid ViajeID)

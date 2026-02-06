@@ -24,7 +24,13 @@ AS
       BEGIN try 
 	
 		 declare @NotaID UNIQUEIDENTIFIER
+		 DECLARE @ViajeFecha DATE = NULL, @ViajeNombre VARCHAR(200) = NULL
 		 SET @MontoDevolucion = ISNULL(@MontoDevolucion, 0)
+
+		 /* Obtener datos del viaje antes de liberar pasajes */
+		 SELECT TOP 1 @ViajeFecha = v.FechaSalida, @ViajeNombre = v.Descripcion
+		 FROM dbo.Pasaje p INNER JOIN dbo.Viaje v ON v.ViajeID = p.ViajeID
+		 WHERE p.FacturaID = @FacturaID
 
 		 begin tran 
 		 set @NotaID = NEWID()
@@ -38,7 +44,9 @@ AS
                        NroNota, 
                        MontoNota,
 					   MontoDevolucion,
-					   Detalle) 
+					   Detalle,
+					   ViajeFecha,
+					   ViajeNombre) 
           VALUES      (@NotaID,
 					   @PorcentajeRetencion, 
                        @MontoRetencion, 
@@ -48,7 +56,9 @@ AS
                        @NroNota, 
                        @MontoNota,
 					   @MontoDevolucion,
-					   @Detalle)
+					   @Detalle,
+					   @ViajeFecha,
+					   @ViajeNombre)
 
 		 
 		

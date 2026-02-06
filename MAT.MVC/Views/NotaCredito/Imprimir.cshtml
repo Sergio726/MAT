@@ -67,6 +67,13 @@
             <div class="nc-label">Cliente</div>
             <div class="nc-value">@(Model != null ? (Model.Cliente ?? "-") : "-")</div>
         </div>
+        @if (Model != null && (Model.ViajeFecha.HasValue || !string.IsNullOrEmpty(Model.ViajeNombre)))
+        {
+        <div class="nc-row">
+            <div class="nc-label">Viaje</div>
+            <div class="nc-value">@(Model.ViajeNombre ?? "-")@(Model.ViajeFecha.HasValue ? " · Salida: " + Model.ViajeFecha.Value.ToString("dd/MM/yyyy") : "")</div>
+        </div>
+        }
         <div class="nc-row">
             <div class="nc-label">Crédito para próximas compras</div>
             <div class="nc-value monto">@string.Format("{0:C}", Model != null ? Model.MontoNota : 0)</div>

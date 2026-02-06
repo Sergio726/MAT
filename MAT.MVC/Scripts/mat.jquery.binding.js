@@ -885,6 +885,12 @@ $(document).on("click", "#btn-retencion", function () {
             setError("MontoDevolucion", "Devolución + crédito no puede superar el total de pagos.");
             ok = false;
         }
+        // La suma de los tres montos debe ser exactamente igual al total disponible
+        var sumaMontos = (isNaN(montoNota) ? 0 : montoNota) + (isNaN(montoRetencion) ? 0 : montoRetencion) + (isNaN(montoDevolucion) ? 0 : montoDevolucion);
+        if (ok && Math.abs(sumaMontos - totalDisponible) > 0.01) {
+            setError("MontoNota", "Crédito + Retenido + Devolución debe ser igual al total disponible (" + (typeof formatNumberMoney === "function" ? formatNumberMoney(totalDisponible) : totalDisponible) + ").");
+            ok = false;
+        }
     }
 
     if (!ok) {

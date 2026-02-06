@@ -6,6 +6,7 @@ AS
   -- Description:  get NotaCredito 
     2018-03-05	add Vendedor, detalle  
 	2026-01-31	add Cliente
+	2026-02-06	add ViajeFecha, ViajeNombre (datos del viaje)
   -- =============================================*/ 
 BEGIN 
     SET nocount, xact_abort ON; 
@@ -20,7 +21,9 @@ BEGIN
 		   n.PorcentajeRetencion,
 		   Vendedor = p.FullName,
 		   Cliente = pCliente.FullName,
-		   n.Detalle
+		   n.Detalle,
+		   n.ViajeFecha,
+		   n.ViajeNombre
 	from dbo.Nota n
 	inner join dbo.Persona p
 		on n.VendedorID = p.PersonaID

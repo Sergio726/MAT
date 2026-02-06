@@ -10,6 +10,8 @@ CREATE TABLE [dbo].[Nota] (
     [MontoNota]           MONEY            NOT NULL,
     [MontoDevolucion]      MONEY            NULL,
     [Detalle]             VARCHAR (1000)   NULL,
+    [ViajeFecha]           DATE             NULL,
+    [ViajeNombre]          VARCHAR (200)   NULL,
     CONSTRAINT [PK_Nota] PRIMARY KEY CLUSTERED ([NotaID] ASC),
     CONSTRAINT [FK_Nota_Cliente] FOREIGN KEY ([ClienteID]) REFERENCES [dbo].[Cliente] ([ClienteID]),
     CONSTRAINT [FK_Nota_Vendedor] FOREIGN KEY ([VendedorID]) REFERENCES [dbo].[Vendedor] ([VendedorID])

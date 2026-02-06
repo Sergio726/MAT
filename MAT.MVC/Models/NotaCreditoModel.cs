@@ -27,6 +27,10 @@ namespace MAT.MVC.Models
         public string Vendedor { get; set; }
         public string Cliente { get; set; }
         public string Detalle { get; set; }
+        /// <summary>Fecha de salida del viaje asociado a la factura/nota.</summary>
+        public DateTime? ViajeFecha { get; set; }
+        /// <summary>Nombre/descripción del viaje asociado.</summary>
+        public string ViajeNombre { get; set; }
     }
 
     public class MovimientoNotaCredito 
@@ -155,6 +159,10 @@ namespace MAT.MVC.Models
                 _nota.Detalle = _reader["Detalle"].ToString();
                 if (_reader["MontoDevolucion"] != DBNull.Value && _reader["MontoDevolucion"] != null)
                     _nota.MontoDevolucion = Convert.ToDecimal(_reader["MontoDevolucion"]);
+                if (_reader["ViajeFecha"] != DBNull.Value && _reader["ViajeFecha"] != null)
+                    _nota.ViajeFecha = Convert.ToDateTime(_reader["ViajeFecha"]);
+                if (_reader["ViajeNombre"] != DBNull.Value && _reader["ViajeNombre"] != null)
+                    _nota.ViajeNombre = _reader["ViajeNombre"].ToString();
             }
 
             return _nota;

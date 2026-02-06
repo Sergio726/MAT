@@ -76,6 +76,28 @@
         color: #1e293b;
     }
 
+    /* Información del viaje */
+    .mat-nc-viaje {
+        padding: 0.625rem 0.75rem;
+        margin-bottom: 1rem;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+    }
+    .mat-nc-viaje-title {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    .mat-nc-viaje-title i { color: var(--primary-color, #e91e63); margin-right: 0.25rem; }
+    .mat-nc-viaje-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .mat-nc-viaje-item { display: flex; flex-direction: column; gap: 0.125rem; }
+    .mat-nc-viaje-label { font-size: 0.6875rem; color: #64748b; }
+    .mat-nc-viaje-value { font-size: 0.875rem; font-weight: 600; color: #1e293b; }
+
     /* Sección de montos */
     .mat-nc-montos {
         display: flex;
@@ -308,6 +330,58 @@
         box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15) !important;
     }
 
+    /* Barra de estado: suma Crédito + Retenido + Devolución */
+    .mat-nc-status-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.625rem 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #e5e7eb;
+        background: #f8fafc;
+        font-size: 0.8125rem;
+    }
+    .mat-nc-status-bar .mat-nc-status-label {
+        font-weight: 600;
+        color: #64748b;
+    }
+    .mat-nc-status-bar .mat-nc-status-sum {
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .mat-nc-status-bar .mat-nc-status-sep {
+        color: #94a3b8;
+        font-weight: 500;
+    }
+    .mat-nc-status-bar .mat-nc-status-total {
+        font-weight: 600;
+        color: #475569;
+    }
+    .mat-nc-status-bar .mat-nc-status-msg {
+        margin-left: auto;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .mat-nc-status-bar.mat-nc-status-ok {
+        background: #f0fdf4;
+        border-color: #86efac;
+    }
+    .mat-nc-status-bar.mat-nc-status-ok .mat-nc-status-msg {
+        color: #166534;
+    }
+    .mat-nc-status-bar.mat-nc-status-error {
+        background: #fef2f2;
+        border-color: #fca5a5;
+    }
+    .mat-nc-status-bar.mat-nc-status-error .mat-nc-status-msg {
+        color: #991b1b;
+    }
+    .mat-nc-status-bar.mat-nc-status-pending .mat-nc-status-msg {
+        color: #92400e;
+    }
+
     /* Responsive */
     @@media (max-width: 600px) {
         .mat-nc-header {
@@ -382,6 +456,30 @@
             </div>
         </div>
 
+        @if (Model.ViajeFecha.HasValue || !string.IsNullOrEmpty(Model.ViajeNombre))
+        {
+        <!-- Información del viaje -->
+        <div class="mat-nc-viaje">
+            <div class="mat-nc-viaje-title"><i class="bi bi-geo-alt"></i> Viaje asociado</div>
+            <div class="mat-nc-viaje-row">
+                @if (!string.IsNullOrEmpty(Model.ViajeNombre))
+                {
+                    <div class="mat-nc-viaje-item">
+                        <span class="mat-nc-viaje-label">Nombre</span>
+                        <span class="mat-nc-viaje-value">@Model.ViajeNombre</span>
+                    </div>
+                }
+                @if (Model.ViajeFecha.HasValue)
+                {
+                    <div class="mat-nc-viaje-item">
+                        <span class="mat-nc-viaje-label">Fecha salida</span>
+                        <span class="mat-nc-viaje-value">@Model.ViajeFecha.Value.ToString("dd/MM/yyyy")</span>
+                    </div>
+                }
+            </div>
+        </div>
+        }
+
         <!-- Montos -->
         <div class="mat-nc-montos">
             <div class="mat-nc-monto credito">
@@ -416,6 +514,15 @@
                 <div class="mat-field-error" data-for="MontoDevolucion"></div>
                 <div class="mat-nc-monto-hint">Dinero al cliente</div>
             </div>
+        </div>
+
+        <!-- Barra de estado: suma en tiempo real -->
+        <div class="mat-nc-status-bar mat-nc-status-pending" id="matNcStatusBar" role="status" aria-live="polite">
+            <span class="mat-nc-status-label">Distribución:</span>
+            <span class="mat-nc-status-sum" id="matNcStatusSum">$ 0,00</span>
+            <span class="mat-nc-status-sep">/</span>
+            <span class="mat-nc-status-total" id="matNcStatusTotal">$ 0,00</span>
+            <span class="mat-nc-status-msg" id="matNcStatusMsg">La suma debe coincidir con el total disponible</span>
         </div>
 
         <!-- Detalle -->
@@ -472,5 +579,52 @@
                 $title.html('Nota de Crédito <span style="opacity:0.8;font-weight:400;margin-left:0.5rem;">#' + nroNota + '</span>');
             }
         }
+
+        // Barra de estado: actualizar suma al cambiar Crédito, Retenido o Devolución
+        function parseMoneyVal(val) {
+            var s = (val == null ? "" : String(val)).trim();
+            s = s.replace(/[^\d,.\-]/g, "");
+            s = s.replace(/\./g, "").replace(",", ".");
+            var n = parseFloat(s);
+            return isNaN(n) ? 0 : n;
+        }
+        function updateNotaCreditoStatusBar() {
+            var $bar = $("#matNcStatusBar");
+            var $sum = $("#matNcStatusSum");
+            var $total = $("#matNcStatusTotal");
+            var $msg = $("#matNcStatusMsg");
+            if (!$bar.length) return;
+            var totalPagos = parseMoneyVal($("#hdnTotalPagos").val());
+            var totalFactura = parseMoneyVal($("#hdnMontoFactura").val());
+            var totalDisponible = totalPagos > 0 ? totalPagos : totalFactura;
+            var montoNota = parseMoneyVal($("#MontoNota").val());
+            var montoRetencion = parseMoneyVal($("#MontoRetencion").val());
+            var montoDevolucion = parseMoneyVal($("#MontoDevolucion").val());
+            var suma = montoNota + montoRetencion + montoDevolucion;
+            var totalFormatted = (typeof formatNumberMoney === "function") ? formatNumberMoney(totalDisponible) : "$ " + totalDisponible.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            var sumFormatted = (typeof formatNumberMoney === "function") ? formatNumberMoney(suma) : "$ " + suma.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            $sum.text(sumFormatted);
+            $total.text(totalFormatted);
+            $bar.removeClass("mat-nc-status-ok mat-nc-status-error mat-nc-status-pending");
+            if (totalDisponible <= 0) {
+                $bar.addClass("mat-nc-status-pending");
+                $msg.text("Total no disponible");
+                return;
+            }
+            if (Math.abs(suma - totalDisponible) < 0.01) {
+                $bar.addClass("mat-nc-status-ok");
+                $msg.html("<i class=\"bi bi-check-circle-fill\"></i> Coincide con el total");
+            } else if (suma > totalDisponible) {
+                $bar.addClass("mat-nc-status-error");
+                $msg.html("<i class=\"bi bi-exclamation-circle-fill\"></i> La suma supera el total");
+            } else {
+                $bar.addClass("mat-nc-status-pending");
+                $msg.text("La suma debe coincidir con el total disponible");
+            }
+        }
+        updateNotaCreditoStatusBar();
+        $(document).on("input change", "#NotaCredito #MontoNota, #NotaCredito #MontoRetencion, #NotaCredito #MontoDevolucion", function () {
+            updateNotaCreditoStatusBar();
+        });
     })();
 </script>
