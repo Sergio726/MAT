@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_RegistroPago_NuevoPago](@Monto	money	= 0	,
+CREATE PROCEDURE [dbo].[usp_MAT_RegistroPago_NuevoPago](@Monto	money	= 0	,
 														@MontoRecibidoMonedaTipo int =1,
 														@MontoEquivalente money = null,
 														@MontoEquivalenteMonedaTipo int = null,
@@ -65,12 +65,12 @@ AS
 					values (@PagoID,@Monto,@MontoRecibidoMonedaTipo,@MontoEquivalente,@MontoEquivalenteMonedaTipo,@MontoEquivalenteCotizacion)
 
 
-			/*Movimiento de Nota de Credito en CreditoCliente*/
+			/*Movimiento de Nota de Credito en CreditoCliente + trazabilidad (PagoID/FacturaID) y aplicacion por nota (FIFO)*/
 			if(@TipoPago = 4) --nota credito
 			begin
-				insert into dbo.CreditoCliente (VendedorID,ClienteID,Monto,Descripcion,IsInput)
-				values (@VendedorId,@ClienteID,-@Monto,'REALIZACION PAGO. NRO DE RECIBO ' + @NroRecibo,0)
-				
+				insert into dbo.CreditoCliente (VendedorID,ClienteID,Monto,Descripcion,IsInput,PagoID,FacturaID)
+				values (@VendedorId,@ClienteID,-@Monto,'REALIZACION PAGO. NRO DE RECIBO ' + @NroRecibo,0,@PagoID,@FacturaID)
+				EXEC dbo.usp_MAT_NotaCreditoAplicacion_Allocate @ClienteID = @ClienteID, @PagoID = @PagoID, @FacturaID = @FacturaID, @Monto = @Monto
 			end
 
 			/*Impacto Movimiento de Pago en el Historial*/ 

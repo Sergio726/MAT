@@ -37,6 +37,8 @@ namespace MAT.MVC.Controllers
             try
             {
                 _model = NotaCreditoMethod.GetNotaByID(NotaID);
+                ViewBag.Aplicaciones = NotaCreditoMethod.GetAplicacionesByNotaID(NotaID);
+                ViewBag.SaldoDisponibleNota = NotaCreditoMethod.GetSaldoDisponiblePorNota(NotaID);
             }
             catch (Exception e)
             {

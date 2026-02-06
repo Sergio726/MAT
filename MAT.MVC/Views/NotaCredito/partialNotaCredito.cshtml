@@ -8,11 +8,22 @@
 
 @if (ViewBag.Error != null)
 {
-    <script type="text/javascript">console.log("@ViewBag.Error");</script>
-    return;
+    <div class="mat-nc-detail mat-nc-error" role="alert">
+        <p class="mat-nc-error-msg"><i class="bi bi-exclamation-triangle"></i> No se pudo cargar la nota de crédito.</p>
+        <p class="mat-nc-error-detail">@ViewBag.Error</p>
+    </div>
+    <script type="text/javascript">console.error("NotaCredito partialNotaCredito: error al cargar.");</script>
 }
-
-<div class="mat-nc-detail" data-notaid="@notaIdStr" data-nronota="@nroNotaDisplay">
+else if (Model == null || Model.NotaID == Guid.Empty || string.IsNullOrEmpty(Model.NroNota))
+{
+    <div class="mat-nc-detail mat-nc-not-found">
+        <p class="mat-nc-not-found-msg"><i class="bi bi-search"></i> No se encontró la nota de crédito.</p>
+        <p class="mat-nc-not-found-hint">El ID puede no existir o haber sido eliminado.</p>
+    </div>
+}
+else
+{
+<div class="mat-nc-detail nota-credito-detail-container" data-notaid="@notaIdStr" data-nronota="@nroNotaDisplay">
     <!-- Header con resumen -->
     <div class="mat-nc-header">
         <div class="mat-nc-header-item">
@@ -87,6 +98,42 @@
         </div>
     </div>
 
+    @{
+        var aplicaciones = ViewBag.Aplicaciones as List<MAT.MVC.Models.NotaCreditoAplicacionModel>;
+        var saldoDisponibleNota = ViewBag.SaldoDisponibleNota != null ? (decimal)ViewBag.SaldoDisponibleNota : Model.MontoNota;
+    }
+    @if (aplicaciones != null && aplicaciones.Count > 0)
+    {
+    <div class="mat-nc-info-section mat-nc-aplicado">
+        <div class="mat-nc-info-row">
+            <div class="mat-nc-info-item full">
+                <span class="mat-nc-info-label"><i class="bi bi-link-45deg"></i> Aplicado a</span>
+            </div>
+        </div>
+        <ul class="mat-nc-aplicado-list">
+            @foreach (var a in aplicaciones)
+            {
+                <li class="mat-nc-aplicado-item">
+                    <span class="mat-nc-aplicado-desc">Recibo @(a.NroRecibo ?? "-") · Factura @(a.NroFactura ?? "-")</span>
+                    <span class="mat-nc-aplicado-monto">@string.Format("{0:C}", a.MontoAplicado)</span>
+                    <span class="mat-nc-aplicado-fecha">@a.Fecha.ToString("dd/MM/yyyy")</span>
+                </li>
+            }
+        </ul>
+    </div>
+    }
+    @if (Model.NotaID != Guid.Empty)
+    {
+    <div class="mat-nc-info-section mat-nc-saldo-nota">
+        <div class="mat-nc-info-row">
+            <div class="mat-nc-info-item">
+                <span class="mat-nc-info-label">Saldo disponible de esta nota</span>
+                <span class="mat-nc-info-value mat-nc-saldo-value">@string.Format("{0:C}", saldoDisponibleNota)</span>
+            </div>
+        </div>
+    </div>
+    }
+
     <!-- Información adicional -->
     <div class="mat-nc-info-section">
         <div class="mat-nc-info-row">
@@ -127,3 +174,4 @@
         }
     })();
 </script>
+}

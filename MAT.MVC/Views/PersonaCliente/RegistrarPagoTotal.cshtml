@@ -97,6 +97,9 @@
     .btn-pago-primary:hover {
         background: var(--primary-hover, #d81b60);
     }
+    .credito-status.credito-ok { color: #059669; }
+    .credito-status.credito-fail { color: #dc2626; }
+    .credito-status.credito-info { color: #6b7280; }
     @@media (max-width: 500px) {
         .pago-total-grid {
             grid-template-columns: 1fr;
@@ -131,6 +134,14 @@
                 <input type="text" name="TransaccionID" id="TransaccionID" class="pago-form-input" disabled="disabled" />
             </div>
 
+            <div class="pago-form-group" id="credito-disponible-group" style="display: none;">
+                <label class="pago-form-label">
+                    <i class="bi bi-bank"></i>
+                    Crédito disponible
+                </label>
+                <input type="text" id="total-credito" class="pago-form-input" disabled />
+                <div id="credito-status-msg" class="credito-status" style="display:none; margin-top:0.35rem; font-size:0.8125rem; font-weight:500;"></div>
+            </div>
             <div class="pago-form-group">
                 <label class="pago-form-label">
                     <i class="bi bi-cash"></i>
@@ -176,10 +187,33 @@
             var tipoPago = $(this).val();
             if (tipoPago == "1") {
                 $("#transaccion-group").hide();
+                $("#credito-disponible-group").hide();
                 $("#TransaccionID").attr("disabled", true);
             } else {
                 $("#transaccion-group").show();
                 $("#TransaccionID").attr("disabled", false);
+            }
+            if (tipoPago == "4") {
+                $("#credito-disponible-group").show();
+                var ClienteID = "@ViewBag.ClienteID";
+                var SaldoFactura = parseFloat("@ViewBag.Saldo".replace(",", ".")) || 0;
+                $("#credito-status-msg").show().removeClass("credito-ok credito-fail").addClass("credito-info").text("Cargando...");
+                $.get("/NotaCredito/getCreditoDisponible", { ClienteID: ClienteID }, function (data) {
+                    var response = typeof data === "string" ? eval(data) : data;
+                    if (response[0] == "Done.") {
+                        var cred = parseFloat(response[1]);
+                        $("#total-credito").val(cred);
+                        var $msg = $("#credito-status-msg").removeClass("credito-info");
+                        if (cred >= SaldoFactura) {
+                            $msg.addClass("credito-ok").html("<i class=\"bi bi-check-circle-fill\"></i> Saldo suficiente para este pago");
+                        } else {
+                            $msg.addClass("credito-fail").html("<i class=\"bi bi-exclamation-circle-fill\"></i> Saldo insuficiente. Crédito disponible: " + (typeof formatNumberMoney === "function" ? formatNumberMoney(cred) : cred));
+                        }
+                    } else { $("#credito-status-msg").hide(); }
+                }).fail(function () { $("#credito-status-msg").hide(); });
+            } else {
+                $("#credito-disponible-group").hide();
+                $("#credito-status-msg").hide();
             }
         });
 
@@ -187,6 +221,14 @@
         $("#btnRegistrarPago").click(function () {
             var monto = $("#txtPago").val();
             var tipopago = parseInt($("#tipopago").val());
+            if (tipopago === 4) {
+                var cred = parseFloat($("#total-credito").val());
+                var montoNum = parseFloat(String(monto).replace(",", ".")) || 0;
+                if (!isNaN(cred) && montoNum > cred) {
+                    (window.alertInfo || window.alert)("Crédito insuficiente. El cliente no tiene saldo suficiente para este pago.", "Validación");
+                    return;
+                }
+            }
             var nrofactura = $("#Factura").val();
             var nrorecibo = $("#Recibo").val();
             var FacturaID = "@ViewBag.FacturaID";

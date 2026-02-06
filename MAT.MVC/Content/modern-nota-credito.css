@@ -1,0 +1,82 @@
+/* Nota de crédito - detalle (partialNotaCredito) - Estándar CSS proyecto MAT */
+/* Variables: saas-variables.css; prefijo mat-nc- (compatibilidad con RegistrarNotaCredito) */
+
+/* Estados: error y no encontrado */
+.mat-nc-error .mat-nc-error-msg {
+    color: var(--warning-color);
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.mat-nc-error .mat-nc-error-detail {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.mat-nc-not-found .mat-nc-not-found-msg {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+}
+
+.mat-nc-not-found .mat-nc-not-found-hint {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* Lista "Aplicado a" */
+.mat-nc-aplicado-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mat-nc-aplicado-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.8125rem;
+}
+
+.mat-nc-aplicado-item:last-child {
+    border-bottom: none;
+}
+
+.mat-nc-aplicado-desc {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.mat-nc-aplicado-monto {
+    font-weight: 600;
+    color: var(--success-color);
+}
+
+.mat-nc-aplicado-fecha {
+    color: var(--text-secondary);
+}
+
+.mat-nc-saldo-nota .mat-nc-saldo-value {
+    font-weight: 700;
+    color: var(--brand-primary);
+}
+
+/* Botón principal: texto e icono claros sobre fondo primario */
+.mat-nc-actions .mat-nc-btn-primary,
+.mat-nc-actions .mat-nc-btn.mat-nc-btn-primary {
+    color: var(--white);
+}
+
+.mat-nc-actions .mat-nc-btn-primary:hover,
+.mat-nc-actions .mat-nc-btn.mat-nc-btn-primary:hover {
+    color: var(--white);
+}
+
+.mat-nc-actions .mat-nc-btn-primary i,
+.mat-nc-actions .mat-nc-btn.mat-nc-btn-primary i {
+    color: var(--white);
+}

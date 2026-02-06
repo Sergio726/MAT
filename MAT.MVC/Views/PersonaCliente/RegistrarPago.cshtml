@@ -128,6 +128,9 @@
     @@keyframes spin {
         to { transform: rotate(360deg); }
     }
+    .credito-status.credito-ok { color: #059669; }
+    .credito-status.credito-fail { color: #dc2626; }
+    .credito-status.credito-info { color: #6b7280; }
     @@media (max-width: 600px) {
         .pago-layout {
             flex-direction: column;
@@ -200,6 +203,14 @@
                     <input type="text" name="Recibo" id="Recibo" class="pago-form-input" placeholder="Numero de recibo" />
                 </div>
 
+                <div class="pago-form-group" id="credito-disponible-group" style="display: none;">
+                    <label class="pago-form-label">
+                        <i class="bi bi-bank"></i>
+                        Crédito disponible
+                    </label>
+                    <input type="text" id="total-credito" class="pago-form-input" disabled />
+                    <div id="credito-status-msg" class="credito-status" style="display:none; margin-top:0.35rem; font-size:0.8125rem; font-weight:500;"></div>
+                </div>
                 <div class="pago-form-group">
                     <label class="pago-form-label">
                         <i class="bi bi-wallet2"></i>
@@ -244,10 +255,26 @@
             var tipoPago = $(this).val();
             if (tipoPago == "1") {
                 $("#transaccion-group").hide();
+                $("#credito-disponible-group").hide();
                 $("#TransaccionID").attr("disabled", true);
             } else {
                 $("#transaccion-group").show();
                 $("#TransaccionID").attr("disabled", false);
+            }
+            if (tipoPago == "4") {
+                $("#credito-disponible-group").show();
+                var ClienteID = "@ViewBag.ClienteID";
+                $("#credito-status-msg").show().removeClass("credito-ok credito-fail").addClass("credito-info").text("Cargando...");
+                $.get("/NotaCredito/getCreditoDisponible", { ClienteID: ClienteID }, function (data) {
+                    var response = typeof data === "string" ? eval(data) : data;
+                    if (response[0] == "Done.") {
+                        $("#total-credito").val(parseFloat(response[1]));
+                        if (typeof updateCreditoStatusMsg === "function") updateCreditoStatusMsg();
+                    } else { $("#credito-status-msg").hide(); }
+                }).fail(function () { $("#credito-status-msg").hide(); });
+            } else {
+                $("#credito-disponible-group").hide();
+                $("#credito-status-msg").hide();
             }
         });
     });
@@ -277,6 +304,13 @@
             var ViajeMonedaTipo = parent.$("#hdnViajeMonedaTipo").val();
             var MontoRecibido = monto;
 
+            if (tipopago == 4) {
+                var cred = parseFloat($("#total-credito").val());
+                var montoNum = parseFloat(String(monto).replace(/\./g, "").replace(",", ".")) || 0;
+                if (!isNaN(cred) && montoNum > cred) {
+                    return (window.alertInfo || window.alert)("Crédito insuficiente. Ingrese un monto menor o igual al Crédito Disponible.", "Validación");
+                }
+            }
             if (parseFloat(monto.replace(/\./g, "")) > parseFloat(Saldo)) {
                 return (window.alertInfo || window.alert)("El monto ingresado no puede ser mayor al saldo de la factura. Saldo actual: $" + parseFloat(Saldo), "Validación");
             }

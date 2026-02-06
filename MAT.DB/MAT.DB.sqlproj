@@ -114,6 +114,7 @@
     <Build Include="dbo\Tables\galerias.sql" />
     <Build Include="dbo\Tables\Gallery.sql" />
     <Build Include="dbo\Tables\Nota.sql" />
+    <Build Include="dbo\Tables\NotaCreditoAplicacion.sql" />
     <Build Include="dbo\Tables\GalleryImage.sql" />
     <Build Include="dbo\Tables\Pago.sql" />
     <Build Include="dbo\Tables\Image.sql" />
@@ -219,6 +220,8 @@
     <Build Include="dbo\Stored Procedures\_ProcedureFactura_Delete.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>
+    <Build Include="dbo\Stored Procedures\usp_MAT_NotaCreditoAplicacion_Allocate.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_NotaCreditoAplicacion_GetByNotaID.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Nota_GetNotaByID.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedurePasajero_GetByPasajeroId.sql">
       <AnsiNulls>Off</AnsiNulls>

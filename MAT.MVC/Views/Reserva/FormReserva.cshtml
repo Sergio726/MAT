@@ -97,7 +97,9 @@
                             Credito Disponible
                         </label>
                         <input type="text" name="total-credito" id="total-credito" class="reserva-form-input" disabled />
+                        <div id="credito-status-msg" class="credito-status credito-info" style="display:none; margin-top:0.35rem; font-size:0.8125rem; font-weight:500;"></div>
                     </div>
+                    <style>.credito-status.credito-ok { color: #059669; } .credito-status.credito-fail { color: #dc2626; } .credito-status.credito-info { color: #6b7280; }</style>
 
                     <div class="reserva-form-group">
                         <label class="reserva-form-label">
@@ -337,14 +339,30 @@
             }
         });
 
-        // Payment type toggle
+        // Payment type toggle + mostrar crédito cuando es Nota de Crédito
         $("select[name='Pago.TipoPago']").change(function () {
             var tipopago = parseInt($(this).val());
-            // CREDITO, DEBITO, TRANSFERENCIA
             if (tipopago == 2 || tipopago == 3 || tipopago == 4 || tipopago == 5 || tipopago == 6) {
                 $("#transaccion-group").show();
             } else {
                 $("#transaccion-group").hide();
+            }
+            if (tipopago == 4) {
+                $("#credito-group").show();
+                var ClienteID = $("#ClienteId").val() || $("#Cliente").val();
+                if (ClienteID) {
+                    $("#credito-status-msg").show().removeClass("credito-ok credito-fail").addClass("credito-info").text("Cargando...");
+                    $.get("/NotaCredito/getCreditoDisponible", { ClienteID: ClienteID }, function (data) {
+                        var response = typeof data === "string" ? eval(data) : data;
+                        if (response[0] == "Done.") {
+                            $("#total-credito").val(parseFloat(response[1]));
+                            if (typeof updateCreditoStatusMsg === "function") updateCreditoStatusMsg();
+                        } else { $("#credito-status-msg").hide(); }
+                    }).fail(function () { $("#credito-status-msg").hide(); });
+                }
+            } else {
+                $("#credito-group").hide();
+                $("#credito-status-msg").hide();
             }
         }).trigger("change");
     });

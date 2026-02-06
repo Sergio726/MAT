@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Reserva_RegistrarPago]
+CREATE PROCEDURE [dbo].[usp_MAT_Reserva_RegistrarPago]
 (
 	@ReservaId UNIQUEIDENTIFIER,
 	@PagoMonto MONEY
@@ -111,7 +111,7 @@ BEGIN
 
 				end
 				
-				/*Movimiento de Nota de Credito en CreditoCliente*/
+				/*Movimiento de Nota de Credito en CreditoCliente + trazabilidad (PagoID/FacturaID) y aplicacion por nota (FIFO)*/
 				if(@PagoTipoPago = 4) --nota credito
 				begin
 					insert into dbo.CreditoCliente
@@ -120,15 +120,20 @@ BEGIN
 						ClienteID,
 						Monto,
 						Descripcion,
-						IsInput
+						IsInput,
+						PagoID,
+						FacturaID
 					)
 					values (
 						@VendedorId,
 						@ClienteId,
 						-@PagoMonto,
-						'REALIZACION PAGO. NRO DE RECIBO ' + @PagoNroRecibo
-						,0
+						'REALIZACION PAGO. NRO DE RECIBO ' + @PagoNroRecibo,
+						0,
+						@PagoID,
+						@FacturaId
 					)
+					EXEC dbo.usp_MAT_NotaCreditoAplicacion_Allocate @ClienteID = @ClienteId, @PagoID = @PagoID, @FacturaID = @FacturaId, @Monto = @PagoMonto
 				end
 
 				/*Impacto Movimiento de Pago en el Historial*/ 

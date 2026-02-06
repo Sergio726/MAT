@@ -1,4 +1,4 @@
-﻿@using MAT.MVC.Models
+@using MAT.MVC.Models
 @using MAT.Enums
 @using MAT.Utilities
 @model NuevaReservaModel
@@ -97,6 +97,7 @@
                     if (response[0] == "Done.") {
                         var Cred = parseFloat(response[1]);
                         $("#total-credito").val(Cred);
+                        if (typeof updateCreditoStatusMsg === "function") updateCreditoStatusMsg();
                     }
                     else {
                         (window.alertError || window.alert)("Ocurrió un error al intentar calcular el crédito disponible.", "Error");
@@ -306,6 +307,8 @@
             <div id="total-credito-field" class="form-field">
                 <input type="text" name="total-credito" id="total-credito" disabled />
             </div>
+            <div id="credito-status-msg" class="credito-status credito-info" style="display:none; margin-top:0.35rem; font-size:0.8125rem; font-weight:500;"></div>
+            <style>.credito-status.credito-ok { color: #059669; } .credito-status.credito-fail { color: #dc2626; } .credito-status.credito-info { color: #6b7280; }</style>
 
             <!--Moneda********-->
             <div class="form-label">

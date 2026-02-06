@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_CreditoCliente_GetMovimientoNotaCreditoByClienteID] (@ClienteID uniqueidentifier)
+CREATE PROCEDURE [dbo].[usp_MAT_CreditoCliente_GetMovimientoNotaCreditoByClienteID] (@ClienteID uniqueidentifier)
 as
 -- ============================================= 
 -- Author:    Garcia Sergio 
@@ -13,10 +13,16 @@ BEGIN
 		   ccl.Monto,
 		   Descripcion = upper(ccl.Descripcion),
 		   ccl.Fecha,
-		   Vendedor = p.FullName 
+		   Vendedor = p.FullName,
+		   ccl.PagoID,
+		   ccl.FacturaID,
+		   NroRecibo = pag.NroRecibo,
+		   NroFactura = f.NroFactura
 	from dbo.CreditoCliente ccl
 	inner join dbo.Persona p
 		on ccl.VendedorID = p.PersonaID
+	left join dbo.Pago pag on pag.PagoID = ccl.PagoID
+	left join dbo.Factura f on f.FacturaID = ccl.FacturaID
 	where ccl.ClienteID = @ClienteID
 	order by ccl.Id desc
 	

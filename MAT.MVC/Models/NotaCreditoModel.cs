@@ -40,6 +40,23 @@ namespace MAT.MVC.Models
         public string Descripcion { get; set; }
         public DateTime Fecha { get; set; }
         public string Vendedor { get; set; }
+        public Guid? PagoID { get; set; }
+        public Guid? FacturaID { get; set; }
+        public string NroRecibo { get; set; }
+        public string NroFactura { get; set; }
+    }
+
+    /// <summary>Registro de aplicación de crédito de una nota a un pago/factura.</summary>
+    public class NotaCreditoAplicacionModel
+    {
+        public int Id { get; set; }
+        public Guid NotaCreditoID { get; set; }
+        public Guid PagoID { get; set; }
+        public Guid FacturaID { get; set; }
+        public decimal MontoAplicado { get; set; }
+        public DateTime Fecha { get; set; }
+        public string NroRecibo { get; set; }
+        public string NroFactura { get; set; }
     }
 
     public static class NotaCreditoMethod
@@ -120,8 +137,16 @@ namespace MAT.MVC.Models
                 _item.Descripcion = row["Descripcion"].ToString();
                 _item.Fecha = Convert.ToDateTime(row["Fecha"]);
                 _item.Monto = Convert.ToDouble(row["Monto"]);
-                _item.NotaCreditoID = row["NotaCreditoID"].ToString();
+                _item.NotaCreditoID = row["NotaCreditoID"] != DBNull.Value && row["NotaCreditoID"] != null ? row["NotaCreditoID"].ToString() : null;
                 _item.Vendedor = row["Vendedor"].ToString();
+                if (row.Table.Columns.Contains("PagoID") && row["PagoID"] != DBNull.Value && row["PagoID"] != null)
+                    _item.PagoID = (Guid)row["PagoID"];
+                if (row.Table.Columns.Contains("FacturaID") && row["FacturaID"] != DBNull.Value && row["FacturaID"] != null)
+                    _item.FacturaID = (Guid)row["FacturaID"];
+                if (row.Table.Columns.Contains("NroRecibo") && row["NroRecibo"] != DBNull.Value && row["NroRecibo"] != null)
+                    _item.NroRecibo = row["NroRecibo"].ToString();
+                if (row.Table.Columns.Contains("NroFactura") && row["NroFactura"] != DBNull.Value && row["NroFactura"] != null)
+                    _item.NroFactura = row["NroFactura"].ToString();
                 _list.Add(_item);
             }
 
@@ -145,18 +170,18 @@ namespace MAT.MVC.Models
                     };
             SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Nota_GetNotaByID", dbParams);
 
+            _nota.NotaID = NotaID;
             while (_reader.Read())
             {
-                _nota.NotaID = NotaID;
-                _nota.Dias = Convert.ToInt32(_reader["Dias"]);
-                _nota.Fecha = Convert.ToDateTime(_reader["Fecha"]);
-                _nota.MontoNota = Convert.ToDecimal(_reader["MontoNota"]);
-                _nota.MontoRetencion = Convert.ToDecimal(_reader["MontoRetencion"]);
-                _nota.NroNota = _reader["NroNota"].ToString();
-                _nota.PorcentajeRetencion = Convert.ToDecimal(_reader["PorcentajeRetencion"]);
-                _nota.Vendedor = _reader["Vendedor"].ToString();
+                _nota.Dias = _reader["Dias"] != DBNull.Value && _reader["Dias"] != null ? Convert.ToInt32(_reader["Dias"]) : 0;
+                _nota.Fecha = _reader["Fecha"] != DBNull.Value && _reader["Fecha"] != null ? Convert.ToDateTime(_reader["Fecha"]) : default(DateTime);
+                _nota.MontoNota = _reader["MontoNota"] != DBNull.Value && _reader["MontoNota"] != null ? Convert.ToDecimal(_reader["MontoNota"]) : 0;
+                _nota.MontoRetencion = _reader["MontoRetencion"] != DBNull.Value && _reader["MontoRetencion"] != null ? Convert.ToDecimal(_reader["MontoRetencion"]) : 0;
+                _nota.NroNota = _reader["NroNota"] != DBNull.Value && _reader["NroNota"] != null ? _reader["NroNota"].ToString() : null;
+                _nota.PorcentajeRetencion = _reader["PorcentajeRetencion"] != DBNull.Value && _reader["PorcentajeRetencion"] != null ? Convert.ToDecimal(_reader["PorcentajeRetencion"]) : 0;
+                _nota.Vendedor = _reader["Vendedor"] != DBNull.Value && _reader["Vendedor"] != null ? _reader["Vendedor"].ToString() : null;
                 _nota.Cliente = _reader["Cliente"] != DBNull.Value && _reader["Cliente"] != null ? _reader["Cliente"].ToString() : null;
-                _nota.Detalle = _reader["Detalle"].ToString();
+                _nota.Detalle = _reader["Detalle"] != DBNull.Value && _reader["Detalle"] != null ? _reader["Detalle"].ToString() : null;
                 if (_reader["MontoDevolucion"] != DBNull.Value && _reader["MontoDevolucion"] != null)
                     _nota.MontoDevolucion = Convert.ToDecimal(_reader["MontoDevolucion"]);
                 if (_reader["ViajeFecha"] != DBNull.Value && _reader["ViajeFecha"] != null)
@@ -166,6 +191,40 @@ namespace MAT.MVC.Models
             }
 
             return _nota;
+        }
+
+        /// <summary>Obtiene las aplicaciones (pagos/facturas) donde se usó el crédito de una nota.</summary>
+        public static List<NotaCreditoAplicacionModel> GetAplicacionesByNotaID(Guid NotaID)
+        {
+            var list = new List<NotaCreditoAplicacionModel>();
+            SqlParameter[] dbParams = new SqlParameter[] { DBHelper.MakeParam("@NotaID", SqlDbType.UniqueIdentifier, 0, NotaID) };
+            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_NotaCreditoAplicacion_GetByNotaID", dbParams))
+            {
+                while (reader.Read())
+                {
+                    list.Add(new NotaCreditoAplicacionModel
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        NotaCreditoID = (Guid)reader["NotaCreditoID"],
+                        PagoID = (Guid)reader["PagoID"],
+                        FacturaID = (Guid)reader["FacturaID"],
+                        MontoAplicado = Convert.ToDecimal(reader["MontoAplicado"]),
+                        Fecha = Convert.ToDateTime(reader["Fecha"]),
+                        NroRecibo = reader["NroRecibo"] != DBNull.Value && reader["NroRecibo"] != null ? reader["NroRecibo"].ToString() : null,
+                        NroFactura = reader["NroFactura"] != DBNull.Value && reader["NroFactura"] != null ? reader["NroFactura"].ToString() : null
+                    });
+                }
+            }
+            return list;
+        }
+
+        /// <summary>Saldo disponible de una nota (MontoNota - suma de montos ya aplicados).</summary>
+        public static decimal GetSaldoDisponiblePorNota(Guid NotaID)
+        {
+            var aplicaciones = GetAplicacionesByNotaID(NotaID);
+            var nota = GetNotaByID(NotaID);
+            var aplicado = aplicaciones.Sum(a => a.MontoAplicado);
+            return nota.MontoNota - aplicado;
         }
     }
 }

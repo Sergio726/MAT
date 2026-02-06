@@ -44,6 +44,8 @@ $(document).on("click", "select[name='Pago.TipoPago']", function () {
     if (tipopago == 4) {
         $("#total-credito-label").css("display", "inline-block");
         $("#total-credito-field").css("display", "inline-block");
+        var $status = $("#credito-status-msg");
+        if ($status.length) $status.show().removeClass("credito-ok credito-fail").text("Cargando...");
         var ClienteID = $("#Cliente").val();
 
         $.ajax({
@@ -54,18 +56,51 @@ $(document).on("click", "select[name='Pago.TipoPago']", function () {
                 if (response[0] == "Done.") {
                     var Cred = parseFloat(response[1]);
                     $("#total-credito").val(Cred);
+                    updateCreditoStatusMsg();
                 }
                 else {
+                    if ($status.length) $status.hide();
                     (window.alertError || window.alert)("Ocurrió un error al intentar calcular el crédito disponible.", "Error");
                     console.log(response[1]);
                 }
             },
             error: function (e) {
+                if ($status.length) $status.hide();
                 (window.alertError || window.alert)("Ocurrió un error al intentar calcular el crédito disponible.", "Error");
                 console.log(e);
             }
         })
+    } else {
+        $("#credito-status-msg").hide();
     }
+});
+
+function parseMontoInput(val) {
+    if (val == null || val === "") return NaN;
+    var s = String(val).trim().replace(/\./g, "").replace(",", ".");
+    return parseFloat(s) || NaN;
+}
+function updateCreditoStatusMsg() {
+    var $status = $("#credito-status-msg");
+    if (!$status.length) return;
+    var tipopago = parseInt($("select[name='Pago.TipoPago']").val(), 10) || parseInt($("#tipopago").val(), 10);
+    if (tipopago !== 4) { $status.hide(); return; }
+    var cred = parseFloat($("#total-credito").val());
+    var montoVal = $("#txtPago").val() || $("input[name='MontoPago']").val();
+    var monto = parseMontoInput(montoVal);
+    if (isNaN(cred) || cred < 0) { $status.hide(); return; }
+    if (montoVal === "" || isNaN(monto)) {
+        $status.removeClass("credito-ok credito-fail").addClass("credito-info").html("<i class=\"bi bi-info-circle\"></i> Ingrese el monto a abonar para verificar si tiene saldo suficiente.").show();
+        return;
+    }
+    if (monto <= cred) {
+        $status.removeClass("credito-fail credito-info").addClass("credito-ok").html("<i class=\"bi bi-check-circle-fill\"></i> Saldo suficiente").show();
+    } else {
+        $status.removeClass("credito-ok credito-info").addClass("credito-fail").html("<i class=\"bi bi-exclamation-circle-fill\"></i> Saldo insuficiente. Crédito disponible: " + (typeof formatNumberMoney === "function" ? formatNumberMoney(cred) : cred)).show();
+    }
+}
+$(document).on("input change", "#txtPago, input[name='MontoPago']", function () {
+    updateCreditoStatusMsg();
 });
 
 $(document).on("click", "#btnReservarPasaje", function () {
