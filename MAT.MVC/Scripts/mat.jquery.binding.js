@@ -225,6 +225,24 @@ $(document).on("keypress", "#txt-filter-cliente", function () {
     $("div#grid-clientes").load(url);
 });
 
+$(document).on("keyup", "#txt-filter-servicio", function () {
+    var filter = $(this).val();
+    var id = $("#guid-paquete").val();
+    $("div#grid-servicios").load("/Paquete/RenderGridServicios?id=" + id + "&filter=" + encodeURIComponent(filter));
+});
+
+$(document).on("keyup", "#txt-filter-precio", function () {
+    var filter = $(this).val();
+    var id = $("#guid-paquete").val();
+    $("div#grid-precios").load("/Paquete/RenderGridPrecios?id=" + id + "&filter=" + encodeURIComponent(filter));
+});
+
+$(document).on("keyup", "#txt-filter-adicional", function () {
+    var filter = $(this).val();
+    var id = $("#guid-paquete").val();
+    $("div#grid-adicionales").load("/Paquete/RenderGridAdicionales?id=" + id + "&filter=" + encodeURIComponent(filter));
+});
+
 // Handler de DataTable eliminado - ahora se usa sistema de checkboxes en autocomplete
 // $(document).on("click", "#grid-seleccionar-pasajero tbody tr.row-pasajero", function (e) { ... });
 

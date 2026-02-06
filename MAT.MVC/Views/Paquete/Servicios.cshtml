@@ -13,8 +13,8 @@
     }
     .search-wrapper input {
         width: 100%;
-        padding: 0.625rem 1rem;
-        padding-left: 2.5rem;
+        box-sizing: border-box;
+        padding: 0.625rem 1rem 0.625rem 2.25rem;
         border: 1px solid var(--border-color, #e5e7eb);
         border-radius: 0.5rem;
         font-size: 0.875rem;
@@ -30,10 +30,12 @@
     }
     .search-wrapper i {
         position: absolute;
-        left: 0.875rem;
+        left: 0.75rem;
         top: 50%;
         transform: translateY(-50%);
         color: var(--text-secondary, #9ca3af);
+        font-size: 0.75rem;
+        pointer-events: none;
     }
     .grid-container {
         min-height: 150px;

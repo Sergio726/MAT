@@ -2,37 +2,77 @@
 @using MAT.Enums
 @using MAT.Utilities
 @using MAT.Entities
-<table class="partial-grid mat-customtable">
+<style>
+    .grid-modal-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .grid-modal-table th {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: var(--bg-secondary, #f9fafb);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .grid-modal-table td {
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        color: var(--text-primary, #1f2937);
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .grid-modal-table tr:last-child td {
+        border-bottom: none;
+    }
+    .grid-modal-table tr:hover {
+        background: var(--bg-secondary, #f9fafb);
+    }
+    .btn-link-modern {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: var(--primary-color, #e91e63);
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .btn-link-modern:hover {
+        background: var(--primary-hover, #d81b60);
+        color: white;
+        text-decoration: none;
+    }
+    .btn-link-modern i {
+        color: white;
+    }
+</style>
+<table class="grid-modal-table">
     <thead>
-    <tr>
-        <th class="hidden">
-        </th>
-        <th>
-            @Html.Label("Descripción")
-        </th>
-        <th>
-        </th>       
-    </tr>
-        </thead>
-    <tbody>    
-@foreach (var item in Model) {
-    <tr>
-        <td class="hidden">
-            @item.PrecioId
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Descripcion)
-        </td>
-        <td>
-            <a href="#" id="btn-vincular-precio" data-precio="@item.PrecioId">
-                        <img src="/Images/link.png" width="32" height="32" title="Vincular Precio" /></a>            
-        </td>
-    </tr>
-}
-        </tbody>
+        <tr>
+            <th class="hidden"></th>
+            <th>Descripcion</th>
+            <th style="width: 60px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="hidden">@item.PrecioId</td>
+                <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
+                <td>
+                    <a href="#" id="btn-vincular-precio" data-precio="@item.PrecioId" class="btn-link-modern" title="Vincular Precio">
+                        <i class="bi bi-plus-lg"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
-<script type="text/javascript">
-    $(function () {
-        $("table tbody tr:odd").addClass("odd");
-    });
-</script>
