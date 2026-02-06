@@ -420,7 +420,7 @@
                     dropdownBtn: true
                 });
                 $("#DDPaqueteId").attr("data-id", "@Model.PaqueteID");
-                $("#DDPaqueteId").val("@Model.PaqueteNombre");
+                $("#DDPaqueteId").val(@Html.Raw(Json.Encode(Model.PaqueteNombre)));
                 $("#PaqueteId").val("@Model.PaqueteID");
                 break;
 
