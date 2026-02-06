@@ -498,8 +498,8 @@
                 dataType: "json",
                 success: function (data) {
                     if (data.Mensaje === "Done.") {
-                        confirm("Los datos se guardaron correctamente.", "Operación Exitosa");
-                        setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=@Model.ViajeID"; }, 1000);
+                        (window.alertSuccess || window.alert)("Los datos se guardaron correctamente.", "Operación Exitosa");
+                        setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=@Model.ViajeID"; }, 1500);
                     }
                     else {
                         (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
@@ -516,8 +516,8 @@
                 success: function (data) {
                     if (data.Mensaje === "Done.") {
                         var ViajeID = data.ID;
-                        confirm("Los datos se guardaron correctamente.", "Operación Exitosa");
-                        setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=" + ViajeID; }, 1000);
+                        (window.alertSuccess || window.alert)("Los datos se guardaron correctamente.", "Operación Exitosa");
+                        setTimeout(function () { location.href = "/Viaje/Edit/?sAction=detail&sViajeID=" + ViajeID; }, 1500);
                     }
                     else {
                         (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");

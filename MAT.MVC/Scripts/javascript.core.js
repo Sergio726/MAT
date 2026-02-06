@@ -109,11 +109,35 @@ this.alert = function (message, title) {
     $(document.body).append($div);
     $div.dialog({
         modal: true,
+        closeOnEscape: true,
+        resizable: false,
+        draggable: false,
+        dialogClass: "modern-alert-dialog",
+        open: function () {
+            var $dlg = $(this);
+            try {
+                var $w = $dlg.dialog("widget");
+                // Asegurar que el botón X cierre correctamente
+                $w.find(".ui-dialog-titlebar-close")
+                    .off("click.matAlertClose")
+                    .on("click.matAlertClose", function (e) {
+                        e.preventDefault();
+                        $dlg.dialog("close");
+                    });
+                // Dar estilo al botón Aceptar
+                var $btns = $w.find(".ui-dialog-buttonpane button");
+                $btns.addClass("btn btn-primary");
+            } catch (e) { }
+        },
+        close: function () {
+            var $dlg = $(this);
+            try { $dlg.dialog("destroy"); } catch (e) { }
+            try { $dlg.remove(); } catch (e) { }
+        },
         buttons: {
-            Ok: function () {
+            "Aceptar": function () {
                 var $dlg = $(this);
                 $dlg.dialog("close");
-                $dlg.remove();
             }
         }
     });

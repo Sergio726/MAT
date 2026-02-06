@@ -3,7 +3,44 @@
     var isDetail = ViewBag.Action == "detail";
 }
 
+<!-- Select2 for searchable dropdown -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/es.js"></script>
+
 <style>
+    /* Select2 custom styling */
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px;
+        padding-left: 0.5rem;
+        color: var(--text-primary, #1f2937);
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+    }
+
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        padding: 0.5rem;
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background: linear-gradient(135deg, #e91e63, #c2185b);
+    }
+
+    .select2-dropdown {
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.375rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
     .itinerario-section {
         margin-top: 2rem;
     }
@@ -237,7 +274,7 @@
                 </div>
                 <div class="itinerario-form-group">
                     <label>Hora Aprox.</label>
-                    <input type="text" id="txtItinerarioHora" class="time" placeholder="HH:MM" maxlength="5" />
+                    <input type="text" id="txtItinerarioHora" class="time-itinerario" placeholder="HH:MM" maxlength="5" />
                 </div>
                 <div class="itinerario-form-group">
                     <label>Duracion (min)</label>
@@ -304,8 +341,16 @@
             loadParadas();
         }
 
-        // Initialize time picker for itinerario
-        $("#txtItinerarioHora").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
+        // Initialize Select2 for searchable dropdown
+        $("#ddlItinerarioParada").select2({
+            placeholder: "Buscar parada...",
+            allowClear: true,
+            language: "es",
+            width: '100%'
+        });
+
+        // Initialize time picker for itinerario (using custom class to avoid main form validation)
+        $(".time-itinerario").timepicker({ 'scrollDefault': 'now', 'timeFormat': 'H:i' });
     });
 
     function loadParadas() {
@@ -321,6 +366,8 @@
                 $.each(paradasList, function (i, item) {
                     ddl.append('<option value="' + item.ItinerarioID + '">' + item.Nombre + '</option>');
                 });
+                // Refresh Select2 after loading options
+                ddl.trigger('change.select2');
             }
         });
     }
@@ -418,7 +465,7 @@
             success: function (data) {
                 if (data.Mensaje === "Done.") {
                     // Clear form
-                    $("#ddlItinerarioParada").val("");
+                    $("#ddlItinerarioParada").val("").trigger('change');
                     $("#txtItinerarioHora").val("");
                     $("#txtItinerarioDuracion").val("");
                     $("#txtItinerarioObservacion").val("");
@@ -508,7 +555,7 @@
                     loadParadas();
                     // Select the new parada
                     setTimeout(function () {
-                        $("#ddlItinerarioParada").val(data.ID);
+                        $("#ddlItinerarioParada").val(data.ID).trigger('change');
                     }, 500);
                 } else {
                     (window.alertError || window.alert)("Error al crear la parada: " + data.Mensaje, "Error");
