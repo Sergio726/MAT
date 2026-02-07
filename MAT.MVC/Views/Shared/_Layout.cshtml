@@ -114,175 +114,172 @@
                         <li class="active">
                             <a href="/Home/Index" data-bs-toggle="tooltip" data-bs-placement="right" title="Panel Principal">
                                 <i class="bi bi-house-door"></i>
-                                <span>Panel Principal</span>
+                                <span>Inicio</span>
                             </a>
                         </li>
 
-                        <!-- Components Submenu Level 1 -->
-                        <li class="hasSubmenu active">
-                            <a data-bs-toggle="collapse" href="#menu_components" id="btn_configuracion" role="button" aria-expanded="true" aria-controls="menu_components">
-                                <i class="bi bi-gear"></i>
-                                <span>Configuración</span>
+                        <!-- Nivel 1: Presupuestos -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_presupuestos" role="button" aria-expanded="false" aria-controls="menu_presupuestos">
+                                <i class="bi bi-file-earmark-text"></i>
+                                <span>Presupuestos</span>
                             </a>
-                           
-                            <ul class="collapse show" id="menu_components">
-                                <!-- Components Submenu Level 2 -->
-                                <!-- Presupuestos -->
-                                <li class="hasSubmenu">
-                                    <a data-bs-toggle="collapse" href="#menu_presupuestos" role="button" aria-expanded="false" aria-controls="menu_presupuestos">
-                                        <i class="bi bi-file-earmark-text"></i>
-                                        <span>Presupuestos</span>
+                            <ul class="collapse" id="menu_presupuestos">
+                                <li>
+                                    <a href="/Presupuesto/Index">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>Listado</span>
                                     </a>
-                                    <ul class="collapse" id="menu_presupuestos">
-                                        <li>
-                                            <a href="/Presupuesto/Index">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>Listado</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Presupuesto/Seguimiento">
-                                                <i class="bi bi-clipboard-data"></i>
-                                                <span>Seguimiento</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="hasSubmenu">
-                                    <a data-bs-toggle="collapse" href="#menu_clientes" role="button" aria-expanded="false" aria-controls="menu_clientes">
-                                        <i class="bi bi-people"></i>
-                                        <span>Clientes</span>
-                                    </a>
-                                    <ul class="collapse" id="menu_clientes">
-                                        <li>
-                                            <a href="/PersonaCliente/Create">
-                                                <i class="bi bi-person-plus"></i>
-                                                <span>Nuevo</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/PersonaCliente/Index">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>Listado</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="hasSubmenu">
-                                    <a data-bs-toggle="collapse" href="#menu_hoteles" role="button" aria-expanded="false" aria-controls="menu_hoteles">
-                                        <i class="bi bi-building"></i>
-                                        <span>Hoteles</span>
-                                    </a>
-                                    <ul class="collapse" id="menu_hoteles">
-                                        <li>
-                                            <a href="/Hotel/ABM">
-                                                <i class="bi bi-plus-square"></i>
-                                                <span>Nuevo</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Hotel/Index">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>Listado</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="hasSubmenu">
-                                    <a data-bs-toggle="collapse" href="#menu_transportes" role="button" aria-expanded="false" aria-controls="menu_transportes">
-                                        <i class="bi bi-bus-front"></i>
-                                        <span>Transportes</span>
-                                    </a>
-                                    <ul class="collapse" id="menu_transportes">
-                                        <li>
-                                            <a href="/Transporte/Index">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>Listado</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="hasSubmenu">
-                                    <a data-bs-toggle="collapse" href="#menu_servicios" role="button" aria-expanded="false" aria-controls="menu_servicios">
-                                        <i class="bi bi-tools"></i>
-                                        <span>Servicios</span>
-                                    </a>
-                                    <ul class="collapse" id="menu_servicios">
-                                        <li>
-                                            <a href="/Servicio/Create">
-                                                <i class="bi bi-plus-square"></i>
-                                                <span>Nuevo</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Servicio/Index">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>Listado</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="hasSubmenu">
-                                    <a data-bs-toggle="collapse" href="#menu_excursiones" role="button" aria-expanded="false" aria-controls="menu_excursiones">
-                                        <i class="bi bi-compass"></i>
-                                        <span>Excursiones</span>
-                                    </a>
-                                    <ul class="collapse" id="menu_excursiones">
-                                        <li>
-                                            <a href="/Excursion/Create">
-                                                <i class="bi bi-plus-square"></i>
-                                                <span>Nuevo</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Excursion/Index">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>Listado</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="hasSubmenu">
-                                    <a data-bs-toggle="collapse" href="#menu_precios" role="button" aria-expanded="false" aria-controls="menu_precios">
-                                        <i class="bi bi-currency-dollar"></i>
-                                        <span>Butacas</span>
-                                    </a>
-                                    <ul class="collapse" id="menu_precios">
-                                        <li>
-                                            <a href="/Precio/Index">
-                                                <i class="bi bi-eye"></i>
-                                                <span>Ver o Agregar</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="hasSubmenu">
-                                    <a data-bs-toggle="collapse" href="#menu_adicionales" role="button" aria-expanded="false" aria-controls="menu_adicionales">
-                                        <i class="bi bi-plus-circle"></i>
-                                        <span>Adicionales</span>
-                                    </a>
-                                    <ul class="collapse" id="menu_adicionales">
-                                        <li>
-                                            <a href="/Adicional/Create">
-                                                <i class="bi bi-plus-square"></i>
-                                                <span>Nuevo</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Adicional/Index">
-                                                <i class="bi bi-list-ul"></i>
-                                                <span>Listado</span>
-                                            </a>
-                                        </li>
-                                    </ul>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="javascript: showCotizador(); return false;">
-                                        <i class="bi bi-calculator"></i>
-                                        <span>Cotizador</span>
+                                    <a href="/Presupuesto/Seguimiento">
+                                        <i class="bi bi-clipboard-data"></i>
+                                        <span>Seguimiento</span>
                                     </a>
                                 </li>
                             </ul>
+                        </li>
+                        <!-- Nivel 1: Clientes -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_clientes" role="button" aria-expanded="false" aria-controls="menu_clientes">
+                                <i class="bi bi-people"></i>
+                                <span>Clientes</span>
+                            </a>
+                            <ul class="collapse" id="menu_clientes">
+                                <li>
+                                    <a href="/PersonaCliente/Create">
+                                        <i class="bi bi-person-plus"></i>
+                                        <span>Nuevo</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/PersonaCliente/Index">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>Listado</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Nivel 1: Hoteles -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_hoteles" role="button" aria-expanded="false" aria-controls="menu_hoteles">
+                                <i class="bi bi-building"></i>
+                                <span>Hoteles</span>
+                            </a>
+                            <ul class="collapse" id="menu_hoteles">
+                                <li>
+                                    <a href="/Hotel/ABM">
+                                        <i class="bi bi-plus-square"></i>
+                                        <span>Nuevo</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/Hotel/Index">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>Listado</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Nivel 1: Transportes -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_transportes" role="button" aria-expanded="false" aria-controls="menu_transportes">
+                                <i class="bi bi-bus-front"></i>
+                                <span>Transportes</span>
+                            </a>
+                            <ul class="collapse" id="menu_transportes">
+                                <li>
+                                    <a href="/Transporte/Index">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>Listado</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Nivel 1: Servicios -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_servicios" role="button" aria-expanded="false" aria-controls="menu_servicios">
+                                <i class="bi bi-tools"></i>
+                                <span>Servicios</span>
+                            </a>
+                            <ul class="collapse" id="menu_servicios">
+                                <li>
+                                    <a href="/Servicio/Create">
+                                        <i class="bi bi-plus-square"></i>
+                                        <span>Nuevo</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/Servicio/Index">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>Listado</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Nivel 1: Excursiones -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_excursiones" role="button" aria-expanded="false" aria-controls="menu_excursiones">
+                                <i class="bi bi-compass"></i>
+                                <span>Excursiones</span>
+                            </a>
+                            <ul class="collapse" id="menu_excursiones">
+                                <li>
+                                    <a href="/Excursion/Create">
+                                        <i class="bi bi-plus-square"></i>
+                                        <span>Nuevo</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/Excursion/Index">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>Listado</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Nivel 1: Butacas -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_precios" role="button" aria-expanded="false" aria-controls="menu_precios">
+                                <i class="bi bi-currency-dollar"></i>
+                                <span>Butacas</span>
+                            </a>
+                            <ul class="collapse" id="menu_precios">
+                                <li>
+                                    <a href="/Precio/Index">
+                                        <i class="bi bi-eye"></i>
+                                        <span>Ver o Agregar</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Nivel 1: Adicionales -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_adicionales" role="button" aria-expanded="false" aria-controls="menu_adicionales">
+                                <i class="bi bi-plus-circle"></i>
+                                <span>Adicionales</span>
+                            </a>
+                            <ul class="collapse" id="menu_adicionales">
+                                <li>
+                                    <a href="/Adicional/Create">
+                                        <i class="bi bi-plus-square"></i>
+                                        <span>Nuevo</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/Adicional/Index">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>Listado</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Nivel 1: Cotizador -->
+                        <li>
+                            <a href="#" onclick="javascript: showCotizador(); return false;">
+                                <i class="bi bi-calculator"></i>
+                                <span>Cotizador</span>
+                            </a>
                         </li>
                     </ul>
                 </div>

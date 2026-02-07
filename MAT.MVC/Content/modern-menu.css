@@ -1,8 +1,9 @@
-/* Estilos modernos para el menú lateral SaaS - Marco Antonio Tours - Flat Design */
+/* Estilos modernos para el menú lateral SaaS - Marco Antonio Tours - Flat Design
+   Paleta: variables en saas-variables.css (--menu-bg, --menu-active-accent, etc.) */
 #menu {
     width: 260px !important;
     margin-left: 0 !important;
-    background: #2b2d42 !important;
+    background: var(--menu-bg, #1e293b) !important;
     box-shadow: none !important;
     border-right: none !important;
     float: none !important;
@@ -89,7 +90,7 @@
     display: flex !important;
     align-items: center !important;
     padding: 12px 20px !important;
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: var(--menu-text, rgba(255, 255, 255, 0.75)) !important;
     text-decoration: none !important;
     transition: all 0.2s ease;
     font-size: 0.95rem;
@@ -151,12 +152,12 @@
 }
 
 #menu .menu-0 > li > a:hover i {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: var(--menu-text-hover, rgba(255, 255, 255, 0.95)) !important;
 }
 
 /* Fondo sutil para padre hasSubmenu cuando está expandido */
 #menu .menu-0 > li.hasSubmenu > a[aria-expanded="true"] {
-    background: rgba(255, 255, 255, 0.05) !important;
+    background: var(--menu-hover-bg, rgba(255, 255, 255, 0.06)) !important;
 }
 
 #menu .menu-0 > li.hasSubmenu > a::after {
@@ -248,7 +249,7 @@
     font-style: normal;
     font-weight: normal !important;
     display: inline-block;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--menu-submenu-text, rgba(255, 255, 255, 0.6));
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse.show > li > a:hover,
@@ -260,7 +261,7 @@
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li > a:hover i {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: var(--menu-submenu-text-hover, rgba(255, 255, 255, 0.95)) !important;
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > a::after {
@@ -290,7 +291,7 @@
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > ul.collapse > li > a {
     padding-left: 4rem !important;
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.55) !important;
+    color: var(--menu-submenu-text, rgba(255, 255, 255, 0.55)) !important;
     border-radius: 8px !important;
     margin: 2px 10px !important;
     background: transparent !important;
@@ -299,8 +300,8 @@
 }
 
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > ul.collapse > li > a:hover {
-    background: rgba(255, 255, 255, 0.05) !important;
-    color: rgba(255, 255, 255, 0.9) !important;
+    background: var(--menu-hover-bg, rgba(255, 255, 255, 0.05)) !important;
+    color: var(--menu-submenu-text-hover, rgba(255, 255, 255, 0.95)) !important;
     box-shadow: none !important;
 }
 
@@ -356,9 +357,9 @@
 /* Hover - solo aplicar cuando NO está en transición */
 #menu .menu-0 ul.show li a:hover,
 #menu .menu-0 ul.collapse.show li a:hover {
-    color: rgba(255, 255, 255, 0.95) !important;
+    color: var(--menu-submenu-text-hover, rgba(255, 255, 255, 0.95)) !important;
     text-decoration: none !important;
-    background-color: rgba(255, 255, 255, 0.08) !important;
+    background-color: var(--menu-submenu-hover-bg, rgba(255, 255, 255, 0.08)) !important;
 }
 
 /* =====================================================
@@ -393,10 +394,10 @@
 #menu .menu-0 > li.hasSubmenu > ul.show > li.submenu-active > a,
 #menu .menu-0 ul li.submenu-active > a,
 #menu .menu-0 li.submenu-active > a {
-    background: rgba(230, 51, 117, 0.2) !important;
-    color: #e63375 !important;
+    background: var(--menu-active-bg, rgba(230, 51, 117, 0.2)) !important;
+    color: var(--menu-active-accent, var(--brand-primary)) !important;
     font-weight: 600 !important;
-    border-left: 3px solid #e63375 !important;
+    border-left: 3px solid var(--menu-active-accent, var(--brand-primary)) !important;
     padding-left: calc(3rem - 3px) !important;
 }
 
@@ -404,15 +405,15 @@
 #menu .menu-0 > li.hasSubmenu > ul.show > li.submenu-active > a i,
 #menu .menu-0 ul li.submenu-active > a i,
 #menu .menu-0 li.submenu-active > a i {
-    color: #e63375 !important;
+    color: var(--menu-active-accent, var(--brand-primary)) !important;
 }
 
 /* Nivel 3 activo */
 #menu .menu-0 > li.hasSubmenu > ul > li.hasSubmenu > ul > li.submenu-active > a {
-    background: rgba(230, 51, 117, 0.2) !important;
-    color: #e63375 !important;
+    background: var(--menu-active-bg, rgba(230, 51, 117, 0.2)) !important;
+    color: var(--menu-active-accent, var(--brand-primary)) !important;
     font-weight: 600 !important;
-    border-left: 3px solid #e63375 !important;
+    border-left: 3px solid var(--menu-active-accent, var(--brand-primary)) !important;
     padding-left: calc(4rem - 3px) !important;
 }
 

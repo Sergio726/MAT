@@ -1605,32 +1605,9 @@ input.buttonAdd_29px:hover {
     position: relative;
 }
 
-/* Bullet point indicator for submenu items */
-#menu .menu-0 li.hasSubmenu ul li a::before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 5px;
-    height: 5px;
-    background: #999;
-    border-radius: 50%;
-    transition: background 0.2s ease;
-}
-
-#menu .menu-0 li.hasSubmenu ul li a:hover::before,
-#menu .menu-0 li.hasSubmenu ul li.active a::before {
-    background: #8ec657;
-}
-
 /* Nested submenu (level 2) additional indentation */
 #menu .menu-0 li.hasSubmenu ul li.hasSubmenu ul li a {
     padding-left: 35px !important;
-}
-
-#menu .menu-0 li.hasSubmenu ul li.hasSubmenu ul li a::before {
-    left: 23px;
 }
 
 /* =====================================================
@@ -1682,12 +1659,6 @@ input.buttonAdd_29px:hover {
     color: #fff !important;
     font-weight: 600;
     border-left: 3px solid #8ec657;
-}
-
-#menu .menu-0 ul li.submenu-active > a::before {
-    background: #8ec657 !important;
-    width: 6px;
-    height: 6px;
 }
 
 /* Ensure parent menu stays expanded when child is active */
