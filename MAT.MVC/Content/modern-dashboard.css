@@ -364,11 +364,13 @@
     font-weight: 600 !important;
 }
 
-/* Días deshabilitados (sin viajes disponibles) */
+/* Días deshabilitados (sin viajes disponibles) - sin opacidad para que los números se vean bien */
 .modern-calendar-container .ui-datepicker-calendar td.ui-state-disabled a,
-.modern-calendar-container .ui-datepicker-calendar td.ui-state-disabled span {
+.modern-calendar-container .ui-datepicker-calendar td.ui-state-disabled span,
+.modern-calendar-container .ui-datepicker-calendar td.ui-datepicker-unselectable.ui-state-disabled a,
+.modern-calendar-container .ui-datepicker-calendar td.ui-datepicker-unselectable.ui-state-disabled span {
     color: #9ca3af !important;
-    opacity: 0.6 !important;
+    opacity: 1 !important;
     font-weight: normal !important;
     cursor: not-allowed !important;
 }
@@ -1487,6 +1489,7 @@ div.bnn_floating-banner.hidden {
    Para estados: reservahotel (6), reservapasajehotel (8), prereservahotel (9)
    ============================================ */
 
+/* H = Hotel asignado. Para estados: reservahotel (6), reservapasajehotel (8), prereservahotel (9) */
 #panel-bus .piso_superior a.reservahotel::after,
 #panel-bus .piso_inferior a.reservahotel::after,
 #panel-bus .piso_superior_edicion a.reservahotel::after,
@@ -1586,7 +1589,7 @@ div.bnn_floating-banner.hidden {
 #panel-bus .new_piso_superior a.señaIncompleta::before,
 #panel-bus .new_piso_inferior a.señaIncompleta::before {
     border-color: #8b5cf6 !important;
-    background: #8b5cf6 !important; /* Fondo violeta igual que señado */
+    background: #8b5cf6 !important;
     opacity: 1 !important;
     box-shadow: 0 2px 4px rgba(139, 92, 246, 0.4) !important;
 }
@@ -1608,9 +1611,7 @@ div.bnn_floating-banner.hidden {
     font-weight: 700 !important;
 }
 
-/* Badge "!" para SenaIncompleta - Esquina superior derecha, pequeño */
-/* NOTA: Si la butaca también tiene hotel, el badge "H" se muestra centrado y el "!" en esquina */
-/* Ambos pueden coexistir porque el "H" está centrado y el "!" en esquina */
+/* Badge "!" para SenaIncompleta - esquina superior derecha */
 #panel-bus .piso_superior a.SenaIncompleta::after,
 #panel-bus .piso_inferior a.SenaIncompleta::after,
 #panel-bus .piso_superior_edicion a.SenaIncompleta::after,
@@ -1627,27 +1628,24 @@ div.bnn_floating-banner.hidden {
     position: absolute !important;
     top: 2px !important;
     right: 2px !important;
-    background: #facc15 !important; /* Fondo amarillo */
-    color: #dc2626 !important; /* Texto rojo */
+    background: #facc15 !important;
+    color: #dc2626 !important;
     font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif !important;
-    font-size: 0.625rem !important; /* 10px - más chico que "H" */
+    font-size: 0.625rem !important;
     font-weight: 700 !important;
-    width: 10px !important; /* Más chico que badge "H" */
-    height: 10px !important; /* Más chico que badge "H" */
-    border: 2px solid #dc2626 !important; /* Borde rojo */
+    width: 12px !important;
+    height: 12px !important;
+    border: 2px solid #dc2626 !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    z-index: 15 !important; /* Por encima del badge "H" si existe */
+    z-index: 15 !important;
     box-shadow: 0 1px 3px rgba(220, 38, 38, 0.5) !important;
     line-height: 1 !important;
     padding: 0 !important;
     pointer-events: none !important;
 }
-
-/* Si SenaIncompleta tiene hotel, el badge "H" debe estar centrado (ya definido arriba) */
-/* El badge "!" se mantiene en esquina con z-index más alto */
 
 /* ============================================
    TABLA DE REFERENCIAS - Diseño Compacto y Moderno
@@ -1973,11 +1971,11 @@ div.bnn_floating-banner.hidden {
     padding: 0 !important;
 }
 
-/* Fondo violeta para SenaIncompleta en referencias (igual que señado) */
+/* Fondo violeta para SenaIncompleta en referencias */
 #tabla-referencia .referencia-item a.SenaIncompleta::before,
 #tabla-referencia .referencia-item a.señaIncompleta::before {
     border-color: #8b5cf6 !important;
-    background: #8b5cf6 !important; /* Fondo violeta igual que señado */
+    background: #8b5cf6 !important;
     border-width: 2px !important;
     border-style: solid !important;
 }
@@ -1990,20 +1988,20 @@ div.bnn_floating-banner.hidden {
     box-shadow: 0 2px 4px rgba(139, 92, 246, 0.4) !important;
 }
 
-/* Badge "!" en referencias - Esquina superior derecha, pequeño */
+/* Badge "!" en referencias para Seña Incompleta */
 #tabla-referencia .referencia-item a.SenaIncompleta::after,
 #tabla-referencia .referencia-item a.señaIncompleta::after {
     content: '!' !important;
     position: absolute !important;
     top: 2px !important;
     right: 2px !important;
-    background: #facc15 !important; /* Fondo amarillo */
-    color: #dc2626 !important; /* Texto rojo */
-    font-size: 0.5rem !important; /* 8px - más chico que "H" */
+    background: #facc15 !important;
+    color: #dc2626 !important;
+    font-size: 0.5rem !important;
     font-weight: 700 !important;
-    width: 8px !important; /* Más chico que badge "H" */
-    height: 8px !important; /* Más chico que badge "H" */
-    border: 1.5px solid #dc2626 !important; /* Borde rojo */
+    width: 8px !important;
+    height: 8px !important;
+    border: 1.5px solid #dc2626 !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
@@ -7475,16 +7473,18 @@ ul.viajes-lista li .viaje-container h4 {
 }
 
 /* Dias de otros meses (grises) */
-.ui-datepicker-calendar td.ui-datepicker-other-month span,
-.ui-datepicker-calendar td.ui-datepicker-unselectable span {
+.ui-datepicker-calendar td.ui-datepicker-other-month span {
     color: var(--text-muted, #9ca3af) !important;
     opacity: 0.5 !important;
 }
 
-/* Dias no seleccionables */
-.ui-datepicker-calendar td.ui-state-disabled span {
+/* Dias no seleccionables (ui-datepicker-unselectable, ui-state-disabled) - sin opacidad para que los números se vean */
+.ui-datepicker-calendar td.ui-datepicker-unselectable span,
+.ui-datepicker-calendar td.ui-datepicker-unselectable a,
+.ui-datepicker-calendar td.ui-state-disabled span,
+.ui-datepicker-calendar td.ui-state-disabled a {
     color: var(--text-muted, #9ca3af) !important;
-    opacity: 0.4 !important;
+    opacity: 1 !important;
     cursor: not-allowed !important;
 }
 

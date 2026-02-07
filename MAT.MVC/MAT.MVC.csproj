@@ -612,7 +612,6 @@
     <Content Include="Fonts\glyphicons-regular.otf" />
     <Content Include="Fonts\glyphicons-regular.ttf" />
     <Content Include="Content\mat.listadosimple.print.css" />
-    <Content Include="Documents\Manual.pdf" />
     <Content Include="Content\mat.planillaprint.css" />
     <Content Include="Content\mat.manifiesto.print.css" />
     <Content Include="Content\mat.tblVinculacionMenor.css" />

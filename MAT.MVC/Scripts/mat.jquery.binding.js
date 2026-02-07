@@ -2025,11 +2025,6 @@ $(document).on("click", "#btn-cerrar-ventana-adicionales", function () {
     window.location.reload();
 });
 
-$(document).on("click", "#btn-document-help", function () {
-    var url = "/Documents/Manual.pdf";
-    window.open(url, '_blank');
-});
-
 $(document).on("click", ".paging-habitaciones", function () {
     var search = $(this).data("search");
     var page = $(this).data("page");

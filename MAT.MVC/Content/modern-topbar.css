@@ -13,12 +13,91 @@
     width: 100%;
 }
 
+/* Header unificado: 3 columnas - logo (izq) | breadcrumb (centro) | perfil (der) */
+.navbar.main .wrapper--unified {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Columna 1: Logo - alineado a la izquierda */
+.navbar.main .wrapper--unified .user-profile-logo {
+    margin-left: 0;
+    flex-shrink: 0;
+}
+
+/* Columna 2: Breadcrumb - ocupa el centro, contenido alineado a la izquierda */
+.navbar.main .wrapper--unified .navbar-breadcrumb {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+}
+
+/* Columna 3: Menú de usuario - alineado a la derecha */
+.navbar.main .wrapper--unified .user-profile-container {
+    flex-shrink: 0;
+    margin-left: auto;
+    width: auto;
+}
+
+/* Topnav vacío: no ocupa espacio en la barra unificada */
+.navbar.main .wrapper--unified .topnav.pull-right {
+    display: none;
+}
+
+/* Breadcrumb dentro del navbar: sin caja propia, mismo nivel visual */
+.navbar-breadcrumb .content-header {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    min-height: 0;
+}
+
+.navbar-breadcrumb .content-header-left {
+    flex: 1;
+    min-width: 0;
+    gap: 0.75rem;
+}
+
+.navbar-breadcrumb .btn-back {
+    margin-left: 0;
+}
+
+/* Evitar que el breadcrumb largo empuje el perfil */
+.navbar-breadcrumb .breadcrumb-nav {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.navbar-breadcrumb .breadcrumb-nav .breadcrumb {
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+.navbar-breadcrumb .breadcrumb-nav .breadcrumb-item {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.navbar-breadcrumb .breadcrumb-nav .breadcrumb-item.active {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .user-profile-container {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100%;
     gap: 1rem;
+}
+
+.navbar.main .wrapper--unified .user-profile-container {
+    justify-content: flex-end;
 }
 
 .user-profile-logo {
@@ -464,6 +543,15 @@
 
     .navbar.main .wrapper {
         gap: 0.5rem;
+    }
+
+    .navbar.main .wrapper--unified .navbar-breadcrumb {
+        margin: 0 0.25rem;
+        min-width: 0;
+    }
+
+    .navbar.main .wrapper--unified .user-profile-logo {
+        max-width: 100px;
     }
 
     .user-profile-container {

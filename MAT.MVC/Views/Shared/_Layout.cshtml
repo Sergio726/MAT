@@ -70,27 +70,29 @@
     <!-- Main Container Fluid -->
     <div class="container-fluid fixed menu-left">
 
-        <!-- Top navbar (note: add class "navbar-hidden" to close the navbar by default) -->
+        <!-- Top navbar unificado: logo + breadcrumb + perfil -->
         <div class="navbar main hidden-print">
 
-            <!-- Wrapper -->
-            <div class="wrapper">
+            <div class="wrapper wrapper--unified">
                 <!-- Mobile Menu Toggle Button -->
                 <button type="button" class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menú">
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                 </button>
+                <!-- Logo -->
+                <img src="~/Images/mat header.png" alt="Marco Antonio Tours" class="user-profile-logo" />
+                <!-- Breadcrumb (Volver + ruta) integrado en la barra -->
+                <div class="navbar-breadcrumb">
+                    @Html.Partial("_Breadcrumb")
+                </div>
                 <!-- User Profile -->
                 <div class="user-profile-container">
-                    <img src="~/Images/mat header.png" alt="Marco Antonio Tours" class="user-profile-logo" />
                     @Html.Partial("_LoginPartial")
                 </div>
-                <!-- Menu Toggle Button -->
                 <ul class="topnav pull-right">
                 </ul>
             </div>
-            <!-- // Wrapper END -->
 
         </div>
         <!-- Top navbar END -->
@@ -286,9 +288,8 @@
             </div>
             <!-- // Sidebar Menu END -->
 
-            <!-- Content -->
+            <!-- Content (breadcrumb ya está en el header unificado) -->
             <div id="content">
-                @Html.Partial("_Breadcrumb")
                 @Html.Partial("_Alerts")
                 @RenderBody()
             </div>

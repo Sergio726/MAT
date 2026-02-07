@@ -9130,18 +9130,6 @@ div.glyphicons.glyphicon-primary i:before {
     margin-top: 1em;
 }
 
-#btn-document-help {
-    position:absolute;
-    top:0;
-    right:3em;
-}
-
-    #btn-document-help img {
-        width:32px;
-    }
-        #btn-document-help img:hover {
-            opacity:0.4;
-        }
 /*Styles for flayer Lugares disponibles*/
 
 .bnn_floating-banner {
