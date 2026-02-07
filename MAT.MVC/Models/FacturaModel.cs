@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -86,6 +86,8 @@ namespace MAT.MVC.Models
         public string PaqueteDescripcion { get; set; }
         public string ViajeDescripcion { get; set; }
         public string ClienteFullName { get; set; }
+        /// <summary>Cuando Estado = Nota de crédito (6), ID de la nota asociada (desde MovimientoCuenta).</summary>
+        public Guid? NotaID { get; set; }
     }
 
     public class FacturaDetalle {
@@ -480,6 +482,10 @@ namespace MAT.MVC.Models
                      if (_reader["PaqueteDescripcion"].ToString() != "")
                     {
                         Factura.PaqueteDescripcion = _reader["PaqueteDescripcion"].ToString();
+                    }
+                    if (_reader["NotaID"] != DBNull.Value && _reader["NotaID"] != null && !string.IsNullOrEmpty(_reader["NotaID"].ToString()))
+                    {
+                        Factura.NotaID = new Guid(_reader["NotaID"].ToString());
                     }
                      ListFactura.Add(Factura);
                 }

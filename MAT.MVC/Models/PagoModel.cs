@@ -1,4 +1,4 @@
-﻿using MAT.MVC.Common;
+using MAT.MVC.Common;
 using MAT.Services;
 using MAT.Utilities;
 using System;
@@ -24,7 +24,8 @@ namespace MAT.MVC.Models
         public string Vendedor { get; set; }
         public string Moneda { get; set; }
         public string MonedaPaquete { get; set; }
-                
+        /// <summary>True cuando el pago fue cancelado por una nota de crédito (MontoRecibido = 0).</summary>
+        public bool CanceladoPorNotaCredito { get; set; }
     }
 
     public class PagoDetalle {
@@ -34,7 +35,8 @@ namespace MAT.MVC.Models
         public string MonedaEquivalente { get; set; }
         public decimal Cotizacion { get; set; }
         public string Fecha { get; set; }
-
+        /// <summary>True cuando el pago fue cancelado por una nota de crédito (MontoRecibido = 0).</summary>
+        public bool CanceladoPorNotaCredito { get; set; }
     }
 
     public class PagoMethod
@@ -155,21 +157,31 @@ namespace MAT.MVC.Models
         public static PagoDetalle GetPagoDetalleByPagoID(Guid PagoID)
         {
             SqlParameter[] dbParams = new SqlParameter[]
-                    {                    
-                        DBHelper.MakeParam("@PagoID", SqlDbType.UniqueIdentifier, 0, PagoID)
-                    };
-            DataSet ds = DBHelper.ExecuteDataSet("dbo.usp_MAT_PagoDetalle_GetByPagoID", dbParams);
-            PagoDetalle oPagoDetalle = new PagoDetalle();
-            foreach (DataRow dr in ds.Tables[0].Rows)
             {
-                oPagoDetalle.MontoRecibido = Convert.ToDecimal(dr["MontoRecibido"]);
-                oPagoDetalle.MonedaRecibida = dr["MonedaRecibida"].ToString();
-                oPagoDetalle.MontoEquivalente = Convert.ToDecimal(dr["MontoEquivalente"]);
-                oPagoDetalle.MonedaEquivalente = dr["MonedaEquivalente"].ToString();
-                oPagoDetalle.Cotizacion = Convert.ToDecimal(dr["Cotizacion"]);
-                oPagoDetalle.Fecha = dr["Fecha"].ToString();
+                DBHelper.MakeParam("@PagoID", SqlDbType.UniqueIdentifier, 0, PagoID)
+            };
+            DataSet ds = DBHelper.ExecuteDataSet("dbo.usp_MAT_PagoDetalle_GetByPagoID", dbParams);
+            PagoDetalle oPagoDetalle = new PagoDetalle
+            {
+                MonedaRecibida = "",
+                MonedaEquivalente = "",
+                Fecha = ""
+            };
+            if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                DataRow dr = ds.Tables[0].Rows[0];
+                oPagoDetalle.MontoRecibido = dr["MontoRecibido"] != DBNull.Value && dr["MontoRecibido"] != null ? Convert.ToDecimal(dr["MontoRecibido"]) : 0;
+                oPagoDetalle.MonedaRecibida = dr["MonedaRecibida"] != null && dr["MonedaRecibida"] != DBNull.Value ? dr["MonedaRecibida"].ToString() : "";
+                oPagoDetalle.MontoEquivalente = dr["MontoEquivalente"] != DBNull.Value && dr["MontoEquivalente"] != null ? Convert.ToDecimal(dr["MontoEquivalente"]) : 0;
+                oPagoDetalle.MonedaEquivalente = dr["MonedaEquivalente"] != null && dr["MonedaEquivalente"] != DBNull.Value ? dr["MonedaEquivalente"].ToString() : "";
+                oPagoDetalle.Cotizacion = dr["Cotizacion"] != DBNull.Value && dr["Cotizacion"] != null ? Convert.ToDecimal(dr["Cotizacion"]) : 0;
+                oPagoDetalle.Fecha = dr["Fecha"] != null && dr["Fecha"] != DBNull.Value ? dr["Fecha"].ToString() : "";
+                oPagoDetalle.CanceladoPorNotaCredito = oPagoDetalle.MontoRecibido == 0;
             }
-
+            else
+            {
+                oPagoDetalle.CanceladoPorNotaCredito = true;
+            }
             return oPagoDetalle;
         }
 

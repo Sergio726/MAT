@@ -80,6 +80,12 @@
                             <i class="bi bi-eye"></i>
                         </a>
                     }
+                    else if (factura.NotaID.HasValue)
+                    {
+                        <a href="#" class="btn-factura-detail btn-ver-nota-credito" data-notaid="@factura.NotaID.Value" title="Ver nota de crédito">
+                            <i class="bi bi-credit-card-2-front"></i>
+                        </a>
+                    }
                 </td>
             </tr>
         }

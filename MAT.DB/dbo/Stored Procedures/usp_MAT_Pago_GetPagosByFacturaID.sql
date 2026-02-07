@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Pago_GetPagosByFacturaID](@FacturaID uniqueidentifier)
+CREATE PROCEDURE [dbo].[usp_MAT_Pago_GetPagosByFacturaID](@FacturaID uniqueidentifier)
 AS
 /*-----------------------------------------------------------
 Author:    Garcia Sergio 
@@ -7,6 +7,7 @@ Description:  Get Pagos by FacturaID
 
 2017-10-06	Garcia Sergio: add column Vendedor
 2018-05-01	Garcia Sergio: add column MonedaTipo
+2026-02	OUTER APPLY para MonedaPaquete: facturas anuladas con Nota de crédito no tienen Pasaje; así se listan igual sus pagos.
 -----------------------------------------------------------*/
 
 	SET nocount, xact_abort ON; 
@@ -21,7 +22,8 @@ BEGIN
 			TipoPagoDescripcion = tp.Descripcion,
 			Vendedor = per.Nombre + ' ' + per.Apellido,
 			Moneda = isnull(mt.Codigo,'ARS'),
-			MonedaPaquete = mp.Codigo
+			MonedaPaquete = mp.Codigo,
+			CanceladoPorNotaCredito = case when pd.PagoID is not null and isnull(pd.MontoRecibido, 0) = 0 then 1 else 0 end
 	from dbo.MovimientoCuenta mc
 	inner join dbo.Pago p
 		on mc.PagoID = p.PagoID
@@ -33,7 +35,7 @@ BEGIN
 		on mt.Id = pd.MontoRecibidoMonedaTipo
 	left join dbo.Persona per
 		on p.VendedorId = per.PersonaID
-	cross apply(
+	outer apply(
 		select top 1 mot.Codigo 
 		from dbo.Pasaje pj
 		inner join dbo.Viaje v

@@ -4069,6 +4069,20 @@ div.bnn_floating-banner.hidden {
     flex-wrap: wrap;
 }
 
+/* Leyenda cuando el pago fue cancelado por nota de crédito */
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle.modern-pago-cancelado-nc {
+    color: var(--text-secondary, #64748b);
+    font-size: 0.9rem;
+    padding: 0.85rem;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 0.65rem;
+}
+.ui-dialog.mat-pagos-dialog .modern-pago-detalle.modern-pago-cancelado-nc i {
+    color: #d97706;
+    margin-right: 0.35rem;
+}
+
 /* Responsive (mobile): ocultar columnas menos críticas para que la tabla no se ensanche */
 @media (max-width: 768px) {
     /* # */

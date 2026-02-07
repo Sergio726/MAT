@@ -1023,8 +1023,8 @@
     </ConfigurationOptionsElement>
   </SchemaCompareSettingsService>
   <SchemaCompareViewSettings>
-    <GroupBy>2</GroupBy>
-    <ZoomLevel>100</ZoomLevel>
+    <GroupBy>0</GroupBy>
+    <ZoomLevel>102</ZoomLevel>
     <Filter>Equals_Objects,Not_Supported_Deploy</Filter>
   </SchemaCompareViewSettings>
   <ExcludedSourceElements>

@@ -1,4 +1,4 @@
-﻿@if (ViewBag.Error != null)
+@if (ViewBag.Error != null)
 {
     <div class="modern-alert-error">
         <i class="bi bi-exclamation-circle"></i>
@@ -17,7 +17,7 @@
         var table = $tbl.DataTable({
             "columnDefs": [
                 {
-                    "targets": [8,9],
+                    "targets": [8,9,10],
                     "orderable": false
                 },
             ]
@@ -58,23 +58,24 @@
             url: "/Pago/GetPagoDetalleByPagoID",
             data: { PagoID: PagoID },
             success: function (data) {
-                
-                var _data = {
-                    "MontoRecibido": formatNumberMoney(data.MontoRecibido),
-                    "MonedaRecibida": data.MonedaRecibida.trim(),
-                    "MontoEquivalente": formatNumberMoney(data.MontoEquivalente),
-                    "MonedaEquivalente": data.MonedaEquivalente.trim(),
-                    "Cotizacion": formatNumberMoney(data.Cotizacion),
-                    "Fecha": data.Fecha
+                var _html;
+                if (data.CanceladoPorNotaCredito) {
+                    _html = '<div class="modern-pago-detalle modern-pago-cancelado-nc"><i class="bi bi-x-circle"></i> Pago cancelado por nota de crédito</div>';
+                } else {
+                    var _data = {
+                        "MontoRecibido": formatNumberMoney(data.MontoRecibido),
+                        "MonedaRecibida": (data.MonedaRecibida || "").trim(),
+                        "MontoEquivalente": formatNumberMoney(data.MontoEquivalente),
+                        "MonedaEquivalente": (data.MonedaEquivalente || "").trim(),
+                        "Cotizacion": formatNumberMoney(data.Cotizacion),
+                        "Fecha": data.Fecha || ""
+                    };
+                    _html = $("#divPagoDetalle").html().trim().render(_data);
                 }
-                var _html = $("#divPagoDetalle").html().trim().render(_data);
                 $("#" + PagoID).html(_html);
                 $("#" + PagoID).removeClass("modern-loading-container");
-
             }
         });
-
-        // return  $("#divPagoMoreDetails").html().trim();
     }
 </script>
 
@@ -114,6 +115,7 @@
             <th>Vendedor</th>
             <th>Monto</th>
             <th>Moneda</th>
+            <th>Estado</th>
             <th></th>
             <th></th>
         </tr>
@@ -187,6 +189,18 @@
                 <span class="mat-badge @monedaClass">@m</span>
             </td>
             <td>
+                @if (item.CanceladoPorNotaCredito)
+                {
+                    <span class="mat-badge mat-badge--pastel-amber" title="Pago cancelado por nota de crédito">
+                        <i class="bi bi-info-circle"></i> Cancelado por N.C.
+                    </span>
+                }
+                else
+                {
+                    <span class="mat-empty" aria-label="Vigente">—</span>
+                }
+            </td>
+            <td>
                 <a href="javascript:cancelarPago('@item.PagoID','@ViewBag.FacturaID');"
                    id="lnkCancelarPago"
                    class="modern-btn-icon modern-btn-icon-danger mat-pago-cancel"
@@ -202,7 +216,7 @@
     <tfoot>
         <tr>
             <th>Total</th>
-            <th colspan="5"></th>
+            <th colspan="6"></th>
             @if (Model.Count() > 0)
             {
                 <th colspan="4">

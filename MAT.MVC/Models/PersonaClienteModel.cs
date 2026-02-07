@@ -45,6 +45,7 @@ namespace MAT.MVC.Models
     {
         public Guid ClienteID { get; set; }
         public string FullName { get; set; }
+        public string Dni { get; set; }
         public decimal Monto { get; set; }
         public DateTime? UltimaFecha { get; set; }
     }
@@ -269,6 +270,7 @@ namespace MAT.MVC.Models
                     PersonaCliente_CreditoClienteModel _item = new PersonaCliente_CreditoClienteModel();
                     _item.ClienteID = new Guid(_reader["ClienteID"].ToString());
                     _item.FullName = _reader["FullName"].ToString();
+                    _item.Dni = SafeGetString(_reader, "DNI");
                     _item.Monto = Convert.ToDecimal(_reader["Monto"].ToString());
                     _item.UltimaFecha = _reader["UltimaFecha"] != DBNull.Value && _reader["UltimaFecha"] != null
                         ? Convert.ToDateTime(_reader["UltimaFecha"])
@@ -278,6 +280,22 @@ namespace MAT.MVC.Models
             }
 
             return _List;
+        }
+
+        /// <summary>
+        /// Lee una columna string del reader; devuelve null si la columna no existe o es DBNull.
+        /// </summary>
+        private static string SafeGetString(SqlDataReader reader, string columnName)
+        {
+            try
+            {
+                var value = reader[columnName];
+                return value != null && value != DBNull.Value ? value.ToString() : null;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return null;
+            }
         }
     }
 }

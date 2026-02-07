@@ -30,6 +30,7 @@
                 <thead>
                     <tr>
                         <th style="width:250px;">Cliente</th>
+                        <th style="width:120px;">DNI</th>
                         <th>Monto</th>
                         <th style="width:110px;">Última fecha</th>
                         <th style="width:120px;"></th>
@@ -63,6 +64,13 @@
                         {
                             "data": "FullName",
                             "sClass": "left"
+                        },
+                        {
+                            "data": "Dni",
+                            "sClass": "left",
+                            "mRender": function (data, type, row) {
+                                return row.Dni || '-';
+                            }
                         },
                         {
                             "data": "Monto",
