@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,6 +11,7 @@ using WebMatrix.WebData;
 using System.Data;
 using System.Data.SqlClient;
 using MAT.MVC.Infrastructure;
+using MAT.MVC.Common;
 
 namespace MAT.MVC.Controllers.Hotel
 {
@@ -179,7 +180,7 @@ namespace MAT.MVC.Controllers.Hotel
                 ViewBag.Error = e.Message;
             }
             
-            return PartialView();
+            return View();
         }
 
         public ActionResult EsquemaDistribucion(Guid? hotelid, Guid? viajeid, string fecha)
@@ -216,5 +217,57 @@ namespace MAT.MVC.Controllers.Hotel
             }
         }
 
+        /// <summary>
+        /// Quita un pasajero de una habitación (elimina el registro en ReservaHabitacion).
+        /// Si el pasajero queda sin ninguna habitación asignada en el viaje, actualiza el estado del pasaje.
+        /// </summary>
+        [Authorize]
+        [HttpPost]
+        public JsonResult QuitarPasajeroHabitacion(string pasajeroId, string habitacionId, string viajeId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(pasajeroId) || string.IsNullOrEmpty(habitacionId) || string.IsNullOrEmpty(viajeId))
+                {
+                    return Json(new { ok = false, message = "Faltan parámetros: pasajeroId, habitacionId o viajeId." });
+                }
+                if (MATContext.CurrentVendedor == null)
+                {
+                    return Json(new { ok = false, message = "Usuario sin vendedor asociado. No se puede auditar la acción." });
+                }
+
+                var gPasajero = new Guid(pasajeroId);
+                var gHabitacion = new Guid(habitacionId);
+                var gViaje = new Guid(viajeId);
+
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@PasajeroID", SqlDbType.UniqueIdentifier, 0, gPasajero),
+                    DBHelper.MakeParam("@HabitacionID", SqlDbType.UniqueIdentifier, 0, gHabitacion),
+                    DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, gViaje),
+                    DBHelper.MakeParam("@UserID", SqlDbType.UniqueIdentifier, 0, MATContext.CurrentVendedor.VendedorId)
+                };
+
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_PersonaCliente_DeleteReservaHotel", dbParams))
+                {
+                    if (_reader.Read())
+                    {
+                        var id = _reader["ID"] != DBNull.Value ? Convert.ToInt32(_reader["ID"]) : 0;
+                        var result = _reader["Result"]?.ToString() ?? "";
+                        if (id == 1 && result == "Done.")
+                        {
+                            return Json(new { ok = true, message = "Pasajero quitado de la habitación correctamente." });
+                        }
+                        return Json(new { ok = false, message = result });
+                    }
+                }
+
+                return Json(new { ok = false, message = "No se recibió respuesta del servidor." });
+            }
+            catch (Exception e)
+            {
+                return Json(new { ok = false, message = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.QuitarPasajeroHabitacion") });
+            }
+        }
     }
 }

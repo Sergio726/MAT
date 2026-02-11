@@ -2,14 +2,10 @@
     ViewBag.Title = "Distribución de Hoteles";
 }
 
-<head>
-    <title>DISTRIBUCION DE HABITACIONES</title>
-    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+@section Styles {
     <link href="~/Content/hoteles.css" rel="stylesheet" />
-    <link href="~/Content/mat.esquemadistribucion.print.css" rel="stylesheet" media="print"/>
-    <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-</head>
+    <link href="~/Content/mat.esquemadistribucion.print.css" rel="stylesheet" media="print" />
+}
 
 <style>
     /* ===== MODERN HOTEL DISTRIBUTION STYLES ===== */
@@ -173,13 +169,15 @@
         font-size: 14px;
     }
 
-    /* Print styles - Compact and simple */
+    /* Print styles - A color, header con fondo azul */
     @@media print {
         body {
             background: white;
             padding: 0;
             margin: 0;
             font-size: 10px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         .hotel-distribution-page {
             box-shadow: none;
@@ -188,23 +186,26 @@
             max-width: none;
             border-radius: 0;
             border: none;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         .hotel-toolbar {
             display: none !important;
         }
         .hotel-header {
-            background: white !important;
-            color: #000 !important;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%) !important;
+            color: #fff !important;
             padding: 10px 15px;
-            border-bottom: 2px solid #000;
+            border-bottom: none;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         .hotel-header-title {
             font-size: 14px;
-            color: #000;
+            color: #fff !important;
         }
         .hotel-header-logo img {
             height: 35px;
-            filter: grayscale(100%);
         }
         .hotel-content {
             min-height: auto;
@@ -276,44 +277,99 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    $(function () {
-        var idselected = $("#HotelPorViaje option:selected").val();
-        var viajeid = $("#distribucion-viaje-id").val();
-        var fecha = $("#HotelPorViaje option:selected").attr("fecha");
+<!-- Modal confirmación quitar pasajero de habitación -->
+<div class="modal fade" id="modalQuitarPasajero" tabindex="-1" aria-labelledby="modalQuitarPasajeroLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-quitar-pasajero">
+            <div class="modal-header modal-quitar-pasajero-header">
+                <h5 class="modal-title" id="modalQuitarPasajeroLabel">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Confirmar acción
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-quitar-pasajero-mensaje" class="mb-0"></p>
+                <p class="text-danger small mb-0 mt-2">
+                    <strong>Este cambio es irreversible.</strong> El pasajero dejará de estar asignado a esta habitación.
+                </p>
+            </div>
+            <div class="modal-footer modal-quitar-pasajero-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-modal-quitar-aceptar">
+                    <i class="bi bi-person-dash"></i> Quitar de la habitación
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-        setTimeout(function () {
-            loadPage(idselected, viajeid, fecha)
-        }, 500);
-    });
-
-    $(document).on("change", "#HotelPorViaje", function () {
-        var idselected = $("#HotelPorViaje option:selected").val();
-        var fecha = $('#HotelPorViaje option:selected').attr("fecha");
-        var viajeid = $("#distribucion-viaje-id").val();
-
-        $("#esquema-distribucion").html('<div class="loading-container"><div class="loading-spinner"></div><span>Cargando distribución...</span></div>');
-
-        setTimeout(function () {
-            loadPage(idselected, viajeid, fecha)
-        }, 300);
-    });
-
-    $(document).on("click", "#btn-print-distribucion", function () {
-        window.print();
-    });
-
-    function loadPage(idselected, viajeid, fecha) {
-        $.ajax({
-            url: "/Hotel/EsquemaDistribucion",
-            data: { hotelid: idselected, viajeid: viajeid, fecha: fecha },
-            dataType: "html",
-            success: function (data) {
-                $("#esquema-distribucion").html(data);
-            },
-            error: function() {
-                $("#esquema-distribucion").html('<div class="error-message">Error al cargar la distribución. Por favor, intente nuevamente.</div>');
-            }
-        });
+<style>
+    .modal-quitar-pasajero .modal-header {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+        color: #fff;
+        border-bottom: none;
     }
+    .modal-quitar-pasajero .modal-title { font-weight: 600; }
+    .modal-quitar-pasajero .modal-footer {
+        border-top: 1px solid #e0e0e0;
+        padding: 1rem 1.25rem;
+    }
+    .modal-quitar-pasajero #btn-modal-quitar-aceptar {
+        background: linear-gradient(135deg, #c2185b 0%, #ad1457 100%);
+        border: none;
+    }
+    .modal-quitar-pasajero #btn-modal-quitar-aceptar:hover {
+        background: linear-gradient(135deg, #ad1457 0%, #880e4f 100%);
+    }
+</style>
+
+@section Scripts {
+<script type="text/javascript">
+    (function () {
+        var $ = window.jQuery;
+        if (!$) {
+            console.error('jQuery no está cargado. Asegúrese de que el layout incluye jQuery.');
+            return;
+        }
+        $(function () {
+            var idselected = $("#HotelPorViaje option:selected").val();
+            var viajeid = $("#distribucion-viaje-id").val();
+            var fecha = $("#HotelPorViaje option:selected").attr("fecha");
+
+            setTimeout(function () {
+                loadPage(idselected, viajeid, fecha);
+            }, 500);
+        });
+
+        $(document).on("change", "#HotelPorViaje", function () {
+            var idselected = $("#HotelPorViaje option:selected").val();
+            var fecha = $("#HotelPorViaje option:selected").attr("fecha");
+            var viajeid = $("#distribucion-viaje-id").val();
+
+            $("#esquema-distribucion").html('<div class="loading-container"><div class="loading-spinner"></div><span>Cargando distribución...</span></div>');
+
+            setTimeout(function () {
+                loadPage(idselected, viajeid, fecha);
+            }, 300);
+        });
+
+        $(document).on("click", "#btn-print-distribucion", function () {
+            window.print();
+        });
+
+        function loadPage(idselected, viajeid, fecha) {
+            $.ajax({
+                url: "/Hotel/EsquemaDistribucion",
+                data: { hotelid: idselected, viajeid: viajeid, fecha: fecha },
+                dataType: "html",
+                success: function (data) {
+                    $("#esquema-distribucion").html(data);
+                },
+                error: function() {
+                    $("#esquema-distribucion").html('<div class="error-message">Error al cargar la distribución. Por favor, intente nuevamente.</div>');
+                }
+            });
+        }
+    })();
 </script>
+}

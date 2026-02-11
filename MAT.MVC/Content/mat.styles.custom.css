@@ -1671,3 +1671,11 @@ input.buttonAdd_29px:hover {
     height: auto !important;
 }
 
+/* Ocultar en impresión: navbar, menú lateral, overlay (usado por Layout y vistas) */
+@media print {
+    .hidden-print,
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
+

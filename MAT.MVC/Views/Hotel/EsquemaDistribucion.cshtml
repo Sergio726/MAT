@@ -1,7 +1,5 @@
 @model List<MAT.MVC.Models.EsquemaDistribucion>
 
-<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-
 <style>
     /* ===== MODERN HOTEL SCHEMA STYLES ===== */
     .schema-container {
@@ -185,6 +183,31 @@
         padding: 3px 0;
         font-size: 12px;
         color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .person-entry .person-name {
+        flex: 1;
+    }
+
+    .person-entry .btn-quitar-pasajero {
+        flex-shrink: 0;
+        padding: 2px 6px;
+        font-size: 11px;
+        border: 1px solid #dc3545;
+        background: #fff;
+        color: #dc3545;
+        border-radius: 4px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .person-entry .btn-quitar-pasajero:hover {
+        background: #dc3545;
+        color: #fff;
     }
 
     .person-entry:not(:last-child) {
@@ -338,6 +361,10 @@
             font-size: 8px;
         }
 
+        .btn-quitar-pasajero {
+            display: none !important;
+        }
+
         .person-entry:not(:last-child) {
             border-bottom: none;
             padding-bottom: 1px;
@@ -455,8 +482,9 @@
                                             {
                                                 foreach (var persona in vModel[n].lHotelPersona)
                                                 {
-                                                    <div class="person-entry divPersona" id="@persona.PersonaID">
-                                                        - @persona.PersonaNombre @persona.PersonaApellido
+                                                    <div class="person-entry divPersona" id="@persona.PersonaID" data-habitacionid="@vModel[n].HabitacionID" data-viajeid="@ViewData["viajeid"]">
+                                                        <span class="person-name">- @persona.PersonaNombre @persona.PersonaApellido</span>
+                                                        <button type="button" class="btn-quitar-pasajero" title="Quitar pasajero de la habitación" data-pasajeroid="@persona.PersonaID">Quitar</button>
                                                     </div>
                                                 }
                                             }
@@ -488,8 +516,9 @@
                                             {
                                                 foreach (var persona in vModel[n].lHotelPersona)
                                                 {
-                                                    <div class="person-entry divPersona" id="@persona.PersonaID">
-                                                        - @persona.PersonaNombre @persona.PersonaApellido
+                                                    <div class="person-entry divPersona" id="@persona.PersonaID" data-habitacionid="@vModel[n].HabitacionID" data-viajeid="@ViewData["viajeid"]">
+                                                        <span class="person-name">- @persona.PersonaNombre @persona.PersonaApellido</span>
+                                                        <button type="button" class="btn-quitar-pasajero" title="Quitar pasajero de la habitación" data-pasajeroid="@persona.PersonaID">Quitar</button>
                                                     </div>
                                                 }
                                             }
@@ -525,6 +554,77 @@
                         $(this).addClass("tutor-person");
                     }
                 });
+            }
+        });
+    });
+
+    $(document).on("click", ".btn-quitar-pasajero", function () {
+        var $btn = $(this);
+        var $row = $btn.closest(".person-entry");
+        var pasajeroId = $btn.attr("data-pasajeroid");
+        var habitacionId = $row.attr("data-habitacionid");
+        var viajeId = $row.attr("data-viajeid");
+        var nombrePersona = $row.find(".person-name").text().replace(/^\s*-\s*/, "").trim();
+
+        $("#modal-quitar-pasajero-mensaje").text("¿Está seguro que desea quitar a \"" + nombrePersona + "\" de esta habitación?");
+        var $modal = $("#modalQuitarPasajero");
+        $modal.data("quitarPasajero", { pasajeroId: pasajeroId, habitacionId: habitacionId, viajeId: viajeId, $btn: $btn });
+        var modalEl = document.getElementById("modalQuitarPasajero");
+        if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+            var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        } else {
+            $modal.modal("show");
+        }
+    });
+
+    $(document).on("click", "#btn-modal-quitar-aceptar", function () {
+        var $modal = $("#modalQuitarPasajero");
+        var payload = $modal.data("quitarPasajero");
+        if (!payload) return;
+        var pasajeroId = payload.pasajeroId, habitacionId = payload.habitacionId, viajeId = payload.viajeId, $btn = payload.$btn;
+
+        $modal.data("quitarPasajero", null);
+        var modalEl = document.getElementById("modalQuitarPasajero");
+        if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+            bootstrap.Modal.getInstance(modalEl).hide();
+        } else {
+            $modal.modal("hide");
+        }
+
+        $btn.prop("disabled", true).text("...");
+
+        $.ajax({
+            url: "/Hotel/QuitarPasajeroHabitacion",
+            type: "POST",
+            data: { pasajeroId: pasajeroId, habitacionId: habitacionId, viajeId: viajeId },
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                if (data.ok) {
+                    var idselected = $("#HotelPorViaje option:selected").val();
+                    var viajeid = $("#distribucion-viaje-id").val();
+                    var fecha = $("#HotelPorViaje option:selected").attr("fecha");
+                    $("#esquema-distribucion").html('<div class="loading-container"><div class="loading-spinner"></div><span>Actualizando...</span></div>');
+                    $.ajax({
+                        url: "/Hotel/EsquemaDistribucion",
+                        data: { hotelid: idselected, viajeid: viajeid, fecha: fecha },
+                        dataType: "html",
+                        success: function (html) {
+                            $("#esquema-distribucion").html(html);
+                        },
+                        error: function () {
+                            $("#esquema-distribucion").html('<div class="error-message">Error al actualizar. Recargue la página.</div>');
+                        }
+                    });
+                } else {
+                    $btn.prop("disabled", false).text("Quitar");
+                    alert("Error: " + (data.message || "No se pudo quitar el pasajero."));
+                }
+            },
+            error: function (xhr, status, err) {
+                $btn.prop("disabled", false).text("Quitar");
+                alert("Error al procesar la solicitud. Intente nuevamente.");
             }
         });
     });
