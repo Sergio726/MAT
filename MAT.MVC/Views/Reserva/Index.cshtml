@@ -461,6 +461,9 @@
                     <a href="javascript: openWaitingList();" class="modern-alert-link" title="Hay clientes en lista de espera">
                         HAY CLIENTES ESPERANDO
                     </a>
+                    <button type="button" class="modern-alert-close" title="Cerrar notificación" aria-label="Cerrar">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
             </div>
             }
@@ -474,6 +477,9 @@
                     <a href="javascript: showPreReservas();" class="modern-alert-link" title="Ver Pre Reservas Vencidas">
                         EXISTEN PRE-RESERVAS VENCIDAS (@ViewBag.PreReservas.Count)
                     </a>
+                    <button type="button" class="modern-alert-close" title="Cerrar notificación" aria-label="Cerrar">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
             </div>
 
@@ -537,7 +543,10 @@
         checkBus();
 
         setTimeout(formatDisplay, 2000);
-        
+
+        $(document).on("click", ".modern-alert-close", function () {
+            $(this).closest(".modern-alert").hide();
+        });
     });
 
     function checkBus(){

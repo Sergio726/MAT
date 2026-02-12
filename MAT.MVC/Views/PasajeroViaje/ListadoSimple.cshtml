@@ -1,274 +1,95 @@
-﻿@*@model IEnumerable<MAT.Entities.PasajeroViaje>*@
 @model List<MAT.MVC.Models.PasajeroViajeModel>
 
-@using MAT.Utilities
 @using MAT.Enums
 @using MAT.Entities
 @using MAT.Services
 @{
-    ViewBag.Title = "Lista de Viajes";
+    ViewBag.Title = "Lista de pasajeros";
     int numeracion = 1;
 }
-<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-<link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
-<link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
-<script src="~/Scripts/jquery-1.8.2.js"></script>
-<head>
-    <title>LISTA DE PASAJEROS</title>
-</head>
-<style>
-    /* Override styles for this page */
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-        background-color: #f5f5f5;
-        margin: 0;
-        padding: 20px;
-    }
-    .Content {
-        width: 90%;
-        max-width: 1100px;
-        margin: 0 auto;
-        background: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    #divEncabezadoViaje.headMAT {
-        background-color: #1e3a5f;
-        background-image: none;
-    }
-    .EncabezadoViaje {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        min-height: 80px;
-        padding: 18px 25px;
-        color: white;
-    }
-    .viaje-info {
-        flex: 1;
-    }
-    .viaje-logo {
-        flex-shrink: 0;
-        margin-left: 20px;
-        margin-right: 40px;
-    }
-    .viaje-logo img {
-        height: 50px;
-        width: auto;
-    }
-    .viaje-titulo {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: white;
-    }
-    .viaje-fechas {
-        font-size: 13px;
-        color: rgba(255,255,255,0.9);
-    }
-    .viaje-fechas strong {
-        color: white;
-    }
-    .fecha-separador {
-        margin: 0 12px;
-        opacity: 0.5;
-    }
-    #tablaPasajeros.backMAT {
-        background-image: none !important;
-        background: white !important;
-    }
-    .tabla {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-    }
-    .tabla thead {
-        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-        color: white;
-    }
-    .tabla thead tr td {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 11px;
-        padding: 10px 8px;
-        border: none;
-        border-right: 1px solid rgba(255,255,255,0.2);
-    }
-    .tabla thead tr td:last-child {
-        border-right: none;
-    }
-    .tabla tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-    .tabla tbody tr:hover {
-        background-color: #fff3e0;
-    }
-    .tabla tbody td.celda {
-        padding: 8px;
-        border: none;
-        border-bottom: 1px solid #e0e0e0;
-        color: #333;
-    }
-    .column_nro { width: 40px; text-align: center; }
 
-    /* Toolbar */
-    .toolbar {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        padding: 12px 20px;
-        background: #f8f9fa;
-        border-bottom: 1px solid #e0e0e0;
-        gap: 10px;
-    }
-    .btn-print {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(233, 30, 99, 0.3);
-        transition: all 0.2s ease;
-    }
-    .btn-print:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
-    }
-    .btn-print:active {
-        transform: translateY(0);
-    }
-    .btn-print i {
-        font-size: 16px;
-    }
-    .total-pasajeros {
-        font-size: 13px;
-        color: #666;
-        margin-right: auto;
-    }
-    .total-pasajeros strong {
-        color: #333;
-    }
+@section Styles {
+    <link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
+    <link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
+}
 
-    /* Hide old floating button */
-    .floatPrint {
-        display: none;
-    }
-
-    /* Print styles */
-    @@media print {
-        .HideToPrint {
-            display: none !important;
-        }
-        .toolbar {
-            display: none !important;
-        }
-        body {
-            padding: 0;
-            background: white;
-        }
-        .Content {
-            box-shadow: none;
-            width: 100%;
-            max-width: none;
-        }
-    }
-</style>
-<div id="divContent" class="Content">
-  @*  <div class="logo-voucher">
-                <img alt="" src="/Images/marco_antonio_back.jpg" width="90" /></div>*@
-    <div id="divEncabezadoViaje" class="EncabezadoViaje headMAT">
+<div id="divContent" class="listado-simple Content">
+    <div id="divEncabezadoViaje" class="listado-simple-header EncabezadoViaje headMAT">
         @{
-            ViajeService VS = new ViajeService();
-            Guid ViajeId = new Guid(Model.First().ViajeID);
-            Viaje V = VS.GetByViajeId(ViajeId);
+            var viajeService = new ViajeService();
+            var viajeId = new Guid(Model.First().ViajeID);
+            var viaje = viajeService.GetByViajeId(viajeId);
         }
         <div class="viaje-info">
-            <div class="viaje-titulo">@V.Descripcion</div>
+            <div class="viaje-titulo">@viaje.Descripcion</div>
             <div class="viaje-fechas">
-                <span><strong>Salida:</strong> @V.FechaSalida.Value.ToShortDateString()</span>
+                <span><strong>Salida:</strong> @viaje.FechaSalida.Value.ToShortDateString()</span>
                 <span class="fecha-separador">|</span>
-                <span><strong>Regreso:</strong> @V.FechaRegreso.Value.ToShortDateString()</span>
+                <span><strong>Regreso:</strong> @viaje.FechaRegreso.Value.ToShortDateString()</span>
             </div>
         </div>
         <div class="viaje-logo">
             <img src="/Images/marco_antonio_back3.png" alt="Marco Antonio Turismo" />
         </div>
     </div>
+
     <div class="toolbar HideToPrint">
         <span class="total-pasajeros">Total: <strong>@Model.Count</strong> pasajeros</span>
-        <button type="button" class="btn-print" onclick="javascript:printListado();">
+        <button type="button" class="btn-print" onclick="printListado();">
             <i class="bi bi-printer-fill"></i>
             Imprimir Listado
         </button>
     </div>
+
     <div id="tablaPasajeros" class="backMAT">
-        <table style="width: 100%;" class="tabla">
-            <thead>
-                <tr>
-                    <td class="celda column_nro">N° <input type="checkbox" checked class="chkIsPrint" column="column_nro" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
-                    <td class="celda column_apellido_nombre">APELLIDO Y NOMBRE <input type="checkbox" checked class="chkIsPrint" column="column_apellido_nombre" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
-                    <td class="celda column_tipo_doc">TIPO Y N° DOC <input type="checkbox" checked class="chkIsPrint" column="column_tipo_doc" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
-                    <td class="celda column_cuit_cuil">CUIT/CUIL <input type="checkbox" checked class="chkIsPrint" column="column_cuit_cuil" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja." /> </td>
-                    <td class="celda column_fecha_nac">FECHA NAC. <input type="checkbox" checked class="chkIsPrint" column="column_fecha_nac" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
-                    <td class="celda column_telefono">TELEFONO <input type="checkbox" checked class="chkIsPrint" column="column_telefono" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja."/> </td>
-                </tr>
-
-            </thead>
-            <tbody>
-
-                @foreach (var item in Model)
-                { 
+        <div class="listado-pantalla">
+            <table class="tabla listado-simple-tabla">
+                <thead>
                     <tr>
-                    <td class="celda column_nro">@numeracion</td>
-                    <td class="celda column_apellido_nombre">@item.Apellido @item.Nombre</td>
-                    <td class="celda column_tipo_doc">@((eTipoDocumento)item.TipoDocumento) @item.NroDocumento.ToString()</td>
-                    <td class="celda column_cuit_cuil">@item.CUIT</td>
-                    <td class="celda column_fecha_nac">
-                        @if (item.FechaNacimiento != null)
-                        {
-                            @Html.Label(item.FechaNacimiento)    
-                        }
-                    </td>
-                    <td  class="celda column_telefono">@item.Telefono.ToString()</td>
-                </tr>
-                    numeracion += 1;
-                }
-
-            </tbody>
-        </table>
-
+                        <td class="celda column_nro">N° <input type="checkbox" checked class="chkIsPrint" column="column_nro" title="Incluir esta columna en la impresión." /></td>
+                        <td class="celda column_apellido_nombre">APELLIDO Y NOMBRE <input type="checkbox" checked class="chkIsPrint" column="column_apellido_nombre" title="Incluir esta columna en la impresión." /></td>
+                        <td class="celda column_tipo_doc">TIPO Y N° DOC <input type="checkbox" checked class="chkIsPrint" column="column_tipo_doc" title="Incluir esta columna en la impresión." /></td>
+                        <td class="celda column_cuit_cuil">CUIT/CUIL <input type="checkbox" checked class="chkIsPrint" column="column_cuit_cuil" title="Incluir esta columna en la impresión." /></td>
+                        <td class="celda column_fecha_nac">FECHA NAC. <input type="checkbox" checked class="chkIsPrint" column="column_fecha_nac" title="Incluir esta columna en la impresión." /></td>
+                        <td class="celda column_telefono">TELEFONO <input type="checkbox" checked class="chkIsPrint" column="column_telefono" title="Incluir esta columna en la impresión." /></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="celda column_nro">@numeracion</td>
+                            <td class="celda column_apellido_nombre">@item.Apellido @item.Nombre</td>
+                            <td class="celda column_tipo_doc">@((eTipoDocumento)item.TipoDocumento) @item.NroDocumento.ToString()</td>
+                            <td class="celda column_cuit_cuil">@item.CUIT</td>
+                            <td class="celda column_fecha_nac">
+                                @if (item.FechaNacimiento != null)
+                                {
+                                    @Html.Label(item.FechaNacimiento)
+                                }
+                            </td>
+                            <td class="celda column_telefono">@item.Telefono.ToString()</td>
+                        </tr>
+                        numeracion += 1;
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-<div class="floatPrint HideToPrint">
-    <button type="button" class="float_iconPrint" title="Imprimir Listado" onclick="javascript:printListado();">
-        <i class="bi bi-printer-fill"></i>
-    </button>
-</div>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+@section Scripts {
 <script type="text/javascript">
     function printListado() {
-        $("input[type='checkbox']").each(function () {
+        $("input[type='checkbox'].chkIsPrint").each(function () {
             var column = $(this).attr("column");
             if ($(this).is(":checked")) {
                 $("." + column).removeClass("HideToPrint");
-
-            }
-            else {
+            } else {
                 $("." + column).addClass("HideToPrint");
             }
         });
-
         window.print();
     }
 </script>
+}

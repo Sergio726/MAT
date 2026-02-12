@@ -3495,6 +3495,31 @@ div.bnn_floating-banner.hidden {
     flex-shrink: 0;
 }
 
+.modern-alert-close {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.modern-alert-close:hover {
+    background: rgba(0, 0, 0, 0.14);
+    color: var(--text-primary);
+}
+
+.modern-alert-close i {
+    font-size: 0.875rem;
+}
+
 .modern-alert-warning .modern-alert-content i {
     color: #f59e0b;
 }

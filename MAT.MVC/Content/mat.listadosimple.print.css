@@ -1,8 +1,8 @@
-/* ===== LISTADO SIMPLE - PRINT STYLES ===== */
+/* ===== LISTADO SIMPLE - PRINT STYLES (A4, UNA PÁGINA, 1 COLUMNA) ===== */
 
 @page {
-    size: A4 landscape;
-    margin: 10mm;
+    size: A4 portrait;
+    margin: 8mm;
 }
 
 * {
@@ -11,7 +11,7 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 10pt;
+    font-size: 9pt;
     margin: 0;
     padding: 0;
     background: white;
@@ -19,58 +19,50 @@ body {
     print-color-adjust: exact;
 }
 
-.Content {
+#content .listado-simple.Content {
     width: 100%;
     margin: 0;
     padding: 0;
     background: white;
     box-shadow: none;
     border-radius: 0;
+    page-break-inside: avoid;
 }
 
-/* Header del viaje */
+/* Header del viaje compacto para A4 */
 .EncabezadoViaje {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 60px;
-    padding: 10px 15px;
+    min-height: 0;
+    padding: 4mm 5mm;
     width: 100%;
     color: #fff;
-    background: #1e3a5f !important;
+    background: var(--listado-header-bg) !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    margin-bottom: 0;
+    margin-bottom: 3mm;
 }
 
-.EncabezadoViaje .custom_padding_4 {
-    flex: 1;
-}
-
-.EncabezadoViaje label {
-    display: block;
+.EncabezadoViaje .viaje-titulo {
     font-size: 10pt;
-    line-height: 1.5;
-    color: white !important;
+    font-weight: 700;
+    margin-bottom: 1px;
 }
 
-.EncabezadoViaje label:first-of-type {
-    font-size: 12pt;
-    font-weight: bold;
-    margin-bottom: 3px;
-    text-transform: uppercase;
+.EncabezadoViaje .viaje-fechas {
+    font-size: 8pt;
 }
 
-/* Logo en header */
+.EncabezadoViaje .viaje-logo img {
+    height: 28px;
+}
+
 .headMAT {
-    background-image: url('/Images/MAT_LOGO_WHITE.png');
-    background-repeat: no-repeat;
-    background-position: right 15px center;
-    background-size: auto 50px;
+    background-image: none;
 }
 
-/* Tabla de pasajeros */
-#tablaPasajeros {
+.listado-simple #tablaPasajeros {
     padding: 0;
     background-image: none !important;
 }
@@ -79,75 +71,88 @@ body {
     background-image: none !important;
 }
 
-.tabla {
+.listado-simple .tabla {
     width: 100%;
     border-collapse: collapse;
-    font-size: 9pt;
+    font-size: 6.5pt;
     border: 1px solid #333;
+    table-layout: fixed;
 }
 
-.tabla thead {
-    background: #e91e63 !important;
+.listado-simple .tabla thead {
+    background: var(--brand-primary) !important;
     color: white !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 
-.tabla thead tr td {
+.listado-simple .tabla thead tr td {
     font-weight: bold;
     text-transform: uppercase;
-    font-size: 8pt;
-    padding: 8px 6px;
+    font-size: 6pt;
+    padding: 2px 3px;
     border: 1px solid #333;
     color: white !important;
-    background: #e91e63 !important;
+    background: var(--brand-primary) !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 
-.tabla tbody tr:nth-child(even) {
+.listado-simple .tabla tbody tr:nth-child(even) {
     background-color: #f5f5f5 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
 }
 
-.tabla tbody tr:nth-child(odd) {
+.listado-simple .tabla tbody tr:nth-child(odd) {
     background-color: white !important;
 }
 
-.tabla tbody td.celda {
-    padding: 6px;
+.listado-simple .tabla tbody td.celda {
+    padding: 2px 3px;
     border: 1px solid #ccc;
     color: #333;
     vertical-align: middle;
-    font-size: 9pt;
+    font-size: 6.5pt;
+    line-height: 1.2;
 }
 
-/* Column widths for print */
-.column_nro {
-    width: 35px;
+/* Anchos de columnas para impresión en 1 columna A4 */
+.listado-simple .tabla .column_nro {
+    width: 8%;
     text-align: center;
 }
 
-.column_apellido_nombre {
-    width: auto;
+.listado-simple .tabla .column_apellido_nombre {
+    width: 28%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.column_tipo_doc {
-    width: 100px;
+.listado-simple .tabla .column_tipo_doc {
+    width: 22%;
 }
 
-.column_cuit_cuil {
-    width: 100px;
+.listado-simple .tabla .column_cuit_cuil {
+    width: 18%;
 }
 
-.column_fecha_nac {
-    width: 80px;
+.listado-simple .tabla .column_fecha_nac {
+    width: 12%;
     text-align: center;
 }
 
-.column_telefono {
-    width: 90px;
+.listado-simple .tabla .column_telefono {
+    width: 12%;
+}
+
+/* Evitar que las filas se partan entre páginas */
+.listado-simple .tabla tbody tr {
+    page-break-inside: avoid;
+}
+
+.listado-simple .tabla thead {
+    display: table-header-group;
 }
 
 /* Hide elements for print */
@@ -163,18 +168,13 @@ input[type="checkbox"] {
     display: none !important;
 }
 
-/* Page break control */
-.tabla tbody tr {
-    page-break-inside: avoid;
-}
-
-.tabla thead {
-    display: table-header-group;
-}
-
-/* Footer for print */
-@page {
-    @bottom-center {
-        content: "Página " counter(page) " de " counter(pages);
+/* Forzar una sola página: contenedor principal sin salto */
+@media print {
+    html, body {
+        height: auto;
+        overflow: hidden;
+    }
+    .Content {
+        overflow: visible;
     }
 }

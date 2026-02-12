@@ -33,5 +33,9 @@
     --menu-active-accent: var(--brand-primary);
     --menu-scrollbar-thumb: rgba(255, 255, 255, 0.2);
     --menu-scrollbar-thumb-hover: rgba(255, 255, 255, 0.35);
+
+    /* Listado / impresión (encabezado azul) */
+    --listado-header-bg: #1e3a5f;
+    --listado-header-bg-end: #2d5a87;
 }
 

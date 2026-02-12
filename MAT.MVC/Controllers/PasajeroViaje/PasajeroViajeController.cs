@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -70,11 +70,11 @@ namespace MAT.MVC.Controllers.PasajeroViaje
 
                 ViewBag.Paquete = MAT.MVC.Models.PaqueteVinculos.GetPaqueteByID(Id.ToString());
 
-                return PartialView(LPasajeroViaje);
+                return View(LPasajeroViaje);
             }
             catch
             {
-                return PartialView(LPasajeroViaje);
+                return View(LPasajeroViaje);
             }
 
 

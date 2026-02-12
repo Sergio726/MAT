@@ -1,42 +1,69 @@
-/* ===== LISTADO SIMPLE - SCREEN STYLES ===== */
+/* ===== LISTADO SIMPLE - SCREEN STYLES (normalizado, variables) ===== */
 
 * {
     box-sizing: border-box;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 20px;
-}
-
-.Content {
+/* Contenedor principal: solo afecta cuando la vista ListadoSimple está presente */
+#content .listado-simple.Content {
     width: 90%;
     max-width: 1100px;
     margin: 0 auto;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border-radius: 8px;
+    background: var(--white);
+    box-shadow: var(--card-shadow);
+    border-radius: var(--border-radius-lg);
     overflow: hidden;
 }
 
-.logo-voucher {
-    float: left;
-    width: 30%;
-    margin: 5px 5px;
+/* Header del viaje */
+.listado-simple-header.EncabezadoViaje {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 80px;
+    padding: 18px 25px;
+    color: var(--white);
+    background: var(--listado-header-bg);
+    background-image: none;
 }
 
-/* Header del viaje */
-.EncabezadoViaje {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 80px;
-    padding: 15px 20px;
-    width: 100%;
-    color: #fff;
-    background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+.listado-simple-header .viaje-info {
+    flex: 1;
+}
+
+.listado-simple-header .viaje-logo {
+    flex-shrink: 0;
+    margin-left: 20px;
+    margin-right: 40px;
+}
+
+.listado-simple-header .viaje-logo img {
+    height: 50px;
+    width: auto;
+}
+
+.listado-simple-header .viaje-titulo {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--white);
+}
+
+.listado-simple-header .viaje-fechas {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.listado-simple-header .viaje-fechas strong {
+    color: var(--white);
+}
+
+.listado-simple-header .fecha-separador {
+    margin: 0 12px;
+    opacity: 0.5;
 }
 
 .EncabezadoViaje .custom_padding_4 {
@@ -57,94 +84,150 @@ body {
     letter-spacing: 0.5px;
 }
 
+/* Toolbar */
+.listado-simple .toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    gap: 10px;
+}
+
+.listado-simple .btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--brand-primary);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.3);
+    transition: all 0.2s ease;
+}
+
+.listado-simple .btn-print:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.4);
+}
+
+.listado-simple .btn-print:active {
+    transform: translateY(0);
+}
+
+.listado-simple .btn-print i {
+    font-size: 16px;
+}
+
+.listado-simple .total-pasajeros {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-right: auto;
+}
+
+.listado-simple .total-pasajeros strong {
+    color: var(--text-primary);
+}
+
 /* Tabla de pasajeros */
 #tablaPasajeros {
     padding: 0;
 }
 
-.tabla {
+.listado-print-columnas {
+    display: none;
+}
+
+.listado-simple .tabla {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 12px;
 }
 
-.tabla thead {
-    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-    color: white;
+.listado-simple .tabla thead {
+    background: var(--brand-primary);
+    color: var(--white);
 }
 
-.tabla thead tr td {
+.listado-simple .tabla thead tr td {
     font-weight: 600;
     text-transform: uppercase;
     font-size: 11px;
-    letter-spacing: 0.5px;
-    padding: 12px 10px;
+    padding: 10px 8px;
     border: none;
-    border-right: 1px solid rgba(255,255,255,0.2);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.tabla thead tr td:last-child {
+.listado-simple .tabla thead tr td:last-child {
     border-right: none;
 }
 
-.tabla thead input[type="checkbox"] {
+.listado-simple .tabla thead input[type="checkbox"] {
     margin-left: 5px;
     vertical-align: middle;
     cursor: pointer;
 }
 
-.tabla tbody tr {
+.listado-simple .tabla tbody tr {
     transition: background-color 0.2s ease;
 }
 
-.tabla tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
+.listado-simple .tabla tbody tr:nth-child(even) {
+    background-color: var(--bg-main);
 }
 
-.tabla tbody tr:hover {
+.listado-simple .tabla tbody tr:hover {
     background-color: #fff3e0;
 }
 
-.tabla tbody td.celda {
-    padding: 10px;
+.listado-simple .tabla tbody td.celda {
+    padding: 8px;
     border: none;
-    border-bottom: 1px solid #e0e0e0;
-    color: #333;
-    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
-.tabla tbody tr:last-child td.celda {
+.listado-simple .tabla tbody tr:last-child td.celda {
     border-bottom: none;
 }
 
-/* Column widths */
-.column_nro {
-    width: 50px;
+/* Anchos de columna */
+.listado-simple .column_nro {
+    width: 40px;
     text-align: center;
 }
 
-.column_apellido_nombre {
+.listado-simple .column_apellido_nombre {
     width: auto;
 }
 
-.column_tipo_doc {
+.listado-simple .column_tipo_doc {
     width: 130px;
 }
 
-.column_cuit_cuil {
+.listado-simple .column_cuit_cuil {
     width: 120px;
 }
 
-.column_fecha_nac {
+.listado-simple .column_fecha_nac {
     width: 100px;
     text-align: center;
 }
 
-.column_telefono {
+.listado-simple .column_telefono {
     width: 110px;
 }
 
-/* Print button */
+/* Botón flotante (oculto si hay toolbar) */
+.listado-simple .floatPrint {
+    display: none;
+}
+
 .floatPrint {
     position: fixed;
     bottom: 30px;
@@ -155,35 +238,34 @@ body {
 .float_iconPrint {
     width: 56px;
     height: 56px;
-    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+    background: var(--brand-primary);
     border: none;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.4);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--white);
     font-size: 24px;
 }
 
 .float_iconPrint:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(233, 30, 99, 0.5);
+    box-shadow: 0 6px 16px rgba(230, 51, 117, 0.5);
 }
 
 .float_iconPrint:active {
     transform: scale(0.95);
 }
 
-/* Override watermark from mat.styles.custom.css */
+/* Overrides de estilos globales para esta vista */
 #tablaPasajeros.backMAT {
-    background-image: none !important;
-    background: white !important;
+    background-image: none;
+    background: var(--white);
 }
 
-/* Override header from mat.styles.custom.css */
 #divEncabezadoViaje.headMAT {
-    background-image: none !important;
+    background-image: none;
 }

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Pasaje_CambiarPasajero]
+CREATE PROCEDURE [dbo].[usp_MAT_Pasaje_CambiarPasajero]
 (
     @PasajeID UNIQUEIDENTIFIER,
     @NuevoPasajeroID UNIQUEIDENTIFIER,
@@ -9,7 +9,9 @@ AS
 ----------------------------------------------------------------------------------------------------
 -- Author:    Seba Garcia
 -- Create date: 2026-01-28
--- Description: Cambia el pasajero asignado a un pasaje
+-- Description: Cambia el pasajero asignado a un pasaje. Si el pasaje tenía habitación
+--   asignada (ReservaHabitacion), actualiza también el PasajeroID en esa tabla para que
+--   la misma habitación quede asignada al nuevo pasajero.
 -- Parámetros:
 --   @PasajeID: ID del pasaje a modificar
 --   @NuevoPasajeroID: ID del nuevo pasajero (PersonaID)
@@ -53,6 +55,12 @@ BEGIN
             SET @Result = 'Error: No se pudo actualizar el pasaje.';
             RETURN;
         END
+
+        -- Si el pasaje tenía habitación asignada, actualizar ReservaHabitacion para que
+        -- la misma habitación quede asignada al nuevo pasajero (quitar al anterior, poner al nuevo).
+        UPDATE dbo.ReservaHabitacion
+        SET PasajeroID = @NuevoPasajeroID
+        WHERE PasajeID = @PasajeID;
         
         SET @Result = 'Done.';
         
