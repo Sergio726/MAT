@@ -169,48 +169,7 @@
         font-size: 14px;
     }
 
-    /* Print styles - A color, header con fondo azul */
-    @@media print {
-        body {
-            background: white;
-            padding: 0;
-            margin: 0;
-            font-size: 10px;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        .hotel-distribution-page {
-            box-shadow: none;
-            margin: 0;
-            width: 100%;
-            max-width: none;
-            border-radius: 0;
-            border: none;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        .hotel-toolbar {
-            display: none !important;
-        }
-        .hotel-header {
-            background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%) !important;
-            color: #fff !important;
-            padding: 10px 15px;
-            border-bottom: none;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        .hotel-header-title {
-            font-size: 14px;
-            color: #fff !important;
-        }
-        .hotel-header-logo img {
-            height: 35px;
-        }
-        .hotel-content {
-            min-height: auto;
-        }
-    }
+    /* Estilos de impresión A4: ver mat.esquemadistribucion.print.css */
 
     /* Responsive */
     @@media (max-width: 768px) {
