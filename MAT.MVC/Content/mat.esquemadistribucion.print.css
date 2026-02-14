@@ -2,13 +2,14 @@
    Diseño según vista: barra azul, paneles info, barra grupo, secciones magenta. */
 
 @page {
-    size: A4 portrait;
-    margin: 4mm;
+    margin: 0;
 }
 
 @media print {
     * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
         page-break-before: auto !important;
         page-break-after: auto !important;
         page-break-inside: auto !important;
@@ -17,7 +18,7 @@
         break-inside: auto !important;
     }
 
-    /* Ocultar header de página y menú lateral para que no alteren la impresión */
+    /* Ocultar header de página y menú lateral */
     .navbar.main,
     #menu,
     .sidebar-overlay,
@@ -27,7 +28,6 @@
         visibility: hidden !important;
     }
 
-    /* Contenido a ancho completo: quitar margen del sidebar y padding del navbar */
     .container-fluid.fixed.menu-left {
         padding: 0 !important;
         margin: 0 !important;
@@ -46,7 +46,6 @@
         max-width: 100% !important;
     }
 
-    /* Ocultar alertas/notificaciones en impresión */
     .modern-alerts-host {
         display: none !important;
     }
@@ -56,14 +55,15 @@
         margin: 0;
         padding: 0;
         font-size: 4.5pt;
-        line-height: 1.1;
+        line-height: 0.95;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
-    /* Ocultar botón imprimir, botones quitar, modal, loading */
     .btn-print,
+    .print-controls,
+    .print-scale-group,
     .btn-quitar-pasajero,
     #modalQuitarPasajero,
     .modal,
@@ -72,21 +72,27 @@
         display: none !important;
     }
 
-    /* Toolbar: solo mostrar línea "Hotel: [nombre]" sin botón */
+    /* Toolbar */
     .hotel-toolbar {
         display: flex !important;
         align-items: center;
-        padding: 2px 0 4px 0;
+        padding: 0;
+        margin: 0;
         background: transparent !important;
         border: none !important;
         border-bottom: none !important;
-        gap: 4px;
+        gap: 3px;
+        height: auto;
+        min-height: 0;
+        line-height: 0.95;
     }
 
     .hotel-selector-label {
         font-weight: 600;
         color: #333;
         font-size: 4.5pt;
+        margin: 0;
+        padding: 0;
     }
 
     .hotel-select {
@@ -94,31 +100,37 @@
         border: none !important;
         background: transparent !important;
         padding: 0 !important;
+        margin: 0 !important;
         min-width: 0;
+        height: auto;
+        min-height: 0;
         appearance: none !important;
         background-image: none !important;
         color: #333;
         font-weight: 500;
+        line-height: 0.95;
     }
 
-    /* Contenedor principal */
+    /* Contenedor principal - escalar todo al 80% */
     .hotel-distribution-page {
-        width: 100%;
+        width: 125%;
         max-width: none;
         margin: 0;
         padding: 0;
         box-shadow: none;
         border: none;
         border-radius: 0;
+        transform: scale(0.8);
+        transform-origin: top left;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
-    /* Encabezado: barra azul oscuro */
+    /* Encabezado */
     .hotel-header {
         background: #1a3a5e !important;
         color: #fff !important;
-        padding: 5px 8px;
+        padding: 2px 6px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -132,62 +144,67 @@
         text-transform: uppercase;
         letter-spacing: 0.3px;
         color: #fff !important;
+        line-height: 0.95;
     }
 
     .hotel-header-logo img {
-        height: 18px;
+        height: 14px;
         width: auto;
     }
 
     .hotel-content {
         min-height: 0;
         padding: 0;
+        margin: 0;
     }
 
-    /* Contenedor del esquema */
+    /* Esquema */
     .schema-container {
-        padding: 4px 0 0 0;
+        padding: 1px 0 0 0;
+        margin: 0;
         display: block;
     }
 
     .schema-error {
-        font-size: 5pt;
-        padding: 4px 5px;
-        margin: 2px 0;
+        font-size: 4.5pt;
+        padding: 1px 3px;
+        margin: 0;
     }
 
-    /* Paneles de información: dos columnas, borde sutil, título con línea magenta */
+    /* Paneles de información */
     .info-section {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 6px;
-        margin-bottom: 4px;
+        gap: 3px;
+        margin: 0 0 1px 0;
     }
 
     .info-card {
         background: #fff !important;
         border: 1px solid #e0e0e0;
-        border-radius: 1px;
-        padding: 4px 5px;
+        border-radius: 0;
+        padding: 1px 3px;
+        margin: 0;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
     .info-card-title {
-        font-size: 5pt;
+        font-size: 4.5pt;
         font-weight: 700;
         color: #1e3a5f;
         text-transform: uppercase;
-        letter-spacing: 0.1px;
-        margin-bottom: 2px;
-        padding-bottom: 2px;
+        letter-spacing: 0;
+        margin: 0 0 0 0;
+        padding: 0 0 0 0;
         border-bottom: 1px solid #e91e63;
-        line-height: 1.1;
+        line-height: 0.95;
     }
 
     .info-card p {
         margin: 0;
-        line-height: 1.1;
+        padding: 0;
+        line-height: 0.95;
         font-size: 4.5pt;
         color: #333;
     }
@@ -197,22 +214,24 @@
         border: none;
         background: transparent;
         padding: 0;
-        line-height: 1.1;
+        margin: 0;
+        line-height: 0.95;
         width: auto;
+        height: auto;
     }
 
-    /* Barra grupo / coordinador: azul oscuro */
+    /* Barra grupo / coordinador */
     .group-info-row {
         background: #1a3a5e !important;
         color: #fff !important;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 4px;
-        padding: 2px 5px;
-        margin-bottom: 4px;
+        gap: 0;
+        padding: 1px 4px;
+        margin: 0 0 1px 0;
         border-radius: 0;
         font-size: 4.5pt;
-        line-height: 1.1;
+        line-height: 0.95;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
@@ -222,26 +241,29 @@
         color: #fff !important;
         border: 1px solid rgba(255, 255, 255, 0.35);
         padding: 0 2px;
+        margin: 0;
         font-size: 4.5pt;
-        border-radius: 1px;
-        line-height: 1.1;
+        border-radius: 0;
+        line-height: 0.95;
+        height: auto;
     }
 
-    /* Sección por tipo de habitación: barra magenta, luego dos columnas */
+    /* Secciones de habitación */
     .room-type-section {
-        margin-bottom: 3px;
+        margin: 0 0 1px 0;
     }
 
     .room-type-header {
         background: #e91e63 !important;
         color: #fff !important;
-        padding: 1px 4px;
+        padding: 0 4px;
+        margin: 0;
         border-radius: 0;
         font-size: 4.5pt;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.2px;
-        line-height: 1.1;
+        line-height: 0.95;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
@@ -253,10 +275,13 @@
         border: 1px solid #e0e0e0;
         border-top: none;
         overflow: hidden;
+        margin: 0;
     }
 
     .room-table-wrapper {
         border-right: 1px solid #e0e0e0;
+        margin: 0;
+        padding: 0;
     }
 
     .room-table-wrapper:last-child {
@@ -267,7 +292,9 @@
         width: 100%;
         border-collapse: collapse;
         font-size: 4.2pt;
-        line-height: 1.08;
+        line-height: 0.95;
+        margin: 0;
+        padding: 0;
     }
 
     .room-table thead {
@@ -277,13 +304,15 @@
     }
 
     .room-table thead th {
-        padding: 1px 3px;
+        padding: 0 3px;
+        margin: 0;
         text-align: left;
         font-weight: 600;
         color: #1e3a5f;
         text-transform: uppercase;
         font-size: 4pt;
         border-bottom: 1px solid #e0e0e0;
+        line-height: 0.95;
     }
 
     .room-table thead th:first-child {
@@ -291,7 +320,7 @@
     }
 
     .room-table tbody tr {
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: none;
     }
 
     .room-table tbody tr:nth-child(even) {
@@ -302,8 +331,9 @@
 
     .room-table tbody td {
         padding: 0 3px;
+        margin: 0;
         vertical-align: top;
-        line-height: 1.08;
+        line-height: 0.95;
     }
 
     .room-table tbody td:first-child {
@@ -320,14 +350,17 @@
 
     .person-entry {
         padding: 0;
+        margin: 0;
         font-size: 4.2pt;
-        line-height: 1.08;
+        line-height: 0.95;
         color: #333;
         display: block;
     }
 
     .person-entry .person-name {
         display: block;
+        margin: 0;
+        padding: 0;
     }
 
     .person-entry:not(:last-child) {
@@ -338,7 +371,7 @@
         background: #7c3aed !important;
         color: #fff !important;
         padding: 0 2px;
-        border-radius: 1px;
+        border-radius: 0;
         margin: 0;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
@@ -348,9 +381,11 @@
         color: #999;
         font-style: italic;
         font-size: 4.2pt;
+        margin: 0;
+        padding: 0;
     }
 
-    /* Fluir todo en una sola página sin saltos */
+    /* Una sola página */
     .hotel-distribution-page {
         overflow: visible !important;
     }

@@ -169,6 +169,51 @@
         font-size: 14px;
     }
 
+    /* Controles de impresión */
+    .print-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .print-scale-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .print-scale-label {
+        font-weight: 600;
+        color: #1e3a5f;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .print-scale-select {
+        padding: 8px 30px 8px 10px;
+        font-size: 13px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        transition: border-color 0.2s ease;
+    }
+
+    .print-scale-select:hover {
+        border-color: #c2185b;
+    }
+
+    .print-scale-select:focus {
+        outline: none;
+        border-color: #e91e63;
+        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+    }
+
     /* Estilos de impresión A4: ver mat.esquemadistribucion.print.css */
 
     /* Responsive */
@@ -222,10 +267,26 @@
                 </select>
             }
         </div>
-        <button id="btn-print-distribucion" type="button" class="btn-print">
-            <i class="bi bi-printer-fill"></i>
-            Imprimir Distribución
-        </button>
+        <div class="print-controls">
+            <div class="print-scale-group">
+                <label for="print-scale" class="print-scale-label">Escala:</label>
+                <select id="print-scale" class="print-scale-select">
+                    <option value="1.0">100%</option>
+                    <option value="0.95">95%</option>
+                    <option value="0.9">90%</option>
+                    <option value="0.85">85%</option>
+                    <option value="0.8" selected>80%</option>
+                    <option value="0.75">75%</option>
+                    <option value="0.7">70%</option>
+                    <option value="0.65">65%</option>
+                    <option value="0.6">60%</option>
+                </select>
+            </div>
+            <button id="btn-print-distribucion" type="button" class="btn-print">
+                <i class="bi bi-printer-fill"></i>
+                Imprimir Distribución
+            </button>
+        </div>
     </div>
 
     <div id="esquema-distribucion" class="hotel-content">
@@ -313,6 +374,41 @@
         });
 
         $(document).on("click", "#btn-print-distribucion", function () {
+            var scale = parseFloat($("#print-scale").val()) || 0.8;
+            var widthPct = (100 / scale).toFixed(2);
+            var $page = $(".hotel-distribution-page");
+
+            // Medir contenido real para calcular tamaño de página
+            // Temporalmente quitar transform para medir el tamaño natural
+            var origTransform = $page.css("transform");
+            var origWidth = $page.css("width");
+            $page.css({ "transform": "none", "width": "100%" });
+
+            var contentW = $page[0].scrollWidth;
+            var contentH = $page[0].scrollHeight;
+
+            // Restaurar estilos
+            $page.css({ "transform": origTransform, "width": origWidth });
+
+            // Calcular dimensiones de página en mm (96 dpi)
+            var pageWmm = Math.ceil((contentW * scale) / 3.7795) + 6; // +6mm margen
+            var pageHmm = Math.ceil((contentH * scale) / 3.7795) + 6;
+
+            // Inyectar estilo dinámico con page size y escala
+            var styleId = "print-scale-dynamic";
+            $("#" + styleId).remove();
+            var atPage = String.fromCharCode(64) + 'page';
+            $("head").append(
+                '<style id="' + styleId + '" media="print">' +
+                atPage + ' { size: ' + pageWmm + 'mm ' + pageHmm + 'mm; margin: 3mm; } ' +
+                '.hotel-distribution-page { ' +
+                    'transform: scale(' + scale + ') !important; ' +
+                    'transform-origin: top left !important; ' +
+                    'width: ' + widthPct + '% !important; ' +
+                '}' +
+                '</style>'
+            );
+
             window.print();
         });
 
