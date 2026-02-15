@@ -1,4 +1,4 @@
-﻿@model NuevaReservaModel
+@model NuevaReservaModel
 @using MAT.MVC.Models
 @{
     Guid ViajeID = new Guid();
@@ -70,6 +70,14 @@
                             <span class="collapse-toggle"></span>
                         </div>
                         <div id="divCliente" class="widget-body in collapse" style="height: auto;width: 500px">
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label>Código de Presupuesto</label>
+                                <div style="display: flex; gap: 8px;">
+                                    <input type="text" id="txt-codigo-presupuesto" placeholder="Ej: MAT-20260215-0001" style="flex: 1;" />
+                                    <button type="button" class="btn btn-small btn-primary" id="btn-buscar-codigo" title="Buscar por código">Buscar</button>
+                                </div>
+                                <small style="color: #666; font-size: 11px;">El cliente puede llegar con el código en WhatsApp o impreso</small>
+                            </div>
                             <div class="form-group">
                                 <label>Cliente</label>
                                 <input type="text" id="txt-busqueda-cliente" placeholder="Ingrese Nombre o DNI" />
@@ -92,6 +100,9 @@
                                         <div style="font-size: 11px; color: #666;">
                                             <span>Código: <strong id="codigo-seguimiento"></strong></span> | 
                                             <span>Monto pactado: <strong id="monto-pactado"></strong></span>
+                                        </div>
+                                        <div id="presupuesto-contacto-info" style="font-size: 11px; color: #666; margin-top: 4px; display: none;">
+                                            <span id="presupuesto-contacto-text"></span>
                                         </div>
                                         <div style="margin-top: 8px; padding: 8px; background-color: #f0f0f0; border-radius: 3px; font-size: 11px;">
                                             <strong>Reparto de Comisión Automático:</strong><br/>
@@ -389,6 +400,60 @@
                     }
                 });
                 
+                // Búsqueda por código de presupuesto
+                $('#btn-buscar-codigo').on('click', function () { buscarPresupuestoPorCodigo(); });
+                $('#txt-codigo-presupuesto').on('keypress', function (e) {
+                    if (e.which === 13) { e.preventDefault(); buscarPresupuestoPorCodigo(); }
+                });
+
+                function buscarPresupuestoPorCodigo() {
+                    var codigo = $('#txt-codigo-presupuesto').val().trim();
+                    if (!codigo) {
+                        (window.alertInfo || window.alert)('Ingrese el código del presupuesto (ej: MAT-20260215-0001)', 'Código requerido');
+                        return;
+                    }
+                    $.ajax({
+                        url: "/NuevaReserva/BuscarPresupuestoPorCodigo",
+                        type: "POST",
+                        data: { codigoSeguimiento: codigo },
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.success && response.hasPresupuesto) {
+                                var p = response.presupuesto;
+                                $("#vendedor-origen-nombre").text(p.vendedorOrigenNombre);
+                                $("#codigo-seguimiento").text(p.codigoSeguimiento);
+                                $("#monto-pactado").text("$" + parseFloat(p.montoPactado).toLocaleString('es-AR'));
+                                $("#comision-origen").text("50%");
+                                $("#comision-cierre").text("50%");
+                                $("#banner-atribucion").slideDown();
+                                oReserva.PresupuestoId = p.presupuestoId;
+                                oReserva.VendedorIdOrigen = p.vendedorIdOrigen;
+                                // Mostrar datos de contacto del presupuesto si no hay DNI (ayuda a identificar al cliente)
+                                var contactos = [];
+                                if (p.nombreCliente) contactos.push('Cliente: ' + p.nombreCliente);
+                                if (p.telefonoCliente) contactos.push('Tel: ' + p.telefonoCliente);
+                                if (p.emailCliente) contactos.push('Email: ' + p.emailCliente);
+                                if (p.dniCliente) contactos.push('DNI: ' + p.dniCliente);
+                                if (contactos.length > 0) {
+                                    $("#presupuesto-contacto-text").text(contactos.join(' | '));
+                                    $("#presupuesto-contacto-info").show();
+                                } else {
+                                    $("#presupuesto-contacto-info").hide();
+                                }
+                            } else {
+                                $("#banner-atribucion").slideUp();
+                                oReserva.PresupuestoId = null;
+                                oReserva.VendedorIdOrigen = null;
+                                $("#presupuesto-contacto-info").hide();
+                                (window.alertInfo || window.alert)(response.message || 'No se encontró el presupuesto.', 'Búsqueda');
+                            }
+                        },
+                        error: function () {
+                            (window.alertError || window.alert)('Error al buscar el presupuesto.', 'Error');
+                        }
+                    });
+                }
+
                 // Función para buscar presupuesto por DNI
                 function buscarPresupuestoPorDni(dni) {
                     $.ajax({
@@ -407,7 +472,7 @@
                                 $("#comision-cierre").text("50%");
                                 
                                 $("#banner-atribucion").slideDown();
-                                
+                                $("#presupuesto-contacto-info").hide(); // En búsqueda por DNI no mostramos datos de contacto
                                 // Guardar información del presupuesto para usar al cerrar la venta
                                 oReserva.PresupuestoId = presupuesto.presupuestoId;
                                 oReserva.VendedorIdOrigen = presupuesto.vendedorIdOrigen;
@@ -415,6 +480,7 @@
                                 $("#banner-atribucion").slideUp();
                                 oReserva.PresupuestoId = null;
                                 oReserva.VendedorIdOrigen = null;
+                                $("#presupuesto-contacto-info").hide();
                             }
                         },
                         error: function () {

@@ -21,14 +21,14 @@
 
     <!-- Panel de Filtros -->
     <div class="modern-card mb-4">
-        <div class="modern-card-header" style="cursor: pointer;" onclick="toggleFiltros()">
+        <div class="modern-card-header presupuesto-filtros-toggle" onclick="toggleFiltros()">
             <div class="modern-card-title">
                 <i class="bi bi-funnel"></i>
                 <span>Filtros de Búsqueda</span>
             </div>
             <i class="bi bi-chevron-down" id="iconFiltros"></i>
         </div>
-        <div class="modern-card-content" id="divFiltros" style="display: none;">
+        <div class="modern-card-content presupuesto-u-hidden" id="divFiltros">
             <div class="row g-3">
                 <div class="col-md-3">
                     <label class="modern-form-label">
@@ -99,7 +99,7 @@
                 <span>Listado de Presupuestos</span>
             </div>
         </div>
-        <div class="modern-card-content" style="padding: 0;">
+        <div class="modern-card-content presupuesto-table-content">
             <div style="padding: 1.5rem;">
                 <table id="tblPresupuestos" class="modern-table" style="width: 100%;">
                     <thead>
@@ -125,225 +125,9 @@
 </div>
 
 <!-- Modal de Detalle -->
-<div id="modalDetallePresupuesto" style="display: none;">
+<div id="modalDetallePresupuesto" class="presupuesto-u-hidden">
     <div id="contenidoDetallePresupuesto"></div>
 </div>
-
-<style>
-    /* Estilos modernos para badges de estado */
-    .presupuesto-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.375rem 0.875rem;
-        border-radius: 20px;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        letter-spacing: 0.025em;
-        white-space: nowrap;
-        transition: all 0.2s ease;
-    }
-    
-    .badge-pendiente {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        color: white;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-    }
-    
-    .badge-cerrado {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-    }
-    
-    .badge-expirado {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        color: white;
-        box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
-    }
-    
-    .badge-proximo-expiracion {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: white;
-        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
-        font-size: 0.75rem;
-        padding: 0.25rem 0.625rem;
-        margin-top: 0.25rem;
-        display: block;
-        width: fit-content;
-    }
-    
-    /* Botones de acción modernos */
-    .btn-accion-presupuesto {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        margin: 0 0.25rem;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.2s ease;
-        background: transparent;
-    }
-    
-    .btn-accion-presupuesto i {
-        font-size: 1rem;
-    }
-    
-    .btn-accion-presupuesto.btn-ver {
-        color: #3b82f6;
-    }
-    
-    .btn-accion-presupuesto.btn-ver:hover {
-        background: rgba(59, 130, 246, 0.1);
-        color: #2563eb;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
-    }
-    
-    .btn-accion-presupuesto.btn-copiar {
-        color: #6b7280;
-    }
-    
-    .btn-accion-presupuesto.btn-copiar:hover {
-        background: rgba(107, 114, 128, 0.1);
-        color: #4b5563;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(107, 114, 128, 0.2);
-    }
-    
-    /* Estilos mejorados para DataTables */
-    #tblPresupuestos.dataTable {
-        width: 100% !important;
-        border-collapse: collapse;
-    }
-    
-    #tblPresupuestos.dataTable thead th {
-        background: var(--bg-main) !important;
-        padding: 1rem !important;
-        font-weight: 600;
-        font-size: 0.8125rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: var(--text-primary);
-        border-bottom: 2px solid var(--border-color) !important;
-    }
-    
-    #tblPresupuestos.dataTable tbody td {
-        padding: 1rem !important;
-        border-bottom: 1px solid var(--border-color) !important;
-        color: var(--text-primary);
-        font-size: 0.9375rem;
-        vertical-align: middle;
-    }
-    
-    #tblPresupuestos.dataTable tbody tr {
-        transition: all 0.2s ease;
-        background-color: var(--white) !important;
-    }
-    
-    #tblPresupuestos.dataTable tbody tr:hover {
-        background-color: rgba(230, 51, 117, 0.05) !important;
-        box-shadow: 0 2px 8px rgba(230, 51, 117, 0.08);
-    }
-    
-    #tblPresupuestos.dataTable tbody tr.odd {
-        background-color: #fafafa !important;
-    }
-    
-    #tblPresupuestos.dataTable tbody tr.odd:hover {
-        background-color: rgba(230, 51, 117, 0.05) !important;
-    }
-    
-    /* Estilos para DataTables info y paginación */
-    .dataTables_wrapper .dataTables_info,
-    .dataTables_wrapper .dataTables_paginate {
-        padding: 1rem 1.5rem;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-        padding: 0.5rem 0.75rem;
-        margin: 0 0.25rem;
-        border-radius: 6px;
-        border: 1px solid var(--border-color);
-        color: var(--text-primary) !important;
-        transition: all 0.2s ease;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-        background: var(--brand-primary) !important;
-        color: white !important;
-        border-color: var(--brand-primary);
-    }
-    
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        background: var(--brand-primary) !important;
-        color: white !important;
-        border-color: var(--brand-primary);
-    }
-    
-    /* Mejoras para el código de seguimiento */
-    #tblPresupuestos.dataTable tbody td:first-child {
-        font-weight: 600;
-    }
-    
-    /* Espaciado para acciones */
-    #tblPresupuestos.dataTable tbody td:last-child {
-        text-align: center;
-    }
-    
-    /* Estilos para el modal moderno */
-    .ui-dialog.modern-dialog {
-        border-radius: 12px;
-        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2), 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-    
-    .ui-dialog.modern-dialog .ui-dialog-titlebar {
-        background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%);
-        color: white;
-        border: none;
-        border-radius: 12px 12px 0 0;
-        padding: 1rem 1.5rem;
-        font-weight: 600;
-        font-size: 1.125rem;
-    }
-    
-    .ui-dialog.modern-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        color: white;
-        font-size: 1.25rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    
-    .ui-dialog.modern-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.1);
-    }
-    
-    /* Mejora para el código en la tabla */
-    #tblPresupuestos.dataTable tbody td:first-child strong {
-        color: var(--brand-primary);
-        font-size: 0.9375rem;
-        letter-spacing: 0.025em;
-    }
-    
-    /* Mejora para el monto en la tabla */
-    #tblPresupuestos.dataTable tbody td:nth-child(4) {
-        font-weight: 600;
-        color: var(--brand-primary);
-    }
-</style>
 
 <script type="text/javascript">
     var tablaPresupuestos;
@@ -577,106 +361,17 @@
                 console.log('Respuesta recibida:', response);
                 
                 if (response && response.success) {
-                    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-                        console.log('Datos recibidos:', response.data.length, 'registros');
-                        console.log('Primer registro completo:', JSON.stringify(response.data[0], null, 2));
-                        
-                        try {
-                            console.log('Actualizando tabla con', response.data.length, 'registros');
-                            console.log('Primer registro:', response.data[0]);
-                            
-                            // Destruir la tabla existente si existe
-                            if ($.fn.DataTable.isDataTable('#tblPresupuestos')) {
-                                tablaPresupuestos.destroy();
-                            }
-                            
-                            // Recrear la tabla con los nuevos datos
-                            tablaPresupuestos = $('#tblPresupuestos').DataTable({
-                                language: {
-                                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-AR.json'
-                                },
-                                pageLength: 25,
-                                order: [[5, 'desc']],
-                                columnDefs: [
-                                    { orderable: true, targets: [0, 1, 2, 3, 5, 6, 7] },
-                                    { orderable: false, targets: [4, 8] },
-                                    { className: "text-center", targets: [7, 8] },
-                                    { className: "text-end", targets: [3] }
-                                ],
-                                responsive: true,
-                                processing: false,
-                                serverSide: false,
-                                data: response.data, // Pasar los datos directamente aquí
-                                columns: [
-                                    {
-                                        data: 'codigoSeguimiento',
-                                        render: function (data, type, row) {
-                                            return '<strong style="color: var(--brand-primary);">' + (data || '') + '</strong>';
-                                        }
-                                    },
-                                    {
-                                        data: 'dniCliente',
-                                        render: function (data, type, row) {
-                                            return '<div><strong>DNI:</strong> ' + (data || 'N/A') + '</div>';
-                                        }
-                                    },
-                                    {
-                                        data: 'vendedorOrigenNombre',
-                                        render: function (data) {
-                                            return data || 'N/A';
-                                        }
-                                    },
-                                    {
-                                        data: 'montoPactado',
-                                        render: function (data) {
-                                            return '$' + parseFloat(data || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                        }
-                                    },
-                                    {
-                                        data: 'viajeDescripcion',
-                                        render: function (data) {
-                                            return data ? '<small>' + data + '</small>' : '<span class="text-muted">Sin viaje</span>';
-                                        }
-                                    },
-                                    {
-                                        data: 'fechaCreacion',
-                                        render: function (data) {
-                                            return '<small>' + (data || '') + '</small>';
-                                        }
-                                    },
-                                    {
-                                        data: 'fechaExpiracion',
-                                        render: function (data, type, row) {
-                                            var html = '<small>' + (data || '') + '</small>';
-                                            if (row.diasRestantes > 0 && row.diasRestantes <= 1 && row.estado === 1) {
-                                                html += '<br><span class="badge-proximo-expiracion presupuesto-badge">Expira en ' + row.diasRestantes + ' día</span>';
-                                            }
-                                            return html;
-                                        }
-                                    },
-                                    {
-                                        data: 'estadoNombre',
-                                        render: function (data, type, row) {
-                                            var badgeClass = 'badge-pendiente';
-                                            if (data === 'Cerrado') badgeClass = 'badge-cerrado';
-                                            else if (data === 'Expirado' || row.isExpirado) badgeClass = 'badge-expirado';
-                                            return '<span class="presupuesto-badge ' + badgeClass + '">' + (data || 'Pendiente') + '</span>';
-                                        }
-                                    },
-                                    {
-                                        data: null,
-                                        render: function (data, type, row) {
-                                            var html = '<button class="btn-accion-presupuesto btn-ver" onclick="verDetalle(\'' + row.presupuestoId + '\')" title="Ver detalle">';
-                                            html += '<i class="bi bi-eye"></i></button>';
-                                            html += '<button class="btn-accion-presupuesto btn-copiar" onclick="copiarCodigo(\'' + row.codigoSeguimiento + '\')" title="Copiar código">';
-                                            html += '<i class="bi bi-clipboard"></i></button>';
-                                            return html;
-                                        }
-                                    }
-                                ]
-                            });
-                            
-                            console.log('Tabla recreada. Total de filas:', tablaPresupuestos.rows().count());
+                    var datos = response.data && Array.isArray(response.data) ? response.data : [];
+                    console.log('Datos recibidos:', datos.length, 'registros');
+                    
+                    try {
+                        // Actualizar datos sin destruir la tabla (evita error parentNode)
+                        if (tablaPresupuestos && $.fn.DataTable.isDataTable('#tblPresupuestos')) {
+                            tablaPresupuestos.clear();
+                            tablaPresupuestos.rows.add(datos);
+                            tablaPresupuestos.draw();
+                            console.log('Tabla actualizada. Total de filas:', tablaPresupuestos.rows().count());
+                        }
                         } catch (error) {
                             console.error('Error al actualizar la tabla:', error);
                             console.error('Stack trace:', error.stack);

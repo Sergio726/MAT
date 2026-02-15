@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Presupuesto_GetByDni]
+CREATE PROCEDURE [dbo].[usp_MAT_Presupuesto_GetByDni]
 (
     @DniCliente VARCHAR(50)
 )
@@ -19,6 +19,9 @@ BEGIN
     SELECT 
         p.[PresupuestoID],
         p.[DniCliente],
+        p.[NombreCliente],
+        p.[TelefonoCliente],
+        p.[EmailCliente],
         p.[VendedorIdOrigen],
         p.[CodigoSeguimiento],
         p.[MontoPactado],
@@ -47,7 +50,7 @@ BEGIN
     LEFT JOIN [dbo].[Paquete] paq WITH (NOLOCK)
         ON v.[PaqueteID] = paq.[PaqueteID]
     WHERE 
-        p.[DniCliente] = @DniCliente
+        p.[DniCliente] = @DniCliente AND p.[DniCliente] IS NOT NULL
         AND p.[Estado] = 1 -- Solo pendientes
         AND p.[FechaExpiracion] >= GETDATE() -- No expirados
     ORDER BY 

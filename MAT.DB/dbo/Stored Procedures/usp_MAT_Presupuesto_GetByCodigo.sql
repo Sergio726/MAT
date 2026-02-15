@@ -1,4 +1,4 @@
-﻿/*
+/*
 ----------------------------------------------------------------------------------------------------
 -- Created By: Seba Garcia
 -- Create date: 2026-01-11
@@ -19,6 +19,9 @@ BEGIN
     SELECT 
         p.[PresupuestoID],
         p.[DniCliente],
+        p.[NombreCliente],
+        p.[TelefonoCliente],
+        p.[EmailCliente],
         p.[VendedorIdOrigen],
         p.[CodigoSeguimiento],
         p.[MontoPactado],

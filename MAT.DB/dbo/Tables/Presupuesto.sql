@@ -1,6 +1,9 @@
-﻿CREATE TABLE [dbo].[Presupuesto] (
+CREATE TABLE [dbo].[Presupuesto] (
     [PresupuestoID]     UNIQUEIDENTIFIER CONSTRAINT [DF_Presupuesto_PresupuestoID] DEFAULT (newid()) NOT NULL,
-    [DniCliente]        VARCHAR (50)     NOT NULL,
+    [DniCliente]        VARCHAR (50)     NULL,
+    [NombreCliente]     VARCHAR (200)    NULL,
+    [TelefonoCliente]   VARCHAR (50)     NULL,
+    [EmailCliente]      VARCHAR (100)    NULL,
     [VendedorIdOrigen]  UNIQUEIDENTIFIER NOT NULL,
     [CodigoSeguimiento] VARCHAR (50)     NOT NULL,
     [MontoPactado]      FLOAT (53)       NOT NULL,

@@ -425,6 +425,7 @@
     <Content Include="Content\modern-account.css" />
     <Content Include="Content\modern-dashboard.css" />
     <Content Include="Content\modern-datatable.css" />
+    <Content Include="Content\modern-presupuesto.css" />
     <Content Include="Content\modern-layout.css" />
     <Content Include="Content\modern-menu.css" />
     <Content Include="Content\modern-topbar.css" />

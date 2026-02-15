@@ -1,4 +1,4 @@
-﻿
+
 CREATE PROCEDURE [dbo].[usp_MAT_Presupuesto_GetAll]
 (
     @Estado            INT = NULL,
@@ -23,6 +23,9 @@ BEGIN
     SELECT 
         p.[PresupuestoID],
         p.[DniCliente],
+        p.[NombreCliente],
+        p.[TelefonoCliente],
+        p.[EmailCliente],
         p.[VendedorIdOrigen],
         vOrigen.Apellido +' '+vOrigen.Nombre AS VendedorOrigenNombre,
         p.[CodigoSeguimiento],

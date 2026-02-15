@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MAT.Entities;
 using MAT.MVC.Common;
 using MAT.MVC.Integration;
@@ -60,6 +60,65 @@ namespace MAT.MVC.Controllers.NuevaReserva
         }
 
         /// <summary>
+        /// Busca un presupuesto por código de seguimiento (ej: MAT-20260215-0001)
+        /// Útil cuando el cliente llega a caja con el código impreso o en WhatsApp
+        /// </summary>
+        [HttpPost]
+        public JsonResult BuscarPresupuestoPorCodigo(string codigoSeguimiento)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(codigoSeguimiento))
+                {
+                    return Json(new { success = false, message = "El código de seguimiento es requerido." }, JsonRequestBehavior.AllowGet);
+                }
+
+                var presupuesto = PresupuestoMethod.GetByCodigo(codigoSeguimiento.Trim().ToUpper());
+
+                if (presupuesto == null)
+                {
+                    return Json(new { success = true, hasPresupuesto = false, message = "No se encontró ningún presupuesto con ese código." }, JsonRequestBehavior.AllowGet);
+                }
+
+                if (presupuesto.Estado != eEstadoPresupuesto.Pendiente)
+                {
+                    return Json(new { success = true, hasPresupuesto = false, message = $"El presupuesto ya fue {presupuesto.Estado.ToString().ToLower()}." }, JsonRequestBehavior.AllowGet);
+                }
+
+                if (presupuesto.IsExpirado)
+                {
+                    return Json(new { success = true, hasPresupuesto = false, message = "El presupuesto ha expirado." }, JsonRequestBehavior.AllowGet);
+                }
+
+                var resultado = new
+                {
+                    presupuestoId = presupuesto.PresupuestoID.ToString(),
+                    codigoSeguimiento = presupuesto.CodigoSeguimiento,
+                    montoPactado = presupuesto.MontoPactado,
+                    vendedorOrigenNombre = presupuesto.VendedorOrigenNombre,
+                    vendedorIdOrigen = presupuesto.VendedorIdOrigen.ToString(),
+                    viajeId = presupuesto.ViajeId?.ToString(),
+                    viajeDescripcion = presupuesto.ViajeDescripcion,
+                    paqueteDescripcion = presupuesto.PaqueteDescripcion,
+                    fechaCreacion = presupuesto.FechaCreacion.ToString("dd/MM/yyyy HH:mm"),
+                    fechaExpiracion = presupuesto.FechaExpiracion.ToString("dd/MM/yyyy HH:mm"),
+                    isExpirado = presupuesto.IsExpirado,
+                    dniCliente = presupuesto.DniCliente,
+                    nombreCliente = presupuesto.NombreCliente,
+                    telefonoCliente = presupuesto.TelefonoCliente,
+                    emailCliente = presupuesto.EmailCliente
+                };
+
+                return Json(new { success = true, hasPresupuesto = true, presupuesto = resultado }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en NuevaReservaController.BuscarPresupuestoPorCodigo: {ex.Message} - {ex.StackTrace}", 1);
+                return Json(new { success = false, message = "Error al buscar el presupuesto." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        /// <summary>
         /// Busca presupuestos activos por DNI del cliente
         /// </summary>
         [HttpPost]
@@ -94,7 +153,11 @@ namespace MAT.MVC.Controllers.NuevaReserva
                     paqueteDescripcion = presupuesto.PaqueteDescripcion,
                     fechaCreacion = presupuesto.FechaCreacion.ToString("dd/MM/yyyy HH:mm"),
                     fechaExpiracion = presupuesto.FechaExpiracion.ToString("dd/MM/yyyy HH:mm"),
-                    isExpirado = presupuesto.IsExpirado
+                    isExpirado = presupuesto.IsExpirado,
+                    dniCliente = presupuesto.DniCliente,
+                    nombreCliente = presupuesto.NombreCliente,
+                    telefonoCliente = presupuesto.TelefonoCliente,
+                    emailCliente = presupuesto.EmailCliente
                 };
 
                 return Json(new { success = true, hasPresupuesto = true, presupuesto = resultado }, JsonRequestBehavior.AllowGet);

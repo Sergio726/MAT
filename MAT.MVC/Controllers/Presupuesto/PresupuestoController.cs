@@ -114,13 +114,22 @@ namespace MAT.MVC.Controllers.Presupuesto
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult CreatePresupuesto(string dniCliente, Guid? viajeId, double montoPactado, string observaciones = "", string telefonoCliente = null)
+        public JsonResult CreatePresupuesto(string dniCliente, string nombreCliente, Guid? viajeId, double montoPactado, string observaciones = "", string telefonoCliente = null, string emailCliente = null)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(dniCliente))
+                var dni = string.IsNullOrWhiteSpace(dniCliente) ? null : dniCliente.Trim().Replace(".", "");
+                var nombre = string.IsNullOrWhiteSpace(nombreCliente) ? null : nombreCliente.Trim();
+                var telefono = string.IsNullOrWhiteSpace(telefonoCliente) ? null : telefonoCliente.Trim();
+                var email = string.IsNullOrWhiteSpace(emailCliente) ? null : emailCliente.Trim();
+
+                // Validar: se requiere DNI, o bien (nombre + (teléfono o email)) cuando no hay DNI
+                if (string.IsNullOrWhiteSpace(dni))
                 {
-                    return Json(new { success = false, message = "El DNI del cliente es requerido." });
+                    if (string.IsNullOrWhiteSpace(nombre) || (string.IsNullOrWhiteSpace(telefono) && string.IsNullOrWhiteSpace(email)))
+                    {
+                        return Json(new { success = false, message = "Cuando no hay DNI, debe ingresar nombre del cliente y al menos teléfono o email." });
+                    }
                 }
 
                 if (montoPactado <= 0)
@@ -139,7 +148,10 @@ namespace MAT.MVC.Controllers.Presupuesto
                 PresupuestoStandard presupuesto = new PresupuestoStandard
                 {
                     PresupuestoID = Guid.NewGuid(),
-                    DniCliente = dniCliente.Trim(),
+                    DniCliente = dni ?? "",
+                    NombreCliente = nombre,
+                    TelefonoCliente = telefono,
+                    EmailCliente = email,
                     VendedorIdOrigen = vendedorActual.VendedorId,
                     MontoPactado = montoPactado,
                     ViajeId = viajeId,
@@ -158,11 +170,11 @@ namespace MAT.MVC.Controllers.Presupuesto
                 string whatsappLink = null;
                 string mensajeWhatsAppResultado = "";
                 
-                if (!string.IsNullOrWhiteSpace(telefonoCliente))
+                if (!string.IsNullOrWhiteSpace(telefono))
                 {
                     try
                     {
-                        whatsappEnviado = EnviarWhatsApp(telefonoCliente, mensajeWhatsApp, out whatsappLink);
+                        whatsappEnviado = EnviarWhatsApp(telefono, mensajeWhatsApp, out whatsappLink);
                         if (whatsappEnviado)
                         {
                             mensajeWhatsAppResultado = " El mensaje de WhatsApp ha sido enviado exitosamente.";

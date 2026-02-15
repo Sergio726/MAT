@@ -5,39 +5,39 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="modern-page-container">
+<div class="modern-page-container presupuesto-create">
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-telephone-forward"></i>
-            <span>Modulo de Preventa Telefonica</span>
+            <span>Módulo de Preventa Telefónica</span>
         </h2>
-        <p class="modern-page-subtitle">Registra al cliente y asegura tu comision generando un codigo de seguimiento unico</p>
+        <p class="modern-page-subtitle">Registra al cliente y asegura tu comisión generando un código de seguimiento único</p>
     </div>
 
-    <div class="row g-4" style="align-items: stretch;">
-        <div class="col-lg-6" style="display: flex;">
-            <div class="modern-card" style="display: flex; flex-direction: column; height: 100%;">
+    <div class="row g-4 presupuesto-create-row">
+        <div class="col-lg-6 presupuesto-col-flex">
+            <div class="modern-card presupuesto-form-card">
                 <div class="modern-card-header">
                     <div class="modern-card-title">
                         <i class="bi bi-file-earmark-text"></i>
                         <span>Datos del Presupuesto Rapido</span>
                     </div>
                 </div>
-                <div class="modern-card-content" style="flex: 1; display: flex; flex-direction: column; overflow-y: auto;">
-                    <form id="formPresupuesto" class="modern-form-container" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="modern-card-content presupuesto-form-content">
+                    <form id="formPresupuesto" class="presupuesto-form-container presupuesto-form-flex">
                         @Html.AntiForgeryToken()
                         <div class="modern-form-group">
                             <label for="txt-busqueda-cliente" class="modern-form-label">
                                 <i class="bi bi-search"></i>
                                 Buscar Cliente <span class="text-danger">*</span>
                             </label>
-                            <div style="position: relative;">
+                            <div class="presupuesto-input-wrapper">
                                 <input type="text" 
                                        class="modern-form-input" 
                                        id="txt-busqueda-cliente" 
-                                       placeholder="Ingrese nombre o DNI del cliente (minimo 3 caracteres)..." 
+                                       placeholder="Ingrese nombre o DNI del cliente (mínimo 3 caracteres)..." 
                                        autocomplete="off" />
-                                <span id="loading-cliente" style="display: none; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);">
+                                <span id="loading-cliente" class="presupuesto-loading-indicator">
                                     <i class="bi bi-hourglass-split"></i>
                                 </span>
                             </div>
@@ -50,20 +50,18 @@
                             </small>
                         </div>
 
-                        <div class="modern-form-group" id="divClienteSeleccionado" style="display: none;">
-                            <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <i class="bi bi-person-check" style="color: var(--brand-primary);"></i>
-                                        <strong style="color: var(--text-primary);">Cliente Seleccionado</strong>
+                        <div class="modern-form-group presupuesto-u-hidden" id="divClienteSeleccionado">
+                            <div class="presupuesto-cliente-seleccionado">
+                                <div class="presupuesto-cliente-header">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-person-check presupuesto-icon-primary"></i>
+                                        <strong class="presupuesto-cliente-nombre">Cliente Seleccionado</strong>
                                     </div>
-                                    <button type="button" class="btn-close" onclick="limpiarCliente();" aria-label="Limpiar" style="font-size: 0.875rem;"></button>
+                                    <button type="button" class="btn-close btn-close-sm" onclick="limpiarCliente();" aria-label="Limpiar"></button>
                                 </div>
-                                <div style="color: var(--text-primary);">
+                                <div class="presupuesto-cliente-nombre">
                                     <div><strong id="lblNombreCliente"></strong></div>
-                                    <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                                        DNI: <span id="lblDniCliente"></span>
-                                    </div>
+                                    <div class="presupuesto-cliente-dni">DNI: <span id="lblDniCliente"></span></div>
                                 </div>
                             </div>
                         </div>
@@ -80,7 +78,37 @@
                                    autocomplete="name" />
                             <small class="form-text text-muted">
                                 <i class="bi bi-info-circle"></i>
-                                Opcional: Use este campo si el cliente no esta registrado en el sistema
+                                Si no encuentra al cliente, ingrese el nombre. Cuando no hay DNI, complete también teléfono o email.
+                            </small>
+                        </div>
+
+                        <div class="modern-form-group">
+                            <label for="txtTelefonoVisible" class="modern-form-label">
+                                <i class="bi bi-whatsapp"></i>
+                                Teléfono / WhatsApp
+                            </label>
+                            <input type="text" 
+                                   class="modern-form-input" 
+                                   id="txtTelefonoVisible" 
+                                   placeholder="Ej: 11 1234-5678 o 54911..." 
+                                   autocomplete="tel" />
+                            <small class="form-text text-muted">
+                                Requerido si no hay DNI. Se usa para enviar el código por WhatsApp.
+                            </small>
+                        </div>
+
+                        <div class="modern-form-group">
+                            <label for="txtEmailCliente" class="modern-form-label">
+                                <i class="bi bi-envelope"></i>
+                                Email
+                            </label>
+                            <input type="email" 
+                                   class="modern-form-input" 
+                                   id="txtEmailCliente" 
+                                   placeholder="cliente@ejemplo.com" 
+                                   autocomplete="email" />
+                            <small class="form-text text-muted">
+                                Alternativa al teléfono cuando no hay DNI.
                             </small>
                         </div>
 
@@ -92,27 +120,26 @@
                             @Html.DropDownList("ddlViaje", (List<SelectListItem>)ViewBag.Viajes, "Seleccione un viaje (opcional)", new { @class = "modern-form-select" })
                         </div>
 
-                        <div id="divViajeInfo" style="display: none;">
+                        <div id="divViajeInfo" class="presupuesto-u-hidden">
                             <div class="modern-form-group">
                                 <label class="modern-form-label">
                                     <i class="bi bi-tag"></i>
                                     Precio Base del Viaje
                                 </label>
-                                <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                                        <span style="font-size: 1.125rem; color: var(--text-primary);">Precio Base:</span>
-                                        <strong style="font-size: 1.25rem; color: var(--brand-primary);" id="lblPrecioBase">$0</strong>
+                                <div class="presupuesto-viaje-info-box">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span class="presupuesto-label-text">Precio Base:</span>
+                                        <strong class="presupuesto-value-brand" id="lblPrecioBase">$0</strong>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="modern-form-group" id="divAdicionales" style="display: none;">
+                            <div class="modern-form-group presupuesto-u-hidden" id="divAdicionales">
                                 <label class="modern-form-label">
                                     <i class="bi bi-plus-circle"></i>
                                     Adicionales Disponibles
                                 </label>
-                                <div id="adicionalesContainer" style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                    </div>
+                                <div id="adicionalesContainer" class="presupuesto-adicionales-grid"></div>
                             </div>
 
                             <div class="modern-form-group">
@@ -120,10 +147,10 @@
                                     <i class="bi bi-calculator"></i>
                                     Monto Total
                                 </label>
-                                <div style="background: linear-gradient(135deg, var(--brand-primary) 0%, #ff6b9d 100%); padding: 1.25rem; border-radius: 8px; color: white;">
-                                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                                        <span style="font-size: 1rem; font-weight: 500;">Total:</span>
-                                        <strong style="font-size: 1.5rem; font-weight: 700;" id="lblMontoTotal">$0</strong>
+                                <div class="presupuesto-monto-total-box">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span class="presupuesto-monto-label">Total:</span>
+                                        <strong class="presupuesto-monto-value" id="lblMontoTotal">$0</strong>
                                     </div>
                                 </div>
                             </div>
@@ -134,8 +161,8 @@
                                 <i class="bi bi-currency-dollar"></i>
                                 Monto Pactado <span class="text-danger">*</span>
                             </label>
-                            <div class="input-group">
-                                <span class="input-group-text" style="background: var(--bg-main); border-right: none;">
+                            <div class="presupuesto-input-group">
+                                <span class="presupuesto-input-group-text">
                                     <i class="bi bi-currency-dollar"></i>
                                 </span>
                                 <input type="number" 
@@ -164,7 +191,7 @@
                                       placeholder="Notas adicionales sobre el presupuesto"></textarea>
                         </div>
 
-                        <div class="modern-form-actions" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <div class="modern-form-actions presupuesto-form-actions">
                             <button type="submit" class="btn-modern btn-modern-primary" id="btnGenerarCodigo">
                                 <i class="bi bi-send-check"></i>
                                 <span>Generar Codigo y Enviar WhatsApp</span>
@@ -175,18 +202,18 @@
             </div>
         </div>
 
-        <div class="col-lg-6" style="display: flex;">
-            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
-                <div class="modern-card modern-card-info" style="flex: 1; display: flex; flex-direction: column;">
-                    <div class="modern-card-header" style="padding: 1rem 1.5rem; flex-shrink: 0;">
+        <div class="col-lg-6 presupuesto-col-flex">
+            <div class="presupuesto-sidebar">
+                <div class="modern-card modern-card-info presupuesto-sidebar-card">
+                    <div class="modern-card-header presupuesto-sidebar-header">
                         <div class="modern-card-title" style="font-size: 0.9375rem;">
                             <i class="bi bi-chat-quote"></i>
                             <span>Script Sugerido</span>
                         </div>
                     </div>
-                    <div class="modern-card-content" style="padding: 1rem 1.5rem; flex: 1; display: flex; align-items: center;">
-                        <div style="background: var(--bg-main); padding: 0.875rem; border-radius: 8px; border-left: 3px solid var(--brand-primary); width: 100%;">
-                            <p style="font-style: italic; color: var(--text-primary); margin: 0; line-height: 1.4; font-size: 0.875rem;">
+                    <div class="modern-card-content presupuesto-script-content">
+                        <div class="presupuesto-script-box">
+                            <p class="presupuesto-script-text">
                                 "<span id="scriptNombreCliente" style="font-weight: 600;">[Nombre del Cliente]</span>, 
                                 para que no tengas que repetir todo cuando vayas a la agencia y te respeten este precio de 
                                 $<span id="scriptMonto" style="font-weight: 600;">[Monto]</span>, te acabo de enviar un 
@@ -196,222 +223,55 @@
                     </div>
                 </div>
 
-                <div class="modern-card" style="flex: 1; display: flex; flex-direction: column;">
-                    <div class="modern-card-header" style="padding: 1rem 1.5rem; flex-shrink: 0;">
-                        <div class="modern-card-title" style="font-size: 0.9375rem;">
+                <div class="modern-card presupuesto-sidebar-card">
+                    <div class="modern-card-header presupuesto-sidebar-header">
+                        <div class="modern-card-title presupuesto-sidebar-title">
                             <i class="bi bi-ticket-perforated"></i>
-                            <span>Previsualizacion de Ticket</span>
+                            <span>Previsualización de Ticket</span>
                         </div>
-                        <span class="badge bg-warning text-dark" id="lblNumeroTicket" style="font-size: 0.75rem; padding: 0.375rem 0.625rem;">#----</span>
+                        <span class="badge bg-warning text-dark presupuesto-badge-ticket" id="lblNumeroTicket">#----</span>
                     </div>
-                    <div class="modern-card-content" style="padding: 1rem 1.5rem; flex: 1; display: flex; align-items: center; justify-content: center;">
-                        <div style="text-align: center; padding: 1.25rem; background: linear-gradient(135deg, var(--bg-main) 0%, #ffffff 100%); border-radius: 8px; border: 2px dashed var(--border-color); width: 100%;">
-                            <div style="font-size: 1.5rem; font-weight: 700; font-family: 'Courier New', monospace; color: var(--brand-primary); margin-bottom: 0.75rem; letter-spacing: 1px;" id="lblCodigoSeguimiento">
+                    <div class="modern-card-content presupuesto-ticket-content">
+                        <div class="presupuesto-ticket-preview">
+                            <div class="presupuesto-codigo-display" id="lblCodigoSeguimiento">
                                 MAT-XXXX-XXXX
                             </div>
-                            <div style="font-size: 0.8125rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <div class="presupuesto-vendedor-info">
                                 <i class="bi bi-person-check"></i>
-                                <span>Vendedor: <strong id="lblVendedor" style="font-size: 0.8125rem;">@MAT.MVC.Common.MATContext.CurrentVendedor?.Descripcion</strong></span>
+                                <span>Vendedor: <strong id="lblVendedor">@MAT.MVC.Common.MATContext.CurrentVendedor?.Descripcion</strong></span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="divResultado" class="alert" style="display: none; margin-top: 1.5rem; border-radius: 12px; border: none; box-shadow: var(--card-shadow);">
-                <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                    <i class="bi" id="iconResultado" style="font-size: 1.5rem; flex-shrink: 0;"></i>
-                    <div style="flex: 1;">
-                        <strong id="titleResultado"></strong>
-                        <div id="msgResultado" style="margin-top: 0.5rem;"></div>
+            <!-- Modal centrado para resultado de presupuesto -->
+            <div id="divResultadoOverlay" class="presupuesto-resultado-overlay presupuesto-u-hidden">
+                <div id="divResultado" class="alert presupuesto-alert-resultado presupuesto-resultado-modal">
+                    <div class="presupuesto-alert-inner">
+                        <i class="bi presupuesto-alert-icon" id="iconResultado"></i>
+                        <div class="presupuesto-alert-body">
+                            <strong id="titleResultado"></strong>
+                            <div id="msgResultado" class="presupuesto-alert-msg"></div>
+                            <div id="divResultadoAcciones" class="presupuesto-resultado-acciones presupuesto-u-hidden">
+                                <button type="button" class="btn-modern btn-modern-outline btn-sm" id="btnCopiarWppModal">
+                                    <i class="bi bi-whatsapp"></i> Copiar mensaje WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close presupuesto-resultado-close" id="btnCerrarResultado" aria-label="Cerrar"></button>
                     </div>
-                    <button type="button" class="btn-close" onclick="$('#divResultado').fadeOut();" aria-label="Cerrar"></button>
                 </div>
+            </div>
+            <!-- Botón persistente para copiar mensaje WhatsApp (visible tras cerrar el modal) -->
+            <div id="divCopiarWppPersistente" class="presupuesto-copiar-wpp-persistente presupuesto-u-hidden">
+                <button type="button" class="btn-modern btn-modern-outline btn-sm" id="btnCopiarWppPersistente">
+                    <i class="bi bi-whatsapp"></i> Copiar mensaje WhatsApp
+                </button>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .modern-form-container {
-        padding: 0;
-    }
-
-    .modern-form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .modern-form-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .modern-form-label i {
-        color: var(--brand-primary);
-        font-size: 1rem;
-    }
-
-    .modern-form-input,
-    .modern-form-textarea,
-    .modern-form-select {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 0.9375rem;
-        transition: all 0.2s ease;
-        background: var(--white);
-        color: var(--text-primary);
-    }
-
-    .modern-form-input:focus,
-    .modern-form-textarea:focus,
-    .modern-form-select:focus {
-        outline: none;
-        border-color: var(--brand-primary);
-        box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.1);
-    }
-
-    .modern-form-textarea {
-        resize: vertical;
-        min-height: 100px;
-    }
-
-    .input-group {
-        display: flex;
-        align-items: stretch;
-    }
-
-    .input-group-text {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color);
-        border-right: none;
-        border-radius: 8px 0 0 8px;
-        background: var(--bg-main);
-        color: var(--text-secondary);
-    }
-
-    .input-group .modern-form-input {
-        border-radius: 0 8px 8px 0;
-        border-left: none;
-    }
-
-    .form-text {
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-        font-size: 0.8125rem;
-        color: var(--text-secondary);
-        margin-top: 0.375rem;
-    }
-
-    .form-text i {
-        color: var(--brand-primary);
-    }
-
-    .modern-form-actions {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.5rem 0.75rem;
-        font-weight: 600;
-        border-radius: 8px;
-    }
-
-    /* Estilos para autocomplete de jQuery UI */
-    .ui-autocomplete {
-        max-height: 300px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        background: var(--white);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        padding: 0.5rem 0;
-    }
-
-    .ui-autocomplete .ui-menu-item {
-        padding: 0;
-        margin: 0;
-    }
-
-    .ui-autocomplete .ui-menu-item-wrapper {
-        padding: 0.75rem 1rem;
-        border: none;
-        border-bottom: 1px solid var(--bg-main);
-        color: var(--text-primary);
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .ui-autocomplete .ui-menu-item-wrapper:hover,
-    .ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
-        background: var(--bg-main);
-        border-color: var(--brand-primary);
-        color: var(--text-primary);
-        margin: 0;
-    }
-
-    .ui-autocomplete .ui-menu-item:last-child .ui-menu-item-wrapper {
-        border-bottom: none;
-    }
-
-    /* Scrollbar personalizado para autocomplete */
-    .ui-autocomplete::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .ui-autocomplete::-webkit-scrollbar-track {
-        background: var(--bg-main);
-        border-radius: 3px;
-    }
-
-    .ui-autocomplete::-webkit-scrollbar-thumb {
-        background: var(--border-color);
-        border-radius: 3px;
-    }
-
-    .ui-autocomplete::-webkit-scrollbar-thumb:hover {
-        background: var(--text-muted);
-    }
-
-    /* Estilos para adicionales */
-    .adicional-item {
-        transition: all 0.2s ease;
-    }
-
-    .adicional-item:hover {
-        border-color: var(--brand-primary) !important;
-        box-shadow: 0 2px 8px rgba(230, 51, 117, 0.1);
-    }
-
-    .adicional-item input[type="checkbox"]:checked + label {
-        color: var(--brand-primary);
-    }
-
-    .adicional-item input[type="checkbox"]:checked ~ label {
-        font-weight: 600;
-    }
-
-    .adicional-checkbox:checked {
-        accent-color: var(--brand-primary);
-    }
-</style>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -482,6 +342,7 @@
                     $("#txtDniCliente").val(dni);
                     $("#ClienteId").val(personaId);
                     $("#txtTelefonoCliente").val(telefono);
+                    $("#txtTelefonoVisible").val(telefono);
                     $("#txtNombreCliente").val(nombreCompleto);
                     $("#txt-busqueda-cliente").val(nombreCompleto);
                     
@@ -507,6 +368,7 @@
             $("#txtDniCliente").val('');
             $("#ClienteId").val('');
             $("#txtTelefonoCliente").val('');
+            $("#txtTelefonoVisible").val('');
             $("#txtNombreCliente").val('');
             $("#divClienteSeleccionado").slideUp();
             actualizarScriptSugerido();
@@ -606,12 +468,12 @@
                 var precio = parseFloat(adicional.precio || adicional.Precio || 0);
                 var precioFormateado = precio.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 
-                html += '<div style="background: var(--white); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; transition: all 0.2s ease;" class="adicional-item">';
-                html += '<div style="display: flex; align-items: center; gap: 0.75rem; flex: 1;">';
-                html += '<input type="checkbox" class="adicional-checkbox" data-adicional-id="' + adicionalId + '" data-precio="' + precio + '" id="adicional-' + adicionalId + '" style="width: 18px; height: 18px; cursor: pointer;" />';
-                html += '<label for="adicional-' + adicionalId + '" style="margin: 0; cursor: pointer; flex: 1; color: var(--text-primary);">';
-                html += '<div style="font-weight: 500;">' + escapeHtml(descripcion) + '</div>';
-                html += '<div style="font-size: 0.875rem; color: var(--text-secondary);">$' + precioFormateado + '</div>';
+                html += '<div class="adicional-item">';
+                html += '<div class="adicional-item-inner">';
+                html += '<input type="checkbox" class="adicional-checkbox" data-adicional-id="' + adicionalId + '" data-precio="' + precio + '" id="adicional-' + adicionalId + '" />';
+                html += '<label for="adicional-' + adicionalId + '">';
+                html += '<div class="adicional-desc">' + escapeHtml(descripcion) + '</div>';
+                html += '<div class="adicional-precio">$' + precioFormateado + '</div>';
                 html += '</label>';
                 html += '</div>';
                 html += '</div>';
@@ -674,12 +536,18 @@
             e.preventDefault();
             var dniCliente = $('#txtDniCliente').val().trim().replace(/\./g, '');
             var nombreCliente = $('#txtNombreCliente').val().trim();
+            var telefonoCliente = $('#txtTelefonoVisible').val().trim();
+            var emailCliente = $('#txtEmailCliente').val().trim();
             var viajeId = $('#ddlViaje').val();
             var montoPactado = parseFloat($('#txtMontoPactado').val());
             var observaciones = $('#txtObservaciones').val();
 
             if (!dniCliente && !nombreCliente) {
-                mostrarResultado('Debe buscar y seleccionar un cliente o ingresar al menos el nombre del cliente manualmente.', 'danger');
+                mostrarResultado('Debe buscar y seleccionar un cliente o ingresar al menos el nombre del cliente.', 'danger');
+                return;
+            }
+            if (!dniCliente && nombreCliente && !telefonoCliente && !emailCliente) {
+                mostrarResultado('Cuando no hay DNI, debe ingresar teléfono o email del cliente.', 'danger');
                 return;
             }
 
@@ -698,11 +566,13 @@
                 url: '@Url.Action("CreatePresupuesto", "Presupuesto")',
                 type: 'POST',
                 data: {
-                    dniCliente: dniCliente,
+                    dniCliente: dniCliente || '',
+                    nombreCliente: nombreCliente,
                     viajeId: viajeId || null,
                     montoPactado: montoPactado,
                     observaciones: observaciones,
                     telefonoCliente: telefonoCliente || null,
+                    emailCliente: emailCliente || null,
                     __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
                 },
                 success: function (response) {
@@ -715,6 +585,9 @@
                         
                         if (response.whatsappEnviado) {
                             mensaje += '\n\n✅ El mensaje de WhatsApp ha sido enviado exitosamente al cliente.';
+                            if (response.mensajeWhatsApp) {
+                                window.mensajeWhatsAppParaCopiar = response.mensajeWhatsApp;
+                            }
                         } else if (response.whatsappLink) {
                             // Si hay enlace de WhatsApp, abrirlo automáticamente
                             mensaje += '\n\n📱 Abriendo WhatsApp para enviar el mensaje...';
@@ -749,10 +622,12 @@
     });
 
     function mostrarResultado(mensaje, tipo) {
+        var $overlay = $('#divResultadoOverlay');
         var $div = $('#divResultado');
         var $msg = $('#msgResultado');
         var $title = $('#titleResultado');
         var $icon = $('#iconResultado');
+        var $acciones = $('#divResultadoAcciones');
         
         $div.removeClass('alert-success alert-danger alert-warning alert-info').addClass('alert-' + tipo);
         
@@ -765,7 +640,52 @@
         $icon.removeClass().addClass('bi ' + tipoConfig.icon).css('color', tipoConfig.color);
         $title.text(tipoConfig.title);
         $msg.html(mensaje);
-        $div.fadeIn();
-        if (tipo === 'success') setTimeout(function() { $div.fadeOut(); }, 5000);
+        
+        if (tipo === 'success' && window.mensajeWhatsAppParaCopiar) {
+            $acciones.removeClass('presupuesto-u-hidden');
+        } else {
+            $acciones.addClass('presupuesto-u-hidden');
+        }
+        $('#divCopiarWppPersistente').addClass('presupuesto-u-hidden');
+        $overlay.removeClass('presupuesto-u-hidden');
     }
+
+    function cerrarResultadoModal() {
+        $('#divResultadoOverlay').addClass('presupuesto-u-hidden');
+        if (window.mensajeWhatsAppParaCopiar) {
+            $('#divCopiarWppPersistente').removeClass('presupuesto-u-hidden');
+        }
+    }
+
+    function copiarMensajeWhatsApp() {
+        var texto = window.mensajeWhatsAppParaCopiar;
+        if (!texto) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(texto).then(function() {
+                (window.alertSuccess || alert)('Mensaje copiado al portapapeles.', 'Listo');
+            }).catch(function() { fallbackCopiar(texto); });
+        } else {
+            fallbackCopiar(texto);
+        }
+    }
+
+    function fallbackCopiar(texto) {
+        var $ta = $('<textarea>').val(texto).css({ position: 'fixed', left: '-9999px' }).appendTo('body');
+        $ta.select();
+        try {
+            document.execCommand('copy');
+            (window.alertSuccess || alert)('Mensaje copiado al portapapeles.', 'Listo');
+        } catch (e) {}
+        $ta.remove();
+    }
+
+    $(document).ready(function () {
+        $('#btnCerrarResultado').on('click', cerrarResultadoModal);
+        $('#divResultadoOverlay').on('click', function(e) {
+            if (e.target === this) cerrarResultadoModal();
+        });
+        $('#divResultado').on('click', function(e) { e.stopPropagation(); });
+        $('#btnCopiarWppModal').on('click', copiarMensajeWhatsApp);
+        $('#btnCopiarWppPersistente').on('click', copiarMensajeWhatsApp);
+    });
 </script>

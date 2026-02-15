@@ -14,6 +14,9 @@ namespace MAT.MVC.Models
     {
         public Guid PresupuestoID { get; set; }
         public string DniCliente { get; set; }
+        public string NombreCliente { get; set; }
+        public string TelefonoCliente { get; set; }
+        public string EmailCliente { get; set; }
         public Guid VendedorIdOrigen { get; set; }
         public string VendedorOrigenNombre { get; set; }
         public string CodigoSeguimiento { get; set; }
@@ -41,7 +44,10 @@ namespace MAT.MVC.Models
             SqlParameter[] dbParams = new SqlParameter[]
             {
                 DBHelper.MakeParam("@PresupuestoId", SqlDbType.UniqueIdentifier, 0, presupuesto.PresupuestoID),
-                DBHelper.MakeParam("@DniCliente", SqlDbType.VarChar, 50, presupuesto.DniCliente),
+                DBHelper.MakeParam("@DniCliente", SqlDbType.VarChar, 50, string.IsNullOrWhiteSpace(presupuesto.DniCliente) ? (object)DBNull.Value : presupuesto.DniCliente),
+                DBHelper.MakeParam("@NombreCliente", SqlDbType.VarChar, 200, string.IsNullOrWhiteSpace(presupuesto.NombreCliente) ? (object)DBNull.Value : presupuesto.NombreCliente),
+                DBHelper.MakeParam("@TelefonoCliente", SqlDbType.VarChar, 50, string.IsNullOrWhiteSpace(presupuesto.TelefonoCliente) ? (object)DBNull.Value : presupuesto.TelefonoCliente),
+                DBHelper.MakeParam("@EmailCliente", SqlDbType.VarChar, 100, string.IsNullOrWhiteSpace(presupuesto.EmailCliente) ? (object)DBNull.Value : presupuesto.EmailCliente),
                 DBHelper.MakeParam("@VendedorIdOrigen", SqlDbType.UniqueIdentifier, 0, presupuesto.VendedorIdOrigen),
                 DBHelper.MakeParam("@MontoPactado", SqlDbType.Float, 0, presupuesto.MontoPactado),
                 DBHelper.MakeParam("@ViajeId", SqlDbType.UniqueIdentifier, 0, presupuesto.ViajeId.HasValue ? presupuesto.ViajeId.Value : (object)DBNull.Value),
@@ -71,7 +77,10 @@ namespace MAT.MVC.Models
                 {
                     PresupuestoStandard presupuesto = new PresupuestoStandard();
                     presupuesto.PresupuestoID = new Guid(_reader["PresupuestoID"].ToString());
-                    presupuesto.DniCliente = _reader["DniCliente"].ToString();
+                    presupuesto.DniCliente = _reader["DniCliente"]?.ToString();
+                    presupuesto.NombreCliente = _reader["NombreCliente"]?.ToString();
+                    presupuesto.TelefonoCliente = _reader["TelefonoCliente"]?.ToString();
+                    presupuesto.EmailCliente = _reader["EmailCliente"]?.ToString();
                     presupuesto.VendedorIdOrigen = new Guid(_reader["VendedorIdOrigen"].ToString());
                     presupuesto.VendedorOrigenNombre = _reader["VendedorOrigenNombre"]?.ToString() ?? string.Empty;
                     presupuesto.CodigoSeguimiento = _reader["CodigoSeguimiento"].ToString();
@@ -120,7 +129,10 @@ namespace MAT.MVC.Models
                 {
                     presupuesto = new PresupuestoStandard();
                     presupuesto.PresupuestoID = new Guid(_reader["PresupuestoID"].ToString());
-                    presupuesto.DniCliente = _reader["DniCliente"].ToString();
+                    presupuesto.DniCliente = _reader["DniCliente"]?.ToString();
+                    presupuesto.NombreCliente = _reader["NombreCliente"]?.ToString();
+                    presupuesto.TelefonoCliente = _reader["TelefonoCliente"]?.ToString();
+                    presupuesto.EmailCliente = _reader["EmailCliente"]?.ToString();
                     presupuesto.VendedorIdOrigen = new Guid(_reader["VendedorIdOrigen"].ToString());
                     presupuesto.VendedorOrigenNombre = _reader["VendedorOrigenNombre"]?.ToString() ?? string.Empty;
                     presupuesto.CodigoSeguimiento = _reader["CodigoSeguimiento"].ToString();
@@ -282,7 +294,10 @@ namespace MAT.MVC.Models
                 {
                     PresupuestoStandard presupuesto = new PresupuestoStandard();
                     presupuesto.PresupuestoID = new Guid(_reader["PresupuestoID"].ToString());
-                    presupuesto.DniCliente = _reader["DniCliente"].ToString();
+                    presupuesto.DniCliente = _reader["DniCliente"]?.ToString();
+                    presupuesto.NombreCliente = _reader["NombreCliente"]?.ToString();
+                    presupuesto.TelefonoCliente = _reader["TelefonoCliente"]?.ToString();
+                    presupuesto.EmailCliente = _reader["EmailCliente"]?.ToString();
                     presupuesto.VendedorIdOrigen = new Guid(_reader["VendedorIdOrigen"].ToString());
                     presupuesto.VendedorOrigenNombre = _reader["VendedorOrigenNombre"]?.ToString() ?? string.Empty;
                     presupuesto.CodigoSeguimiento = _reader["CodigoSeguimiento"].ToString();

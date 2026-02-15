@@ -1,7 +1,10 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Presupuesto_Insert]
+CREATE PROCEDURE [dbo].[usp_MAT_Presupuesto_Insert]
 (
     @PresupuestoId      UNIQUEIDENTIFIER,
-    @DniCliente         VARCHAR(50),
+    @DniCliente         VARCHAR(50) = NULL,
+    @NombreCliente      VARCHAR(200) = NULL,
+    @TelefonoCliente    VARCHAR(50) = NULL,
+    @EmailCliente       VARCHAR(100) = NULL,
     @VendedorIdOrigen   UNIQUEIDENTIFIER,
     @MontoPactado       FLOAT,
     @ViajeId            UNIQUEIDENTIFIER = NULL,
@@ -50,6 +53,9 @@ BEGIN
         (
             [PresupuestoID],
             [DniCliente],
+            [NombreCliente],
+            [TelefonoCliente],
+            [EmailCliente],
             [VendedorIdOrigen],
             [CodigoSeguimiento],
             [MontoPactado],
@@ -62,7 +68,10 @@ BEGIN
         VALUES
         (
             @PresupuestoId,
-            @DniCliente,
+            ISNULL(NULLIF(LTRIM(RTRIM(@DniCliente)), ''), NULL),
+            NULLIF(LTRIM(RTRIM(@NombreCliente)), ''),
+            NULLIF(LTRIM(RTRIM(@TelefonoCliente)), ''),
+            NULLIF(LTRIM(RTRIM(@EmailCliente)), ''),
             @VendedorIdOrigen,
             @CodigoSeguimiento,
             @MontoPactado,
