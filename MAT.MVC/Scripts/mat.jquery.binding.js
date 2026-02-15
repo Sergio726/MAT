@@ -491,11 +491,14 @@ $(function () {
     });
 });
 
-$(document).on("click", ".btn-detallefactura", function () {
+$(document).on("click", ".btn-detallefactura", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
     var url = "/PersonaCliente/PopupDetalleFactura?facturaid=" + $(this).data("facturaid");
     var title = "Detalle de Factura"; //Titulo Modificado por petición del cliente. Detalle de Factura -> Nota de Crédito
     var id = "Detalles";
     ShowFormDialog(url, id, title);
+    return false;
 });
 
 

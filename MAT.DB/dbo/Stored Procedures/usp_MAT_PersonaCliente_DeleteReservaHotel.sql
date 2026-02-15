@@ -11,6 +11,7 @@ AS
   -- Description:  Remove registration ReservaHabitacion
   -- 2019-04-05 GARCIA SERGIO: ADD AUDIT
   -- 2026-02-14: Mejora manejo de errores y validaciones
+  -- 2026-02-15: Permite eliminar por PasajeroID+HabitacionID+ViajeID sin requerir PasajeID en Pasaje
   -- ============================================= 
   BEGIN 
       SET nocount, xact_abort ON; 
@@ -19,25 +20,11 @@ AS
 		BEGIN try 
 			BEGIN TRAN 
 
-			DECLARE @PasajeID UNIQUEIDENTIFIER,
-					@ExistsRoom BIT,
-					@ReservaHabitacionID uniqueidentifier,
+			DECLARE @PasajeID UNIQUEIDENTIFIER = NULL,
+					@ReservaHabitacionID uniqueidentifier = NULL,
 					@DeleteCount INT = 0
 
-			DECLARE @DeleteIds table (ReservaHabitacionID uniqueidentifier) 
-
-			-- Validar que exista el pasajero en el viaje
-			SELECT @PasajeID = p.PasajeId 
-			FROM   dbo.Pasaje p 
-			WHERE  p.PasajeroId = @PasajeroID 
-				   AND p.ViajeId = @ViajeID 
-
-			IF @PasajeID IS NULL
-			BEGIN
-				SELECT -1 AS ID, 'No se encontró el pasaje para el pasajero en este viaje.' AS Result
-				ROLLBACK TRAN
-				RETURN
-			END
+			DECLARE @DeleteIds table (ReservaHabitacionID uniqueidentifier, PasajeID uniqueidentifier) 
 
 			-- Validar que exista la reserva de habitación
 			IF NOT EXISTS(SELECT 1 FROM dbo.ReservaHabitacion 
@@ -50,9 +37,9 @@ AS
 				RETURN
 			END
 
-			-- Eliminar reserva
+			-- Eliminar reserva y capturar ReservaHabitacionID y PasajeID de la fila eliminada
 			DELETE dbo.ReservaHabitacion 
-			OUTPUT deleted.ReservaHabitacionID INTO @DeleteIds
+			OUTPUT deleted.ReservaHabitacionID, deleted.PasajeID INTO @DeleteIds
 			WHERE  PasajeroID = @PasajeroID 
 				   AND HabitacionID = @HabitacionID 
 				   AND ViajeID = @ViajeID 
@@ -66,22 +53,22 @@ AS
 				RETURN
 			END
 			
-			-- Audit (no crítico: si falla, loguear pero no abortar la operación)
-			SELECT @ReservaHabitacionID = ReservaHabitacionID FROM @DeleteIds
+			SELECT @ReservaHabitacionID = ReservaHabitacionID, @PasajeID = PasajeID FROM @DeleteIds
 
-			BEGIN TRY
-				IF @ReservaHabitacionID IS NOT NULL
-				BEGIN
+			-- Audit: solo si tenemos PasajeID (AuditReservaHabitacion requiere PasajeId NOT NULL)
+			IF @ReservaHabitacionID IS NOT NULL AND @PasajeID IS NOT NULL
+			BEGIN
+				BEGIN TRY
 					EXEC usp_AuditReservaHabitacion_Insert @ReservaHabitacionID, @HabitacionID, @PasajeID, @ViajeID, @UserID, 'DELETE';
-				END
-			END TRY
-			BEGIN CATCH
-				-- Auditoría falló, pero la operación principal continúa
-				PRINT 'WARN: Auditoría falló - ' + ERROR_MESSAGE()
-			END CATCH
+				END TRY
+				BEGIN CATCH
+					PRINT 'WARN: Auditoría falló - ' + ERROR_MESSAGE()
+				END CATCH
+			END
 			
-			-- Actualizar estado del pasaje si ya no tiene habitaciones asignadas
-			IF NOT EXISTS(SELECT 1 
+			-- Actualizar estado del pasaje solo si existe PasajeID y ya no tiene habitaciones asignadas
+			IF @PasajeID IS NOT NULL 
+			   AND NOT EXISTS(SELECT 1 
 					  FROM ReservaHabitacion 
 					  WHERE PasajeroID = @PasajeroID
 							AND ViajeID = @ViajeID 

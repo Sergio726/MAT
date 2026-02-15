@@ -1,6 +1,8 @@
 /* Variables CSS para el diseño SaaS moderno - Marco Antonio Tours */
 :root {
     --brand-primary: #e63375; /* Fucsia del logo */
+    --brand-primary-light: rgba(230, 51, 117, 0.1);
+    --brand-primary-alpha: rgba(230, 51, 117, 0.12);
     --brand-dark: #2b2d42; /* Azul/Gris oscuro */
     --bg-main: #f4f7f6; /* Fondo general */
     --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
@@ -13,6 +15,8 @@
     --border-color: #e5e7eb;
     --white: #ffffff;
     --success-color: #059669;
+    --info-color: #2563eb;
+    --info-color-light: rgba(37, 99, 235, 0.15);
     --warning-color: #b45309;
 
     /* ===== PALETA MENÚ LATERAL =====
