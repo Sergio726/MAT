@@ -236,9 +236,11 @@ namespace MAT.MVC.Controllers.Hotel
                     return Json(new { ok = false, message = "Usuario sin vendedor asociado. No se puede auditar la acción." });
                 }
 
-                var gPasajero = new Guid(pasajeroId);
-                var gHabitacion = new Guid(habitacionId);
-                var gViaje = new Guid(viajeId);
+                Guid gPasajero, gHabitacion, gViaje;
+                if (!Guid.TryParse(pasajeroId, out gPasajero) || !Guid.TryParse(habitacionId, out gHabitacion) || !Guid.TryParse(viajeId, out gViaje))
+                {
+                    return Json(new { ok = false, message = "Los identificadores proporcionados no son válidos." });
+                }
 
                 SqlParameter[] dbParams = new SqlParameter[]
                 {
@@ -252,21 +254,58 @@ namespace MAT.MVC.Controllers.Hotel
                 {
                     if (_reader.Read())
                     {
-                        var id = _reader["ID"] != DBNull.Value ? Convert.ToInt32(_reader["ID"]) : 0;
-                        var result = _reader["Result"]?.ToString() ?? "";
+                        int id = 0;
+                        string result = "";
+
+                        // Leer ID de forma segura (el SP puede devolver -1 en caso de error)
+                        try
+                        {
+                            var rawId = _reader["ID"];
+                            if (rawId != null && rawId != DBNull.Value)
+                                id = Convert.ToInt32(rawId);
+                        }
+                        catch
+                        {
+                            id = -1;
+                        }
+
+                        // Leer Result de forma segura
+                        try
+                        {
+                            var rawResult = _reader["Result"];
+                            if (rawResult != null && rawResult != DBNull.Value)
+                                result = rawResult.ToString();
+                        }
+                        catch
+                        {
+                            result = "Error al leer la respuesta del procedimiento.";
+                        }
+
                         if (id == 1 && result == "Done.")
                         {
                             return Json(new { ok = true, message = "Pasajero quitado de la habitación correctamente." });
                         }
-                        return Json(new { ok = false, message = result });
+
+                        // El SP devolvió un error explícito
+                        string errorMsg = !string.IsNullOrEmpty(result) ? result : "Error desconocido al quitar el pasajero.";
+                        ErrorUtil.LogAndGetPublicMessage(new Exception("SP DeleteReservaHotel error: " + errorMsg), "HotelController.QuitarPasajeroHabitacion");
+                        return Json(new { ok = false, message = errorMsg });
                     }
                 }
 
-                return Json(new { ok = false, message = "No se recibió respuesta del servidor." });
+                return Json(new { ok = false, message = "No se recibió respuesta del procedimiento. Contacte al administrador." });
+            }
+            catch (SqlException sqlEx)
+            {
+                // Error SQL (conexión, timeout, error de SP no controlado)
+                string msg = "Error de base de datos al quitar el pasajero de la habitación.";
+                ErrorUtil.LogAndGetPublicMessage(sqlEx, "HotelController.QuitarPasajeroHabitacion");
+                return Json(new { ok = false, message = msg + " Detalle: " + sqlEx.Message });
             }
             catch (Exception e)
             {
-                return Json(new { ok = false, message = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.QuitarPasajeroHabitacion") });
+                string msg = ErrorUtil.LogAndGetPublicMessage(e, "HotelController.QuitarPasajeroHabitacion");
+                return Json(new { ok = false, message = !string.IsNullOrEmpty(msg) ? msg : "Error inesperado al quitar el pasajero. Contacte al administrador." });
             }
         }
     }

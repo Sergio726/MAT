@@ -399,6 +399,22 @@
 
 <script src="~/Scripts/jquery-1.8.2.js"></script>
 <script type="text/javascript">
+    // Mostrar error visible en la UI (banner rojo encima del contenido)
+    function mostrarErrorDistribucion(msg) {
+        // Quitar banner anterior si existe
+        $(".distribucion-error-banner").remove();
+        var $banner = $('<div class="distribucion-error-banner" style="background:#ffebee;color:#c62828;padding:10px 15px;border-left:4px solid #c62828;margin:8px 0;border-radius:4px;font-size:13px;display:flex;align-items:center;gap:8px;">' +
+            '<i class="bi bi-exclamation-triangle-fill" style="font-size:16px;flex-shrink:0;"></i>' +
+            '<span style="flex:1;"></span>' +
+            '<button type="button" style="background:none;border:none;color:#c62828;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;" title="Cerrar">&times;</button>' +
+            '</div>');
+        $banner.find("span").text(msg);
+        $banner.find("button").on("click", function () { $banner.fadeOut(200, function() { $banner.remove(); }); });
+        $(".schema-container").prepend($banner);
+        // Auto-cerrar después de 15 segundos
+        setTimeout(function () { $banner.fadeOut(300, function() { $banner.remove(); }); }, 15000);
+    }
+
     $(document).ready(function () {
         var sViajeId = "@ViewData["viajeid"].ToString()";
         $.ajax({
@@ -460,7 +476,7 @@
             dataType: "json",
             traditional: true,
             success: function (data) {
-                if (data.ok) {
+                if (data && data.ok === true) {
                     var idselected = $("#HotelPorViaje option:selected").val();
                     var viajeid = $("#distribucion-viaje-id").val();
                     var fecha = $("#HotelPorViaje option:selected").attr("fecha");
@@ -478,12 +494,17 @@
                     });
                 } else {
                     $btn.prop("disabled", false).text("Quitar");
-                    alert("Error: " + (data.message || "No se pudo quitar el pasajero."));
+                    var errorMsg = (data && data.message) ? data.message : "No se pudo quitar el pasajero. Error desconocido.";
+                    console.error("[QuitarPasajero] Error del servidor:", errorMsg, data);
+                    mostrarErrorDistribucion(errorMsg);
                 }
             },
             error: function (xhr, status, err) {
                 $btn.prop("disabled", false).text("Quitar");
-                alert("Error al procesar la solicitud. Intente nuevamente.");
+                var errorDetail = "";
+                try { errorDetail = xhr.responseJSON ? xhr.responseJSON.message : xhr.responseText; } catch(e) {}
+                console.error("[QuitarPasajero] Error AJAX:", status, err, errorDetail);
+                mostrarErrorDistribucion("Error al procesar la solicitud. " + (errorDetail || "Intente nuevamente."));
             }
         });
     });

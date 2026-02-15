@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_AuditReservaHabitacion_Insert]( @ReservaHabitacionId uniqueidentifier = null,
+CREATE PROCEDURE [dbo].[usp_AuditReservaHabitacion_Insert]( @ReservaHabitacionId uniqueidentifier = null,
 															@HabitacionId uniqueidentifier,
 															@PasajeId uniqueidentifier,
 															@ViajeId uniqueidentifier,
@@ -38,7 +38,7 @@
         SELECT @errmsg = Error_message() + Error_line(), 
                 @errState = Error_state() 
 
-			RAISERROR (N'Error al guardar auditoria de ReservaHabitacion. MSG: %d',16,@errState,1,@errmsg);
+			RAISERROR (N'Error al guardar auditoria de ReservaHabitacion. MSG: %s',16,@errState,@errmsg);
 		END CATCH
 		
   END
