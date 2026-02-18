@@ -480,7 +480,7 @@ namespace MAT.MVC.Controllers.Presupuesto
                 {
                     return Json(new { success = true, message = $"Expiración extendida {horasAdicionales} horas correctamente." });
                 }
-                return Json(new { success = false, message = "No se pudo extender. El presupuesto no existe, no está pendiente o ya fue cerrado." });
+                return Json(new { success = false, message = "No se pudo extender. El presupuesto no existe, no está pendiente/expirado o ya fue cerrado." });
             }
             catch (Exception ex)
             {
@@ -490,7 +490,7 @@ namespace MAT.MVC.Controllers.Presupuesto
         }
 
         /// <summary>
-        /// Cancela o rechaza un presupuesto (solo pendientes)
+        /// Cancela o rechaza un presupuesto (pendientes o expirados)
         /// </summary>
         [HttpPost]
         public JsonResult CancelarPresupuesto(Guid presupuestoId, bool esRechazado = false)
@@ -500,8 +500,8 @@ namespace MAT.MVC.Controllers.Presupuesto
                 var presupuesto = PresupuestoMethod.GetById(presupuestoId);
                 if (presupuesto == null)
                     return Json(new { success = false, message = "Presupuesto no encontrado." });
-                if (presupuesto.Estado != eEstadoPresupuesto.Pendiente)
-                    return Json(new { success = false, message = "Solo se pueden cancelar presupuestos pendientes." });
+                if (presupuesto.Estado != eEstadoPresupuesto.Pendiente && presupuesto.Estado != eEstadoPresupuesto.Expirado)
+                    return Json(new { success = false, message = "Solo se pueden cancelar o rechazar presupuestos pendientes o expirados." });
 
                 var estado = esRechazado ? eEstadoPresupuesto.Rechazado : eEstadoPresupuesto.Cancelado;
                 PresupuestoMethod.UpdateEstado(presupuestoId, estado, null, null);

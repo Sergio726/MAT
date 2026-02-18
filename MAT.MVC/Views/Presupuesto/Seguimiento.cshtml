@@ -608,7 +608,9 @@
         
         // Botones de acción
         html += '<div class="d-flex flex-wrap justify-content-end gap-2 mt-4" style="border-top: 2px solid var(--border-color); padding-top: 1.5rem;">';
-        if (p.estado === 1 && !p.isExpirado) {
+        var esPendienteActivo = (p.estado === 1 && !p.isExpirado);
+        var esExpirado = (p.estado === 2 || p.isExpirado);
+        if (esPendienteActivo) {
             html += '<button class="btn-modern btn-modern-primary" onclick="irAVenta(\'' + (p.codigoSeguimiento || '').replace(/'/g, "\\'") + '\', \'' + (p.viajeId || '') + '\')"><i class="bi bi-cart-check"></i> Convertir en venta</button>';
             html += '<a href="/Presupuesto/Edit/' + p.presupuestoId + '" class="btn-modern btn-modern-secondary" target="_blank"><i class="bi bi-pencil"></i> Editar</a>';
             html += '<div class="btn-group" role="group">';
@@ -618,6 +620,18 @@
             html += '<li><a class="dropdown-item" href="#" onclick="extenderExpiracion(\'' + p.presupuestoId + '\', 24); return false;">24 horas</a></li>';
             html += '<li><a class="dropdown-item" href="#" onclick="extenderExpiracion(\'' + p.presupuestoId + '\', 48); return false;">48 horas</a></li>';
             html += '</ul></div>';
+            html += '<button class="btn-modern btn-modern-secondary" onclick="rechazarPresupuesto(\'' + p.presupuestoId + '\')"><i class="bi bi-person-x"></i> Rechazar</button>';
+            html += '<button class="btn-modern btn-modern-outline btn-modern-danger" onclick="cancelarPresupuesto(\'' + p.presupuestoId + '\')"><i class="bi bi-x-circle"></i> Cancelar</button>';
+        }
+        if (esExpirado) {
+            html += '<div class="btn-group" role="group">';
+            html += '<button type="button" class="btn-modern btn-modern-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-arrow-counterclockwise"></i> Extender / Reactivar</button>';
+            html += '<ul class="dropdown-menu">';
+            html += '<li><a class="dropdown-item" href="#" onclick="extenderExpiracion(\'' + p.presupuestoId + '\', 12); return false;">12 horas</a></li>';
+            html += '<li><a class="dropdown-item" href="#" onclick="extenderExpiracion(\'' + p.presupuestoId + '\', 24); return false;">24 horas</a></li>';
+            html += '<li><a class="dropdown-item" href="#" onclick="extenderExpiracion(\'' + p.presupuestoId + '\', 48); return false;">48 horas</a></li>';
+            html += '</ul></div>';
+            html += '<button class="btn-modern btn-modern-secondary" onclick="rechazarPresupuesto(\'' + p.presupuestoId + '\')"><i class="bi bi-person-x"></i> Rechazar</button>';
             html += '<button class="btn-modern btn-modern-outline btn-modern-danger" onclick="cancelarPresupuesto(\'' + p.presupuestoId + '\')"><i class="bi bi-x-circle"></i> Cancelar</button>';
         }
         html += '<button class="btn-modern btn-modern-secondary" onclick="copiarMensajeWhatsApp()" style="background: #25D366; color: white; border-color: #25D366;"><i class="bi bi-whatsapp"></i> Copiar mensaje para WhatsApp</button>';
@@ -723,13 +737,24 @@
         });
     }
 
-    function cancelarPresupuesto(presupuestoId) {
+    function rechazarPresupuesto(presupuestoId) {
         if (!presupuestoId) return;
+        if (!confirm('¿Marcar como rechazado? (El cliente confirmó que no procederá con la reserva)')) return;
+        ejecutarCancelarRechazar(presupuestoId, true);
+    }
+
+    function cancelarPresupuesto(presupuestoId, esRechazado) {
+        if (!presupuestoId) return;
+        esRechazado = esRechazado === true;
         if (!confirm('¿Está seguro de cancelar este presupuesto?')) return;
+        ejecutarCancelarRechazar(presupuestoId, esRechazado);
+    }
+
+    function ejecutarCancelarRechazar(presupuestoId, esRechazado) {
         $.ajax({
             url: '@Url.Action("CancelarPresupuesto", "Presupuesto")',
             type: 'POST',
-            data: { presupuestoId: presupuestoId, esRechazado: false },
+            data: { presupuestoId: presupuestoId, esRechazado: esRechazado },
             dataType: 'json',
             success: function (response) {
                 if (response.success) {

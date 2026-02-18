@@ -29,16 +29,28 @@ namespace MAT.MVC.Controllers.NuevaReserva
             _backendAPI = new BackendAPI();
         }
         [Authorize]
-        public async Task<ActionResult> Index(Guid viajeid)
+        public async Task<ActionResult> Index(Guid? viajeid = null, string id = null)
         {
+            // Soporta viajeid por query (?viajeid=) y por ruta (NuevaReserva/Index/{id})
+            Guid? viajeGuid = viajeid;
+            if (!viajeGuid.HasValue && !string.IsNullOrEmpty(id) && Guid.TryParse(id, out var parsed))
+                viajeGuid = parsed;
+
+            if (!viajeGuid.HasValue || viajeGuid.Value == Guid.Empty)
+            {
+                TempData["Error"] = "Debe especificar un viaje válido para crear la reserva.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var viajeIdValor = viajeGuid.Value;
             try
             {
-                var Model = await NuevaReservaModel.CreateAsync(viajeid);
+                var Model = await NuevaReservaModel.CreateAsync(viajeIdValor);
                 return View(Model);
             }
             catch (Exception e)
             {
-                var Model = new NuevaReservaModel(viajeid);                
+                var Model = new NuevaReservaModel(viajeIdValor);                
                 Model.Reservas = new List<ReservaStandard>();
                 ViewBag.MsgError = MATLogger.FormatExceptionToHtml(e);
                 return View(Model);

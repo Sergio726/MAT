@@ -8,8 +8,8 @@ AS
 ----------------------------------------------------------------------------------------------------
 -- Created By: Seba Garcia
 -- Create date: 2026-02-15
--- Purpose: Extiende la fecha de expiración de un presupuesto pendiente
--- Description: Suma horas a FechaExpiracion para presupuestos en estado Pendiente
+-- Purpose: Extiende la fecha de expiración de un presupuesto pendiente o reactiva uno expirado
+-- Description: Pendiente: suma horas a FechaExpiracion. Expirado: cambia a Pendiente y fija nueva expiración desde ahora.
 ----------------------------------------------------------------------------------------------------
 */
 BEGIN
@@ -22,12 +22,23 @@ BEGIN
     BEGIN TRANSACTION;
 
     BEGIN TRY
+        -- Pendientes: sumar horas a la fecha actual de expiración
         UPDATE [dbo].[Presupuesto]
         SET [FechaExpiracion] = DATEADD(HOUR, @HorasAdicionales, [FechaExpiracion])
-        WHERE 
-            [PresupuestoID] = @PresupuestoId
-            AND [Estado] = 1  -- Solo pendientes
-            AND [FacturaId] IS NULL;
+        WHERE [PresupuestoID] = @PresupuestoId
+          AND [Estado] = 1
+          AND [FacturaId] IS NULL;
+
+        -- Si no afectó filas (no era pendiente), intentar reactivar expirado
+        IF @@ROWCOUNT = 0
+        BEGIN
+            UPDATE [dbo].[Presupuesto]
+            SET [Estado] = 1,
+                [FechaExpiracion] = DATEADD(HOUR, @HorasAdicionales, GETDATE())
+            WHERE [PresupuestoID] = @PresupuestoId
+              AND [Estado] = 2  -- Expirado
+              AND [FacturaId] IS NULL;
+        END
 
         DECLARE @RowsAffected INT = @@ROWCOUNT;
 
