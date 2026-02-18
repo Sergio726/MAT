@@ -1190,6 +1190,9 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_GetAll.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_Expirados.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_ExtenderExpiracion.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_ProximosVencer.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_Update.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_GetMetricasConversion.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_GetTop.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Pasaje_CambiarPasajero.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_SelectByViajeId_Active.sql" />

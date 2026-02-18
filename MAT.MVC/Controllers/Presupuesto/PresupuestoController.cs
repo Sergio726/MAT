@@ -24,8 +24,11 @@ namespace MAT.MVC.Controllers.Presupuesto
             {
                 // Obtener estadísticas de presupuestos
                 var estadisticas = PresupuestoMethod.GetEstadisticas();
-
                 ViewBag.Estadisticas = estadisticas;
+
+                // Presupuestos próximos a vencer (24h)
+                var proximosVencer = PresupuestoMethod.GetProximosVencer(24);
+                ViewBag.ProximosVencer = proximosVencer;
 
                 return View();
             }
@@ -624,6 +627,100 @@ namespace MAT.MVC.Controllers.Presupuesto
             {
                 MATLogger.Log($"Error en EnviarWhatsApp: {ex.Message}", 1);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Vista de métricas de conversión
+        /// </summary>
+        public ActionResult Metricas(string fechaDesde = null, string fechaHasta = null)
+        {
+            try
+            {
+                DateTime? desde = null;
+                DateTime? hasta = null;
+                if (!string.IsNullOrWhiteSpace(fechaDesde) && DateTime.TryParse(fechaDesde, out DateTime d))
+                    desde = d;
+                if (!string.IsNullOrWhiteSpace(fechaHasta) && DateTime.TryParse(fechaHasta, out DateTime h))
+                    hasta = h;
+                if (!desde.HasValue) desde = DateTime.Now.AddMonths(-6);
+                if (!hasta.HasValue) hasta = DateTime.Now;
+
+                var metricas = PresupuestoMethod.GetMetricasConversion(desde, hasta);
+                ViewBag.FechaDesde = desde.Value.ToString("yyyy-MM-dd");
+                ViewBag.FechaHasta = hasta.Value.ToString("yyyy-MM-dd");
+                return View(metricas);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.Metricas: {ex.Message}", 1);
+                ViewBag.Error = "Error al cargar las métricas.";
+                return View(new PresupuestoMetricas());
+            }
+        }
+
+        /// <summary>
+        /// Vista para editar presupuesto (solo pendientes)
+        /// </summary>
+        public ActionResult Edit(Guid id)
+        {
+            try
+            {
+                var presupuesto = PresupuestoMethod.GetById(id);
+                if (presupuesto == null)
+                    return HttpNotFound("Presupuesto no encontrado.");
+                if (presupuesto.Estado != eEstadoPresupuesto.Pendiente)
+                    return new HttpStatusCodeResult(400, "Solo se pueden editar presupuestos pendientes.");
+                if (presupuesto.FacturaId.HasValue)
+                    return new HttpStatusCodeResult(400, "El presupuesto ya fue cerrado.");
+
+                return View(presupuesto);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.Edit: {ex.Message}", 1);
+                return new HttpStatusCodeResult(500, "Error al cargar el presupuesto.");
+            }
+        }
+
+        /// <summary>
+        /// Actualiza un presupuesto pendiente
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public JsonResult UpdatePresupuesto(Guid presupuestoId, string nombreCliente, string telefonoCliente, string emailCliente, double montoPactado, string fechaExpiracion, string observaciones)
+        {
+            try
+            {
+                var presupuesto = PresupuestoMethod.GetById(presupuestoId);
+                if (presupuesto == null)
+                    return Json(new { success = false, message = "Presupuesto no encontrado." });
+                if (presupuesto.Estado != eEstadoPresupuesto.Pendiente)
+                    return Json(new { success = false, message = "Solo se pueden editar presupuestos pendientes." });
+                if (presupuesto.FacturaId.HasValue)
+                    return Json(new { success = false, message = "El presupuesto ya fue cerrado." });
+
+                if (montoPactado <= 0)
+                    return Json(new { success = false, message = "El monto debe ser mayor a cero." });
+
+                DateTime fechaExp;
+                if (!DateTime.TryParse(fechaExpiracion, out fechaExp) || fechaExp <= DateTime.Now)
+                    return Json(new { success = false, message = "Fecha de expiración inválida." });
+
+                presupuesto.NombreCliente = string.IsNullOrWhiteSpace(nombreCliente) ? null : nombreCliente.Trim();
+                presupuesto.TelefonoCliente = string.IsNullOrWhiteSpace(telefonoCliente) ? null : telefonoCliente.Trim();
+                presupuesto.EmailCliente = string.IsNullOrWhiteSpace(emailCliente) ? null : emailCliente.Trim();
+                presupuesto.MontoPactado = montoPactado;
+                presupuesto.FechaExpiracion = fechaExp;
+                presupuesto.Observaciones = observaciones ?? string.Empty;
+
+                PresupuestoMethod.Update(presupuesto);
+                return Json(new { success = true, message = "Presupuesto actualizado correctamente." });
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.UpdatePresupuesto: {ex.Message}", 1);
+                return Json(new { success = false, message = "Error al actualizar el presupuesto." });
             }
         }
 

@@ -1,0 +1,111 @@
+@model MAT.MVC.Models.PresupuestoStandard
+@{
+    ViewBag.Title = "Editar Presupuesto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-pencil-square"></i>
+            <span>Editar Presupuesto</span>
+        </h2>
+        <p class="modern-page-subtitle">@Model.CodigoSeguimiento</p>
+    </div>
+
+    <div class="modern-card">
+        <div class="modern-card-content">
+            <form id="formEditPresupuesto" class="presupuesto-form-container">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="presupuestoId" value="@Model.PresupuestoID" />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="modern-form-label">Nombre del Cliente</label>
+                        <input type="text" class="modern-form-input" id="txtNombreCliente" value="@(Model.NombreCliente ?? "")" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="modern-form-label">Teléfono / WhatsApp</label>
+                        <input type="text" class="modern-form-input" id="txtTelefonoCliente" value="@(Model.TelefonoCliente ?? "")" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="modern-form-label">Email</label>
+                        <input type="email" class="modern-form-input" id="txtEmailCliente" value="@(Model.EmailCliente ?? "")" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="modern-form-label">DNI (solo lectura)</label>
+                        <input type="text" class="modern-form-input" value="@(Model.DniCliente ?? "-")" readonly disabled />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="modern-form-label">Monto Pactado <span class="text-danger">*</span></label>
+                        <input type="number" class="modern-form-input" id="txtMontoPactado" value="@Model.MontoPactado" step="0.01" min="0" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="modern-form-label">Fecha de Expiración <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="modern-form-input" id="txtFechaExpiracion" required />
+                    </div>
+                    <div class="col-12">
+                        <label class="modern-form-label">Observaciones</label>
+                        <textarea class="modern-form-textarea" id="txtObservaciones" rows="3">@(Model.Observaciones ?? "")</textarea>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn-modern btn-modern-primary">
+                        <i class="bi bi-check-lg"></i> Guardar
+                    </button>
+                    <a href="/Presupuesto/Seguimiento" class="btn-modern btn-modern-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var fechaExp = '@Model.FechaExpiracion.ToString("yyyy-MM-ddTHH:mm")';
+        $('#txtFechaExpiracion').val(fechaExp);
+
+        $('#formEditPresupuesto').on('submit', function (e) {
+            e.preventDefault();
+            var presupuestoId = '@Model.PresupuestoID';
+            var monto = parseFloat($('#txtMontoPactado').val());
+            if (!monto || monto <= 0) {
+                alert('El monto debe ser mayor a cero.');
+                return;
+            }
+            var fechaExp = $('#txtFechaExpiracion').val();
+            if (!fechaExp) {
+                alert('La fecha de expiración es requerida.');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("UpdatePresupuesto", "Presupuesto")',
+                type: 'POST',
+                data: {
+                    presupuestoId: presupuestoId,
+                    nombreCliente: $('#txtNombreCliente').val().trim(),
+                    telefonoCliente: $('#txtTelefonoCliente').val().trim(),
+                    emailCliente: $('#txtEmailCliente').val().trim(),
+                    montoPactado: monto,
+                    fechaExpiracion: fechaExp,
+                    observaciones: $('#txtObservaciones').val(),
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                },
+                dataType: 'json',
+                success: function (r) {
+                    if (r.success) {
+                        alert(r.message);
+                        window.location.href = '/Presupuesto/Seguimiento';
+                    } else {
+                        alert(r.message || 'Error al actualizar.');
+                    }
+                },
+                error: function () {
+                    alert('Error al actualizar el presupuesto.');
+                }
+            });
+        });
+    });
+</script>

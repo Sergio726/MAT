@@ -34,6 +34,51 @@ namespace MAT.MVC.Models
         public bool IsExpirado { get; set; }
     }
 
+    public class PresupuestoProximoVencer
+    {
+        public Guid PresupuestoID { get; set; }
+        public string CodigoSeguimiento { get; set; }
+        public string DniCliente { get; set; }
+        public string NombreCliente { get; set; }
+        public double MontoPactado { get; set; }
+        public DateTime FechaExpiracion { get; set; }
+        public string VendedorOrigenNombre { get; set; }
+        public int MinutosRestantes { get; set; }
+    }
+
+    public class PresupuestoMetricas
+    {
+        public int TotalPendientes { get; set; }
+        public int TotalExpirados { get; set; }
+        public int TotalCerrados { get; set; }
+        public int TotalRechazados { get; set; }
+        public int TotalCancelados { get; set; }
+        public int Total { get; set; }
+        public double TasaConversionPorcentaje { get; set; }
+        public List<PresupuestoMetricaVendedor> PorVendedor { get; set; } = new List<PresupuestoMetricaVendedor>();
+        public List<PresupuestoTendenciaMensual> TendenciaMensual { get; set; } = new List<PresupuestoTendenciaMensual>();
+    }
+
+    public class PresupuestoMetricaVendedor
+    {
+        public Guid VendedorId { get; set; }
+        public string VendedorNombre { get; set; }
+        public int TotalCreados { get; set; }
+        public int TotalCerrados { get; set; }
+        public int TotalExpirados { get; set; }
+        public int TotalRechazadosCancelados { get; set; }
+        public double TasaConversionPorcentaje { get; set; }
+    }
+
+    public class PresupuestoTendenciaMensual
+    {
+        public int Anio { get; set; }
+        public int Mes { get; set; }
+        public int TotalCreados { get; set; }
+        public int TotalCerrados { get; set; }
+        public int TotalExpirados { get; set; }
+    }
+
     public class PresupuestoMethod
     {
         /// <summary>
@@ -206,6 +251,107 @@ namespace MAT.MVC.Models
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Presupuestos pendientes que expiran en las próximas N horas
+        /// </summary>
+        public static List<PresupuestoProximoVencer> GetProximosVencer(int horasVentana = 24)
+        {
+            var lista = new List<PresupuestoProximoVencer>();
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@HorasVentana", SqlDbType.Int, 0, horasVentana)
+            };
+            using (SqlDataReader r = DBHelper.ExecuteDataReader("dbo.usp_MAT_Presupuesto_ProximosVencer", dbParams))
+            {
+                while (r.Read())
+                {
+                    lista.Add(new PresupuestoProximoVencer
+                    {
+                        PresupuestoID = new Guid(r["PresupuestoID"].ToString()),
+                        CodigoSeguimiento = r["CodigoSeguimiento"]?.ToString(),
+                        DniCliente = r["DniCliente"]?.ToString(),
+                        NombreCliente = r["NombreCliente"]?.ToString(),
+                        MontoPactado = Convert.ToDouble(r["MontoPactado"]),
+                        FechaExpiracion = Convert.ToDateTime(r["FechaExpiracion"]),
+                        VendedorOrigenNombre = r["VendedorOrigenNombre"]?.ToString(),
+                        MinutosRestantes = r["MinutosRestantes"] != DBNull.Value ? Convert.ToInt32(r["MinutosRestantes"]) : 0
+                    });
+                }
+            }
+            return lista;
+        }
+
+        /// <summary>
+        /// Actualiza un presupuesto pendiente (solo campos editables)
+        /// </summary>
+        public static void Update(PresupuestoStandard presupuesto)
+        {
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@PresupuestoId", SqlDbType.UniqueIdentifier, 0, presupuesto.PresupuestoID),
+                DBHelper.MakeParam("@NombreCliente", SqlDbType.VarChar, 200, string.IsNullOrWhiteSpace(presupuesto.NombreCliente) ? (object)DBNull.Value : presupuesto.NombreCliente),
+                DBHelper.MakeParam("@TelefonoCliente", SqlDbType.VarChar, 50, string.IsNullOrWhiteSpace(presupuesto.TelefonoCliente) ? (object)DBNull.Value : presupuesto.TelefonoCliente),
+                DBHelper.MakeParam("@EmailCliente", SqlDbType.VarChar, 100, string.IsNullOrWhiteSpace(presupuesto.EmailCliente) ? (object)DBNull.Value : presupuesto.EmailCliente),
+                DBHelper.MakeParam("@MontoPactado", SqlDbType.Float, 0, presupuesto.MontoPactado),
+                DBHelper.MakeParam("@FechaExpiracion", SqlDbType.DateTime, 0, presupuesto.FechaExpiracion),
+                DBHelper.MakeParam("@Observaciones", SqlDbType.VarChar, 500, presupuesto.Observaciones ?? string.Empty)
+            };
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Presupuesto_Update", dbParams);
+        }
+
+        /// <summary>
+        /// Métricas de conversión de presupuestos
+        /// </summary>
+        public static PresupuestoMetricas GetMetricasConversion(DateTime? fechaDesde = null, DateTime? fechaHasta = null)
+        {
+            var metricas = new PresupuestoMetricas();
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@FechaDesde", SqlDbType.DateTime, 0, fechaDesde.HasValue ? (object)fechaDesde.Value : DBNull.Value),
+                DBHelper.MakeParam("@FechaHasta", SqlDbType.DateTime, 0, fechaHasta.HasValue ? (object)fechaHasta.Value : DBNull.Value)
+            };
+            using (SqlDataReader r = DBHelper.ExecuteDataReader("dbo.usp_MAT_Presupuesto_GetMetricasConversion", dbParams))
+            {
+                if (r.Read())
+                {
+                    metricas.TotalPendientes = r["TotalPendientes"] != DBNull.Value ? Convert.ToInt32(r["TotalPendientes"]) : 0;
+                    metricas.TotalExpirados = r["TotalExpirados"] != DBNull.Value ? Convert.ToInt32(r["TotalExpirados"]) : 0;
+                    metricas.TotalCerrados = r["TotalCerrados"] != DBNull.Value ? Convert.ToInt32(r["TotalCerrados"]) : 0;
+                    metricas.TotalRechazados = r["TotalRechazados"] != DBNull.Value ? Convert.ToInt32(r["TotalRechazados"]) : 0;
+                    metricas.TotalCancelados = r["TotalCancelados"] != DBNull.Value ? Convert.ToInt32(r["TotalCancelados"]) : 0;
+                    metricas.Total = r["Total"] != DBNull.Value ? Convert.ToInt32(r["Total"]) : 0;
+                    metricas.TasaConversionPorcentaje = r["TasaConversionPorcentaje"] != DBNull.Value ? Convert.ToDouble(r["TasaConversionPorcentaje"]) : 0;
+                }
+                r.NextResult();
+                while (r.Read())
+                {
+                    metricas.PorVendedor.Add(new PresupuestoMetricaVendedor
+                    {
+                        VendedorId = new Guid(r["VendedorId"].ToString()),
+                        VendedorNombre = r["VendedorNombre"]?.ToString() ?? "",
+                        TotalCreados = r["TotalCreados"] != DBNull.Value ? Convert.ToInt32(r["TotalCreados"]) : 0,
+                        TotalCerrados = r["TotalCerrados"] != DBNull.Value ? Convert.ToInt32(r["TotalCerrados"]) : 0,
+                        TotalExpirados = r["TotalExpirados"] != DBNull.Value ? Convert.ToInt32(r["TotalExpirados"]) : 0,
+                        TotalRechazadosCancelados = r["TotalRechazadosCancelados"] != DBNull.Value ? Convert.ToInt32(r["TotalRechazadosCancelados"]) : 0,
+                        TasaConversionPorcentaje = r["TasaConversionPorcentaje"] != DBNull.Value ? Convert.ToDouble(r["TasaConversionPorcentaje"]) : 0
+                    });
+                }
+                r.NextResult();
+                while (r.Read())
+                {
+                    metricas.TendenciaMensual.Add(new PresupuestoTendenciaMensual
+                    {
+                        Anio = Convert.ToInt32(r["Anio"]),
+                        Mes = Convert.ToInt32(r["Mes"]),
+                        TotalCreados = r["TotalCreados"] != DBNull.Value ? Convert.ToInt32(r["TotalCreados"]) : 0,
+                        TotalCerrados = r["TotalCerrados"] != DBNull.Value ? Convert.ToInt32(r["TotalCerrados"]) : 0,
+                        TotalExpirados = r["TotalExpirados"] != DBNull.Value ? Convert.ToInt32(r["TotalExpirados"]) : 0
+                    });
+                }
+            }
+            return metricas;
         }
 
         /// <summary>

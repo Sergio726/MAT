@@ -868,7 +868,10 @@
     <Content Include="Views\NuevaReserva\SeleccionarPasajero.cshtml" />
     <Content Include="Views\NuevaReserva\FormReserva.cshtml" />
     <Content Include="Views\Presupuesto\Create.cshtml" />
+    <Content Include="Views\Presupuesto\Edit.cshtml" />
     <Content Include="Views\Presupuesto\Index.cshtml" />
+    <Content Include="Views\Presupuesto\ImprimirPresupuesto.cshtml" />
+    <Content Include="Views\Presupuesto\Metricas.cshtml" />
     <Content Include="Views\Presupuesto\Seguimiento.cshtml" />
     <Content Include="_AppStart.cshtml" />
   </ItemGroup>

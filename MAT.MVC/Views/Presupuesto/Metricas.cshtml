@@ -1,0 +1,184 @@
+@model MAT.MVC.Models.PresupuestoMetricas
+@{
+    ViewBag.Title = "Métricas de Conversión - Presupuestos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var fechaDesde = ViewBag.FechaDesde as string ?? DateTime.Now.AddMonths(-6).ToString("yyyy-MM-dd");
+    var fechaHasta = ViewBag.FechaHasta as string ?? DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-graph-up"></i>
+            <span>Métricas de Conversión</span>
+        </h2>
+        <p class="modern-page-subtitle">Análisis de presupuestos por período</p>
+    </div>
+
+    <div class="modern-card mb-4">
+        <div class="modern-card-content">
+            <form method="get" action="@Url.Action("Metricas", "Presupuesto")" class="row g-3">
+                <div class="col-md-3">
+                    <label class="modern-form-label">Desde</label>
+                    <input type="date" name="fechaDesde" class="modern-form-input" value="@fechaDesde" />
+                </div>
+                <div class="col-md-3">
+                    <label class="modern-form-label">Hasta</label>
+                    <input type="date" name="fechaHasta" class="modern-form-input" value="@fechaHasta" />
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn-modern btn-modern-primary">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="modern-card modern-card-primary">
+                <div class="modern-card-header">
+                    <div class="modern-card-title">Total Presupuestos</div>
+                </div>
+                <div class="modern-card-content">
+                    <div class="presupuesto-stat-number">@Model.Total</div>
+                    <p class="presupuesto-stat-label">En el período seleccionado</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="modern-card modern-card-success">
+                <div class="modern-card-header">
+                    <div class="modern-card-title">Cerrados</div>
+                </div>
+                <div class="modern-card-content">
+                    <div class="presupuesto-stat-number">@Model.TotalCerrados</div>
+                    <p class="presupuesto-stat-label">Convertidos en venta</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="modern-card modern-card-info">
+                <div class="modern-card-header">
+                    <div class="modern-card-title">Tasa de Conversión</div>
+                </div>
+                <div class="modern-card-content">
+                    <div class="presupuesto-stat-number">@Model.TasaConversionPorcentaje.ToString("F1")%</div>
+                    <p class="presupuesto-stat-label">Cerrados / (Cerrados + Expirados + Rechazados + Cancelados)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <div class="modern-card-title">
+                        <i class="bi bi-bar-chart"></i>
+                        Por Estado
+                    </div>
+                </div>
+                <div class="modern-card-content">
+                    <div class="row g-3">
+                        <div class="col-md-2"><span class="badge bg-primary">Pendientes: @Model.TotalPendientes</span></div>
+                        <div class="col-md-2"><span class="badge bg-success">Cerrados: @Model.TotalCerrados</span></div>
+                        <div class="col-md-2"><span class="badge bg-warning text-dark">Expirados: @Model.TotalExpirados</span></div>
+                        <div class="col-md-2"><span class="badge bg-danger">Rechazados: @Model.TotalRechazados</span></div>
+                        <div class="col-md-2"><span class="badge bg-secondary">Cancelados: @Model.TotalCancelados</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <div class="modern-card-title">
+                        <i class="bi bi-person"></i>
+                        Por Vendedor
+                    </div>
+                </div>
+                <div class="modern-card-content">
+                    <div class="table-responsive">
+                        <table class="modern-table" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Vendedor</th>
+                                    <th class="text-end">Creados</th>
+                                    <th class="text-end">Cerrados</th>
+                                    <th class="text-end">Expirados</th>
+                                    <th class="text-end">Rech/Cancel</th>
+                                    <th class="text-end">Tasa Conv.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var v in Model.PorVendedor)
+                                {
+                                    <tr>
+                                        <td>@(v.VendedorNombre ?? "Sin nombre")</td>
+                                        <td class="text-end">@v.TotalCreados</td>
+                                        <td class="text-end">@v.TotalCerrados</td>
+                                        <td class="text-end">@v.TotalExpirados</td>
+                                        <td class="text-end">@v.TotalRechazadosCancelados</td>
+                                        <td class="text-end"><strong>@v.TasaConversionPorcentaje.ToString("F1")%</strong></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.PorVendedor.Count == 0)
+                        {
+                            <p class="text-muted mb-0">No hay datos para el período seleccionado.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <div class="modern-card-title">
+                        <i class="bi bi-calendar3"></i>
+                        Tendencia Mensual (últimos 12 meses)
+                    </div>
+                </div>
+                <div class="modern-card-content">
+                    <div class="table-responsive">
+                        <table class="modern-table" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Período</th>
+                                    <th class="text-end">Creados</th>
+                                    <th class="text-end">Cerrados</th>
+                                    <th class="text-end">Expirados</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var t in Model.TendenciaMensual)
+                                {
+                                    var nombreMes = System.Globalization.CultureInfo.GetCultureInfo("es-AR").DateTimeFormat.GetMonthName(t.Mes);
+                                    <tr>
+                                        <td>@nombreMes @t.Anio</td>
+                                        <td class="text-end">@t.TotalCreados</td>
+                                        <td class="text-end">@t.TotalCerrados</td>
+                                        <td class="text-end">@t.TotalExpirados</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.TendenciaMensual.Count == 0)
+                        {
+                            <p class="text-muted mb-0">No hay datos de tendencia.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

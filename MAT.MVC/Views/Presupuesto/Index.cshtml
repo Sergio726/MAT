@@ -1,3 +1,4 @@
+@using MAT.MVC.Models
 @{
     Response.ContentType = "text/html; charset=utf-8";
     Response.Charset = "utf-8";
@@ -9,6 +10,7 @@
     int cerrados = estadisticas.ContainsKey("Cerrados") ? estadisticas["Cerrados"] : 0;
     int expirados = estadisticas.ContainsKey("Expirados") ? estadisticas["Expirados"] : 0;
     int total = estadisticas.ContainsKey("Total") ? estadisticas["Total"] : 0;
+    var proximosVencer = ViewBag.ProximosVencer as List<PresupuestoProximoVencer> ?? new List<PresupuestoProximoVencer>();
 }
 
 <div class="modern-dashboard presupuesto-dashboard">
@@ -76,9 +78,67 @@
             </div>
         </div>
 
+        @if (proximosVencer.Count > 0)
+        {
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="modern-card modern-card-warning">
+                    <div class="modern-card-header">
+                        <div class="modern-card-title">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Presupuestos próximos a vencer (@proximosVencer.Count)
+                        </div>
+                        <a href="/Presupuesto/Seguimiento" class="btn-modern btn-modern-primary btn-sm">
+                            <i class="bi bi-arrow-right"></i> Ir a Seguimiento
+                        </a>
+                    </div>
+                    <div class="modern-card-content">
+                        <div class="table-responsive">
+                            <table class="modern-table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Cliente</th>
+                                        <th>Vendedor</th>
+                                        <th>Monto</th>
+                                        <th>Expira</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var p in proximosVencer.Take(10))
+                                    {
+                                        var mins = p.MinutosRestantes;
+                                        var horas = mins / 60;
+                                        var minsRest = mins % 60;
+                                        var tiempoStr = horas > 0 ? string.Format("{0}h {1}m", horas, minsRest) : string.Format("{0} min", mins);
+                                        <tr>
+                                            <td><strong>@p.CodigoSeguimiento</strong></td>
+                                            <td>@(p.NombreCliente ?? p.DniCliente ?? "-")</td>
+                                            <td>@(p.VendedorOrigenNombre ?? "-")</td>
+                                            <td>@string.Format("{0:C}", p.MontoPactado)</td>
+                                            <td><span class="badge bg-warning text-dark">@tiempoStr</span></td>
+                                            <td>
+                                                <a href="/Presupuesto/Seguimiento" class="btn-modern btn-modern-primary btn-sm">Ver</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (proximosVencer.Count > 10)
+                        {
+                            <p class="text-muted mb-0 mt-2"><small>Mostrando 10 de @proximosVencer.Count. <a href="/Presupuesto/Seguimiento">Ver todos</a></small></p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
         <!-- Acciones Principales -->
         <div class="row g-4 mb-4">
-            <div class="col-lg-6 col-md-6">
+            <div class="col-lg-4 col-md-6">
                 <div class="modern-card modern-card-success presupuesto-card-clickable" onclick="window.location.href='/Presupuesto/Create'">
                     <div class="modern-card-header">
                         <div class="modern-card-title">
@@ -98,7 +158,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6 col-md-6">
+            <div class="col-lg-4 col-md-6">
                 <div class="modern-card modern-card-primary presupuesto-card-clickable" onclick="window.location.href='/Presupuesto/Seguimiento'">
                     <div class="modern-card-header">
                         <div class="modern-card-title">
@@ -113,6 +173,25 @@
                         </p>
                         <a href="/Presupuesto/Seguimiento" class="modern-card-link">
                             Ver panel de seguimiento <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="modern-card modern-card-info presupuesto-card-clickable" onclick="window.location.href='/Presupuesto/Metricas'">
+                    <div class="modern-card-header">
+                        <div class="modern-card-title">
+                            <i class="bi bi-graph-up me-2"></i>
+                            Métricas de Conversión
+                        </div>
+                        <i class="bi bi-bar-chart-line presupuesto-card-icon-large"></i>
+                    </div>
+                    <div class="modern-card-content">
+                        <p class="presupuesto-card-desc">
+                            Analiza la tasa de conversión de presupuestos a ventas por vendedor y período.
+                        </p>
+                        <a href="/Presupuesto/Metricas" class="modern-card-link">
+                            Ver métricas <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>

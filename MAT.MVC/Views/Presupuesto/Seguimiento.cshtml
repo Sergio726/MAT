@@ -610,6 +610,7 @@
         html += '<div class="d-flex flex-wrap justify-content-end gap-2 mt-4" style="border-top: 2px solid var(--border-color); padding-top: 1.5rem;">';
         if (p.estado === 1 && !p.isExpirado) {
             html += '<button class="btn-modern btn-modern-primary" onclick="irAVenta(\'' + (p.codigoSeguimiento || '').replace(/'/g, "\\'") + '\', \'' + (p.viajeId || '') + '\')"><i class="bi bi-cart-check"></i> Convertir en venta</button>';
+            html += '<a href="/Presupuesto/Edit/' + p.presupuestoId + '" class="btn-modern btn-modern-secondary" target="_blank"><i class="bi bi-pencil"></i> Editar</a>';
             html += '<div class="btn-group" role="group">';
             html += '<button type="button" class="btn-modern btn-modern-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-clock-history"></i> Extender</button>';
             html += '<ul class="dropdown-menu">';
