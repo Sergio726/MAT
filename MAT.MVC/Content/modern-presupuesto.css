@@ -67,6 +67,16 @@
     margin: 0;
 }
 
+/* ----- Create: Header ----- */
+.presupuesto-create .modern-page-header-text {
+    flex: 1;
+}
+
+.presupuesto-create .modern-page-header-text .modern-page-subtitle {
+    margin: 0.5rem 0 0 0;
+    color: var(--text-secondary);
+}
+
 /* ----- Create: Formulario ----- */
 .presupuesto-form-container {
     padding: 0;
@@ -366,6 +376,12 @@
     padding: 1rem;
 }
 
+/* Ocultar overlay completamente cuando tiene la clase hidden (evita que bloquee la interacción) */
+.presupuesto-resultado-overlay.presupuesto-u-hidden {
+    display: none !important;
+    pointer-events: none;
+}
+
 .presupuesto-resultado-modal {
     margin: 0;
     max-width: 520px;
@@ -409,8 +425,23 @@
     margin-top: 1rem;
 }
 
+.presupuesto-copiar-wpp-header {
+    display: inline-flex;
+}
+
+.presupuesto-ticket-card {
+    flex: 1;
+}
+
+.presupuesto-ticket-acciones .btn-modern-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .presupuesto-resultado-acciones .btn-modern-outline,
-.presupuesto-copiar-wpp-persistente .btn-modern-outline {
+.presupuesto-copiar-wpp-persistente .btn-modern-outline,
+.presupuesto-copiar-wpp-header .btn-modern-outline {
     background: transparent;
     color: #25D366;
     border: 1px solid #25D366;
@@ -424,7 +455,8 @@
 }
 
 .presupuesto-resultado-acciones .btn-modern-outline:hover,
-.presupuesto-copiar-wpp-persistente .btn-modern-outline:hover {
+.presupuesto-copiar-wpp-persistente .btn-modern-outline:hover,
+.presupuesto-copiar-wpp-header .btn-modern-outline:hover {
     background: #25D366;
     color: white;
 }

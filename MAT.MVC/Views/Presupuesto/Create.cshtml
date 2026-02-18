@@ -7,11 +7,20 @@
 
 <div class="modern-page-container presupuesto-create">
     <div class="modern-page-header">
-        <h2 class="modern-page-title">
-            <i class="bi bi-telephone-forward"></i>
-            <span>Módulo de Preventa Telefónica</span>
-        </h2>
-        <p class="modern-page-subtitle">Registra al cliente y asegura tu comisión generando un código de seguimiento único</p>
+        <div class="modern-page-header-text">
+            <h2 class="modern-page-title">
+                <i class="bi bi-telephone-forward"></i>
+                <span>Módulo de Preventa Telefónica</span>
+            </h2>
+            <p class="modern-page-subtitle">Registra al cliente y asegura tu comisión generando un código de seguimiento único</p>
+        </div>
+        <div class="modern-page-actions">
+            <div id="divCopiarWppPersistente" class="presupuesto-copiar-wpp-header presupuesto-u-hidden">
+                <button type="button" class="btn-modern btn-modern-outline btn-sm" id="btnCopiarWppPersistente">
+                    <i class="bi bi-whatsapp"></i> Copiar mensaje WhatsApp
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4 presupuesto-create-row">
@@ -204,26 +213,7 @@
 
         <div class="col-lg-6 presupuesto-col-flex">
             <div class="presupuesto-sidebar">
-                <div class="modern-card modern-card-info presupuesto-sidebar-card">
-                    <div class="modern-card-header presupuesto-sidebar-header">
-                        <div class="modern-card-title" style="font-size: 0.9375rem;">
-                            <i class="bi bi-chat-quote"></i>
-                            <span>Script Sugerido</span>
-                        </div>
-                    </div>
-                    <div class="modern-card-content presupuesto-script-content">
-                        <div class="presupuesto-script-box">
-                            <p class="presupuesto-script-text">
-                                "<span id="scriptNombreCliente" style="font-weight: 600;">[Nombre del Cliente]</span>, 
-                                para que no tengas que repetir todo cuando vayas a la agencia y te respeten este precio de 
-                                $<span id="scriptMonto" style="font-weight: 600;">[Monto]</span>, te acabo de enviar un 
-                                <strong>Codigo de Reserva Preferencial</strong> a tu WhatsApp. Presentalo al llegar y quien este en caja te va a atender directamente con tu ficha lista."
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modern-card presupuesto-sidebar-card">
+                <div class="modern-card presupuesto-sidebar-card presupuesto-ticket-card">
                     <div class="modern-card-header presupuesto-sidebar-header">
                         <div class="modern-card-title presupuesto-sidebar-title">
                             <i class="bi bi-ticket-perforated"></i>
@@ -239,6 +229,11 @@
                             <div class="presupuesto-vendedor-info">
                                 <i class="bi bi-person-check"></i>
                                 <span>Vendedor: <strong id="lblVendedor">@MAT.MVC.Common.MATContext.CurrentVendedor?.Descripcion</strong></span>
+                            </div>
+                            <div class="presupuesto-ticket-acciones mt-3">
+                                <a href="#" id="btnDescargarPdfPresupuesto" class="btn-modern btn-modern-secondary btn-sm presupuesto-u-hidden" target="_blank" title="Descargar presupuesto en PDF">
+                                    <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -262,12 +257,6 @@
                         <button type="button" class="btn-close presupuesto-resultado-close" id="btnCerrarResultado" aria-label="Cerrar"></button>
                     </div>
                 </div>
-            </div>
-            <!-- Botón persistente para copiar mensaje WhatsApp (visible tras cerrar el modal) -->
-            <div id="divCopiarWppPersistente" class="presupuesto-copiar-wpp-persistente presupuesto-u-hidden">
-                <button type="button" class="btn-modern btn-modern-outline btn-sm" id="btnCopiarWppPersistente">
-                    <i class="bi bi-whatsapp"></i> Copiar mensaje WhatsApp
-                </button>
             </div>
         </div>
     </div>
@@ -352,7 +341,6 @@
                     $("#divClienteSeleccionado").slideDown();
                     
                     // Actualizar script sugerido
-                    actualizarScriptSugerido();
                 }
                 return false;
             },
@@ -371,35 +359,7 @@
             $("#txtTelefonoVisible").val('');
             $("#txtNombreCliente").val('');
             $("#divClienteSeleccionado").slideUp();
-            actualizarScriptSugerido();
         };
-
-        // Funcion para actualizar el script sugerido
-        function actualizarScriptSugerido() {
-            var nombre = $("#txtNombreCliente").val() || $("#lblNombreCliente").text() || '[Nombre del Cliente]';
-            var monto = $('#txtMontoPactado').val() || '[Monto]';
-            var montoFormateado = monto;
-            
-            if (monto !== '[Monto]' && !isNaN(parseFloat(monto))) {
-                montoFormateado = parseFloat(monto).toLocaleString('es-AR', { 
-                    minimumFractionDigits: 0, 
-                    maximumFractionDigits: 0 
-                });
-            }
-            
-            $('#scriptNombreCliente').text(nombre);
-            $('#scriptMonto').text(montoFormateado);
-        }
-
-        // Actualizar script sugerido cuando cambia el monto
-        $('#txtMontoPactado').on('input', function () {
-            actualizarScriptSugerido();
-        });
-
-        // Actualizar script sugerido cuando cambia el nombre manualmente
-        $('#txtNombreCliente').on('input', function () {
-            actualizarScriptSugerido();
-        });
 
         // Manejar cambio de viaje
         $('#ddlViaje').on('change', function () {
@@ -515,12 +475,10 @@
                 $('#txtMontoPactado').val(montoTotal.toFixed(2));
             }
             
-            actualizarScriptSugerido();
         }
 
         $('#txtMontoPactado').on('input', function () {
             $(this).data('manual-edit', true);
-            actualizarScriptSugerido();
         });
 
         function escapeHtml(text) {
@@ -579,6 +537,7 @@
                     if (response.success) {
                         $('#lblCodigoSeguimiento').text(response.codigoSeguimiento);
                         $('#lblNumeroTicket').text('#' + response.codigoSeguimiento.split('-').pop());
+                        $('#btnDescargarPdfPresupuesto').attr('href', '@Url.Action("ImprimirPresupuesto", "Presupuesto")?codigo=' + encodeURIComponent(response.codigoSeguimiento)).removeClass('presupuesto-u-hidden');
                         
                         // Mostrar mensaje según si se envió WhatsApp o no
                         var mensaje = '¡Presupuesto generado exitosamente! Código: ' + response.codigoSeguimiento;

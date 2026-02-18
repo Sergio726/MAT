@@ -364,14 +364,15 @@
                     var datos = response.data && Array.isArray(response.data) ? response.data : [];
                     console.log('Datos recibidos:', datos.length, 'registros');
                     
-                    try {
-                        // Actualizar datos sin destruir la tabla (evita error parentNode)
-                        if (tablaPresupuestos && $.fn.DataTable.isDataTable('#tblPresupuestos')) {
-                            tablaPresupuestos.clear();
-                            tablaPresupuestos.rows.add(datos);
-                            tablaPresupuestos.draw();
-                            console.log('Tabla actualizada. Total de filas:', tablaPresupuestos.rows().count());
-                        }
+                    if (datos.length > 0) {
+                        try {
+                            // Actualizar datos sin destruir la tabla (evita error parentNode)
+                            if (tablaPresupuestos && $.fn.DataTable.isDataTable('#tblPresupuestos')) {
+                                tablaPresupuestos.clear();
+                                tablaPresupuestos.rows.add(datos);
+                                tablaPresupuestos.draw();
+                                console.log('Tabla actualizada. Total de filas:', tablaPresupuestos.rows().count());
+                            }
                         } catch (error) {
                             console.error('Error al actualizar la tabla:', error);
                             console.error('Stack trace:', error.stack);
@@ -379,10 +380,7 @@
                         }
                     } else {
                         console.log('No hay datos en la respuesta o el array está vacío');
-                        // Si la tabla no existe, crearla vacía
-                        if (!$.fn.DataTable.isDataTable('#tblPresupuestos')) {
-                            // Inicializar tabla vacía (se hace en document.ready)
-                        } else {
+                        if ($.fn.DataTable.isDataTable('#tblPresupuestos')) {
                             tablaPresupuestos.clear().draw();
                         }
                         mostrarMensaje('No se encontraron presupuestos con los filtros aplicados.', 'info');
@@ -469,6 +467,7 @@
     }
 
     function mostrarModalDetalle(p) {
+        window._presupuestoDetalleActual = p;
         var html = '<div class="modern-card-content" style="padding: 2rem;">';
         
         // Header con código y estado
@@ -589,7 +588,7 @@
         
         // Botones de acción
         html += '<div class="d-flex justify-content-end gap-2 mt-4" style="border-top: 2px solid var(--border-color); padding-top: 1.5rem;">';
-        html += '<button class="btn-modern btn-modern-secondary" onclick="copiarCodigo(\'' + p.codigoSeguimiento + '\')"><i class="bi bi-clipboard"></i> Copiar Código</button>';
+        html += '<button class="btn-modern btn-modern-secondary" onclick="copiarMensajeWhatsApp()" style="background: #25D366; color: white; border-color: #25D366;"><i class="bi bi-whatsapp"></i> Copiar mensaje para WhatsApp</button>';
         html += '<button class="btn-modern btn-modern-secondary" onclick="cerrarModalDetalle()"><i class="bi bi-x-lg"></i> Cerrar</button>';
         html += '</div>';
 
@@ -666,6 +665,31 @@
             document.execCommand('copy');
             document.body.removeChild(textArea);
             mostrarMensaje('Código copiado al portapapeles: ' + codigo, 'success');
+        });
+    }
+
+    function copiarMensajeWhatsApp() {
+        var p = window._presupuestoDetalleActual;
+        if (!p) {
+            mostrarMensaje('No hay datos del presupuesto disponibles.', 'danger');
+            return;
+        }
+        var nombre = (p.clienteNombre || 'Cliente').trim();
+        var codigo = p.codigoSeguimiento || '';
+        var viaje = (p.viajeDescripcion && p.viajeDescripcion !== 'N/A') ? p.viajeDescripcion : '';
+        var msg = 'Hola ' + nombre + ', te contacto para hacer seguimiento del presupuesto ' + codigo + '.';
+        if (viaje) msg += ' Referente al viaje: ' + viaje + '.';
+        msg += ' ¿Tenés alguna consulta o te gustaría que te ayude con la reserva? ¡Saludos!';
+        navigator.clipboard.writeText(msg).then(function() {
+            mostrarMensaje('Mensaje copiado. Pegalo en WhatsApp para enviar al cliente.', 'success');
+        }, function() {
+            var textArea = document.createElement("textarea");
+            textArea.value = msg;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            mostrarMensaje('Mensaje copiado. Pegalo en WhatsApp para enviar al cliente.', 'success');
         });
     }
 

@@ -217,6 +217,37 @@ namespace MAT.MVC.Controllers.Presupuesto
         }
 
         /// <summary>
+        /// Vista imprimible del presupuesto con logo (para guardar como PDF)
+        /// </summary>
+        [HttpGet]
+        public ActionResult ImprimirPresupuesto(string codigo)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(codigo))
+                {
+                    ViewBag.Error = "Código de presupuesto no especificado.";
+                    return View("ImprimirPresupuesto", (PresupuestoStandard)null);
+                }
+
+                var presupuesto = PresupuestoMethod.GetByCodigo(codigo.Trim().ToUpper());
+                if (presupuesto == null)
+                {
+                    ViewBag.Error = "Presupuesto no encontrado.";
+                    return View("ImprimirPresupuesto", (PresupuestoStandard)null);
+                }
+
+                return View("ImprimirPresupuesto", presupuesto);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.ImprimirPresupuesto: {ex.Message}", 1);
+                ViewBag.Error = "Error al cargar el presupuesto.";
+                return View("ImprimirPresupuesto", (PresupuestoStandard)null);
+            }
+        }
+
+        /// <summary>
         /// Busca presupuestos activos por DNI del cliente
         /// </summary>
         [HttpPost]

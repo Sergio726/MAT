@@ -1,0 +1,128 @@
+@model MAT.MVC.Models.PresupuestoStandard
+@{
+    Layout = null;
+    var titulo = "Presupuesto " + (Model != null ? (Model.CodigoSeguimiento ?? "") : "");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@titulo</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; color: #1f2937; padding: 24px; max-width: 700px; margin: 0 auto; }
+        .pr-header-wrap {
+            background: linear-gradient(135deg, #E63375 0%, #c42a62 100%);
+            padding: 20px 24px;
+            margin: -24px -24px 24px -24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .pr-logo { flex-shrink: 0; }
+        .pr-logo img { max-height: 64px; width: auto; display: block; }
+        .pr-header { border: none; padding: 0; margin: 0; flex: 1; }
+        .pr-title { font-size: 1.75rem; font-weight: 700; color: white; margin: 0; }
+        .pr-subtitle { font-size: 1rem; color: rgba(255,255,255,0.95); margin-top: 6px; }
+        .pr-grid { display: table; width: 100%; }
+        .pr-row { display: table-row; }
+        .pr-label { display: table-cell; padding: 10px 16px 10px 0; font-weight: 600; color: #6b7280; width: 200px; }
+        .pr-value { display: table-cell; padding: 10px 0; }
+        .pr-value.monto { font-weight: 700; font-size: 1.25rem; color: #E63375; }
+        .pr-codigo-box { background: linear-gradient(135deg, rgba(230, 51, 117, 0.1) 0%, rgba(230, 51, 117, 0.05) 100%); padding: 1rem 1.5rem; border-radius: 12px; border: 2px dashed #E63375; margin: 1.5rem 0; text-align: center; }
+        .pr-codigo { font-size: 1.75rem; font-weight: 700; letter-spacing: 0.1em; color: #E63375; }
+        .pr-footer { margin-top: 2rem; font-size: 0.8125rem; color: #6b7280; }
+        @@media print {
+            body { padding: 16px; }
+            .pr-header-wrap { margin: -16px -16px 20px -16px; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    @if (ViewBag.Error != null)
+    {
+        <p class="pr-value">@ViewBag.Error</p>
+    }
+    else if (Model == null)
+    {
+        <p class="pr-value">No se encontró el presupuesto solicitado.</p>
+    }
+    else
+    {
+    <div class="pr-header-wrap">
+        <div class="pr-logo">
+            <img src="@Url.Content("~/Images/marco_antonio_back3.png")" alt="Marco Antonio Tours" />
+        </div>
+        <div class="pr-header">
+            <div class="pr-title">Presupuesto</div>
+            <div class="pr-subtitle">@(Model.CodigoSeguimiento ?? "-")</div>
+        </div>
+    </div>
+    <div class="pr-codigo-box">
+        <div class="pr-codigo">@(Model.CodigoSeguimiento ?? "-")</div>
+        <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">Presente este código para su reserva preferencial</div>
+    </div>
+    <div class="pr-grid">
+        <div class="pr-row">
+            <div class="pr-label">Cliente</div>
+            <div class="pr-value">@(Model.NombreCliente ?? "-")</div>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.DniCliente))
+        {
+        <div class="pr-row">
+            <div class="pr-label">DNI</div>
+            <div class="pr-value">@Model.DniCliente</div>
+        </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.TelefonoCliente))
+        {
+        <div class="pr-row">
+            <div class="pr-label">Teléfono / WhatsApp</div>
+            <div class="pr-value">@Model.TelefonoCliente</div>
+        </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.ViajeDescripcion))
+        {
+        <div class="pr-row">
+            <div class="pr-label">Viaje</div>
+            <div class="pr-value">@(Model.ViajeDescripcion ?? "-")</div>
+        </div>
+        }
+        <div class="pr-row">
+            <div class="pr-label">Monto pactado</div>
+            <div class="pr-value monto">@string.Format("{0:C}", Model.MontoPactado)</div>
+        </div>
+        <div class="pr-row">
+            <div class="pr-label">Vendedor</div>
+            <div class="pr-value">@(Model.VendedorOrigenNombre ?? "-")</div>
+        </div>
+        <div class="pr-row">
+            <div class="pr-label">Fecha de creación</div>
+            <div class="pr-value">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</div>
+        </div>
+        <div class="pr-row">
+            <div class="pr-label">Válido hasta</div>
+            <div class="pr-value">@Model.FechaExpiracion.ToString("dd/MM/yyyy HH:mm")</div>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.Observaciones))
+        {
+        <div class="pr-row">
+            <div class="pr-label">Observaciones</div>
+            <div class="pr-value">@Model.Observaciones</div>
+        </div>
+        }
+    </div>
+    <div class="pr-footer no-print">
+        <p>Use la función imprimir del navegador (Ctrl+P) para imprimir o guardar como PDF.</p>
+    </div>
+    }
+    <script>
+        (function () {
+            if (window.opener) return;
+            var q = window.location.search;
+            if (q.indexOf('print=1') !== -1) window.print();
+        })();
+    </script>
+</body>
+</html>
