@@ -623,9 +623,19 @@
     background: rgba(107, 114, 128, 0.1);
 }
 
+.btn-accion-presupuesto.btn-venta {
+    color: #10b981;
+}
+
+.btn-accion-presupuesto.btn-venta:hover {
+    background: rgba(16, 185, 129, 0.1);
+}
+
 .badge-pendiente { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
 .badge-cerrado { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
 .badge-expirado { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+.badge-rechazado { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+.badge-cancelado { background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; }
 .badge-proximo-expiracion { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; font-size: 0.75rem; padding: 0.25rem 0.625rem; margin-top: 0.25rem; display: block; width: fit-content; }
 
 /* Seguimiento: DataTables */

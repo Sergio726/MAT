@@ -144,6 +144,12 @@ namespace MAT.MVC.Controllers.Presupuesto
                     return Json(new { success = false, message = "No se pudo identificar al vendedor actual." });
                 }
 
+                // Horas de expiración desde configuración (default 48)
+                int horasExpiracion = 48;
+                var horasConfig = System.Configuration.ConfigurationManager.AppSettings["Presupuesto_HorasExpiracion"];
+                if (!string.IsNullOrWhiteSpace(horasConfig) && int.TryParse(horasConfig, out int h) && h > 0)
+                    horasExpiracion = h;
+
                 // Crear presupuesto
                 PresupuestoStandard presupuesto = new PresupuestoStandard
                 {
@@ -155,15 +161,15 @@ namespace MAT.MVC.Controllers.Presupuesto
                     VendedorIdOrigen = vendedorActual.VendedorId,
                     MontoPactado = montoPactado,
                     ViajeId = viajeId,
-                    FechaExpiracion = DateTime.Now.AddHours(48), // 48 horas por defecto
+                    FechaExpiracion = DateTime.Now.AddHours(horasExpiracion),
                     Observaciones = observaciones ?? string.Empty
                 };
 
                 // Generar código y guardar
                 string codigoSeguimiento = PresupuestoMethod.CreatePresupuesto(presupuesto);
 
-                // Construir mensaje de WhatsApp
-                string mensajeWhatsApp = ConstruirMensajeWhatsApp(codigoSeguimiento, montoPactado, viajeId);
+                // Construir mensaje de WhatsApp (incluye nombre del cliente y horas de validez)
+                string mensajeWhatsApp = ConstruirMensajeWhatsApp(codigoSeguimiento, nombre, montoPactado, viajeId, horasExpiracion);
                 
                 // Intentar enviar WhatsApp si hay teléfono
                 bool whatsappEnviado = false;
@@ -459,6 +465,53 @@ namespace MAT.MVC.Controllers.Presupuesto
         }
 
         /// <summary>
+        /// Extiende la fecha de expiración de un presupuesto pendiente
+        /// </summary>
+        [HttpPost]
+        public JsonResult ExtenderExpiracion(Guid presupuestoId, int horasAdicionales = 24)
+        {
+            try
+            {
+                bool ok = PresupuestoMethod.ExtenderExpiracion(presupuestoId, horasAdicionales);
+                if (ok)
+                {
+                    return Json(new { success = true, message = $"Expiración extendida {horasAdicionales} horas correctamente." });
+                }
+                return Json(new { success = false, message = "No se pudo extender. El presupuesto no existe, no está pendiente o ya fue cerrado." });
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.ExtenderExpiracion: {ex.Message}", 1);
+                return Json(new { success = false, message = "Error al extender la expiración." });
+            }
+        }
+
+        /// <summary>
+        /// Cancela o rechaza un presupuesto (solo pendientes)
+        /// </summary>
+        [HttpPost]
+        public JsonResult CancelarPresupuesto(Guid presupuestoId, bool esRechazado = false)
+        {
+            try
+            {
+                var presupuesto = PresupuestoMethod.GetById(presupuestoId);
+                if (presupuesto == null)
+                    return Json(new { success = false, message = "Presupuesto no encontrado." });
+                if (presupuesto.Estado != eEstadoPresupuesto.Pendiente)
+                    return Json(new { success = false, message = "Solo se pueden cancelar presupuestos pendientes." });
+
+                var estado = esRechazado ? eEstadoPresupuesto.Rechazado : eEstadoPresupuesto.Cancelado;
+                PresupuestoMethod.UpdateEstado(presupuestoId, estado, null, null);
+                return Json(new { success = true, message = $"Presupuesto {(esRechazado ? "rechazado" : "cancelado")} correctamente." });
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en PresupuestoController.CancelarPresupuesto: {ex.Message}", 1);
+                return Json(new { success = false, message = "Error al cancelar el presupuesto." });
+            }
+        }
+
+        /// <summary>
         /// Actualiza el estado de un presupuesto cuando se cierra una venta
         /// </summary>
         [HttpPost]
@@ -485,18 +538,19 @@ namespace MAT.MVC.Controllers.Presupuesto
         /// <summary>
         /// Construye el mensaje de WhatsApp con el código de seguimiento
         /// </summary>
-        private string ConstruirMensajeWhatsApp(string codigoSeguimiento, double montoPactado, Guid? viajeId)
+        private string ConstruirMensajeWhatsApp(string codigoSeguimiento, string nombreCliente, double montoPactado, Guid? viajeId, int horasValidez = 48)
         {
             var vendedorActual = MATContext.CurrentVendedor;
             string nombreVendedor = vendedorActual?.Descripcion ?? "Marco Antonio Tours";
+            string saludo = string.IsNullOrWhiteSpace(nombreCliente) ? "¡Hola! 👋" : $"¡Hola {nombreCliente.Trim()}! 👋";
             
-            string mensaje = $"¡Hola! 👋\n\n";
+            string mensaje = $"{saludo}\n\n";
             mensaje += $"Te acabo de generar un *Código de Reserva Preferencial*:\n";
             mensaje += $"*{codigoSeguimiento}*\n\n";
             mensaje += $"💰 Monto acordado: ${montoPactado:N2}\n\n";
             mensaje += $"📋 *Instrucciones:*\n";
             mensaje += $"Cuando vengas a la agencia, presenta este código y quien esté en caja te atenderá directamente con tu ficha lista.\n\n";
-            mensaje += $"⏰ Este código es válido por 48 horas.\n\n";
+            mensaje += $"⏰ Este código es válido por {horasValidez} horas.\n\n";
             mensaje += $"Saludos,\n{nombreVendedor}\nMarco Antonio Tours";
 
             return mensaje;

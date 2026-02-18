@@ -50,6 +50,8 @@
                         <option value="1">Pendiente</option>
                         <option value="2">Expirado</option>
                         <option value="3">Cerrado</option>
+                        <option value="4">Rechazado</option>
+                        <option value="5">Cancelado</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -204,6 +206,8 @@
                         var badgeClass = 'badge-pendiente';
                         if (data === 'Cerrado') badgeClass = 'badge-cerrado';
                         else if (data === 'Expirado' || row.isExpirado) badgeClass = 'badge-expirado';
+                        else if (data === 'Rechazado') badgeClass = 'badge-rechazado';
+                        else if (data === 'Cancelado') badgeClass = 'badge-cancelado';
                         return '<span class="presupuesto-badge ' + badgeClass + '">' + data + '</span>';
                     }
                 },
@@ -212,8 +216,12 @@
                     render: function (data, type, row) {
                         var html = '<button class="btn-accion-presupuesto btn-ver" onclick="verDetalle(\'' + row.presupuestoId + '\')" title="Ver detalle">';
                         html += '<i class="bi bi-eye"></i></button>';
-                        html += '<button class="btn-accion-presupuesto btn-copiar" onclick="copiarCodigo(\'' + row.codigoSeguimiento + '\')" title="Copiar código">';
+                        html += '<button class="btn-accion-presupuesto btn-copiar" onclick="copiarCodigo(\'' + (row.codigoSeguimiento || '').replace(/'/g, "\\'") + '\')" title="Copiar código">';
                         html += '<i class="bi bi-clipboard"></i></button>';
+                        if (row.estado === 1 && !row.isExpirado) {
+                            html += '<button class="btn-accion-presupuesto btn-venta" onclick="irAVenta(\'' + (row.codigoSeguimiento || '').replace(/'/g, "\\'") + '\', \'' + (row.viajeId || '') + '\')" title="Convertir en venta">';
+                            html += '<i class="bi bi-cart-check"></i></button>';
+                        }
                         return html;
                     }
                 }
@@ -476,7 +484,12 @@
         html += '<h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary); font-size: 1.5rem; font-weight: 700;">Detalle de Presupuesto</h3>';
         html += '<div style="font-size: 1.25rem; color: var(--brand-primary); font-weight: 600;">' + p.codigoSeguimiento + '</div>';
         html += '</div>';
-        html += '<span class="presupuesto-badge badge-' + (p.estadoNombre === 'Cerrado' ? 'cerrado' : p.estadoNombre === 'Expirado' ? 'expirado' : 'pendiente') + '">' + p.estadoNombre + '</span>';
+        var badgeClass = 'pendiente';
+        if (p.estadoNombre === 'Cerrado') badgeClass = 'cerrado';
+        else if (p.estadoNombre === 'Expirado' || p.isExpirado) badgeClass = 'expirado';
+        else if (p.estadoNombre === 'Rechazado') badgeClass = 'rechazado';
+        else if (p.estadoNombre === 'Cancelado') badgeClass = 'cancelado';
+        html += '<span class="presupuesto-badge badge-' + badgeClass + '">' + p.estadoNombre + '</span>';
         html += '</div>';
         
         // Grid de información
@@ -594,7 +607,18 @@
         }
         
         // Botones de acción
-        html += '<div class="d-flex justify-content-end gap-2 mt-4" style="border-top: 2px solid var(--border-color); padding-top: 1.5rem;">';
+        html += '<div class="d-flex flex-wrap justify-content-end gap-2 mt-4" style="border-top: 2px solid var(--border-color); padding-top: 1.5rem;">';
+        if (p.estado === 1 && !p.isExpirado) {
+            html += '<button class="btn-modern btn-modern-primary" onclick="irAVenta(\'' + (p.codigoSeguimiento || '').replace(/'/g, "\\'") + '\', \'' + (p.viajeId || '') + '\')"><i class="bi bi-cart-check"></i> Convertir en venta</button>';
+            html += '<div class="btn-group" role="group">';
+            html += '<button type="button" class="btn-modern btn-modern-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-clock-history"></i> Extender</button>';
+            html += '<ul class="dropdown-menu">';
+            html += '<li><a class="dropdown-item" href="#" onclick="extenderExpiracion(\'' + p.presupuestoId + '\', 12); return false;">12 horas</a></li>';
+            html += '<li><a class="dropdown-item" href="#" onclick="extenderExpiracion(\'' + p.presupuestoId + '\', 24); return false;">24 horas</a></li>';
+            html += '<li><a class="dropdown-item" href="#" onclick="extenderExpiracion(\'' + p.presupuestoId + '\', 48); return false;">48 horas</a></li>';
+            html += '</ul></div>';
+            html += '<button class="btn-modern btn-modern-outline btn-modern-danger" onclick="cancelarPresupuesto(\'' + p.presupuestoId + '\')"><i class="bi bi-x-circle"></i> Cancelar</button>';
+        }
         html += '<button class="btn-modern btn-modern-secondary" onclick="copiarMensajeWhatsApp()" style="background: #25D366; color: white; border-color: #25D366;"><i class="bi bi-whatsapp"></i> Copiar mensaje para WhatsApp</button>';
         html += '<button class="btn-modern btn-modern-secondary" onclick="cerrarModalDetalle()"><i class="bi bi-x-lg"></i> Cerrar</button>';
         html += '</div>';
@@ -658,6 +682,67 @@
         } catch (e) {
             console.log('Error al destruir dialog:', e);
         }
+    }
+
+    function irAVenta(codigo, viajeId) {
+        codigo = (codigo || '').trim();
+        viajeId = (viajeId || '').trim();
+        if (!codigo) {
+            mostrarMensaje('No hay código de presupuesto.', 'danger');
+            return;
+        }
+        if (viajeId) {
+            window.open('/NuevaReserva/Index/' + viajeId + '?codigoPresupuesto=' + encodeURIComponent(codigo), '_blank');
+        } else {
+            copiarCodigo(codigo);
+            mostrarMensaje('Código copiado. Vaya a Viajes, seleccione un viaje para reservar, y pegue el código en la sección Cliente.', 'info');
+        }
+    }
+
+    function extenderExpiracion(presupuestoId, horasAdicionales) {
+        if (!presupuestoId) return;
+        horasAdicionales = parseInt(horasAdicionales, 10) || 24;
+        $.ajax({
+            url: '@Url.Action("ExtenderExpiracion", "Presupuesto")',
+            type: 'POST',
+            data: { presupuestoId: presupuestoId, horasAdicionales: horasAdicionales },
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    mostrarMensaje(response.message, 'success');
+                    cerrarModalDetalle();
+                    cargarPresupuestos();
+                } else {
+                    mostrarMensaje(response.message || 'Error al extender.', 'danger');
+                }
+            },
+            error: function () {
+                mostrarMensaje('Error al extender la expiración.', 'danger');
+            }
+        });
+    }
+
+    function cancelarPresupuesto(presupuestoId) {
+        if (!presupuestoId) return;
+        if (!confirm('¿Está seguro de cancelar este presupuesto?')) return;
+        $.ajax({
+            url: '@Url.Action("CancelarPresupuesto", "Presupuesto")',
+            type: 'POST',
+            data: { presupuestoId: presupuestoId, esRechazado: false },
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    mostrarMensaje(response.message, 'success');
+                    cerrarModalDetalle();
+                    cargarPresupuestos();
+                } else {
+                    mostrarMensaje(response.message || 'Error al cancelar.', 'danger');
+                }
+            },
+            error: function () {
+                mostrarMensaje('Error al cancelar el presupuesto.', 'danger');
+            }
+        });
     }
 
     function copiarCodigo(codigo) {

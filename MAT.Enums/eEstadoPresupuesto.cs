@@ -15,7 +15,11 @@ namespace MAT.Enums
         [Description("Expirado")]
         Expirado = 2,
         [Description("Cerrado")]
-        Cerrado = 3
+        Cerrado = 3,
+        [Description("Rechazado")]
+        Rechazado = 4,
+        [Description("Cancelado")]
+        Cancelado = 5
     }
 }
 

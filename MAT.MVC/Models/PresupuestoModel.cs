@@ -188,6 +188,27 @@ namespace MAT.MVC.Models
         }
 
         /// <summary>
+        /// Extiende la fecha de expiración de un presupuesto pendiente
+        /// </summary>
+        public static bool ExtenderExpiracion(Guid presupuestoId, int horasAdicionales = 24)
+        {
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@PresupuestoId", SqlDbType.UniqueIdentifier, 0, presupuestoId),
+                DBHelper.MakeParam("@HorasAdicionales", SqlDbType.Int, 0, horasAdicionales > 0 ? horasAdicionales : 24)
+            };
+
+            using (SqlDataReader reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Presupuesto_ExtenderExpiracion", dbParams))
+            {
+                if (reader.Read() && reader["RowsAffected"] != DBNull.Value)
+                {
+                    return Convert.ToInt32(reader["RowsAffected"]) > 0;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Marca presupuestos expirados como tal
         /// </summary>
         public static int MarcarExpirados()

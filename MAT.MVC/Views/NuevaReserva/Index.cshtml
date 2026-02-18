@@ -534,6 +534,14 @@
                         ul.item.value = ''; //clean input
                     }
                 });
+
+                // Si la URL trae codigoPresupuesto (desde Presupuesto/Seguimiento "Convertir en venta")
+                var urlParams = new URLSearchParams(window.location.search);
+                var codigoPresupuesto = urlParams.get('codigoPresupuesto');
+                if (codigoPresupuesto) {
+                    $('#txt-codigo-presupuesto').val(codigoPresupuesto);
+                    buscarPresupuestoPorCodigo();
+                }
             }
 
             oReserva.recalcularDetallePago = function () {

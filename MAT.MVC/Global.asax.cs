@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,8 +6,10 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.Caching;
 using AutoMapper;
 using MAT.MVC.Integration;
+using MAT.MVC.Models;
 using MAT.Utilities;
 using WebMatrix.WebData;
 using MatRequestContext = MAT.MVC.Infrastructure.RequestContext;
@@ -19,6 +21,8 @@ namespace MAT.MVC
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        private const string CacheKeyMarcarExpirados = "Presupuesto_MarcarExpirados_LastRun";
+
         protected void Application_Start()
         {
             // Inicialización de AutoMapper
@@ -32,7 +36,21 @@ namespace MAT.MVC
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);               
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Marcar presupuestos expirados al iniciar la aplicación
+            try
+            {
+                var count = PresupuestoMethod.MarcarExpirados();
+                if (count > 0)
+                {
+                    MATLogger.Log($"Presupuesto: {count} presupuesto(s) marcado(s) como expirado(s) al iniciar la aplicación.", 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Presupuesto: Error al marcar expirados en Application_Start: {ex.Message}", 1);
+            }
         }
 
         protected void Application_BeginRequest()
@@ -40,6 +58,26 @@ namespace MAT.MVC
             // CorrelationId + timer para logging/performance
             MatRequestContext.GetOrCreateCorrelationId();
             MatRequestContext.StartRequestStopwatch();
+
+            // Marcar presupuestos expirados (máximo una vez por hora)
+            try
+            {
+                var cache = HttpRuntime.Cache;
+                var lastRun = cache[CacheKeyMarcarExpirados] as DateTime?;
+                if (lastRun == null || (DateTime.UtcNow - lastRun.Value).TotalHours >= 1)
+                {
+                    cache.Insert(CacheKeyMarcarExpirados, DateTime.UtcNow, null, DateTime.UtcNow.AddHours(1), Cache.NoSlidingExpiration);
+                    var count = PresupuestoMethod.MarcarExpirados();
+                    if (count > 0)
+                    {
+                        MATLogger.Log($"Presupuesto: {count} presupuesto(s) marcado(s) como expirado(s).", 0);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Presupuesto: Error al marcar expirados: {ex.Message}", 1);
+            }
         }
 
         protected void Application_EndRequest()
