@@ -665,6 +665,16 @@ namespace MAT.MVC.Controllers.PersonaCliente
         {
             ViewBag.FacturaID = facturaid;
             ViewBag.ClienteID = clienteid;
+            try
+            {
+                ViewBag.Saldo = MVC.Models.ReservaMethod.GetSaldoFactura(facturaid);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log(string.Format("RegistrarPago GetSaldoFactura: {0} {1}", ex.Message, ex.StackTrace), 1);
+                ViewBag.Saldo = 0m;
+                ViewBag.SaldoError = "No se pudo obtener el saldo. Verifique la factura.";
+            }
             return PartialView();
         }
 
@@ -673,7 +683,16 @@ namespace MAT.MVC.Controllers.PersonaCliente
         {
             ViewBag.FacturaID = facturaid;
             ViewBag.ClienteID = clienteid;
-            ViewBag.Saldo = MVC.Models.ReservaMethod.GetSaldoFactura(facturaid);
+            try
+            {
+                ViewBag.Saldo = MVC.Models.ReservaMethod.GetSaldoFactura(facturaid);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log(string.Format("RegistrarPagoTotal GetSaldoFactura: {0} {1}", ex.Message, ex.StackTrace), 1);
+                ViewBag.Saldo = 0m;
+                ViewBag.SaldoError = "No se pudo obtener el saldo. Verifique la factura.";
+            }
             return PartialView();
         }
 

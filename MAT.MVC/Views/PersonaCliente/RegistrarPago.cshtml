@@ -3,7 +3,7 @@
 @using MAT.Utilities
 
 @{
-    var vSaldo = MAT.MVC.Models.ReservaMethod.GetSaldoFactura(ViewBag.FacturaID);
+    var vSaldo = ViewBag.Saldo != null ? (decimal)ViewBag.Saldo : 0m;
 }
 
 <style>
@@ -148,6 +148,13 @@
 </style>
 
 <input type="hidden" id="hdnSaldo" value="@vSaldo" />
+
+@if (ViewBag.SaldoError != null)
+{
+    <div class="alert alert-warning" role="alert" style="margin-bottom: 1rem;">
+        <i class="bi bi-exclamation-triangle"></i> @ViewBag.SaldoError
+    </div>
+}
 
 <div class="pago-container">
     <div class="pago-layout">
@@ -358,6 +365,13 @@
                     } else {
                         (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
                     }
+                },
+                error: function (xhr, status, error) {
+                    var msg = "Error al registrar el pago. ";
+                    if (xhr.status === 500) msg += "Error interno del servidor.";
+                    else if (xhr.status === 0) msg += "Verifique su conexión.";
+                    else if (xhr.responseText) msg += (xhr.responseText.substring(0, 150) || error);
+                    (window.alertError || window.alert)(msg, "Error");
                 }
             });
         });
