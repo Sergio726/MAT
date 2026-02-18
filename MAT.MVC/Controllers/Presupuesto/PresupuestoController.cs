@@ -775,9 +775,10 @@ namespace MAT.MVC.Controllers.Presupuesto
 
                 MATLogger.Log($"PresupuestoController.GetDetalle - Presupuesto encontrado: {presupuesto.CodigoSeguimiento}", 2);
 
-                // Obtener datos del cliente por DNI
+                // Obtener datos del cliente: primero por DNI en PersonaCliente; si no hay o no se encuentra, usar datos del presupuesto
                 string clienteNombre = string.Empty;
                 string clienteTelefono = string.Empty;
+                string clienteEmail = string.Empty;
                 if (!string.IsNullOrWhiteSpace(presupuesto.DniCliente))
                 {
                     try
@@ -787,6 +788,7 @@ namespace MAT.MVC.Controllers.Presupuesto
                         {
                             clienteNombre = $"{cliente.Apellido} {cliente.Nombre}".Trim();
                             clienteTelefono = !string.IsNullOrWhiteSpace(cliente.Celular) ? cliente.Celular : cliente.Telefono;
+                            clienteEmail = cliente.Email ?? string.Empty;
                         }
                     }
                     catch (Exception exCliente)
@@ -794,14 +796,21 @@ namespace MAT.MVC.Controllers.Presupuesto
                         MATLogger.Log($"Error al obtener datos del cliente: {exCliente.Message}", 1);
                     }
                 }
+                if (string.IsNullOrWhiteSpace(clienteNombre) && !string.IsNullOrWhiteSpace(presupuesto.NombreCliente))
+                    clienteNombre = presupuesto.NombreCliente;
+                if (string.IsNullOrWhiteSpace(clienteTelefono) && !string.IsNullOrWhiteSpace(presupuesto.TelefonoCliente))
+                    clienteTelefono = presupuesto.TelefonoCliente;
+                if (string.IsNullOrWhiteSpace(clienteEmail) && !string.IsNullOrWhiteSpace(presupuesto.EmailCliente))
+                    clienteEmail = presupuesto.EmailCliente;
 
                 var resultado = new
                 {
                     presupuestoId = presupuesto.PresupuestoID.ToString(),
                     codigoSeguimiento = presupuesto.CodigoSeguimiento,
-                    dniCliente = presupuesto.DniCliente,
+                    dniCliente = presupuesto.DniCliente ?? string.Empty,
                     clienteNombre = clienteNombre,
                     clienteTelefono = clienteTelefono,
+                    clienteEmail = clienteEmail,
                     vendedorOrigenNombre = presupuesto.VendedorOrigenNombre ?? string.Empty,
                     vendedorIdOrigen = presupuesto.VendedorIdOrigen.ToString(),
                     montoPactado = presupuesto.MontoPactado,

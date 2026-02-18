@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MAT.Entities.PasajeroViaje>
+@model IEnumerable<MAT.Entities.PasajeroViaje>
 
 @using MAT.Utilities
 @using MAT.Enums
@@ -8,18 +8,15 @@
     ViewBag.Title = "Lista de Viajes";
     int numeracion = 1;
 }
+@section Styles {
 <link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
 <link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
-<link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-<script src="~/Scripts/jquery-1.8.2.js"></script>
-<head>
-    <title>LISTA DE PASAJEROS</title>
-</head>
+}
 <div id="divContent" class="Content">
   @*  <div class="logo-voucher">
                 <img alt="" src="/Images/marco_antonio_back.jpg" width="90" /></div>*@
     <div id="divEncabezadoViaje" class="EncabezadoViaje headMAT">
-        <div class="custom_padding_4">
+        <div style="padding: 1rem;">
             @foreach (var item in Model)
             {
                 ViajeService VS = new ViajeService();
@@ -77,8 +74,11 @@
     </div>
 </div>
 
-<div class="floatPrint HideToPrint" style=" width: 80px;height: 35px;">
-        <div class="float_iconPrint" title="Imprimir Listado" onclick="javascript:printListado();"></div>
+<div class="HideToPrint" style="position:fixed;bottom:20px;right:20px;">
+    <button type="button" class="btn-modern btn-modern-primary" title="Imprimir Listado" onclick="printListado();">
+        <i class="bi bi-printer-fill"></i>
+        <span>Imprimir</span>
+    </button>
 </div>
 <script type="text/javascript">
     function printListado() {

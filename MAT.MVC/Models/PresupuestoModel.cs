@@ -163,6 +163,15 @@ namespace MAT.MVC.Models
         }
 
         /// <summary>
+        /// Obtiene un presupuesto por ID
+        /// </summary>
+        public static PresupuestoStandard GetById(Guid presupuestoId)
+        {
+            var lista = GetAll(null, null, null, null, null, null);
+            return lista.FirstOrDefault(p => p.PresupuestoID == presupuestoId);
+        }
+
+        /// <summary>
         /// Actualiza el estado de un presupuesto y lo vincula con una factura
         /// </summary>
         public static void UpdateEstado(Guid presupuestoId, eEstadoPresupuesto estado, Guid? facturaId = null, Guid? vendedorIdCierre = null)

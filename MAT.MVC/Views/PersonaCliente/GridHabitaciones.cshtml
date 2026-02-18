@@ -104,7 +104,7 @@
 
 <input type="hidden" id="input-viaje-id" value="@ViewData["viajeid"]" />
 
-<table id="GridHabitacion" class="habitacion-grid-table">
+<table id="GridHabitacion" class="modern-table habitacion-grid-table">
     <thead>
         <tr>
             <th>N° - HAB</th>
@@ -131,14 +131,14 @@
                 <td id="td-@item.HabitacionID">
                     @if (item.Disponibilidad > 0 && ViewBag.HabitacionSelected == null)
                     {
-                        <a class="aReserva btn-reservar" data-viaje="@ViewData["viajeid"]" data-habitacionid="@item.HabitacionID" id="@item.HabitacionID">
+                        <a class="aReserva btn-modern btn-modern-primary btn-reservar" data-viaje="@ViewData["viajeid"]" data-habitacionid="@item.HabitacionID" id="@item.HabitacionID">
                             <i class="bi bi-check-lg"></i>
                             Reservar
                         </a>
                     }
                     else if (item.HabitacionID == ViewBag.HabitacionSelected)
                     {
-                        <a href="javascript:eliminarReservaHotel('@ViewBag.PasajeroId','@ViewBag.HabitacionSelected','@ViewData["viajeid"].ToString()');" class="btn-eliminar-reserva" title="Eliminar reserva de habitación">
+                        <a href="javascript:eliminarReservaHotel('@ViewBag.PasajeroId','@ViewBag.HabitacionSelected','@ViewData["viajeid"].ToString()');" class="modern-btn-icon modern-btn-icon-danger" title="Eliminar reserva de habitación">
                             <i class="bi bi-trash3"></i>
                         </a>
                     }

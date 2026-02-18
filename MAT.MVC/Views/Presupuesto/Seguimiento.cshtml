@@ -502,6 +502,13 @@
         html += '<div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.25rem;">Teléfono</div>';
         html += '<div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">' + (p.clienteTelefono || '-') + '</div>';
         html += '</div>';
+        // Email
+        if (p.clienteEmail) {
+            html += '<div class="col-md-4">';
+            html += '<div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.25rem;">Email</div>';
+            html += '<div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">' + p.clienteEmail + '</div>';
+            html += '</div>';
+        }
         html += '</div>';
         html += '</div>';
         html += '</div>';

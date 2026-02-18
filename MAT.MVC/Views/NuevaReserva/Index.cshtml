@@ -104,6 +104,12 @@
                                         <div id="presupuesto-contacto-info" style="font-size: 11px; color: #666; margin-top: 4px; display: none;">
                                             <span id="presupuesto-contacto-text"></span>
                                         </div>
+                                        <div id="div-crear-cliente-presupuesto" style="margin-top: 8px; display: none;">
+                                            <a id="btn-crear-cliente-presupuesto" href="#" class="btn btn-small btn-success" target="_blank">
+                                                <i class="glyphicons glyphicons-user-add"></i> Crear cliente desde presupuesto
+                                            </a>
+                                            <small style="display: block; color: #666; margin-top: 4px;">Si el cliente no está en el sistema, abrirá el formulario con los datos pre-cargados</small>
+                                        </div>
                                         <div style="margin-top: 8px; padding: 8px; background-color: #f0f0f0; border-radius: 3px; font-size: 11px;">
                                             <strong>Reparto de Comisión Automático:</strong><br/>
                                             <span>Vendedor 1 (Origen): <strong id="comision-origen">50%</strong></span> | 
@@ -428,6 +434,18 @@
                                 $("#banner-atribucion").slideDown();
                                 oReserva.PresupuestoId = p.presupuestoId;
                                 oReserva.VendedorIdOrigen = p.vendedorIdOrigen;
+                                oReserva.PresupuestoDatos = { nombre: p.nombreCliente || '', telefono: p.telefonoCliente || '', email: p.emailCliente || '' };
+                                // Prellenar búsqueda de cliente con el nombre del presupuesto
+                                if (p.nombreCliente) {
+                                    $('#txt-busqueda-cliente').val(p.nombreCliente);
+                                }
+                                // Mostrar/ocultar botón "Crear cliente desde presupuesto"
+                                if (p.nombreCliente && (p.telefonoCliente || p.emailCliente)) {
+                                    $('#btn-crear-cliente-presupuesto').attr('href', '/PersonaCliente/CreateFromPresupuesto?presupuestoId=' + encodeURIComponent(p.presupuestoId) + '&returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search));
+                                    $('#div-crear-cliente-presupuesto').show();
+                                } else {
+                                    $('#div-crear-cliente-presupuesto').hide();
+                                }
                                 // Mostrar datos de contacto del presupuesto si no hay DNI (ayuda a identificar al cliente)
                                 var contactos = [];
                                 if (p.nombreCliente) contactos.push('Cliente: ' + p.nombreCliente);
@@ -444,7 +462,9 @@
                                 $("#banner-atribucion").slideUp();
                                 oReserva.PresupuestoId = null;
                                 oReserva.VendedorIdOrigen = null;
+                                oReserva.PresupuestoDatos = null;
                                 $("#presupuesto-contacto-info").hide();
+                                $('#div-crear-cliente-presupuesto').hide();
                                 (window.alertInfo || window.alert)(response.message || 'No se encontró el presupuesto.', 'Búsqueda');
                             }
                         },
@@ -473,6 +493,7 @@
                                 
                                 $("#banner-atribucion").slideDown();
                                 $("#presupuesto-contacto-info").hide(); // En búsqueda por DNI no mostramos datos de contacto
+                                $('#div-crear-cliente-presupuesto').hide(); // Ya tiene cliente seleccionado
                                 // Guardar información del presupuesto para usar al cerrar la venta
                                 oReserva.PresupuestoId = presupuesto.presupuestoId;
                                 oReserva.VendedorIdOrigen = presupuesto.vendedorIdOrigen;
@@ -481,6 +502,7 @@
                                 oReserva.PresupuestoId = null;
                                 oReserva.VendedorIdOrigen = null;
                                 $("#presupuesto-contacto-info").hide();
+                                $('#div-crear-cliente-presupuesto').hide();
                             }
                         },
                         error: function () {

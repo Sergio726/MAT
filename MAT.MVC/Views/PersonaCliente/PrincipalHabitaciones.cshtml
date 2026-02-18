@@ -1,6 +1,4 @@
-@using (Html.BeginForm())
-{
-    <style>
+<style>
         .habitacion-filter-container {
             display: flex;
             align-items: center;
@@ -85,9 +83,11 @@
         }
     </style>
 
+@using (Html.BeginForm())
+{
     <div class="habitacion-filter-container">
         <span class="habitacion-filter-label">Hotel:</span>
-        <select id="ddHotel" name="ddHotel" class="habitacion-select">
+        <select id="ddHotel" name="ddHotel" class="modern-form-select habitacion-select">
             @foreach (MAT.MVC.Models.HotelDropDown item in ViewBag.ListHotel)
             {
                 <option value="@item.HotelID" fecha="@item.Fecha.ToString("dd/MM/yyyy")">@item.Nombre @item.Fecha.ToString("dd/MM/yyyy")</option>

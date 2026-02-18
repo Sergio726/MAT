@@ -1,24 +1,27 @@
-﻿@model List<MAT.MVC.Models.PaquetePrecio>
+@model List<MAT.MVC.Models.PaquetePrecio>
 @if (ViewBag.Error != null)
 {
-    <div class="msgError"><span>@ViewBag.Error</span></div>    
+    <div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>@ViewBag.Error</span></div>    
 }
 else
 {
-    <div class="custom_padding_top_20">
-        <div>
-            <ul>
-                @foreach (MAT.MVC.Models.PaquetePrecio item in Model)
-	            {
-		            <p><input type="radio" name="precio" value="@item.PrecioID"/> @item.Descripcion.ToString() </p>
-	            }
-            </ul>
-    
+    <div class="modern-card" style="padding: 1.5rem;">
+        <div class="modern-form-group">
+            @foreach (MAT.MVC.Models.PaquetePrecio item in Model)
+            {
+                <label class="modern-form-radio-label" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <input type="radio" name="precio" value="@item.PrecioID"/>
+                    <span>@item.Descripcion.ToString()</span>
+                </label>
+            }
         </div>
-        <div class="custom_padding_10 custom_float_right">
-            <a href="javascript: fnSetPrecio('@ViewBag.DetalleFacturaId');" id="btnCambiarPrecio" class="btn btn-small btn-inverse">Cambiar Precio</a>
+        <div class="modern-form-actions" style="margin-top: 1rem; justify-content: flex-end;">
+            <button type="button" class="btn-modern btn-modern-primary" id="btnCambiarPrecio" onclick="fnSetPrecio('@ViewBag.DetalleFacturaId');">
+                <i class="bi bi-tag"></i>
+                <span>Cambiar Precio</span>
+            </button>
         </div>
-     </div>
+    </div>
     <script type="text/javascript">
         function fnSetPrecio(DetalleFacturaId) {
             var PrecioSelected = $("input[name='precio']:checked").val();

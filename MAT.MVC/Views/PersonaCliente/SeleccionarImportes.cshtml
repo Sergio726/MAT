@@ -1,4 +1,4 @@
-﻿@model MAT.MVC.Models.SeleccionarPasajeroModel
+@model MAT.MVC.Models.SeleccionarPasajeroModel
 
 <input id="input-piso" type="hidden" value="@ViewData["piso"]" />
 <input id="input-anterior" type="hidden" value="@ViewData["anteriorid"]" />
@@ -26,9 +26,12 @@
 </div>
 <br />
 
-<p class="botonera-form">
-    <a class="btn btn-small btn-danger" id="btn-aceptar-cambio-butaca">Confirmar Cambio de Butaca</a>
-</p>
+<div class="modern-form-actions">
+    <button type="button" class="btn-modern btn-modern-primary" id="btn-aceptar-cambio-butaca">
+        <i class="bi bi-check-circle"></i>
+        <span>Confirmar Cambio de Butaca</span>
+    </button>
+</div>
 <script type="text/javascript">
     jQuery(function ($) {
         var piso = $("#input-piso").val();

@@ -97,6 +97,60 @@ namespace MAT.MVC.Controllers.PersonaCliente
             return View();
         }
 
+        /// <summary>
+        /// Crea un nuevo cliente con datos pre-cargados desde un presupuesto (prospecto que decide comprar)
+        /// </summary>
+        [Authorize]
+        public ActionResult CreateFromPresupuesto(Guid? presupuestoId, string returnUrl = null)
+        {
+            ViewBag.ListOcupacion = GetAllOcupacion();
+            ViewBag.ReturnUrl = returnUrl;
+
+            if (!presupuestoId.HasValue)
+            {
+                ViewData["error"] = "No se especificó el presupuesto.";
+                return View("Create");
+            }
+
+            var presupuesto = MAT.MVC.Models.PresupuestoMethod.GetById(presupuestoId.Value);
+            if (presupuesto == null)
+            {
+                ViewData["error"] = "Presupuesto no encontrado.";
+                return View("Create");
+            }
+
+            var model = new MAT.Entities.PersonaCliente();
+            model.Nacionalidad = "ARG";
+            model.PaisResidencia = "ARG";
+            model.Domicilio = "S/D";
+
+            if (!string.IsNullOrWhiteSpace(presupuesto.NombreCliente))
+            {
+                var nombreCompleto = presupuesto.NombreCliente.Trim();
+                if (nombreCompleto.Contains(","))
+                {
+                    var partes = nombreCompleto.Split(new[] { ',' }, 2);
+                    model.Apellido = partes[0].Trim();
+                    model.Nombre = partes.Length > 1 ? partes[1].Trim() : string.Empty;
+                }
+                else
+                {
+                    var palabras = nombreCompleto.Split(new[] { ' ' }, 2);
+                    model.Apellido = palabras[0].Trim();
+                    model.Nombre = palabras.Length > 1 ? palabras[1].Trim() : string.Empty;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(presupuesto.TelefonoCliente))
+                model.Celular = presupuesto.TelefonoCliente.Trim();
+            if (!string.IsNullOrWhiteSpace(presupuesto.EmailCliente))
+                model.Email = presupuesto.EmailCliente.Trim();
+            if (!string.IsNullOrWhiteSpace(presupuesto.DniCliente))
+                model.NroDocumento = presupuesto.DniCliente.Trim();
+
+            return View("Create", model);
+        }
+
         [HttpPost]
         [Authorize]
         public ActionResult Create(FormCollection collection)
@@ -141,7 +195,11 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 #region create
                 PersonaClienteMethod.CreatePersonaCliente(PersonaCliente);
                 #endregion
-                
+
+                var returnUrl = collection.Get("returnUrl");
+                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+
                 return RedirectToAction("Index", "PersonaCliente");
             }
             catch (Exception e)
