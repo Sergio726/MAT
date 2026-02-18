@@ -1,4 +1,4 @@
-﻿@model MAT.MVC.Models.DetalleViaje
+@model MAT.MVC.Models.DetalleViaje
 @using MAT.Entities
 
 <div class="viaje-detalle-container">
@@ -41,13 +41,23 @@
             </div>
         </div>
 
-        @if (Model.NroCoche != null)
+        @if (Model.NroCoche != null || !string.IsNullOrWhiteSpace(Model.TransportePatente))
         {
             <div class="viaje-info-item">
                 <i class="bi bi-bus-front"></i>
                 <div class="viaje-info-content">
-                    <span class="viaje-info-label">Coche</span>
-                    <span class="viaje-info-value">@Model.NroCoche.ToString()</span>
+                    <span class="viaje-info-label">Transporte</span>
+                    <span class="viaje-info-value">
+                        @if (Model.NroCoche != null)
+                        {
+                            <span>Coche @Model.NroCoche</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.TransportePatente))
+                        {
+                            if (Model.NroCoche != null) { <span> · </span> }
+                            <span>Patente @Model.TransportePatente</span>
+                        }
+                    </span>
                 </div>
             </div>
         }

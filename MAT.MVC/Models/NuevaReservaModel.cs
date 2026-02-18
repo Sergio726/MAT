@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MAT.Entities;
 using MAT.Enums.SharedModels;
 using MAT.MVC.Controllers.NuevaReserva;
@@ -40,16 +40,30 @@ namespace MAT.MVC.Models
 
         public async Task<List<ReservaStandard>> GetReservas()
         {
-            var resultPasajeDto = await _backendAPI.GetListOfPasajesByViajeID(ViajeId.ToString());
-
-            return Mapper.Map<List<ReservaStandard>>(resultPasajeDto);
+            try
+            {
+                var resultPasajeDto = await _backendAPI.GetListOfPasajesByViajeID(ViajeId.ToString());
+                return Mapper.Map<List<ReservaStandard>>(resultPasajeDto);
+            }
+            catch (Exception)
+            {
+                // Fallback a base de datos cuando el servicio API no está disponible
+                return ReservaMethod.GetListOfPasajesByViajeID(ViajeId.ToString());
+            }
         }
 
         public async Task<DetalleViaje> GetDetalleViaje()
         {
-            var resultDetalleViaje = await _backendAPI.GetDetalleViajeAsync(ViajeId.ToString());
-            
-            return Mapper.Map<DetalleViaje>(resultDetalleViaje);
+            try
+            {
+                var resultDetalleViaje = await _backendAPI.GetDetalleViajeAsync(ViajeId.ToString());
+                return Mapper.Map<DetalleViaje>(resultDetalleViaje);
+            }
+            catch (Exception)
+            {
+                // Fallback a base de datos cuando el servicio API no está disponible
+                return await Task.FromResult(ViajeMethod.GetDetalleViajeModel(ViajeId));
+            }
         }
 
     }

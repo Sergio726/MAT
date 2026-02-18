@@ -1,4 +1,4 @@
-﻿using MAT.MVC.Integration.BackendApi.Models;
+using MAT.MVC.Integration.BackendApi.Models;
 using MAT.MVC.Models;
 using System;
 using System.Collections.Generic;
@@ -49,6 +49,7 @@ namespace MAT.MVC.Integration
                 .ForMember(dest => dest.HoraRegreso, opt => opt.MapFrom(src => GetString(src.HoraRegreso)))
                 .ForMember(dest => dest.TiempoConsentracion, opt => opt.MapFrom(src => src.TiempoConsentracion))
                 .ForMember(dest => dest.NroCoche, opt => opt.MapFrom(src => GetString(src.NroCoche)))
+                .ForMember(dest => dest.TransportePatente, opt => opt.MapFrom(src => GetString(src.TransportePatente)))
                 .ForMember(dest => dest.PaqueteServicios, opt => opt.MapFrom(src => GetString(src.PaqueteServicios)))
                 .ForMember(dest => dest.PaqueteExcusionesIncluidas, opt => opt.MapFrom(src => GetString(src.PaqueteExcusionesIncluidas)))
                 .ForMember(dest => dest.PaqueteExcusionesOpcionales, opt => opt.MapFrom(src => GetString(src.PaqueteExcusionesOpcionales)))

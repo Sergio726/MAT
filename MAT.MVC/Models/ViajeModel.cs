@@ -82,6 +82,8 @@ namespace MAT.MVC.Models
         public string HoraRegreso { get; set; }
         public int TiempoConsentracion { get; set; }
         public string NroCoche { get; set; }
+        /// <summary>Patente o dominio del coche (transporte).</summary>
+        public string TransportePatente { get; set; }
         public string PaqueteServicios { get; set; }
         public string PaqueteExcusionesIncluidas { get; set; }
         public string PaqueteExcusionesOpcionales { get; set; }
@@ -606,6 +608,36 @@ namespace MAT.MVC.Models
                         
             };
             return DBHelper.ExecuteDataSet("dbo.usp_MAT_Reserva_GetDetalleViaje", dbParams);
+        }
+
+        /// <summary>
+        /// Obtiene el detalle del viaje desde la base de datos (para fallback cuando la API no está disponible).
+        /// </summary>
+        public static DetalleViaje GetDetalleViajeModel(Guid ViajeID)
+        {
+            var oDetalleViaje = new DetalleViaje();
+            DataSet ds = GetDetalleViaje(ViajeID);
+            if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                return oDetalleViaje;
+            DataRow item = ds.Tables[0].Rows[0];
+            oDetalleViaje.Descripcion = item["Descripcion"].ToString();
+            oDetalleViaje.Destino = item["Destino"].ToString();
+            oDetalleViaje.FechaRegreso = item["FechaRegreso"].ToString();
+            oDetalleViaje.FechaSalida = item["FechaSalida"].ToString();
+            oDetalleViaje.HoraRegreso = item["HoraRegreso"].ToString();
+            oDetalleViaje.HoraSalida = item["HoraSalida"].ToString();
+            oDetalleViaje.TiempoConsentracion = Convert.ToInt32(item["TiempoConsentracion"]);
+            oDetalleViaje.NroCoche = item["NroCoche"].ToString();
+            oDetalleViaje.TransportePatente = ds.Tables[0].Columns.Contains("TransportePatente") && item["TransportePatente"] != DBNull.Value && item["TransportePatente"] != null
+                ? item["TransportePatente"].ToString()
+                : null;
+            oDetalleViaje.PaqueteExcusionesIncluidas = item["PaqueteExcusionesIncluidas"].ToString();
+            oDetalleViaje.PaqueteExcusionesOpcionales = item["PaqueteExcusionesOpcionales"].ToString();
+            oDetalleViaje.PaqueteServicios = item["PaqueteServicios"].ToString();
+            oDetalleViaje.Observaciones = item["Observaciones"].ToString();
+            oDetalleViaje.ViajeID = ViajeID.ToString();
+            oDetalleViaje.Itinerario = ItinerarioMethod.GetItinerarioByViajeID(ViajeID.ToString());
+            return oDetalleViaje;
         }
 
         public static List<PasajeroViaje> GetListPasajerosByViajeID(Guid ViajeID)

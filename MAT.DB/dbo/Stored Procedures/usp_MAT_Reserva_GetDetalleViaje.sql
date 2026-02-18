@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Reserva_GetDetalleViaje]  (@ViajeID UNIQUEIDENTIFIER)
+CREATE PROCEDURE [dbo].[usp_MAT_Reserva_GetDetalleViaje]  (@ViajeID UNIQUEIDENTIFIER)
 AS 
    /*-- ============================================= 
   -- Author:    Garcia Sergio 
@@ -27,6 +27,7 @@ AS
 		  v.HoraRegreso,
 		  TiempoConsentracion = ISNULL(v.TiempoConsentracion,30),
 		  t.NroCoche,
+		  t.Matricula AS TransportePatente,
 		  PaqueteServicios = Stuff((SELECT ', ' + UPPER(s.descripcion) 
 					  FROM   dbo.Servicio s 
 							 INNER JOIN dbo.PaqueteServicio ps 

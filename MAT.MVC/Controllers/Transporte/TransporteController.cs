@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -24,16 +24,28 @@ namespace MAT.MVC.Controllers.Transporte
 
         public ActionResult Create()
         {
-
-            return View();
+            return View(new Entities.Transporte());
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(Entities.Transporte Transporte)
         {
-            TransporteService Stransporte = new TransporteService();
-            Stransporte.Insert(Transporte);
-            return RedirectToAction("Index", "Transporte");
+            try
+            {
+                MAT.MVC.Models.TransporteMethod.InsertTransporte(
+                    Transporte.NroCoche,
+                    Transporte.MaxPasajeros ?? 0,
+                    Transporte.KmRecorridos ?? 0,
+                    Transporte.UltimoService,
+                    Transporte.Matricula);
+                return RedirectToAction("Index", "Transporte");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = MAT.MVC.Infrastructure.ErrorUtil.LogAndGetPublicMessage(ex, "TransporteController.Create");
+                return View(Transporte);
+            }
         }
 
         public ActionResult Edit(Guid Id)

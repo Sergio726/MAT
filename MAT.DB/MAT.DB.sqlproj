@@ -462,6 +462,7 @@
       <AnsiNulls>Off</AnsiNulls>
     </Build>
     <Build Include="dbo\Stored Procedures\usp_MAT_Transporte_GetListTransporte.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Transporte_Insert.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Update.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>

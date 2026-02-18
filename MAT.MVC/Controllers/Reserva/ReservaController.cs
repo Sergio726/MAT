@@ -1062,6 +1062,9 @@ namespace MAT.MVC.Controllers.Reserva
                     oDetalleViaje.HoraSalida = item["HoraSalida"].ToString();
                     oDetalleViaje.TiempoConsentracion = Convert.ToInt32(item["TiempoConsentracion"]);
                     oDetalleViaje.NroCoche = item["NroCoche"].ToString();
+                    oDetalleViaje.TransportePatente = ds.Tables[0].Columns.Contains("TransportePatente") && item["TransportePatente"] != DBNull.Value && item["TransportePatente"] != null
+                        ? item["TransportePatente"].ToString()
+                        : null;
                     oDetalleViaje.PaqueteExcusionesIncluidas = item["PaqueteExcusionesIncluidas"].ToString();
                     oDetalleViaje.PaqueteExcusionesOpcionales = item["PaqueteExcusionesOpcionales"].ToString();
                     oDetalleViaje.PaqueteServicios = item["PaqueteServicios"].ToString();
