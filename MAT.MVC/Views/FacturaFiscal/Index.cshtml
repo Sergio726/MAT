@@ -1,0 +1,437 @@
+@{
+    Response.ContentType = "text/html; charset=utf-8";
+    Response.Charset = "utf-8";
+    ViewBag.Title = "Facturacion Fiscal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-receipt-cutoff"></i>
+            <span>Facturacion Fiscal</span>
+        </h2>
+        <div class="ff-quick-actions">
+            <a href="@Url.Action("Create", "FacturaFiscal", new { tipo = 1 })" class="btn-modern btn-modern-primary">
+                <i class="bi bi-cart-plus"></i>
+                <span>Nueva Compra</span>
+            </a>
+            <a href="@Url.Action("Create", "FacturaFiscal", new { tipo = 2 })" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-shop"></i>
+                <span>Nueva Venta</span>
+            </a>
+            <a href="@Url.Action("Proveedores", "FacturaFiscal")" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-building"></i>
+                <span>Proveedores</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Panel de Filtros -->
+    <div class="modern-card mb-4">
+        <div class="modern-card-header ff-filtros-header" onclick="toggleFiltros()">
+            <div class="modern-card-title">
+                <i class="bi bi-funnel"></i>
+                <span>Filtros de Busqueda</span>
+            </div>
+            <i class="bi bi-chevron-down" id="iconFiltros"></i>
+        </div>
+        <div class="modern-card-content" id="divFiltros" style="display: none;">
+            <div class="row g-3">
+                <div class="col-md-2">
+                    <label class="modern-form-label"><i class="bi bi-tag"></i> Tipo</label>
+                    <select id="ddlTipo" class="modern-form-select">
+                        <option value="">Todos</option>
+                        <option value="1">Compra</option>
+                        <option value="2">Venta</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label"><i class="bi bi-file-earmark"></i> Comprobante</label>
+                    <select id="ddlComprobante" class="modern-form-select">
+                        <option value="">Todos</option>
+                        <option value="1">Factura A</option>
+                        <option value="2">Factura B</option>
+                        <option value="3">Factura C</option>
+                        <option value="4">NC A</option>
+                        <option value="5">NC B</option>
+                        <option value="6">NC C</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label"><i class="bi bi-check-circle"></i> Estado</label>
+                    <select id="ddlEstado" class="modern-form-select">
+                        <option value="">Todos</option>
+                        <option value="1">Activa</option>
+                        <option value="2">Anulada</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label"><i class="bi bi-calendar"></i> Fecha Desde</label>
+                    <input type="date" id="txtFechaDesde" class="modern-form-input" />
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label"><i class="bi bi-calendar-check"></i> Fecha Hasta</label>
+                    <input type="date" id="txtFechaHasta" class="modern-form-input" />
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label"><i class="bi bi-search"></i> Busqueda</label>
+                    <input type="text" id="txtBusqueda" class="modern-form-input" placeholder="CUIT, proveedor..." />
+                </div>
+            </div>
+            <div class="row g-3 mt-3">
+                <div class="col-12 d-flex gap-2 flex-wrap align-items-center">
+                    <button type="button" class="btn-modern btn-modern-primary" onclick="aplicarFiltros()">
+                        <i class="bi bi-search"></i> <span>Buscar</span>
+                    </button>
+                    <button type="button" class="btn-modern btn-modern-secondary" onclick="limpiarFiltros()">
+                        <i class="bi bi-x-circle"></i> <span>Limpiar</span>
+                    </button>
+                    <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                        <button type="button" class="ff-export-btn ff-export-excel" onclick="exportarExcel()">
+                            <i class="bi bi-file-earmark-excel"></i> Excel
+                        </button>
+                        <button type="button" class="ff-export-btn ff-export-arca" onclick="exportarARCA()">
+                            <i class="bi bi-file-earmark-text"></i> ARCA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Totales -->
+    <div class="ff-totales-panel" id="panelTotales">
+        <div class="ff-total-item">
+            <div class="ff-total-label">Neto</div>
+            <div class="ff-total-value" id="totalNeto">$0.00</div>
+        </div>
+        <div class="ff-total-item">
+            <div class="ff-total-label">IVA</div>
+            <div class="ff-total-value" id="totalIva">$0.00</div>
+        </div>
+        <div class="ff-total-item">
+            <div class="ff-total-label">Otros Imp.</div>
+            <div class="ff-total-value" id="totalOtros">$0.00</div>
+        </div>
+        <div class="ff-total-item ff-total-general">
+            <div class="ff-total-label">Total</div>
+            <div class="ff-total-value" id="totalGeneral">$0.00</div>
+        </div>
+        <div class="ff-total-item">
+            <div class="ff-total-label">Registros</div>
+            <div class="ff-total-value" id="totalRegistros">0</div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="modern-card">
+        <div class="modern-card-content" style="padding: 1.5rem;">
+            <table id="tblFacturas" class="modern-table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Comprobante</th>
+                        <th>Proveedor / Cliente</th>
+                        <th>CUIT</th>
+                        <th>Neto</th>
+                        <th>IVA</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalle -->
+<div id="modalDetalleFactura" style="display: none;">
+    <div id="contenidoDetalleFactura"></div>
+</div>
+
+<script type="text/javascript">
+    var tablaFacturas;
+
+    $(document).ready(function () {
+        tablaFacturas = $('#tblFacturas').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-AR.json' },
+            pageLength: 25,
+            order: [[0, 'desc']],
+            columnDefs: [
+                { orderable: false, targets: [9] },
+                { className: "text-center", targets: [1, 8, 9] },
+                { className: "text-end", targets: [5, 6, 7] }
+            ],
+            data: [],
+            columns: [
+                {
+                    data: 'fechaEmision',
+                    render: function (data) { return '<small>' + data + '</small>'; }
+                },
+                {
+                    data: 'tipoNombre',
+                    render: function (data, type, row) {
+                        var cls = row.tipo === 1 ? 'ff-badge-compra' : 'ff-badge-venta';
+                        return '<span class="ff-badge ' + cls + '">' + data + '</span>';
+                    }
+                },
+                {
+                    data: 'numeroCompleto',
+                    render: function (data, type, row) {
+                        return '<div><small style="color: var(--text-secondary);">' + row.tipoComprobanteNombre + '</small></div><span class="ff-comprobante-numero">' + data + '</span>';
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return row.tipo === 1 ? (row.proveedorRazonSocial || '-') : (row.clienteNombre || '-');
+                    }
+                },
+                { data: 'cuit' },
+                {
+                    data: 'neto',
+                    render: function (data) { return formatMoney(data); }
+                },
+                {
+                    data: 'iva',
+                    render: function (data) { return formatMoney(data); }
+                },
+                {
+                    data: 'total',
+                    render: function (data) { return '<strong>' + formatMoney(data) + '</strong>'; }
+                },
+                {
+                    data: 'estadoNombre',
+                    render: function (data, type, row) {
+                        var cls = row.estado === 1 ? 'ff-badge-activa' : 'ff-badge-anulada';
+                        return '<span class="ff-badge ' + cls + '">' + data + '</span>';
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        var html = '<button class="ff-btn-accion" onclick="verDetalle(\'' + row.facturaFiscalId + '\')" title="Ver detalle"><i class="bi bi-eye"></i></button>';
+                        if (row.estado === 1) {
+                            html += '<button class="ff-btn-accion ff-btn-anular" onclick="anularFactura(\'' + row.facturaFiscalId + '\')" title="Anular"><i class="bi bi-x-circle"></i></button>';
+                        }
+                        if (row.archivoAdjunto) {
+                            html += '<a href="' + row.archivoAdjunto + '" target="_blank" class="ff-btn-accion" title="Ver adjunto"><i class="bi bi-paperclip"></i></a>';
+                        }
+                        return html;
+                    }
+                }
+            ]
+        });
+
+        aplicarFiltros();
+    });
+
+    function formatMoney(val) {
+        return '$' + parseFloat(val || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function toggleFiltros() {
+        $('#divFiltros').slideToggle();
+        var icon = $('#iconFiltros');
+        icon.toggleClass('bi-chevron-down bi-chevron-up');
+    }
+
+    function getFiltros() {
+        return {
+            tipo: $('#ddlTipo').val() || null,
+            tipoComprobante: $('#ddlComprobante').val() || null,
+            estado: $('#ddlEstado').val() || null,
+            fechaDesde: $('#txtFechaDesde').val() || null,
+            fechaHasta: $('#txtFechaHasta').val() || null,
+            busqueda: $('#txtBusqueda').val().trim() || null
+        };
+    }
+
+    function aplicarFiltros() {
+        cargarFacturas();
+        cargarTotales();
+    }
+
+    function limpiarFiltros() {
+        $('#ddlTipo, #ddlComprobante, #ddlEstado').val('');
+        $('#txtFechaDesde, #txtFechaHasta, #txtBusqueda').val('');
+        aplicarFiltros();
+    }
+
+    function cargarFacturas() {
+        var filtros = getFiltros();
+        var datos = {};
+        for (var key in filtros) { if (filtros[key]) datos[key] = filtros[key]; }
+
+        $.ajax({
+            url: '@Url.Action("GetAll", "FacturaFiscal")',
+            type: 'POST',
+            data: datos,
+            dataType: 'json',
+            success: function (r) {
+                if (r.success) {
+                    tablaFacturas.clear().rows.add(r.data || []).draw();
+                } else {
+                    tablaFacturas.clear().draw();
+                    mostrarMensaje(r.message || 'Error', 'danger');
+                }
+            },
+            error: function () { mostrarMensaje('Error al cargar facturas.', 'danger'); }
+        });
+    }
+
+    function cargarTotales() {
+        var filtros = getFiltros();
+        var datos = {};
+        for (var key in filtros) { if (filtros[key]) datos[key] = filtros[key]; }
+
+        $.ajax({
+            url: '@Url.Action("GetTotales", "FacturaFiscal")',
+            type: 'POST',
+            data: datos,
+            dataType: 'json',
+            success: function (r) {
+                if (r.success) {
+                    $('#totalNeto').text(formatMoney(r.totalNeto));
+                    $('#totalIva').text(formatMoney(r.totalIva));
+                    $('#totalOtros').text(formatMoney(r.totalOtrosImpuestos));
+                    $('#totalGeneral').text(formatMoney(r.totalGeneral));
+                    $('#totalRegistros').text(r.cantidadRegistros);
+                }
+            }
+        });
+    }
+
+    function verDetalle(id) {
+        $.ajax({
+            url: '@Url.Action("GetDetalle", "FacturaFiscal")',
+            type: 'POST',
+            data: { id: id },
+            dataType: 'json',
+            success: function (r) {
+                if (r.success && r.factura) {
+                    mostrarModalDetalle(r.factura);
+                } else {
+                    mostrarMensaje(r.message || 'Error', 'danger');
+                }
+            },
+            error: function () { mostrarMensaje('Error al obtener detalle.', 'danger'); }
+        });
+    }
+
+    function mostrarModalDetalle(f) {
+        var tipoBadge = f.tipo === 1 ? 'ff-badge-compra' : 'ff-badge-venta';
+        var estadoBadge = f.estado === 1 ? 'ff-badge-activa' : 'ff-badge-anulada';
+        var html = '<div style="padding: 1.5rem;">';
+        html += '<div class="d-flex justify-content-between align-items-start mb-4" style="border-bottom: 2px solid var(--border-color); padding-bottom: 1rem;">';
+        html += '<div><h4 style="margin:0;">Detalle de Factura Fiscal</h4>';
+        html += '<span class="ff-badge ' + tipoBadge + '" style="margin-right:0.5rem;">' + f.tipoNombre + '</span>';
+        html += '<span class="ff-comprobante-numero">' + f.tipoComprobanteNombre + ' ' + f.numeroCompleto + '</span></div>';
+        html += '<span class="ff-badge ' + estadoBadge + '">' + f.estadoNombre + '</span></div>';
+
+        html += '<div class="row g-3 mb-3">';
+        html += campo('Fecha Emision', f.fechaEmision);
+        html += campo('Fecha Vencimiento', f.fechaVencimiento || '-');
+        html += campo('CUIT', f.cuit);
+        html += campo('Condicion IVA', f.condicionIva);
+        html += '</div>';
+
+        html += '<div class="row g-3 mb-3">';
+        if (f.tipo === 1) html += campo('Proveedor', f.proveedorRazonSocial || '-');
+        else html += campo('Cliente', f.clienteNombre || '-');
+        html += campo('CAE', f.cae || '-');
+        html += campo('Condicion Venta', f.condicionVenta || '-');
+        html += campo('Moneda', f.monedaDescripcion || '-');
+        html += '</div>';
+
+        html += '<div class="ff-montos-section mb-3"><div class="row g-3">';
+        html += campoMonto('Neto', f.neto);
+        html += campoMonto('IVA', f.iva);
+        html += campoMonto('Percepciones', f.percepciones);
+        html += campoMonto('Otros Imp.', f.otrosImpuestos);
+        html += '</div><div class="ff-monto-total mt-3">TOTAL: ' + formatMoney(f.total) + '</div></div>';
+
+        if (f.observaciones) {
+            html += '<div style="background:var(--bg-main);padding:0.75rem;border-radius:6px;margin-bottom:1rem;"><small style="color:var(--text-secondary);">Observaciones</small><div>' + f.observaciones + '</div></div>';
+        }
+        if (f.archivoAdjunto) {
+            html += '<div class="mb-3"><a href="' + f.archivoAdjunto + '" target="_blank" class="btn-modern btn-modern-secondary"><i class="bi bi-paperclip"></i> Ver Adjunto</a></div>';
+        }
+        html += '<div class="d-flex justify-content-end gap-2"><button class="btn-modern btn-modern-secondary" onclick="cerrarModalDetalle()"><i class="bi bi-x-lg"></i> Cerrar</button></div>';
+        html += '</div>';
+
+        $('#contenidoDetalleFactura').html(html);
+        if ($('#modalDetalleFactura').data('ui-dialog')) $('#modalDetalleFactura').dialog('destroy');
+        $('#modalDetalleFactura').dialog({
+            title: 'Factura Fiscal',
+            modal: true, width: '65%', maxWidth: '850px', resizable: true,
+            position: { my: 'center', at: 'center', of: window },
+            dialogClass: 'modern-dialog'
+        });
+    }
+
+    function campo(label, value) {
+        return '<div class="col-md-3"><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);margin-bottom:0.25rem;">' + label + '</div><div style="font-weight:600;">' + (value || '-') + '</div></div>';
+    }
+    function campoMonto(label, value) {
+        return '<div class="col-md-3"><div style="font-size:0.7rem;text-transform:uppercase;color:var(--text-secondary);margin-bottom:0.25rem;">' + label + '</div><div style="font-weight:600;">' + formatMoney(value) + '</div></div>';
+    }
+
+    function cerrarModalDetalle() {
+        try {
+            if ($('#modalDetalleFactura').data('ui-dialog')) $('#modalDetalleFactura').dialog('destroy');
+        } catch (e) { }
+        $('.ui-dialog, .ui-widget-overlay').hide();
+    }
+
+    function anularFactura(id) {
+        if (!confirm('¿Esta seguro de anular esta factura? Esta accion no se puede deshacer.')) return;
+        $.ajax({
+            url: '@Url.Action("AnularFactura", "FacturaFiscal")',
+            type: 'POST',
+            data: { id: id },
+            dataType: 'json',
+            success: function (r) {
+                if (r.success) {
+                    mostrarMensaje(r.message, 'success');
+                    aplicarFiltros();
+                } else {
+                    mostrarMensaje(r.message, 'danger');
+                }
+            },
+            error: function () { mostrarMensaje('Error al anular.', 'danger'); }
+        });
+    }
+
+    function exportarExcel() {
+        var tipo = $('#ddlTipo').val();
+        if (!tipo) { mostrarMensaje('Seleccione un tipo (Compra o Venta) para exportar.', 'info'); return; }
+        var desde = $('#txtFechaDesde').val();
+        var hasta = $('#txtFechaHasta').val();
+        if (!desde || !hasta) { mostrarMensaje('Seleccione rango de fechas para exportar.', 'info'); return; }
+        window.location.href = '@Url.Action("ExportExcel", "FacturaFiscal")' + '?tipo=' + tipo + '&fechaDesde=' + desde + '&fechaHasta=' + hasta;
+    }
+
+    function exportarARCA() {
+        var tipo = $('#ddlTipo').val();
+        if (!tipo) { mostrarMensaje('Seleccione un tipo (Compra o Venta) para exportar.', 'info'); return; }
+        var desde = $('#txtFechaDesde').val();
+        var hasta = $('#txtFechaHasta').val();
+        if (!desde || !hasta) { mostrarMensaje('Seleccione rango de fechas para exportar.', 'info'); return; }
+        window.location.href = '@Url.Action("ExportARCA", "FacturaFiscal")' + '?tipo=' + tipo + '&fechaDesde=' + desde + '&fechaHasta=' + hasta;
+    }
+
+    function mostrarMensaje(mensaje, tipo) {
+        var alertClass = tipo === 'success' ? 'alert-success' : tipo === 'danger' ? 'alert-danger' : 'alert-info';
+        var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert" style="position:fixed;top:20px;right:20px;z-index:10001;min-width:300px;">';
+        alertHtml += mensaje + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+        $('body').append(alertHtml);
+        setTimeout(function () { $('.alert').fadeOut(function () { $(this).remove(); }); }, 3000);
+    }
+
+    $('#txtBusqueda').on('keypress', function (e) { if (e.which === 13) aplicarFiltros(); });
+</script>

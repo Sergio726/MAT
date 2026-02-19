@@ -1,0 +1,512 @@
+@{
+    Response.ContentType = "text/html; charset=utf-8";
+    Response.Charset = "utf-8";
+    int tipoFactura = ViewBag.TipoFactura ?? 1;
+    string tipoNombre = tipoFactura == 1 ? "Compra" : "Venta";
+    ViewBag.Title = "Nueva Factura de " + tipoNombre;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi @(tipoFactura == 1 ? "bi-cart-plus" : "bi-shop")"></i>
+            <span>Nueva Factura de @tipoNombre</span>
+        </h2>
+        <div class="modern-page-actions">
+            <a href="@Url.Action("Index", "FacturaFiscal")" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-arrow-left"></i> <span>Volver al Listado</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="modern-card">
+        <div class="modern-card-content" style="padding: 1.5rem;">
+            <input type="hidden" id="hdnTipo" value="@tipoFactura" />
+
+            <!-- Proveedor / Cliente -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <h5 style="margin-bottom: 1rem; color: var(--text-primary);">
+                        <i class="bi @(tipoFactura == 1 ? "bi-building" : "bi-person")"></i>
+                        @(tipoFactura == 1 ? "Proveedor" : "Cliente")
+                    </h5>
+                </div>
+                @if (tipoFactura == 1)
+                {
+                    <div class="col-md-6">
+                        <label class="modern-form-label">Proveedor</label>
+                        <div class="d-flex gap-2">
+                            <select id="ddlProveedor" class="modern-form-select" style="flex:1;">
+                                <option value="">-- Seleccionar --</option>
+                            </select>
+                            <button type="button" class="btn-modern btn-modern-secondary" onclick="mostrarModalProveedor()" title="Crear proveedor">
+                                <i class="bi bi-plus-circle"></i>
+                            </button>
+                        </div>
+                        <div id="proveedorInfo" class="ff-proveedor-info" style="display:none;">
+                            <div>
+                                <div class="ff-prov-name" id="provNombre"></div>
+                                <div class="ff-prov-cuit" id="provCuitInfo"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-6">
+                        <label class="modern-form-label">Cliente (nombre o razon social)</label>
+                        <input type="text" id="txtClienteNombre" class="modern-form-input" placeholder="Nombre del cliente..." />
+                        <input type="hidden" id="hdnClienteId" />
+                    </div>
+                }
+                <div class="col-md-3">
+                    <label class="modern-form-label">CUIT *</label>
+                    <input type="text" id="txtCuit" class="modern-form-input" placeholder="XX-XXXXXXXX-X" maxlength="13" />
+                </div>
+                <div class="col-md-3">
+                    <label class="modern-form-label">Condicion IVA *</label>
+                    <select id="ddlCondicionIva" class="modern-form-select">
+                        <option value="">-- Seleccionar --</option>
+                        <option value="1">IVA Responsable Inscripto</option>
+                        <option value="2">IVA Responsable no Inscripto</option>
+                        <option value="3">IVA no Responsable</option>
+                        <option value="4">IVA Sujeto Exento</option>
+                        <option value="5">Consumidor Final</option>
+                        <option value="6">Responsable Monotributo</option>
+                        <option value="7">Sujeto no Categorizado</option>
+                        <option value="8">Proveedor del Exterior</option>
+                        <option value="9">Cliente del Exterior</option>
+                        <option value="10">IVA Liberado Ley 19640</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Datos Comprobante -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <h5 style="margin-bottom: 1rem; color: var(--text-primary);">
+                        <i class="bi bi-file-earmark-text"></i> Datos del Comprobante
+                    </h5>
+                </div>
+                <div class="col-md-3">
+                    <label class="modern-form-label">Tipo Comprobante *</label>
+                    <select id="ddlTipoComprobante" class="modern-form-select">
+                        <option value="1">Factura A</option>
+                        <option value="2">Factura B</option>
+                        <option value="3">Factura C</option>
+                        <option value="4">Nota de Credito A</option>
+                        <option value="5">Nota de Credito B</option>
+                        <option value="6">Nota de Credito C</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label">Punto de Venta *</label>
+                    <input type="number" id="txtPuntoVenta" class="modern-form-input" min="1" max="99999" />
+                </div>
+                <div class="col-md-3">
+                    <label class="modern-form-label">Numero *</label>
+                    <input type="number" id="txtNumero" class="modern-form-input" min="1" />
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label">CAE</label>
+                    <input type="text" id="txtCAE" class="modern-form-input" maxlength="20" />
+                </div>
+                <div class="col-md-2">
+                    <label class="modern-form-label">Moneda</label>
+                    <select id="ddlMoneda" class="modern-form-select">
+                        <option value="1">ARS - Peso Argentino</option>
+                        <option value="2">USD - Dolar</option>
+                        <option value="3">EUR - Euro</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Fechas -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="modern-form-label">Fecha Emision *</label>
+                    <input type="date" id="txtFechaEmision" class="modern-form-input" />
+                </div>
+                <div class="col-md-3">
+                    <label class="modern-form-label">Fecha Vencimiento</label>
+                    <input type="date" id="txtFechaVencimiento" class="modern-form-input" />
+                </div>
+                <div class="col-md-3">
+                    <label class="modern-form-label">Condicion de Venta</label>
+                    <input type="text" id="txtCondicionVenta" class="modern-form-input" placeholder="Contado, 30 dias..." maxlength="100" />
+                </div>
+            </div>
+
+            <!-- Montos -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <h5 style="margin-bottom: 1rem; color: var(--text-primary);">
+                        <i class="bi bi-currency-dollar"></i> Montos
+                    </h5>
+                </div>
+                <div class="col-md-8">
+                    <div class="ff-montos-section">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="modern-form-label">Alicuota IVA</label>
+                                <select id="ddlAlicuota" class="modern-form-select" onchange="calcularMontos()">
+                                    <option value="0">0%</option>
+                                    <option value="1">2.5%</option>
+                                    <option value="2">5%</option>
+                                    <option value="3">10.5%</option>
+                                    <option value="4" selected>21%</option>
+                                    <option value="5">27%</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="modern-form-label">Neto *</label>
+                                <input type="number" id="txtNeto" class="modern-form-input" step="0.01" min="0" value="0" oninput="calcularMontos()" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="modern-form-label">IVA (calculado)</label>
+                                <div class="ff-monto-calculado" id="divIvaCalc">$0.00</div>
+                                <input type="hidden" id="txtIva" value="0" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="modern-form-label">Percepciones</label>
+                                <input type="number" id="txtPercepciones" class="modern-form-input" step="0.01" min="0" value="0" oninput="calcularMontos()" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="modern-form-label">Otros Impuestos</label>
+                                <input type="number" id="txtOtrosImpuestos" class="modern-form-input" step="0.01" min="0" value="0" oninput="calcularMontos()" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="modern-form-label">TOTAL</label>
+                                <div class="ff-monto-total" id="divTotal">$0.00</div>
+                                <input type="hidden" id="txtTotal" value="0" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Adjunto y Observaciones -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="modern-form-label">Archivo Adjunto (PDF, JPG, PNG - max 10MB)</label>
+                    <input type="file" id="fileAdjunto" class="modern-form-input" accept=".pdf,.jpg,.jpeg,.png" onchange="subirAdjunto()" />
+                    <input type="hidden" id="hdnArchivoAdjunto" />
+                    <div id="adjuntoPreview" style="display:none;" class="ff-adjunto-preview">
+                        <i class="bi bi-check-circle" style="color:#059669;"></i>
+                        <span class="ff-adjunto-name" id="adjuntoNombre"></span>
+                        <span class="ff-adjunto-remove" onclick="quitarAdjunto()"><i class="bi bi-x"></i></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="modern-form-label">Observaciones</label>
+                    <textarea id="txtObservaciones" class="modern-form-input" rows="3" maxlength="500" style="resize:vertical;"></textarea>
+                </div>
+            </div>
+
+            <!-- Validacion duplicado -->
+            <div id="alertaDuplicado" class="alert alert-warning" style="display:none;">
+                <i class="bi bi-exclamation-triangle"></i> Ya existe una factura con el mismo CUIT, tipo de comprobante, punto de venta y numero.
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-end gap-2" style="border-top: 2px solid var(--border-color); padding-top: 1.5rem;">
+                <a href="@Url.Action("Index", "FacturaFiscal")" class="btn-modern btn-modern-secondary">
+                    <i class="bi bi-x-lg"></i> Cancelar
+                </a>
+                <button type="button" class="btn-modern btn-modern-primary" onclick="guardarFactura()" id="btnGuardar">
+                    <i class="bi bi-check-lg"></i> Guardar Factura
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear Proveedor -->
+<div id="modalCrearProveedor" style="display:none;">
+    <div style="padding:1.5rem;">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="modern-form-label">Razon Social *</label>
+                <input type="text" id="provRazonSocial" class="modern-form-input" />
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">CUIT *</label>
+                <input type="text" id="provCuit" class="modern-form-input" maxlength="13" />
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">Condicion IVA</label>
+                <select id="provCondicionIva" class="modern-form-select">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="1">IVA Responsable Inscripto</option>
+                    <option value="5">Consumidor Final</option>
+                    <option value="6">Responsable Monotributo</option>
+                    <option value="4">IVA Sujeto Exento</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">Domicilio</label>
+                <input type="text" id="provDomicilio" class="modern-form-input" />
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">Email</label>
+                <input type="email" id="provEmail" class="modern-form-input" />
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">Telefono</label>
+                <input type="text" id="provTelefono" class="modern-form-input" />
+            </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+            <button class="btn-modern btn-modern-secondary" onclick="cerrarModalProveedor()"><i class="bi bi-x-lg"></i> Cancelar</button>
+            <button class="btn-modern btn-modern-primary" onclick="crearProveedorRapido()"><i class="bi bi-check-lg"></i> Crear Proveedor</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var tipoFactura = @tipoFactura;
+
+    $(document).ready(function () {
+        // Set fecha emision = hoy
+        var hoy = new Date().toISOString().split('T')[0];
+        $('#txtFechaEmision').val(hoy);
+
+        // Cargar proveedores si es compra
+        if (tipoFactura === 1) cargarProveedoresDropdown();
+
+        // Validar duplicado on blur
+        $('#txtCuit, #txtPuntoVenta, #txtNumero, #ddlTipoComprobante').on('change blur', function () {
+            validarDuplicado();
+        });
+    });
+
+    function cargarProveedoresDropdown() {
+        $.ajax({
+            url: '@Url.Action("GetProveedores", "FacturaFiscal")',
+            type: 'POST',
+            dataType: 'json',
+            success: function (r) {
+                if (r.success && r.data) {
+                    var ddl = $('#ddlProveedor');
+                    ddl.find('option:not(:first)').remove();
+                    $.each(r.data, function (i, p) {
+                        ddl.append($('<option></option>').val(p.proveedorId).text(p.razonSocial + ' (' + p.cuit + ')').data('prov', p));
+                    });
+                }
+            }
+        });
+
+        $('#ddlProveedor').on('change', function () {
+            var opt = $(this).find(':selected');
+            var p = opt.data('prov');
+            if (p) {
+                $('#txtCuit').val(p.cuit);
+                if (p.condicionIva) $('#ddlCondicionIva').val(p.condicionIva);
+                $('#provNombre').text(p.razonSocial);
+                $('#provCuitInfo').text('CUIT: ' + p.cuit);
+                $('#proveedorInfo').show();
+            } else {
+                $('#proveedorInfo').hide();
+            }
+        });
+    }
+
+    var alicuotaMap = { '0': 0, '1': 2.5, '2': 5, '3': 10.5, '4': 21, '5': 27 };
+
+    function calcularMontos() {
+        var neto = parseFloat($('#txtNeto').val()) || 0;
+        var alicuota = alicuotaMap[$('#ddlAlicuota').val()] || 0;
+        var iva = Math.round(neto * alicuota / 100 * 100) / 100;
+        var percepciones = parseFloat($('#txtPercepciones').val()) || 0;
+        var otros = parseFloat($('#txtOtrosImpuestos').val()) || 0;
+        var total = neto + iva + percepciones + otros;
+
+        $('#txtIva').val(iva.toFixed(2));
+        $('#divIvaCalc').text('$' + iva.toLocaleString('es-AR', { minimumFractionDigits: 2 }));
+        $('#txtTotal').val(total.toFixed(2));
+        $('#divTotal').text('$' + total.toLocaleString('es-AR', { minimumFractionDigits: 2 }));
+    }
+
+    function validarDuplicado() {
+        var cuit = $('#txtCuit').val();
+        var tc = $('#ddlTipoComprobante').val();
+        var pv = $('#txtPuntoVenta').val();
+        var num = $('#txtNumero').val();
+        if (!cuit || !tc || !pv || !num) { $('#alertaDuplicado').hide(); return; }
+
+        $.ajax({
+            url: '@Url.Action("CheckDuplicate", "FacturaFiscal")',
+            type: 'POST',
+            data: { cuit: cuit, tipoComprobante: tc, puntoVenta: pv, numero: num },
+            dataType: 'json',
+            success: function (r) {
+                if (r.success && r.isDuplicate) {
+                    $('#alertaDuplicado').show();
+                    $('#btnGuardar').prop('disabled', true);
+                } else {
+                    $('#alertaDuplicado').hide();
+                    $('#btnGuardar').prop('disabled', false);
+                }
+            }
+        });
+    }
+
+    function subirAdjunto() {
+        var fileInput = document.getElementById('fileAdjunto');
+        if (!fileInput.files || !fileInput.files[0]) return;
+        var formData = new FormData();
+        formData.append('archivo', fileInput.files[0]);
+
+        $.ajax({
+            url: '@Url.Action("UploadAdjunto", "FacturaFiscal")',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (r) {
+                if (r.success) {
+                    $('#hdnArchivoAdjunto').val(r.filePath);
+                    $('#adjuntoNombre').text(r.fileName);
+                    $('#adjuntoPreview').show();
+                } else {
+                    mostrarMensaje(r.message, 'danger');
+                    fileInput.value = '';
+                }
+            },
+            error: function () { mostrarMensaje('Error al subir archivo.', 'danger'); }
+        });
+    }
+
+    function quitarAdjunto() {
+        $('#hdnArchivoAdjunto').val('');
+        $('#adjuntoPreview').hide();
+        $('#fileAdjunto').val('');
+    }
+
+    function guardarFactura() {
+        var cuit = $('#txtCuit').val().trim();
+        var pv = parseInt($('#txtPuntoVenta').val()) || 0;
+        var num = parseInt($('#txtNumero').val()) || 0;
+        var fechaEmision = $('#txtFechaEmision').val();
+
+        if (!cuit) { mostrarMensaje('El CUIT es requerido.', 'danger'); return; }
+        if (pv <= 0) { mostrarMensaje('El punto de venta es requerido.', 'danger'); return; }
+        if (num <= 0) { mostrarMensaje('El numero es requerido.', 'danger'); return; }
+        if (!fechaEmision) { mostrarMensaje('La fecha de emision es requerida.', 'danger'); return; }
+        if (!$('#ddlCondicionIva').val()) { mostrarMensaje('La condicion de IVA es requerida.', 'danger'); return; }
+
+        $('#btnGuardar').prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Guardando...');
+
+        $.ajax({
+            url: '@Url.Action("CreateFactura", "FacturaFiscal")',
+            type: 'POST',
+            data: {
+                tipo: tipoFactura,
+                tipoComprobante: $('#ddlTipoComprobante').val(),
+                puntoVenta: pv,
+                numero: num,
+                fechaEmision: fechaEmision,
+                fechaVencimiento: $('#txtFechaVencimiento').val(),
+                proveedorId: tipoFactura === 1 ? $('#ddlProveedor').val() : '',
+                clienteId: tipoFactura === 2 ? $('#hdnClienteId').val() : '',
+                cuit: cuit,
+                condicionIva: $('#ddlCondicionIva').val(),
+                neto: parseFloat($('#txtNeto').val()) || 0,
+                iva: parseFloat($('#txtIva').val()) || 0,
+                otrosImpuestos: parseFloat($('#txtOtrosImpuestos').val()) || 0,
+                total: parseFloat($('#txtTotal').val()) || 0,
+                moneda: $('#ddlMoneda').val(),
+                cae: $('#txtCAE').val(),
+                alicuotaIva: $('#ddlAlicuota').val(),
+                percepciones: parseFloat($('#txtPercepciones').val()) || 0,
+                condicionVenta: $('#txtCondicionVenta').val(),
+                observaciones: $('#txtObservaciones').val(),
+                archivoAdjunto: $('#hdnArchivoAdjunto').val()
+            },
+            dataType: 'json',
+            success: function (r) {
+                if (r.success) {
+                    mostrarMensaje(r.message, 'success');
+                    setTimeout(function () { window.location.href = '@Url.Action("Index", "FacturaFiscal")'; }, 1500);
+                } else {
+                    mostrarMensaje(r.message, 'danger');
+                    $('#btnGuardar').prop('disabled', false).html('<i class="bi bi-check-lg"></i> Guardar Factura');
+                }
+            },
+            error: function () {
+                mostrarMensaje('Error al guardar la factura.', 'danger');
+                $('#btnGuardar').prop('disabled', false).html('<i class="bi bi-check-lg"></i> Guardar Factura');
+            }
+        });
+    }
+
+    function mostrarModalProveedor() {
+        $('#provRazonSocial, #provCuit, #provDomicilio, #provEmail, #provTelefono').val('');
+        $('#provCondicionIva').val('');
+        if ($('#modalCrearProveedor').data('ui-dialog')) $('#modalCrearProveedor').dialog('destroy');
+        $('#modalCrearProveedor').dialog({
+            title: 'Crear Proveedor',
+            modal: true, width: 600, resizable: false,
+            position: { my: 'center', at: 'center', of: window },
+            dialogClass: 'modern-dialog',
+            close: function () {
+                $(this).dialog('destroy');
+                $('.ui-widget-overlay').remove();
+            }
+        });
+    }
+
+    function cerrarModalProveedor() {
+        try {
+            if ($('#modalCrearProveedor').data('ui-dialog')) {
+                $('#modalCrearProveedor').dialog('close');
+                $('#modalCrearProveedor').dialog('destroy');
+            }
+        } catch (e) { }
+        $('.ui-widget-overlay').remove();
+    }
+
+    function crearProveedorRapido() {
+        var rs = $('#provRazonSocial').val().trim();
+        var cuit = $('#provCuit').val().trim();
+        if (!rs) { mostrarMensaje('Razon social requerida.', 'danger'); return; }
+        if (!cuit) { mostrarMensaje('CUIT requerido.', 'danger'); return; }
+
+        $.ajax({
+            url: '@Url.Action("CreateProveedor", "FacturaFiscal")',
+            type: 'POST',
+            data: {
+                razonSocial: rs,
+                cuit: cuit,
+                condicionIva: $('#provCondicionIva').val() || null,
+                domicilio: $('#provDomicilio').val(),
+                email: $('#provEmail').val(),
+                telefono: $('#provTelefono').val()
+            },
+            dataType: 'json',
+            success: function (r) {
+                if (r.success) {
+                    mostrarMensaje(r.message, 'success');
+                    cerrarModalProveedor();
+                    // Reload proveedores y seleccionar el nuevo
+                    cargarProveedoresDropdown();
+                    setTimeout(function () {
+                        $('#ddlProveedor').val(r.proveedorId).trigger('change');
+                    }, 500);
+                } else {
+                    mostrarMensaje(r.message, 'danger');
+                }
+            },
+            error: function () { mostrarMensaje('Error al crear proveedor.', 'danger'); }
+        });
+    }
+
+    function mostrarMensaje(mensaje, tipo) {
+        var alertClass = tipo === 'success' ? 'alert-success' : tipo === 'danger' ? 'alert-danger' : 'alert-info';
+        var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert" style="position:fixed;top:20px;right:20px;z-index:10001;min-width:300px;">';
+        alertHtml += mensaje + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+        $('body').append(alertHtml);
+        setTimeout(function () { $('.alert').fadeOut(function () { $(this).remove(); }); }, 3000);
+    }
+</script>

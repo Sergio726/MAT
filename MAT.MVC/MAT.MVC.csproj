@@ -57,6 +57,9 @@
     <Reference Include="AutoMapper, Version=6.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.6.0.2\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus, Version=4.5.3.3, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3.3\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth.AspNet">
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.4.13329\lib\net45-full\DotNetOpenAuth.AspNet.dll</HintPath>
     </Reference>
@@ -307,6 +310,7 @@
     <Compile Include="Controllers\NuevaReserva\NuevaReservaController.cs" />
     <Compile Include="Controllers\Pago\PagoController.cs" />
     <Compile Include="Controllers\Paquete\PaqueteController.cs" />
+    <Compile Include="Controllers\FacturaFiscal\FacturaFiscalController.cs" />
     <Compile Include="Controllers\Presupuesto\PresupuestoController.cs" />
     <Compile Include="Controllers\PasajeroViaje\PasajeroViajeController.cs" />
     <Compile Include="Controllers\PersonaCliente\PersonaClienteController.cs" />
@@ -383,7 +387,9 @@
     <Compile Include="Models\PlanillaHotelModel.cs" />
     <Compile Include="Models\PlanillaHotelPrintModel.cs" />
     <Compile Include="Models\PrecioModel.cs" />
+    <Compile Include="Models\FacturaFiscalModel.cs" />
     <Compile Include="Models\PresupuestoModel.cs" />
+    <Compile Include="Models\ProveedorFiscalModel.cs" />
     <Compile Include="Models\RegistroPagoModel.cs" />
     <Compile Include="Models\ReservaModel.cs" />
     <Compile Include="Models\ResumenPlanillaModel.cs" />
@@ -425,6 +431,7 @@
     <Content Include="Content\modern-account.css" />
     <Content Include="Content\modern-dashboard.css" />
     <Content Include="Content\modern-datatable.css" />
+    <Content Include="Content\modern-facturafiscal.css" />
     <Content Include="Content\modern-presupuesto.css" />
     <Content Include="Content\modern-layout.css" />
     <Content Include="Content\modern-menu.css" />
@@ -873,6 +880,9 @@
     <Content Include="Views\Presupuesto\ImprimirPresupuesto.cshtml" />
     <Content Include="Views\Presupuesto\Metricas.cshtml" />
     <Content Include="Views\Presupuesto\Seguimiento.cshtml" />
+    <Content Include="Views\FacturaFiscal\Index.cshtml" />
+    <Content Include="Views\FacturaFiscal\Create.cshtml" />
+    <Content Include="Views\FacturaFiscal\Proveedores.cshtml" />
     <Content Include="_AppStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
