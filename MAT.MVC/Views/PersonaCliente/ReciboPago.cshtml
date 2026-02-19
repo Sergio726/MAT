@@ -1,0 +1,146 @@
+@model MAT.MVC.Models.ReciboPagoViewModel
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marco Antonio Tours - Recibo de Pago</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <link href="~/Content/recibo-pago.css" rel="stylesheet" />
+
+    <style type="text/css">
+        @@media print {
+            @@page {
+                margin: 1cm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="recibo">
+        <!-- HEADER -->
+        <div class="encabezado-recibo headMAT">
+            <div class="div50 custom_padding_left_5">
+                <p><strong>Marco Antonio Tours</strong> Leg. N&deg; 11.049</p>
+                <p>Resoluci&oacute;n N&deg; 811</p>
+                <p>Dean Funes N&deg; 29 - CP 4400</p>
+                <p>Tel. 0387 4321823 - 4218085</p>
+                <p>Salta - Argentina</p>
+            </div>
+            <div class="div50 custom_text_aling_right">
+                <p>RECIBO DE PAGO</p>
+            </div>
+        </div>
+
+        <!-- INFO BAR -->
+        <div class="div100">
+            <div class="div50 custom_text_aling_left">
+                <p><span class="custom_font_weigh_bold">FECHA:</span> @Model.FechaPago.ToString("dd/MM/yyyy HH:mm")</p>
+            </div>
+            <div class="div50 custom_text_aling_right">
+                @if (!string.IsNullOrWhiteSpace(Model.NroRecibo))
+                {
+                    <p><span class="custom_font_weigh_bold">RECIBO N&deg;:</span> @Model.NroRecibo</p>
+                }
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="cuerpo-recibo">
+            <!-- Client Info -->
+            <div class="div100">
+                <p>
+                    <span class="custom_font_weigh_bold">RECIBIMOS DE:</span>
+                    @Model.ClienteNombre
+                </p>
+            </div>
+
+            <!-- Monto destacado -->
+            <div class="recibo-monto-box">
+                <div class="monto-label">Monto recibido</div>
+                <div>
+                    <span class="monto-valor">@String.Format("{0:C}", Model.Monto)</span>
+                    <span class="monto-moneda">@Model.Moneda</span>
+                </div>
+            </div>
+
+            <!-- Payment details -->
+            <div class="div100">
+                <div class="div50">
+                    <p><span class="custom_font_weigh_bold">MEDIO DE PAGO:</span> @Model.TipoPagoDescripcion</p>
+                    @if (!string.IsNullOrWhiteSpace(Model.TransaccionID))
+                    {
+                        <p><span class="custom_font_weigh_bold">TRANSACCI&Oacute;N:</span> @Model.TransaccionID</p>
+                    }
+                </div>
+                <div class="div50">
+                    <p><span class="custom_font_weigh_bold">VENDEDOR:</span> @Model.Vendedor</p>
+                    @if (!string.IsNullOrWhiteSpace(Model.NroFactura))
+                    {
+                        <p><span class="custom_font_weigh_bold">FACTURA N&deg;:</span> @Model.NroFactura</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Detalle multi-moneda (si aplica) -->
+            @if (Model.Detalle != null && !string.IsNullOrWhiteSpace(Model.Detalle.MonedaRecibida) && !Model.Detalle.CanceladoPorNotaCredito)
+            {
+                <div class="recibo-detalle-moneda">
+                    <div class="detalle-title">Detalle de cambio</div>
+                    <div class="detalle-row">
+                        <span class="detalle-label">Monto recibido</span>
+                        <span class="detalle-value">@String.Format("{0:N2}", Model.Detalle.MontoRecibido) @Model.Detalle.MonedaRecibida</span>
+                    </div>
+                    <div class="detalle-row">
+                        <span class="detalle-label">Equivalente</span>
+                        <span class="detalle-value">@String.Format("{0:N2}", Model.Detalle.MontoEquivalente) @Model.Detalle.MonedaEquivalente</span>
+                    </div>
+                    @if (Model.Detalle.Cotizacion > 0)
+                    {
+                        <div class="detalle-row">
+                            <span class="detalle-label">Cotizaci&oacute;n</span>
+                            <span class="detalle-value">1 U$D = @String.Format("{0:N2}", Model.Detalle.Cotizacion)</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Detalle.Fecha))
+                    {
+                        <div class="detalle-row">
+                            <span class="detalle-label">Fecha transacci&oacute;n</span>
+                            <span class="detalle-value">@Model.Detalle.Fecha</span>
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Concepto -->
+            <div class="concepto-box">
+                <div class="concepto-title">CONCEPTO</div>
+                @if (!string.IsNullOrWhiteSpace(Model.PaqueteDescripcion))
+                {
+                    <p><span class="custom_font_weigh_bold">Paquete:</span> @Model.PaqueteDescripcion</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.ViajeDescripcion))
+                {
+                    <p><span class="custom_font_weigh_bold">Viaje:</span> @Model.ViajeDescripcion</p>
+                }
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="pie-recibo">
+            <div class="firma-area">
+                <div class="firma-linea">
+                    <div class="linea"></div>
+                    <p>Firma Cliente</p>
+                </div>
+                <div class="firma-linea">
+                    <div class="linea"></div>
+                    <p>Firma Agencia</p>
+                </div>
+            </div>
+            <p class="recibo-nota">Este recibo es comprobante de pago. Conserve este documento.</p>
+        </div>
+    </div>
+</body>
+</html>

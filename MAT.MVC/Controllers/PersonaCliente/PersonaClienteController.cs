@@ -698,7 +698,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
 
         [HttpPost]
         [Authorize]
-        public bool RegistrarPago(string monto, string tipopago, string recibo, string TransaccionID, string FacturaID, string ClienteID,
+        public JsonResult RegistrarPago(string monto, string tipopago, string recibo, string TransaccionID, string FacturaID, string ClienteID,
                                   string MontoRecibido = "", string MontoRecibidoMonedaTipo = "1", string MontoEquivalente = "", string MontoEquivalenteMonedaTipo = "", string MontoEquivalenteCotizacion = "")
         {
             try
@@ -738,19 +738,25 @@ namespace MAT.MVC.Controllers.PersonaCliente
                     }
                 }
 
-                return bReturn;
+                if (bReturn)
+                {
+                    var pagos = MVC.Models.PagoMethod.GetPagosByFacturaID(Guid.Parse(FacturaID));
+                    var ultimoPago = pagos.OrderByDescending(p => p.FechaPago).FirstOrDefault();
+                    return Json(new { Success = true, PagoID = ultimoPago != null ? ultimoPago.PagoID : "", FacturaID = FacturaID });
+                }
+                return Json(new { Success = false, PagoID = "", FacturaID = FacturaID });
             }
             catch (Exception ex)
             {
                 MATLogger.Log(String.Format("{0} {1}", ex.Message, ex.StackTrace), 1);
-                return false;
+                return Json(new { Success = false, PagoID = "", FacturaID = FacturaID });
             }
         }
 
        
         [HttpPost]
         [Authorize]
-        public bool RegistrarPagoTotal(string monto, string tipopago, string factura, string recibo, string TransaccionID, string FacturaID, string ClienteID,
+        public JsonResult RegistrarPagoTotal(string monto, string tipopago, string factura, string recibo, string TransaccionID, string FacturaID, string ClienteID,
                                        string MontoRecibido = "", string MontoRecibidoMonedaTipo = "1", string MontoEquivalente = "", string MontoEquivalenteMonedaTipo = "", string MontoEquivalenteCotizacion = "")
         {
             try
@@ -776,9 +782,9 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 {
                     iMontoEquivalenteMonedaTipo = Convert.ToInt32(MontoEquivalenteMonedaTipo);
                 }
-                   
+
                 DataSet ds = MVC.Models.PagoMethod.NuevoPago(Convert.ToDecimal(monto), ClienteID, recibo, TransaccionID, Convert.ToInt32(tipopago), FacturaID, factura, dMontoRecibido, Convert.ToInt32(MontoRecibidoMonedaTipo), dMontoEquivalente, iMontoEquivalenteMonedaTipo, dMontoEquivalenteCotizacion);
-                
+
 
                 bool bReturn = false;
                 foreach (DataRow item in ds.Tables[0].Rows)
@@ -788,14 +794,20 @@ namespace MAT.MVC.Controllers.PersonaCliente
                         bReturn = true;
                         break;
                     }
-	            } 
+	            }
 
-                return bReturn;
+                if (bReturn)
+                {
+                    var pagos = MVC.Models.PagoMethod.GetPagosByFacturaID(Guid.Parse(FacturaID));
+                    var ultimoPago = pagos.OrderByDescending(p => p.FechaPago).FirstOrDefault();
+                    return Json(new { Success = true, PagoID = ultimoPago != null ? ultimoPago.PagoID : "", FacturaID = FacturaID });
+                }
+                return Json(new { Success = false, PagoID = "", FacturaID = FacturaID });
             }
             catch (Exception ex)
             {
                 MATLogger.Log(String.Format("{0} {1}", ex.Message, ex.StackTrace), 1);
-                return false;
+                return Json(new { Success = false, PagoID = "", FacturaID = FacturaID });
             }
         }
 
@@ -960,6 +972,48 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 return PartialView(ListVoucher);
             }
             
+        }
+
+        [Authorize]
+        public ActionResult ReciboPago(Guid pagoId, Guid facturaId)
+        {
+            try
+            {
+                var pagos = Models.PagoMethod.GetPagosByFacturaID(facturaId);
+                var pago = pagos.FirstOrDefault(p => p.PagoID == pagoId.ToString());
+                if (pago == null)
+                {
+                    ViewBag.Error = "No se encontro el pago.";
+                    return PartialView(new Models.ReciboPagoViewModel());
+                }
+
+                var detalle = Models.PagoMethod.GetPagoDetalleByPagoID(pagoId);
+                var factura = FacturaMetod.FacturaStandardByID(facturaId);
+
+                var model = new Models.ReciboPagoViewModel
+                {
+                    PagoID = pago.PagoID,
+                    FechaPago = pago.FechaPago,
+                    Monto = pago.Monto,
+                    NroRecibo = pago.NroRecibo,
+                    TipoPagoDescripcion = pago.TipoPagoDescripcion,
+                    TransaccionID = pago.TransaccionID,
+                    Vendedor = pago.Vendedor,
+                    Moneda = pago.Moneda,
+                    ClienteNombre = factura != null ? (factura.ClienteNombre + " " + factura.ClienteApellido).Trim() : "",
+                    PaqueteDescripcion = factura != null ? factura.PaqueteDescripcion : "",
+                    ViajeDescripcion = factura != null ? factura.ViajeDescripcion : "",
+                    NroFactura = factura != null ? factura.NroFactura : "",
+                    Detalle = detalle
+                };
+
+                return PartialView("ReciboPago", model);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = e.Message;
+                return PartialView("ReciboPago", new Models.ReciboPagoViewModel());
+            }
         }
 
         public JsonResult Voucher_GetNrPrintByFacturaID(Guid facturaId)

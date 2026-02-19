@@ -1,0 +1,411 @@
+@page {
+    size: A4;
+    margin: 1cm;
+}
+
+/* =====================================================
+   RECIBO DE PAGO - BASE STYLES
+   ===================================================== */
+
+body {
+    font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.recibo {
+    width: 90%;
+    max-width: 850px;
+    margin: 0 auto 30px auto;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.recibo p {
+    margin: 2px 0;
+    padding: 0;
+}
+
+/* =====================================================
+   HEADER SECTION
+   ===================================================== */
+
+.recibo .encabezado-recibo {
+    position: relative;
+    width: 100%;
+    padding: 15px 20px;
+    padding-right: 180px;
+    background: linear-gradient(135deg, #2A307D 0%, #3d4494 100%);
+    color: #fff;
+    min-height: 95px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.recibo .encabezado-recibo::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.recibo .encabezado-recibo .div50 {
+    display: block;
+}
+
+.recibo .encabezado-recibo .div50:first-child {
+    width: 100%;
+}
+
+.recibo .encabezado-recibo .div50:first-child p {
+    font-size: 10pt;
+    line-height: 1.5;
+    margin: 1px 0;
+}
+
+.recibo .encabezado-recibo .div50:last-child {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    width: auto;
+    text-align: right;
+}
+
+.recibo .encabezado-recibo .div50:last-child p {
+    font-size: 11pt;
+    font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* =====================================================
+   INFO BAR
+   ===================================================== */
+
+.recibo > .div100 {
+    display: table;
+    width: 100%;
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-bottom: 2px solid #E83A61;
+    box-sizing: border-box;
+}
+
+.recibo > .div100 .div50 {
+    display: table-cell;
+    width: 50%;
+    vertical-align: middle;
+}
+
+.recibo > .div100 .div50 p {
+    margin: 0;
+    font-size: 10pt;
+}
+
+/* =====================================================
+   BODY SECTION
+   ===================================================== */
+
+.recibo .cuerpo-recibo {
+    padding: 20px;
+    background: #fff;
+}
+
+.recibo .cuerpo-recibo .div100 {
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+/* Client info section */
+.recibo .cuerpo-recibo > .div100:first-child {
+    background: #f0f4f8;
+    padding: 12px 15px;
+    border-radius: 6px;
+    border-left: 4px solid #E83A61;
+    margin-bottom: 15px;
+}
+
+.recibo .cuerpo-recibo > .div100:first-child p {
+    font-size: 10.5pt;
+    line-height: 1.5;
+}
+
+/* Payment details section */
+.recibo .cuerpo-recibo .div50 {
+    float: left;
+    width: 48%;
+    margin-right: 2%;
+}
+
+.recibo .cuerpo-recibo .div50:last-child {
+    margin-right: 0;
+}
+
+.recibo .cuerpo-recibo .div50 p {
+    font-size: 10pt;
+    margin-bottom: 4px;
+}
+
+/* Section labels */
+.custom_font_weigh_bold {
+    font-weight: 600;
+    color: #2A307D;
+}
+
+/* =====================================================
+   MONTO DESTACADO
+   ===================================================== */
+
+.recibo-monto-box {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf4 100%);
+    border: 2px solid #2A307D;
+    border-radius: 8px;
+    padding: 15px 20px;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.recibo-monto-box .monto-label {
+    font-size: 10pt;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.recibo-monto-box .monto-valor {
+    font-size: 22pt;
+    font-weight: 700;
+    color: #2A307D;
+}
+
+.recibo-monto-box .monto-moneda {
+    display: inline-block;
+    background: #E83A61;
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 10pt;
+    font-weight: 600;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* =====================================================
+   DETALLE MULTI-MONEDA
+   ===================================================== */
+
+.recibo-detalle-moneda {
+    background: #fafbfc;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px 15px;
+    margin: 12px 0;
+}
+
+.recibo-detalle-moneda .detalle-title {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #2A307D;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eee;
+}
+
+.recibo-detalle-moneda .detalle-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 10pt;
+}
+
+.recibo-detalle-moneda .detalle-row .detalle-label {
+    color: #666;
+}
+
+.recibo-detalle-moneda .detalle-row .detalle-value {
+    font-weight: 600;
+    color: #333;
+}
+
+/* =====================================================
+   CONCEPTO SECTION
+   ===================================================== */
+
+.recibo .concepto-box {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px 15px;
+    background: #fafbfc;
+    margin: 12px 0;
+}
+
+.recibo .concepto-box .concepto-title {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #2A307D;
+    margin-bottom: 6px;
+}
+
+.recibo .concepto-box p {
+    font-size: 10pt;
+    margin-bottom: 4px;
+}
+
+/* =====================================================
+   FOOTER / FIRMA
+   ===================================================== */
+
+.recibo .pie-recibo {
+    padding: 20px;
+    background: #f8f9fa;
+    border-top: 2px solid #2A307D;
+    clear: both;
+}
+
+.recibo .pie-recibo .firma-area {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+}
+
+.recibo .pie-recibo .firma-linea {
+    width: 40%;
+    text-align: center;
+}
+
+.recibo .pie-recibo .firma-linea .linea {
+    border-top: 1px solid #333;
+    margin-bottom: 4px;
+}
+
+.recibo .pie-recibo .firma-linea p {
+    font-size: 9pt;
+    color: #666;
+}
+
+.recibo .pie-recibo .recibo-nota {
+    font-size: 8pt;
+    color: #888;
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* =====================================================
+   LAYOUT HELPERS
+   ===================================================== */
+
+.div100 {
+    width: 100%;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.div50 {
+    float: left;
+    width: 48%;
+    margin-right: 2%;
+}
+
+.custom_text_aling_right {
+    text-align: right;
+}
+
+.custom_text_aling_left {
+    text-align: left;
+}
+
+.custom_text_aling_center {
+    text-align: center;
+}
+
+.custom_padding_left_5 {
+    padding-left: 5px;
+}
+
+/* =====================================================
+   BACKGROUND IMAGE (HEADER LOGO)
+   ===================================================== */
+
+.headMAT {
+    background-image: url("/Images/marco_antonio_back3.png");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 200px auto;
+}
+
+/* =====================================================
+   PRINT STYLES
+   ===================================================== */
+
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+    }
+
+    .recibo {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .recibo .encabezado-recibo {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background: #2A307D !important;
+    }
+
+    .recibo > .div100 {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background: #f8f9fa !important;
+    }
+
+    .recibo-monto-box {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background: #f0f4f8 !important;
+    }
+
+    .recibo-monto-box .monto-moneda {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background: #E83A61 !important;
+        color: #fff !important;
+    }
+
+    .recibo .pie-recibo {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        background: #f8f9fa !important;
+    }
+
+    .recibo .encabezado-recibo .div50:last-child p {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* =====================================================
+   SCREEN ONLY STYLES
+   ===================================================== */
+
+@media screen {
+    body {
+        background: #e9ecef;
+        padding: 20px;
+    }
+}

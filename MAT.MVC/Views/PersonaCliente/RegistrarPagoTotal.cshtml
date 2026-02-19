@@ -255,11 +255,14 @@
                     ClienteID: ClienteID
                 },
                 success: function (data) {
-                    var result = data == "True" ? true : false;
+                    var result = data.Success;
                     $("#PagoTotal").dialog("close");
                     if (result) {
                         (window.alertSuccess || window.alert)("Pago recibido correctamente.", "Éxito");
                         PopupDetalleFactura_Load();
+                        if (data.PagoID && data.FacturaID) {
+                            imprimirReciboPago(data.PagoID, data.FacturaID);
+                        }
                     } else {
                         (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
                     }

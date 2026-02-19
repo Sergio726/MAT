@@ -204,4 +204,21 @@ namespace MAT.MVC.Models
 
     }
 
+    public class ReciboPagoViewModel
+    {
+        public string PagoID { get; set; }
+        public DateTime FechaPago { get; set; }
+        public decimal Monto { get; set; }
+        public string NroRecibo { get; set; }
+        public string TipoPagoDescripcion { get; set; }
+        public string TransaccionID { get; set; }
+        public string ClienteNombre { get; set; }
+        public string Vendedor { get; set; }
+        public string Moneda { get; set; }
+        public string PaqueteDescripcion { get; set; }
+        public string ViajeDescripcion { get; set; }
+        public string NroFactura { get; set; }
+        public PagoDetalle Detalle { get; set; }
+    }
+
 }
