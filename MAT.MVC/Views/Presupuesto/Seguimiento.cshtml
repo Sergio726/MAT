@@ -700,17 +700,12 @@
     }
 
     function irAVenta(codigo, viajeId) {
-        codigo = (codigo || '').trim();
         viajeId = (viajeId || '').trim();
-        if (!codigo) {
-            mostrarMensaje('No hay código de presupuesto.', 'danger');
-            return;
-        }
         if (viajeId) {
-            window.open('/NuevaReserva/Index/' + viajeId + '?codigoPresupuesto=' + encodeURIComponent(codigo), '_blank');
+            window.open('/Reserva/Index?viajeid=' + viajeId, '_blank');
         } else {
-            copiarCodigo(codigo);
-            mostrarMensaje('Código copiado. Vaya a Viajes, seleccione un viaje para reservar, y pegue el código en la sección Cliente.', 'info');
+            if (codigo) copiarCodigo(codigo);
+            mostrarMensaje('Este presupuesto no tiene viaje asociado. Vaya a Viajes, seleccione un viaje y desde allí abra el módulo de reservas.', 'info');
         }
     }
 

@@ -70,14 +70,6 @@
                             <span class="collapse-toggle"></span>
                         </div>
                         <div id="divCliente" class="widget-body in collapse" style="height: auto;width: 500px">
-                            <div class="form-group" style="margin-bottom: 12px;">
-                                <label>Código de Presupuesto</label>
-                                <div style="display: flex; gap: 8px;">
-                                    <input type="text" id="txt-codigo-presupuesto" placeholder="Ej: MAT-20260215-0001" style="flex: 1;" />
-                                    <button type="button" class="btn btn-small btn-primary" id="btn-buscar-codigo" title="Buscar por código">Buscar</button>
-                                </div>
-                                <small style="color: #666; font-size: 11px;">El cliente puede llegar con el código en WhatsApp o impreso</small>
-                            </div>
                             <div class="form-group">
                                 <label>Cliente</label>
                                 <input type="text" id="txt-busqueda-cliente" placeholder="Ingrese Nombre o DNI" />
@@ -85,38 +77,6 @@
                             <div id="detalle-cliente" class="form-group">
                                 <label>DNI</label>
                                 <label class="show-data" id="cliente-dni"></label>
-                            </div>
-                            <!-- Banner de Atribución de Presupuesto -->
-                            <div id="banner-atribucion" class="alert alert-warning" style="display: none; margin-top: 15px;">
-                                <div class="row">
-                                    <div class="col-xs-1">
-                                        <i class="glyphicons glyphicons-user" style="font-size: 24px;"></i>
-                                    </div>
-                                    <div class="col-xs-11">
-                                        <strong style="text-transform: uppercase; font-size: 11px;">¡Atención Atribución Detectada!</strong>
-                                        <p style="margin: 5px 0; font-size: 12px;">
-                                            Este cliente fue asesorado previamente por <strong id="vendedor-origen-nombre"></strong> vía telefónica.
-                                        </p>
-                                        <div style="font-size: 11px; color: #666;">
-                                            <span>Código: <strong id="codigo-seguimiento"></strong></span> | 
-                                            <span>Monto pactado: <strong id="monto-pactado"></strong></span>
-                                        </div>
-                                        <div id="presupuesto-contacto-info" style="font-size: 11px; color: #666; margin-top: 4px; display: none;">
-                                            <span id="presupuesto-contacto-text"></span>
-                                        </div>
-                                        <div id="div-crear-cliente-presupuesto" style="margin-top: 8px; display: none;">
-                                            <a id="btn-crear-cliente-presupuesto" href="#" class="btn btn-small btn-success" target="_blank">
-                                                <i class="glyphicons glyphicons-user-add"></i> Crear cliente desde presupuesto
-                                            </a>
-                                            <small style="display: block; color: #666; margin-top: 4px;">Si el cliente no está en el sistema, abrirá el formulario con los datos pre-cargados</small>
-                                        </div>
-                                        <div style="margin-top: 8px; padding: 8px; background-color: #f0f0f0; border-radius: 3px; font-size: 11px;">
-                                            <strong>Reparto de Comisión Automático:</strong><br/>
-                                            <span>Vendedor 1 (Origen): <strong id="comision-origen">50%</strong></span> | 
-                                            <span>Vendedor 2 (Cierre): <strong id="comision-cierre">50%</strong></span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -370,10 +330,6 @@
             oReserva.HabitacionesDisponibles = [];
             oReserva.Adicionales = [];
             oReserva.PrecioTotal = 0;
-            oReserva.PresupuestoId = null;
-            oReserva.VendedorIdOrigen = null;
-
-
             function loadAutoComplete() {
                 $("#txt-busqueda-cliente").autocomplete({
                     minLength: 3,
@@ -398,118 +354,8 @@
                         oReserva.Cliente = ul.item.data;
                         oReserva.addPasajero(ul.item.data);
                         $("#cliente-dni").html(ul.item.data.NroDocumento);
-                        
-                        // Buscar presupuesto por DNI
-                        if (ul.item.data.NroDocumento) {
-                            buscarPresupuestoPorDni(ul.item.data.NroDocumento);
-                        }
                     }
                 });
-                
-                // Búsqueda por código de presupuesto
-                $('#btn-buscar-codigo').on('click', function () { buscarPresupuestoPorCodigo(); });
-                $('#txt-codigo-presupuesto').on('keypress', function (e) {
-                    if (e.which === 13) { e.preventDefault(); buscarPresupuestoPorCodigo(); }
-                });
-
-                function buscarPresupuestoPorCodigo() {
-                    var codigo = $('#txt-codigo-presupuesto').val().trim();
-                    if (!codigo) {
-                        (window.alertInfo || window.alert)('Ingrese el código del presupuesto (ej: MAT-20260215-0001)', 'Código requerido');
-                        return;
-                    }
-                    $.ajax({
-                        url: "/NuevaReserva/BuscarPresupuestoPorCodigo",
-                        type: "POST",
-                        data: { codigoSeguimiento: codigo },
-                        dataType: "json",
-                        success: function (response) {
-                            if (response.success && response.hasPresupuesto) {
-                                var p = response.presupuesto;
-                                $("#vendedor-origen-nombre").text(p.vendedorOrigenNombre);
-                                $("#codigo-seguimiento").text(p.codigoSeguimiento);
-                                $("#monto-pactado").text("$" + parseFloat(p.montoPactado).toLocaleString('es-AR'));
-                                $("#comision-origen").text("50%");
-                                $("#comision-cierre").text("50%");
-                                $("#banner-atribucion").slideDown();
-                                oReserva.PresupuestoId = p.presupuestoId;
-                                oReserva.VendedorIdOrigen = p.vendedorIdOrigen;
-                                oReserva.PresupuestoDatos = { nombre: p.nombreCliente || '', telefono: p.telefonoCliente || '', email: p.emailCliente || '' };
-                                // Prellenar búsqueda de cliente con el nombre del presupuesto
-                                if (p.nombreCliente) {
-                                    $('#txt-busqueda-cliente').val(p.nombreCliente);
-                                }
-                                // Mostrar/ocultar botón "Crear cliente desde presupuesto"
-                                if (p.nombreCliente && (p.telefonoCliente || p.emailCliente)) {
-                                    $('#btn-crear-cliente-presupuesto').attr('href', '/PersonaCliente/CreateFromPresupuesto?presupuestoId=' + encodeURIComponent(p.presupuestoId) + '&returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search));
-                                    $('#div-crear-cliente-presupuesto').show();
-                                } else {
-                                    $('#div-crear-cliente-presupuesto').hide();
-                                }
-                                // Mostrar datos de contacto del presupuesto si no hay DNI (ayuda a identificar al cliente)
-                                var contactos = [];
-                                if (p.nombreCliente) contactos.push('Cliente: ' + p.nombreCliente);
-                                if (p.telefonoCliente) contactos.push('Tel: ' + p.telefonoCliente);
-                                if (p.emailCliente) contactos.push('Email: ' + p.emailCliente);
-                                if (p.dniCliente) contactos.push('DNI: ' + p.dniCliente);
-                                if (contactos.length > 0) {
-                                    $("#presupuesto-contacto-text").text(contactos.join(' | '));
-                                    $("#presupuesto-contacto-info").show();
-                                } else {
-                                    $("#presupuesto-contacto-info").hide();
-                                }
-                            } else {
-                                $("#banner-atribucion").slideUp();
-                                oReserva.PresupuestoId = null;
-                                oReserva.VendedorIdOrigen = null;
-                                oReserva.PresupuestoDatos = null;
-                                $("#presupuesto-contacto-info").hide();
-                                $('#div-crear-cliente-presupuesto').hide();
-                                (window.alertInfo || window.alert)(response.message || 'No se encontró el presupuesto.', 'Búsqueda');
-                            }
-                        },
-                        error: function () {
-                            (window.alertError || window.alert)('Error al buscar el presupuesto.', 'Error');
-                        }
-                    });
-                }
-
-                // Función para buscar presupuesto por DNI
-                function buscarPresupuestoPorDni(dni) {
-                    $.ajax({
-                        url: "/NuevaReserva/BuscarPresupuestoPorDni",
-                        type: "POST",
-                        data: { dniCliente: dni },
-                        success: function (response) {
-                            if (response.success && response.hasPresupuesto) {
-                                var presupuesto = response.presupuesto;
-                                
-                                // Mostrar banner de atribución
-                                $("#vendedor-origen-nombre").text(presupuesto.vendedorOrigenNombre);
-                                $("#codigo-seguimiento").text(presupuesto.codigoSeguimiento);
-                                $("#monto-pactado").text("$" + parseFloat(presupuesto.montoPactado).toLocaleString('es-AR'));
-                                $("#comision-origen").text("50%");
-                                $("#comision-cierre").text("50%");
-                                
-                                $("#banner-atribucion").slideDown();
-                                $("#presupuesto-contacto-info").hide(); // En búsqueda por DNI no mostramos datos de contacto
-                                $('#div-crear-cliente-presupuesto').hide(); // Ya tiene cliente seleccionado
-                                // Guardar información del presupuesto para usar al cerrar la venta
-                                oReserva.PresupuestoId = presupuesto.presupuestoId;
-                                oReserva.VendedorIdOrigen = presupuesto.vendedorIdOrigen;
-                            } else {
-                                $("#banner-atribucion").slideUp();
-                                oReserva.PresupuestoId = null;
-                                oReserva.VendedorIdOrigen = null;
-                                $("#presupuesto-contacto-info").hide();
-                                $('#div-crear-cliente-presupuesto').hide();
-                            }
-                        },
-                        error: function () {
-                            console.log("Error al buscar presupuesto");
-                        }
-                    });
-                }
                 $("#txt-busqueda-pasajero").autocomplete({
                     minLength: 3,
                     source: function (request, response) {
@@ -534,14 +380,6 @@
                         ul.item.value = ''; //clean input
                     }
                 });
-
-                // Si la URL trae codigoPresupuesto (desde Presupuesto/Seguimiento "Convertir en venta")
-                var urlParams = new URLSearchParams(window.location.search);
-                var codigoPresupuesto = urlParams.get('codigoPresupuesto');
-                if (codigoPresupuesto) {
-                    $('#txt-codigo-presupuesto').val(codigoPresupuesto);
-                    buscarPresupuestoPorCodigo();
-                }
             }
 
             oReserva.recalcularDetallePago = function () {
