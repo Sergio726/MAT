@@ -61,6 +61,11 @@
     <Compile Include="eCategoriaHotel.cs" />
     <Compile Include="eCondicionIVA.cs" />
     <Compile Include="eEstadoFactura.cs" />
+    <Compile Include="eEstadoFacturaFiscal.cs" />
+    <Compile Include="eEstadoProveedor.cs" />
+    <Compile Include="eTipoFacturaFiscal.cs" />
+    <Compile Include="eTipoComprobante.cs" />
+    <Compile Include="eAlicuotaIva.cs" />
     <Compile Include="eEstadoHabitacion.cs" />
     <Compile Include="eEstadoPasaje.cs" />
     <Compile Include="eEstadoPresupuesto.cs" />

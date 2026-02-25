@@ -39,6 +39,7 @@
     <link href="~/Content/modern-facturas.css" rel="stylesheet" />
     <link href="~/Content/modern-topbar.css" rel="stylesheet" />
     <link href="~/Content/modern-presupuesto.css" rel="stylesheet" />
+    <link href="~/Content/modern-facturafiscal.css" rel="stylesheet" />
 
     @RenderSection("Styles", required: false)
 
@@ -146,6 +147,39 @@
                                     <a href="/Presupuesto/Metricas">
                                         <i class="bi bi-graph-up"></i>
                                         <span>Métricas</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Nivel 1: Facturacion Fiscal -->
+                        <li class="hasSubmenu">
+                            <a data-bs-toggle="collapse" href="#menu_facturacion" role="button" aria-expanded="false" aria-controls="menu_facturacion">
+                                <i class="bi bi-receipt-cutoff"></i>
+                                <span>Facturacion</span>
+                            </a>
+                            <ul class="collapse" id="menu_facturacion">
+                                <li>
+                                    <a href="/FacturaFiscal/Index">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>Listado</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/FacturaFiscal/Create?tipo=1">
+                                        <i class="bi bi-cart-plus"></i>
+                                        <span>Nueva Compra</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/FacturaFiscal/Create?tipo=2">
+                                        <i class="bi bi-shop"></i>
+                                        <span>Nueva Venta</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/FacturaFiscal/Proveedores">
+                                        <i class="bi bi-building"></i>
+                                        <span>Proveedores</span>
                                     </a>
                                 </li>
                             </ul>
@@ -333,12 +367,29 @@
 
             // Auto-detectar elemento activo del menú según la URL actual
             var currentPath = window.location.pathname.toLowerCase();
+            var currentSearch = window.location.search.toLowerCase();
+            var currentFull = currentPath + currentSearch;
 
             $('#menu .menu-0 ul li a').each(function() {
                 var href = $(this).attr('href');
                 if (href && href !== '#') {
-                    var menuPath = href.toLowerCase();
-                    if (currentPath === menuPath || currentPath.indexOf(menuPath) === 0) {
+                    var menuHref = href.toLowerCase();
+                    // Separar path y query del href del menu
+                    var qIdx = menuHref.indexOf('?');
+                    var menuPath = qIdx >= 0 ? menuHref.substring(0, qIdx) : menuHref;
+                    var menuQuery = qIdx >= 0 ? menuHref.substring(qIdx) : '';
+
+                    var isMatch = false;
+                    if (menuQuery) {
+                        // Si el link tiene query params, comparar path+query
+                        isMatch = currentFull === menuHref || (currentPath === menuPath && currentSearch === menuQuery);
+                    } else {
+                        // Sin query params: comparar path directo o /Controller vs /Controller/Index
+                        isMatch = currentPath === menuPath || currentPath.indexOf(menuPath) === 0
+                            || (menuPath.endsWith('/index') && currentPath === menuPath.replace('/index', ''));
+                    }
+
+                    if (isMatch) {
                         // Marcar este elemento como activo
                         $(this).parent('li').addClass('submenu-active');
 

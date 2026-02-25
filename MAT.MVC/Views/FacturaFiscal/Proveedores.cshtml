@@ -1,0 +1,270 @@
+@{
+    Response.ContentType = "text/html; charset=utf-8";
+    Response.Charset = "utf-8";
+    ViewBag.Title = "Proveedores Fiscales";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-building"></i>
+            <span>Proveedores</span>
+        </h2>
+        <div class="modern-page-actions">
+            <button type="button" class="btn-modern btn-modern-primary" onclick="abrirModalProveedor()">
+                <i class="bi bi-plus-circle"></i> <span>Nuevo Proveedor</span>
+            </button>
+            <a href="@Url.Action("Index", "FacturaFiscal")" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-arrow-left"></i> <span>Volver a Facturas</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="modern-card">
+        <div class="modern-card-content" style="padding: 1.5rem;">
+            <table id="tblProveedores" class="modern-table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Razon Social</th>
+                        <th>CUIT</th>
+                        <th>Cond. IVA</th>
+                        <th>Domicilio</th>
+                        <th>Email</th>
+                        <th>Telefono</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Proveedor -->
+<div id="modalProveedor" style="display:none;">
+    <div style="padding:1.5rem;">
+        <input type="hidden" id="hdnProveedorId" />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="modern-form-label">Razon Social *</label>
+                <input type="text" id="txtRazonSocial" class="modern-form-input" maxlength="50" />
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">CUIT *</label>
+                <input type="text" id="txtCuit" class="modern-form-input" maxlength="13" placeholder="XX-XXXXXXXX-X" />
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">Condicion IVA</label>
+                <select id="ddlCondicionIva" class="modern-form-select">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="1">IVA Responsable Inscripto</option>
+                    <option value="2">IVA Responsable no Inscripto</option>
+                    <option value="3">IVA no Responsable</option>
+                    <option value="4">IVA Sujeto Exento</option>
+                    <option value="5">Consumidor Final</option>
+                    <option value="6">Responsable Monotributo</option>
+                    <option value="7">Sujeto no Categorizado</option>
+                    <option value="8">Proveedor del Exterior</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">Domicilio</label>
+                <input type="text" id="txtDomicilio" class="modern-form-input" maxlength="200" />
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">Email</label>
+                <input type="email" id="txtEmail" class="modern-form-input" maxlength="50" />
+            </div>
+            <div class="col-md-6">
+                <label class="modern-form-label">Telefono</label>
+                <input type="text" id="txtTelefono" class="modern-form-input" maxlength="50" />
+            </div>
+            <div class="col-md-6" id="divEstado" style="display:none;">
+                <label class="modern-form-label">Estado</label>
+                <select id="ddlEstado" class="modern-form-select">
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+            <button class="btn-modern btn-modern-secondary" onclick="cerrarModal()"><i class="bi bi-x-lg"></i> Cancelar</button>
+            <button class="btn-modern btn-modern-primary" onclick="guardarProveedor()" id="btnGuardarProv"><i class="bi bi-check-lg"></i> Guardar</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var tablaProveedores;
+    var condicionIvaMap = {
+        1: 'IVA Resp. Inscripto', 2: 'IVA Resp. no Inscripto', 3: 'IVA no Responsable',
+        4: 'IVA Sujeto Exento', 5: 'Consumidor Final', 6: 'Resp. Monotributo',
+        7: 'Sujeto no Categorizado', 8: 'Proveedor del Exterior'
+    };
+
+    $(document).ready(function () {
+        tablaProveedores = $('#tblProveedores').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-AR.json' },
+            pageLength: 25,
+            order: [[0, 'asc']],
+            columnDefs: [
+                { orderable: false, targets: [7] },
+                { className: "text-center", targets: [6, 7] }
+            ],
+            data: [],
+            columns: [
+                { data: 'razonSocial', render: function (d) { return '<strong>' + d + '</strong>'; } },
+                { data: 'cuit' },
+                { data: 'condicionIva', render: function (d) { return condicionIvaMap[d] || '-'; } },
+                { data: 'domicilio', render: function (d) { return d || '-'; } },
+                { data: 'email', render: function (d) { return d || '-'; } },
+                { data: 'telefono', render: function (d) { return d || '-'; } },
+                {
+                    data: 'estado',
+                    render: function (d) {
+                        return d === 1
+                            ? '<span class="ff-badge ff-badge-activa">Activo</span>'
+                            : '<span class="ff-badge ff-badge-anulada">Inactivo</span>';
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return '<button class="ff-btn-accion" onclick="editarProveedor(\'' + row.proveedorId + '\')" title="Editar"><i class="bi bi-pencil"></i></button>';
+                    }
+                }
+            ]
+        });
+
+        cargarProveedores();
+    });
+
+    function cargarProveedores() {
+        $.ajax({
+            url: '@Url.Action("GetAllProveedores", "FacturaFiscal")',
+            type: 'POST',
+            dataType: 'json',
+            success: function (r) {
+                if (r.success) {
+                    tablaProveedores.clear().rows.add(r.data || []).draw();
+                }
+            },
+            error: function () { mostrarMensaje('Error al cargar proveedores.', 'danger'); }
+        });
+    }
+
+    function abrirModalProveedor(provId) {
+        $('#hdnProveedorId').val('');
+        $('#txtRazonSocial, #txtCuit, #txtDomicilio, #txtEmail, #txtTelefono').val('');
+        $('#ddlCondicionIva').val('');
+        $('#ddlEstado').val('1');
+        $('#divEstado').hide();
+
+        var titulo = 'Nuevo Proveedor';
+        if (provId) {
+            titulo = 'Editar Proveedor';
+            $('#divEstado').show();
+        }
+
+        if ($('#modalProveedor').data('ui-dialog')) $('#modalProveedor').dialog('destroy');
+        $('#modalProveedor').dialog({
+            title: titulo,
+            modal: true, width: 650, resizable: false,
+            position: { my: 'center', at: 'center', of: window },
+            dialogClass: 'modern-dialog',
+            close: function () {
+                $(this).dialog('destroy');
+                $('.ui-widget-overlay').remove();
+            }
+        });
+    }
+
+    function cerrarModal() {
+        try {
+            if ($('#modalProveedor').data('ui-dialog')) {
+                $('#modalProveedor').dialog('close');
+                $('#modalProveedor').dialog('destroy');
+            }
+        } catch (e) { }
+        $('.ui-widget-overlay').remove();
+    }
+
+    function editarProveedor(id) {
+        $.ajax({
+            url: '@Url.Action("GetProveedorById", "FacturaFiscal")',
+            type: 'POST',
+            data: { id: id },
+            dataType: 'json',
+            success: function (r) {
+                if (r.success && r.proveedor) {
+                    var p = r.proveedor;
+                    abrirModalProveedor(p.proveedorId);
+                    $('#hdnProveedorId').val(p.proveedorId);
+                    $('#txtRazonSocial').val(p.razonSocial);
+                    $('#txtCuit').val(p.cuit);
+                    $('#ddlCondicionIva').val(p.condicionIva || '');
+                    $('#txtDomicilio').val(p.domicilio);
+                    $('#txtEmail').val(p.email);
+                    $('#txtTelefono').val(p.telefono);
+                    $('#ddlEstado').val(p.estado);
+                } else {
+                    mostrarMensaje(r.message || 'Error', 'danger');
+                }
+            },
+            error: function () { mostrarMensaje('Error al cargar proveedor.', 'danger'); }
+        });
+    }
+
+    function guardarProveedor() {
+        var rs = $('#txtRazonSocial').val().trim();
+        var cuit = $('#txtCuit').val().trim();
+        if (!rs) { mostrarMensaje('Razon social requerida.', 'danger'); return; }
+        if (!cuit) { mostrarMensaje('CUIT requerido.', 'danger'); return; }
+
+        var provId = $('#hdnProveedorId').val();
+        var isEdit = !!provId;
+
+        var datos = {
+            razonSocial: rs,
+            cuit: cuit,
+            condicionIva: $('#ddlCondicionIva').val() || null,
+            domicilio: $('#txtDomicilio').val(),
+            email: $('#txtEmail').val(),
+            telefono: $('#txtTelefono').val()
+        };
+
+        if (isEdit) {
+            datos.proveedorId = provId;
+            datos.estado = $('#ddlEstado').val();
+        }
+
+        var url = isEdit ? '@Url.Action("UpdateProveedor", "FacturaFiscal")' : '@Url.Action("CreateProveedor", "FacturaFiscal")';
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: datos,
+            dataType: 'json',
+            success: function (r) {
+                if (r.success) {
+                    mostrarMensaje(r.message, 'success');
+                    cerrarModal();
+                    cargarProveedores();
+                } else {
+                    mostrarMensaje(r.message, 'danger');
+                }
+            },
+            error: function () { mostrarMensaje('Error al guardar.', 'danger'); }
+        });
+    }
+
+    function mostrarMensaje(mensaje, tipo) {
+        var alertClass = tipo === 'success' ? 'alert-success' : tipo === 'danger' ? 'alert-danger' : 'alert-info';
+        var alertHtml = '<div class="alert ' + alertClass + ' alert-dismissible fade show" role="alert" style="position:fixed;top:20px;right:20px;z-index:10001;min-width:300px;">';
+        alertHtml += mensaje + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+        $('body').append(alertHtml);
+        setTimeout(function () { $('.alert').fadeOut(function () { $(this).remove(); }); }, 3000);
+    }
+</script>

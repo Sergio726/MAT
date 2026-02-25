@@ -9,6 +9,8 @@
     [CondicionIva] INT              NULL,
     [Cuit]         VARCHAR (50)     NULL,
     [FormaPago]    INT              NULL,
+    [Domicilio]    VARCHAR (200)    NULL,
+    [Estado]       INT              NOT NULL DEFAULT(1),
     [LocalidadID]  INT              NULL,
     CONSTRAINT [PK_Proveedor] PRIMARY KEY CLUSTERED ([ProveedorID] ASC)
 );

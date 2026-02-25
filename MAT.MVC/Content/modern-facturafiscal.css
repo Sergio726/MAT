@@ -1,0 +1,250 @@
+/* ========================================
+   Factura Fiscal - Styles
+   ======================================== */
+
+/* Badges de tipo */
+.ff-badge {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.ff-badge-compra {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.ff-badge-venta {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.ff-badge-activa {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.ff-badge-anulada {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* Panel de totales */
+.ff-totales-panel {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.ff-total-item {
+    flex: 1;
+    min-width: 150px;
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.ff-total-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary, #6b7280);
+    margin-bottom: 0.25rem;
+}
+
+.ff-total-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary, #111827);
+}
+
+.ff-total-item.ff-total-general {
+    background: linear-gradient(135deg, rgba(230, 51, 117, 0.08) 0%, rgba(230, 51, 117, 0.03) 100%);
+    border-color: rgba(230, 51, 117, 0.2);
+}
+
+.ff-total-item.ff-total-general .ff-total-value {
+    color: var(--brand-primary, #e63375);
+}
+
+/* Seccion montos en formulario */
+.ff-montos-section {
+    background: var(--bg-main, #f9fafb);
+    border-radius: 8px;
+    padding: 1.25rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.ff-montos-section .form-group {
+    margin-bottom: 0.75rem;
+}
+
+.ff-monto-calculado {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px dashed rgba(16, 185, 129, 0.3);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-weight: 600;
+}
+
+.ff-monto-total {
+    background: linear-gradient(135deg, rgba(230, 51, 117, 0.1) 0%, rgba(230, 51, 117, 0.05) 100%);
+    border: 2px solid rgba(230, 51, 117, 0.25);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--brand-primary, #e63375);
+    text-align: center;
+}
+
+/* Acciones rapidas */
+.ff-quick-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.ff-quick-actions .btn-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Numero de comprobante formateado */
+.ff-comprobante-numero {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary, #111827);
+}
+
+/* Filtros colapsable */
+.ff-filtros-header {
+    cursor: pointer;
+    user-select: none;
+}
+
+.ff-filtros-header:hover {
+    opacity: 0.85;
+}
+
+/* Upload preview */
+.ff-adjunto-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-main, #f9fafb);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 6px;
+    margin-top: 0.5rem;
+}
+
+.ff-adjunto-preview .ff-adjunto-name {
+    font-size: 0.875rem;
+    color: var(--text-primary, #111827);
+}
+
+.ff-adjunto-preview .ff-adjunto-remove {
+    cursor: pointer;
+    color: #dc2626;
+    font-size: 1rem;
+}
+
+/* Proveedor inline card */
+.ff-proveedor-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(59, 130, 246, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.ff-proveedor-info .ff-prov-name {
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+}
+
+.ff-proveedor-info .ff-prov-cuit {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #6b7280);
+}
+
+/* Table action buttons */
+.ff-btn-accion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 6px;
+    background: var(--bg-card, #fff);
+    color: var(--text-secondary, #6b7280);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 0.875rem;
+    margin: 0 2px;
+}
+
+.ff-btn-accion:hover {
+    background: var(--bg-main, #f9fafb);
+    color: var(--brand-primary, #e63375);
+    border-color: var(--brand-primary, #e63375);
+}
+
+.ff-btn-accion.ff-btn-anular:hover {
+    color: #dc2626;
+    border-color: #dc2626;
+}
+
+/* Export buttons */
+.ff-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid;
+}
+
+.ff-export-excel {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.ff-export-excel:hover {
+    background: rgba(16, 185, 129, 0.2);
+}
+
+.ff-export-arca {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.ff-export-arca:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
