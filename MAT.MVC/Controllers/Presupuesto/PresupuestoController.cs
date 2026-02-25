@@ -322,6 +322,7 @@ namespace MAT.MVC.Controllers.Presupuesto
                 {
                     presupuestoId = presupuesto.PresupuestoID.ToString(),
                     codigoSeguimiento = presupuesto.CodigoSeguimiento,
+                    nombreCliente = presupuesto.NombreCliente,
                     dniCliente = presupuesto.DniCliente,
                     montoPactado = presupuesto.MontoPactado,
                     vendedorOrigenNombre = presupuesto.VendedorOrigenNombre,

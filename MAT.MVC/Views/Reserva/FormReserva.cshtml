@@ -50,6 +50,44 @@
                 </div>
             </div>
 
+            <!-- Seccion: Presupuesto vinculado -->
+            <div class="reserva-form-section" id="presupuesto-section">
+                <h3 class="reserva-section-title">
+                    <i class="bi bi-file-earmark-text"></i>
+                    Presupuesto
+                </h3>
+                @if (ViewBag.Presupuesto != null)
+                {
+                    var p = ViewBag.Presupuesto;
+                    <div class="reserva-presupuesto-vinculado" style="padding: 0.75rem; background: #fef3c7; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <strong><i class="bi bi-check-circle"></i> Presupuesto vinculado</strong>
+                        <div style="font-size: 0.875rem; margin-top: 0.35rem;">
+                            <span><strong>Código:</strong> @p.CodigoSeguimiento</span>
+                            <span style="margin-left: 1rem;"><strong>Cliente:</strong> @p.NombreCliente</span>
+                            <span style="margin-left: 1rem;"><strong>Monto:</strong> @string.Format("{0:C}", p.MontoPactado)</span>
+                        </div>
+                        <a href="@Url.Action("ImprimirPresupuesto", "Presupuesto", new { codigo = p.CodigoSeguimiento })" target="_blank" class="btn-modern btn-modern-secondary btn-sm" style="margin-top: 0.5rem;">
+                            <i class="bi bi-download"></i> Descargar
+                        </a>
+                    </div>
+                    <input type="hidden" id="presupuestoIdReserva" name="presupuestoIdReserva" value="@p.PresupuestoId" />
+                }
+                else
+                {
+                    <div class="presupuesto-buscar-opcional" style="display: flex; gap: 0.5rem; align-items: flex-start; flex-wrap: wrap;">
+                        <input type="text" id="txt-buscar-presupuesto" class="reserva-form-input" placeholder="Código de presupuesto (opcional)" style="max-width: 220px;" />
+                        <button type="button" id="btn-buscar-presupuesto" class="btn-reserva btn-reserva-secondary btn-sm">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                    <div id="presupuesto-encontrado" class="reserva-presupuesto-vinculado" style="display: none; padding: 0.75rem; background: #fef3c7; border-radius: 8px; margin-top: 0.5rem;">
+                        <strong><i class="bi bi-check-circle"></i> Presupuesto encontrado</strong>
+                        <div style="font-size: 0.875rem; margin-top: 0.35rem;" id="presupuesto-encontrado-datos"></div>
+                        <input type="hidden" id="presupuestoIdReserva" name="presupuestoIdReserva" value="" />
+                    </div>
+                }
+            </div>
+
             <!-- Seccion: Condicion de Venta -->
             <div class="reserva-form-section">
                 <h3 class="reserva-section-title">
@@ -322,6 +360,37 @@
             if (disabled) {
                 $("#txtDescuento, #detalledescuento").val("");
             }
+        });
+
+        // Buscar presupuesto por código (opcional)
+        $("#btn-buscar-presupuesto").on("click", function () {
+            var codigo = $("#txt-buscar-presupuesto").val().trim().toUpperCase();
+            if (!codigo) {
+                (window.alertInfo || window.alert)("Ingrese un código de presupuesto.", "Validación");
+                return;
+            }
+            $.post("/Presupuesto/GetByCodigo", { codigoSeguimiento: codigo }, function (data) {
+                if (data.success && data.hasPresupuesto && data.presupuesto) {
+                    var p = data.presupuesto;
+                    if (p.isExpirado) {
+                        (window.alertWarning || window.alert)("El presupuesto está expirado.", "Presupuesto expirado");
+                        return;
+                    }
+                    if (p.estado !== "Pendiente") {
+                        (window.alertWarning || window.alert)("El presupuesto ya no está pendiente.", "Estado");
+                        return;
+                    }
+                    $("#presupuesto-encontrado-datos").html("<span><strong>Código:</strong> " + p.codigoSeguimiento + "</span><span style='margin-left:1rem;'><strong>Cliente:</strong> " + (p.nombreCliente || p.dniCliente || "N/A") + "</span><span style='margin-left:1rem;'><strong>Monto:</strong> $" + parseFloat(p.montoPactado).toFixed(2) + "</span>");
+                    $("#presupuesto-encontrado").find("input[name='presupuestoIdReserva']").val(p.presupuestoId);
+                    $("#presupuesto-encontrado").show();
+                } else if (data.success && !data.hasPresupuesto) {
+                    (window.alertInfo || window.alert)("No se encontró presupuesto con ese código.", "Búsqueda");
+                } else {
+                    (window.alertError || window.alert)(data.message || "Error al buscar.", "Error");
+                }
+            }).fail(function () {
+                (window.alertError || window.alert)("Error al buscar el presupuesto.", "Error");
+            });
         });
     });
 

@@ -34,7 +34,7 @@ namespace MAT.MVC.Controllers.Reserva
         }
         
         [Authorize]
-        public async Task<ActionResult> Index(Guid viajeid)
+        public async Task<ActionResult> Index(Guid viajeid, string codigoPresupuesto = null)
         {
             List<ReservaStandard> Model = new List<ReservaStandard>();
 
@@ -44,6 +44,21 @@ namespace MAT.MVC.Controllers.Reserva
                 ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeid.ToString());
                 ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeid.ToString()).Tables[0].Rows[0]["CountListaEspera"];
 
+                // Si viene de "Convertir en venta" desde Presupuesto, cargar datos del presupuesto
+                if (!string.IsNullOrWhiteSpace(codigoPresupuesto))
+                {
+                    var presupuesto = PresupuestoMethod.GetByCodigo(codigoPresupuesto.Trim().ToUpper());
+                    if (presupuesto != null && presupuesto.Estado == eEstadoPresupuesto.Pendiente && !presupuesto.IsExpirado)
+                    {
+                        ViewBag.Presupuesto = new
+                        {
+                            PresupuestoId = presupuesto.PresupuestoID.ToString(),
+                            CodigoSeguimiento = presupuesto.CodigoSeguimiento,
+                            NombreCliente = presupuesto.NombreCliente ?? presupuesto.DniCliente ?? "Cliente",
+                            MontoPactado = presupuesto.MontoPactado
+                        };
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -297,7 +312,7 @@ namespace MAT.MVC.Controllers.Reserva
 
         
         [HttpPost]
-        public ActionResult ReservarPasajes(List<PasajeInputModel> pasajes, string montoSeguroMenor = "")
+        public ActionResult ReservarPasajes(List<PasajeInputModel> pasajes, string montoSeguroMenor = "", string codigoPresupuesto = null)
         {
             try
             {
@@ -305,7 +320,22 @@ namespace MAT.MVC.Controllers.Reserva
                 ViewBag.Pasajes = jsonobject;
                 ViewBag.CantPasajes = pasajes.Count();
 
-                
+                // Si viene presupuesto vinculado, cargar datos para FormReserva
+                if (!string.IsNullOrWhiteSpace(codigoPresupuesto))
+                {
+                    var presupuesto = PresupuestoMethod.GetByCodigo(codigoPresupuesto.Trim().ToUpper());
+                    if (presupuesto != null && presupuesto.Estado == eEstadoPresupuesto.Pendiente && !presupuesto.IsExpirado)
+                    {
+                        ViewBag.Presupuesto = new
+                        {
+                            PresupuestoId = presupuesto.PresupuestoID.ToString(),
+                            CodigoSeguimiento = presupuesto.CodigoSeguimiento,
+                            NombreCliente = presupuesto.NombreCliente ?? presupuesto.DniCliente ?? "Cliente",
+                            MontoPactado = presupuesto.MontoPactado
+                        };
+                    }
+                }
+
                 //MATContext.Reserva = new ReservaModel(pasajes);
                 //MontoFactura = MATContext.Reserva.CalcularMontoTotal();
 
@@ -894,7 +924,8 @@ namespace MAT.MVC.Controllers.Reserva
         public string FormReserva(string cliente, string tipopago, string condicion, string recibo, string TransaccionId, string nroFactura, 
                                   string observaciones, string jsonobject, string descuento = "", string monto = "0", string montoFactura = "0", string listmenores = "",
                                   string tutormenor = "", string viajeid = "", string detalledescuento = "",
-                                  string MontoRecibido = "", string MontoRecibidoMonedaTipo = "1",string MontoEquivalente = "", string MontoEquivalenteMonedaTipo = "", string MontoEquivalenteCotizacion = "", string ViajeMonedaTipo = "1")
+                                  string MontoRecibido = "", string MontoRecibidoMonedaTipo = "1",string MontoEquivalente = "", string MontoEquivalenteMonedaTipo = "", string MontoEquivalenteCotizacion = "", string ViajeMonedaTipo = "1",
+                                  string presupuestoId = null)
         {
             try
             {
@@ -997,6 +1028,14 @@ namespace MAT.MVC.Controllers.Reserva
                 }
                 //Vincular Menor
                 VincularMenorByViaje(viajeid, tutormenor, listmenores);
+
+                // Cerrar presupuesto vinculado y distribuir comisiones
+                if (!string.IsNullOrWhiteSpace(presupuestoId) && Guid.TryParse(presupuestoId, out Guid presupuestoGuid))
+                {
+                    Guid facturaGuid = Guid.Parse(sFacturaID);
+                    Guid vendedorCierre = MATContext.CurrentVendedor.VendedorId;
+                    PresupuestoMethod.UpdateEstado(presupuestoGuid, eEstadoPresupuesto.Cerrado, facturaGuid, vendedorCierre);
+                }
 
                 return sEstadoFactura;
             }

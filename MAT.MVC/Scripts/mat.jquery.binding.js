@@ -217,7 +217,8 @@ $(document).on("click", "#btnReservarPasaje", function () {
             MontoEquivalente: MontoEquivalente,
             MontoEquivalenteMonedaTipo: MontoEquivalenteMonedaTipo,
             MontoEquivalenteCotizacion: MontoEquivalenteCotizacion,
-            ViajeMonedaTipo: ViajeMonedaTipo
+            ViajeMonedaTipo: ViajeMonedaTipo,
+            presupuestoId: ($("#presupuestoIdReserva").length ? $("#presupuestoIdReserva").val() : "") || ($("#presupuestoId").length ? $("#presupuestoId").val() : "")
         },
         success: function (data) {
 
@@ -388,9 +389,11 @@ $(document).on("click", "#btn-reservar", function () {
             }
         }
 
-        var _data = {"pasajes": pasajes};
+        var codigoPresupuesto = $("#presupuestoCodigo").length ? $("#presupuestoCodigo").val() : "";
+        var urlReservar = "/Reserva/ReservarPasajes";
+        if (codigoPresupuesto) urlReservar += "?codigoPresupuesto=" + encodeURIComponent(codigoPresupuesto);
         $.ajax({
-            url: "/Reserva/ReservarPasajes",
+            url: urlReservar,
             type: "POST",
             data: JSON.stringify({ "pasajes": pasajes }),
             contentType: "application/json; charset=utf-8",
