@@ -814,6 +814,27 @@ function showVoucher(facturaId, TipoVoucher, bInfoAdicional)
     }
 }
 
+function imprimirReciboPago(pagoId, facturaId) {
+    try {
+        var url = "/PersonaCliente/ReciboPago?pagoId=" + encodeURIComponent(pagoId)
+                + "&facturaId=" + encodeURIComponent(facturaId);
+        var printWindow = window.open(url, '_blank');
+
+        if (printWindow) {
+            printWindow.onload = function () {
+                setTimeout(function () {
+                    printWindow.print();
+                }, 500);
+            };
+        } else {
+            (window.alertInfo || window.alert)("Por favor, permita las ventanas emergentes para imprimir el recibo.", "Atencion");
+        }
+    } catch (e) {
+        console.error("Error al abrir ventana de recibo:", e);
+        (window.alertError || window.alert)("Error al abrir el recibo. Por favor, intente nuevamente.", "Error");
+    }
+}
+
 $(document).on("click", "#btn-notacredito", function () {
     var facturaid = $(this).data("facturaid");
     var clienteid = $(this).data("clienteid");
