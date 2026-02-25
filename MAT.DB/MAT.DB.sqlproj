@@ -98,6 +98,7 @@
     <Build Include="dbo\Tables\EstadoPasaje.sql" />
     <Build Include="dbo\Tables\Excursion.sql" />
     <Build Include="dbo\Tables\Factura.sql" />
+    <Build Include="dbo\Tables\FacturaFiscal.sql" />
     <Build Include="dbo\Tables\Habitacion.sql" />
     <Build Include="dbo\Tables\PlantillaDistribucionHabitacion.sql" />
     <Build Include="dbo\Tables\Country.sql" />
