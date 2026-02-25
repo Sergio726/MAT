@@ -1069,6 +1069,14 @@
       <AnsiNulls>Off</AnsiNulls>
     </Build>
     <Build Include="dbo\Stored Procedures\usp_MAT_Factura_Search.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_FacturaFiscal_Anular.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_FacturaFiscal_CheckDuplicate.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_FacturaFiscal_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_FacturaFiscal_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_FacturaFiscal_GetForExport.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_FacturaFiscal_GetTotales.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_FacturaFiscal_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_FacturaFiscal_Update.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_External_Packages_GetAll.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedurePasaje_GetByFacturaId.sql">
       <AnsiNulls>Off</AnsiNulls>
@@ -1194,6 +1202,10 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_ProximosVencer.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_Update.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Presupuesto_GetMetricasConversion.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Proveedor_GetAll_Fiscal.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Proveedor_GetById_Fiscal.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Proveedor_Insert_Fiscal.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Proveedor_Update_Fiscal.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_GetTop.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Pasaje_CambiarPasajero.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_SelectByViajeId_Active.sql" />
