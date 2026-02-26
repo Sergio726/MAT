@@ -3,70 +3,100 @@
     Response.Charset = "utf-8";
     ViewBag.Title = "Panel Principal";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
+
     var estadisticas = ViewBag.Estadisticas as Dictionary<string, object> ?? new Dictionary<string, object>();
-    var totalPorCobrar = estadisticas.ContainsKey("TotalPorCobrar") ? Convert.ToDouble(estadisticas["TotalPorCobrar"]) : 0.0;
     var cantidadPresupuestos = estadisticas.ContainsKey("CantidadPresupuestos") ? Convert.ToInt32(estadisticas["CantidadPresupuestos"]) : 0;
+    var totalPresupuestos = estadisticas.ContainsKey("TotalPresupuestos") ? Convert.ToDouble(estadisticas["TotalPresupuestos"]) : 0.0;
     var clientesNuevos = estadisticas.ContainsKey("ClientesNuevos") ? Convert.ToInt32(estadisticas["ClientesNuevos"]) : 0;
-    var totalVentas = estadisticas.ContainsKey("TotalVentas") ? Convert.ToDouble(estadisticas["TotalVentas"]) : 0.0;
+    var totalFacturado = estadisticas.ContainsKey("TotalFacturado") ? Convert.ToDouble(estadisticas["TotalFacturado"]) : 0.0;
+    var totalPendiente = estadisticas.ContainsKey("TotalPendiente") ? Convert.ToDouble(estadisticas["TotalPendiente"]) : 0.0;
     var cantidadVentas = estadisticas.ContainsKey("CantidadVentas") ? Convert.ToInt32(estadisticas["CantidadVentas"]) : 0;
-    
+    var isAdmin = ViewBag.IsAdmin ?? false;
+
     var mesActual = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month);
-    var añoActual = DateTime.Now.Year;
+    var anioActual = DateTime.Now.Year;
 }
 
 <div class="modern-dashboard">
     <div class="container-fluid">
-        <!-- Estadísticas del Mes -->
-        <div class="row g-4 mb-4">
-            <div class="col-lg-3 col-md-6">
-                <div class="modern-card modern-card-primary">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">Total por Cobrar</div>
-                        <i class="bi bi-currency-dollar modern-card-icon-small"></i>
-                    </div>
-                    <div class="modern-card-content">
-                        <div class="modern-stat-number">$@totalPorCobrar.ToString("N2")</div>
-                        <p class="modern-stat-label">Saldo pendiente del mes</p>
-                    </div>
-                </div>
+        <!-- Indicador de contexto -->
+        @if ((bool)isAdmin)
+        {
+            <div class="alert alert-info py-2 px-3 mb-3" style="font-size: 0.85rem; border-radius: 8px;">
+                <i class="bi bi-shield-check me-1"></i> Vista Administrador - Mostrando datos de todos los vendedores
             </div>
+        }
 
-            <div class="col-lg-3 col-md-6">
-                <div class="modern-card modern-card-success">
+        <!-- Estadisticas del Mes -->
+        <div class="row g-4 mb-4">
+            <!-- PRESUPUESTOS -->
+            <div class="col-lg-4 col-md-6">
+                <div class="modern-card modern-card-success dashboard-stat-card" onclick="openDetalleModal('presupuestos')" title="Ver detalle de presupuestos del mes">
                     <div class="modern-card-header">
                         <div class="modern-card-title">Presupuestos</div>
                         <i class="bi bi-file-earmark-text modern-card-icon-small"></i>
                     </div>
                     <div class="modern-card-content">
                         <div class="modern-stat-number">@cantidadPresupuestos</div>
-                        <p class="modern-stat-label">Presupuestos del mes</p>
+                        <p class="modern-stat-label">Realizados en @mesActual</p>
+                        <p class="modern-stat-label mt-1">
+                            <span style="color: var(--brand-primary); font-weight: 600;">Total: $@totalPresupuestos.ToString("N2")</span>
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6">
-                <div class="modern-card modern-card-warning">
+            <!-- CLIENTES NUEVOS -->
+            <div class="col-lg-4 col-md-6">
+                <div class="modern-card modern-card-warning dashboard-stat-card" onclick="openDetalleModal('clientes')" title="Ver detalle de clientes nuevos del mes">
                     <div class="modern-card-header">
                         <div class="modern-card-title">Clientes Nuevos</div>
                         <i class="bi bi-people modern-card-icon-small"></i>
                     </div>
                     <div class="modern-card-content">
                         <div class="modern-stat-number">@clientesNuevos</div>
-                        <p class="modern-stat-label">Nuevos clientes del mes</p>
+                        <p class="modern-stat-label">Dados de alta en @mesActual</p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6">
-                <div class="modern-card modern-card-info">
+            <!-- VENTAS REALIZADAS -->
+            <div class="col-lg-4 col-md-12">
+                <div class="modern-card modern-card-info dashboard-stat-card" onclick="openDetalleModal('ventas')" title="Ver detalle de ventas del mes">
                     <div class="modern-card-header">
                         <div class="modern-card-title">Ventas Realizadas</div>
                         <i class="bi bi-cart-check modern-card-icon-small"></i>
                     </div>
                     <div class="modern-card-content">
                         <div class="modern-stat-number">@cantidadVentas</div>
-                        <p class="modern-stat-label">Total: $@totalVentas.ToString("N2")</p>
+                        <div class="d-flex justify-content-between mt-1" style="gap: 1rem;">
+                            <p class="modern-stat-label mb-0">
+                                <span style="color: var(--brand-primary); font-weight: 600;">Total: $@totalFacturado.ToString("N2")</span>
+                            </p>
+                            <p class="modern-stat-label mb-0">
+                                <span style="color: #dc3545; font-weight: 600;">Pend: $@totalPendiente.ToString("N2")</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Detalle -->
+        <div class="modal fade" id="dashboardDetalleModal" tabindex="-1" aria-labelledby="dashboardDetalleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-content" style="border-radius: 12px; border: none;">
+                    <div class="modal-header" style="background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%); color: white; border-radius: 12px 12px 0 0;">
+                        <h5 class="modal-title" id="dashboardDetalleModalLabel">Detalle</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body" id="dashboardDetalleBody" style="min-height: 200px;">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Cargando detalle...</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -263,9 +293,54 @@
         transform: translateY(-50%);
     }
 
+    .dashboard-stat-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .dashboard-stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
     .modern-card[onclick]:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Tabla dentro del modal de detalle */
+    .detalle-table {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+    .detalle-table th {
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .detalle-table td, .detalle-table th {
+        padding: 0.5rem 0.75rem;
+        vertical-align: middle;
+    }
+    .detalle-table tbody tr:hover {
+        background-color: rgba(230, 51, 117, 0.04);
+    }
+    .detalle-resumen {
+        display: flex;
+        gap: 1.5rem;
+        padding: 0.75rem 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    .detalle-resumen-item {
+        font-size: 0.85rem;
+    }
+    .detalle-resumen-item strong {
+        font-weight: 700;
     }
 
     /* Separador Visual entre Secciones */
@@ -470,6 +545,144 @@
             const t1 = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
             const diffTime = t1.getTime() - t0.getTime();
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // === Funciones para modales de detalle de indicadores ===
+        function openDetalleModal(tipo) {
+            var modal = new bootstrap.Modal(document.getElementById('dashboardDetalleModal'));
+            var body = document.getElementById('dashboardDetalleBody');
+            var title = document.getElementById('dashboardDetalleModalLabel');
+
+            // Spinner de carga
+            body.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-2 text-muted">Cargando detalle...</p></div>';
+
+            var urlMap = {
+                'presupuestos': '/Home/GetPresupuestosDetalle',
+                'clientes': '/Home/GetClientesNuevosDetalle',
+                'ventas': '/Home/GetVentasDetalle'
+            };
+
+            var titleMap = {
+                'presupuestos': 'Presupuestos del Mes',
+                'clientes': 'Clientes Nuevos del Mes',
+                'ventas': 'Ventas Realizadas del Mes'
+            };
+
+            title.textContent = titleMap[tipo] || 'Detalle';
+            modal.show();
+
+            $.ajax({
+                url: urlMap[tipo],
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success && response.data) {
+                        body.innerHTML = renderDetalle(tipo, response.data);
+                    } else {
+                        body.innerHTML = '<div class="alert alert-warning">No se pudieron obtener los datos: ' + (response.message || '') + '</div>';
+                    }
+                },
+                error: function () {
+                    body.innerHTML = '<div class="alert alert-danger">Error al cargar los datos.</div>';
+                }
+            });
+        }
+
+        function renderDetalle(tipo, data) {
+            if (!data || data.length === 0) {
+                return '<div class="alert alert-info">No hay registros para el mes actual.</div>';
+            }
+
+            if (tipo === 'presupuestos') {
+                var html = '<div class="detalle-resumen"><div class="detalle-resumen-item"><strong>' + data.length + '</strong> presupuestos</div></div>';
+                html += '<div class="table-responsive"><table class="table table-sm table-bordered detalle-table"><thead><tr>';
+                html += '<th>Codigo</th><th>Cliente</th><th>DNI</th><th>Monto</th><th>Estado</th><th>Fecha</th><th>Viaje</th><th>Vendedor</th>';
+                html += '</tr></thead><tbody>';
+                for (var i = 0; i < data.length; i++) {
+                    var p = data[i];
+                    html += '<tr>';
+                    html += '<td>' + escapeHtml(p.CodigoSeguimiento) + '</td>';
+                    html += '<td>' + escapeHtml(p.NombreCliente) + '</td>';
+                    html += '<td>' + escapeHtml(p.DniCliente) + '</td>';
+                    html += '<td class="text-end">$' + formatNumber(p.MontoPactado) + '</td>';
+                    html += '<td>' + escapeHtml(p.Estado) + '</td>';
+                    html += '<td>' + escapeHtml(p.FechaCreacion) + '</td>';
+                    html += '<td>' + escapeHtml(p.ViajeDescripcion || '') + '</td>';
+                    html += '<td>' + escapeHtml(p.VendedorOrigenNombre || '') + '</td>';
+                    html += '</tr>';
+                }
+                html += '</tbody></table></div>';
+                return html;
+            }
+
+            if (tipo === 'clientes') {
+                var html = '<div class="detalle-resumen"><div class="detalle-resumen-item"><strong>' + data.length + '</strong> clientes nuevos</div></div>';
+                html += '<div class="table-responsive"><table class="table table-sm table-bordered detalle-table"><thead><tr>';
+                html += '<th>Nombre</th><th>Documento</th><th>Celular</th><th>Email</th><th>1ra Factura</th><th>Vendedor</th>';
+                html += '</tr></thead><tbody>';
+                for (var i = 0; i < data.length; i++) {
+                    var c = data[i];
+                    html += '<tr>';
+                    html += '<td>' + escapeHtml(c.ClienteNombre) + '</td>';
+                    html += '<td>' + escapeHtml(c.NroDocumento) + '</td>';
+                    html += '<td>' + escapeHtml(c.Celular) + '</td>';
+                    html += '<td>' + escapeHtml(c.Email) + '</td>';
+                    html += '<td>' + escapeHtml(c.PrimeraFactura) + '</td>';
+                    html += '<td>' + escapeHtml(c.VendedorNombre || '') + '</td>';
+                    html += '</tr>';
+                }
+                html += '</tbody></table></div>';
+                return html;
+            }
+
+            if (tipo === 'ventas') {
+                var totalFact = 0, totalPag = 0, totalSaldo = 0;
+                for (var i = 0; i < data.length; i++) {
+                    totalFact += data[i].TotalFactura || 0;
+                    totalPag += data[i].MontoPagado || 0;
+                    totalSaldo += data[i].Saldo || 0;
+                }
+                var html = '<div class="detalle-resumen">';
+                html += '<div class="detalle-resumen-item"><strong>' + data.length + '</strong> facturas</div>';
+                html += '<div class="detalle-resumen-item">Total Facturado: <strong style="color:var(--brand-primary)">$' + formatNumber(totalFact) + '</strong></div>';
+                html += '<div class="detalle-resumen-item">Total Cobrado: <strong style="color:#198754">$' + formatNumber(totalPag) + '</strong></div>';
+                html += '<div class="detalle-resumen-item">Pendiente: <strong style="color:#dc3545">$' + formatNumber(totalSaldo) + '</strong></div>';
+                html += '</div>';
+                html += '<div class="table-responsive"><table class="table table-sm table-bordered detalle-table"><thead><tr>';
+                html += '<th>Fecha</th><th>Cliente</th><th>Vendedor</th><th>Viaje</th><th>Salida</th><th>Butacas</th><th>Estado</th><th class="text-end">Facturado</th><th class="text-end">Pagado</th><th class="text-end">Saldo</th>';
+                html += '</tr></thead><tbody>';
+                for (var i = 0; i < data.length; i++) {
+                    var v = data[i];
+                    var saldoClass = (v.Saldo > 0) ? 'style="color:#dc3545;font-weight:600"' : '';
+                    html += '<tr>';
+                    html += '<td>' + escapeHtml(v.FacturaFecha) + '</td>';
+                    html += '<td>' + escapeHtml(v.ClienteFullName) + '</td>';
+                    html += '<td>' + escapeHtml(v.VendedorFullName) + '</td>';
+                    html += '<td>' + escapeHtml(v.ViajeDescripcion) + '</td>';
+                    html += '<td>' + escapeHtml(v.FechaSalida) + '</td>';
+                    html += '<td class="text-center">' + v.CantidadButacas + '</td>';
+                    html += '<td>' + escapeHtml(v.FacturaEstado) + '</td>';
+                    html += '<td class="text-end">$' + formatNumber(v.TotalFactura) + '</td>';
+                    html += '<td class="text-end">$' + formatNumber(v.MontoPagado) + '</td>';
+                    html += '<td class="text-end" ' + saldoClass + '>$' + formatNumber(v.Saldo) + '</td>';
+                    html += '</tr>';
+                }
+                html += '</tbody></table></div>';
+                return html;
+            }
+
+            return '<div class="alert alert-info">Sin datos.</div>';
+        }
+
+        function escapeHtml(str) {
+            if (str == null) return '';
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        function formatNumber(num) {
+            if (num == null || isNaN(num)) return '0.00';
+            return parseFloat(num).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
         $(document).ready(function() {
