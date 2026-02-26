@@ -186,18 +186,8 @@
                 </div>
             </div>
 
-            <!-- Adjunto y Observaciones -->
+            <!-- Observaciones -->
             <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <label class="modern-form-label">Archivo Adjunto (PDF, JPG, PNG - max 10MB)</label>
-                    <input type="file" id="fileAdjunto" class="modern-form-input" accept=".pdf,.jpg,.jpeg,.png" onchange="subirAdjunto()" />
-                    <input type="hidden" id="hdnArchivoAdjunto" />
-                    <div id="adjuntoPreview" style="display:none;" class="ff-adjunto-preview">
-                        <i class="bi bi-check-circle" style="color:#059669;"></i>
-                        <span class="ff-adjunto-name" id="adjuntoNombre"></span>
-                        <span class="ff-adjunto-remove" onclick="quitarAdjunto()"><i class="bi bi-x"></i></span>
-                    </div>
-                </div>
                 <div class="col-md-6">
                     <label class="modern-form-label">Observaciones</label>
                     <textarea id="txtObservaciones" class="modern-form-input" rows="3" maxlength="500" style="resize:vertical;"></textarea>
@@ -352,38 +342,6 @@
         });
     }
 
-    function subirAdjunto() {
-        var fileInput = document.getElementById('fileAdjunto');
-        if (!fileInput.files || !fileInput.files[0]) return;
-        var formData = new FormData();
-        formData.append('archivo', fileInput.files[0]);
-
-        $.ajax({
-            url: '@Url.Action("UploadAdjunto", "FacturaFiscal")',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (r) {
-                if (r.success) {
-                    $('#hdnArchivoAdjunto').val(r.filePath);
-                    $('#adjuntoNombre').text(r.fileName);
-                    $('#adjuntoPreview').show();
-                } else {
-                    mostrarMensaje(r.message, 'danger');
-                    fileInput.value = '';
-                }
-            },
-            error: function () { mostrarMensaje('Error al subir archivo.', 'danger'); }
-        });
-    }
-
-    function quitarAdjunto() {
-        $('#hdnArchivoAdjunto').val('');
-        $('#adjuntoPreview').hide();
-        $('#fileAdjunto').val('');
-    }
-
     function guardarFactura() {
         var cuit = $('#txtCuit').val().trim();
         var pv = parseInt($('#txtPuntoVenta').val()) || 0;
@@ -421,8 +379,7 @@
                 alicuotaIva: $('#ddlAlicuota').val(),
                 percepciones: parseFloat($('#txtPercepciones').val()) || 0,
                 condicionVenta: $('#txtCondicionVenta').val(),
-                observaciones: $('#txtObservaciones').val(),
-                archivoAdjunto: $('#hdnArchivoAdjunto').val()
+                observaciones: $('#txtObservaciones').val()
             },
             dataType: 'json',
             success: function (r) {

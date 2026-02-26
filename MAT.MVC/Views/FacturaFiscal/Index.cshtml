@@ -361,7 +361,6 @@
         if (f.archivoAdjunto) {
             html += '<div class="mb-3"><a href="' + f.archivoAdjunto + '" target="_blank" class="btn-modern btn-modern-secondary"><i class="bi bi-paperclip"></i> Ver Adjunto</a></div>';
         }
-        html += '<div class="d-flex justify-content-end gap-2"><button class="btn-modern btn-modern-secondary" onclick="cerrarModalDetalle()"><i class="bi bi-x-lg"></i> Cerrar</button></div>';
         html += '</div>';
 
         $('#contenidoDetalleFactura').html(html);
@@ -370,7 +369,10 @@
             title: 'Factura Fiscal',
             modal: true, width: '65%', maxWidth: '850px', resizable: true,
             position: { my: 'center', at: 'center', of: window },
-            dialogClass: 'modern-dialog'
+            dialogClass: 'modern-dialog',
+            close: function () {
+                $(this).dialog('destroy');
+            }
         });
     }
 
@@ -383,9 +385,8 @@
 
     function cerrarModalDetalle() {
         try {
-            if ($('#modalDetalleFactura').data('ui-dialog')) $('#modalDetalleFactura').dialog('destroy');
+            if ($('#modalDetalleFactura').data('ui-dialog')) $('#modalDetalleFactura').dialog('close');
         } catch (e) { }
-        $('.ui-dialog, .ui-widget-overlay').hide();
     }
 
     function anularFactura(id) {
