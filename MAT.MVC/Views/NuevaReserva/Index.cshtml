@@ -19,8 +19,8 @@
     <span>@Html.Raw(@ViewBag.MsgError)</span>
 </div>
 
-@{if (Model.Reservas.Count <= 0)
-    {
+@if (Model.Reservas.Count <= 0)
+{
         var message = ViewBag.MsgError;
         if (message.Contains("Error with url:"))
         {
@@ -34,9 +34,9 @@
         {
             <h3>El viaje seleccionado posee campos incompletos. Por favor revise los datos del viaje.</h3>
         }
-    }
-    else
-    {
+}
+else
+{
         <div class="container-flex">
             <div class="left-container">
                 <section id="panel-detalle">
@@ -1165,5 +1165,3 @@
 
         </script>
     }
-
-}

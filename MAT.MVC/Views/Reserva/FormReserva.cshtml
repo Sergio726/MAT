@@ -56,21 +56,20 @@
                     <i class="bi bi-file-earmark-text"></i>
                     Presupuesto
                 </h3>
-                @if (ViewBag.Presupuesto != null)
+                @if (ViewBag.PresupuestoCodigo != null)
                 {
-                    var p = ViewBag.Presupuesto;
                     <div class="reserva-presupuesto-vinculado" style="padding: 0.75rem; background: #fef3c7; border-radius: 8px; margin-bottom: 0.5rem;">
                         <strong><i class="bi bi-check-circle"></i> Presupuesto vinculado</strong>
                         <div style="font-size: 0.875rem; margin-top: 0.35rem;">
-                            <span><strong>Código:</strong> @p.CodigoSeguimiento</span>
-                            <span style="margin-left: 1rem;"><strong>Cliente:</strong> @p.NombreCliente</span>
-                            <span style="margin-left: 1rem;"><strong>Monto:</strong> @string.Format("{0:C}", p.MontoPactado)</span>
+                            <span><strong>Código:</strong> @ViewBag.PresupuestoCodigo</span>
+                            <span style="margin-left: 1rem;"><strong>Cliente:</strong> @ViewBag.PresupuestoNombreCliente</span>
+                            <span style="margin-left: 1rem;"><strong>Monto:</strong> @string.Format("{0:C}", ViewBag.PresupuestoMontoPactado)</span>
                         </div>
-                        <a href="@Url.Action("ImprimirPresupuesto", "Presupuesto", new { codigo = p.CodigoSeguimiento })" target="_blank" class="btn-modern btn-modern-secondary btn-sm" style="margin-top: 0.5rem;">
+                        <a href="@Url.Action("ImprimirPresupuesto", "Presupuesto", new { codigo = ViewBag.PresupuestoCodigo })" target="_blank" class="btn-modern btn-modern-secondary btn-sm" style="margin-top: 0.5rem;">
                             <i class="bi bi-download"></i> Descargar
                         </a>
                     </div>
-                    <input type="hidden" id="presupuestoIdReserva" name="presupuestoIdReserva" value="@p.PresupuestoId" />
+                    <input type="hidden" id="presupuestoIdReserva" name="presupuestoIdReserva" value="@ViewBag.PresupuestoId" />
                 }
                 else
                 {

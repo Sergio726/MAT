@@ -6,6 +6,11 @@
 @{
     Guid ViajeID = new Guid();
     Guid PaqueteID = new Guid();
+    string PresupuestoCodigo = null;
+    string PresupuestoNombreCliente = null;
+    decimal? PresupuestoMonto = null;
+    string PresupuestoId = null;
+
     if (Model.Count > 0)
     {
         ViewBag.Title = "Reserva";
@@ -14,7 +19,52 @@
         PaqueteID = Model.First().PaqueteID;
 
     }
-    
+
+    var presupuestoObj = ViewBag.Presupuesto as object;
+    if (presupuestoObj != null)
+    {
+        var tipo = presupuestoObj.GetType();
+        var propId = tipo.GetProperty("PresupuestoId");
+        var propCodigo = tipo.GetProperty("CodigoSeguimiento");
+        var propNombre = tipo.GetProperty("NombreCliente");
+        var propMonto = tipo.GetProperty("MontoPactado");
+
+        if (propId != null)
+        {
+            var valor = propId.GetValue(presupuestoObj, null);
+            if (valor != null)
+            {
+                PresupuestoId = Convert.ToString(valor);
+            }
+        }
+
+        if (propCodigo != null)
+        {
+            var valor = propCodigo.GetValue(presupuestoObj, null);
+            if (valor != null)
+            {
+                PresupuestoCodigo = Convert.ToString(valor);
+            }
+        }
+
+        if (propNombre != null)
+        {
+            var valor = propNombre.GetValue(presupuestoObj, null);
+            if (valor != null)
+            {
+                PresupuestoNombreCliente = Convert.ToString(valor);
+            }
+        }
+
+        if (propMonto != null)
+        {
+            var valor = propMonto.GetValue(presupuestoObj, null);
+            if (valor != null)
+            {
+                PresupuestoMonto = Convert.ToDecimal(valor);
+            }
+        }
+    }
 }
 
 <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
@@ -28,36 +78,35 @@
         <span>@ViewBag.MsgError</span>
     </div>
 
-    @if (ViewBag.Presupuesto != null)
+    @if (!string.IsNullOrEmpty(PresupuestoCodigo))
     {
-        var p = ViewBag.Presupuesto;
         <div class="modern-alert modern-alert-warning reserva-presupuesto-banner" style="margin-bottom: 1rem;">
             <div class="modern-alert-content" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
                 <div>
                     <strong><i class="bi bi-file-earmark-text"></i> Presupuesto vinculado</strong>
                     <div style="font-size: 0.9rem; margin-top: 0.35rem;">
-                        <span><strong>Código:</strong> @p.CodigoSeguimiento</span>
-                        <span style="margin-left: 1rem;"><strong>Cliente:</strong> @p.NombreCliente</span>
-                        <span style="margin-left: 1rem;"><strong>Monto:</strong> @string.Format("{0:C}", p.MontoPactado)</span>
+                        <span><strong>Código:</strong> @PresupuestoCodigo</span>
+                        <span style="margin-left: 1rem;"><strong>Cliente:</strong> @PresupuestoNombreCliente</span>
+                        <span style="margin-left: 1rem;"><strong>Monto:</strong> @(PresupuestoMonto.HasValue ? string.Format("{0:C}", PresupuestoMonto.Value) : "")</span>
                     </div>
                 </div>
-                <a href="@Url.Action("ImprimirPresupuesto", "Presupuesto", new { codigo = p.CodigoSeguimiento })" target="_blank" class="btn-modern btn-modern-secondary btn-sm">
+                <a href="@Url.Action("ImprimirPresupuesto", "Presupuesto", new { codigo = PresupuestoCodigo })" target="_blank" class="btn-modern btn-modern-secondary btn-sm">
                     <i class="bi bi-download"></i> Descargar presupuesto
                 </a>
             </div>
         </div>
     }
 
-    @{if (Model.Count <= 0)
-      {
+    @if (Model.Count <= 0)
+    {
             <div class="modern-card">
                 <div class="modern-card-content" style="padding: 2rem;">
                     <h3>El viaje seleccionado posee campos incompletos. Por favor revise los datos del viaje.</h3>
                 </div>
             </div>
-      }
-      else
-      {
+    }
+    else
+    {
   
         <div class="oculto">
             Id Pasajero:
@@ -470,11 +519,8 @@
         <input type="hidden" id="hdnListMenor" value="" data-tutor="" data-complete="false" data-monto=""/>
         <input type="hidden" id="hdnViajeID" value="@ViajeID" />
         <input type="hidden" id="hdnViajeMonedaTipo" value="@Model.First().MonedaTipo.ToString()" />
-        @{
-            var presupuesto = ViewBag.Presupuesto;
-        }
-        <input type="hidden" id="presupuestoCodigo" value="@(presupuesto != null ? presupuesto.CodigoSeguimiento : "")" />
-        <input type="hidden" id="presupuestoId" value="@(presupuesto != null ? presupuesto.PresupuestoId : "")" />
+        <input type="hidden" id="presupuestoCodigo" value="@(PresupuestoCodigo ?? string.Empty)" />
+        <input type="hidden" id="presupuestoId" value="@(PresupuestoId ?? string.Empty)" />
 
         <div class="modern-alerts-container">
 
@@ -557,7 +603,6 @@
 
         </div>
 
-    }
     }
 </div>
 
