@@ -983,8 +983,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 var pago = pagos.FirstOrDefault(p => p.PagoID == pagoId.ToString());
                 if (pago == null)
                 {
-                    ViewBag.Error = "No se encontro el pago.";
-                    return PartialView(new Models.ReciboPagoViewModel());
+                    ViewBag.Error = "No se encontró el pago. Es posible que haya sido eliminado.";
+                    return PartialView("ReciboPago", new Models.ReciboPagoViewModel());
                 }
 
                 var detalle = Models.PagoMethod.GetPagoDetalleByPagoID(pagoId);
@@ -1001,9 +1001,9 @@ namespace MAT.MVC.Controllers.PersonaCliente
                     Vendedor = pago.Vendedor,
                     Moneda = pago.Moneda,
                     ClienteNombre = factura != null ? (factura.ClienteNombre + " " + factura.ClienteApellido).Trim() : "",
-                    PaqueteDescripcion = factura != null ? factura.PaqueteDescripcion : "",
-                    ViajeDescripcion = factura != null ? factura.ViajeDescripcion : "",
-                    NroFactura = factura != null ? factura.NroFactura : "",
+                    PaqueteDescripcion = factura != null ? (factura.PaqueteDescripcion ?? "") : "",
+                    ViajeDescripcion = factura != null ? (factura.ViajeDescripcion ?? "") : "",
+                    NroFactura = factura != null ? (factura.NroFactura ?? "") : "",
                     Detalle = detalle
                 };
 
@@ -1011,7 +1011,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                MAT.MVC.Infrastructure.ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ReciboPago");
+                ViewBag.Error = "Ocurrió un error al cargar el recibo. Intente nuevamente.";
                 return PartialView("ReciboPago", new Models.ReciboPagoViewModel());
             }
         }

@@ -334,7 +334,10 @@ namespace MAT.MVC.Models
                 if (_reader.Read())
                 {
                     Factura.PaqueteDescripcion = _reader["PaqueteDescripcion"].ToString();
-                    Factura.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
+                    if (_reader["MonedaTipo"] != DBNull.Value && _reader["MonedaTipo"] != null)
+                    {
+                        Factura.MonedaTipo = Convert.ToInt32(_reader["MonedaTipo"]);
+                    }
                 }
             }
             return Factura;
