@@ -799,6 +799,7 @@ namespace MAT.MVC.Controllers.Presupuesto
                 {
                     presupuestoId = p.PresupuestoID.ToString(),
                     codigoSeguimiento = p.CodigoSeguimiento,
+                    nombreCliente = p.NombreCliente,
                     dniCliente = p.DniCliente,
                     vendedorOrigenNombre = p.VendedorOrigenNombre,
                     vendedorIdOrigen = p.VendedorIdOrigen.ToString(),

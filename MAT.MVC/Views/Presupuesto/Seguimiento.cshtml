@@ -161,9 +161,11 @@
                     }
                 },
                 {
-                    data: 'dniCliente',
+                    data: 'nombreCliente',
                     render: function (data, type, row) {
-                        return '<div><strong>DNI:</strong> ' + (data || 'N/A') + '</div>';
+                        var nombre = data ? '<strong>' + data + '</strong>' : '<em class="text-muted">Sin nombre</em>';
+                        var dni = row.dniCliente ? '<br><small class="text-muted">DNI: ' + row.dniCliente + '</small>' : '';
+                        return nombre + dni;
                     }
                 },
                 {
