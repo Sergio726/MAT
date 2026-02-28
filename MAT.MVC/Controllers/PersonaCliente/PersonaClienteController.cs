@@ -984,7 +984,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (pago == null)
                 {
                     ViewBag.Error = "No se encontró el pago. Es posible que haya sido eliminado.";
-                    return PartialView("ReciboPago", new Models.ReciboPagoViewModel());
+                    return View("ReciboPago", new Models.ReciboPagoViewModel());
                 }
 
                 var detalle = Models.PagoMethod.GetPagoDetalleByPagoID(pagoId);
@@ -1007,13 +1007,13 @@ namespace MAT.MVC.Controllers.PersonaCliente
                     Detalle = detalle
                 };
 
-                return PartialView("ReciboPago", model);
+                return View("ReciboPago", model);
             }
             catch (Exception e)
             {
                 MAT.MVC.Infrastructure.ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ReciboPago");
                 ViewBag.Error = "Ocurrió un error al cargar el recibo. Intente nuevamente.";
-                return PartialView("ReciboPago", new Models.ReciboPagoViewModel());
+                return View("ReciboPago", new Models.ReciboPagoViewModel());
             }
         }
 
