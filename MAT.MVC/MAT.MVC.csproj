@@ -503,6 +503,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\mat.cnrt.print.css" />
     <Content Include="Content\voucher.css" />
+    <Content Include="Content\recibo-pago.css" />
     <Content Include="Dependencies\Microsoft.Web.WebPages.OAuth.dll" />
     <Content Include="Dependencies\Microsoft.Web.WebPages.OAuth.xml" />
     <Content Include="Dependencies\System.Web.Helpers.dll" />
