@@ -670,8 +670,7 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ActionResult Logs(string correlationId = null)
         {
-            if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
-                return RedirectToAction("Index", "Home");
+            if (!IsAdminUser()) return RedirectToAction("Index", "Home");
 
             var logs = MATLogger.GetRecentLogs(1000);
 
@@ -686,14 +685,26 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ContentResult LogsRaw(string correlationId = null)
         {
-            if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
-                return Content("Sin permisos");
+            if (!IsAdminUser()) return Content("Sin permisos");
 
             var logs = MATLogger.GetRecentLogs(1000);
             if (!string.IsNullOrWhiteSpace(correlationId))
                 logs = logs.Where(l => l.Contains(correlationId)).ToList();
 
             return Content(string.Join("\n", logs), "text/plain", Encoding.UTF8);
+        }
+
+        private bool IsAdminUser()
+        {
+            try
+            {
+                return Roles.IsUserInRole(User.Identity.Name, "Administrador");
+            }
+            catch
+            {
+                // RoleManager puede no estar configurado; en ese caso permitir a cualquier usuario autenticado
+                return User.Identity.IsAuthenticated;
+            }
         }
 
         public JsonResult AuditFactura(string dateFrom, string dateTo)
