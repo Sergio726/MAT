@@ -1,4 +1,5 @@
 @{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     ViewBag.Title = "Logs del sistema";
     var logs = ViewBag.Logs as List<string> ?? new List<string>();
     var correlationId = ViewBag.CorrelationId as string;

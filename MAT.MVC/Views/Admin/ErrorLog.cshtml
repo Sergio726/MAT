@@ -1,106 +1,347 @@
-@using System.Data
-@model DataTable
 @{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     ViewBag.Title = "Error Log";
-    var correlationId = ViewBag.CorrelationId as string;
-    var fechaDesde    = ViewBag.FechaDesde    as string;
-    var rows          = Model != null ? Model.Rows : null;
-    int count         = rows != null ? rows.Count : 0;
 }
 
-<div class="container-fluid" style="padding:20px;">
-    <h2>Error Log <small>(@count entradas)</small></h2>
-
-    <form method="get" class="form-inline" style="margin-bottom:15px;">
-        <div class="input-group" style="margin-right:8px;">
-            <input type="text" name="correlationId" value="@correlationId" class="form-control"
-                   placeholder="Correlation ID" style="width:280px;" />
-        </div>
-        <div class="input-group" style="margin-right:8px;">
-            <input type="date" name="fechaDesde" value="@fechaDesde" class="form-control" />
-        </div>
-        <button type="submit" class="btn btn-primary">Filtrar</button>
-        <a href="@Url.Action("ErrorLog")" class="btn btn-default" style="margin-left:4px;">Limpiar</a>
-    </form>
-
-    @if (count == 0)
-    {
-        <div class="alert alert-info">No hay errores registrados con los filtros aplicados.</div>
+<style>
+    #tabla-errores thead th { background: #2c3e50; color: #fff; white-space: nowrap; }
+    #tabla-errores { font-size: 12px; }
+    .stack-pre {
+        font-size: 11px; max-height: 280px; overflow-y: auto; white-space: pre-wrap;
+        background: #2b2b2b; color: #f8f8f2; padding: 10px; border-radius: 4px; margin: 0;
     }
-    else
-    {
+    .badge-1 { background: #5bc0de; }
+    .badge-2 { background: #f0ad4e; }
+    .badge-3 { background: #d9534f; }
+    #diagnostico-box {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 12px; height: 620px; background: #1e1e1e; color: #d4d4d4;
+        border: 1px solid #555; padding: 12px; resize: vertical; width: 100%;
+        line-height: 1.5;
+    }
+</style>
+
+<div class="container-fluid" style="padding: 20px; max-width: 1500px;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+        <h2 style="margin:0;">
+            Error Log &nbsp;<small class="text-muted" id="lbl-count"></small>
+        </h2>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm active" id="btn-tabla" onclick="mostrarVista('tabla')">
+                <span class="glyphicon glyphicon-th-list"></span>&nbsp; Tabla
+            </button>
+            <button type="button" class="btn btn-default btn-sm" id="btn-diag" onclick="mostrarVista('diagnostico')">
+                <span class="glyphicon glyphicon-paste"></span>&nbsp; Diagnóstico
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div style="margin-bottom:16px; background:#f5f5f5; padding:12px 14px; border-radius:4px; border:1px solid #ddd;">
+        <div class="form-inline">
+            <div class="form-group" style="margin-right:8px;">
+                <input type="text" id="filtro-correlation" class="form-control input-sm"
+                       placeholder="Correlation ID" style="width:290px; font-family:monospace;" />
+            </div>
+            <div class="form-group" style="margin-right:8px;">
+                <input type="date" id="filtro-fecha" class="form-control input-sm" title="Desde fecha" />
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="cargarDatos()">
+                <span class="glyphicon glyphicon-filter"></span>&nbsp;Filtrar
+            </button>
+            <button class="btn btn-default btn-sm" style="margin-left:4px;" onclick="limpiarFiltros()">
+                <span class="glyphicon glyphicon-remove"></span>&nbsp;Limpiar
+            </button>
+            <button class="btn btn-default btn-sm" style="margin-left:4px;" onclick="cargarDatos()" title="Recargar">
+                <span class="glyphicon glyphicon-refresh"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div id="estado-carga" style="text-align:center; padding:30px; color:#888;">
+        <span class="glyphicon glyphicon-refresh spinning"></span>&nbsp; Cargando...
+    </div>
+
+    <div id="estado-vacio" class="alert alert-info" style="display:none;">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        &nbsp;No hay errores registrados con los filtros aplicados.
+    </div>
+
+    <!-- Vista Tabla -->
+    <div id="vista-tabla" style="display:none;">
         <div style="overflow-x:auto;">
-            <table class="table table-condensed table-bordered table-hover" style="font-size:12px;">
-                <thead class="thead-dark" style="background:#333;color:#fff;">
+            <table class="table table-condensed table-bordered table-hover" id="tabla-errores" style="margin-bottom:0;">
+                <thead>
                     <tr>
-                        <th style="width:50px;">ID</th>
-                        <th style="width:140px;">Fecha</th>
-                        <th style="width:200px;">Correlation ID</th>
-                        <th style="width:200px;">Tipo</th>
+                        <th style="width:48px;">ID</th>
+                        <th style="width:135px;">Fecha</th>
+                        <th style="width:175px;">Correlation ID</th>
+                        <th style="width:210px;">Tipo</th>
                         <th>Mensaje</th>
-                        <th style="width:220px;">URL</th>
-                        <th style="width:100px;">Usuario</th>
-                        <th style="width:40px;">Imp.</th>
-                        <th style="width:60px;">Stack</th>
+                        <th style="width:210px;">URL</th>
+                        <th style="width:85px;">Usuario</th>
+                        <th style="width:32px;" title="Importancia">!</th>
+                        <th style="width:100px;"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach (DataRow row in rows)
-                    {
-                        var id       = row["Id"]?.ToString();
-                        var fecha    = row["FechaHora"] != DBNull.Value ? Convert.ToDateTime(row["FechaHora"]).ToString("dd/MM/yyyy HH:mm:ss") : "";
-                        var corrId   = row["CorrelationId"]?.ToString() ?? "";
-                        var tipo     = row["Tipo"]?.ToString() ?? "";
-                        var mensaje  = row["Mensaje"]?.ToString() ?? "";
-                        var stack    = row["StackTrace"]?.ToString() ?? "";
-                        var url      = row["Url"]?.ToString() ?? "";
-                        var usuario  = row["Usuario"]?.ToString() ?? "";
-                        var imp      = row["Importancia"]?.ToString() ?? "1";
-                        var rowCss   = imp == "2" ? "warning" : (imp == "3" ? "danger" : "");
-                        <tr class="@rowCss">
-                            <td>@id</td>
-                            <td>@fecha</td>
-                            <td><small>@corrId</small></td>
-                            <td><small>@tipo</small></td>
-                            <td>@mensaje</td>
-                            <td style="word-break:break-all;"><small>@url</small></td>
-                            <td><small>@usuario</small></td>
-                            <td style="text-align:center;">@imp</td>
-                            <td style="text-align:center;">
-                                @if (!string.IsNullOrEmpty(stack))
-                                {
-                                    <a href="#" class="btn btn-xs btn-default toggle-stack"
-                                       data-target="stack-@id">Ver</a>
-                                }
-                            </td>
-                        </tr>
-                        @if (!string.IsNullOrEmpty(stack))
-                        {
-                            <tr id="stack-@id" style="display:none;">
-                                <td colspan="9">
-                                    <pre style="font-size:11px;max-height:300px;overflow-y:auto;white-space:pre-wrap;background:#f8f8f8;padding:8px;">@stack</pre>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
+                <tbody id="tabla-body"></tbody>
             </table>
         </div>
-    }
+    </div>
+
+    <!-- Vista Diagnóstico -->
+    <div id="vista-diagnostico" style="display:none;">
+        <div style="margin-bottom:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-success btn-sm" onclick="copiarTodo()">
+                <span class="glyphicon glyphicon-copy"></span>&nbsp;Copiar todo
+            </button>
+            <button class="btn btn-default btn-sm" onclick="seleccionarTodo()">
+                <span class="glyphicon glyphicon-text-background"></span>&nbsp;Seleccionar todo
+            </button>
+            <span id="msg-copiado" style="display:none; color:#3c763d; font-weight:bold;">
+                <span class="glyphicon glyphicon-ok"></span>&nbsp;¡Copiado!
+            </span>
+            <span class="text-muted" style="font-size:12px;">
+                — Pegá este texto directamente en el chat para diagnóstico
+            </span>
+        </div>
+        <textarea id="diagnostico-box" readonly spellcheck="false"></textarea>
+    </div>
+
 </div>
 
+<style>
+    .spinning { animation: spin 1s linear infinite; display: inline-block; }
+    @@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+
 <script>
+(function () {
+    var ERRORES = [];
+    var VISTA_ACTUAL = 'tabla';
+
+    // Carga inicial
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.toggle-stack').forEach(function (btn) {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                var targetId = this.getAttribute('data-target');
-                var row = document.getElementById(targetId);
-                if (row) {
-                    row.style.display = row.style.display === 'none' ? '' : 'none';
-                    this.textContent = row.style.display === 'none' ? 'Ver' : 'Ocultar';
-                }
-            });
-        });
+        cargarDatos();
     });
+
+    window.cargarDatos = function () {
+        var corrId = document.getElementById('filtro-correlation').value.trim();
+        var fecha  = document.getElementById('filtro-fecha').value;
+
+        mostrarEstado('cargando');
+
+        var url = '@Url.Action("ErrorLogJson")';
+        var params = [];
+        if (corrId) params.push('correlationId=' + encodeURIComponent(corrId));
+        if (fecha)  params.push('fechaDesde='    + encodeURIComponent(fecha));
+        if (params.length) url += '?' + params.join('&');
+
+        fetch(url)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.ok) { mostrarEstado('error', data.mensaje); return; }
+                ERRORES = data.errores || [];
+                renderizarTabla();
+                renderizarDiagnostico();
+                mostrarEstado(ERRORES.length === 0 ? 'vacio' : 'datos');
+            })
+            .catch(function (err) {
+                mostrarEstado('error', 'Error al conectar con el servidor.');
+            });
+    };
+
+    window.limpiarFiltros = function () {
+        document.getElementById('filtro-correlation').value = '';
+        document.getElementById('filtro-fecha').value = '';
+        cargarDatos();
+    };
+
+    // ---- Renderizar tabla ----
+    function renderizarTabla() {
+        var tbody = document.getElementById('tabla-body');
+        var html = '';
+        for (var i = 0; i < ERRORES.length; i++) {
+            var e = ERRORES[i];
+            var rowCss = e.imp === '3' ? 'danger' : (e.imp === '2' ? 'warning' : '');
+            var stackId = 'stack-' + e.id;
+            html += '<tr class="' + rowCss + '">';
+            html += '<td style="text-align:center;color:#888;">'  + esc(e.id)    + '</td>';
+            html += '<td style="white-space:nowrap;">'             + esc(e.fecha) + '</td>';
+            html += '<td style="font-family:monospace;font-size:10px;word-break:break-all;">' + esc(e.corrId) + '</td>';
+            html += '<td style="font-size:11px;word-break:break-word;">' + esc(e.tipo) + '</td>';
+            html += '<td>'                                          + esc(e.msg)   + '</td>';
+            html += '<td style="word-break:break-all;font-size:11px;">' + esc(e.url) + '</td>';
+            html += '<td><small>'                                   + esc(e.user)  + '</small></td>';
+            html += '<td style="text-align:center;"><span class="badge badge-' + esc(e.imp) + '">' + esc(e.imp) + '</span></td>';
+            html += '<td style="text-align:center;white-space:nowrap;">';
+            if (e.stack) {
+                html += '<button class="btn btn-xs btn-default" onclick="toggleStack(\'' + stackId + '\', this)">Stack</button> ';
+            }
+            html += '<button class="btn btn-xs btn-info" title="Copiar" onclick="copiarFila(' + i + ', this)">';
+            html += '<span class="glyphicon glyphicon-copy"></span></button>';
+            html += '</td>';
+            html += '</tr>';
+            if (e.stack) {
+                html += '<tr id="' + stackId + '" style="display:none;background:#222;">';
+                html += '<td colspan="9" style="padding:0;"><pre class="stack-pre">' + esc(e.stack) + '</pre></td>';
+                html += '</tr>';
+            }
+        }
+        tbody.innerHTML = html;
+        document.getElementById('lbl-count').textContent = ERRORES.length + (ERRORES.length === 1 ? ' entrada' : ' entradas');
+    }
+
+    // ---- Renderizar diagnóstico ----
+    function renderizarDiagnostico() {
+        var lineas = [];
+        var sep  = rep('\u2500', 70);
+        var sep2 = rep('\u2504', 70);
+
+        lineas.push('# ERROR LOG \u2014 ' + ERRORES.length + ' entrada(s)');
+        lineas.push('# Generado: ' + new Date().toLocaleString('es-AR'));
+        lineas.push('# ' + sep);
+
+        for (var i = 0; i < ERRORES.length; i++) {
+            var e = ERRORES[i];
+            lineas.push('');
+            lineas.push('\u250c' + sep);
+            lineas.push('\u2502 #' + (i + 1) + '  \u00b7  ' + (e.fecha || '\u2014') + '  \u00b7  Importancia: ' + (e.imp || '1'));
+            lineas.push('\u251c' + sep);
+            lineas.push('\u2502 Correlation ID : ' + (e.corrId || '\u2014'));
+            lineas.push('\u2502 Tipo           : ' + (e.tipo   || '\u2014'));
+            lineas.push('\u2502 URL            : ' + (e.url    || '\u2014'));
+            lineas.push('\u2502 Usuario        : ' + (e.user   || '\u2014'));
+            lineas.push('\u251c' + sep2);
+            lineas.push('\u2502 MENSAJE:');
+            (e.msg || '\u2014').split('\n').forEach(function (l) { lineas.push('\u2502   ' + l); });
+            if (e.stack) {
+                lineas.push('\u251c' + sep2);
+                lineas.push('\u2502 STACKTRACE:');
+                e.stack.split('\n').forEach(function (l) { lineas.push('\u2502   ' + l.trim()); });
+            }
+            lineas.push('\u2514' + sep);
+        }
+        lineas.push('');
+        lineas.push('# FIN DEL LOG');
+        document.getElementById('diagnostico-box').value = lineas.join('\n');
+    }
+
+    // ---- Mostrar/ocultar estados ----
+    function mostrarEstado(estado, msg) {
+        document.getElementById('estado-carga').style.display    = estado === 'cargando' ? ''      : 'none';
+        document.getElementById('estado-vacio').style.display    = estado === 'vacio'    ? ''      : 'none';
+        document.getElementById('vista-tabla').style.display     = (estado === 'datos' && VISTA_ACTUAL === 'tabla')       ? '' : 'none';
+        document.getElementById('vista-diagnostico').style.display = (estado === 'datos' && VISTA_ACTUAL === 'diagnostico') ? '' : 'none';
+        if (estado === 'datos') {
+            document.getElementById('vista-tabla').style.display       = VISTA_ACTUAL === 'tabla'       ? '' : 'none';
+            document.getElementById('vista-diagnostico').style.display = VISTA_ACTUAL === 'diagnostico' ? '' : 'none';
+        }
+        if (estado === 'error') {
+            document.getElementById('estado-vacio').style.display = '';
+            document.getElementById('estado-vacio').textContent = msg || 'Error';
+        }
+    }
+
+    // ---- Cambiar vista ----
+    window.mostrarVista = function (tipo) {
+        VISTA_ACTUAL = tipo;
+        document.getElementById('vista-tabla').style.display       = tipo === 'tabla'       ? '' : 'none';
+        document.getElementById('vista-diagnostico').style.display = tipo === 'diagnostico' ? '' : 'none';
+        document.getElementById('btn-tabla').classList.toggle('active', tipo === 'tabla');
+        document.getElementById('btn-diag').classList.toggle('active',  tipo === 'diagnostico');
+    };
+
+    // ---- Toggle stack trace ----
+    window.toggleStack = function (id, btn) {
+        var tr = document.getElementById(id);
+        if (!tr) return;
+        var visible = tr.style.display !== 'none';
+        tr.style.display = visible ? 'none' : '';
+        btn.textContent  = visible ? 'Stack' : 'Ocultar';
+    };
+
+    // ---- Copiar fila individual ----
+    window.copiarFila = function (idx, btn) {
+        copiar(formatearError(ERRORES[idx], idx + 1), btn);
+    };
+
+    // ---- Copiar todo diagnóstico ----
+    window.copiarTodo = function () {
+        copiar(document.getElementById('diagnostico-box').value, null, function () {
+            var m = document.getElementById('msg-copiado');
+            m.style.display = '';
+            setTimeout(function () { m.style.display = 'none'; }, 3000);
+        });
+    };
+
+    window.seleccionarTodo = function () {
+        var ta = document.getElementById('diagnostico-box');
+        if (ta) { ta.focus(); ta.select(); }
+    };
+
+    function formatearError(e, num) {
+        var sep  = rep('\u2500', 70);
+        var sep2 = rep('\u2504', 70);
+        var L = [];
+        L.push('\u250c' + sep);
+        L.push('\u2502 #' + num + '  \u00b7  ' + (e.fecha || '\u2014') + '  \u00b7  Importancia: ' + (e.imp || '1'));
+        L.push('\u251c' + sep);
+        L.push('\u2502 Correlation ID : ' + (e.corrId || '\u2014'));
+        L.push('\u2502 Tipo           : ' + (e.tipo   || '\u2014'));
+        L.push('\u2502 URL            : ' + (e.url    || '\u2014'));
+        L.push('\u2502 Usuario        : ' + (e.user   || '\u2014'));
+        L.push('\u251c' + sep2);
+        L.push('\u2502 MENSAJE:');
+        (e.msg || '\u2014').split('\n').forEach(function (l) { L.push('\u2502   ' + l); });
+        if (e.stack) {
+            L.push('\u251c' + sep2);
+            L.push('\u2502 STACKTRACE:');
+            e.stack.split('\n').forEach(function (l) { L.push('\u2502   ' + l.trim()); });
+        }
+        L.push('\u2514' + sep);
+        return L.join('\n');
+    }
+
+    function copiar(texto, btn, cb) {
+        function ok() {
+            if (btn) {
+                var orig = btn.innerHTML;
+                btn.innerHTML = '<span class="glyphicon glyphicon-ok"></span>';
+                setTimeout(function () { btn.innerHTML = orig; }, 2000);
+            }
+            if (cb) cb();
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(texto).then(ok)['catch'](fallback);
+        } else { fallback(); }
+        function fallback() {
+            var ta = document.createElement('textarea');
+            ta.value = texto;
+            ta.style.cssText = 'position:fixed;opacity:0;';
+            document.body.appendChild(ta);
+            ta.focus(); ta.select();
+            try { document.execCommand('copy'); } catch (ex) {}
+            document.body.removeChild(ta);
+            ok();
+        }
+    }
+
+    function esc(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function rep(ch, n) {
+        var s = '';
+        for (var i = 0; i < n; i++) s += ch;
+        return s;
+    }
+}());
 </script>

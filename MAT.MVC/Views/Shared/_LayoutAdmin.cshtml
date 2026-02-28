@@ -1,4 +1,4 @@
-﻿@using System.Web.Security
+@using System.Web.Security
 <!DOCTYPE html>
 <html>
 <head>
@@ -117,6 +117,12 @@
                     <a class="nav-link" href="/Admin/PlanillasGeneradas"><i class="bi bi-printer"></i> Planillas Generadas</a>
                 </nav>
 
+                <div class="nav-section-title">Sistema</div>
+                <nav class="nav nav-pills flex-column gap-1">
+                    <a class="nav-link" href="/Admin/ErrorLog"><i class="bi bi-bug"></i> Error Log</a>
+                    <a class="nav-link" href="/Admin/Logs"><i class="bi bi-terminal"></i> Log en memoria</a>
+                </nav>
+
                 @if (isAdminDev)
                 {
                     <div class="nav-section-title">Dev</div>
@@ -165,6 +171,12 @@
                     <nav class="nav nav-pills flex-column gap-1">
                         <a class="nav-link" href="/Admin/PlanillaServicios"><i class="bi bi-wrench-adjustable"></i> Planilla Servicios</a>
                         <a class="nav-link" href="/Admin/PlanillasGeneradas"><i class="bi bi-printer"></i> Planillas Generadas</a>
+                    </nav>
+
+                    <div class="nav-section-title">Sistema</div>
+                    <nav class="nav nav-pills flex-column gap-1">
+                        <a class="nav-link" href="/Admin/ErrorLog"><i class="bi bi-bug"></i> Error Log</a>
+                        <a class="nav-link" href="/Admin/Logs"><i class="bi bi-terminal"></i> Log en memoria</a>
                     </nav>
 
                     @if (isAdminDev)

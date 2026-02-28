@@ -695,9 +695,17 @@ namespace MAT.MVC.Controllers.Admin
         }
 
         [Authorize]
-        public ActionResult ErrorLog(string correlationId = null, string fechaDesde = null)
+        public ActionResult ErrorLog()
         {
             if (!IsAdminUser()) return RedirectToAction("Index", "Home");
+            return View();
+        }
+
+        [Authorize]
+        public JsonResult ErrorLogJson(string correlationId = null, string fechaDesde = null)
+        {
+            if (!IsAdminUser())
+                return Json(new { ok = false, mensaje = "Sin permisos" }, JsonRequestBehavior.AllowGet);
 
             DateTime? fecha = null;
             if (!string.IsNullOrWhiteSpace(fechaDesde))
@@ -708,9 +716,26 @@ namespace MAT.MVC.Controllers.Admin
             }
 
             var dt = DbErrorLogger.GetRecent(200, correlationId, fecha);
-            ViewBag.CorrelationId = correlationId;
-            ViewBag.FechaDesde    = fechaDesde;
-            return View(dt);
+            var lista = new System.Collections.Generic.List<object>();
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                var row = dt.Rows[i];
+                lista.Add(new
+                {
+                    id     = row["Id"] == DBNull.Value     ? "" : row["Id"].ToString(),
+                    fecha  = row["FechaHora"] == DBNull.Value ? "" : Convert.ToDateTime(row["FechaHora"]).ToString("dd/MM/yyyy HH:mm:ss"),
+                    corrId = row["CorrelationId"] == DBNull.Value ? "" : row["CorrelationId"].ToString(),
+                    tipo   = row["Tipo"] == DBNull.Value   ? "" : row["Tipo"].ToString(),
+                    msg    = row["Mensaje"] == DBNull.Value ? "" : row["Mensaje"].ToString(),
+                    stack  = row["StackTrace"] == DBNull.Value ? "" : row["StackTrace"].ToString(),
+                    url    = row["Url"] == DBNull.Value    ? "" : row["Url"].ToString(),
+                    user   = row["Usuario"] == DBNull.Value ? "" : row["Usuario"].ToString(),
+                    imp    = row["Importancia"] == DBNull.Value ? "1" : row["Importancia"].ToString()
+                });
+            }
+
+            return Json(new { ok = true, errores = lista }, JsonRequestBehavior.AllowGet);
         }
 
         private bool IsAdminUser()
