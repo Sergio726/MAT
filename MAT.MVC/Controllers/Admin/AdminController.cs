@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -665,6 +665,35 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ActionResult AuditoriaFacturas() {
             return View();
+        }
+
+        [Authorize]
+        public ActionResult Logs(string correlationId = null)
+        {
+            if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
+                return RedirectToAction("Index", "Home");
+
+            var logs = MATLogger.GetRecentLogs(1000);
+
+            if (!string.IsNullOrWhiteSpace(correlationId))
+                logs = logs.Where(l => l.Contains(correlationId)).ToList();
+
+            ViewBag.CorrelationId = correlationId;
+            ViewBag.Logs = logs;
+            return View();
+        }
+
+        [Authorize]
+        public ContentResult LogsRaw(string correlationId = null)
+        {
+            if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
+                return Content("Sin permisos");
+
+            var logs = MATLogger.GetRecentLogs(1000);
+            if (!string.IsNullOrWhiteSpace(correlationId))
+                logs = logs.Where(l => l.Contains(correlationId)).ToList();
+
+            return Content(string.Join("\n", logs), "text/plain", Encoding.UTF8);
         }
 
         public JsonResult AuditFactura(string dateFrom, string dateTo)

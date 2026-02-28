@@ -841,6 +841,7 @@
     <Content Include="Views\Viaje\ListViajes.cshtml" />
     <Content Include="Views\Viaje\_ItinerarioSection.cshtml" />
     <Content Include="Views\Admin\AuditoriaFacturas.cshtml" />
+    <Content Include="Views\Admin\Logs.cshtml" />
     <Content Include="Views\PersonaCliente\HistorialdePagos.cshtml" />
     <Content Include="Views\PersonaCliente\partialHistorialdePagos.cshtml" />
     <Content Include="Views\PersonaCliente\partialHistorialdePagosByFactura.cshtml" />

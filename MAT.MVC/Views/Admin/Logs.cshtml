@@ -1,0 +1,40 @@
+@{
+    ViewBag.Title = "Logs del sistema";
+    var logs = ViewBag.Logs as List<string> ?? new List<string>();
+    var correlationId = ViewBag.CorrelationId as string;
+}
+
+<div class="container-fluid" style="padding: 20px;">
+    <h2>Logs del sistema <small>(@logs.Count entradas)</small></h2>
+
+    <form method="get" class="form-inline" style="margin-bottom: 15px;">
+        <div class="input-group">
+            <input type="text" name="correlationId" value="@correlationId" class="form-control"
+                   placeholder="Filtrar por Correlation ID" style="width: 320px;" />
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="@Url.Action("Logs")" class="btn btn-default">Limpiar</a>
+            </span>
+        </div>
+        &nbsp;
+        <a href="@Url.Action("LogsRaw", new { correlationId = correlationId })" class="btn btn-default" target="_blank">
+            Ver como texto plano
+        </a>
+    </form>
+
+    @if (!string.IsNullOrWhiteSpace(correlationId))
+    {
+        <div class="alert alert-info">
+            Mostrando entradas para Correlation ID: <strong>@correlationId</strong>
+        </div>
+    }
+
+    @if (logs.Count == 0)
+    {
+        <div class="alert alert-warning">No hay entradas de log en memoria con ese filtro.</div>
+    }
+    else
+    {
+        <pre style="background:#1e1e1e; color:#d4d4d4; padding:15px; border-radius:5px; font-size:12px; max-height:80vh; overflow-y:auto;">@string.Join("\n", logs)</pre>
+    }
+</div>

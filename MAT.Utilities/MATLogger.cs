@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,32 +9,45 @@ namespace MAT.Utilities
 {
     public static class MATLogger
     {
-        readonly static int SAVE_PERIOD = 10 * 1000;// period=10 seconds
-        readonly static int SAVE_COUNTER = 1000;// save after 1000 messages
-        readonly static int MIN_IMPORTANCE = 0;// log only messages with importance value >=MIN_IMPORTANCE
-
-        // Deshabilitado: No se utilizan archivos físicos de log
+        readonly static int SAVE_PERIOD = 10 * 1000;
+        readonly static int SAVE_COUNTER = 200;
+        readonly static int MIN_IMPORTANCE = 0;
+        readonly static int MAX_IN_MEMORY = 2000;
 
         readonly static List<string> _list_log = new List<string>();
         readonly static object _locker = new object();
         static int _counter = 0;
         static DateTime _last_save = DateTime.Now;
 
+        private static string GetLogDirectory()
+        {
+            try
+            {
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                return Path.Combine(baseDir, "App_Data", "logs");
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public static void NewFile()
         {
-            // Deshabilitado: No se crean archivos físicos
             SaveToFile();
             lock (_locker)
             {
                 _counter = 0;
             }
         }
+
         public static void Log(string LogMessage, int Importance)
         {
             if (Importance < MIN_IMPORTANCE) return;
+            var entry = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffff},{1},{2}", DateTime.Now, LogMessage, Importance);
             lock (_locker)
             {
-                _list_log.Add(String.Format("{0:HH:mm:ss.ffff},{1},{2}", DateTime.Now, LogMessage, Importance));
+                _list_log.Add(entry);
                 _counter++;
             }
             TimeSpan timeDiff = DateTime.Now - _last_save;
@@ -45,8 +58,7 @@ namespace MAT.Utilities
 
         public static void SaveToFile()
         {
-            // Deshabilitado: No se escriben archivos físicos de log
-            // Los logs se mantienen solo en memoria y se limpian periódicamente
+            List<string> toWrite;
             lock (_locker)
             {
                 if (_list_log.Count == 0)
@@ -54,15 +66,31 @@ namespace MAT.Utilities
                     _last_save = DateTime.Now;
                     return;
                 }
-                
-                // Limpiar logs antiguos de la memoria (mantener solo los últimos 1000)
-                if (_list_log.Count > 1000)
-                {
-                    _list_log.RemoveRange(0, _list_log.Count - 1000);
-                }
-                
+                toWrite = new List<string>(_list_log);
+                if (_list_log.Count > MAX_IN_MEMORY)
+                    _list_log.RemoveRange(0, _list_log.Count - MAX_IN_MEMORY);
                 _counter = 0;
                 _last_save = DateTime.Now;
+            }
+
+            try
+            {
+                string logDir = GetLogDirectory();
+                if (string.IsNullOrEmpty(logDir)) return;
+                if (!Directory.Exists(logDir)) Directory.CreateDirectory(logDir);
+                string logFile = Path.Combine(logDir, $"mat-log-{DateTime.Now:yyyy-MM-dd}.txt");
+                File.AppendAllLines(logFile, toWrite, Encoding.UTF8);
+            }
+            catch { /* no-op: logging nunca debe romper la app */ }
+        }
+
+        /// <summary>Devuelve las últimas N entradas del log en memoria.</summary>
+        public static List<string> GetRecentLogs(int count = 500)
+        {
+            lock (_locker)
+            {
+                int skip = Math.Max(0, _list_log.Count - count);
+                return _list_log.Skip(skip).ToList();
             }
         }
 
