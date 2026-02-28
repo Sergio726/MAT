@@ -29,6 +29,8 @@ namespace MAT.MVC.Infrastructure
             }
             catch { /* no-op */ }
 
+            DbErrorLogger.Log(correlationId, ex);
+
             if (IsDev())
                 return $"[{correlationId}] {ex.Message}";
 

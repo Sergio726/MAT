@@ -1,0 +1,106 @@
+@using System.Data
+@model DataTable
+@{
+    ViewBag.Title = "Error Log";
+    var correlationId = ViewBag.CorrelationId as string;
+    var fechaDesde    = ViewBag.FechaDesde    as string;
+    var rows          = Model != null ? Model.Rows : null;
+    int count         = rows != null ? rows.Count : 0;
+}
+
+<div class="container-fluid" style="padding:20px;">
+    <h2>Error Log <small>(@count entradas)</small></h2>
+
+    <form method="get" class="form-inline" style="margin-bottom:15px;">
+        <div class="input-group" style="margin-right:8px;">
+            <input type="text" name="correlationId" value="@correlationId" class="form-control"
+                   placeholder="Correlation ID" style="width:280px;" />
+        </div>
+        <div class="input-group" style="margin-right:8px;">
+            <input type="date" name="fechaDesde" value="@fechaDesde" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a href="@Url.Action("ErrorLog")" class="btn btn-default" style="margin-left:4px;">Limpiar</a>
+    </form>
+
+    @if (count == 0)
+    {
+        <div class="alert alert-info">No hay errores registrados con los filtros aplicados.</div>
+    }
+    else
+    {
+        <div style="overflow-x:auto;">
+            <table class="table table-condensed table-bordered table-hover" style="font-size:12px;">
+                <thead class="thead-dark" style="background:#333;color:#fff;">
+                    <tr>
+                        <th style="width:50px;">ID</th>
+                        <th style="width:140px;">Fecha</th>
+                        <th style="width:200px;">Correlation ID</th>
+                        <th style="width:200px;">Tipo</th>
+                        <th>Mensaje</th>
+                        <th style="width:220px;">URL</th>
+                        <th style="width:100px;">Usuario</th>
+                        <th style="width:40px;">Imp.</th>
+                        <th style="width:60px;">Stack</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow row in rows)
+                    {
+                        var id       = row["Id"]?.ToString();
+                        var fecha    = row["FechaHora"] != DBNull.Value ? Convert.ToDateTime(row["FechaHora"]).ToString("dd/MM/yyyy HH:mm:ss") : "";
+                        var corrId   = row["CorrelationId"]?.ToString() ?? "";
+                        var tipo     = row["Tipo"]?.ToString() ?? "";
+                        var mensaje  = row["Mensaje"]?.ToString() ?? "";
+                        var stack    = row["StackTrace"]?.ToString() ?? "";
+                        var url      = row["Url"]?.ToString() ?? "";
+                        var usuario  = row["Usuario"]?.ToString() ?? "";
+                        var imp      = row["Importancia"]?.ToString() ?? "1";
+                        var rowCss   = imp == "2" ? "warning" : (imp == "3" ? "danger" : "");
+                        <tr class="@rowCss">
+                            <td>@id</td>
+                            <td>@fecha</td>
+                            <td><small>@corrId</small></td>
+                            <td><small>@tipo</small></td>
+                            <td>@mensaje</td>
+                            <td style="word-break:break-all;"><small>@url</small></td>
+                            <td><small>@usuario</small></td>
+                            <td style="text-align:center;">@imp</td>
+                            <td style="text-align:center;">
+                                @if (!string.IsNullOrEmpty(stack))
+                                {
+                                    <a href="#" class="btn btn-xs btn-default toggle-stack"
+                                       data-target="stack-@id">Ver</a>
+                                }
+                            </td>
+                        </tr>
+                        @if (!string.IsNullOrEmpty(stack))
+                        {
+                            <tr id="stack-@id" style="display:none;">
+                                <td colspan="9">
+                                    <pre style="font-size:11px;max-height:300px;overflow-y:auto;white-space:pre-wrap;background:#f8f8f8;padding:8px;">@stack</pre>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.toggle-stack').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var targetId = this.getAttribute('data-target');
+                var row = document.getElementById(targetId);
+                if (row) {
+                    row.style.display = row.style.display === 'none' ? '' : 'none';
+                    this.textContent = row.style.display === 'none' ? 'Ver' : 'Ocultar';
+                }
+            });
+        });
+    });
+</script>

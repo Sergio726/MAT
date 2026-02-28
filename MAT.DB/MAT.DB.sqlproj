@@ -139,6 +139,7 @@
     <Build Include="dbo\Tables\Room.sql" />
     <Build Include="dbo\Tables\RoomType.sql" />
     <Build Include="dbo\Tables\PaquetePrecio.sql" />
+    <Build Include="dbo\Tables\ErrorLog.sql" />
     <Build Include="dbo\Tables\ScriptLog.sql" />
     <Build Include="dbo\Tables\PaqueteServicio.sql" />
     <Build Include="dbo\Tables\Seat.sql" />
@@ -1048,6 +1049,8 @@
       <AnsiNulls>Off</AnsiNulls>
     </Build>
     <Build Include="dbo\Stored Procedures\usp_MAT_Paquetes_VinculosByPaqueteID.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ErrorLog_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ErrorLog_GetRecent.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Admin_AuditoriaFacturas.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Find.sql">
       <AnsiNulls>Off</AnsiNulls>

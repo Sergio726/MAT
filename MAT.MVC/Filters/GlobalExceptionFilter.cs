@@ -30,6 +30,12 @@ namespace MAT.MVC.Filters
             }
             catch { /* no-op */ }
 
+            DbErrorLogger.Log(
+                correlationId,
+                ex,
+                url:      filterContext.HttpContext?.Request?.Url?.ToString(),
+                usuario:  filterContext.HttpContext?.User?.Identity?.Name);
+
             var isAjax = filterContext.HttpContext?.Request?.IsAjaxRequest() == true
                          || string.Equals(filterContext.HttpContext?.Request?.Headers?["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
 

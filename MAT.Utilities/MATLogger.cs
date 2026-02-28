@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,11 @@ namespace MAT.Utilities
         {
             try
             {
+                // Si hay una ruta configurada en LogFilePath, usarla; si no, App_Data/logs/
+                string configured = ConfigurationManager.AppSettings["LogFilePath"];
+                if (!string.IsNullOrWhiteSpace(configured))
+                    return configured;
+
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;
                 return Path.Combine(baseDir, "App_Data", "logs");
             }

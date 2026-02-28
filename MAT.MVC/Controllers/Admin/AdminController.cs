@@ -694,6 +694,25 @@ namespace MAT.MVC.Controllers.Admin
             return Content(string.Join("\n", logs), "text/plain", Encoding.UTF8);
         }
 
+        [Authorize]
+        public ActionResult ErrorLog(string correlationId = null, string fechaDesde = null)
+        {
+            if (!IsAdminUser()) return RedirectToAction("Index", "Home");
+
+            DateTime? fecha = null;
+            if (!string.IsNullOrWhiteSpace(fechaDesde))
+            {
+                DateTime parsed;
+                if (DateTime.TryParse(fechaDesde, out parsed))
+                    fecha = parsed;
+            }
+
+            var dt = DbErrorLogger.GetRecent(200, correlationId, fecha);
+            ViewBag.CorrelationId = correlationId;
+            ViewBag.FechaDesde    = fechaDesde;
+            return View(dt);
+        }
+
         private bool IsAdminUser()
         {
             try
