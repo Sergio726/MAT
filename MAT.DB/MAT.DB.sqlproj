@@ -1006,6 +1006,7 @@
       <AnsiNulls>Off</AnsiNulls>
     </Build>
     <Build Include="dbo\Stored Procedures\usp_GetAllOcupacion.sql" />
+    <Build Include="dbo\Stored Procedures\usp_GetAllProvincia.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedurePaqueteServicio_GetByPaqueteServicioId.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>

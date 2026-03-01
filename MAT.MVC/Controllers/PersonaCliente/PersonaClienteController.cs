@@ -94,6 +94,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
         {
             if (!string.IsNullOrEmpty(msj)) ViewData["error"] = msj;
             ViewBag.ListOcupacion = GetAllOcupacion();
+            ViewBag.ListProvincia = GetAllProvincia();
             return View();
         }
 
@@ -104,6 +105,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
         public ActionResult CreateFromPresupuesto(Guid? presupuestoId, string returnUrl = null)
         {
             ViewBag.ListOcupacion = GetAllOcupacion();
+            ViewBag.ListProvincia = GetAllProvincia();
             ViewBag.ReturnUrl = returnUrl;
 
             if (!presupuestoId.HasValue)
@@ -272,6 +274,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                     #endregion
 
                     ViewBag.ListOcupacion = GetAllOcupacion();
+                    ViewBag.ListProvincia = GetAllProvincia();
                     return View(PersonaCliente);
                 }
                 catch (Exception ex)
@@ -1322,6 +1325,23 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
 
             return List;
+        }
+
+        public static List<SelectListItem> GetAllProvincia()
+        {
+            var list = new List<SelectListItem>();
+            using (SqlDataReader reader = DBHelper.ExecuteDataReader("usp_GetAllProvincia", null))
+            {
+                while (reader.Read())
+                {
+                    list.Add(new SelectListItem
+                    {
+                        Value = reader["ID"].ToString(),
+                        Text  = reader["Nombre"].ToString()
+                    });
+                }
+            }
+            return list;
         }
 
        

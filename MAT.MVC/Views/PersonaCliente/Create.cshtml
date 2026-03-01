@@ -151,7 +151,7 @@
                     <div class="modern-form-row">
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Provincia)<span class="field-required" aria-hidden="true"> *</span></label>
-                            @Html.DropDownListFor(model => model.Provincia, Helper.ToSelectEntities("Provincia"), new { @class = "modern-form-select" })
+                            @Html.DropDownListFor(model => model.Provincia, (IEnumerable<SelectListItem>)ViewBag.ListProvincia, new { @class = "modern-form-select" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">Departamento</label>
