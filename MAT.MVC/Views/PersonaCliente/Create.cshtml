@@ -15,18 +15,8 @@
         </h2>
     </div>
 
-    @if (ViewData["error"] != null)
-    {
-        <div class="modern-alert-error">
-            <i class="bi bi-exclamation-circle"></i>
-            <span>@ViewData["error"].ToString()</span>
-        </div>
-    }
-
-    @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmCreateCliente", id = "frmCreateCliente" }))
-    {
+    <form id="frmCreateCliente" name="frmCreateCliente">
         @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @if (ViewBag.ReturnUrl != null)
         {
             <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
@@ -56,12 +46,10 @@
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Apellido)<span class="field-required" aria-hidden="true"> *</span></label>
                             @Html.TextBoxFor(model => model.Apellido, new { @class = "modern-form-input", placeholder = "Apellido del cliente" })
-                            @Html.ValidationMessageFor(model => model.Apellido, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Nombre)</label>
                             @Html.TextBoxFor(model => model.Nombre, new { @class = "modern-form-input", placeholder = "Nombre del cliente" })
-                            @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Sexo)</label>
@@ -74,22 +62,18 @@
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.NroDocumento)<span class="field-required" aria-hidden="true"> *</span></label>
                             @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "00.000.000" })
-                            @Html.ValidationMessageFor(model => model.NroDocumento, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.FechaNacimiento)</label>
                             @Html.TextBoxFor(model => model.FechaNacimiento, "{0:dd/MM/yyyy}", new { @class = "modern-form-input datepicker", placeholder = "dd/mm/aaaa" })
-                            @Html.ValidationMessageFor(model => model.FechaNacimiento, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Nacionalidad)<span class="field-required" aria-hidden="true"> *</span></label>
                             @Html.TextBoxFor(model => model.Nacionalidad, new { @class = "modern-form-input", placeholder = "ARG" })
-                            @Html.ValidationMessageFor(model => model.Nacionalidad, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.PaisResidencia)</label>
                             @Html.TextBoxFor(model => model.PaisResidencia, new { @class = "modern-form-input", placeholder = "ARG" })
-                            @Html.ValidationMessageFor(model => model.PaisResidencia, "", new { @class = "text-danger" })
                         </div>
                     </div>
                 </div>
@@ -108,32 +92,26 @@
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Domicilio)<span class="field-required" aria-hidden="true"> *</span></label>
                             @Html.TextBoxFor(model => model.Domicilio, new { @class = "modern-form-input", placeholder = "Dirección completa" })
-                            @Html.ValidationMessageFor(model => model.Domicilio, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Telefono)</label>
                             @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Teléfono fijo" })
-                            @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Celular)</label>
                             @Html.TextBoxFor(model => model.Celular, new { @class = "modern-form-input", placeholder = "Celular" })
-                            @Html.ValidationMessageFor(model => model.Celular, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Email)</label>
                             @Html.TextBoxFor(model => model.Email, new { @class = "modern-form-input", placeholder = "correo@ejemplo.com", type = "email" })
-                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Fax)</label>
                             @Html.TextBoxFor(model => model.Fax, new { @class = "modern-form-input", placeholder = "Fax (opcional)" })
-                            @Html.ValidationMessageFor(model => model.Fax, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Web)</label>
                             @Html.TextBoxFor(model => model.Web, new { @class = "modern-form-input", placeholder = "www.ejemplo.com" })
-                            @Html.ValidationMessageFor(model => model.Web, "", new { @class = "text-danger" })
                         </div>
                     </div>
                 </div>
@@ -187,17 +165,14 @@
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.RazonSocial)</label>
                             @Html.TextBoxFor(model => model.RazonSocial, new { @class = "modern-form-input", placeholder = "Razón social (opcional)" })
-                            @Html.ValidationMessageFor(model => model.RazonSocial, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">CUIT/CUIL</label>
                             @Html.TextBoxFor(model => model.Cuit, new { @class = "modern-form-input", placeholder = "00-00000000-0" })
-                            @Html.ValidationMessageFor(model => model.Cuit, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">Empresa</label>
                             @Html.TextBoxFor(model => model.Empresa, new { @class = "modern-form-input", placeholder = "Nombre de empresa (opcional)" })
-                            @Html.ValidationMessageFor(model => model.Empresa, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.CondicionIva)</label>
@@ -238,19 +213,16 @@
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Idioma)</label>
                             @Html.TextBoxFor(model => model.Idioma, new { @class = "modern-form-input", placeholder = "Idioma preferido" })
-                            @Html.ValidationMessageFor(model => model.Idioma, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Promotor)</label>
                             @Html.TextBoxFor(model => model.Promotor, new { @class = "modern-form-input", placeholder = "Promotor (opcional)" })
-                            @Html.ValidationMessageFor(model => model.Promotor, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="modern-form-row mt-2">
                         <div class="modern-form-group modern-form-group-full">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Observacion)</label>
                             @Html.TextAreaFor(model => model.Observacion, new { @class = "modern-form-input", rows = 3, placeholder = "Observaciones adicionales..." })
-                            @Html.ValidationMessageFor(model => model.Observacion, "", new { @class = "text-danger" })
                         </div>
                     </div>
                 </div>
@@ -268,7 +240,7 @@
                 </button>
             </div>
         </div>
-    }
+    </form>
 </div>
 
 @section Scripts {
@@ -276,6 +248,10 @@
 }
 
 <script type="text/javascript">
+    var _initialError = @Html.Raw(ViewData["error"] != null
+        ? "'" + ViewData["error"].ToString().Replace("\\", "\\\\").Replace("'", "\\'") + "'"
+        : "null");
+
     window.showValidationBannerCreate = function (messages) {
         var $banner = $("#validation-banner-create");
         var $list = $banner.find(".validation-banner-list");
@@ -296,6 +272,46 @@
             $("#validation-banner-create").addClass("hidden");
             if (window._validationBannerCreateTimer) clearTimeout(window._validationBannerCreateTimer);
         });
+
+        $("#btnAgregarCliente").on("click", function () {
+            var $btn = $(this);
+            var formData = $("#frmCreateCliente").serialize();
+
+            var errors = [];
+            if (!$.trim($("#Apellido").val())) errors.push("El apellido es obligatorio.");
+            if (!$.trim($("#NroDocumento").val())) errors.push("El número de documento es obligatorio.");
+            if (!$.trim($("#Domicilio").val())) errors.push("El domicilio es obligatorio.");
+            if (!$.trim($("#Nacionalidad").val())) errors.push("La nacionalidad es obligatoria.");
+            if ($("#ddLocalidad").val() === "0" || !$("#ddLocalidad").val()) errors.push("Debe seleccionar una localidad.");
+
+            if (errors.length > 0) {
+                window.showValidationBannerCreate(errors);
+                return;
+            }
+
+            $btn.prop("disabled", true).html('<i class="bi bi-hourglass-split"></i> <span>Guardando...</span>');
+
+            $.ajax({
+                type: "POST",
+                url: "/PersonaCliente/CreateAjax",
+                data: formData,
+                dataType: "json",
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = response.redirectUrl;
+                    } else {
+                        window.showValidationBannerCreate(response.message);
+                        $btn.prop("disabled", false).html('<i class="bi bi-check-circle"></i> <span>Agregar cliente</span>');
+                    }
+                },
+                error: function () {
+                    window.showValidationBannerCreate("Error de comunicación con el servidor. Intente nuevamente.");
+                    $btn.prop("disabled", false).html('<i class="bi bi-check-circle"></i> <span>Agregar cliente</span>');
+                }
+            });
+        });
+
+        if (_initialError) window.showValidationBannerCreate(_initialError);
 
         $("#CondicionIva").val("5");
         $("#Provincia").val("16");

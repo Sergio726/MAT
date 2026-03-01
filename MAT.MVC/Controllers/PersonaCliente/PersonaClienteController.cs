@@ -206,11 +206,65 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                return RedirectToAction("Create", "PersonaCliente", new { msj = "No se pudo ingresar el pasajero al sistema. Disculpe las molestias." + e.Message });
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Create");
+                return RedirectToAction("Create", "PersonaCliente", new { msj = "No se pudo ingresar el pasajero al sistema. " + msg });
             }
+        }
 
+        [HttpPost]
+        [Authorize]
+        public JsonResult CreateAjax(FormCollection collection)
+        {
+            PersonaClienteModel PersonaCliente = new PersonaClienteModel();
+            try
+            {
+                #region Persona
+                PersonaCliente.Apellido = collection.Get("Apellido").ToString().ToUpper();
+                PersonaCliente.Nombre = collection.Get("Nombre").ToString();
+                PersonaCliente.TipoDocumento = Convert.ToInt32(collection.Get("TipoDocumento").ToString());
+                PersonaCliente.NroDocumento = collection.Get("NroDocumento").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("LocalidadId"))) PersonaCliente.LocalidadID = Convert.ToInt32(collection.Get("LocalidadId").ToString());
+                if (!string.IsNullOrEmpty(collection.Get("Provincia"))) PersonaCliente.Provincia = Convert.ToInt32(collection.Get("Provincia"));
+                if (!string.IsNullOrEmpty(collection.Get("Telefono"))) PersonaCliente.Telefono = collection.Get("Telefono").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Celular"))) PersonaCliente.Celular = collection.Get("Celular").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Email"))) PersonaCliente.Email = collection.Get("Email").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Domicilio"))) PersonaCliente.Domicilio = collection.Get("Domicilio");
+                if (!string.IsNullOrEmpty(collection.Get("Ocupacion"))) PersonaCliente.Ocupacion = collection.Get("Ocupacion").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("FechaNacimiento"))) PersonaCliente.FechaNacimiento = Convert.ToDateTime(collection.Get("FechaNacimiento"));
+                if (!string.IsNullOrEmpty(collection.Get("Sexo"))) PersonaCliente.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
+                if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) PersonaCliente.Nacionalidad = collection.Get("Nacionalidad").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) PersonaCliente.PaisResidencia = collection.Get("PaisResidencia").ToString();
+                #endregion
 
+                #region Cliente
+                if (!string.IsNullOrEmpty(collection.Get("RazonSocial"))) PersonaCliente.RazonSocial = collection.Get("RazonSocial").ToString().ToUpper();
+                if (!string.IsNullOrEmpty(collection.Get("Cuit"))) PersonaCliente.Cuit = collection.Get("Cuit").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Empresa"))) PersonaCliente.Empresa = collection.Get("Empresa").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("FormaPago"))) PersonaCliente.FormaPago = Convert.ToInt32(collection.Get("FormaPago"));
+                if (!string.IsNullOrEmpty(collection.Get("CondicionIva"))) PersonaCliente.CondicionIva = Convert.ToInt32(collection.Get("CondicionIva"));
+                if (!string.IsNullOrEmpty(collection.Get("Fax"))) PersonaCliente.Fax = collection.Get("Fax").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Web"))) PersonaCliente.Web = collection.Get("Web").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Idioma"))) PersonaCliente.Idioma = collection.Get("Idioma").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Promotor"))) PersonaCliente.Promotor = collection.Get("Promotor").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("Observacion"))) PersonaCliente.Observacion = collection.Get("Observacion").ToString();
+                if (!string.IsNullOrEmpty(collection.Get("TipoId"))) PersonaCliente.TipoID = Convert.ToInt32(collection.Get("TipoId").ToString());
+                if (MATContext.CurrentVendedor != null) PersonaCliente.VendedorID = MATContext.CurrentVendedor.VendedorId.ToString();
+                #endregion
 
+                PersonaClienteMethod.CreatePersonaCliente(PersonaCliente);
+
+                var returnUrl = collection.Get("returnUrl");
+                string redirectUrl = Url.Action("Index", "PersonaCliente");
+                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    redirectUrl = returnUrl;
+
+                return Json(new { success = true, redirectUrl = redirectUrl });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.CreateAjax");
+                return Json(new { success = false, message = msg });
+            }
         }
 
         [Authorize]
@@ -279,19 +333,14 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 }
                 catch (Exception ex)
                 {
-                    // Log del error específico durante la actualización de PersonaCliente
-                    // Aquí podrías usar tu sistema de logging preferido
+                    ErrorUtil.LogAndGetPublicMessage(ex, "PersonaClienteController.Edit (inner)");
                     throw new Exception("Error al actualizar los datos de PersonaCliente", ex);
                 }
             }
             catch (Exception e)
             {
-                // Log del error general
-                // Aquí podrías usar tu sistema de logging preferido
-
-                // Retornamos a la vista de error compartida
+                ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Edit");
                 return View("Error", e);
-                
             }
         }
 

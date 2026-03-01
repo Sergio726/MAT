@@ -250,3 +250,4 @@ ModelManifest.xml
 #MAT.MVC
 /bin/
 /MAT.MVC/Properties/PublishProfiles/IISProfile.pubxml
+/MAT.MVC/App_Data/logs/

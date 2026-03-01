@@ -1,0 +1,67 @@
+---
+description: Convención de manejo de errores en controladores MVC de MAT
+globs: MAT.MVC/Controllers/**/*.cs
+alwaysApply: false
+---
+
+# Manejo de errores en controladores
+
+Siempre usar `ErrorUtil.LogAndGetPublicMessage` en los bloques `catch` de los controladores. Esta función:
+- Guarda el error en `App_Data/logs/mat-log-{fecha}.txt` vía `MATLogger`
+- Persiste en la tabla `ErrorLog` de la BD vía `DbErrorLogger`
+- Adjunta el `correlationId` de la request para trazabilidad
+- Devuelve un mensaje seguro para el usuario (sin stack trace en producción)
+
+```csharp
+// ❌ MAL — la excepción se pierde sin rastro
+catch (Exception e)
+{
+    return Json(new { success = false, message = e.Message });
+}
+
+// ✅ BIEN — loguea y devuelve mensaje seguro
+catch (Exception e)
+{
+    var msg = ErrorUtil.LogAndGetPublicMessage(e, "NombreController.NombreAccion");
+    return Json(new { success = false, message = msg });
+}
+```
+
+## Contexto
+
+El parámetro `context` debe identificar `"NombreController.NombreAccion"` para localizar el error en el log.
+
+```csharp
+// Para acciones que devuelven View/Redirect
+catch (Exception e)
+{
+    var msg = ErrorUtil.LogAndGetPublicMessage(e, "ClienteController.Create");
+    return RedirectToAction("Create", new { msj = msg });
+}
+
+// Para acciones que devuelven JsonResult
+catch (Exception e)
+{
+    var msg = ErrorUtil.LogAndGetPublicMessage(e, "ClienteController.SaveAjax");
+    return Json(new { success = false, message = msg });
+}
+
+// Para acciones que devuelven PartialView
+catch (Exception e)
+{
+    ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ClienteController.RenderGrid");
+    return PartialView();
+}
+```
+
+## Namespace
+
+```csharp
+using MAT.MVC.Infrastructure; // ErrorUtil
+```
+
+## No usar
+
+- `e.Message` directamente al usuario (expone detalles internos)
+- `MATLogger.Log(...)` directo en controladores (no incluye correlationId automático)
+- Bloques `catch` vacíos o con solo comentarios
