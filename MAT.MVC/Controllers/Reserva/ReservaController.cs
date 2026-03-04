@@ -104,7 +104,7 @@ namespace MAT.MVC.Controllers.Reserva
                 }
             }
 
-            return PartialView(DistCoche);
+            return View(DistCoche);
         }
 
         public string QuickSearch()

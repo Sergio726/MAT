@@ -13,44 +13,65 @@
     var cantidadVentas = estadisticas.ContainsKey("CantidadVentas") ? Convert.ToInt32(estadisticas["CantidadVentas"]) : 0;
     var isAdmin = ViewBag.IsAdmin ?? false;
 
-    var mesActual = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month);
+    var ci = new System.Globalization.CultureInfo("es-AR");
+    var mesActual = ci.DateTimeFormat.GetMonthName(DateTime.Now.Month);
+    mesActual = char.ToUpper(mesActual[0]) + mesActual.Substring(1);
     var anioActual = DateTime.Now.Year;
+
+    var hora = DateTime.Now.Hour;
+    var saludo = hora < 12 ? "Buenos días" : hora < 20 ? "Buenas tardes" : "Buenas noches";
+    var fechaRaw = DateTime.Now.ToString("dddd d 'de' MMMM 'de' yyyy", ci);
+    var fechaFormateada = char.ToUpper(fechaRaw[0]) + fechaRaw.Substring(1);
+
+    var totalCobrado = totalFacturado - totalPendiente;
+    var porcentajeCobrado = totalFacturado > 0 ? (int)Math.Round(totalCobrado / totalFacturado * 100) : 0;
 }
 
 <div class="modern-dashboard">
     <div class="container-fluid">
-        <!-- Indicador de contexto -->
-        @if ((bool)isAdmin)
-        {
-            <div class="alert alert-info py-2 px-3 mb-3" style="font-size: 0.85rem; border-radius: 8px;">
-                <i class="bi bi-shield-check me-1"></i> Vista Administrador - Mostrando datos de todos los vendedores
-            </div>
-        }
 
-        <!-- Estadisticas del Mes -->
+        <div class="dashboard-welcome">
+            <div class="dashboard-welcome-text">
+                <h2 class="dashboard-welcome-title">@saludo, @User.Identity.Name</h2>
+                <p class="dashboard-welcome-subtitle">@fechaFormateada</p>
+            </div>
+            @if ((bool)isAdmin)
+            {
+                <span class="dashboard-role-badge">
+                    <i class="bi bi-shield-check me-1"></i> Administrador
+                </span>
+            }
+        </div>
+
+        <p class="section-label">Resumen de @mesActual @anioActual</p>
+
         <div class="row g-4 mb-4">
-            <!-- PRESUPUESTOS -->
             <div class="col-lg-4 col-md-6">
                 <div class="modern-card modern-card-success dashboard-stat-card" onclick="openDetalleModal('presupuestos')" title="Ver detalle de presupuestos del mes">
                     <div class="modern-card-header">
-                        <div class="modern-card-title">Presupuestos</div>
+                        <div>
+                            <div class="modern-card-title">Presupuestos</div>
+                            <span class="kpi-month-chip">@mesActual @anioActual</span>
+                        </div>
                         <i class="bi bi-file-earmark-text modern-card-icon-small"></i>
                     </div>
                     <div class="modern-card-content">
                         <div class="modern-stat-number">@cantidadPresupuestos</div>
                         <p class="modern-stat-label">Realizados en @mesActual</p>
                         <p class="modern-stat-label mt-1">
-                            <span style="color: var(--brand-primary); font-weight: 600;">Total: $@totalPresupuestos.ToString("N2")</span>
+                            <span class="stat-amount-primary">Total: $@totalPresupuestos.ToString("N2")</span>
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- CLIENTES NUEVOS -->
             <div class="col-lg-4 col-md-6">
                 <div class="modern-card modern-card-warning dashboard-stat-card" onclick="openDetalleModal('clientes')" title="Ver detalle de clientes nuevos del mes">
                     <div class="modern-card-header">
-                        <div class="modern-card-title">Clientes Nuevos</div>
+                        <div>
+                            <div class="modern-card-title">Clientes Nuevos</div>
+                            <span class="kpi-month-chip">@mesActual @anioActual</span>
+                        </div>
                         <i class="bi bi-people modern-card-icon-small"></i>
                     </div>
                     <div class="modern-card-content">
@@ -60,37 +81,45 @@
                 </div>
             </div>
 
-            <!-- VENTAS REALIZADAS -->
             <div class="col-lg-4 col-md-12">
                 <div class="modern-card modern-card-info dashboard-stat-card" onclick="openDetalleModal('ventas')" title="Ver detalle de ventas del mes">
                     <div class="modern-card-header">
-                        <div class="modern-card-title">Ventas Realizadas</div>
+                        <div>
+                            <div class="modern-card-title">Ventas Realizadas</div>
+                            <span class="kpi-month-chip">@mesActual @anioActual</span>
+                        </div>
                         <i class="bi bi-cart-check modern-card-icon-small"></i>
                     </div>
                     <div class="modern-card-content">
                         <div class="modern-stat-number">@cantidadVentas</div>
-                        <div class="d-flex justify-content-between mt-1" style="gap: 1rem;">
+                        <div class="kpi-amounts-row">
                             <p class="modern-stat-label mb-0">
-                                <span style="color: var(--brand-primary); font-weight: 600;">Total: $@totalFacturado.ToString("N2")</span>
+                                <span class="stat-amount-primary">Total: $@totalFacturado.ToString("N2")</span>
                             </p>
                             <p class="modern-stat-label mb-0">
-                                <span style="color: #dc3545; font-weight: 600;">Pend: $@totalPendiente.ToString("N2")</span>
+                                <span class="stat-amount-danger">Pend: $@totalPendiente.ToString("N2")</span>
                             </p>
                         </div>
+                        @if (totalFacturado > 0)
+                        {
+                            <div class="kpi-progress mt-2" title="@porcentajeCobrado% cobrado">
+                                <div class="kpi-progress-bar" style="width: @porcentajeCobrado%"></div>
+                            </div>
+                            <p class="modern-stat-label mt-1">Cobrado: @porcentajeCobrado%</p>
+                        }
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modal de Detalle -->
         <div class="modal fade" id="dashboardDetalleModal" tabindex="-1" aria-labelledby="dashboardDetalleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                <div class="modal-content" style="border-radius: 12px; border: none;">
-                    <div class="modal-header" style="background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%); color: white; border-radius: 12px 12px 0 0;">
+                <div class="modal-content modal-content-rounded">
+                    <div class="modal-header modal-header-branded">
                         <h5 class="modal-title" id="dashboardDetalleModalLabel">Detalle</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
-                    <div class="modal-body" id="dashboardDetalleBody" style="min-height: 200px;">
+                    <div class="modal-body modal-body-min" id="dashboardDetalleBody">
                         <div class="text-center py-5">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Cargando...</span>
@@ -98,11 +127,15 @@
                             <p class="mt-2 text-muted">Cargando detalle...</p>
                         </div>
                     </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-lg me-1"></i> Cerrar
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Separador Visual -->
         <div class="section-divider">
             <div class="section-divider-line"></div>
             <div class="section-divider-content">
@@ -115,154 +148,142 @@
             <div class="section-divider-line"></div>
         </div>
 
-        <!-- Accesos Rápidos -->
         <div class="quick-access-grid">
-            <!-- Primera Fila -->
             <div class="quick-access-item">
-                <div class="modern-card modern-card-success" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/Presupuesto/Index'" title="Gestiona presupuestos telefónicos y cotizaciones.">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">
-                            Módulo de Presupuestos
+                <a href="/Presupuesto/Index" class="quick-access-link">
+                    <div class="modern-card modern-card-success">
+                        <div class="modern-card-header">
+                            <div class="modern-card-title">Módulo de Presupuestos</div>
+                            <i class="bi bi-file-earmark-text modern-card-icon-small"></i>
                         </div>
-                        <i class="bi bi-file-earmark-text modern-card-icon-small"></i>
+                        <div class="modern-card-content">
+                            <p class="modern-card-description">Gestiona presupuestos telefónicos y cotizaciones.</p>
+                            <span class="modern-card-link">Ir a presupuestos <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
                     </div>
-                    <div class="modern-card-content">
-                        <a href="/Presupuesto/Index" class="modern-card-link">
-                            Ir a presupuestos <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
+                </a>
             </div>
 
             <div class="quick-access-item">
-                <div class="modern-card modern-card-primary" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/Viaje/Index'" title="Administra viajes, reservas y disponibilidad.">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">
-                            Gestión de Viajes
+                <a href="/Viaje/Index" class="quick-access-link">
+                    <div class="modern-card modern-card-primary">
+                        <div class="modern-card-header">
+                            <div class="modern-card-title">Gestión de Viajes</div>
+                            <i class="bi bi-airplane modern-card-icon-small"></i>
                         </div>
-                        <i class="bi bi-airplane modern-card-icon-small"></i>
+                        <div class="modern-card-content">
+                            <p class="modern-card-description">Administra viajes, reservas y disponibilidad.</p>
+                            <span class="modern-card-link">Ver gestión <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
                     </div>
-                    <div class="modern-card-content">
-                        <a href="/Viaje/Index" class="modern-card-link">
-                            Ver gestión <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
+                </a>
             </div>
 
             <div class="quick-access-item">
-                <div class="modern-card modern-card-warning" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/Home/ViajesPorFecha'" title="Consulta viajes disponibles por fecha específica.">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">
-                            Viajes por Fecha
+                <a href="/Home/ViajesPorFecha" class="quick-access-link">
+                    <div class="modern-card modern-card-warning">
+                        <div class="modern-card-header">
+                            <div class="modern-card-title">Viajes por Fecha</div>
+                            <i class="bi bi-calendar-event modern-card-icon-small"></i>
                         </div>
-                        <i class="bi bi-calendar-event modern-card-icon-small"></i>
+                        <div class="modern-card-content">
+                            <p class="modern-card-description">Consulta viajes disponibles por fecha específica.</p>
+                            <span class="modern-card-link">Ver viajes <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
                     </div>
-                    <div class="modern-card-content">
-                        <a href="/Home/ViajesPorFecha" class="modern-card-link">
-                            Ver viajes <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
+                </a>
             </div>
 
             <div class="quick-access-item">
-                <div class="modern-card modern-card-info" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/Home/TodosLosViajesIndex'" title="Visualiza todos los viajes disponibles en el sistema.">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">
-                            Todos los Viajes
+                <a href="/Home/TodosLosViajesIndex" class="quick-access-link">
+                    <div class="modern-card modern-card-info">
+                        <div class="modern-card-header">
+                            <div class="modern-card-title">Todos los Viajes</div>
+                            <i class="bi bi-suitcase modern-card-icon-small"></i>
                         </div>
-                        <i class="bi bi-suitcase modern-card-icon-small"></i>
+                        <div class="modern-card-content">
+                            <p class="modern-card-description">Visualiza todos los viajes disponibles en el sistema.</p>
+                            <span class="modern-card-link">Ver todos <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
                     </div>
-                    <div class="modern-card-content">
-                        <a href="/Home/TodosLosViajesIndex" class="modern-card-link">
-                            Ver todos <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
+                </a>
             </div>
 
             <div class="quick-access-item">
-                <div class="modern-card modern-card-success" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/Paquete/Index'" title="Administra paquetes turísticos y sus configuraciones.">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">
-                            Gestión de Paquetes
+                <a href="/Paquete/Index" class="quick-access-link">
+                    <div class="modern-card modern-card-success">
+                        <div class="modern-card-header">
+                            <div class="modern-card-title">Gestión de Paquetes</div>
+                            <i class="bi bi-box-seam modern-card-icon-small"></i>
                         </div>
-                        <i class="bi bi-box-seam modern-card-icon-small"></i>
-                    </div>
-                    <div class="modern-card-content">
-                        <a href="/Paquete/Index" class="modern-card-link">
-                            Ver paquetes <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Segunda Fila -->
-            <div class="quick-access-item">
-                <div class="modern-card modern-card-primary" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/PersonaCliente/Index'" title="Ver el listado de clientes del sistema.">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">
-                            Clientes
+                        <div class="modern-card-content">
+                            <p class="modern-card-description">Administra paquetes turísticos y sus configuraciones.</p>
+                            <span class="modern-card-link">Ver paquetes <i class="bi bi-arrow-right ms-1"></i></span>
                         </div>
-                        <i class="bi bi-people modern-card-icon-small"></i>
                     </div>
-                    <div class="modern-card-content">
-                        <a href="/PersonaCliente/Index" class="modern-card-link">
-                            Ver clientes <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
+                </a>
             </div>
 
             <div class="quick-access-item">
-                <div class="modern-card modern-card-warning" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/Factura/Index'" title="Consulta y gestiona facturas del sistema.">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">
-                            Búsqueda de Facturas
+                <a href="/PersonaCliente/Index" class="quick-access-link">
+                    <div class="modern-card modern-card-primary">
+                        <div class="modern-card-header">
+                            <div class="modern-card-title">Clientes</div>
+                            <i class="bi bi-people modern-card-icon-small"></i>
                         </div>
-                        <i class="bi bi-receipt modern-card-icon-small"></i>
+                        <div class="modern-card-content">
+                            <p class="modern-card-description">Ver el listado completo de clientes del sistema.</p>
+                            <span class="modern-card-link">Ver clientes <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
                     </div>
-                    <div class="modern-card-content">
-                        <a href="/Factura/Index" class="modern-card-link">
-                            Ver facturas <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
+                </a>
             </div>
 
             <div class="quick-access-item">
-                <div class="modern-card modern-card-info" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/PersonaCliente/NotaCreditoList'" title="Gestiona notas de crédito y devoluciones.">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">
-                            Notas de Crédito
+                <a href="/Factura/Index" class="quick-access-link">
+                    <div class="modern-card modern-card-warning">
+                        <div class="modern-card-header">
+                            <div class="modern-card-title">Búsqueda de Facturas</div>
+                            <i class="bi bi-receipt modern-card-icon-small"></i>
                         </div>
-                        <i class="bi bi-file-earmark-text modern-card-icon-small"></i>
+                        <div class="modern-card-content">
+                            <p class="modern-card-description">Consulta y gestiona facturas del sistema.</p>
+                            <span class="modern-card-link">Ver facturas <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
                     </div>
-                    <div class="modern-card-content">
-                        <a href="/PersonaCliente/NotaCreditoList" class="modern-card-link">
-                            Ver notas <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
+                </a>
+            </div>
+
+            <div class="quick-access-item">
+                <a href="/PersonaCliente/NotaCreditoList" class="quick-access-link">
+                    <div class="modern-card modern-card-info">
+                        <div class="modern-card-header">
+                            <div class="modern-card-title">Notas de Crédito</div>
+                            <i class="bi bi-file-earmark-minus modern-card-icon-small"></i>
+                        </div>
+                        <div class="modern-card-content">
+                            <p class="modern-card-description">Gestiona notas de crédito y devoluciones.</p>
+                            <span class="modern-card-link">Ver notas <i class="bi bi-arrow-right ms-1"></i></span>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             @if (User.Identity.Name.ToUpper().Equals("ADMINDEV"))
             {
                 <div class="quick-access-item">
-                    <div class="modern-card modern-card-success" style="cursor: pointer; transition: all 0.3s ease;" onclick="window.location.href='/Home/HistorialPagos'" title="Consulta el historial completo de pagos.">
-                        <div class="modern-card-header">
-                            <div class="modern-card-title">
-                                Historial de Pagos
+                    <a href="/Home/HistorialPagos" class="quick-access-link">
+                        <div class="modern-card modern-card-success">
+                            <div class="modern-card-header">
+                                <div class="modern-card-title">Historial de Pagos</div>
+                                <i class="bi bi-clock-history modern-card-icon-small"></i>
                             </div>
-                            <i class="bi bi-clock-history modern-card-icon-small"></i>
+                            <div class="modern-card-content">
+                                <p class="modern-card-description">Consulta el historial completo de pagos.</p>
+                                <span class="modern-card-link">Ver historial <i class="bi bi-arrow-right ms-1"></i></span>
+                            </div>
                         </div>
-                        <div class="modern-card-content">
-                            <a href="/Home/HistorialPagos" class="modern-card-link">
-                                Ver historial <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             }
         </div>
@@ -270,6 +291,58 @@
 </div>
 
 <style>
+    /* ===== Welcome Header ===== */
+    .dashboard-welcome {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(135deg, var(--surface-card, #fff) 0%, rgba(230, 51, 117, 0.04) 100%);
+        border-radius: 12px;
+        border: 1px solid var(--border-color, #e9ecef);
+        margin-bottom: 1.5rem;
+    }
+
+    .dashboard-welcome-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 0.2rem 0;
+        line-height: 1.2;
+    }
+
+    .dashboard-welcome-subtitle {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .dashboard-role-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 1rem;
+        background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%);
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border-radius: 50px;
+        white-space: nowrap;
+        box-shadow: 0 3px 10px rgba(230, 51, 117, 0.25);
+    }
+
+    /* ===== Section label ===== */
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-secondary);
+        margin-bottom: 0.75rem;
+    }
+
+    /* ===== KPI Cards ===== */
     .modern-stat-number {
         font-size: 2.5rem;
         font-weight: 700;
@@ -284,34 +357,80 @@
         margin: 0;
     }
 
-    .modern-card-icon-large {
-        font-size: 3rem;
-        opacity: 0.1;
-        position: absolute;
-        right: 1.5rem;
-        top: 50%;
-        transform: translateY(-50%);
+    .kpi-month-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.15rem 0.55rem;
+        background: rgba(230, 51, 117, 0.1);
+        color: var(--brand-primary);
+        font-size: 0.68rem;
+        font-weight: 600;
+        border-radius: 50px;
+        margin-top: 0.2rem;
+    }
+
+    .stat-amount-primary {
+        color: var(--brand-primary);
+        font-weight: 600;
+    }
+
+    .stat-amount-danger {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .kpi-amounts-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 0.25rem;
+    }
+
+    .kpi-progress {
+        height: 6px;
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .kpi-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #198754, #20c997);
+        border-radius: 3px;
+        transition: width 0.6s ease;
     }
 
     .dashboard-stat-card {
         cursor: pointer;
         transition: all 0.3s ease;
     }
+
     .dashboard-stat-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
 
-    .modern-card[onclick]:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    /* ===== Modal ===== */
+    .modal-content-rounded {
+        border-radius: 12px;
+        border: none;
     }
 
-    /* Tabla dentro del modal de detalle */
+    .modal-header-branded {
+        background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%);
+        color: white;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-body-min {
+        min-height: 200px;
+    }
+
     .detalle-table {
         width: 100%;
         font-size: 0.85rem;
     }
+
     .detalle-table th {
         background-color: #f8f9fa;
         position: sticky;
@@ -320,13 +439,23 @@
         font-weight: 600;
         white-space: nowrap;
     }
-    .detalle-table td, .detalle-table th {
+
+    .detalle-table td,
+    .detalle-table th {
         padding: 0.5rem 0.75rem;
         vertical-align: middle;
     }
+
     .detalle-table tbody tr:hover {
         background-color: rgba(230, 51, 117, 0.04);
     }
+
+    .detalle-table tfoot td {
+        background-color: #f8f9fa;
+        font-weight: 700;
+        border-top: 2px solid #dee2e6;
+    }
+
     .detalle-resumen {
         display: flex;
         gap: 1.5rem;
@@ -336,14 +465,28 @@
         margin-bottom: 1rem;
         flex-wrap: wrap;
     }
+
     .detalle-resumen-item {
         font-size: 0.85rem;
     }
+
     .detalle-resumen-item strong {
         font-weight: 700;
     }
 
-    /* Separador Visual entre Secciones */
+    .detalle-amount-primary {
+        color: var(--brand-primary);
+    }
+
+    .detalle-amount-success {
+        color: #198754;
+    }
+
+    .detalle-amount-danger {
+        color: #dc3545;
+    }
+
+    /* ===== Section Divider ===== */
     .section-divider {
         display: flex;
         align-items: center;
@@ -422,6 +565,49 @@
         }
     }
 
+    /* ===== Quick Access Grid ===== */
+    .quick-access-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .quick-access-item {
+        min-width: 0;
+    }
+
+    .quick-access-link {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .quick-access-link:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .quick-access-link .modern-card {
+        flex: 1;
+        transition: all 0.3s ease;
+    }
+
+    .quick-access-link:hover .modern-card {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .modern-card-description {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin: 0 0 0.75rem 0;
+        line-height: 1.45;
+    }
+
+    /* ===== Responsive ===== */
     @@media (max-width: 768px) {
         .section-divider {
             margin: 2rem 0 1.5rem 0;
@@ -441,22 +627,15 @@
             height: 2rem;
             font-size: 0.75rem;
         }
-    }
 
-    /* Grid de 5 columnas para accesos rápidos */
-    .quick-access-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
+        .quick-access-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
 
-    .quick-access-item {
-        min-width: 0;
-    }
-
-    .quick-access-item .modern-card {
-        height: 100%;
+        .dashboard-welcome-title {
+            font-size: 1.15rem;
+        }
     }
 
     @@media (max-width: 1400px) {
@@ -468,13 +647,6 @@
     @@media (max-width: 1200px) {
         .quick-access-grid {
             grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    @@media (max-width: 768px) {
-        .quick-access-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
         }
     }
 
@@ -499,7 +671,6 @@
     </div>
 
     <script>
-        // Persistencia del cierre (no volver a mostrar por X horas)
         const BANNER_DISMISS_KEY = "mat.banner.viajesPorVencer.dismissUntil";
         const BANNER_DISMISS_HOURS = 12;
 
@@ -525,7 +696,6 @@
         }
 
         function parseNetDate(dateString) {
-            // Soporta: ISO, "yyyy-MM-dd", y "/Date(1700000000000)/"
             if (!dateString) return null;
             if (typeof dateString === "string") {
                 const m = /\/Date\((\d+)\)\//.exec(dateString);
@@ -538,8 +708,6 @@
         function formatDateDiff(dateString) {
             const targetDate = parseNetDate(dateString);
             if (!targetDate) return null;
-
-            // Normalizar a "medianoche" para evitar off-by-one por horas/zona
             const today = new Date();
             const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             const t1 = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
@@ -547,22 +715,20 @@
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
 
-        // === Funciones para modales de detalle de indicadores ===
         function openDetalleModal(tipo) {
-            var modal = new bootstrap.Modal(document.getElementById('dashboardDetalleModal'));
-            var body = document.getElementById('dashboardDetalleBody');
-            var title = document.getElementById('dashboardDetalleModalLabel');
+            const modal = new bootstrap.Modal(document.getElementById('dashboardDetalleModal'));
+            const body = document.getElementById('dashboardDetalleBody');
+            const title = document.getElementById('dashboardDetalleModalLabel');
 
-            // Spinner de carga
             body.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div><p class="mt-2 text-muted">Cargando detalle...</p></div>';
 
-            var urlMap = {
+            const urlMap = {
                 'presupuestos': '/Home/GetPresupuestosDetalle',
                 'clientes': '/Home/GetClientesNuevosDetalle',
                 'ventas': '/Home/GetVentasDetalle'
             };
 
-            var titleMap = {
+            const titleMap = {
                 'presupuestos': 'Presupuestos del Mes',
                 'clientes': 'Clientes Nuevos del Mes',
                 'ventas': 'Ventas Realizadas del Mes'
@@ -593,12 +759,12 @@
             }
 
             if (tipo === 'presupuestos') {
-                var html = '<div class="detalle-resumen"><div class="detalle-resumen-item"><strong>' + data.length + '</strong> presupuestos</div></div>';
+                let html = '<div class="detalle-resumen"><div class="detalle-resumen-item"><strong>' + data.length + '</strong> presupuestos</div></div>';
                 html += '<div class="table-responsive"><table class="table table-sm table-bordered detalle-table"><thead><tr>';
                 html += '<th>Codigo</th><th>Cliente</th><th>DNI</th><th>Monto</th><th>Estado</th><th>Fecha</th><th>Viaje</th><th>Vendedor</th>';
                 html += '</tr></thead><tbody>';
-                for (var i = 0; i < data.length; i++) {
-                    var p = data[i];
+                for (let i = 0; i < data.length; i++) {
+                    const p = data[i];
                     html += '<tr>';
                     html += '<td>' + escapeHtml(p.CodigoSeguimiento) + '</td>';
                     html += '<td>' + escapeHtml(p.NombreCliente) + '</td>';
@@ -615,12 +781,12 @@
             }
 
             if (tipo === 'clientes') {
-                var html = '<div class="detalle-resumen"><div class="detalle-resumen-item"><strong>' + data.length + '</strong> clientes nuevos</div></div>';
+                let html = '<div class="detalle-resumen"><div class="detalle-resumen-item"><strong>' + data.length + '</strong> clientes nuevos</div></div>';
                 html += '<div class="table-responsive"><table class="table table-sm table-bordered detalle-table"><thead><tr>';
                 html += '<th>Nombre</th><th>Documento</th><th>Celular</th><th>Email</th><th>1ra Factura</th><th>Vendedor</th>';
                 html += '</tr></thead><tbody>';
-                for (var i = 0; i < data.length; i++) {
-                    var c = data[i];
+                for (let i = 0; i < data.length; i++) {
+                    const c = data[i];
                     html += '<tr>';
                     html += '<td>' + escapeHtml(c.ClienteNombre) + '</td>';
                     html += '<td>' + escapeHtml(c.NroDocumento) + '</td>';
@@ -635,24 +801,24 @@
             }
 
             if (tipo === 'ventas') {
-                var totalFact = 0, totalPag = 0, totalSaldo = 0;
-                for (var i = 0; i < data.length; i++) {
+                let totalFact = 0, totalPag = 0, totalSaldo = 0;
+                for (let i = 0; i < data.length; i++) {
                     totalFact += data[i].TotalFactura || 0;
                     totalPag += data[i].MontoPagado || 0;
                     totalSaldo += data[i].Saldo || 0;
                 }
-                var html = '<div class="detalle-resumen">';
+                let html = '<div class="detalle-resumen">';
                 html += '<div class="detalle-resumen-item"><strong>' + data.length + '</strong> facturas</div>';
-                html += '<div class="detalle-resumen-item">Total Facturado: <strong style="color:var(--brand-primary)">$' + formatNumber(totalFact) + '</strong></div>';
-                html += '<div class="detalle-resumen-item">Total Cobrado: <strong style="color:#198754">$' + formatNumber(totalPag) + '</strong></div>';
-                html += '<div class="detalle-resumen-item">Pendiente: <strong style="color:#dc3545">$' + formatNumber(totalSaldo) + '</strong></div>';
+                html += '<div class="detalle-resumen-item">Total Facturado: <strong class="detalle-amount-primary">$' + formatNumber(totalFact) + '</strong></div>';
+                html += '<div class="detalle-resumen-item">Total Cobrado: <strong class="detalle-amount-success">$' + formatNumber(totalPag) + '</strong></div>';
+                html += '<div class="detalle-resumen-item">Pendiente: <strong class="detalle-amount-danger">$' + formatNumber(totalSaldo) + '</strong></div>';
                 html += '</div>';
                 html += '<div class="table-responsive"><table class="table table-sm table-bordered detalle-table"><thead><tr>';
                 html += '<th>Fecha</th><th>Cliente</th><th>Vendedor</th><th>Viaje</th><th>Salida</th><th>Butacas</th><th>Estado</th><th class="text-end">Facturado</th><th class="text-end">Pagado</th><th class="text-end">Saldo</th>';
                 html += '</tr></thead><tbody>';
-                for (var i = 0; i < data.length; i++) {
-                    var v = data[i];
-                    var saldoClass = (v.Saldo > 0) ? 'style="color:#dc3545;font-weight:600"' : '';
+                for (let i = 0; i < data.length; i++) {
+                    const v = data[i];
+                    const saldoClass = (v.Saldo > 0) ? ' class="detalle-amount-danger fw-semibold"' : '';
                     html += '<tr>';
                     html += '<td>' + escapeHtml(v.FacturaFecha) + '</td>';
                     html += '<td>' + escapeHtml(v.ClienteFullName) + '</td>';
@@ -663,10 +829,19 @@
                     html += '<td>' + escapeHtml(v.FacturaEstado) + '</td>';
                     html += '<td class="text-end">$' + formatNumber(v.TotalFactura) + '</td>';
                     html += '<td class="text-end">$' + formatNumber(v.MontoPagado) + '</td>';
-                    html += '<td class="text-end" ' + saldoClass + '>$' + formatNumber(v.Saldo) + '</td>';
+                    html += '<td class="text-end"' + saldoClass + '>$' + formatNumber(v.Saldo) + '</td>';
                     html += '</tr>';
                 }
-                html += '</tbody></table></div>';
+                html += '</tbody>';
+                html += '<tfoot>';
+                html += '<tr>';
+                html += '<td colspan="7" class="text-end">Totales:</td>';
+                html += '<td class="text-end">$' + formatNumber(totalFact) + '</td>';
+                html += '<td class="text-end">$' + formatNumber(totalPag) + '</td>';
+                html += '<td class="text-end' + (totalSaldo > 0 ? ' detalle-amount-danger' : '') + '">$' + formatNumber(totalSaldo) + '</td>';
+                html += '</tr>';
+                html += '</tfoot>';
+                html += '</table></div>';
                 return html;
             }
 
@@ -675,7 +850,7 @@
 
         function escapeHtml(str) {
             if (str == null) return '';
-            var div = document.createElement('div');
+            const div = document.createElement('div');
             div.appendChild(document.createTextNode(str));
             return div.innerHTML;
         }
@@ -685,12 +860,10 @@
             return parseFloat(num).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        $(document).ready(function() {
-            // Contar dinámicamente el número de accesos rápidos
-            var accessCount = $('.quick-access-item').length;
+        $(document).ready(function () {
+            const accessCount = $('.quick-access-item').length;
             $('#accessCountBadge').text(accessCount);
 
-            // Si el usuario lo cerró recientemente, no lo volvemos a cargar/mostrar
             if (isBannerDismissed()) {
                 return;
             }
@@ -705,7 +878,6 @@
                         return;
                     }
 
-                    // v2: el endpoint devuelve items tipados (DTO). Fallback: sJsonResult legacy {Table:[...]}
                     let items = (data && Array.isArray(data.items)) ? data.items : null;
                     if (!items) {
                         let jsonData;
@@ -722,10 +894,9 @@
                     if (items && Array.isArray(items) && items.length > 0) {
                         const banner = document.getElementById('banner');
                         const bannerList = document.getElementById('banner-list');
-                        
-                        // Limpiar la lista antes de agregar elementos
+
                         bannerList.innerHTML = '';
-                        
+
                         const MAX_ITEMS = 7;
                         items.slice(0, MAX_ITEMS).forEach(item => {
                             const daysToDeparture = (typeof item.DaysToDeparture === "number")
@@ -733,7 +904,6 @@
                                 : formatDateDiff(item.fechasalida || item.FechaSalida);
                             const listItem = document.createElement('li');
 
-                            // Evitar XSS: NO usar innerHTML con datos de backend
                             const h2 = document.createElement('h2');
                             const a = document.createElement('a');
                             a.href = "/Reserva/Index?viajeid=" + encodeURIComponent(item.ViajeID || item.ViajeId || "");
@@ -757,7 +927,6 @@
                             bannerList.appendChild(listItem);
                         });
 
-                        // Mostrar el banner solo si hay elementos
                         if (bannerList.children.length > 0) {
                             banner.classList.remove('hidden');
                             banner.style.display = '';

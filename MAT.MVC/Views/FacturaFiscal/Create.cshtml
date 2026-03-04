@@ -37,9 +37,29 @@
                     <div class="col-md-6">
                         <label class="modern-form-label">Proveedor</label>
                         <div class="d-flex gap-2">
-                            <select id="ddlProveedor" class="modern-form-select" style="flex:1;">
-                                <option value="">-- Seleccionar --</option>
-                            </select>
+                            <div class="dropdown flex-fill" id="ddlProveedorWrapper">
+                                <button type="button" id="btnProveedorDropdown"
+                                        class="modern-form-select text-start d-flex align-items-center justify-content-between w-100"
+                                        data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"
+                                        style="background-image:none; cursor:pointer;">
+                                    <span id="proveedorSelectedText" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">-- Seleccionar --</span>
+                                    <i class="bi bi-chevron-down ms-2" style="flex-shrink:0;font-size:0.75rem;opacity:0.6;"></i>
+                                </button>
+                                <div class="dropdown-menu p-0 shadow" id="proveedorDropdownMenu"
+                                     style="width:100%;max-height:320px;display:flex;flex-direction:column;">
+                                    <div class="p-2 border-bottom" style="flex-shrink:0;">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                            <input type="text" id="txtBuscarProveedor" class="form-control"
+                                                   placeholder="Buscar por nombre o CUIT..." autocomplete="off" />
+                                        </div>
+                                    </div>
+                                    <div id="listaProveedoresDropdown" style="overflow-y:auto;flex:1;">
+                                        <div class="text-muted px-3 py-2" style="font-size:0.85rem;">Cargando...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="ddlProveedor" />
                             <button type="button" class="btn-modern btn-modern-secondary" onclick="mostrarModalProveedor()" title="Crear proveedor">
                                 <i class="bi bi-plus-circle"></i>
                             </button>
@@ -271,6 +291,8 @@
         });
     });
 
+    var _proveedoresData = [];
+
     function cargarProveedoresDropdown() {
         $.ajax({
             url: '@Url.Action("GetProveedores", "FacturaFiscal")',
@@ -278,28 +300,78 @@
             dataType: 'json',
             success: function (r) {
                 if (r.success && r.data) {
-                    var ddl = $('#ddlProveedor');
-                    ddl.find('option:not(:first)').remove();
-                    $.each(r.data, function (i, p) {
-                        ddl.append($('<option></option>').val(p.proveedorId).text(p.razonSocial + ' (' + p.cuit + ')').data('prov', p));
-                    });
+                    _proveedoresData = r.data;
+                    renderListaProveedores('');
                 }
+            },
+            error: function () {
+                $('#listaProveedoresDropdown').html('<div class="text-danger px-3 py-2" style="font-size:0.85rem;">Error al cargar proveedores.</div>');
             }
         });
 
-        $('#ddlProveedor').on('change', function () {
-            var opt = $(this).find(':selected');
-            var p = opt.data('prov');
-            if (p) {
-                $('#txtCuit').val(p.cuit);
-                if (p.condicionIva) $('#ddlCondicionIva').val(p.condicionIva);
-                $('#provNombre').text(p.razonSocial);
-                $('#provCuitInfo').text('CUIT: ' + p.cuit);
-                $('#proveedorInfo').show();
-            } else {
-                $('#proveedorInfo').hide();
-            }
+        $('#txtBuscarProveedor').on('input', function () {
+            renderListaProveedores($(this).val());
         });
+
+        $('#btnProveedorDropdown').on('shown.bs.dropdown', function () {
+            $('#txtBuscarProveedor').val('').focus();
+            renderListaProveedores('');
+        });
+    }
+
+    function renderListaProveedores(filtro) {
+        var lista = $('#listaProveedoresDropdown');
+        lista.empty();
+
+        var q = $.trim(filtro).toLowerCase();
+        var filtrados = q
+            ? $.grep(_proveedoresData, function (p) {
+                return p.razonSocial.toLowerCase().indexOf(q) >= 0
+                    || (p.cuit && p.cuit.indexOf(q) >= 0);
+            })
+            : _proveedoresData;
+
+        if (filtrados.length === 0) {
+            lista.append('<div class="text-muted px-3 py-2" style="font-size:0.85rem;">Sin resultados.</div>');
+            return;
+        }
+
+        $.each(filtrados, function (i, p) {
+            var item = $('<a href="#" class="dropdown-item py-2 px-3"></a>')
+                .attr('data-id', p.proveedorId)
+                .html(
+                    '<div style="font-size:0.875rem;font-weight:600;line-height:1.2;">' + escapeHtml(p.razonSocial) + '</div>' +
+                    '<div style="font-size:0.78rem;color:#6c757d;">' + (p.cuit || '') + '</div>'
+                )
+                .on('click', function (e) {
+                    e.preventDefault();
+                    seleccionarProveedor(p);
+                    var dd = bootstrap.Dropdown.getInstance($('#btnProveedorDropdown')[0]);
+                    if (dd) dd.hide();
+                });
+            lista.append(item);
+        });
+    }
+
+    function seleccionarProveedor(p) {
+        $('#ddlProveedor').val(p.proveedorId);
+        $('#proveedorSelectedText').text(p.razonSocial + ' (' + (p.cuit || '') + ')');
+        $('#txtCuit').val(p.cuit || '');
+
+        var condIva = p.condicionIva;
+        $('#ddlCondicionIva').val(condIva !== null && condIva !== undefined ? String(condIva) : '');
+
+        $('#provNombre').text(p.razonSocial);
+        $('#provCuitInfo').text('CUIT: ' + (p.cuit || ''));
+        $('#proveedorInfo').show();
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
     }
 
     var alicuotaMap = { '0': 0, '1': 2.5, '2': 5, '3': 10.5, '4': 21, '5': 27 };
@@ -446,11 +518,19 @@
                 if (r.success) {
                     mostrarMensaje(r.message, 'success');
                     cerrarModalProveedor();
-                    // Reload proveedores y seleccionar el nuevo
-                    cargarProveedoresDropdown();
-                    setTimeout(function () {
-                        $('#ddlProveedor').val(r.proveedorId).trigger('change');
-                    }, 500);
+                    $.ajax({
+                        url: '@Url.Action("GetProveedores", "FacturaFiscal")',
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (resp) {
+                            if (resp.success && resp.data) {
+                                _proveedoresData = resp.data;
+                                renderListaProveedores('');
+                                var nuevo = $.grep(resp.data, function (p) { return p.proveedorId === r.proveedorId; });
+                                if (nuevo.length > 0) seleccionarProveedor(nuevo[0]);
+                            }
+                        }
+                    });
                 } else {
                     mostrarMensaje(r.message, 'danger');
                 }

@@ -1,0 +1,119 @@
+---
+description: Estándares de diseño UI/UX, responsividad, componentes y convenciones frontend para vistas Razor. Aplica cuando se trabaja en vistas .cshtml o scripts JS del proyecto.
+globs: **/*.cshtml, **/Scripts/**/*.js, **/Content/**/*.css
+alwaysApply: false
+---
+
+# Designer-Developer Híbrido — ASP.NET MVC + Bootstrap 5 + jQuery
+
+Experto en diseño UI/UX para aplicaciones web empresariales sobre ASP.NET MVC 4 con .NET 4.8.
+Generá código listo para producción. Sin comentarios innecesarios. Sin explicaciones salvo que se pidan.
+
+## Stack frontend
+- **Vistas**: Razor Views (`.cshtml`) con ASP.NET MVC 4 HtmlHelpers
+- **CSS**: Bootstrap 5.3.2 (utility classes + componentes nativos)
+- **Iconos**: Bootstrap Icons (`<i class="bi bi-...">`)
+- **JS**: jQuery 3.7.1 + jQuery UI 1.13.2
+- **Grillas**: DataTables (con jQuery)
+- **Plugins activos**: jquery.validate, jquery.mask, jquery.timepicker, jquery.magicsearch
+- **Excel**: EPPlus (server-side, no frontend)
+
+## Estructura de vista Razor estándar
+
+```cshtml
+@model MAT.MVC.Models.MiViewModel
+
+@{
+    ViewBag.Title = "Título de la página";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4 class="fw-semibold">Título</h4>
+        </div>
+    </div>
+    <!-- contenido -->
+</div>
+```
+
+## Bootstrap 5 — convenciones
+
+- Layout con `container-fluid` + `row` + `col-*` siempre
+- Formularios con `row g-3` y `col-md-*` para alineación en grilla
+- Botones: `btn btn-primary` para acción principal, `btn btn-outline-secondary` para secundarias
+- Tablas: `table table-hover table-sm align-middle` dentro de `table-responsive`
+- Modales: usar `modal fade` con `modal-dialog-centered`
+- Alerts: `alert alert-dismissible fade show` con Bootstrap Icons
+
+```html
+<!-- Botón primario estándar -->
+<button type="button" class="btn btn-primary">
+    <i class="bi bi-save me-1"></i> Guardar
+</button>
+
+<!-- Tabla estándar -->
+<div class="table-responsive">
+    <table id="tblDatos" class="table table-hover table-sm align-middle w-100">
+        <thead class="table-dark">...</thead>
+    </table>
+</div>
+```
+
+## DataTables — inicialización estándar
+
+```javascript
+$('#tblDatos').DataTable({
+    language: { url: '/Content/datatables/es-AR.json' },
+    responsive: true,
+    pageLength: 25,
+    order: [[0, 'asc']]
+});
+```
+
+## jQuery — convenciones
+
+- Todo el código JS dentro de `$(document).ready(function () { ... });`
+- AJAX con `$.ajax` o `$.post` / `$.get` apuntando a controllers MVC
+- Validación con `jquery.validate` + `jquery.validate.unobtrusive` (atributos Data Annotations en el modelo)
+- Masks con `$('#campo').mask('000/0000000');`
+
+```javascript
+$(document).ready(function () {
+    $('#formGuardar').on('submit', function (e) {
+        e.preventDefault();
+        if (!$(this).valid()) return;
+
+        $.post('@Url.Action("Guardar", "MiController")', $(this).serialize())
+            .done(function (res) {
+                if (res.success) location.reload();
+                else alert(res.message);
+            });
+    });
+});
+```
+
+## Responsividad — Mobile First
+
+- Columnas: `col-12 col-sm-6 col-md-4 col-lg-3` según densidad del contenido
+- Formularios: `col-12 col-md-6` como base
+- Nunca valores fijos en px para layouts — usar clases Bootstrap o unidades relativas
+- Touch targets mínimos: `min-height: 44px` en botones e inputs
+
+## Accesibilidad mínima obligatoria
+
+- Labels vinculados con `for` / `asp-for` en todo input
+- `aria-label` en botones de solo ícono
+- Contraste mínimo WCAG AA
+- Semántica HTML correcta: `<header>`, `<main>`, `<section>`, `<footer>`
+
+## Prohibiciones absolutas
+
+- ❌ `inline styles` salvo casos excepcionales justificados
+- ❌ `!important`
+- ❌ jQuery `$('#id')` sin verificar que el elemento existe primero
+- ❌ JS fuera de `document.ready` sin razón
+- ❌ Tablas sin `table-responsive` wrapper
+- ❌ Botones sin tipo explícito (`type="button"` o `type="submit"`)
+- ❌ Comentarios en el código generado
