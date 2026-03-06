@@ -1,6 +1,384 @@
 @model List<MAT.MVC.Models.DistribucionCoche>
 @using MAT.MVC.Models
 @using MAT.Enums
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribución de Coche</title>
+    <link href="~/Content/bootstrap-5.3.2.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        /* ===== MODERN BUS DISTRIBUTION STYLES ===== */
+        body {
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* Page container */
+        .bus-distribution-page {
+            padding: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Card wrapper */
+        .bus-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Legend */
+        .bus-legend {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.813rem;
+            color: #64748b;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .legend-color.occupied {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+        }
+
+        .legend-color.empty {
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .legend-color.tutor {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .legend-color.facility {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        }
+
+        /* Bus layout container */
+        #cole1 {
+            width: 700px;
+            margin: auto;
+            padding: 1.5rem;
+            box-sizing: content-box;
+        }
+
+        .grupo1, .grupo2 {
+            width: 44%;
+        }
+
+        .grupo1 {
+            float: left;
+        }
+
+        .grupo2 {
+            float: right;
+        }
+
+        .pasillo {
+            width: 10%;
+            display: inline-block;
+            position: relative;
+        }
+
+        /* Base seat styling */
+        .asiento, .asiento_parabrisa, .asiento_invertido, .asiento_largo {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            margin-bottom: 3px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 9pt;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            padding: 4px 6px;
+        }
+
+        .asiento {
+            width: 149px;
+            display: inline-block;
+            height: 50px;
+            vertical-align: top;
+        }
+
+        .asiento_parabrisa {
+            width: 144px;
+            display: inline-block;
+            height: 50px;
+            float: right;
+            margin-left: 7px;
+            vertical-align: top;
+        }
+
+        .asiento_invertido {
+            display: inline-block;
+            float: right;
+            height: 50px;
+            margin-bottom: 3px;
+            margin-left: 7px;
+            width: 144px;
+            vertical-align: top;
+        }
+
+        .asiento_largo {
+            width: 97%;
+            display: inline-block;
+            height: 50px;
+            margin-bottom: 3px;
+            float: right;
+            vertical-align: top;
+        }
+
+        /* Occupied seat styling */
+        .asiento:not(.vacio)[id]:not([id=""]),
+        .asiento_parabrisa:not(.vacio)[id]:not([id=""]),
+        .asiento_invertido:not(.vacio)[id]:not([id=""]),
+        .asiento_largo:not(.vacio)[id]:not([id=""]) {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            border: none;
+            box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3);
+        }
+
+        .asiento:not(.vacio)[id]:not([id=""]) .spnCodB,
+        .asiento_parabrisa:not(.vacio)[id]:not([id=""]) .spnCodB,
+        .asiento_invertido:not(.vacio)[id]:not([id=""]) .spnCodB,
+        .asiento_largo:not(.vacio)[id]:not([id=""]) .spnCodB {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .asiento:not(.vacio)[id]:not([id=""]) .spnB,
+        .asiento_parabrisa:not(.vacio)[id]:not([id=""]) .spnB,
+        .asiento_invertido:not(.vacio)[id]:not([id=""]) .spnB,
+        .asiento_largo:not(.vacio)[id]:not([id=""]) .spnB {
+            color: white;
+        }
+
+        /* Tutor styling */
+        div.asiento.Tutor, div.asiento_parabrisa.Tutor, div.asiento_invertido.Tutor, div.asiento_largo.Tutor {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+        }
+
+        div.asiento.Tutor::after, div.asiento_parabrisa.Tutor::after,
+        div.asiento_invertido.Tutor::after, div.asiento_largo.Tutor::after {
+            content: '\f4fc';
+            font-family: 'bootstrap-icons';
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Facility styling (vacio) */
+        .vacio {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
+            border: none !important;
+            box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
+        }
+
+        .vacio span {
+            color: white !important;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Section headers */
+        .encabezado_superior, .encabezado_inferior {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 0 0 1rem;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            width: 100%;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3);
+        }
+
+        .encabezado_inferior {
+            margin-top: 1.5rem;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        /* TV indicators */
+        .tv {
+            width: 50%;
+            height: 20px;
+            margin: auto;
+            border: none;
+            text-align: center;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 4px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: #78350f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+        }
+
+        .tv1 {
+            position: absolute;
+            top: 0;
+            left: 20px;
+        }
+
+        .tv2 {
+            position: absolute;
+            top: 172px;
+            left: 20px;
+        }
+
+        .tv3 {
+            position: absolute;
+            top: 300px;
+            left: 20px;
+        }
+
+        .tv4 {
+            position: absolute;
+            top: 430px;
+            left: 20px;
+        }
+
+        .tv5 {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .tv6 {
+            position: absolute;
+            top: 130px;
+            left: 20px;
+        }
+
+        /* Seat code and name */
+        .spnCodB {
+            font-weight: 700;
+            font-size: 9pt;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 1px;
+        }
+
+        .spnB {
+            font-size: 8pt;
+            color: #475569;
+            line-height: 1.3;
+            display: block;
+            word-break: break-word;
+        }
+
+        /* Position classes */
+        .asiento_parabrisa.posicion_A, .asiento_invertido.posicion_A {
+            float: right;
+        }
+
+        .asiento_parabrisa.posicion_B, .asiento_invertido.posicion_B {
+            float: left;
+        }
+
+        /* Custom margins */
+        .custom_margin_top_47 {
+            margin-top: 47px;
+        }
+
+        .custom_margin_top_20 {
+            margin-top: 20px;
+        }
+
+        /* Print styles */
+        @@page {
+            margin: 1.5cm;
+            size: A4 portrait;
+        }
+
+        @@media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .bus-distribution-page {
+                padding: 0;
+            }
+
+            .bus-card {
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+                overflow: visible;
+            }
+
+            .bus-legend {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .piso-section {
+                break-after: page;
+                page-break-after: always;
+            }
+
+            .piso-section:last-child {
+                break-after: auto;
+                page-break-after: auto;
+            }
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .bus-distribution-page {
+                padding: 0.5rem;
+                overflow-x: auto;
+            }
+
+            #cole1 {
+                padding: 1rem;
+                min-width: 700px;
+            }
+
+            .bus-legend {
+                gap: 1rem;
+                padding: 0.75rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
 
 <div class="bus-distribution-page">
     <div class="bus-card">
@@ -29,7 +407,6 @@
         <div class="encabezado_superior">MINI BUS</div>
         <div>
             <div class="grupo1">
-                @*@foreach (var item in Model.Where(bt => bt.Butaca.NroButaca.Value < 45 && (bt.Butaca.Posicion=="C" || bt.Butaca.Posicion=="D") ).OrderBy(bt => bt.Butaca.NroButaca))*@
                 @foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
                 {
                     <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
@@ -169,14 +546,14 @@
       
     }
     else
-    { 
+    {
+        <div class="piso-section">
         <div class="encabezado_superior">
         PISO SUPERIOR SEMICAMA
         </div>
         <div>
             <div class="grupo1">
 
-                @*@foreach (var item in Model.Where(bt => bt.Butaca.NroButaca.Value < 45 && (bt.Butaca.Posicion=="C" || bt.Butaca.Posicion=="D") ).OrderBy(bt => bt.Butaca.NroButaca))*@
                 @if (ViewBag.NroCoche == "101")
                 {
                     foreach (var item in Model.Where(bt => bt.ButacaNro < 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
@@ -225,7 +602,6 @@
                 <div class="asiento_parabrisa posicion_@ItemPasajero3.ButacaPosicion" id="@(ItemPasajero3 != null ? ItemPasajero3.PasajeroID : "")">
                     <span class="spnCodB">@ItemPasajero3.ButacaCodigo </span>
 
-                    @*@if (ItemPasajero3.PersonaPasajero != null)*@
                     @if (ItemPasajero3.PasajeroID != null)
                     {
                         <span class="spnB"> @ItemPasajero3.PasajeroNombre.ToUpper() @ItemPasajero3.PasajeroApellido.ToUpper()</span>
@@ -291,9 +667,7 @@
                     <div class="asiento_largo vacio" style="padding-top:5px">
                         <span>ESCALERA</span>
                     </div>
-                    <div class="asiento_largo bold">
-                        BAR
-                    </div>
+                    <div class="asiento_largo vacio"><span>BAR</span></div>
 
                     foreach (var item in Model.Where(bt => bt.ButacaNro > 8 && bt.ButacaNro < 49 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
                     {
@@ -324,11 +698,8 @@
                     <div class="asiento_largo vacio" style="padding-top:5px">
                         <span>ESCALERA</span>
                     </div>
-                    <div class="asiento_largo bold">
-                        BAR
-                    </div>
+                    <div class="asiento_largo vacio"><span>BAR</span></div>
                 }
-
 
 
 
@@ -336,6 +707,9 @@
             </div>
         </div>
         <div class="clear"></div>
+        </div><!-- /piso-section superior -->
+
+        <div class="piso-section">
         <div class="encabezado_inferior">
             PISO INFERIOR CAMA
         </div>
@@ -416,358 +790,14 @@
 
             </div>
         </div>
+        </div><!-- /piso-section inferior -->
     }
 
         </div>
     </div>
 </div>
 
-@section Styles {
-<style>
-    /* ===== MODERN BUS DISTRIBUTION STYLES ===== */
-    body {
-        -webkit-print-color-adjust: exact;
-    }
-
-    /* Page container */
-    .bus-distribution-page {
-        padding: 1.5rem;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    /* Card wrapper */
-    .bus-card {
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        overflow: hidden;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Legend */
-    .bus-legend {
-        display: flex;
-        gap: 1.5rem;
-        padding: 1rem 1.5rem;
-        background: #f8fafc;
-        border-bottom: 1px solid #e2e8f0;
-        flex-wrap: wrap;
-    }
-
-    .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.813rem;
-        color: #64748b;
-    }
-
-    .legend-color {
-        width: 20px;
-        height: 20px;
-        border-radius: 4px;
-        border: 1px solid rgba(0,0,0,0.1);
-    }
-
-    .legend-color.occupied {
-        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-    }
-
-    .legend-color.empty {
-        background: #f1f5f9;
-        border: 2px dashed #cbd5e1;
-    }
-
-    .legend-color.tutor {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    }
-
-    .legend-color.facility {
-        background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-    }
-
-    /* Bus layout container */
-    #cole1 {
-        width: 700px;
-        margin: auto;
-        padding: 1.5rem;
-    }
-
-    .grupo1, .grupo2 {
-        width: 44%;
-    }
-
-    .grupo1 {
-        float: left;
-    }
-
-    .grupo2 {
-        float: right;
-    }
-
-    .pasillo {
-        width: 10%;
-        display: inline-block;
-        position: relative;
-    }
-
-    /* Base seat styling */
-    .asiento, .asiento_parabrisa, .asiento_invertido, .asiento_largo {
-        background: #f1f5f9;
-        border: 1px solid #cbd5e1;
-        border-radius: 4px;
-        margin-bottom: 3px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        font-size: 9pt;
-        transition: all 0.2s ease;
-        position: relative;
-        overflow: hidden;
-        box-sizing: border-box;
-        padding: 4px 6px;
-    }
-
-    .asiento {
-        width: 149px;
-        display: inline-block;
-        height: 50px;
-        vertical-align: top;
-    }
-
-    .asiento_parabrisa {
-        width: 144px;
-        display: inline-block;
-        height: 50px;
-        float: right;
-        margin-left: 7px;
-        vertical-align: top;
-    }
-
-    .asiento_invertido {
-        display: inline-block;
-        float: right;
-        height: 50px;
-        margin-bottom: 3px;
-        margin-left: 7px;
-        width: 144px;
-        vertical-align: top;
-    }
-
-    .asiento_largo {
-        width: 97%;
-        display: inline-block;
-        height: 50px;
-        margin-bottom: 3px;
-        float: right;
-        vertical-align: top;
-    }
-
-    /* Occupied seat styling */
-    .asiento:not(.vacio)[id]:not([id=""]),
-    .asiento_parabrisa:not(.vacio)[id]:not([id=""]),
-    .asiento_invertido:not(.vacio)[id]:not([id=""]),
-    .asiento_largo:not(.vacio)[id]:not([id=""]) {
-        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-        border: none;
-        box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3);
-    }
-
-    .asiento:not(.vacio)[id]:not([id=""]) .spnCodB,
-    .asiento_parabrisa:not(.vacio)[id]:not([id=""]) .spnCodB,
-    .asiento_invertido:not(.vacio)[id]:not([id=""]) .spnCodB,
-    .asiento_largo:not(.vacio)[id]:not([id=""]) .spnCodB {
-        color: rgba(255, 255, 255, 0.9);
-    }
-
-    .asiento:not(.vacio)[id]:not([id=""]) .spnB,
-    .asiento_parabrisa:not(.vacio)[id]:not([id=""]) .spnB,
-    .asiento_invertido:not(.vacio)[id]:not([id=""]) .spnB,
-    .asiento_largo:not(.vacio)[id]:not([id=""]) .spnB {
-        color: white;
-    }
-
-    /* Tutor styling */
-    div.asiento.Tutor, div.asiento_parabrisa.Tutor, div.asiento_invertido.Tutor, div.asiento_largo.Tutor {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
-        box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
-    }
-
-    div.asiento.Tutor::after, div.asiento_parabrisa.Tutor::after,
-    div.asiento_invertido.Tutor::after, div.asiento_largo.Tutor::after {
-        content: '\f4fc';
-        font-family: 'bootstrap-icons';
-        position: absolute;
-        bottom: 2px;
-        right: 4px;
-        font-size: 0.875rem;
-        color: rgba(255,255,255,0.7);
-    }
-
-    /* Facility styling (vacio) */
-    .vacio {
-        background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
-        border: none !important;
-        box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
-    }
-
-    .vacio span {
-        color: white !important;
-        font-weight: 600;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    /* Section headers */
-    .encabezado_superior, .encabezado_inferior {
-        background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-        color: white;
-        font-size: 0.875rem;
-        font-weight: 600;
-        margin: 0 0 1rem;
-        padding: 0.75rem 1rem;
-        text-align: center;
-        width: 100%;
-        border-radius: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3);
-    }
-
-    .encabezado_inferior {
-        margin-top: 1.5rem;
-    }
-
-    .clear {
-        clear: both;
-    }
-
-    /* TV indicators */
-    .tv {
-        width: 50%;
-        height: 20px;
-        margin: auto;
-        border: none;
-        text-align: center;
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        border-radius: 4px;
-        font-size: 0.625rem;
-        font-weight: 700;
-        color: #78350f;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
-    }
-
-    .tv1 {
-        position: absolute;
-        top: 0;
-        left: 20px;
-    }
-
-    .tv2 {
-        position: absolute;
-        top: 172px;
-        left: 20px;
-    }
-
-    .tv3 {
-        position: absolute;
-        top: 300px;
-        left: 20px;
-    }
-
-    .tv4 {
-        position: absolute;
-        top: 430px;
-        left: 20px;
-    }
-
-    .tv5 {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-    }
-
-    .tv6 {
-        position: absolute;
-        top: 130px;
-        left: 20px;
-    }
-
-    /* Seat code and name */
-    .spnCodB {
-        font-weight: 700;
-        font-size: 9pt;
-        color: #1e293b;
-        display: block;
-        margin-bottom: 1px;
-    }
-
-    .spnB {
-        font-size: 8pt;
-        color: #475569;
-        line-height: 1.3;
-        display: block;
-        word-break: break-word;
-    }
-
-    /* Position classes */
-    .asiento_parabrisa.posicion_A, .asiento_invertido.posicion_A {
-        float: right;
-    }
-
-    .asiento_parabrisa.posicion_B, .asiento_invertido.posicion_B {
-        float: left;
-    }
-
-    /* Custom margins */
-    .custom_margin_top_47 {
-        margin-top: 47px;
-    }
-
-    .custom_margin_top_20 {
-        margin-top: 20px;
-    }
-
-    /* Print styles */
-    @@media print {
-        .bus-distribution-page {
-            padding: 0;
-        }
-
-        .bus-card {
-            box-shadow: none;
-            border: 1px solid #e2e8f0;
-        }
-
-        .bus-legend {
-            print-color-adjust: exact;
-            -webkit-print-color-adjust: exact;
-        }
-    }
-
-    /* Responsive */
-    @@media (max-width: 768px) {
-        .bus-distribution-page {
-            padding: 0.5rem;
-            overflow-x: auto;
-        }
-
-        #cole1 {
-            padding: 1rem;
-            min-width: 700px;
-        }
-
-        .bus-legend {
-            gap: 1rem;
-            padding: 0.75rem 1rem;
-        }
-    }
-</style>
-}
-<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         
@@ -805,6 +835,7 @@
             }
         });
     });
-
-    
 </script>
+
+</body>
+</html>
