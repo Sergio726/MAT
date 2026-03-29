@@ -2646,8 +2646,8 @@ div.bnn_floating-banner.hidden {
 
 /* Texto y spans en modales */
 .ui-dialog span {
-    font-size: 0.9375rem;
-    color: var(--text-primary);
+    font-size: 0.8rem;
+    color: var(--text-primary, #2b2d42);
 }
 
 .ui-dialog .custom_font_weigh_bold {

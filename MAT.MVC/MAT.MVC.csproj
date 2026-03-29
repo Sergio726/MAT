@@ -434,6 +434,8 @@
     <Content Include="Content\modern-datatable.css" />
     <Content Include="Content\modern-facturafiscal.css" />
     <Content Include="Content\modern-facturas.css" />
+    <Content Include="Content\factura-detalle.css" />
+    <Content Include="Content\partial-vinculacion-menor.css" />
     <Content Include="Content\modern-nota-credito.css" />
     <Content Include="Content\modern-presupuesto.css" />
     <Content Include="Content\modern-layout.css" />

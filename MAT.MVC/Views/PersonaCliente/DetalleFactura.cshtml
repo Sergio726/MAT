@@ -9,297 +9,11 @@
     Guid ClienteID = Model.ClienteID;
     double dTotal = 0;
     double dTotalPagos = Model.Monto - Model.Saldo;
+    int cantMenores = (int)(ViewBag.CantMenores ?? 0);
+    int countMenoresVinculados = ((List<PasajeroMenorModel>)ViewBag.ListMenores)
+        .Count(x => x.PasajeroMenorID != 0);
+    int cupoRestante = Math.Max(0, cantMenores - countMenoresVinculados);
 }
-
-<style>
-    .factura-detail-container {
-        padding: 0.5rem;
-    }
-    .factura-info-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
-        margin-bottom: 1.25rem;
-    }
-    .factura-info-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    .factura-info-item.full-width {
-        grid-column: span 2;
-    }
-    .factura-info-label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--text-secondary, #6b7280);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    .factura-info-value {
-        font-size: 0.875rem;
-        color: var(--text-primary, #1f2937);
-        padding: 0.5rem 0.625rem;
-        background: var(--bg-secondary, #f9fafb);
-        border-radius: 0.375rem;
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-    }
-    .factura-info-value i {
-        color: var(--primary-color, #e91e63);
-        font-size: 0.875rem;
-    }
-    .factura-info-value .currency-badge {
-        background: var(--primary-color, #e91e63);
-        color: white;
-        padding: 0.125rem 0.375rem;
-        border-radius: 0.25rem;
-        font-size: 0.7rem;
-        font-weight: 600;
-        margin-left: 0.25rem;
-    }
-    /* Icono de copiar ID en titlebar del dialog */
-    .ui-dialog-titlebar-copy-id {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        margin-left: 0.5rem;
-        padding: 0;
-        border: none;
-        background: transparent;
-        color: var(--text-secondary, #6b7280);
-        cursor: pointer;
-        border-radius: 0.25rem;
-        transition: all 0.2s ease;
-        font-size: 0.875rem;
-    }
-    .ui-dialog-titlebar-copy-id:hover {
-        background: var(--bg-secondary, #f3f4f6);
-        color: var(--primary-color, #e91e63);
-    }
-    .ui-dialog-titlebar-copy-id:active {
-        transform: scale(0.95);
-    }
-    .factura-section {
-        margin-bottom: 1rem;
-    }
-    .factura-section-title {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        padding: 0.5rem 0.75rem;
-        background: var(--bg-secondary, #f3f4f6);
-        border-radius: 0.375rem 0.375rem 0 0;
-        border-bottom: 2px solid var(--primary-color, #e91e63);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .factura-section-title i {
-        color: var(--primary-color, #e91e63);
-    }
-    .factura-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.8rem;
-    }
-    .factura-table thead th {
-        background: var(--bg-secondary, #f9fafb);
-        padding: 0.5rem;
-        text-align: left;
-        font-weight: 600;
-        color: var(--text-secondary, #6b7280);
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-    }
-    .factura-table tbody td {
-        padding: 0.5rem;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-        color: var(--text-primary, #1f2937);
-    }
-    .factura-table tbody tr:hover {
-        background: var(--bg-secondary, #f9fafb);
-    }
-    .factura-table tfoot th {
-        background: var(--bg-secondary, #f3f4f6);
-        padding: 0.625rem 0.5rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        border-top: 2px solid var(--border-color, #e5e7eb);
-    }
-    .btn-action-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 28px;
-        height: 28px;
-        border-radius: 0.375rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background: var(--bg-secondary, #f3f4f6);
-        color: var(--text-secondary, #6b7280);
-        text-decoration: none;
-    }
-    .btn-action-icon:hover {
-        background: var(--primary-color, #e91e63);
-        color: white;
-    }
-    .btn-eliminar-pasajero {
-        background: #fee2e2;
-        color: #dc2626;
-    }
-    .btn-eliminar-pasajero:hover {
-        background: #dc2626;
-        color: white;
-    }
-    .btn-eliminar-pasajero:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-    .btn-cambiar-pasajero {
-        background: #dbeafe;
-        color: #2563eb;
-    }
-    .btn-cambiar-pasajero:hover {
-        background: #2563eb;
-        color: white;
-    }
-    .pasajero-resultado-item {
-        padding: 0.75rem;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .pasajero-resultado-item:hover {
-        background: var(--bg-secondary, #f3f4f6);
-    }
-    .pasajero-resultado-item.selected {
-        background: #dbeafe;
-        border-left: 3px solid #2563eb;
-    }
-    .pasajero-resultado-item:last-child {
-        border-bottom: none;
-    }
-    .pasajero-resultado-nombre {
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        font-size: 0.875rem;
-    }
-    .pasajero-resultado-detalle {
-        font-size: 0.75rem;
-        color: var(--text-secondary, #6b7280);
-        margin-top: 0.25rem;
-    }
-    .factura-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border-color, #e5e7eb);
-        margin-top: 1rem;
-    }
-    .btn-factura {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        padding: 0.5rem 0.875rem;
-        border-radius: 0.375rem;
-        font-weight: 500;
-        font-size: 0.75rem;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        border: none;
-        cursor: pointer;
-    }
-    .btn-factura-primary {
-        background: var(--primary-color, #e91e63);
-        color: white !important;
-    }
-    .btn-factura-primary:hover {
-        background: var(--primary-hover, #d81b60);
-        color: white !important;
-        text-decoration: none;
-    }
-    .btn-factura-secondary {
-        background: var(--bg-secondary, #f3f4f6);
-        color: var(--text-primary, #374151);
-        border: 1px solid var(--border-color, #e5e7eb);
-    }
-    .btn-factura-secondary:hover {
-        background: var(--border-color, #e5e7eb);
-        color: var(--text-primary, #374151);
-        text-decoration: none;
-    }
-    .btn-factura-danger {
-        background: #fee2e2;
-        color: #dc2626;
-        border: 1px solid #fecaca;
-    }
-    .btn-factura-danger:hover {
-        background: #fecaca;
-        color: #dc2626;
-        text-decoration: none;
-    }
-    .dialog-hidden {
-        display: none;
-    }
-    .dialog-content {
-        padding: 1rem;
-    }
-    .dialog-content .form-group {
-        margin-bottom: 0.75rem;
-    }
-    .dialog-content label {
-        display: block;
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--text-secondary, #6b7280);
-        margin-bottom: 0.25rem;
-    }
-    .dialog-content input[type="number"],
-    .dialog-content input[type="text"] {
-        width: 100%;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-    }
-    .dialog-content input:focus {
-        outline: none;
-        border-color: var(--primary-color, #e91e63);
-        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
-    }
-    .dialog-content .radio-group {
-        display: flex;
-        gap: 1rem;
-        margin: 0.5rem 0;
-    }
-    .dialog-content .radio-group label {
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-        cursor: pointer;
-    }
-    @@media (max-width: 480px) {
-        .factura-info-grid {
-            grid-template-columns: 1fr;
-        }
-        .factura-info-item.full-width {
-            grid-column: span 1;
-        }
-        .factura-actions {
-            flex-direction: column;
-        }
-        .btn-factura {
-            justify-content: center;
-        }
-    }
-</style>
 
 <div class="factura-detail-container" data-facturaid="@FacturaID">
     @{
@@ -385,7 +99,7 @@
                 <tr>
                     <th>Butaca</th>
                     <th>Pasajero</th>
-                    <th style="width: 70px;">Acciones</th>
+                    <th class="factura-th-acciones">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -397,7 +111,7 @@
                         </td>
                         <td>@item.PasajeroNombre @item.PasajeroApellido</td>
                         <td>
-                            <div style="display: flex; gap: 0.25rem;">
+                            <div class="factura-cell-actions">
                                 <a href="#" class="btn-action-icon btn-cambiar-pasajero" data-pasaje="@item.PasajeID" data-pasajero-actual="@item.PasajeroNombre @item.PasajeroApellido" data-pasajero-id="@item.PasajeroID" title="Cambiar Pasajero">
                                     <i class="bi bi-person-badge"></i>
                                 </a>
@@ -438,7 +152,7 @@
             <table id="tblListMenores" class="factura-table">
                 <thead>
                     <tr>
-                        <th style="width: 40px;">#</th>
+                        <th class="factura-th-num">#</th>
                         <th>Responsable del menor</th>
                         <th>Menor a cargo</th>
                     </tr>
@@ -471,10 +185,10 @@
         <table class="factura-table">
             <thead>
                 <tr>
-                    <th style="width: 40px;">#</th>
+                    <th class="factura-th-num">#</th>
                     <th>Fecha</th>
                     <th>Detalle</th>
-                    <th style="width: 60px;">Cant.</th>
+                    <th class="factura-th-cant">Cant.</th>
                     <th>Precio</th>
                 </tr>
             </thead>
@@ -491,12 +205,12 @@
                             <td>@item.Detalle</td>
                             <td>@item.Cantidad</td>
                             <td>
-                                <div style="display: flex; align-items: center; gap: 0.375rem;">
+                                <div class="factura-precio-row">
                                     <span>@String.Format("{0:C}", item.Precio)</span>
                                     @if (item.Detalle.Contains("PAQUETE"))
                                     {
-                                        <a href="javascript: fnCambiarPrecio('@item.Id','@Model.FacturaID');" title="Cambiar Precio" class="btn-action-icon" style="width: 24px; height: 24px;">
-                                            <i class="bi bi-pencil" style="font-size: 0.7rem;"></i>
+                                        <a href="javascript: fnCambiarPrecio('@item.Id','@Model.FacturaID');" title="Cambiar Precio" class="btn-action-icon btn-action-icon--sm">
+                                            <i class="bi bi-pencil"></i>
                                         </a>
                                     }
                                 </div>
@@ -507,7 +221,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="4" style="text-align: right;">Total</th>
+                    <th colspan="4" class="factura-tfoot-total-label">Total</th>
                     <th>@String.Format("{0:C}", dTotal)</th>
                 </tr>
             </tfoot>
@@ -546,6 +260,19 @@
             <i class="bi bi-receipt"></i>
             Pagos
         </a>
+        @if (cantMenores > 0)
+        {
+            <button type="button" class="btn-factura btn-factura-secondary"
+                    onclick="showVinculosMenorFactura();"
+                    title="Vincular menores a un responsable de este viaje (seguro de menor en la factura)">
+                <i class="bi bi-person-heart"></i>
+                Vincular Menores
+                @if (countMenoresVinculados > 0)
+                {
+                    <span class="factura-badge-count">@countMenoresVinculados</span>
+                }
+            </button>
+        }
         <a href="#" id="btn-eliminarventa" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-danger">
             <i class="bi bi-trash3"></i>
             Eliminar Venta
@@ -556,16 +283,16 @@
 <!-- Dialogs -->
 <div id="divSelectTipoVoucher" title="Tipo de Voucher" class="dialog-hidden">
     <div class="dialog-content">
-        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <a href="javascript: imprimirVoucher('@FacturaID','Grupal');" class="btn-factura btn-factura-secondary" style="justify-content: center;">
+        <div class="factura-dialog-stack">
+            <a href="javascript: imprimirVoucher('@FacturaID','Grupal');" class="btn-factura btn-factura-secondary btn-factura--block">
                 <i class="bi bi-people"></i>
                 Grupal
             </a>
-            <a href="javascript: imprimirVoucher('@FacturaID','Individual');" class="btn-factura btn-factura-secondary" style="justify-content: center;">
+            <a href="javascript: imprimirVoucher('@FacturaID','Individual');" class="btn-factura btn-factura-secondary btn-factura--block">
                 <i class="bi bi-person"></i>
                 Individual
             </a>
-            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: 0.5rem;">
+            <label class="factura-checkbox-label">
                 <input type="checkbox" id="chkInfoAdicional" />
                 <span>Incluir Informacion Adicional</span>
             </label>
@@ -577,11 +304,11 @@
 <div id="divDescuentoRecargo" title="Descuento/Recargo" class="dialog-hidden">
     <div class="dialog-content">
         <div class="form-group">
-            <label for="nMonto">Monto <span style="color: #ef4444;">*</span></label>
+            <label for="nMonto">Monto <span class="factura-required">*</span></label>
             <input type="number" id="nMonto" min="0" max="100000" value="0" />
         </div>
         <div class="form-group">
-            <label for="txtDetalleDR">Detalle <span style="color: #ef4444;">*</span></label>
+            <label for="txtDetalleDR">Detalle <span class="factura-required">*</span></label>
             <input type="text" id="txtDetalleDR" maxlength="100" />
         </div>
         <div class="form-group">
@@ -597,7 +324,7 @@
                 </label>
             </div>
         </div>
-        <div style="margin-top: 1rem; text-align: right;">
+        <div class="factura-dialog-actions">
             <button type="button" class="btn-factura btn-factura-primary" onclick="addDR()">
                 <i class="bi bi-plus-lg"></i>
                 Agregar
@@ -609,7 +336,7 @@
 <!-- Dialogo: Código de seguridad para eliminar pasajero -->
 <div id="divEliminarPasajeroCodigo" title="Código de seguridad" class="dialog-hidden">
     <div class="dialog-content">
-        <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 1rem;">
+        <p class="factura-dialog-hint">
             Para eliminar al pasajero de la factura, ingrese el código de seguridad asignado por el administrador del sistema.
         </p>
         <div class="form-group">
@@ -618,7 +345,7 @@
         </div>
         <input type="hidden" id="hdnEliminarPasajero_PasajeID" />
         <input type="hidden" id="hdnEliminarPasajero_FacturaID" />
-        <div style="margin-top: 1rem; text-align: right;">
+        <div class="factura-dialog-actions">
             <button type="button" id="btnConfirmarEliminarPasajero" class="btn-factura btn-factura-danger">
                 <i class="bi bi-trash"></i>
                 Eliminar pasajero
@@ -630,21 +357,21 @@
 <!-- Dialogo: Cambiar pasajero -->
 <div id="divCambiarPasajero" title="Cambiar Pasajero" class="dialog-hidden">
     <div class="dialog-content">
-        <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 1rem;">
+        <p class="factura-dialog-hint">
             Busque y seleccione el nuevo pasajero que ocupará esta butaca.
         </p>
         <div class="form-group">
             <label for="txtBuscarPasajero">Buscar pasajero (nombre, apellido o documento)</label>
-            <input type="text" id="txtBuscarPasajero" placeholder="Ingrese nombre, apellido o documento..." autocomplete="off" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.375rem; font-size: 0.875rem;" />
+            <input type="text" id="txtBuscarPasajero" class="factura-input-search" placeholder="Ingrese nombre, apellido o documento..." autocomplete="off" />
         </div>
-        <div id="divResultadosPasajeros" style="max-height: 300px; overflow-y: auto; margin-top: 1rem; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.375rem; padding: 0.5rem;">
-            <p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;">
+        <div id="divResultadosPasajeros" class="factura-resultados-scroll">
+            <p class="factura-placeholder-msg">
                 Ingrese al menos 2 caracteres para buscar
             </p>
         </div>
         <input type="hidden" id="hdnCambiarPasajero_PasajeID" />
         <input type="hidden" id="hdnCambiarPasajero_PasajeroActualID" />
-        <div style="margin-top: 1rem; text-align: right;">
+        <div class="factura-dialog-actions">
             <button type="button" id="btnConfirmarCambiarPasajero" class="btn-factura btn-factura-primary" disabled>
                 <i class="bi bi-check-lg"></i>
                 Confirmar cambio
@@ -655,6 +382,8 @@
 
 <input type="hidden" id="hdnTotalPagos" value="@dTotalPagos" />
 <input type="hidden" id="hdnViajeMonedaTipo" value="@Model.MonedaTipo" />
+<input type="hidden" id="hdnSeguroMenorTotal" value="@cantMenores" />
+<input type="hidden" id="numMenor" value="@cupoRestante" />
 
 <script type="text/javascript">
     $(function () {
@@ -671,6 +400,13 @@
             }
             if ($("#divCambiarPasajero").length && $("#divCambiarPasajero").hasClass("ui-dialog-content")) {
                 $("#divCambiarPasajero").addClass("dialog-hidden").dialog("destroy");
+            }
+        });
+
+        // Al cerrar el dialog de vinculación de menores, refrescar DetalleFactura
+        $(document).on("dialogclose", "#divVinculosMenorDesdeFactura", function () {
+            if (typeof window.PopupDetalleFactura_Load === "function") {
+                window.PopupDetalleFactura_Load();
             }
         });
 
@@ -814,7 +550,7 @@
             $("#hdnCambiarPasajero_PasajeID").val(pasajeID);
             $("#hdnCambiarPasajero_PasajeroActualID").val(pasajeroActualID);
             $("#txtBuscarPasajero").val("");
-            $("#divResultadosPasajeros").html('<p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;">Ingrese al menos 2 caracteres para buscar</p>');
+            $("#divResultadosPasajeros").html('<p class="factura-placeholder-msg">Ingrese al menos 2 caracteres para buscar</p>');
             $("#btnConfirmarCambiarPasajero").prop("disabled", true);
 
             $("#divCambiarPasajero")
@@ -846,13 +582,13 @@
             clearTimeout(buscarPasajeroTimeout);
 
             if (searchTerm.length < 2) {
-                $resultados.html('<p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;">Ingrese al menos 2 caracteres para buscar</p>');
+                $resultados.html('<p class="factura-placeholder-msg">Ingrese al menos 2 caracteres para buscar</p>');
                 $btnConfirmar.prop("disabled", true);
                 return;
             }
 
             buscarPasajeroTimeout = setTimeout(function () {
-                $resultados.html('<p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;"><i class="bi bi-hourglass-split"></i> Buscando...</p>');
+                $resultados.html('<p class="factura-placeholder-msg"><i class="bi bi-hourglass-split"></i> Buscando...</p>');
 
                 $.ajax({
                     url: "/PersonaCliente/GetClientesTop",
@@ -873,12 +609,12 @@
                             });
                             $resultados.html(html);
                         } else {
-                            $resultados.html('<p style="text-align: center; color: var(--text-secondary, #6b7280); font-size: 0.8rem; margin: 1rem 0;">No se encontraron resultados</p>');
+                            $resultados.html('<p class="factura-placeholder-msg">No se encontraron resultados</p>');
                         }
                         $btnConfirmar.prop("disabled", true);
                     },
                     error: function () {
-                        $resultados.html('<p style="text-align: center; color: #dc2626; font-size: 0.8rem; margin: 1rem 0;">Error al buscar pasajeros. Intente nuevamente.</p>');
+                        $resultados.html('<p class="factura-placeholder-msg factura-placeholder-msg--error">Error al buscar pasajeros. Intente nuevamente.</p>');
                         $btnConfirmar.prop("disabled", true);
                     }
                 });
@@ -1027,5 +763,28 @@
             var url = "/PersonaCliente/partialHistorialdePagosByFactura?FacturaID=" + encodeURIComponent(FacturaID || "");
             ShowFormDialog(url, "PopinPagosFactura", "Pagos", "wide");
         }
+    }
+
+    function showVinculosMenorFactura() {
+        var viajeId = "@ViewBag.ViajeID";
+        if (!viajeId) {
+            return (window.alertInfo || window.alert)(
+                "No se pudo obtener el viaje de esta factura.", "Atención");
+        }
+        var cantSeguro = parseInt($("#hdnSeguroMenorTotal").val(), 10) || 0;
+        var cupo = parseInt($("#numMenor").val(), 10) || 0;
+        window.showFormListaMayor = function () {
+            ShowFormDialog("/Reserva/FormListaMayor?sViajeId=" + viajeId, "divFormListaMayor", "Lista de Pasajeros", "medium");
+        };
+        window.showFormListaMenor = function () {
+            if (cantSeguro > 0 && cupo === 0) {
+                return (window.alertInfo || window.alert)(
+                    "Ya se alcanzó la cantidad máxima de menores permitida por el seguro de la factura. Puede desvincular un menor en la lista inferior si necesita corregir datos.",
+                    "Atención");
+            }
+            ShowFormDialog("/Reserva/FormListaMenor?sViajeId=" + viajeId, "divFormListaMenor", "Lista de menores disponibles", "medium");
+        };
+        var url = "/Reserva/VinculacionMenor?sViajeId=" + encodeURIComponent(viajeId) + "&desdeFactura=1";
+        ShowFormDialog(url, "divVinculosMenorDesdeFactura", "Vinculación de Menores", "medium");
     }
 </script>

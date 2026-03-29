@@ -97,9 +97,9 @@
 
 <div class="form-lista-menor-container">
     <div class="help-icon-row">
-        <div class="help-badge" title="La lista solo muestra aquellas personas de 1 a 4 años de edad.">
+        <div class="help-badge" id="listaMenorHelpCupo" title="La lista solo muestra aquellas personas de 1 a 4 años de edad.">
             <i class="bi bi-info-circle"></i>
-            Menores de 1 a 4 años
+            <span id="listaMenorHelpText">Menores de 1 a 4 años</span>
         </div>
     </div>
 
@@ -149,8 +149,9 @@
         });
 
         ListMenorID = [];
+        updateListaMenorHelpText();
         $('#tblListaMenor tbody').on('click', 'tr', function () {
-            var nrMenores = $("#numMenor").val();
+            var nrMenores = parseInt($("#numMenor").val(), 10) || 0;
             var MenorID = $(this).data("id");
             var idxItem = ListMenorID.indexOf(MenorID);
 
@@ -159,8 +160,18 @@
                 $(this).removeClass('selected');
             }
             else {
-                if (nrMenores <= ListMenorID.length) {
-                    return (window.alertInfo || window.alert)("Solo puede seleccionar hasta " + nrMenores + " menores. Si desea seleccionar más, cambie la cantidad de seguro de menor.", "Validación");
+                if (nrMenores > 0 && ListMenorID.length >= nrMenores) {
+                    var $tot = $("#hdnSeguroMenorTotal");
+                    var totalSeguro = $tot.length ? (parseInt($tot.val(), 10) || 0) : 0;
+                    var msg = "Solo puede seleccionar hasta " + nrMenores + " menor(es) en esta operación.";
+                    if (totalSeguro > nrMenores) {
+                        msg += " Cupo restante según el seguro de la factura (total del seguro: " + totalSeguro + ").";
+                    } else if ($tot.length && totalSeguro > 0) {
+                        msg += " Si necesita más cupo, aumente la cantidad de seguro de menor en la factura.";
+                    } else {
+                        msg += " Si desea seleccionar más, cambie la cantidad de seguro de menor.";
+                    }
+                    return (window.alertInfo || window.alert)(msg, "Validación");
                 }
                 ListMenorID.push(MenorID);
                 $(this).addClass('selected');
@@ -168,18 +179,39 @@
         });
     });
 
+    function updateListaMenorHelpText() {
+        var nr = parseInt($("#numMenor").val(), 10) || 0;
+        var total = parseInt($("#hdnSeguroMenorTotal").val(), 10) || 0;
+        var $span = $("#listaMenorHelpText");
+        if (!$span.length) return;
+        var edad = "Lista: personas de 1 a 4 años.";
+        if (nr > 0) {
+            if (total > nr) {
+                $span.text(edad + " Puede vincular hasta " + nr + " en esta operación (disponibles: " + total + "). Elija al menos uno y pulse Vincular.");
+            } else {
+                $span.text(edad + " Puede vincular hasta " + nr + " menor(es). Elija al menos uno y pulse Vincular.");
+            }
+        } else {
+            $span.text(edad + " Elija al menos un menor y pulse Vincular.");
+        }
+    }
+
     function closePopup() {
         ListMenorID = [];
         $("#divFormListaMenor").dialog("close");
     }
 
     function vincularListMenor() {
-        var nrMenores = $("#numMenor").val();
-        if (nrMenores > ListMenorID.length) {
-            var n = parseInt(nrMenores) - parseInt(ListMenorID.length);
-            return (window.alertInfo || window.alert)("Por favor seleccione " + n + " menores más.", "Validación");
+        if (ListMenorID.length === 0) {
+            return (window.alertInfo || window.alert)("Seleccione al menos un menor.", "Validación");
         }
-        $("#hdnListMenor").val(ListMenorID);
+        var joined = ListMenorID.join(",");
+        $("#hdnListMenor").val(joined);
+        $("#hdnVinculacionMenoresIds").val(joined);
+        if ($("#txtMenor").length) {
+            $("#txtMenor").val(ListMenorID.length ? (ListMenorID.length + " menor(es) seleccionado(s)") : "");
+        }
+        $("#hdnMenorId").val(ListMenorID.length === 1 ? ListMenorID[0] : "");
         $("#divFormListaMenor").dialog("close");
     }
 </script>

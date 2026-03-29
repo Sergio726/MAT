@@ -594,6 +594,14 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 ViewBag.ListMenores = data.Menores ?? new List<PasajeroMenorModel>();
                 ViewBag.ExtendFacturaDetalle = data.Items ?? new List<DBOFacturaDetalle>();
 
+                var primerPasaje = data.FacturaDetalle?.FirstOrDefault();
+                ViewBag.ViajeID = primerPasaje?.ViajeID.ToString() ?? "";
+
+                // Sumar Cantidad de todos los renglones de seguro menor (puede haber varios ítems con Cantidad 1)
+                ViewBag.CantMenores = data.Items?
+                    .Where(x => x.Detalle != null && x.Detalle.ToUpper().Contains("MENOR"))
+                    .Sum(x => x.Cantidad) ?? 0;
+
                 // Reutilizamos la misma vista parcial para minimizar cambios UI.
                 return PartialView("DetalleFactura", data.Factura ?? new FacturaStandard());
             }

@@ -1,140 +1,130 @@
 @model List<MAT.MVC.Models.PasajeroMenorModel>
+@using System.Linq
+@{
+    var viajeId = ViewBag.ViajeID as string ?? "";
+    var menoresVinculados = Model != null
+        ? Model.Where(m => m.PasajeroMenorID != 0).ToList()
+        : new List<MAT.MVC.Models.PasajeroMenorModel>();
+    var urlDesvincular = Url.Action("DesvincularMenor", "Reserva");
+    var totalMenores = menoresVinculados.Count;
+}
 
-<style>
-    .partial-vinculacion-container {
-        padding: 0.5rem;
-    }
-    .print-action-row {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 0.75rem;
-    }
-    .btn-print {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        padding: 0.5rem 0.75rem;
-        background: var(--bg-secondary, #f3f4f6);
-        color: var(--text-primary, #374151);
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 0.375rem;
-        font-size: 0.8125rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    .btn-print:hover {
-        background: #e5e7eb;
-        color: var(--text-primary, #374151);
-    }
-    .table-scroll-container {
-        max-height: 428px;
-        overflow-y: auto;
-        border-radius: 0.5rem;
-        background: white;
-    }
-    #tblListMenores {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    #tblListMenores thead th {
-        position: sticky;
-        top: 0;
-        background: var(--bg-secondary, #f9fafb);
-        padding: 0.75rem 1rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-secondary, #6b7280);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-        text-align: left;
-    }
-    #tblListMenores thead th:first-child {
-        width: 40px;
-        text-align: center;
-    }
-    #tblListMenores tbody td {
-        padding: 0.75rem 1rem;
-        font-size: 0.875rem;
-        color: var(--text-primary, #1f2937);
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-    }
-    #tblListMenores tbody td:first-child {
-        text-align: center;
-        font-weight: 500;
-        color: var(--text-secondary, #6b7280);
-    }
-    #tblListMenores tbody tr:hover {
-        background: var(--bg-secondary, #f9fafb);
-    }
-    #tblListMenores tbody tr:last-child td {
-        border-bottom: none;
-    }
-    .empty-state {
-        text-align: center;
-        padding: 2rem;
-        color: var(--text-secondary, #9ca3af);
-    }
-    .empty-state i {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-</style>
-
-<div class="partial-vinculacion-container">
-    <div class="print-action-row">
-        <a href="javascript: printMenor();" class="btn-print" title="Imprimir lista de menores">
-            <i class="bi bi-printer"></i>
-            Imprimir
-        </a>
+<div class="listado-simple partial-vinculacion-container">
+    <div class="partial-vinculacion-count-bar" aria-live="polite">
+        <span class="partial-vinculacion-count-chip" title="Menores con responsable asignado en este viaje">
+            <i class="bi bi-people-fill partial-vinculacion-count-icon" aria-hidden="true"></i>
+            <span class="partial-vinculacion-count-num">@totalMenores</span>
+            <span class="partial-vinculacion-count-text">@(totalMenores == 1 ? "menor vinculado" : "menores vinculados")</span>
+        </span>
     </div>
 
-    <div class="table-scroll-container">
-        <table id="tblListMenores">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th style="width: 48%;">Responsable del menor</th>
-                    <th style="width: 48%;">Menor a cargo</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{int i = 0;}
-                @foreach (var item in Model)
-                {
-                    if (item.PasajeroMenorID != 0)
+    <div id="tablaVinculacionMenor" class="partial-vinculacion-tabla-wrap">
+        <div class="listado-pantalla partial-vinculacion-body-scroll">
+            <table id="tblPartialVinculacionMenor" class="tabla listado-simple-tabla">
+                <thead>
+                    <tr>
+                        <td class="celda column_nro">N°</td>
+                        <td class="celda column_apellido_nombre">RESPONSABLE</td>
+                        <td class="celda column_vinc_menor">MENOR A CARGO</td>
+                        <td class="celda column_vinc_accion">ACCIÓN</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (totalMenores == 0)
                     {
-                        i++;
-                        <tr>
-                            <td>@i</td>
-                            <td>@(item.ApellidoMayor + ", " + item.NombreMayor) <span style="color: #6b7280;">Doc.: @item.DocMayor</span></td>
-                            <td>@(item.ApellidoMenor + ", " + item.NomreMenor) <span style="color: #6b7280;">Doc.: @item.DocMenor</span></td>
+                        <tr class="partial-vinculacion-empty-row">
+                            <td colspan="4" class="partial-vinculacion-empty-cell">
+                                <div class="partial-vinculacion-empty" role="status">
+                                    <div class="partial-vinculacion-empty-icon">
+                                        <i class="bi bi-person-plus"></i>
+                                    </div>
+                                    <p class="partial-vinculacion-empty-title">Aún no hay vinculaciones</p>
+                                    <p class="partial-vinculacion-empty-hint">Cuando vincule un menor a un responsable, aparecerá aquí.</p>
+                                </div>
+                            </td>
                         </tr>
                     }
-                }
-                @if (i == 0)
-                {
-                    <tr>
-                        <td colspan="3">
-                            <div class="empty-state">
-                                <i class="bi bi-people"></i>
-                                No hay menores vinculados
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                    else
+                    {
+                        int i = 0;
+                        foreach (var item in menoresVinculados)
+                        {
+                            i++;
+                            <tr>
+                                <td class="celda column_nro">@i</td>
+                                <td class="celda column_apellido_nombre">
+                                    <div class="partial-vinculacion-person">
+                                        <span class="partial-vinculacion-person-name">@(item.ApellidoMayor + ", " + item.NombreMayor)</span>
+                                        <span class="partial-vinculacion-person-doc">Doc. @item.DocMayor</span>
+                                    </div>
+                                </td>
+                                <td class="celda column_vinc_menor">
+                                    <div class="partial-vinculacion-person">
+                                        <span class="partial-vinculacion-person-name">@(item.ApellidoMenor + ", " + item.NomreMenor)</span>
+                                        <span class="partial-vinculacion-person-doc">Doc. @item.DocMenor</span>
+                                    </div>
+                                </td>
+                                <td class="celda column_vinc_accion">
+                                    <div class="partial-vinculacion-actions">
+                                        <button type="button" class="btn-action-icon btn-desvincular-menor" title="Desvincular menor"
+                                                onclick="desvincularMenorPm(@item.PasajeroMenorID); return false;">
+                                            <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                            <span class="visually-hidden">Desvincular</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    function printMenor() {
-        var ViajeID = "@ViewBag.ViajeID";
-        var url = "/Reserva/PartialVinculacionMenor?sViajeId=" + ViajeID + "&sPrint=Print";
-        window.open(url, '_blank').print();
-    }
+    (function () {
+        var viajeId = @Html.Raw(Json.Encode(viajeId));
+        var urlDesvincular = @Html.Raw(Json.Encode(urlDesvincular));
+
+        window.desvincularMenorPm = function (pasajeroMenorId) {
+            if (!pasajeroMenorId || !viajeId) {
+                return;
+            }
+            confirm("¿Desvincular este menor del responsable indicado?", "Desvincular menor",
+                function () {
+                    var $dlg = $(this);
+                    $.ajax({
+                        url: urlDesvincular,
+                        type: "POST",
+                        data: { sViajeId: viajeId, pasajeromenorId: pasajeroMenorId },
+                        success: function (r) {
+                            if (r && r.success) {
+                                if (typeof loadPasajeroMenor === "function") {
+                                    loadPasajeroMenor();
+                                }
+                                if (typeof window.PopupDetalleFactura_Load === "function") {
+                                    window.PopupDetalleFactura_Load();
+                                }
+                                if (typeof window.alertSuccess === "function") {
+                                    window.alertSuccess("El menor fue desvinculado correctamente.", "Éxito");
+                                }
+                            } else {
+                                (window.alertError || window.alert)((r && r.message) ? r.message : "No se pudo desvincular.", "Error");
+                            }
+                        },
+                        error: function () {
+                            (window.alertError || window.alert)("Error al desvincular. Intente nuevamente.", "Error");
+                        }
+                    });
+                    $dlg.dialog("close");
+                    $dlg.remove();
+                },
+                function () {
+                    var $dlg = $(this);
+                    $dlg.dialog("close");
+                    $dlg.remove();
+                });
+        };
+    })();
 </script>

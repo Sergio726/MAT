@@ -1,0 +1,179 @@
+/**
+ * Reserva/PartialVinculacionMenor — mismo look que PasajeroViaje/ListadoSimple
+ * (estilos base en mat.listadosimple.css; aquí solo ajustes de incrustación y vacío).
+ */
+
+/* Incrustado en panel/modal: sin caja ancha centrada de la vista completa */
+.partial-vinculacion-container.listado-simple {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+}
+
+.partial-vinculacion-count-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.partial-vinculacion-count-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    font-size: 12px;
+    color: var(--text-secondary);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.partial-vinculacion-count-icon {
+    font-size: 0.95rem;
+    color: var(--brand-primary);
+    opacity: 0.9;
+}
+
+.partial-vinculacion-count-num {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-primary);
+    min-width: 1.1em;
+    text-align: center;
+}
+
+.partial-vinculacion-count-text {
+    color: var(--text-secondary);
+}
+
+.partial-vinculacion-container #tablaVinculacionMenor.partial-vinculacion-tabla-wrap {
+    padding: 0;
+    background: var(--white);
+    background-image: none;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+    overflow: hidden;
+}
+
+.partial-vinculacion-body-scroll {
+    max-height: 420px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.partial-vinculacion-container.listado-simple .column_vinc_menor {
+    width: auto;
+    min-width: 120px;
+}
+
+.partial-vinculacion-container.listado-simple .column_vinc_accion {
+    width: 56px;
+    text-align: center;
+}
+
+.partial-vinculacion-container.listado-simple .tabla thead tr td.column_vinc_accion {
+    text-align: center;
+}
+
+/* Cuerpo de la tabla: tipografía más compacta que el listado estándar */
+.partial-vinculacion-container.listado-simple .tabla tbody td.celda {
+    font-size: 11px;
+}
+
+.partial-vinculacion-container .partial-vinculacion-empty-row:hover {
+    background-color: transparent !important;
+}
+
+.partial-vinculacion-empty-cell {
+    padding: 0 !important;
+    border-bottom: none !important;
+    vertical-align: middle;
+}
+
+.partial-vinculacion-person {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.partial-vinculacion-person-name {
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 1.35;
+    word-break: break-word;
+    color: var(--text-primary);
+}
+
+.partial-vinculacion-person-doc {
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+.partial-vinculacion-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Botón desvincular: btn-action-icon + btn-desvincular-menor (factura-detalle.css, mismo look que eliminar pasajero) */
+
+/* Estado vacío */
+.partial-vinculacion-empty {
+    text-align: center;
+    padding: 2rem 1.25rem 2.25rem;
+    background: linear-gradient(180deg, var(--bg-main) 0%, var(--white) 100%);
+}
+
+.partial-vinculacion-empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.75rem;
+    border-radius: 50%;
+    background: var(--bg-main);
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+}
+
+.partial-vinculacion-empty-title {
+    margin: 0 0 0.35rem;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.partial-vinculacion-empty-hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    max-width: 16rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 480px) {
+    .partial-vinculacion-count-bar {
+        justify-content: center;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .partial-vinculacion-count-chip {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+}

@@ -392,6 +392,7 @@
       <AnsiNulls>Off</AnsiNulls>
     </Build>
     <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_GetPasajeroMenor.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reserva_DesvincularMenor.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedurePrecio_GetByPrecioId.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>

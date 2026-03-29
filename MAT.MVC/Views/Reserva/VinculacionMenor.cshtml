@@ -1,12 +1,23 @@
 @model List<MAT.MVC.Models.PasajeroMenorModel>
+@{
+    bool mostrarNuevaVinculacion = ViewBag.MostrarNuevaVinculacion as bool? ?? false;
+}
 
 <style>
     .vinculacion-menor-container {
         padding: 0.5rem;
         min-height: 400px;
     }
-    .vinculacion-form-hidden {
-        display: none;
+    .vinculacion-form-panel {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+    }
+    .vinculacion-form-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 0.5rem;
     }
     .vinculacion-form-row {
         display: flex;
@@ -99,32 +110,42 @@
     }
 </style>
 
-<input type="hidden" id="hdnMayorId" value="" />
-<input type="hidden" id="hdnMenorId" value="" />
-<input type="hidden" id="hdnPasajeId" value="" />
+@if (mostrarNuevaVinculacion)
+{
+    <input type="hidden" id="hdnMayorId" value="" />
+    <input type="hidden" id="hdnMenorId" value="" />
+    <input type="hidden" id="hdnPasajeId" value="" />
+    <input type="hidden" id="hdnVinculacionViajeId" value="@ViewBag.ViajeID" />
+    <input type="hidden" id="hdnVinculacionMenoresIds" value="" />
+}
 
 <div class="vinculacion-menor-container">
-    <div class="vinculacion-form-hidden">
-        <div class="vinculacion-form-row">
-            <input type="text" id="txtMayor" class="vinculacion-input" placeholder="Seleccione un tutor" readonly />
-            <button type="button" onclick="showFormListaMayor();" title="Click para seleccionar un tutor o responsable del menor" class="btn-select">
-                <i class="bi bi-plus"></i>
-            </button>
+    @if (mostrarNuevaVinculacion)
+    {
+        <div class="vinculacion-form-panel">
+            <div class="vinculacion-form-title">Nueva vinculación</div>
+            <div class="vinculacion-form-row">
+                <input type="text" id="txtMayor" class="vinculacion-input" placeholder="Seleccione un tutor" readonly />
+                <button type="button" onclick="showFormListaMayor();" title="Click para seleccionar un tutor o responsable del menor" class="btn-select">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
+            <div class="vinculacion-form-row">
+                <input type="text" id="txtMenor" class="vinculacion-input" placeholder="Seleccione uno o más menores" readonly />
+                <button type="button" onclick="showFormListaMenor();" title="Click para seleccionar menores" class="btn-select">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
+            <div class="vinculacion-form-row">
+                <button type="button" onclick="valForm();" class="btn-vincular" title="Click para finalizar la vinculación">
+                    <i class="bi bi-link-45deg"></i>
+                    Vincular
+                </button>
+            </div>
         </div>
-        <div class="vinculacion-form-row">
-            <input type="text" id="txtMenor" class="vinculacion-input" placeholder="Seleccione un menor" readonly />
-            <button type="button" onclick="showFormListaMenor();" title="Click para seleccionar un menor" class="btn-select">
-                <i class="bi bi-plus"></i>
-            </button>
-        </div>
-        <div class="vinculacion-form-row">
-            <button type="button" onclick="valForm();" class="btn-vincular" title="Click para finalizar la vinculación">
-                <i class="bi bi-link-45deg"></i>
-                Vincular Menor
-            </button>
-        </div>
-    </div>
+    }
 
+    <div class="vinculacion-form-title">Menores ya vinculados a este viaje</div>
     <div id="divContentPasajeroMenor" class="content-area">
         <div class="loading-state">
             <div class="loading-spinner"></div>
@@ -158,39 +179,59 @@
 
         $("#txtMenor").val(Apellido + ", " + Nombre);
         $("#hdnMenorId").val(PersonID);
+        $("#hdnVinculacionMenoresIds").val(PersonID);
         $("#divFormListaMenor").dialog("close");
     }
 
     function valForm() {
-        var ViajeID = $("#id_viaje").val();
-        if (ViajeID == "") {
+        var viajeOk = ($("#hdnVinculacionViajeId").val() || ($("#id_viaje").length ? $("#id_viaje").val() : "") || "").toString();
+        if (viajeOk === "") {
             return (window.alertInfo || window.alert)("No hay un viaje seleccionado, por favor actualice la página.", "Validación");
         }
         var PasajeID = $("#hdnPasajeId").val();
         var MayorID = $("#hdnMayorId").val();
-        if (MayorID == "" || PasajeID == "") {
+        if (MayorID === "" || PasajeID === "") {
             return (window.alertInfo || window.alert)("Seleccione un tutor o encargado del menor por favor.", "Validación");
         }
-        var MenorID = $("#hdnMenorId").val();
-        if (MenorID == "") {
-            return (window.alertInfo || window.alert)("Seleccione un menor por favor.", "Validación");
+
+        var idsStr = ($("#hdnVinculacionMenoresIds").val() || "").toString().trim();
+        var ids = idsStr ? idsStr.split(",").map(function (s) { return $.trim(s); }).filter(function (x) { return x.length > 0; }) : [];
+        if (ids.length === 0) {
+            var single = ($("#hdnMenorId").val() || "").toString().trim();
+            if (single) { ids = [single]; }
+        }
+        if (ids.length === 0) {
+            return (window.alertInfo || window.alert)("Seleccione al menos un menor por favor.", "Validación");
         }
 
+        vincularMenoresSecuencial(PasajeID, MayorID, ids, 0);
+    }
+
+    function vincularMenoresSecuencial(pasajeId, mayorId, menoresIds, index) {
+        if (index >= menoresIds.length) {
+            $("#hdnVinculacionMenoresIds").val("");
+            $("#hdnMenorId").val("");
+            $("#txtMenor").val("");
+            loadPasajeroMenor();
+            return;
+        }
         $.ajax({
             url: "/Reserva/VincularMenor",
             data: {
-                sPasajeID: PasajeID,
-                sMayorID: MayorID,
-                sMenorID: MenorID
+                sPasajeID: pasajeId,
+                sMayorID: mayorId,
+                sMenorID: menoresIds[index]
             },
             dataType: "json",
             success: function (data) {
-                if (data.Id == "1") {
-                    loadPasajeroMenor();
+                if (data.Id === "1") {
+                    vincularMenoresSecuencial(pasajeId, mayorId, menoresIds, index + 1);
+                } else {
+                    (window.alertError || window.alert)((data.Msj || "Ha ocurrido un error, por favor intente nuevamente."), "Error");
                 }
-                else {
-                    (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
-                }
+            },
+            error: function () {
+                (window.alertError || window.alert)("Ha ocurrido un error de red.", "Error");
             }
         });
     }

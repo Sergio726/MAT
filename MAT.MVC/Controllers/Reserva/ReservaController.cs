@@ -367,11 +367,12 @@ namespace MAT.MVC.Controllers.Reserva
             }
         }
 
-        public ActionResult VinculacionMenor(string sViajeId = "")
+        public ActionResult VinculacionMenor(string sViajeId = "", string desdeFactura = "")
         {
             ViewBag.ViajeID = sViajeId;
+            ViewBag.MostrarNuevaVinculacion = string.Equals(desdeFactura, "1", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(desdeFactura, "true", StringComparison.OrdinalIgnoreCase);
             return PartialView();
-            
         }
 
         public ActionResult GetOffListPassengers(string sViajeId = "")
@@ -884,6 +885,43 @@ namespace MAT.MVC.Controllers.Reserva
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [Authorize]
+        [HttpPost]
+        public JsonResult DesvincularMenor(string sViajeId, int pasajeromenorId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(sViajeId) || pasajeromenorId <= 0)
+                {
+                    return Json(new { success = false, message = "Datos inválidos." });
+                }
+
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@PasajeroMenorID", SqlDbType.Int, 0, pasajeromenorId),
+                    DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, sViajeId.Trim()),
+                };
+
+                using (SqlDataReader reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_DesvincularMenor", dbParams))
+                {
+                    if (reader.Read())
+                    {
+                        string id = reader["Id"].ToString();
+                        string msg = reader["ErrorMsg"] != null && reader["ErrorMsg"] != DBNull.Value
+                            ? reader["ErrorMsg"].ToString()
+                            : "";
+                        return Json(new { success = id == "1", message = msg });
+                    }
+                }
+
+                return Json(new { success = false, message = "No se pudo completar la operación." });
+            }
+            catch (Exception e)
+            {
+                string msg = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.DesvincularMenor");
+                return Json(new { success = false, message = msg });
+            }
+        }
 
         public string[] VincularMenorByViaje(string sViaje = "", string sMayorID = "", string sMenorID = "")
         {
