@@ -11,19 +11,22 @@ window.openPagosFacturaDialog = function (FacturaID) {
     ShowFormDialog(url, id, title, "wide");
 };
 
-// Función para mostrar mensaje de éxito de manera moderna
+// Mensaje de éxito (p. ej. tras eliminar pasajero en factura). Compatible con modal padre (#Detalles):
+// - moveToTop para quedar por encima del popin anterior
+// - setupOverlayClose apunta a este dialog (el handler global no puede seguir cerrando solo #Detalles)
+// - callback una sola vez al cerrar (X, Aceptar, Escape o overlay)
 function ShowSuccessMessage(message, title, callback) {
     title = title || 'Operación exitosa';
     message = message || 'La operación se realizó correctamente.';
-    
-    // Remover diálogo si ya existe
+
     if ($("#modern-success-dialog").length > 0) {
-        $("#modern-success-dialog").dialog("destroy").remove();
+        try {
+            $("#modern-success-dialog").dialog("destroy");
+        } catch (e) { }
+        $("#modern-success-dialog").remove();
     }
 
-    // Normalizar mensajes comunes (mejor UX)
     var msg = (message || "").toString();
-    // Caso típico: eliminación de pasajero en factura
     if (/pasajero\s+eliminado/i.test(msg) && /factura/i.test(msg)) {
         msg = "Pasajero eliminado.\nLa factura fue actualizada (butaca/habitación liberadas si correspondía).";
     }
@@ -32,7 +35,7 @@ function ShowSuccessMessage(message, title, callback) {
         .split("\n")
         .map(function (line) { return $("<div/>").text(line).html(); })
         .join("<br/>");
-    
+
     var dialogContent = '<div id="modern-success-dialog" style="display: none;">' +
         '<div style="display: flex; align-items: flex-start; gap: 1.25rem;">' +
         '<i class="bi bi-check-circle-fill" style="font-size: 2.5rem; color: #10b981; flex-shrink: 0; margin-top: 0.125rem;"></i>' +
@@ -42,72 +45,76 @@ function ShowSuccessMessage(message, title, callback) {
         '</div>' +
         '</div>' +
         '</div>';
-    
+
+    var callbackFired = false;
+    function runCallbackAndRestoreOverlay() {
+        if (callbackFired) {
+            return;
+        }
+        callbackFired = true;
+        if (typeof callback === "function") {
+            try {
+                callback();
+            } catch (e) {
+                console.error("ShowSuccessMessage callback:", e);
+            }
+        }
+        try {
+            if (typeof ModalConfig !== "undefined" && ModalConfig.setupOverlayClose) {
+                var $det = $("#Detalles");
+                if ($det.length && $det.hasClass("ui-dialog-content") && $det.dialog("isOpen")) {
+                    ModalConfig.setupOverlayClose("Detalles");
+                }
+            }
+        } catch (e2) { }
+    }
+
     $("body").append(dialogContent);
-    
+
     $("#modern-success-dialog").dialog({
         autoOpen: true,
         modal: true,
         width: 500,
         minWidth: 400,
         maxWidth: 600,
-        // jQuery UI Dialog no soporta HTML en title: dejar texto plano para evitar que se vea "<i ...>"
         title: title,
         resizable: false,
         draggable: false,
-        dialogClass: 'modern-success-dialog',
+        closeOnEscape: true,
+        dialogClass: "modern-success-dialog",
         buttons: {
-            "Aceptar": function() {
+            "Aceptar": function () {
                 $(this).dialog("close");
-                if (typeof callback === 'function') {
-                    callback();
-                }
             }
         },
-        close: function() {
-            $(this).dialog("destroy").remove();
-            if (typeof callback === 'function') {
-                callback();
-            }
-        },
-        open: function() {
-            // Asegurar que el diálogo esté centrado
-            var $dialog = $(this).parent();
-            $dialog.css({
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: 10000
-            });
-            
-            // Asegurar que los botones sean visibles
-            setTimeout(function() {
-                var $buttonPane = $dialog.find('.ui-dialog-buttonpane');
-                if ($buttonPane.length > 0) {
-                    $buttonPane.css({
-                        display: 'flex !important',
-                        visibility: 'visible !important',
-                        opacity: '1 !important'
+        open: function () {
+            var $dlg = $(this);
+            try {
+                $dlg.dialog("moveToTop", true);
+            } catch (e) { }
+            try {
+                ModalConfig.setupOverlayClose("modern-success-dialog");
+            } catch (e) { }
+            try {
+                var $w = $dlg.dialog("widget");
+                $w.find(".ui-dialog-titlebar-close")
+                    .off("click.matSuccessClose")
+                    .on("click.matSuccessClose", function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        $dlg.dialog("close");
                     });
-                    
-                    // Asegurar que el botón tenga los estilos correctos
-                    var $button = $buttonPane.find('.ui-button, button');
-                    $button.css({
-                        display: 'inline-block !important',
-                        visibility: 'visible !important',
-                        opacity: '1 !important'
-                    });
-                }
-            }, 100);
+            } catch (e2) { }
         },
-        create: function() {
-            // Asegurar que el overlay sea visible
-            $('.ui-widget-overlay').css({
-                background: 'rgba(0, 0, 0, 0.5)',
-                opacity: '1',
-                zIndex: '9999'
-            });
+        close: function () {
+            var $el = $(this);
+            try {
+                $el.dialog("destroy");
+            } catch (e) { }
+            try {
+                $el.remove();
+            } catch (e2) { }
+            runCallbackAndRestoreOverlay();
         }
     });
 }

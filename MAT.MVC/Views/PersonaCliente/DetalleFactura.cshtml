@@ -251,7 +251,7 @@
                 <i class="bi bi-cash-stack"></i>
                 Pago Total
             </a>
-            <a href="#" id="btn-descuentoRecargo" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-secondary" onclick="javascript: $('#divDescuentoRecargo').removeClass('dialog-hidden').dialog({width: 400, modal: true, close: function() { $(this).addClass('dialog-hidden').dialog('destroy'); }});">
+            <a href="#" id="btn-descuentoRecargo" data-facturaid="@FacturaID" data-clienteid="@ClienteID" class="btn-factura btn-factura-secondary" onclick="javascript: $('#divDescuentoRecargo').removeClass('dialog-hidden').dialog({width: 400, modal: true, dialogClass: 'mat-dialog', draggable: false, position: { my: 'center', at: 'center', of: window }, close: function() { $(this).addClass('dialog-hidden').dialog('destroy'); }});">
                 <i class="bi bi-percent"></i>
                 Descuento/Recargo
             </a>
@@ -468,6 +468,9 @@
                     modal: true,
                     width: 420,
                     resizable: false,
+                    draggable: false,
+                    dialogClass: "mat-dialog",
+                    position: { my: "center", at: "center", of: window },
                     close: function () {
                         $("#divEliminarPasajeroCodigo").addClass("dialog-hidden").dialog("destroy");
                     }
@@ -559,6 +562,9 @@
                     modal: true,
                     width: 500,
                     resizable: false,
+                    draggable: false,
+                    dialogClass: "mat-dialog",
+                    position: { my: "center", at: "center", of: window },
                     close: function () {
                         $("#divCambiarPasajero").addClass("dialog-hidden").dialog("destroy");
                     }

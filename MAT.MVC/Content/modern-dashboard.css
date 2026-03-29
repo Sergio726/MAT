@@ -2228,14 +2228,14 @@ div.bnn_floating-banner.hidden {
     to { opacity: 1; }
 }
 
-/* Jerarquía de z-index para modales: overlay 9999, dialog 10000, datepicker 10050.
-   No bajar .ui-datepicker por debajo de 10001 para que sea clickeable dentro de popups. */
+/* Jerarquía de z-index para modales: jQuery UI asigna z-index en línea (modales anidados).
+   Valor por defecto en CSS solo como respaldo; sin !important para no anular el apilado dinámico. */
 /* Overlay del modal */
 .ui-widget-overlay {
     background: rgba(0, 0, 0, 0.5) !important;
     animation: overlayFadeIn 0.3s ease-out forwards;
     cursor: pointer;
-    z-index: 9999 !important; /* Por debajo del modal pero por encima de todo lo demás */
+    z-index: 9999; /* Sin !important: permite apilar overlays/dialogs anidados (p. ej. eliminar pasajero en factura) */
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
