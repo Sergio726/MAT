@@ -566,7 +566,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 factura = FacturaMetod.FacturaStandardByID(facturaid);
                 facturaDetalle = FacturaMetod.FacturaDetalleByID(facturaid);
                 ViewBag.FacturaDetalle = facturaDetalle;
-                ViewBag.ListMenores = GetPasajeroMenorByFacturaID(facturaid);
+                ViewBag.ListMenores = FacturaMetod.GetPasajeroMenorByFacturaID(facturaid);
                 ViewBag.ExtendFacturaDetalle = FacturaMetod.GetDetalleByFacturaID(facturaid);
                 return PartialView(factura);
             }
@@ -610,33 +610,6 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 ViewBag.Error = e.Message;
                 return View("Error", e);
             }
-        }
-
-        public static List<PasajeroMenorModel> GetPasajeroMenorByFacturaID(Guid facturaid)
-        {
-            SqlParameter[] dbParams = new SqlParameter[]
-                    {                    
-                        DBHelper.MakeParam("@FacturaID", SqlDbType.VarChar, 0, Convert.ToString(facturaid)),
-                    };
-            List<PasajeroMenorModel> model = new List<PasajeroMenorModel>();
-
-            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_PersonaCliente_GetPasajeroMenorByFactura", dbParams))
-            {
-                while (_reader.Read())
-                {
-                    PasajeroMenorModel item = new PasajeroMenorModel();
-                    item.PasajeroMenorID = Convert.ToInt32(_reader["id"]);
-                    item.ApellidoMayor = _reader["ApellidoMayor"].ToString();
-                    item.NombreMayor = _reader["NombreMayor"].ToString();
-                    item.DocMayor = _reader["DocMayor"].ToString();
-                    item.ApellidoMenor = _reader["ApellidoMenor"].ToString();
-                    item.NomreMenor = _reader["NomreMenor"].ToString();
-                    item.DocMenor = _reader["DocMenor"].ToString();
-                    model.Add(item);
-                }
-            }
-
-            return model;
         }
 
         public static int EliminarVinculoPasajeroMenor(Guid facturaid)

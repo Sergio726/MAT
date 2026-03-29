@@ -138,6 +138,36 @@ namespace MAT.MVC.Models
         }
 
         /// <summary>
+        /// Menores vinculados cuyo pasaje pertenece a la factura (mismo criterio que el detalle de factura).
+        /// </summary>
+        public static List<PasajeroMenorModel> GetPasajeroMenorByFacturaID(Guid facturaid)
+        {
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@FacturaID", SqlDbType.VarChar, 0, Convert.ToString(facturaid)),
+            };
+            var model = new List<PasajeroMenorModel>();
+
+            using (SqlDataReader reader = DBHelper.ExecuteDataReader("usp_MAT_PersonaCliente_GetPasajeroMenorByFactura", dbParams))
+            {
+                while (reader.Read())
+                {
+                    var item = new PasajeroMenorModel();
+                    item.PasajeroMenorID = Convert.ToInt32(reader["id"]);
+                    item.ApellidoMayor = reader["ApellidoMayor"].ToString();
+                    item.NombreMayor = reader["NombreMayor"].ToString();
+                    item.DocMayor = reader["DocMayor"].ToString();
+                    item.ApellidoMenor = reader["ApellidoMenor"].ToString();
+                    item.NomreMenor = reader["NomreMenor"].ToString();
+                    item.DocMenor = reader["DocMenor"].ToString();
+                    model.Add(item);
+                }
+            }
+
+            return model;
+        }
+
+        /// <summary>
         /// Fast path: 1 solo SP / 1 roundtrip para armar el popin DetalleFactura.
         /// Requiere el SP dbo.usp_MAT_Factura_GetDetallePopupByFacturaID (ver /database).
         /// </summary>

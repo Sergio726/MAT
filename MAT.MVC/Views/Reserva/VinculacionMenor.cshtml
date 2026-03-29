@@ -1,6 +1,7 @@
 @model List<MAT.MVC.Models.PasajeroMenorModel>
 @{
     bool mostrarNuevaVinculacion = ViewBag.MostrarNuevaVinculacion as bool? ?? false;
+    string sFacturaIdVinc = ViewBag.SFacturaId as string ?? "";
 }
 
 <style>
@@ -110,6 +111,8 @@
     }
 </style>
 
+<input type="hidden" id="hdnVinculacionFacturaId" value="@sFacturaIdVinc" />
+
 @if (mostrarNuevaVinculacion)
 {
     <input type="hidden" id="hdnMayorId" value="" />
@@ -145,7 +148,7 @@
         </div>
     }
 
-    <div class="vinculacion-form-title">Menores ya vinculados a este viaje</div>
+    <div class="vinculacion-form-title">@(string.IsNullOrEmpty(sFacturaIdVinc) ? "Menores ya vinculados a este viaje" : "Menores ya vinculados en esta factura")</div>
     <div id="divContentPasajeroMenor" class="content-area">
         <div class="loading-state">
             <div class="loading-spinner"></div>
@@ -246,7 +249,10 @@
 
         $.ajax({
             url: "/Reserva/PartialVinculacionMenor",
-            data: { sViajeId: "@ViewBag.ViajeID" },
+            data: {
+                sViajeId: "@ViewBag.ViajeID",
+                sFacturaId: ($("#hdnVinculacionFacturaId").val() || "").toString()
+            },
             dataType: "html",
             success: function (data) {
                 $("#divContentPasajeroMenor").html(data);

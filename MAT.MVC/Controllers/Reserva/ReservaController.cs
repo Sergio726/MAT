@@ -367,11 +367,13 @@ namespace MAT.MVC.Controllers.Reserva
             }
         }
 
-        public ActionResult VinculacionMenor(string sViajeId = "", string desdeFactura = "")
+        public ActionResult VinculacionMenor(string sViajeId = "", string desdeFactura = "", string sFacturaId = "")
         {
             ViewBag.ViajeID = sViajeId;
             ViewBag.MostrarNuevaVinculacion = string.Equals(desdeFactura, "1", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(desdeFactura, "true", StringComparison.OrdinalIgnoreCase);
+            Guid facturaGuid;
+            ViewBag.SFacturaId = Guid.TryParse(sFacturaId, out facturaGuid) ? facturaGuid.ToString() : "";
             return PartialView();
         }
 
@@ -565,41 +567,49 @@ namespace MAT.MVC.Controllers.Reserva
                         JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult PartialVinculacionMenor(string sViajeId = "", string sPrint = "")
+        public ActionResult PartialVinculacionMenor(string sViajeId = "", string sPrint = "", string sFacturaId = "")
         {
             List<PasajeroMenorModel> model = new List<PasajeroMenorModel>();
             ViewBag.ViajeID = sViajeId;
+            Guid facturaGuid = Guid.Empty;
+            bool porFactura = sPrint != "Print" && Guid.TryParse(sFacturaId, out facturaGuid);
+            ViewBag.VinculacionPorFactura = porFactura;
             try
             {
-                SqlParameter[] dbParams = new SqlParameter[]
-                    {                    
-                        DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(sViajeId)),
-                    };
-                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPasajeroMenor", dbParams))
+                if (porFactura)
                 {
-                    while (_reader.Read())
+                    model = FacturaMetod.GetPasajeroMenorByFacturaID(facturaGuid);
+                }
+                else
+                {
+                    SqlParameter[] dbParams = new SqlParameter[]
+                        {                    
+                            DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(sViajeId)),
+                        };
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPasajeroMenor", dbParams))
                     {
-                        PasajeroMenorModel item = new PasajeroMenorModel();
-                        item.PasajeroMenorID = Convert.ToInt32(_reader["id"]);
-                        item.ApellidoMayor = _reader["ApellidoMayor"].ToString();
-                        item.NombreMayor = _reader["NombreMayor"].ToString();
-                        item.DocMayor = _reader["DocMayor"].ToString();
-                        item.ApellidoMenor = _reader["ApellidoMenor"].ToString();
-                        item.NomreMenor = _reader["NomreMenor"].ToString();
-                        item.DocMenor = _reader["DocMenor"].ToString();
-                        model.Add(item);
-                    }
+                        while (_reader.Read())
+                        {
+                            PasajeroMenorModel item = new PasajeroMenorModel();
+                            item.PasajeroMenorID = Convert.ToInt32(_reader["id"]);
+                            item.ApellidoMayor = _reader["ApellidoMayor"].ToString();
+                            item.NombreMayor = _reader["NombreMayor"].ToString();
+                            item.DocMayor = _reader["DocMayor"].ToString();
+                            item.ApellidoMenor = _reader["ApellidoMenor"].ToString();
+                            item.NomreMenor = _reader["NomreMenor"].ToString();
+                            item.DocMenor = _reader["DocMenor"].ToString();
+                            model.Add(item);
+                        }
 
-                    _reader.NextResult();
-                    if (_reader.Read())
-                    {
-                        ViewBag.NombrePaquete = _reader["NombrePaquete"].ToString();
-                        ViewBag.FechaSalida = Convert.ToDateTime(_reader["FechaSalida"]).ToShortDateString();
-                        ViewBag.FechaRegreso = Convert.ToDateTime(_reader["FechaRegreso"]).ToShortDateString();
+                        _reader.NextResult();
+                        if (_reader.Read())
+                        {
+                            ViewBag.NombrePaquete = _reader["NombrePaquete"].ToString();
+                            ViewBag.FechaSalida = Convert.ToDateTime(_reader["FechaSalida"]).ToShortDateString();
+                            ViewBag.FechaRegreso = Convert.ToDateTime(_reader["FechaRegreso"]).ToShortDateString();
+                        }
                     }
                 }
-
-
             }
             catch (Exception e)
             {

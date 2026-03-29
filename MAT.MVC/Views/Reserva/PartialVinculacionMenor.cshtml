@@ -2,6 +2,7 @@
 @using System.Linq
 @{
     var viajeId = ViewBag.ViajeID as string ?? "";
+    var vinculacionPorFactura = ViewBag.VinculacionPorFactura as bool? ?? false;
     var menoresVinculados = Model != null
         ? Model.Where(m => m.PasajeroMenorID != 0).ToList()
         : new List<MAT.MVC.Models.PasajeroMenorModel>();
@@ -11,7 +12,7 @@
 
 <div class="listado-simple partial-vinculacion-container">
     <div class="partial-vinculacion-count-bar" aria-live="polite">
-        <span class="partial-vinculacion-count-chip" title="Menores con responsable asignado en este viaje">
+        <span class="partial-vinculacion-count-chip" title="@(vinculacionPorFactura ? "Menores con responsable asignado en esta factura" : "Menores con responsable asignado en este viaje")">
             <i class="bi bi-people-fill partial-vinculacion-count-icon" aria-hidden="true"></i>
             <span class="partial-vinculacion-count-num">@totalMenores</span>
             <span class="partial-vinculacion-count-text">@(totalMenores == 1 ? "menor vinculado" : "menores vinculados")</span>

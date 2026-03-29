@@ -784,7 +784,7 @@
             }
             ShowFormDialog("/Reserva/FormListaMenor?sViajeId=" + viajeId, "divFormListaMenor", "Lista de menores disponibles", "medium");
         };
-        var url = "/Reserva/VinculacionMenor?sViajeId=" + encodeURIComponent(viajeId) + "&desdeFactura=1";
+        var url = "/Reserva/VinculacionMenor?sViajeId=" + encodeURIComponent(viajeId) + "&desdeFactura=1&sFacturaId=" + encodeURIComponent("@FacturaID");
         ShowFormDialog(url, "divVinculosMenorDesdeFactura", "Vinculación de Menores", "medium");
     }
 </script>
