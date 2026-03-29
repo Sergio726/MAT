@@ -35,7 +35,7 @@ namespace MAT.MVC.Controllers.PasajeroViaje
             //IList<MAT.Entities.PasajeroViaje> EPasajeroViaje = Servicio.GetAll().Where(p => p.ViajeId == Id).OrderBy(ps => ps.Apellido).ToList();
             List<MAT.Entities.PasajeroViaje> EPasajeroViaje = GetListPasajeroViaje(Id);
 
-            return PartialView(EPasajeroViaje);
+            return View(EPasajeroViaje);
         }
         public ActionResult CNRT(Guid Id)
         {
@@ -82,19 +82,16 @@ namespace MAT.MVC.Controllers.PasajeroViaje
 
         public ActionResult ListadoSimpleToExport(Guid Id)
         {
-
-            List<MAT.Entities.PasajeroViaje> EPasajeroViaje = new List<MAT.Entities.PasajeroViaje>();
+            List<PasajeroViajeModel> LPasajeroViaje = new List<PasajeroViajeModel>();
             try
             {
-                EPasajeroViaje = GetListPasajeroViaje(Id);
-                return PartialView(EPasajeroViaje);
+                LPasajeroViaje = PasajeroViajeMethod.GetPasajeroViajeByViajeID(Id.ToString());
+                return PartialView(LPasajeroViaje);
             }
             catch
             {
-                return PartialView(EPasajeroViaje);
+                return PartialView(LPasajeroViaje);
             }
-
-
         }
 
         public List<MAT.Entities.PasajeroViaje> GetListPasajeroViaje(Guid Id)

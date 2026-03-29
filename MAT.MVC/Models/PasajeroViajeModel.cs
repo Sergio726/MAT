@@ -1,4 +1,4 @@
-﻿using MAT.Utilities;
+using MAT.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -19,6 +19,10 @@ namespace MAT.MVC.Models
         public string CUIT { get; set; }
         public string Telefono { get; set; }
         public string FechaNacimiento { get; set; }
+        public bool EsMenorVinculado { get; set; }
+        public string ApellidoResponsable { get; set; }
+        public string NombreResponsable { get; set; }
+        public string NroDocResponsable { get; set; }
     }
 
     public class PasajeroViajeMethod
@@ -44,6 +48,10 @@ namespace MAT.MVC.Models
                     Item.CUIT = _reader["CUIT"].ToString();
                     Item.Telefono = _reader["Telefono"].ToString();
                     Item.FechaNacimiento = _reader["FechaNacimiento"].ToString();
+                    Item.EsMenorVinculado = Convert.ToBoolean(_reader["EsMenorVinculado"]);
+                    Item.ApellidoResponsable = _reader["ApellidoResponsable"] == DBNull.Value ? "" : _reader["ApellidoResponsable"].ToString();
+                    Item.NombreResponsable = _reader["NombreResponsable"] == DBNull.Value ? "" : _reader["NombreResponsable"].ToString();
+                    Item.NroDocResponsable = _reader["NroDocResponsable"] == DBNull.Value ? "" : _reader["NroDocResponsable"].ToString();
 
                     ListPasajeroViaje.Add(Item);
                 }

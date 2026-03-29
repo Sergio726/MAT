@@ -154,6 +154,8 @@ namespace MAT.MVC.Models
                 {
                     var item = new PasajeroMenorModel();
                     item.PasajeroMenorID = Convert.ToInt32(reader["id"]);
+                    var pasajeVal = reader["PasajeID"];
+                    item.PasajeID = (pasajeVal == null || pasajeVal == DBNull.Value) ? "" : pasajeVal.ToString();
                     item.ApellidoMayor = reader["ApellidoMayor"].ToString();
                     item.NombreMayor = reader["NombreMayor"].ToString();
                     item.DocMayor = reader["DocMayor"].ToString();
@@ -270,6 +272,8 @@ namespace MAT.MVC.Models
                 {
                     PasajeroMenorModel item = new PasajeroMenorModel();
                     if (dr["id"] != DBNull.Value) item.PasajeroMenorID = Convert.ToInt32(dr["id"]);
+                    if (dr.Table.Columns.Contains("PasajeID") && dr["PasajeID"] != DBNull.Value)
+                        item.PasajeID = dr["PasajeID"].ToString();
                     item.ApellidoMayor = dr["ApellidoMayor"]?.ToString();
                     item.NombreMayor = dr["NombreMayor"]?.ToString();
                     item.DocMayor = dr["DocMayor"]?.ToString();

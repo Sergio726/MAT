@@ -82,6 +82,7 @@ BEGIN
     /* Resultset 4: Menores (equivalente a usp_MAT_PersonaCliente_GetPasajeroMenorByFactura) */
     SELECT
         pm.Id,
+        p.PasajeID         AS PasajeID,
         tutor.Apellido     AS ApellidoMayor,
         tutor.Nombre       AS NombreMayor,
         tutor.NroDocumento AS DocMayor,

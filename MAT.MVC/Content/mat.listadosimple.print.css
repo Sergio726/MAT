@@ -108,6 +108,28 @@ body {
     background-color: white !important;
 }
 
+.listado-simple .tabla tbody tr.tr-row-menor-vinculado {
+    box-shadow: inset 3px 0 0 #c2185b !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.listado-simple .tabla tbody tr.tr-row-menor-vinculado:nth-child(even),
+.listado-simple .tabla tbody tr.tr-row-menor-vinculado:nth-child(odd) {
+    background-color: #faf5f5 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.ShowOnlyPrint {
+    display: block !important;
+    margin: 0 0 2mm;
+    padding: 0;
+    font-size: 6.5pt;
+    line-height: 1.25;
+    color: #333;
+}
+
 .listado-simple .tabla tbody td.celda {
     padding: 2px 3px;
     border: 1px solid #ccc;
@@ -134,7 +156,7 @@ body {
 }
 
 .listado-simple .tabla .column_cuit_cuil {
-    width: 18%;
+    width: 14%;
 }
 
 .listado-simple .tabla .column_fecha_nac {

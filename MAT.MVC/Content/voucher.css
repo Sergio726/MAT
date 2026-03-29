@@ -1,6 +1,6 @@
 @page {
     size: A4;
-    margin: 1cm;
+    margin: 0.75cm;
 }
 
 /* =====================================================
@@ -9,8 +9,8 @@
 
 body {
     font-family: 'Segoe UI', Calibri, Arial, sans-serif;
-    font-size: 11pt;
-    line-height: 1.4;
+    font-size: 9pt;
+    line-height: 1.3;
     color: #333;
     margin: 0;
     padding: 0;
@@ -19,7 +19,7 @@ body {
 .voucher {
     width: 90%;
     max-width: 850px;
-    margin: 0 auto 30px auto;
+    margin: 0 auto 14px auto;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -28,7 +28,7 @@ body {
 }
 
 .voucher p {
-    margin: 2px 0;
+    margin: 1px 0;
     padding: 0;
 }
 
@@ -39,11 +39,11 @@ body {
 .voucher .encabezado-voucher {
     position: relative;
     width: 100%;
-    padding: 15px 20px;
-    padding-right: 180px;
+    padding: 8px 12px;
+    padding-right: 150px;
     background: linear-gradient(135deg, #2A307D 0%, #3d4494 100%);
     color: #fff;
-    min-height: 95px;
+    min-height: 68px;
     box-sizing: border-box;
     overflow: hidden;
 }
@@ -63,25 +63,25 @@ body {
 }
 
 .voucher .encabezado-voucher .div50:first-child p {
-    font-size: 10pt;
-    line-height: 1.5;
-    margin: 1px 0;
+    font-size: 8.5pt;
+    line-height: 1.25;
+    margin: 0;
 }
 
 .voucher .encabezado-voucher .div50:last-child {
     position: absolute;
-    top: 12px;
-    right: 15px;
+    top: 8px;
+    right: 10px;
     width: auto;
     text-align: right;
 }
 
 .voucher .encabezado-voucher .div50:last-child p {
-    font-size: 11pt;
+    font-size: 9pt;
     font-weight: 600;
     background: rgba(255,255,255,0.2);
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 4px 8px;
+    border-radius: 3px;
     display: inline-block;
     border: 1px solid rgba(255,255,255,0.3);
 }
@@ -93,7 +93,7 @@ body {
 .voucher > .div100 {
     display: table;
     width: 100%;
-    padding: 10px 20px;
+    padding: 5px 12px;
     background: #f8f9fa;
     border-bottom: 2px solid #E83A61;
     box-sizing: border-box;
@@ -107,7 +107,7 @@ body {
 
 .voucher > .div100 .div30 p {
     margin: 0;
-    font-size: 10pt;
+    font-size: 8.5pt;
 }
 
 /* =====================================================
@@ -115,27 +115,28 @@ body {
    ===================================================== */
 
 .voucher .cuerpo-voucher {
-    padding: 20px;
+    padding: 8px 12px;
     background: #fff;
 }
 
 .voucher .cuerpo-voucher .div100 {
-    margin-bottom: 12px;
+    margin-bottom: 6px;
     overflow: hidden;
 }
 
 /* Client info section */
 .voucher .cuerpo-voucher > .div100:first-child {
     background: #f0f4f8;
-    padding: 12px 15px;
-    border-radius: 6px;
-    border-left: 4px solid #E83A61;
-    margin-bottom: 15px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border-left: 3px solid #E83A61;
+    margin-bottom: 6px;
 }
 
 .voucher .cuerpo-voucher > .div100:first-child p {
-    font-size: 10.5pt;
-    line-height: 1.5;
+    font-size: 8.5pt;
+    line-height: 1.3;
+    margin: 1px 0;
 }
 
 /* Contact info row */
@@ -151,8 +152,8 @@ body {
 
 .voucher .cuerpo-voucher .div50 p,
 .voucher .cuerpo-voucher .div50 div {
-    font-size: 10pt;
-    margin-bottom: 4px;
+    font-size: 8.5pt;
+    margin-bottom: 2px;
 }
 
 /* Section labels */
@@ -169,9 +170,9 @@ body {
     border: none;
     border-bottom: 1px dashed #666;
     background: transparent;
-    padding: 2px 5px;
+    padding: 1px 3px;
     font-family: inherit;
-    font-size: 10pt;
+    font-size: 8.5pt;
     color: #333;
     outline: none;
 }
@@ -182,7 +183,7 @@ body {
 }
 
 .custom_width_400px {
-    width: 320px;
+    width: 280px;
 }
 
 .custom_width_200px {
@@ -199,15 +200,15 @@ body {
 
 .voucher .custom_diplay_block {
     display: block;
-    padding: 10px 0;
+    padding: 4px 0;
     border-top: 1px solid #eee;
-    margin-top: 10px;
+    margin-top: 5px;
     clear: both;
 }
 
 .voucher .custom_diplay_block span {
-    font-size: 10pt;
-    line-height: 1.6;
+    font-size: 8.5pt;
+    line-height: 1.35;
 }
 
 /* =====================================================
@@ -216,19 +217,19 @@ body {
 
 .voucher fieldset {
     border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 12px 15px;
-    margin: 15px 0;
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin: 6px 0;
     background: #fafbfc;
 }
 
 .voucher fieldset legend {
-    padding: 5px 12px;
+    padding: 2px 8px;
     background: #2A307D;
     color: #fff;
-    font-size: 10pt;
+    font-size: 8pt;
     font-weight: 600;
-    border-radius: 4px;
+    border-radius: 3px;
 }
 
 .voucher fieldset legend .custom_font_weigh_bold {
@@ -236,15 +237,15 @@ body {
 }
 
 .voucher fieldset ul {
-    margin: 5px 0;
-    padding-left: 20px;
+    margin: 3px 0;
+    padding-left: 16px;
     list-style-type: disc;
 }
 
 .voucher fieldset ul li {
-    font-size: 10pt;
-    line-height: 1.6;
-    margin-bottom: 5px;
+    font-size: 8.5pt;
+    line-height: 1.35;
+    margin-bottom: 2px;
     color: #444;
 }
 
@@ -267,27 +268,27 @@ body {
    ===================================================== */
 
 .voucher .pie-voucher {
-    padding: 15px 20px;
+    padding: 6px 10px;
     background: #f8f9fa;
     border-top: 2px solid #2A307D;
-    font-size: 8pt;
-    line-height: 1.4;
+    font-size: 7pt;
+    line-height: 1.3;
     color: #444;
     clear: both;
 }
 
 .voucher .pie-voucher p {
-    margin-bottom: 6px;
+    margin-bottom: 3px;
     text-align: justify;
 }
 
 /* Important notices with yellow background */
 .custom_background_yellow {
     background: linear-gradient(90deg, #fff3cd 0%, #ffeeba 100%) !important;
-    padding: 8px 12px !important;
-    border-radius: 4px;
+    padding: 4px 8px !important;
+    border-radius: 3px;
     border-left: 3px solid #ffc107;
-    margin: 8px 0 !important;
+    margin: 4px 0 !important;
     font-style: normal;
     color: #856404;
 }
@@ -299,20 +300,20 @@ body {
 /* Certificate border box */
 .custom_border_2px {
     border: 2px solid #E83A61;
-    border-radius: 6px;
-    padding: 12px;
+    border-radius: 4px;
+    padding: 6px 8px;
     background: #fff;
-    margin-top: 12px;
+    margin-top: 6px;
 }
 
 .custom_border_2px p {
-    font-size: 9pt;
+    font-size: 8pt;
     color: #333;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 }
 
 .custom_padding_2 {
-    padding: 12px;
+    padding: 6px 8px;
 }
 
 /* =====================================================
@@ -324,17 +325,17 @@ body {
 }
 
 .divInfoAdicional ol {
-    margin: 10px 0;
-    padding-left: 25px;
+    margin: 4px 0;
+    padding-left: 18px;
 }
 
 .divInfoAdicional ol li {
-    margin-bottom: 8px;
+    margin-bottom: 3px;
 }
 
 .divInfoAdicional ol li p {
-    font-size: 10pt;
-    line-height: 1.5;
+    font-size: 8.5pt;
+    line-height: 1.3;
     margin: 0;
 }
 
@@ -342,7 +343,7 @@ body {
     max-width: 100%;
     height: auto;
     display: block;
-    margin: 10px auto;
+    margin: 6px auto;
 }
 
 /* =====================================================
@@ -351,7 +352,7 @@ body {
 
 .div100 {
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     overflow: hidden;
 }
 
@@ -387,15 +388,15 @@ body {
 }
 
 .custom_margin_top_10 {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .custom_height_30 {
-    height: 30px;
+    height: 12px;
 }
 
 .custom_font_size_16 {
-    font-size: 11pt !important;
+    font-size: 9pt !important;
 }
 
 /* =====================================================
@@ -406,7 +407,7 @@ body {
     background-image: url("/Images/marco_antonio_back3.png");
     background-repeat: no-repeat;
     background-position: right center;
-    background-size: 200px auto;
+    background-size: 150px auto;
 }
 
 /* Remove watermark for better readability */
@@ -425,16 +426,16 @@ body {
 
 .passengers-list {
     background: #f8f9fa;
-    padding: 12px 15px;
-    border-radius: 6px;
-    margin-bottom: 15px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
 }
 
 .passengers-list .passenger-item {
-    padding: 6px 0;
+    padding: 3px 0;
     border-bottom: 1px solid #eee;
-    font-size: 10pt;
-    line-height: 1.5;
+    font-size: 8.5pt;
+    line-height: 1.3;
 }
 
 .passengers-list .passenger-item:last-child {
@@ -445,21 +446,21 @@ body {
     display: inline-block;
     background: #2A307D;
     color: #fff;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 9pt;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 7.5pt;
     font-weight: 600;
-    margin-right: 8px;
+    margin-right: 5px;
 }
 
 .passengers-list .seat-type {
     display: inline-block;
     background: #E83A61;
     color: #fff;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 8pt;
-    margin-right: 8px;
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-size: 7pt;
+    margin-right: 5px;
 }
 
 /* =====================================================
@@ -481,11 +482,13 @@ body {
         border-radius: 0;
         box-shadow: none;
         page-break-inside: avoid;
-        page-break-after: always;
+        /* Sin page-break-after: siempre: el último "hijo" del body suele ser HideToPrint, no el voucher, y Chrome generaba una hoja en blanco. */
+        page-break-after: auto;
     }
 
-    .voucher:last-child {
-        page-break-after: auto;
+    /* Salto antes del 2.º voucher en adelante (otro pasajero o hoja de info adicional). */
+    .voucher ~ .voucher {
+        page-break-before: always;
     }
 
     .voucher .encabezado-voucher {
@@ -530,12 +533,15 @@ body {
     }
 
     .divInfoAdicional {
-        page-break-before: always;
         page-break-inside: avoid;
     }
 
     .HideToPrint {
         display: none !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
     }
 
     .divInfoAdicional img {
@@ -561,6 +567,133 @@ body {
 @media screen {
     body {
         background: #e9ecef;
-        padding: 20px;
+        padding: 10px;
     }
+}
+
+/* Tablas compactas (menores, itinerario) */
+.voucher-table-compact {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8pt;
+    line-height: 1.25;
+}
+
+.voucher-table-compact th,
+.voucher-table-compact td {
+    text-align: left;
+    padding: 2px 4px;
+    vertical-align: top;
+    border-bottom: 1px solid #ddd;
+}
+
+.voucher-table-compact th {
+    font-size: 7.5pt;
+    color: #2A307D;
+    font-weight: 600;
+}
+
+.voucher-table-compact.voucher-itinerario td:first-child {
+    width: 22px;
+    text-align: center;
+    font-weight: bold;
+    color: #E83A61;
+}
+
+.voucher-table-compact.voucher-itinerario td:nth-child(2) {
+    font-weight: 500;
+}
+
+.voucher-table-compact.voucher-itinerario td:nth-child(3),
+.voucher-table-compact.voucher-itinerario td:nth-child(4) {
+    width: 48px;
+    text-align: center;
+    color: #666;
+}
+
+/* Bloque información adicional (documentación) */
+.voucher-doc-extra {
+    padding: 6px 10px;
+    font-size: 8.5pt;
+    line-height: 1.3;
+}
+
+.voucher-doc-extra h3 {
+    color: #2A307D;
+    font-size: 9.5pt;
+    margin: 0 0 4px 0;
+    padding-bottom: 3px;
+    border-bottom: 2px solid #E83A61;
+}
+
+.voucher-doc-extra > p.voucher-doc-lead {
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.voucher-doc-callout {
+    background: #f0f4f8;
+    padding: 5px 8px;
+    border-radius: 4px;
+    margin: 6px 0;
+    border-left: 3px solid #E83A61;
+}
+
+.voucher-doc-callout p {
+    margin: 0;
+    font-weight: 600;
+    text-align: justify;
+    font-size: 8pt;
+}
+
+.voucher-doc-extra h4 {
+    color: #2A307D;
+    font-size: 9pt;
+    margin: 6px 0 3px 0;
+}
+
+.voucher-doc-extra p.voucher-doc-p {
+    text-align: justify;
+    margin: 0 0 4px 0;
+}
+
+.voucher-doc-img-wrap {
+    text-align: center;
+    margin: 5px 0;
+}
+
+.voucher-doc-img-wrap img {
+    max-width: 42%;
+}
+
+.voucher-doc-warn {
+    background: #fff3cd;
+    padding: 5px 8px;
+    border-radius: 4px;
+    border-left: 3px solid #ffc107;
+    margin-top: 6px;
+}
+
+.voucher-doc-warn p {
+    margin: 0 0 3px 0;
+}
+
+.voucher-doc-warn > p:first-of-type {
+    font-weight: 600;
+}
+
+.voucher-doc-emphasis {
+    font-weight: 600;
+    color: #E83A61;
+}
+
+.voucher-grupal-section-title {
+    margin: 0 0 4px 0;
+    font-size: 8.5pt;
+    line-height: 1.25;
+}
+
+.voucher-menores-bloque-title {
+    margin: 0 0 3px 0;
+    font-size: 8.5pt;
 }

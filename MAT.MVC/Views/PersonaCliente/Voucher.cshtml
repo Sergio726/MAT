@@ -1,4 +1,6 @@
 @model List<MAT.MVC.Models.VoucherStandard>
+@using System
+@using System.Linq
 @using MAT.Enums
 <!DOCTYPE html>
 <html>
@@ -13,7 +15,7 @@
     <style type="text/css">
         @@media print {
             @@page {
-                margin: 1cm;
+                margin: 0.75cm;
             }
         }
     </style>
@@ -76,6 +78,36 @@
                             <p><span class="custom_font_weigh_bold">CELULAR:</span> @(item.PersonaCelular)</p>
                         </div>
                     </div>
+
+                    @{
+                        var listMenoresVoucher = ViewBag.ListMenores as List<MAT.MVC.Models.PasajeroMenorModel> ?? new List<MAT.MVC.Models.PasajeroMenorModel>();
+                        var menoresDelPasaje = listMenoresVoucher.Where(m => m.PasajeroMenorID != 0 && string.Equals(m.PasajeID ?? "", item.PasajePasajeID ?? "", StringComparison.OrdinalIgnoreCase)).ToList();
+                    }
+                    @if (menoresDelPasaje.Count > 0)
+                    {
+                        <div class="div100 custom_diplay_block">
+                            <fieldset>
+                                <legend><span class="custom_font_weigh_bold">MENORES VINCULADOS</span></legend>
+                                <table class="voucher-table-compact">
+                                    <thead>
+                                        <tr>
+                                            <th>Responsable del menor</th>
+                                            <th>Menor a cargo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var vm in menoresDelPasaje)
+                                        {
+                                            <tr>
+                                                <td>@(vm.ApellidoMayor + ", " + vm.NombreMayor + " Doc.: " + vm.DocMayor)</td>
+                                                <td>@(vm.ApellidoMenor + ", " + vm.NomreMenor + " Doc.: " + vm.DocMenor)</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </fieldset>
+                        </div>
+                    }
 
                     <!-- Trip Details -->
                     <div class="div100">
@@ -153,19 +185,19 @@
                                 <legend>
                                     <span class="custom_font_weigh_bold">ITINERARIO DEL VIAJE</span>
                                 </legend>
-                                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                <table class="voucher-table-compact voucher-itinerario">
                                     @foreach (var paso in item.Itinerario.OrderBy(x => x.Orden))
                                     {
                                         <tr>
-                                            <td style="padding: 3px 8px; width: 30px; text-align: center; font-weight: bold; color: #E83A61;">@paso.Orden</td>
-                                            <td style="padding: 3px 8px; font-weight: 500;">@paso.Nombre</td>
-                                            <td style="padding: 3px 8px; width: 60px; text-align: center;">
+                                            <td>@paso.Orden</td>
+                                            <td>@paso.Nombre</td>
+                                            <td>
                                                 @if (!string.IsNullOrEmpty(paso.HoraAprox))
                                                 {
                                                     <span>@paso.HoraAprox hs.</span>
                                                 }
                                             </td>
-                                            <td style="padding: 3px 8px; width: 60px; text-align: center; color: #666;">
+                                            <td>
                                                 @if (paso.DuracionMin.HasValue && paso.DuracionMin.Value > 0)
                                                 {
                                                     <span>@paso.DuracionMin min</span>
@@ -238,9 +270,9 @@
                         </div>
                     </div>
 
-                    <div style="padding: 20px;">
-                        <h3 style="color: #2A307D; margin-bottom: 10px; border-bottom: 2px solid #E83A61; padding-bottom: 5px;">INFORMACIÓN DE DOCUMENTACIÓN</h3>
-                        <p style="font-weight: 600; margin-bottom: 10px;">Documentación necesaria para salir del país</p>
+                    <div class="voucher-doc-extra">
+                        <h3>INFORMACIÓN DE DOCUMENTACIÓN</h3>
+                        <p class="voucher-doc-lead">Documentación necesaria para salir del país</p>
 
                         <ol>
                             <li>
@@ -257,38 +289,38 @@
                             </li>
                         </ol>
 
-                        <div style="background: #f0f4f8; padding: 12px; border-radius: 6px; margin: 15px 0; border-left: 4px solid #E83A61;">
-                            <p style="font-weight: 600; text-align: justify;">
+                        <div class="voucher-doc-callout">
+                            <p>
                                 "Los menores deben tener sus documentos nacionales de identidad vigentes (DNI) con las actualizaciones de los 8, 14 y 16 años según corresponda. Aquellos menores que efectúen la primera actualización de su DNI (entre los 5 y los 8 años), en la fecha en la que el menor cumpla 14 años deberán renovarlo en ese momento. Los que actualicen antes del 01/11/12 mantienen su vigencia hasta los 16 años, según corresponda.
                                 Nota: NO VALIDOS PARA VIAJAR: las "tirillas" de documentación en trámite, L.E., L.C., Cedula Federal del Mercosur y no Mercosur, Cedula Provincial, DNI verde y celeste.
                                 Toda documentación debe estar en buen estado de conservación".
                             </p>
                         </div>
 
-                        <h4 style="color: #2A307D; margin: 15px 0 10px 0;">Monedas y Tipo de Cambio</h4>
-                        <p style="text-align: justify; margin-bottom: 10px;">
+                        <h4>Monedas y Tipo de Cambio</h4>
+                        <p class="voucher-doc-p">
                             Los pesos argentinos que lleven los pasajeros, solo los podrán utilizar en el territorio nacional. Los cambios de dinero se harán al entrar al país y en las ciudades donde se alojen. El coordinador podrá informar cuándo y dónde cambiar. Es necesario avisar al banco o a atención al cliente de su tarjeta de crédito que va a realizar un viaje para que le habiliten la misma para usar en el exterior del país.
                         </p>
-                        <p style="text-align: justify; margin-bottom: 10px;">
+                        <p class="voucher-doc-p">
                             En caso de llevar Dolares: importante, los billetes con rostro pequeño (de todos los valores), son considerados viejos en la mayoría de los países y generalmente es difícil cambiarlos a la moneda local o si los cambian, lo hacen a un cambio desfavorable, dando menor valor al billete que si quisiéramos cambiar uno más nuevo.
                         </p>
-                        <p style="font-weight: 600; color: #E83A61;">Abstenerse llevar billetes de 100 dólares series B y C, no los reciben.</p>
+                        <p class="voucher-doc-p voucher-doc-emphasis">Abstenerse llevar billetes de 100 dólares series B y C, no los reciben.</p>
 
-                        <div style="text-align: center; margin: 15px 0;">
-                            <img src="~/Images/BilleteDolar.png" style="max-width: 50%;" alt="Billete Dolar" />
+                        <div class="voucher-doc-img-wrap">
+                            <img src="~/Images/BilleteDolar.png" alt="Billete Dolar" />
                         </div>
 
-                        <h4 style="color: #2A307D; margin: 15px 0 10px 0;">Electricidad</h4>
-                        <p style="text-align: justify;">
+                        <h4>Electricidad</h4>
+                        <p class="voucher-doc-p">
                             La corriente eléctrica es de 220 Voltios durante todo el recorrido. Los tipos de enchufes que encontrará en los hoteles, serán el triple (uso cotidiano en Argentina) y doble de patas redondeadas en Brasil.
                         </p>
 
-                        <div style="text-align: center; margin: 15px 0;">
-                            <img src="~/Images/EnchufeBrasil.png" style="max-width: 35%;" alt="Enchufe Brasil" />
+                        <div class="voucher-doc-img-wrap">
+                            <img src="~/Images/EnchufeBrasil.png" alt="Enchufe Brasil" />
                         </div>
 
-                        <div style="background: #fff3cd; padding: 12px; border-radius: 6px; border-left: 4px solid #ffc107; margin-top: 15px;">
-                            <p style="font-weight: 600; margin-bottom: 5px;">IMPORTANTE:</p>
+                        <div class="voucher-doc-warn">
+                            <p>IMPORTANTE:</p>
                             <p>Notificar previamente a su Agente de Viajes si hay requerimiento especiales de comidas tales como <strong>vegetarianos, veganos, celíacos o alérgicos, entre otros.</strong></p>
                         </div>
                     </div>

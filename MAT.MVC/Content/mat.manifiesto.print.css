@@ -1,6 +1,238 @@
-﻿@page {
-   margin-left: 10mm;
-   margin-right: 10mm;
-   margin-top: 11mm;
-   margin-bottom: 5mm;
+/*
+ * Manifiesto — impresión en UNA hoja tamaño Oficio.
+ *
+ * Oficio común en LATAM: 216 mm × 330 mm (≈ 8,5" × 13"). Si tu papel es Legal (8,5" × 14"),
+ * cambia @page a: size: 216mm 356mm;  o  size: legal;
+ *
+ * Límite físico: con muchos pasajeros o texto largo, una sola hoja puede ser imposible sin
+ * reducir más la escala (--manifiesto-print-scale) o aceptar segunda página.
+ */
+@page {
+    size: 216mm 330mm;
+    margin: 5mm;
+}
+
+@media print {
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    #content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .toolbar,
+    .HideToPrint {
+        display: none !important;
+    }
+
+    /*
+     * Escala global del bloque (1 = sin escala). Bajar a ~0,82–0,88 si aún pagina
+     * con muchos pasajeros. Compensar ancho para que no recorte al achicar.
+     */
+    .manifiesto-wrapper {
+        --manifiesto-print-scale: 0.88;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+        box-sizing: border-box;
+        transform: scale(var(--manifiesto-print-scale));
+        transform-origin: top left;
+        width: calc(100% / var(--manifiesto-print-scale));
+        min-height: calc(100% / var(--manifiesto-print-scale));
+        page-break-after: avoid;
+    }
+
+    .manifiesto-wrapper .Content {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Encabezado azul compacto */
+    .manifiesto-wrapper #divEncabezadoViaje.headMAT {
+        background-color: #1e3a5f !important;
+        background-image: none !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .manifiesto-wrapper .EncabezadoViaje {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 0 !important;
+        padding: 2.5mm 3mm !important;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+    }
+
+    .manifiesto-wrapper .viaje-titulo {
+        font-size: 8.5pt !important;
+        margin-bottom: 0 !important;
+        line-height: 1.15;
+    }
+
+    .manifiesto-wrapper .viaje-subtitulo {
+        font-size: 7pt !important;
+        line-height: 1.15;
+    }
+
+    .manifiesto-wrapper .viaje-fechas {
+        font-size: 6.5pt !important;
+        margin-top: 1px !important;
+    }
+
+    .manifiesto-wrapper .viaje-logo img {
+        height: 22px !important;
+        width: auto !important;
+    }
+
+    /* Formulario cabecera */
+    .manifiesto-wrapper .manifiesto-header {
+        padding: 2mm 2mm !important;
+        border-bottom: none !important;
+        page-break-inside: avoid;
+    }
+
+    .manifiesto-wrapper .mf-card {
+        border: 1px solid #222 !important;
+        border-radius: 0 !important;
+    }
+
+    .manifiesto-wrapper .mf-card-title {
+        padding: 1.5mm 2mm !important;
+        font-size: 6.5pt !important;
+        background: #f0f0f0 !important;
+        border-bottom: 1px solid #222 !important;
+        color: #111 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .manifiesto-wrapper .mf-card-title .bi {
+        display: none !important;
+    }
+
+    .manifiesto-wrapper .mf-card-body {
+        padding: 2mm 2mm !important;
+        gap: 1.5mm 2mm !important;
+        align-items: stretch !important;
+    }
+
+    .manifiesto-wrapper .mf-field {
+        gap: 0 !important;
+    }
+
+    .manifiesto-wrapper .mf-label {
+        font-size: 5.5pt !important;
+        line-height: 1.1;
+        margin-bottom: 1px;
+    }
+
+    .manifiesto-wrapper .mf-input,
+    .manifiesto-wrapper .mf-static {
+        padding: 1px 3px !important;
+        font-size: 6pt !important;
+        border: 1px solid #333 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        color: #111 !important;
+        min-height: 0 !important;
+        line-height: 1.2;
+    }
+
+    .manifiesto-wrapper .mf-static {
+        background: #fafafa !important;
+    }
+
+    .manifiesto-wrapper .mf-help {
+        font-size: 5.5pt !important;
+        line-height: 1.15 !important;
+        margin-top: 1px !important;
+    }
+
+    /* Tabla pasajeros */
+    .manifiesto-wrapper #tablaPasajeros.backMAT {
+        background: white !important;
+        background-image: none !important;
+        padding: 0 !important;
+    }
+
+    .manifiesto-wrapper .table-scroll {
+        overflow: visible !important;
+    }
+
+    .manifiesto-wrapper .tabla {
+        width: 100% !important;
+        min-width: 0 !important;
+        border-collapse: collapse !important;
+        table-layout: fixed !important;
+        font-size: 5.5pt !important;
+        border: 1px solid #222 !important;
+        page-break-inside: avoid;
+    }
+
+    .manifiesto-wrapper .tabla thead {
+        background: #c2185b !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .manifiesto-wrapper .tabla thead tr td {
+        font-weight: 700 !important;
+        font-size: 5.5pt !important;
+        padding: 1px 2px !important;
+        border: 1px solid rgba(0, 0, 0, 0.25) !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        text-transform: none !important;
+        line-height: 1.1;
+        vertical-align: middle;
+    }
+
+    .manifiesto-wrapper .tabla tbody td.celda {
+        padding: 1px 2px !important;
+        font-size: 5.5pt !important;
+        border-bottom: 1px solid #bbb !important;
+        border-right: 1px solid #ddd !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        vertical-align: top !important;
+        line-height: 1.12;
+    }
+
+    .manifiesto-wrapper .tabla tbody tr:nth-child(even) {
+        background: #f7f7f7 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .manifiesto-wrapper .column_nro {
+        width: 4% !important;
+        text-align: center !important;
+    }
+
+    /* Anchos aproximados para 11 columnas en oficio */
+    .manifiesto-wrapper .column_apellido { width: 11%; }
+    .manifiesto-wrapper .column_nombre { width: 11%; }
+    .manifiesto-wrapper .column_tipo_doc { width: 7%; }
+    .manifiesto-wrapper .column_nro_doc { width: 10%; }
+    .manifiesto-wrapper .column_fecha_nac { width: 8%; }
+    .manifiesto-wrapper .column_sexo { width: 5%; }
+    .manifiesto-wrapper .column_nacionalidad { width: 10%; }
+    .manifiesto-wrapper .column_pais_residencia { width: 10%; }
+    .manifiesto-wrapper .column_ocupacion { width: 12%; }
+    .manifiesto-wrapper .column_telefono { width: 12%; }
 }

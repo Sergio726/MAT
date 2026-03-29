@@ -3,9 +3,11 @@
 @using MAT.Enums
 @using MAT.Entities
 @using MAT.Services
+@using System.Linq
 @{
     ViewBag.Title = "Lista de pasajeros";
     int numeracion = 1;
+    var tieneMenoresVinculados = Model != null && Model.Any(m => m.EsMenorVinculado);
 }
 
 @section Styles {
@@ -42,12 +44,14 @@
     </div>
 
     <div id="tablaPasajeros" class="backMAT">
+     
         <div class="listado-pantalla">
             <table class="tabla listado-simple-tabla">
                 <thead>
                     <tr>
                         <td class="celda column_nro">N° <input type="checkbox" checked class="chkIsPrint" column="column_nro" title="Incluir esta columna en la impresión." /></td>
                         <td class="celda column_apellido_nombre">APELLIDO Y NOMBRE <input type="checkbox" checked class="chkIsPrint" column="column_apellido_nombre" title="Incluir esta columna en la impresión." /></td>
+                        <td class="celda column_responsable">RESPONSABLE <input type="checkbox" checked class="chkIsPrint" column="column_responsable" title="Incluir esta columna en la impresión." /></td>
                         <td class="celda column_tipo_doc">TIPO Y N° DOC <input type="checkbox" checked class="chkIsPrint" column="column_tipo_doc" title="Incluir esta columna en la impresión." /></td>
                         <td class="celda column_cuit_cuil">CUIT/CUIL <input type="checkbox" checked class="chkIsPrint" column="column_cuit_cuil" title="Incluir esta columna en la impresión." /></td>
                         <td class="celda column_fecha_nac">FECHA NAC. <input type="checkbox" checked class="chkIsPrint" column="column_fecha_nac" title="Incluir esta columna en la impresión." /></td>
@@ -57,9 +61,33 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <tr class="@(item.EsMenorVinculado ? "tr-row-menor-vinculado" : null)">
                             <td class="celda column_nro">@numeracion</td>
-                            <td class="celda column_apellido_nombre">@item.Apellido @item.Nombre</td>
+                            <td class="celda column_apellido_nombre">
+                                <span class="listado-simple-nombre-cell">
+                                    @if (item.EsMenorVinculado)
+                                    {
+                                        <span class="listado-simple-nombre-icon HideToPrint" aria-hidden="true"><i class="bi bi-link-45deg"></i></span>
+                                    }
+                                    <span>@item.Apellido @item.Nombre</span>
+                                </span>
+                            </td>
+                            <td class="celda column_responsable">
+                                @if (item.EsMenorVinculado)
+                                {
+                                    <div class="listado-simple-responsable-cell">
+                                        <span class="listado-simple-chip">Menor vinculado</span>
+                                        <div class="listado-simple-resp-lines">
+                                            <span class="listado-resp-name">Resp.: @item.ApellidoResponsable, @item.NombreResponsable</span>
+                                            <span class="listado-resp-doc">Doc. @item.NroDocResponsable</span>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="listado-simple-titular-muted">Titular</span>
+                                }
+                            </td>
                             <td class="celda column_tipo_doc">@((eTipoDocumento)item.TipoDocumento) @item.NroDocumento.ToString()</td>
                             <td class="celda column_cuit_cuil">@item.CUIT</td>
                             <td class="celda column_fecha_nac">

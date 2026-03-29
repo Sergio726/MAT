@@ -134,6 +134,106 @@
     color: var(--text-primary);
 }
 
+/* Leyenda menores vinculados */
+.listado-simple-legend {
+    margin: 0;
+    padding: 10px 20px 12px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    background: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.listado-simple-legend strong {
+    color: var(--text-primary);
+}
+
+.ShowOnlyPrint {
+    display: none !important;
+}
+
+/* Columna responsable / chips (alineado a PartialVinculacionMenor) */
+.listado-simple .column_responsable {
+    width: 200px;
+    min-width: 140px;
+    vertical-align: top;
+}
+
+.listado-simple-responsable-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
+.listado-simple-chip {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--brand-primary);
+    background: rgba(230, 51, 117, 0.08);
+    border: 1px solid rgba(230, 51, 117, 0.25);
+}
+
+.listado-simple-resp-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+}
+
+.listado-resp-name {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text-primary);
+    word-break: break-word;
+}
+
+.listado-resp-doc {
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+.listado-simple-titular-muted {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.listado-simple-nombre-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.listado-simple-nombre-icon {
+    flex-shrink: 0;
+    color: var(--brand-primary);
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Fila menor vinculado: banda + fondo suave */
+.listado-simple .tabla tbody tr.tr-row-menor-vinculado {
+    box-shadow: inset 4px 0 0 var(--brand-primary);
+}
+
+.listado-simple .tabla tbody tr.tr-row-menor-vinculado:nth-child(even),
+.listado-simple .tabla tbody tr.tr-row-menor-vinculado:nth-child(odd) {
+    background-color: #fff8f5;
+}
+
+.listado-simple .tabla tbody tr.tr-row-menor-vinculado:hover {
+    background-color: #fff0e8;
+}
+
 /* Tabla de pasajeros */
 #tablaPasajeros {
     padding: 0;

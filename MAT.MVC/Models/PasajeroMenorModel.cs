@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +8,7 @@ namespace MAT.MVC.Models
     public class PasajeroMenorModel
     {
         public int PasajeroMenorID { get; set; }
+        public string PasajeID { get; set; }
         public string ApellidoMayor {get; set;}
         public string NombreMayor {get; set;}
         public string DocMayor {get; set;}

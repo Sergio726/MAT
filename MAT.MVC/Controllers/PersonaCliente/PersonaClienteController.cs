@@ -979,9 +979,11 @@ namespace MAT.MVC.Controllers.PersonaCliente
         public ActionResult Voucher(Guid facturaid, string sTipoVoucher = "Individual", bool bInfoAdicional = false)
         {
             List<Models.VoucherStandard> ListVoucher = new List<Models.VoucherStandard>();
+            ViewBag.ListMenores = new List<PasajeroMenorModel>();
             try
             {
                 ListVoucher = Models.VoucherMethod.GetVoucherByFacturaID(facturaid.ToString());
+                ViewBag.ListMenores = FacturaMetod.GetPasajeroMenorByFacturaID(facturaid);
                 string sView = "";
                 ViewBag.InfoAdicional = bInfoAdicional;
 
@@ -1001,7 +1003,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Voucher");
                 return PartialView(ListVoucher);
             }
             

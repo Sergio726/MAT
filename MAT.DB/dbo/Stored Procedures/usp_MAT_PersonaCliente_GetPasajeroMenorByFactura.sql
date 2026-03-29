@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_PersonaCliente_GetPasajeroMenorByFactura] (@FacturaID varchar(max) = '')
+CREATE PROCEDURE [dbo].[usp_MAT_PersonaCliente_GetPasajeroMenorByFactura] (@FacturaID varchar(max) = '')
 AS 
 -- =============================================
 -- Author:		Garcia Sergio
@@ -12,6 +12,7 @@ BEGIN
 	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 	
 	select pm.id,
+		   p.PasajeID AS PasajeID,
 		   tutor.Apellido AS ApellidoMayor,
 		   tutor.Nombre AS NombreMayor,
 		   tutor.NroDocumento AS DocMayor,
