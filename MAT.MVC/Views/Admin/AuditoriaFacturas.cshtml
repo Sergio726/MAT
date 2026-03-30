@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
@@ -69,10 +69,33 @@
 <script type="text/javascript">
     var _dataTable = "";
     $(document).ready(function () {
-        $("#dateFrom").datepicker();
-        $("#dateTo").datepicker();
+        var auditDpOpts = {
+            dateFormat: "dd/mm/yy",
+            firstDay: 1,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "2015:2035",
+            showButtonPanel: true,
+            showOtherMonths: true,
+            selectOtherMonths: true
+        };
+        $("#dateFrom").datepicker($.extend({}, auditDpOpts, {
+            onClose: function (selected) {
+                if (selected) {
+                    var d = $("#dateFrom").datepicker("getDate");
+                    if (d) $("#dateTo").datepicker("option", "minDate", d);
+                }
+            }
+        }));
+        $("#dateTo").datepicker($.extend({}, auditDpOpts, {
+            onClose: function () {
+                var d0 = $("#dateFrom").datepicker("getDate");
+                var d1 = $("#dateTo").datepicker("getDate");
+                if (d0 && d1 && d1 < d0) $("#dateTo").datepicker("setDate", d0);
+            }
+        }));
 
-        $("input[type='text']").click(function () {
+        $("input.modern-form-input[type='text']").on("focus click", function () {
             $(this).css("background-color", "#fff");
         });
     });
@@ -103,66 +126,70 @@
     }
 
     function searchFactura() {
-        if (valForm()) {
-            var loadingHtml = '<div class="modern-loading-container"><div class="modern-loading-spinner"></div><span class="modern-loading-text">Buscando registros...</span></div>';
-            $("#divResult").html(loadingHtml);
-            var date1 = $("#dateFrom").val();
-            var date2 = $("#dateTo").val();
-            $.ajax({
-                url: "/Admin/AuditFactura",
-                data: {
-                    "dateFrom": date1,
-                    "dateTo": date2
-                },
-                dataType: "json",
-                success: function (data) {
-                    loadTable(data);
-                },
-                error: function() {
-                    $("#divResult").html('<div class="modern-alert-error"><i class="bi bi-exclamation-circle"></i><span>Error al buscar registros. Por favor, intente nuevamente.</span></div>');
-                }
-            });
-        }
+        if (!valForm()) return;
+
+        var $wrap = $("#divResult");
+        var $tbl = $("#tblAudit").detach();
+        var loadingHtml = '<div class="modern-loading-container"><div class="modern-loading-spinner"></div><span class="modern-loading-text">Buscando registros...</span></div>';
+        $wrap.html(loadingHtml);
+
+        var date1 = $("#dateFrom").val();
+        var date2 = $("#dateTo").val();
+        $.ajax({
+            url: '@Url.Action("AuditFactura", "Admin")',
+            type: "GET",
+            data: { dateFrom: date1, dateTo: date2 },
+            dataType: "json",
+            success: function (data) {
+                $wrap.empty().append($tbl);
+                loadTable(data);
+            },
+            error: function () {
+                $wrap.empty().append($tbl);
+                $tbl.hide();
+                $wrap.prepend('<div class="modern-alert-error" style="margin-bottom:1rem"><i class="bi bi-exclamation-circle"></i><span>Error al buscar registros. Por favor, intente nuevamente.</span></div>');
+            }
+        });
     }
 
-    function loadTable(jTable) {
-        
-        if (_dataTable != "") {
-            $("#tblAudit").hide();
-            $("#tblAudit").DataTable().destroy();
-            $("#tblAudit").empty();
+    function loadTable(payload) {
+        var rows = [];
+        if (payload == null) {
+            rows = [];
+        } else if (typeof payload === "string") {
+            try {
+                rows = JSON.parse(payload);
+            } catch (e) {
+                rows = [];
+            }
+        } else if ($.isArray(payload)) {
+            rows = payload;
         }
-        
-        var jTables = eval(jTable);
-        var jt = jTables;
 
-        _dataTable = $("#tblAudit").DataTable({
-                    "aaData": jt,
-                    "columns": [
-        	        {"title":"ID", "data": "ID" },
-        	        { "title": "Acción", "data": "Accion" },
-                    { "Descripcion": "Descripción", "data": "Descripcion" },
-                    { "title": "Fecha","data": "Fecha" },
-        	        { "title": "Persona/Cliente","data": "Cliente" },
-        	        { "title": "Vendedor", "data": "Vendedor" },
-        	
-                    ],
-                    "bAutoWidth": false,
-                    "pageLength": 25
-                });
+        var $tbl = $("#tblAudit");
+        if (!$tbl.length) return;
 
-        $("#divResult").html("");
-        $("#divResult").append($("#tblAudit"));
-        $("#tblAudit").show();
+        if ($.fn.dataTable && $.fn.dataTable.isDataTable($tbl)) {
+            $tbl.DataTable().destroy();
+        }
+        $tbl.empty();
+
+        _dataTable = $tbl.DataTable({
+            data: rows,
+            columns: [
+                { title: "ID", data: "ID" },
+                { title: "Acción", data: "Accion" },
+                { title: "Descripción", data: "Descripcion" },
+                { title: "Fecha", data: "Fecha" },
+                { title: "Persona/Cliente", data: "Cliente" },
+                { title: "Vendedor", data: "Vendedor" }
+            ],
+            autoWidth: false,
+            pageLength: 25
+        });
+
+        $tbl.show();
     }
 
 </script>
-
-<style>
-    .modern-form-input-error {
-        border-color: #dc2626 !important;
-        background-color: #fef2f2 !important;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
-    }
-</style>
 </div>

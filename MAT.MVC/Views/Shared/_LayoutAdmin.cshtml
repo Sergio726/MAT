@@ -17,11 +17,24 @@
     <link href="~/Scripts/jquery.timepicker/jquery.timepicker.css" rel="stylesheet" />
     <link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-    <link href="~/Content/admin.modern.css?v=20260118" rel="stylesheet" />
+    <link href="~/Content/admin.modern.css?v=20260330b" rel="stylesheet" />
 
     <!-- JS (nuevo) -->
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+    @* Migrate siempre hace console.log al cargar; filtramos solo durante su carga. *@
+    <script>
+        (function () {
+            var origLog = console.log.bind(console);
+            console.log = function () {
+                var a = arguments[0];
+                if (typeof a === 'string' && a.indexOf('JQMIGRATE:') === 0) return;
+                return origLog.apply(console, arguments);
+            };
+            window.__matRestoreConsoleLog = function () { console.log = origLog; };
+        })();
+    </script>
     <script src="~/Scripts/jquery-migrate-3.4.1.min.js"></script>
+    <script>window.__matRestoreConsoleLog(); delete window.__matRestoreConsoleLog;</script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>

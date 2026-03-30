@@ -49,6 +49,7 @@ namespace MAT.MVC.Controllers.Admin
             catch (Exception e)
             {
                 ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.ResumenPagos");
+                ViewBag.jDDViaje = "[]";
             }
             
             return View();
@@ -751,14 +752,15 @@ namespace MAT.MVC.Controllers.Admin
             }
         }
 
+        [Authorize]
         public JsonResult AuditFactura(string dateFrom, string dateTo)
         {
-           // string sResult = "";
-            var jResult = "";
+            if (!IsAdminUser())
+                return Json(new List<AuditFactura>(), JsonRequestBehavior.AllowGet);
 
-            List<AuditFactura> listFactura = new List<AuditFactura>();
+            var listFactura = new List<AuditFactura>();
             SqlParameter[] _dbParams = new SqlParameter[]
-                        {                    
+                        {
                             DBHelper.MakeParam("@dateFrom", SqlDbType.VarChar, 0, dateFrom),
                             DBHelper.MakeParam("@dateTo", SqlDbType.VarChar, 0, dateTo)
                         };
@@ -777,11 +779,8 @@ namespace MAT.MVC.Controllers.Admin
                 }
             }
 
-            
-            var jsonSerialiser = new JavaScriptSerializer();
-            jResult = jsonSerialiser.Serialize(listFactura);
-
-            return Json(jResult, JsonRequestBehavior.AllowGet);
+            // Devolver el array directamente; Json() ya serializa (evita doble JSON string).
+            return Json(listFactura, JsonRequestBehavior.AllowGet);
         }
     }
 }

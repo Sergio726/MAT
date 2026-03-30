@@ -1,3 +1,4 @@
+/* Despliegue: alinear con MAT.DB\dbo\Stored Procedures\usp_MAT_Admin_AuditoriaFacturas.sql */
 CREATE PROCEDURE [dbo].[usp_MAT_Admin_AuditoriaFacturas] (
     @dateFrom VARCHAR(10),
     @dateTo   VARCHAR(10)

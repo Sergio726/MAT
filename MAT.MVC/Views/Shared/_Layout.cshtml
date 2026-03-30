@@ -48,7 +48,20 @@
 
     <script src="~/Scripts/preset.js"></script>
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+    @* Migrate siempre hace console.log al cargar; filtramos solo durante su carga. *@
+    <script>
+        (function () {
+            var origLog = console.log.bind(console);
+            console.log = function () {
+                var a = arguments[0];
+                if (typeof a === 'string' && a.indexOf('JQMIGRATE:') === 0) return;
+                return origLog.apply(console, arguments);
+            };
+            window.__matRestoreConsoleLog = function () { console.log = origLog; };
+        })();
+    </script>
     <script src="~/Scripts/jquery-migrate-3.4.1.min.js"></script>
+    <script>window.__matRestoreConsoleLog(); delete window.__matRestoreConsoleLog;</script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>
