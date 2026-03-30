@@ -182,14 +182,15 @@
             <i class="bi bi-list-ul"></i>
             Items
         </div>
-        <table class="factura-table">
+        <table class="factura-table factura-table-items">
             <thead>
                 <tr>
                     <th class="factura-th-num">#</th>
                     <th>Fecha</th>
                     <th>Detalle</th>
                     <th class="factura-th-cant">Cant.</th>
-                    <th>Precio</th>
+                    <th class="factura-th-precio">Precio</th>
+                    <th class="factura-th-acciones">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -198,21 +199,38 @@
                     foreach (DBOFacturaDetalle item in ViewBag.ExtendFacturaDetalle)
                     {
                         iNro += 1;
-                        dTotal += item.Precio;
+                        dTotal += item.Precio * item.Cantidad;
                         <tr>
                             <td>@iNro</td>
-                            <td>@item.Fecha</td>
-                            <td>@item.Detalle</td>
-                            <td>@item.Cantidad</td>
-                            <td>
+                            <td class="factura-td-fecha">@item.Fecha</td>
+                            <td class="factura-td-detalle">@item.Detalle</td>
+                            <td class="factura-td-cant">@item.Cantidad</td>
+                            <td class="factura-td-precio">
                                 <div class="factura-precio-row">
-                                    <span>@String.Format("{0:C}", item.Precio)</span>
-                                    @if (item.Detalle.Contains("PAQUETE"))
-                                    {
-                                        <a href="javascript: fnCambiarPrecio('@item.Id','@Model.FacturaID');" title="Cambiar Precio" class="btn-action-icon btn-action-icon--sm">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                    }
+                                    <span class="factura-precio-row__amount">@String.Format("{0:C}", item.Precio)</span>
+                                    <span class="factura-precio-row__tools">
+                                        @if (item.Detalle.Contains("PAQUETE"))
+                                        {
+                                            <a href="javascript: fnCambiarPrecio('@item.Id','@Model.FacturaID');" title="Cambiar Precio" class="btn-action-icon btn-action-icon--sm">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="factura-precio-row__tool-spacer" aria-hidden="true"></span>
+                                        }
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="factura-td-acciones">
+                                <div class="factura-item-actions">
+                                    <button type="button"
+                                            class="btn-action-icon btn-action-icon--sm btn-eliminar-item-detallefactura"
+                                            data-detalle-factura-id="@item.Id"
+                                            data-factura-id="@FacturaID"
+                                            title="Eliminar ítem">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -220,9 +238,16 @@
                 }
             </tbody>
             <tfoot>
-                <tr>
-                    <th colspan="4" class="factura-tfoot-total-label">Total</th>
-                    <th>@String.Format("{0:C}", dTotal)</th>
+                <tr class="factura-tfoot-total">
+                    <td colspan="3" class="factura-tfoot-spacer" aria-hidden="true"></td>
+                    <td class="factura-tfoot-total-meta">
+                        <span class="factura-tfoot-total-label">
+                            <i class="bi bi-currency-exchange" aria-hidden="true"></i>
+                            Total @(!string.IsNullOrEmpty(sUSD) ? "(" + sUSD + ")" : "")
+                        </span>
+                    </td>
+                    <td class="factura-tfoot-total-amount">@String.Format("{0:C}", dTotal)</td>
+                    <td class="factura-tfoot-actions-spacer" aria-hidden="true"></td>
                 </tr>
             </tfoot>
         </table>
@@ -408,6 +433,53 @@
             if (typeof window.PopupDetalleFactura_Load === "function") {
                 window.PopupDetalleFactura_Load();
             }
+        });
+
+        $(document).on("click", ".btn-eliminar-item-detallefactura", function (e) {
+            e.preventDefault();
+            var $btn = $(this);
+            var detalleFacturaId = $btn.data("detalle-factura-id");
+            var facturaId = $btn.data("factura-id");
+            confirm(
+                "¿Está seguro de que desea eliminar este ítem de la factura? La eliminación quedará registrada en auditoría.",
+                "Eliminar ítem",
+                function () {
+                    var $dlg = $(this);
+                    $dlg.dialog("close");
+                    try { $dlg.remove(); } catch (ex) { }
+
+                    $btn.prop("disabled", true);
+                    $.ajax({
+                        type: "POST",
+                        url: "/PersonaCliente/DetalleFacturaEliminarItem",
+                        data: { detalleFacturaId: detalleFacturaId, facturaId: facturaId },
+                        success: function (res) {
+                            if (res && res.success) {
+                                if (typeof window.PopupDetalleFactura_Load === "function") {
+                                    window.PopupDetalleFactura_Load();
+                                } else if (typeof PopupDetalleFactura_Load === "function") {
+                                    PopupDetalleFactura_Load();
+                                } else {
+                                    location.reload();
+                                }
+                            } else {
+                                (window.alertError || window.alert)((res && res.message) ? res.message : "No se pudo eliminar el ítem.", "Error");
+                                $btn.prop("disabled", false);
+                            }
+                        },
+                        error: function () {
+                            (window.alertError || window.alert)("Error al eliminar el ítem. Intente nuevamente.", "Error");
+                            $btn.prop("disabled", false);
+                        }
+                    });
+                },
+                function () {
+                    var $dlg = $(this);
+                    $dlg.dialog("close");
+                    try { $dlg.remove(); } catch (ex) { }
+                }
+            );
+            return false;
         });
 
         if ($(".btn-editar-habitacion").length != $(".btn-editar-butaca").length) {

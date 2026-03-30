@@ -1,69 +1,59 @@
 ---
-description: En stored procedures, agregar/actualizar bloque de cabecera con fecha, autor Seba Garcia y detalle del cambio
-globs: "**/Stored Procedures/*.sql"
+description: Cabecera obligatoria en stored procedures (MAT.DB y database/) al crear o modificar
+globs:
+  - "MAT.DB/**/Stored Procedures/**/*.sql"
+  - "database/**/*.sql"
 alwaysApply: false
 ---
 
-# Cabecera en Stored Procedures
+# Cabecera en stored procedures (SQL Server)
 
-Cada vez que **crees** o **modifiques** un stored procedure (archivo `.sql` en `Stored Procedures` o en `database/` que contenga `CREATE PROCEDURE` o `CREATE OR ALTER PROCEDURE`), debes:
+Cada vez que **crees** o **modifiques** un archivo que defina un stored procedure (`CREATE PROCEDURE` o `CREATE OR ALTER PROCEDURE`), en **MAT.DB** (`dbo/Stored Procedures`) o en **database/** (scripts de despliegue), el comentario de cabecera debe ir **inmediatamente después de `AS`** y **antes de `BEGIN`** (o antes de `SET NOCOUNT` si el procedimiento no usa `BEGIN` explícito en la primera línea; cuando exista `BEGIN`, el bloque va entre `AS` y `BEGIN`).
 
-1. **Incluir o actualizar** un bloque de comentario justo después de `AS` (antes de `SET NOCOUNT` o del primer `BEGIN`).
-2. El bloque debe tener:
-   - **Fecha**: fecha actual en formato corto (ej. 03/02/2026 o 2026-02-03).
-   - **Autor**: Seba Garcia
-   - **Detalle del cambio**: una o más líneas describiendo qué se hizo (creación, corrección de duplicados, nuevo parámetro, etc.).
+## Formato obligatorio
 
-## Formato del bloque
+Usar exactamente esta estructura (líneas con `--` alineadas como en el ejemplo; `Create date` en **YYYY-MM-DD**):
 
 ```sql
 AS
-/*
-    Fecha: 03/02/2026
-    Autor: Seba Garcia
-    Detalle: [Descripción breve del cambio o creación]
-*/
-SET NOCOUNT ...
+/*-- =============================================
+  -- Author:    Sebastian Garcia
+  -- Create date: 2026-03-29
+  -- Description: [Una o más líneas: propósito del SP o del cambio realizado.]
+  --              [Continuation lines alineadas con -- Description:]
+  ============================================= */
+BEGIN
 ```
 
-Si el SP ya tiene un bloque de comentario anterior (ej. "Autor: Sebastian Garcia", "Create date:", etc.), **actualízalo** para que quede con este formato y la fecha/detalle del último cambio.
+- **Author:** siempre `Sebastian Garcia` (no abreviar).
+- **Create date:** fecha del cambio o creación (actualizar en cada modificación sustantiva si el equipo lo documenta así; como mínimo en creación).
+- **Description:** qué hace el SP o qué se modificó (claro para quien lea el historial en código).
 
-## Ejemplo al modificar
+## Qué no hacer
 
-Antes:
-```sql
-AS
-/*
-    Autor: Sebastian Garcia 19/01/2026
-    Consolidado optimizado para Popin DetalleFactura
-*/
-```
+- No usar el formato antiguo (`Fecha:` / `Autor:` / `Detalle:` en bloque `/* */` suelto sin el marco `/*-- =========`).
+- No colocar solo comentarios sueltos sin el cierre `============================================= */`.
+- No invocar `usp_Factura_Audit` u otros SP dentro de la cabecera; la cabecera es solo comentario.
 
-Después de un cambio (ej. evitar duplicados en pasajeros):
-```sql
-AS
-/*
-    Fecha: 03/02/2026
-    Autor: Seba Garcia
-    Detalle: Evitar duplicados en listado de pasajeros; LEFT JOIN a ReservaHabitacion reemplazado por subconsulta agrupada por PasajeID.
-*/
-```
-
-## Ejemplo al crear uno nuevo
+## Ejemplo mínimo (SP nuevo)
 
 ```sql
-CREATE PROCEDURE [dbo].[usp_MAT_Ejemplo_Nuevo]
+CREATE PROCEDURE [dbo].[usp_MAT_Ejemplo]
 (
     @Id UNIQUEIDENTIFIER
 )
 AS
-/*
-    Fecha: 03/02/2026
-    Autor: Seba Garcia
-    Detalle: Creación del SP para [descripción del propósito].
-*/
-SET NOCOUNT, XACT_ABORT ON;
-...
+/*-- =============================================
+  -- Author:    Sebastian Garcia
+  -- Create date: 2026-03-29
+  -- Description: Obtiene datos de ejemplo por Id.
+  ============================================= */
+BEGIN
+    SET NOCOUNT ON;
+    ...
+END
 ```
 
-Aplica esta regla en **MAT.DB\dbo\Stored Procedures\*.sql** y en **database\*.sql** cuando el archivo defina un stored procedure.
+## Paridad
+
+Mantener el **mismo** encabezado (salvo fechas/descripciones) entre el archivo en **MAT.DB** y el script equivalente en **database/** cuando existan ambos.

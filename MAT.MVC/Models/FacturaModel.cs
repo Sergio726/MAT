@@ -610,6 +610,21 @@ namespace MAT.MVC.Models
 
         }
 
+        /// <summary>
+        /// Elimina una línea de DetalleFactura (validación de pagos, AuditFactura, ActualizarEstados).
+        /// Requiere dbo.usp_MAT_DetalleFactura_DeleteById.
+        /// </summary>
+        public static void DeleteDetalleFacturaLine(int detalleFacturaId, Guid facturaID, Guid vendedorID)
+        {
+            SqlParameter[] dbParams = new SqlParameter[]
+            {
+                DBHelper.MakeParam("@DetalleFacturaId", SqlDbType.Int, 0, detalleFacturaId),
+                DBHelper.MakeParam("@FacturaID", SqlDbType.UniqueIdentifier, 0, facturaID),
+                DBHelper.MakeParam("@VendedorID", SqlDbType.UniqueIdentifier, 0, vendedorID),
+            };
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_DetalleFactura_DeleteById", dbParams);
+        }
+
         public static List<DBOFacturaDetalle> GetDetalleByFacturaID(Guid FacturaID)
         {
             SqlParameter[] dbParams = new SqlParameter[]

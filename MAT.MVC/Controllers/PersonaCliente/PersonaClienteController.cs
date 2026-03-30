@@ -1512,6 +1512,27 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 sResult[1] = e.Message;
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
-        } 
+        }
+
+        [HttpPost]
+        [Authorize]
+        public JsonResult DetalleFacturaEliminarItem(int detalleFacturaId, Guid facturaId)
+        {
+            try
+            {
+                if (MATContext.CurrentVendedor == null)
+                {
+                    return Json(new { success = false, message = "No se pudo identificar al vendedor en sesión." }, JsonRequestBehavior.AllowGet);
+                }
+
+                FacturaMetod.DeleteDetalleFacturaLine(detalleFacturaId, facturaId, MATContext.CurrentVendedor.VendedorId);
+                return Json(new { success = true, message = "" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.DetalleFacturaEliminarItem");
+                return Json(new { success = false, message = msg }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }
