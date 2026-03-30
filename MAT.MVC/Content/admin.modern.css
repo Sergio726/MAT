@@ -530,3 +530,93 @@ body.admin-modern .ui-datepicker .ui-datepicker-buttonpane {
   }
 }
 
+/* Confirmaciones jQuery UI (evitar window.confirm nativo: sin CSS en el repo, aspecto “localhost dice”) */
+body.admin-modern .ui-widget-overlay {
+  background: rgba(0, 0, 0, 0.55) !important;
+  opacity: 1 !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog,
+body.admin-modern .ui-dialog.modern-alert-dialog {
+  border-radius: 12px !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid var(--admin-border) !important;
+  background: var(--admin-surface-2) !important;
+  overflow: hidden;
+  max-width: min(420px, 94vw);
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-titlebar,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar,
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-widget-header,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-widget-header {
+  background: var(--admin-surface) !important;
+  background-image: none !important;
+  border: none !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  color: var(--admin-text) !important;
+  padding: 0.9rem 1rem !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-title,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-title {
+  color: var(--admin-text) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-content,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-content {
+  background: var(--admin-surface-2) !important;
+  color: var(--admin-text) !important;
+  padding: 1.1rem 1rem !important;
+  font-size: 0.95rem !important;
+  line-height: 1.45 !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-content p,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-content p {
+  margin: 0 !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-buttonpane {
+  background: var(--admin-surface) !important;
+  border-top: 1px solid var(--admin-border) !important;
+  margin: 0 !important;
+  padding: 0.75rem 1rem !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane button,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-buttonpane button {
+  border-radius: 999px !important;
+  padding: 0.45rem 1.1rem !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane .ui-dialog-buttonset,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+  float: right !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane .btn-primary,
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane button:last-child {
+  background: linear-gradient(90deg, var(--admin-primary) 0%, var(--admin-primary-2) 100%) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane .btn-outline-secondary,
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane button:first-child {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--admin-text) !important;
+  border: 1px solid var(--admin-border) !important;
+}
+
+body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-titlebar-close,
+body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
+  opacity: 0.85;
+}
+

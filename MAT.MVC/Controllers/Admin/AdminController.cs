@@ -54,11 +54,16 @@ namespace MAT.MVC.Controllers.Admin
                         roleArray = new string[] { };
                     }
 
+                    bool isApproved, isLocked;
+                    TryPopulateMembershipDisplayForAdmin(u.UserName, out isApproved, out isLocked);
+
                     list.Add(new AdminUserListItem
                     {
                         UserId = u.UserId,
                         UserName = u.UserName,
-                        RolesSummary = roleArray.Length > 0 ? string.Join(", ", roleArray) : "—"
+                        RolesSummary = roleArray.Length > 0 ? string.Join(", ", roleArray) : "—",
+                        IsApproved = isApproved,
+                        IsLockedOut = isLocked
                     });
                 }
             }
@@ -66,6 +71,323 @@ namespace MAT.MVC.Controllers.Admin
             if (TempData["UserMessage"] != null)
                 ViewBag.StatusMessage = TempData["UserMessage"];
             return View(list);
+        }
+
+        [Authorize]
+        public ActionResult UsuarioEditar(int? id)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+            if (id == null) return RedirectToAction("Usuarios");
+
+            UserProfile profile;
+            using (var ctx = new UsersContext())
+            {
+                profile = ctx.UserProfiles.FirstOrDefault(x => x.UserId == id.Value);
+            }
+
+            if (profile == null)
+            {
+                TempData["UserMessage"] = "Usuario no encontrado.";
+                return RedirectToAction("Usuarios");
+            }
+
+            var userName = profile.UserName;
+            bool isAdmin = false;
+            try
+            {
+                isAdmin = Roles.IsUserInRole(userName, "Administrador");
+            }
+            catch { }
+
+            bool isApproved, isLocked;
+            TryPopulateMembershipDisplayForAdmin(userName, out isApproved, out isLocked);
+
+            var model = new AdminUsuarioEditModel
+            {
+                UserId = id.Value,
+                UserName = userName,
+                EsAdministrador = isAdmin,
+                IsApproved = isApproved,
+                IsLockedOut = isLocked
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult UsuarioEditar(AdminUsuarioEditModel model)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            if (model == null || model.UserId <= 0)
+                return RedirectToAction("Usuarios");
+
+            UserProfile profile;
+            using (var ctx = new UsersContext())
+            {
+                profile = ctx.UserProfiles.FirstOrDefault(x => x.UserId == model.UserId);
+            }
+
+            if (profile == null)
+            {
+                TempData["UserMessage"] = "Usuario no encontrado.";
+                return RedirectToAction("Usuarios");
+            }
+
+            var targetUserName = profile.UserName;
+            model.UserName = targetUserName;
+
+            bool currentlyAdmin = false;
+            try
+            {
+                currentlyAdmin = Roles.IsUserInRole(targetUserName, "Administrador");
+            }
+            catch { }
+
+            if (model.EsAdministrador && !currentlyAdmin)
+            {
+                try
+                {
+                    Roles.AddUserToRole(targetUserName, "Administrador");
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioEditar.AddRole"));
+                }
+            }
+            else if (!model.EsAdministrador && currentlyAdmin)
+            {
+                if (string.Equals(User.Identity.Name, targetUserName, StringComparison.OrdinalIgnoreCase))
+                    ModelState.AddModelError("", "No puede quitarse el rol Administrador a usted mismo.");
+                else if (CountUsersInRole("Administrador") <= 1)
+                    ModelState.AddModelError("", "No puede quitarse el último administrador del sistema.");
+                else
+                {
+                    try
+                    {
+                        Roles.RemoveUserFromRole(targetUserName, "Administrador");
+                    }
+                    catch (Exception e)
+                    {
+                        ModelState.AddModelError("", ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioEditar.RemoveRole"));
+                    }
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                TempData["UserMessage"] = "Usuario actualizado correctamente.";
+                return RedirectToAction("Usuarios");
+            }
+
+            TryPopulateMembershipDisplayForAdmin(targetUserName, out bool reIsApproved, out bool reIsLocked);
+            model.IsApproved = reIsApproved;
+            model.IsLockedOut = reIsLocked;
+
+            return View(model);
+        }
+
+        [Authorize]
+        public ActionResult UsuarioResetPassword(int? id)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+            if (id == null) return RedirectToAction("Usuarios");
+
+            UserProfile profile;
+            using (var ctx = new UsersContext())
+            {
+                profile = ctx.UserProfiles.FirstOrDefault(x => x.UserId == id.Value);
+            }
+
+            if (profile == null)
+            {
+                TempData["UserMessage"] = "Usuario no encontrado.";
+                return RedirectToAction("Usuarios");
+            }
+
+            var m = new AdminUsuarioResetPasswordModel
+            {
+                UserId = id.Value,
+                UserName = profile.UserName
+            };
+            return View(m);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult UsuarioResetPassword(AdminUsuarioResetPasswordModel model)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            if (model == null || model.UserId <= 0)
+                return RedirectToAction("Usuarios");
+
+            UserProfile profile;
+            using (var ctx = new UsersContext())
+            {
+                profile = ctx.UserProfiles.FirstOrDefault(x => x.UserId == model.UserId);
+            }
+
+            if (profile == null)
+            {
+                TempData["UserMessage"] = "Usuario no encontrado.";
+                return RedirectToAction("Usuarios");
+            }
+
+            model.UserName = profile.UserName;
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                string resetToken = WebSecurity.GeneratePasswordResetToken(profile.UserName);
+                WebSecurity.ResetPassword(resetToken, model.NewPassword);
+                TempData["UserMessage"] = "La contraseña se restableció correctamente.";
+                return RedirectToAction("Usuarios");
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioResetPassword"));
+                return View(model);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult UsuarioEstablecerEstado(int userId, bool aprobado)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            string userName = GetUserNameByProfileId(userId);
+            if (string.IsNullOrEmpty(userName))
+            {
+                TempData["UserMessage"] = "Usuario no encontrado.";
+                return RedirectToAction("Usuarios");
+            }
+
+            if (!aprobado && string.Equals(User.Identity.Name, userName, StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["UserMessage"] = "No puede deshabilitar su propia cuenta.";
+                return RedirectToAction("Usuarios");
+            }
+
+            if (!aprobado)
+            {
+                bool targetIsAdmin = false;
+                try
+                {
+                    targetIsAdmin = Roles.IsUserInRole(userName, "Administrador");
+                }
+                catch { }
+
+                if (targetIsAdmin && CountUsersInRole("Administrador") <= 1)
+                {
+                    TempData["UserMessage"] = "No puede deshabilitar el último administrador del sistema.";
+                    return RedirectToAction("Usuarios");
+                }
+            }
+
+            try
+            {
+                // SimpleMembershipProvider no implementa Membership.UpdateUser para IsApproved (lanza NotSupportedException).
+                // IsApproved del usuario corresponde a IsConfirmed en dbo.webpages_Membership.
+                if (Membership.Provider is SimpleMembershipProvider)
+                {
+                    using (var ctx = new UsersContext())
+                    {
+                        var rows = ctx.Database.ExecuteSqlCommand(
+                            "UPDATE dbo.webpages_Membership SET IsConfirmed = @p0 WHERE UserId = @p1",
+                            aprobado,
+                            userId);
+                        if (rows == 0)
+                        {
+                            TempData["UserMessage"] = "No se encontró fila de membresía (webpages_Membership) para este usuario.";
+                            return RedirectToAction("Usuarios");
+                        }
+                    }
+
+                    TempData["UserMessage"] = aprobado ? "Usuario habilitado." : "Usuario deshabilitado.";
+                    return RedirectToAction("Usuarios");
+                }
+
+                MembershipUser mu = Membership.GetUser(userName, false);
+                if (mu == null)
+                {
+                    TempData["UserMessage"] = "No se encontró la cuenta de inicio de sesión (membership) para este usuario.";
+                    return RedirectToAction("Usuarios");
+                }
+
+                mu.IsApproved = aprobado;
+                Membership.UpdateUser(mu);
+                TempData["UserMessage"] = aprobado ? "Usuario habilitado." : "Usuario deshabilitado.";
+            }
+            catch (Exception e)
+            {
+                TempData["UserMessage"] = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioEstablecerEstado");
+            }
+
+            return RedirectToAction("Usuarios");
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult UsuarioDesbloquear(int userId)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            string userName = GetUserNameByProfileId(userId);
+            if (string.IsNullOrEmpty(userName))
+            {
+                TempData["UserMessage"] = "Usuario no encontrado.";
+                return RedirectToAction("Usuarios");
+            }
+
+            try
+            {
+                MembershipUser mu = Membership.GetUser(userName, false);
+                if (mu != null && mu.IsLockedOut)
+                    mu.UnlockUser();
+                TempData["UserMessage"] = "Cuenta desbloqueada.";
+            }
+            catch (Exception e)
+            {
+                TempData["UserMessage"] = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioDesbloquear");
+            }
+
+            return RedirectToAction("Usuarios");
+        }
+
+        private static string GetUserNameByProfileId(int userId)
+        {
+            using (var ctx = new UsersContext())
+            {
+                var p = ctx.UserProfiles.FirstOrDefault(x => x.UserId == userId);
+                return p?.UserName;
+            }
+        }
+
+        private static int CountUsersInRole(string roleName)
+        {
+            try
+            {
+                string[] users = Roles.GetUsersInRole(roleName);
+                return users?.Length ?? 0;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         [Authorize]
@@ -807,6 +1129,45 @@ namespace MAT.MVC.Controllers.Admin
             {
                 // RoleManager puede no estar configurado; en ese caso permitir a cualquier usuario autenticado
                 return User.Identity.IsAuthenticated;
+            }
+        }
+
+        /// <summary>
+        /// SimpleMembershipProvider.GetUser devuelve siempre IsApproved=true e IsLockedOut=false en el objeto MembershipUser.
+        /// El estado de cuenta aprobada está en webpages_Membership.IsConfirmed (expuesto como WebSecurity.IsConfirmed).
+        /// </summary>
+        private static void TryPopulateMembershipDisplayForAdmin(string userName, out bool isApproved, out bool isLockedOut)
+        {
+            isApproved = true;
+            isLockedOut = false;
+            if (string.IsNullOrWhiteSpace(userName))
+                return;
+
+            try
+            {
+                if (Membership.Provider is SimpleMembershipProvider && WebSecurity.Initialized)
+                {
+                    isApproved = WebSecurity.IsConfirmed(userName);
+                    try
+                    {
+                        int failures = WebSecurity.GetPasswordFailuresSinceLastSuccess(userName);
+                        int max = Membership.MaxInvalidPasswordAttempts;
+                        if (max > 0 && failures >= max)
+                            isLockedOut = true;
+                    }
+                    catch { }
+                    return;
+                }
+
+                MembershipUser mu = Membership.GetUser(userName, false);
+                if (mu != null)
+                {
+                    isApproved = mu.IsApproved;
+                    isLockedOut = mu.IsLockedOut;
+                }
+            }
+            catch
+            {
             }
         }
 

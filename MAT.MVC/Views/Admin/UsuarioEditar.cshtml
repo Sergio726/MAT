@@ -1,0 +1,55 @@
+@model MAT.MVC.Models.AdminUsuarioEditModel
+@{
+    ViewBag.Title = "Editar usuario";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-person"></i>
+            <span>Editar usuario</span>
+        </h2>
+        <p class="text-white-50 small mb-0">@Html.Encode(Model.UserName)</p>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm bg-white">
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("UsuarioEditar", "Admin", FormMethod.Post, new { @class = "" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.UserId)
+                        @Html.HiddenFor(m => m.UserName)
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                        <div class="mb-3">
+                            <label class="form-label text-secondary">Nombre de usuario</label>
+                            <div class="form-control-plaintext fw-semibold">@Html.Encode(Model.UserName)</div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            @Html.CheckBoxFor(m => m.EsAdministrador, new { @class = "form-check-input" })
+                            @Html.LabelFor(m => m.EsAdministrador, new { @class = "form-check-label" })
+                        </div>
+
+                        <div class="mb-3 small text-secondary">
+                            <div>Estado de cuenta (membership): <strong>@(Model.IsApproved ? "Aprobada (puede iniciar sesión)" : "Deshabilitada")</strong></div>
+                            @if (Model.IsLockedOut)
+                            {
+                                <div class="text-warning mt-1"><i class="bi bi-lock"></i> Cuenta bloqueada por intentos fallidos. Use Desbloquear en el listado.</div>
+                            }
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn-modern btn-modern-primary">Guardar cambios</button>
+                            <a href="@Url.Action("Usuarios", "Admin")" class="btn btn-outline-secondary">Volver al listado</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
