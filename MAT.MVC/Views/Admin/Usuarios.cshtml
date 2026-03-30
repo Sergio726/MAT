@@ -1,0 +1,45 @@
+@model IEnumerable<MAT.MVC.Models.AdminUserListItem>
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h2 class="modern-page-title mb-0">
+            <i class="bi bi-people"></i>
+            <span>Usuarios del sistema</span>
+        </h2>
+        <a href="@Url.Action("RegistrarVendedor", "Admin")" class="btn-modern btn-modern-primary">
+            <i class="bi bi-person-plus"></i>
+            <span>Registrar vendedor</span>
+        </a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.StatusMessage as string))
+    {
+        <div class="alert alert-success mt-3 mb-0" role="alert">@ViewBag.StatusMessage</div>
+    }
+
+    <div class="modern-table-container mt-3">
+        <table class="modern-table table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Usuario</th>
+                    <th>Roles</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td>@u.UserId</td>
+                        <td>@Html.Encode(u.UserName)</td>
+                        <td>@Html.Encode(u.RolesSummary)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

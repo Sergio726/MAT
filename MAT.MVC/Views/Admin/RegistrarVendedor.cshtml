@@ -1,0 +1,85 @@
+@{
+    ViewBag.Title = "Registrar vendedor";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<link href="~/Content/modern-account.css" rel="stylesheet" />
+<link href="~/Content/saas-variables.css" rel="stylesheet" />
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-person-plus"></i>
+            <span>Registrar vendedor</span>
+        </h2>
+        <p class="text-secondary small mb-0">Crea la cuenta de membership y el registro de persona/vendedor asociado.</p>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("RegistrarVendedor", "Admin", FormMethod.Post, new { @class = "account-form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3 list-unstyled" })
+
+                        <div class="account-form-group mb-3">
+                            <label class="account-form-label" for="UserName">Nombre de usuario</label>
+                            <input type="text" id="UserName" name="UserName" class="form-control" placeholder="Usuario" autocomplete="username" required />
+                        </div>
+
+                        <div class="account-form-group mb-3">
+                            <label class="account-form-label" for="Password">Contraseña</label>
+                            <input type="password" id="Password" name="Password" class="form-control" placeholder="Mínimo 6 caracteres" autocomplete="new-password" data-val="true" data-val-length="El número de caracteres de Contraseña debe ser al menos 6." data-val-length-max="100" data-val-length-min="6" data-val-required="El campo Contraseña es obligatorio." />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="account-form-group mb-3">
+                            <label class="account-form-label" for="ConfirmPassword">Confirmar contraseña</label>
+                            <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" placeholder="Repite la contraseña" autocomplete="new-password" data-val="true" data-val-equalto="La contraseña y la contraseña de confirmación no coinciden." data-val-equalto-other="*.Password" />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="ConfirmPassword" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="account-form-group mb-3">
+                            <label class="account-form-label" for="Nombre">Nombre</label>
+                            <input type="text" id="Nombre" name="Nombre" class="form-control" placeholder="Nombre" autocomplete="given-name" />
+                        </div>
+
+                        <div class="account-form-group mb-3">
+                            <label class="account-form-label" for="Apellido">Apellido</label>
+                            <input type="text" id="Apellido" name="Apellido" class="form-control" placeholder="Apellido" autocomplete="family-name" />
+                        </div>
+
+                        <div class="account-form-group mb-3">
+                            <label class="account-form-label" for="NroDocumento">DNI</label>
+                            <input type="text" id="NroDocumento" name="NroDocumento" class="form-control" placeholder="Número de documento" autocomplete="off" />
+                        </div>
+
+                        <div class="account-form-group mb-3">
+                            <label class="account-form-label" for="Telefono">Teléfono</label>
+                            <input type="tel" id="Telefono" name="Telefono" class="form-control" placeholder="Teléfono" autocomplete="tel" />
+                        </div>
+
+                        <div class="account-form-group mb-4">
+                            <label class="account-form-label" for="Email">Email</label>
+                            <input type="email" id="Email" name="Email" class="form-control" placeholder="correo@ejemplo.com" autocomplete="email" />
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn-modern btn-modern-primary">
+                                <i class="bi bi-check-lg"></i>
+                                <span>Guardar</span>
+                            </button>
+                            <a href="@Url.Action("Usuarios", "Admin")" class="btn btn-outline-secondary">Volver al listado</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -348,6 +348,7 @@
     <Compile Include="Integration\IApiClient.cs" />
     <Compile Include="Integration\MappingProfile.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\AdminUserListItem.cs" />
     <Compile Include="Models\AdicionalModel.cs" />
     <Compile Include="Models\AuditModel.cs" />
     <Compile Include="Models\ClienteModel.cs" />
@@ -827,6 +828,9 @@
     <Content Include="Views\Admin\GridPlanillaHotelDetalleEdit.cshtml" />
     <Content Include="Views\Admin\GridPlanillaServiciosItemEdit.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Admin\Usuarios.cshtml" />
+    <Content Include="Views\Admin\RegistrarVendedor.cshtml" />
+    <Content Include="Views\Admin\MiCuenta.cshtml" />
     <Content Include="Views\Localidad\Create.cshtml" />
     <Content Include="Views\Viaje\HotelSetIngresoEgreso.cshtml" />
     <Content Include="Views\Reserva\VinculacionMenor.cshtml" />

@@ -15,8 +15,13 @@ using System.Data;
 using System.Text;
 using Newtonsoft.Json;
 using MAT.MVC.Infrastructure;
+using MAT.MVC.Filters;
+using WebMatrix.WebData;
+using Microsoft.Web.WebPages.OAuth;
+using AccountManageMessageId = MAT.MVC.Controllers.Account.AccountController.ManageMessageId;
 namespace MAT.MVC.Controllers.Admin
 {
+    [InitializeSimpleMembership]
     public class AdminController : Controller
     {
         //
@@ -26,6 +31,199 @@ namespace MAT.MVC.Controllers.Admin
         {
             if (!Roles.IsUserInRole(User.Identity.Name, "Administrador")) return RedirectToAction("Index", "Home");
             return View();
+        }
+
+        [Authorize]
+        public ActionResult Usuarios()
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            var list = new List<AdminUserListItem>();
+            using (var ctx = new UsersContext())
+            {
+                foreach (var u in ctx.UserProfiles.AsEnumerable().OrderBy(x => x.UserName))
+                {
+                    string[] roleArray = { };
+                    try
+                    {
+                        roleArray = Roles.GetRolesForUser(u.UserName) ?? new string[] { };
+                    }
+                    catch
+                    {
+                        roleArray = new string[] { };
+                    }
+
+                    list.Add(new AdminUserListItem
+                    {
+                        UserId = u.UserId,
+                        UserName = u.UserName,
+                        RolesSummary = roleArray.Length > 0 ? string.Join(", ", roleArray) : "—"
+                    });
+                }
+            }
+
+            if (TempData["UserMessage"] != null)
+                ViewBag.StatusMessage = TempData["UserMessage"];
+            return View(list);
+        }
+
+        [Authorize]
+        public ActionResult RegistrarVendedor()
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult RegistrarVendedor(FormCollection form)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            if (string.IsNullOrWhiteSpace(form["Password"]) || form["Password"] != form["ConfirmPassword"])
+                ModelState.AddModelError("", "La contraseña y la confirmación no coinciden o están vacías.");
+            if (string.IsNullOrWhiteSpace(form["UserName"]))
+                ModelState.AddModelError("", "El nombre de usuario es obligatorio.");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    WebSecurity.CreateUserAndAccount(form["UserName"], form["Password"]);
+                    RegistroVendedorModel.InsertVendedor(form);
+                    TempData["UserMessage"] = "El usuario vendedor se registró correctamente.";
+                    return RedirectToAction("Usuarios");
+                }
+                catch (MembershipCreateUserException e)
+                {
+                    ModelState.AddModelError("", MembershipCreateErrorToString(e.StatusCode));
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", ErrorUtil.LogAndGetPublicMessage(e, "AdminController.RegistrarVendedor"));
+                }
+            }
+
+            return View();
+        }
+
+        [Authorize]
+        public ActionResult MiCuenta(AccountManageMessageId? message)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            ViewBag.StatusMessage =
+                message == AccountManageMessageId.ChangePasswordSuccess ? "La contraseña se ha cambiado."
+                : message == AccountManageMessageId.SetPasswordSuccess ? "Su contraseña se ha establecido."
+                : message == AccountManageMessageId.RemoveLoginSuccess ? "El inicio de sesión externo se ha quitado."
+                : "";
+            ViewBag.HasLocalPassword = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
+            ViewBag.ReturnUrl = Url.Action("MiCuenta", "Admin");
+            ViewBag.PasswordFormAction = "MiCuenta";
+            ViewBag.PasswordFormController = "Admin";
+            return View("MiCuenta", new LocalPasswordModel());
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult MiCuenta(LocalPasswordModel model)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
+            ViewBag.HasLocalPassword = hasLocalAccount;
+            ViewBag.ReturnUrl = Url.Action("MiCuenta", "Admin");
+            ViewBag.PasswordFormAction = "MiCuenta";
+            ViewBag.PasswordFormController = "Admin";
+
+            if (hasLocalAccount)
+            {
+                if (ModelState.IsValid)
+                {
+                    bool changePasswordSucceeded;
+                    try
+                    {
+                        changePasswordSucceeded = WebSecurity.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword);
+                    }
+                    catch (Exception)
+                    {
+                        changePasswordSucceeded = false;
+                    }
+
+                    if (changePasswordSucceeded)
+                    {
+                        return RedirectToAction("MiCuenta", new { Message = AccountManageMessageId.ChangePasswordSuccess });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "La contraseña actual es incorrecta o la nueva contraseña no es válida.");
+                    }
+                }
+            }
+            else
+            {
+                ModelState state = ModelState["OldPassword"];
+                if (state != null)
+                {
+                    state.Errors.Clear();
+                }
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        WebSecurity.CreateAccount(User.Identity.Name, model.NewPassword);
+                        return RedirectToAction("MiCuenta", new { Message = AccountManageMessageId.SetPasswordSuccess });
+                    }
+                    catch (Exception)
+                    {
+                        ModelState.AddModelError("", string.Format("No se puede crear una cuenta local. Es posible que ya exista una cuenta con el nombre \"{0}\".", User.Identity.Name));
+                    }
+                }
+            }
+
+            return View("MiCuenta", model);
+        }
+
+        private ActionResult RequireAdministrator()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "Home");
+            try
+            {
+                if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
+                    return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return null;
+        }
+
+        private static string MembershipCreateErrorToString(MembershipCreateStatus createStatus)
+        {
+            switch (createStatus)
+            {
+                case MembershipCreateStatus.DuplicateUserName:
+                    return "El nombre de usuario ya existe. Escriba un nombre de usuario diferente.";
+                case MembershipCreateStatus.DuplicateEmail:
+                    return "Ya existe un nombre de usuario para esa dirección de correo electrónico.";
+                case MembershipCreateStatus.InvalidPassword:
+                    return "La contraseña especificada no es válida.";
+                case MembershipCreateStatus.InvalidUserName:
+                    return "El nombre de usuario especificado no es válido.";
+                default:
+                    return "No se pudo crear el usuario. Compruebe los datos e inténtelo de nuevo.";
+            }
         }
 
         public ActionResult ResumenPagos()

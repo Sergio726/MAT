@@ -1,0 +1,48 @@
+@model MAT.MVC.Models.LocalPasswordModel
+@{
+    ViewBag.Title = "Mi cuenta";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<link href="~/Content/modern-account.css" rel="stylesheet" />
+<link href="~/Content/saas-variables.css" rel="stylesheet" />
+
+<div class="modern-page-container">
+    <div class="modern-page-header">
+        <h2 class="modern-page-title">
+            <i class="bi bi-key"></i>
+            <span>Mi cuenta</span>
+        </h2>
+        <p class="text-white-50 small mb-0">Cambiar la contraseña del usuario con el que inició sesión en el panel.</p>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm bg-white">
+                <div class="card-body p-4">
+                    @if (!string.IsNullOrEmpty(ViewBag.StatusMessage as string))
+                    {
+                        <div class="alert alert-success" role="alert">@ViewBag.StatusMessage</div>
+                    }
+
+                    <p class="text-secondary mb-4">
+                        Ha iniciado sesión como <strong class="text-dark">@User.Identity.Name</strong>.
+                    </p>
+
+                    @if (ViewBag.HasLocalPassword == true)
+                    {
+                        @Html.Partial("~/Views/Account/_ChangePasswordPartial.cshtml")
+                    }
+                    else
+                    {
+                        @Html.Partial("~/Views/Account/_SetPasswordPartial.cshtml")
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

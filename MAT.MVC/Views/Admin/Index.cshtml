@@ -256,6 +256,56 @@
         </div>
     </div>
 
+    <div class="admin-section">
+        <h2 class="admin-section-title">
+            <i class="bi bi-people"></i>
+            Usuarios
+        </h2>
+        <div class="admin-cards-grid">
+            <a href="/Admin/Usuarios" class="admin-card">
+                <div class="admin-card-icon icon-primary">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="admin-card-content">
+                    <h3 class="admin-card-title">
+                        Listado de usuarios
+                        <span class="admin-card-badge badge-primary">1</span>
+                    </h3>
+                    <p class="admin-card-description">Ver cuentas registradas y roles asignados</p>
+                </div>
+                <i class="bi bi-chevron-right admin-card-arrow"></i>
+            </a>
+
+            <a href="/Admin/RegistrarVendedor" class="admin-card">
+                <div class="admin-card-icon icon-success">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <div class="admin-card-content">
+                    <h3 class="admin-card-title">
+                        Registrar vendedor
+                        <span class="admin-card-badge badge-info">2</span>
+                    </h3>
+                    <p class="admin-card-description">Alta de cuenta y datos de vendedor (mismo flujo que registro público, sin cerrar sesión)</p>
+                </div>
+                <i class="bi bi-chevron-right admin-card-arrow"></i>
+            </a>
+
+            <a href="/Admin/MiCuenta" class="admin-card">
+                <div class="admin-card-icon icon-warning">
+                    <i class="bi bi-key"></i>
+                </div>
+                <div class="admin-card-content">
+                    <h3 class="admin-card-title">
+                        Mi cuenta
+                        <span class="admin-card-badge badge-warning">3</span>
+                    </h3>
+                    <p class="admin-card-description">Cambiar la contraseña del usuario con el que inició sesión</p>
+                </div>
+                <i class="bi bi-chevron-right admin-card-arrow"></i>
+            </a>
+        </div>
+    </div>
+
     @if (User.Identity.Name.ToUpper().Equals("ADMINDEV"))
     {
         <div class="admin-section admin-dev-section">
