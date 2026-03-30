@@ -18,6 +18,8 @@ namespace MAT.MVC.Models
         public string NroDocumento { get; set; }
         public string CUIT { get; set; }
         public string Telefono { get; set; }
+        public int? Sexo { get; set; }
+        public string Nacionalidad { get; set; }
         public string FechaNacimiento { get; set; }
         public bool EsMenorVinculado { get; set; }
         public string ApellidoResponsable { get; set; }
@@ -47,6 +49,8 @@ namespace MAT.MVC.Models
                     Item.NroDocumento = _reader["NroDocumento"].ToString();
                     Item.CUIT = _reader["CUIT"].ToString();
                     Item.Telefono = _reader["Telefono"].ToString();
+                    Item.Sexo = _reader["Sexo"] == DBNull.Value ? (int?)null : Convert.ToInt32(_reader["Sexo"]);
+                    Item.Nacionalidad = _reader["Nacionalidad"] == DBNull.Value ? "" : _reader["Nacionalidad"].ToString();
                     Item.FechaNacimiento = _reader["FechaNacimiento"].ToString();
                     Item.EsMenorVinculado = Convert.ToBoolean(_reader["EsMenorVinculado"]);
                     Item.ApellidoResponsable = _reader["ApellidoResponsable"] == DBNull.Value ? "" : _reader["ApellidoResponsable"].ToString();

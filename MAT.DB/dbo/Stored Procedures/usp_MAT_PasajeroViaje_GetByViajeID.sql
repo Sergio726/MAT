@@ -13,6 +13,10 @@ AS
     Fecha: 29/03/2026
     Autor: Seba Garcia
     Detalle: EsMenorVinculado, ApellidoResponsable, NombreResponsable, NroDocResponsable (join Persona pasajeroid). UNION ALL en lugar de UNION.
+
+    Fecha: 30/03/2026
+    Autor: Sebastian Garcia
+    Detalle: Se agregan al resultado las columnas Sexo y Nacionalidad (rama PasajeroViaje pv y menores Persona per).
 */
 BEGIN
     SET nocount, xact_abort ON;
@@ -26,6 +30,8 @@ BEGIN
 		   CUIT = ISNULL(c.Cuit, ''),
 		   FechaNacimiento = CONVERT(VARCHAR(10), pv.FechaNacimiento, 103),
 		   pv.Telefono,
+		   pv.Sexo,
+		   Nacionalidad = pv.Nacionalidad,
 		   EsMenorVinculado = CAST(0 AS bit),
 		   ApellidoResponsable = CAST(NULL AS nvarchar(100)),
 		   NombreResponsable = CAST(NULL AS nvarchar(100)),
@@ -42,6 +48,8 @@ BEGIN
 		   CUIT = ISNULL(c.Cuit, ''),
 		   FechaNacimiento = CONVERT(VARCHAR(10), per.FechaNacimiento, 103),
 		   Telefono = '',
+		   per.Sexo,
+		   Nacionalidad = per.Nacionalidad,
 		   EsMenorVinculado = CAST(1 AS bit),
 		   ApellidoResponsable = TRIM(pMayor.Apellido),
 		   NombreResponsable = pMayor.Nombre,

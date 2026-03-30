@@ -8,6 +8,11 @@
     ViewBag.Title = "Lista de pasajeros";
     int numeracion = 1;
     var tieneMenoresVinculados = Model != null && Model.Any(m => m.EsMenorVinculado);
+    Guid? viajeParaExport = null;
+    if (Model != null && Model.Any())
+    {
+        viajeParaExport = new Guid(Model.First().ViajeID);
+    }
 }
 
 @section Styles {
@@ -16,6 +21,10 @@
 }
 
 <div id="divContent" class="listado-simple Content">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-warning m-3" role="alert">@ViewBag.Error</div>
+    }
     <div id="divEncabezadoViaje" class="listado-simple-header EncabezadoViaje headMAT">
         @{
             var viajeService = new ViajeService();
@@ -37,6 +46,13 @@
 
     <div class="toolbar HideToPrint">
         <span class="total-pasajeros">Total: <strong>@Model.Count</strong> pasajeros</span>
+        @if (viajeParaExport.HasValue)
+        {
+            <a href="@Url.Action("ListadoSimpleToExport", "PasajeroViaje", new { id = viajeParaExport.Value })" class="btn-print btn-export-modelo" role="button">
+                <i class="bi bi-file-earmark-spreadsheet"></i>
+                Listado formato MODELO
+            </a>
+        }
         <button type="button" class="btn-print" onclick="printListado();">
             <i class="bi bi-printer-fill"></i>
             Imprimir Listado

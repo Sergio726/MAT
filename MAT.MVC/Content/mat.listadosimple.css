@@ -124,6 +124,19 @@
     font-size: 16px;
 }
 
+.listado-simple a.btn-print {
+    text-decoration: none;
+    color: var(--white);
+    box-sizing: border-box;
+}
+
+.listado-simple a.btn-print:hover,
+.listado-simple a.btn-print:focus,
+.listado-simple a.btn-print:active,
+.listado-simple a.btn-print:visited {
+    color: var(--white);
+}
+
 .listado-simple .total-pasajeros {
     font-size: 13px;
     color: var(--text-secondary);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -8,8 +9,11 @@ using MAT.Services;
 using MAT.Enums;
 using MAT.Utilities;
 using MAT.MVC.Models;
+using MAT.MVC.Infrastructure;
 using System.Data.SqlClient;
 using System.Data;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace MAT.MVC.Controllers.PasajeroViaje
 {
@@ -72,8 +76,9 @@ namespace MAT.MVC.Controllers.PasajeroViaje
 
                 return View(LPasajeroViaje);
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(ex, "PasajeroViajeController.ListadoSimple");
                 return View(LPasajeroViaje);
             }
 
@@ -86,12 +91,128 @@ namespace MAT.MVC.Controllers.PasajeroViaje
             try
             {
                 LPasajeroViaje = PasajeroViajeMethod.GetPasajeroViajeByViajeID(Id.ToString());
-                return PartialView(LPasajeroViaje);
+                return View(LPasajeroViaje);
             }
-            catch
+            catch (Exception ex)
             {
-                return PartialView(LPasajeroViaje);
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(ex, "PasajeroViajeController.ListadoSimpleToExport");
+                return View(LPasajeroViaje);
             }
+        }
+
+        [HttpGet]
+        public ActionResult ExportListadoPasajerosExcel(Guid Id)
+        {
+            try
+            {
+                var list = PasajeroViajeMethod.GetPasajeroViajeByViajeID(Id.ToString());
+                var bytes = BuildListadoPasajerosExcelWorkbook(list);
+                var fileName = $"ListadoPasajeros_{Id:N}.xlsx";
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "PasajeroViajeController.ExportListadoPasajerosExcel");
+                return new HttpStatusCodeResult(500, msg);
+            }
+        }
+
+        private static byte[] BuildListadoPasajerosExcelWorkbook(IList<PasajeroViajeModel> list)
+        {
+            using (var pck = new ExcelPackage())
+            {
+                var ws = pck.Workbook.Worksheets.Add("Hoja1");
+                var headers = new[]
+                {
+                    "N", "APELLIDO", "NOMBRES", "TIPO DE DOCUMENTO", "N° DE DOCUMENTO", "FECHA DE NAC.", "SEXO", "MENOR", "NACIONALIDAD", "TRIPULANTE"
+                };
+                var colWidths = new[] { 5.14, 40.57, 32.14, 22.29, 21d, 16.14, 9.57, 10.14, 16d, 19.43 };
+
+                for (var c = 0; c < headers.Length; c++)
+                {
+                    var cell = ws.Cells[1, c + 1];
+                    cell.Value = headers[c];
+                    cell.Style.Font.Name = "Calibri";
+                    cell.Style.Font.Size = 11;
+                }
+
+                for (var i = 0; i < colWidths.Length; i++)
+                {
+                    ws.Column(i + 1).Width = colWidths[i];
+                }
+
+                var row = 2;
+                var idx = 1;
+                foreach (var item in list)
+                {
+                    ws.Cells[row, 1].Value = idx++;
+                    ws.Cells[row, 2].Value = (item.Apellido ?? "").ToUpperInvariant();
+                    ws.Cells[row, 3].Value = (item.Nombre ?? "").ToUpperInvariant();
+                    ws.Cells[row, 4].Value = GetTipoDocumentoDescription(item.TipoDocumento);
+                    ws.Cells[row, 5].Value = FormatNroDocumentoListado(item.NroDocumento);
+                    ws.Cells[row, 6].Value = item.FechaNacimiento ?? "";
+                    ws.Cells[row, 7].Value = FormatSexoLetra(item.Sexo);
+                    ws.Cells[row, 8].Value = item.EsMenorVinculado ? 1 : 0;
+                    ws.Cells[row, 9].Value = item.Nacionalidad ?? "";
+                    ws.Cells[row, 10].Value = "";
+
+                    for (var c = 1; c <= 10; c++)
+                    {
+                        var cell = ws.Cells[row, c];
+                        cell.Style.Font.Name = "Times New Roman";
+                        cell.Style.Font.Size = 11;
+                    }
+
+                    row++;
+                }
+
+                var lastRow = Math.Max(1, row - 1);
+                ApplyListadoModeloThinBorders(ws, 1, lastRow, 1, 10);
+
+                return pck.GetAsByteArray();
+            }
+        }
+
+        private static void ApplyListadoModeloThinBorders(ExcelWorksheet ws, int row1, int row2, int col1, int col2)
+        {
+            for (var r = row1; r <= row2; r++)
+            {
+                for (var c = col1; c <= col2; c++)
+                {
+                    var b = ws.Cells[r, c].Style.Border;
+                    b.Top.Style = ExcelBorderStyle.Thin;
+                    b.Bottom.Style = ExcelBorderStyle.Thin;
+                    b.Left.Style = ExcelBorderStyle.Thin;
+                    b.Right.Style = ExcelBorderStyle.Thin;
+                }
+            }
+        }
+
+        private static string FormatNroDocumentoListado(string nro)
+        {
+            if (string.IsNullOrEmpty(nro))
+            {
+                return "";
+            }
+            return nro.Replace(".", "");
+        }
+
+        private static string GetTipoDocumentoDescription(int tipoDocumento)
+        {
+            if (!Enum.IsDefined(typeof(eTipoDocumento), tipoDocumento))
+            {
+                return tipoDocumento.ToString();
+            }
+            return ((eTipoDocumento)tipoDocumento).GetDescription();
+        }
+
+        private static string FormatSexoLetra(int? sexo)
+        {
+            if (!sexo.HasValue || !Enum.IsDefined(typeof(eSexo), sexo.Value))
+            {
+                return "";
+            }
+            return sexo.Value == (int)eSexo.Masculino ? "M" : sexo.Value == (int)eSexo.Femenino ? "F" : "";
         }
 
         public List<MAT.Entities.PasajeroViaje> GetListPasajeroViaje(Guid Id)

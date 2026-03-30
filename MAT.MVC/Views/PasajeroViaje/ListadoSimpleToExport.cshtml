@@ -3,23 +3,37 @@
 @using MAT.Enums
 @using MAT.Entities
 @using MAT.Services
+@using MAT.Utilities
 @using System.Linq
-@{
-    ViewBag.Title = "Lista de Viajes";
-    int numeracion = 1;
-    var tieneMenoresVinculados = Model != null && Model.Any(m => m.EsMenorVinculado);
+@functions {
+    string SexoLetra(int? sexo)
+    {
+        if (!sexo.HasValue || !Enum.IsDefined(typeof(eSexo), sexo.Value)) { return ""; }
+        return sexo.Value == (int)eSexo.Masculino ? "M" : sexo.Value == (int)eSexo.Femenino ? "F" : "";
+    }
 }
+@{
+    ViewBag.Title = "Listado para exportación";
+    int numeracion = 1;
+}
+
 @section Styles {
     <link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
     <link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
 }
-<div id="divContent" class="listado-simple Content">
-    <div id="divEncabezadoViaje" class="listado-simple-header EncabezadoViaje headMAT">
-        @if (Model != null && Model.Any())
-        {
-            var viajeService = new ViajeService();
-            var viajeId = new Guid(Model.First().ViajeID);
-            var viaje = viajeService.GetByViajeId(viajeId);
+
+<div id="divContent" class="listado-simple Content listado-export-modelo">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-warning m-3" role="alert">@ViewBag.Error</div>
+    }
+    @if (Model != null && Model.Any())
+    {
+        var viajeService = new ViajeService();
+        var viajeId = new Guid(Model.First().ViajeID);
+        var viaje = viajeService.GetByViajeId(viajeId);
+
+        <div id="divEncabezadoViaje" class="listado-simple-header EncabezadoViaje headMAT">
             <div class="viaje-info">
                 <div class="viaje-titulo">@viaje.Descripcion</div>
                 <div class="viaje-fechas">
@@ -28,94 +42,66 @@
                     <span><strong>Regreso:</strong> @viaje.FechaRegreso.Value.ToShortDateString()</span>
                 </div>
             </div>
-            <div class="viaje-logo">
-                <img src="/Images/marco_antonio_back3.png" alt="Marco Antonio Turismo" />
-            </div>
-        }
-    </div>
-    <div id="tablaPasajeros" class="backMAT">
-      
-        <div class="listado-pantalla">
-            <table class="tabla listado-simple-tabla" style="width: 100%;">
-                <thead>
-                    <tr>
-                        <td class="celda column_nro">N° <input type="checkbox" checked class="chkIsPrint" column="column_nro" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja." /></td>
-                        <td class="celda column_apellido_nombre">APELLIDO Y NOMBRE <input type="checkbox" checked class="chkIsPrint" column="column_apellido_nombre" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja." /></td>
-                        <td class="celda column_responsable">RESPONSABLE <input type="checkbox" checked class="chkIsPrint" column="column_responsable" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja." /></td>
-                        <td class="celda column_tipo_doc">TIPO Y N° DOC <input type="checkbox" checked class="chkIsPrint" column="column_tipo_doc" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja." /></td>
-                        <td class="celda column_cuit_cuil">CUIT/CUIL <input type="checkbox" checked class="chkIsPrint" column="column_cuit_cuil" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja." /></td>
-                        <td class="celda column_fecha_nac">FECHA NAC. <input type="checkbox" checked class="chkIsPrint" column="column_fecha_nac" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja." /></td>
-                        <td class="celda column_telefono">TELEFONO <input type="checkbox" checked class="chkIsPrint" column="column_telefono" title="Checkear opcion si desea que esta columna aparezca en la impresión de la hoja." /></td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null)
-                    {
-                        foreach (var item in Model)
+        </div>
+
+        <div class="toolbar HideToPrint">
+            <span class="total-pasajeros">Total: <strong>@Model.Count</strong> pasajeros (formato MODELO)</span>
+            <a href="@Url.Action("ExportListadoPasajerosExcel", "PasajeroViaje", new { id = viajeId })" class="btn-print btn-excel" role="button">
+                <i class="bi bi-file-earmark-excel"></i>
+                Descargar Excel
+            </a>
+            <button type="button" class="btn-print" onclick="window.print();">
+                <i class="bi bi-printer-fill"></i>
+                Imprimir
+            </button>
+        </div>
+
+        <div id="tablaPasajeros" class="backMAT">
+            <div class="listado-pantalla">
+                <table class="tabla listado-simple-tabla listado-tabla-modelo" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <td class="celda">N</td>
+                            <td class="celda">APELLIDO</td>
+                            <td class="celda">NOMBRES</td>
+                            <td class="celda">TIPO DE DOCUMENTO</td>
+                            <td class="celda">N° DE DOCUMENTO</td>
+                            <td class="celda">FECHA DE NAC.</td>
+                            <td class="celda">SEXO</td>
+                            <td class="celda">MENOR</td>
+                            <td class="celda">NACIONALIDAD</td>
+                            <td class="celda">TRIPULANTE</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
                         {
                             <tr class="@(item.EsMenorVinculado ? "tr-row-menor-vinculado" : null)">
-                                <td class="celda column_nro">@numeracion</td>
-                                <td class="celda column_apellido_nombre">
-                                    <span class="listado-simple-nombre-cell">
-                                        @if (item.EsMenorVinculado)
-                                        {
-                                            <span class="listado-simple-nombre-icon HideToPrint" aria-hidden="true"><i class="bi bi-link-45deg"></i></span>
-                                        }
-                                        <span>@( (item.Apellido ?? "").ToUpper() ) @( (item.Nombre ?? "").ToUpper() )</span>
-                                    </span>
-                                </td>
-                                <td class="celda column_responsable">
-                                    @if (item.EsMenorVinculado)
-                                    {
-                                        <div class="listado-simple-responsable-cell">
-                                            <span class="listado-simple-chip">Menor vinculado</span>
-                                            <div class="listado-simple-resp-lines">
-                                                <span class="listado-resp-name">Resp.: @item.ApellidoResponsable, @item.NombreResponsable</span>
-                                                <span class="listado-resp-doc">Doc. @item.NroDocResponsable</span>
-                                            </div>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <span class="listado-simple-titular-muted">Titular</span>
-                                    }
-                                </td>
-                                <td class="celda column_tipo_doc">@((eTipoDocumento)item.TipoDocumento) @item.NroDocumento.ToString().Replace(".", "")</td>
-                                <td class="celda column_cuit_cuil">@item.CUIT</td>
-                                <td class="celda column_fecha_nac">
+                                <td class="celda">@numeracion</td>
+                                <td class="celda">@((item.Apellido ?? "").ToUpper())</td>
+                                <td class="celda">@((item.Nombre ?? "").ToUpper())</td>
+                                <td class="celda">@(Enum.IsDefined(typeof(eTipoDocumento), item.TipoDocumento) ? ((eTipoDocumento)item.TipoDocumento).GetDescription() : item.TipoDocumento.ToString())</td>
+                                <td class="celda">@(item.NroDocumento != null ? item.NroDocumento.Replace(".", "") : "")</td>
+                                <td class="celda">
                                     @if (!string.IsNullOrWhiteSpace(item.FechaNacimiento))
                                     {
                                         @Html.Label(item.FechaNacimiento)
                                     }
                                 </td>
-                                <td class="celda column_telefono">@item.Telefono</td>
+                                <td class="celda">@SexoLetra(item.Sexo)</td>
+                                <td class="celda">@(item.EsMenorVinculado ? 1 : 0)</td>
+                                <td class="celda">@(item.Nacionalidad ?? "")</td>
+                                <td class="celda"></td>
                             </tr>
                             numeracion += 1;
                         }
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-</div>
-
-<div class="HideToPrint" style="position:fixed;bottom:20px;right:20px;">
-    <button type="button" class="btn-modern btn-modern-primary" title="Imprimir Listado" onclick="printListado();">
-        <i class="bi bi-printer-fill"></i>
-        <span>Imprimir</span>
-    </button>
-</div>
-<script type="text/javascript">
-    function printListado() {
-        $("input[type='checkbox'].chkIsPrint").each(function () {
-            var column = $(this).attr("column");
-            if ($(this).is(":checked")) {
-                $("." + column).removeClass("HideToPrint");
-            }
-            else {
-                $("." + column).addClass("HideToPrint");
-            }
-        });
-        window.print();
     }
-</script>
+    else
+    {
+        <p class="px-3 py-2">No hay pasajeros para este viaje.</p>
+    }
+</div>
