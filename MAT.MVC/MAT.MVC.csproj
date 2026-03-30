@@ -361,7 +361,6 @@
     <Compile Include="Models\Habitacion.cs" />
     <Compile Include="Models\HabitacionTipo.cs" />
     <Compile Include="Models\HistorialModel.cs" />
-    <Compile Include="Models\HistorialPreciosModel.cs" />
     <Compile Include="Models\HotelHabitacionViajeModel.cs" />
     <Compile Include="Models\HotelModel.cs" />
     <Compile Include="Models\InfopathModel.cs" />
@@ -803,17 +802,10 @@
     <Content Include="Views\PersonaCliente\PrincipalHabitaciones.cshtml" />
     <Content Include="Views\PersonaCliente\GridHabitaciones.cshtml" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
-    <Content Include="Views\Admin\HistorialPrecios.cshtml" />
     <Content Include="Views\Admin\ResumenPagos.cshtml" />
     <Content Include="Views\Admin\GridResumenPagos.cshtml" />
     <Content Include="Views\Admin\ResumenPagosPorFecha.cshtml" />
     <Content Include="Views\Admin\GridResumenPagosFecha.cshtml" />
-    <Content Include="Views\Admin\ServiciosAdminList.cshtml" />
-    <Content Include="Views\Admin\ServiciosAdminCreate.cshtml" />
-    <Content Include="Views\Admin\ServiciosAdminPrecioCreate.cshtml" />
-    <Content Include="Views\Admin\ServiciosAdminPrecioHistorial.cshtml" />
-    <Content Include="Views\Admin\ServiciosAdminPrecioHistorialGrid.cshtml" />
-    <Content Include="Views\Admin\ServiciosAdminPrecioEdit.cshtml" />
     <Content Include="Views\Admin\PartialDropDownHotel.cshtml" />
     <Content Include="Views\Admin\PlanillaServicios.cshtml" />
     <Content Include="Views\Admin\PartialGridServiciosAdmin.cshtml" />

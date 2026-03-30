@@ -1578,35 +1578,6 @@ $(document).on("click", "#btn-eliminar-servicio", function () {
     })
 });
 
-$(document).on("click", "#btn-eliminar-servicio-admin", function () {
-    var id = $(this).data("id");
-    confirm("¿Está seguro que desea eliminar este servicio?", "Confirmación Eliminar Servicio",
-    function () {
-        var $dlg = $(this);
-        $.ajax({
-            url: "/Admin/ServiciosAdminDelete",
-            data: { id: id },
-            success: function (data) {
-                if (data == "True") {
-                    (window.alertSuccess || window.alert)("Servicio eliminado correctamente.", "Éxito");
-                    setTimeout(5000);
-                    window.location.reload();
-                } else {
-                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
-                }
-            }
-        });
-        $dlg.dialog("close");
-        $dlg.remove();
-
-    },
-    function () {
-        var $dlg = $(this);
-        $dlg.dialog("close");
-        $dlg.remove();
-    })
-});
-
 $(document).on("click", "#btn-eliminar-excursion", function () {
     var id = $(this).data("id");
     confirm("¿Está seguro que desea eliminar esta excursión?", "Confirmación Eliminar Excursion",
@@ -2176,35 +2147,6 @@ $(document).on("click", ".btn-eliminar-precio-habitacion", function () {
         $.ajax({
             url: "/Admin/PrecioHotelDelete",
             data: { preciohabitacionid: id },
-            success: function (data) {
-                if (data == "True") {
-                    (window.alertSuccess || window.alert)("Precio eliminado correctamente.", "Éxito");
-                    setTimeout(5000);
-                    window.location.reload();
-                } else {
-                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
-                }
-            }
-        });
-        $dlg.dialog("close");
-        $dlg.remove();
-
-    },
-    function () {
-        var $dlg = $(this);
-        $dlg.dialog("close");
-        $dlg.remove();
-    })
-});
-
-$(document).on("click", ".btn-eliminar-precio-servicio", function () {
-    var id = $(this).data("id");
-    confirm("¿Está seguro que desea eliminar este precio?", "Confirmación Eliminar Precio",
-    function () {
-        var $dlg = $(this);
-        $.ajax({
-            url: "/Admin/ServiciosAdminPrecioDelete",
-            data: { id: id },
             success: function (data) {
                 if (data == "True") {
                     (window.alertSuccess || window.alert)("Precio eliminado correctamente.", "Éxito");

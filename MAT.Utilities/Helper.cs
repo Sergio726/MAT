@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -220,16 +220,6 @@ namespace MAT.Utilities
                         Text = string.Format("{0} - Salida {1}", new PaqueteService().GetByPaqueteId(e.PaqueteId.Value).Descripcion, e.FechaSalida.Value.ToShortDateString()),
                         Value = Convert.ToString(e.ViajeId)   
                     });
-                    break;
-                case "ServicioAdmin":
-                    MAT.Services.ServicioService servService = new MAT.Services.ServicioService();
-                    IEnumerable<Servicio> Servicio = servService.GetAll().Where(s =>s.TipoServicio==1).ToList();
-                    listitem = Servicio.Select(e => new SelectListItem()
-                    {
-                        Text = new MAT.Services.ServicioService().GetByServicioId(e.ServicioId).Descripcion,
-                        Value = Convert.ToString(e.ServicioId)
-                    });
-                    if (selected.HasValue) listitem.Where(it => it.Value == selected.Value.ToString()).FirstOrDefault().Selected = true;
                     break;
             }
             return listitem;
