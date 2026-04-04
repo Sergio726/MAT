@@ -1,120 +1,204 @@
 @* Modal compartido: Clientes dados de alta por período
    Usado desde: Home/Index.cshtml y PersonaCliente/Index.cshtml
    Endpoint: /PersonaCliente/GetClientesNuevosDetalle?fechaDesde=dd/MM/yyyy&fechaHasta=dd/MM/yyyy
+   Estilos: modern-dashboard.css (#modalClientesNuevosPeriodo, .detalle-table)
 *@
 
 <div class="modal fade" id="modalClientesNuevosPeriodo" tabindex="-1"
      aria-labelledby="modalClientesNuevosPeriodoLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content" style="border-radius: 12px; border: none;">
-            <div class="modal-header"
-                 style="background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%); color: white; border-radius: 12px 12px 0 0;">
+        <div class="modal-content cnp-modal-content">
+            <div class="modal-header cnp-modal-header">
                 <h5 class="modal-title" id="modalClientesNuevosPeriodoLabel">
-                    <i class="bi bi-people me-2"></i>Clientes dados de alta por período
+                    <i class="bi bi-people" aria-hidden="true"></i>
+                    <span>Clientes dados de alta por período</span>
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <div class="modal-body" style="min-height: 250px;">
-                <!-- Panel de filtro de fechas -->
-                <div class="d-flex align-items-center flex-wrap gap-2 mb-3 p-2"
-                     style="background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-                    <label class="mb-0" style="font-size: 0.85rem; font-weight: 600; white-space: nowrap;">Desde:</label>
-                    <input type="date" id="cnpFiltroDesde" class="form-control form-control-sm" style="max-width: 160px;" />
-                    <label class="mb-0" style="font-size: 0.85rem; font-weight: 600; white-space: nowrap;">Hasta:</label>
-                    <input type="date" id="cnpFiltroHasta" class="form-control form-control-sm" style="max-width: 160px;" />
-                    <button class="btn btn-sm btn-primary" onclick="cnpAplicarFiltro()" style="white-space: nowrap;">
-                        <i class="bi bi-search me-1"></i>Aplicar
-                    </button>
-                </div>
-                <!-- Contenedor de resultados -->
-                <div id="cnpTablaContainer">
-                    <div class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Cargando...</span>
+            <div class="modal-body cnp-modal-body">
+                <div class="cnp-filtros-card">
+                    <div id="cnpFiltroAlert" class="alert alert-warning py-2 px-3 d-none cnp-msg-box" role="alert"></div>
+                    <div class="cnp-filtros-grid">
+                        <div class="modern-form-group cnp-filtro-field">
+                            <label class="modern-form-label" for="cnpFiltroDesde">
+                                <i class="bi bi-calendar3" aria-hidden="true"></i>
+                                Desde
+                            </label>
+                            <input type="text" id="cnpFiltroDesde" class="modern-form-input cnp-date-input"
+                                   placeholder="dd/mm/aaaa" autocomplete="off" readonly />
+                        </div>
+                        <div class="modern-form-group cnp-filtro-field">
+                            <label class="modern-form-label" for="cnpFiltroHasta">
+                                <i class="bi bi-calendar3" aria-hidden="true"></i>
+                                Hasta
+                            </label>
+                            <input type="text" id="cnpFiltroHasta" class="modern-form-input cnp-date-input"
+                                   placeholder="dd/mm/aaaa" autocomplete="off" readonly />
+                        </div>
+                        <div class="cnp-filtro-actions">
+                            <button type="button" class="btn-modern btn-modern-primary" onclick="cnpAplicarFiltro()">
+                                <i class="bi bi-search" aria-hidden="true"></i>
+                                <span>Aplicar</span>
+                            </button>
                         </div>
                     </div>
                 </div>
+                <div id="cnpTablaContainer" aria-live="polite" aria-busy="false">
+                    <div class="modern-loading-placeholder cnp-loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="text-muted mb-0">Cargando...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer cnp-modal-footer">
+                <button type="button" class="btn-modern btn-modern-secondary" data-bs-dismiss="modal">
+                    <span>Cerrar</span>
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-    // Abre el modal con el mes actual como rango por defecto
+    $(document).ready(function () {
+        // Fix z-index: jQuery UI datepicker queda debajo del modal de Bootstrap sin esto
+        $.datepicker.setDefaults({
+            beforeShow: function () {
+                setTimeout(function () { $('.ui-datepicker').css('z-index', 9999); }, 0);
+            }
+        });
+
+        var dpOpts = {
+            dateFormat: 'dd/mm/yy',
+            firstDay: 1,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '2015:2035',
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            onSelect: function () { cnpSetFiltroAlert(''); }
+        };
+
+        $('#cnpFiltroDesde').datepicker($.extend({}, dpOpts, {
+            onClose: function (selected) {
+                if (selected) {
+                    var d = $('#cnpFiltroDesde').datepicker('getDate');
+                    if (d) $('#cnpFiltroHasta').datepicker('option', 'minDate', d);
+                }
+            }
+        }));
+
+        $('#cnpFiltroHasta').datepicker($.extend({}, dpOpts, {
+            onClose: function () {
+                var d0 = $('#cnpFiltroDesde').datepicker('getDate');
+                var d1 = $('#cnpFiltroHasta').datepicker('getDate');
+                if (d0 && d1 && d1 < d0) $('#cnpFiltroHasta').datepicker('setDate', d0);
+            }
+        }));
+    });
+
+    function cnpSetFiltroAlert(msg) {
+        var el = document.getElementById('cnpFiltroAlert');
+        if (!el) return;
+        if (!msg) {
+            el.classList.add('d-none');
+            el.textContent = '';
+            return;
+        }
+        el.textContent = msg;
+        el.classList.remove('d-none');
+    }
+
+    function cnpSetTablaBusy(busy) {
+        var c = document.getElementById('cnpTablaContainer');
+        if (c) c.setAttribute('aria-busy', busy ? 'true' : 'false');
+    }
+
+    // Abre el modal con el mes actual como rango por defecto y carga datos
     function openClientesNuevosModal() {
         var hoy = new Date();
         var primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
         var ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
 
-        document.getElementById('cnpFiltroDesde').value = cnpToInputDate(primerDia);
-        document.getElementById('cnpFiltroHasta').value = cnpToInputDate(ultimoDia);
+        cnpSetFiltroAlert('');
+        $('#cnpFiltroDesde').datepicker('setDate', primerDia);
+        $('#cnpFiltroHasta').datepicker('setDate', ultimoDia);
 
         var modal = new bootstrap.Modal(document.getElementById('modalClientesNuevosPeriodo'));
         modal.show();
 
-        cnpCargarDatos(cnpToDisplayDate(cnpToInputDate(primerDia)),
-                       cnpToDisplayDate(cnpToInputDate(ultimoDia)));
+        cnpCargarDatos($('#cnpFiltroDesde').val(), $('#cnpFiltroHasta').val());
     }
 
-    // Lee los inputs y recarga
     function cnpAplicarFiltro() {
-        var desde = document.getElementById('cnpFiltroDesde').value;
-        var hasta = document.getElementById('cnpFiltroHasta').value;
+        var desde = $('#cnpFiltroDesde').val();
+        var hasta = $('#cnpFiltroHasta').val();
         if (!desde || !hasta) {
-            alert('Seleccioná ambas fechas.');
+            cnpSetFiltroAlert('Seleccioná ambas fechas para aplicar el filtro.');
             return;
         }
-        cnpCargarDatos(cnpToDisplayDate(desde), cnpToDisplayDate(hasta));
+        cnpSetFiltroAlert('');
+        cnpCargarDatos(desde, hasta);
     }
 
-    // Llama al endpoint y renderiza resultados
     function cnpCargarDatos(fechaDesde, fechaHasta) {
         var container = document.getElementById('cnpTablaContainer');
-        container.innerHTML = '<div class="text-center py-5">'
+        cnpSetTablaBusy(true);
+        container.innerHTML = '<div class="modern-loading-placeholder cnp-loading">'
             + '<div class="spinner-border text-primary" role="status">'
             + '<span class="visually-hidden">Cargando...</span></div>'
-            + '<p class="mt-2 text-muted">Cargando...</p></div>';
+            + '<p class="text-muted mb-0">Cargando clientes...</p></div>';
 
         $.ajax({
             url: '/PersonaCliente/GetClientesNuevosDetalle',
             data: { fechaDesde: fechaDesde, fechaHasta: fechaHasta },
             dataType: 'json',
             success: function (r) {
+                cnpSetTablaBusy(false);
                 if (r.success && r.data) {
                     container.innerHTML = cnpRenderTabla(r.data, fechaDesde, fechaHasta);
                 } else {
-                    container.innerHTML = '<div class="alert alert-warning">'
-                        + cnpEscape(r.message || 'No se pudieron obtener los datos.') + '</div>';
+                    container.innerHTML = '<div class="modern-alert-error cnp-msg-box">'
+                        + '<i class="bi bi-exclamation-circle" aria-hidden="true"></i>'
+                        + '<span>' + cnpEscape(r.message || 'No se pudieron obtener los datos.') + '</span></div>';
                 }
             },
             error: function () {
-                container.innerHTML = '<div class="alert alert-danger">Error al cargar los datos.</div>';
+                cnpSetTablaBusy(false);
+                container.innerHTML = '<div class="modern-alert-error cnp-msg-box">'
+                    + '<i class="bi bi-exclamation-circle" aria-hidden="true"></i>'
+                    + '<span>Error al cargar los datos. Intentá de nuevo.</span></div>';
             }
         });
     }
 
-    // Construye el HTML de la tabla de resultados
     function cnpRenderTabla(data, fechaDesde, fechaHasta) {
         if (!data || data.length === 0) {
-            return '<div class="alert alert-info">No hay clientes dados de alta entre '
-                + cnpEscape(fechaDesde) + ' y ' + cnpEscape(fechaHasta) + '.</div>';
+            return '<div class="modern-empty-state cnp-empty-state">'
+                + '<i class="bi bi-inbox" aria-hidden="true"></i>'
+                + '<h4>Sin resultados en este período</h4>'
+                + '<p class="text-muted">No hay clientes dados de alta entre <strong>'
+                + cnpEscape(fechaDesde) + '</strong> y <strong>' + cnpEscape(fechaHasta) + '</strong>.</p>'
+                + '</div>';
         }
 
-        var html = '<div class="d-flex align-items-center mb-2" style="gap:1rem;">'
-            + '<span style="font-size:0.9rem;"><strong>' + data.length + '</strong> cliente'
-            + (data.length !== 1 ? 's' : '') + ' encontrado' + (data.length !== 1 ? 's' : '') + '</span>'
+        var html = '<div class="detalle-resumen" role="status">'
+            + '<div class="detalle-resumen-item"><strong>' + data.length + '</strong> cliente'
+            + (data.length !== 1 ? 's' : '') + ' encontrado' + (data.length !== 1 ? 's' : '') + '</div>'
             + '</div>';
 
-        html += '<div class="table-responsive">'
-            + '<table class="table table-sm table-bordered detalle-table">'
+        html += '<div class="cnp-table-card"><div class="table-responsive">'
+            + '<table class="table table-sm table-hover align-middle mb-0 detalle-table">'
             + '<thead><tr>'
-            + '<th>Nombre</th>'
-            + '<th>Documento</th>'
-            + '<th>Celular</th>'
-            + '<th>Email</th>'
-            + '<th>Fecha de Alta</th>'
-            + '<th>1ra Factura</th>'
-            + '<th>Vendedor</th>'
+            + '<th scope="col">Nombre</th>'
+            + '<th scope="col">Documento</th>'
+            + '<th scope="col">Celular</th>'
+            + '<th scope="col">Email</th>'
+            + '<th scope="col">Fecha de Alta</th>'
+            + '<th scope="col">1ra Factura</th>'
+            + '<th scope="col">Vendedor</th>'
             + '</tr></thead><tbody>';
 
         for (var i = 0; i < data.length; i++) {
@@ -130,27 +214,10 @@
                 + '</tr>';
         }
 
-        html += '</tbody></table></div>';
+        html += '</tbody></table></div></div>';
         return html;
     }
 
-    // --- Helpers de formato de fecha ---
-
-    // Date object → "yyyy-MM-dd" (valor para input[type=date])
-    function cnpToInputDate(dateObj) {
-        var d = String(dateObj.getDate()).padStart(2, '0');
-        var m = String(dateObj.getMonth() + 1).padStart(2, '0');
-        return dateObj.getFullYear() + '-' + m + '-' + d;
-    }
-
-    // "yyyy-MM-dd" → "dd/MM/yyyy" (para enviar al servidor)
-    function cnpToDisplayDate(yyyymmdd) {
-        if (!yyyymmdd) return '';
-        var p = yyyymmdd.split('-');
-        return p[2] + '/' + p[1] + '/' + p[0];
-    }
-
-    // Escape HTML para evitar XSS
     function cnpEscape(str) {
         if (str == null) return '';
         var div = document.createElement('div');

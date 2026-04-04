@@ -8649,3 +8649,177 @@ ul.viajes-lista li .viaje-container h4 {
         grid-column: span 1;
     }
 }
+
+/* ============================================
+   Tablas de detalle en modales (Home dashboard, etc.)
+   ============================================ */
+.detalle-table {
+    width: 100%;
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+.detalle-table th {
+    background-color: #f1f5f9;
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.detalle-table td,
+.detalle-table th {
+    padding: 0.65rem 0.85rem;
+    vertical-align: middle;
+}
+
+.detalle-table tbody tr:hover {
+    background-color: var(--brand-primary-light);
+}
+
+.detalle-resumen {
+    display: flex;
+    gap: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    box-shadow: var(--card-shadow);
+}
+
+.detalle-resumen-item {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.detalle-resumen-item strong {
+    font-weight: 700;
+    color: var(--brand-primary);
+}
+
+/* ============================================
+   Modal: Clientes dados de alta por período (#modalClientesNuevosPeriodo)
+   ============================================ */
+#modalClientesNuevosPeriodo .cnp-modal-content {
+    border-radius: var(--border-radius-lg);
+    border: none;
+    overflow: hidden;
+    box-shadow: 0 1.25rem 3rem rgba(43, 45, 66, 0.18);
+}
+
+#modalClientesNuevosPeriodo .cnp-modal-header {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, #c92a5f 100%);
+    color: #fff;
+    border-bottom: none;
+    padding: 1rem 1.25rem;
+}
+
+#modalClientesNuevosPeriodo .cnp-modal-header .modal-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#modalClientesNuevosPeriodo .cnp-modal-body {
+    min-height: 220px;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-main);
+}
+
+#modalClientesNuevosPeriodo .cnp-filtros-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+#modalClientesNuevosPeriodo .cnp-filtros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem 1.25rem;
+    align-items: end;
+}
+
+#modalClientesNuevosPeriodo .cnp-filtro-field .modern-form-label {
+    margin-bottom: 0.35rem;
+}
+
+#modalClientesNuevosPeriodo .cnp-date-input {
+    max-width: 100%;
+    cursor: pointer;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.9375rem;
+}
+
+#modalClientesNuevosPeriodo .cnp-filtro-actions {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+}
+
+#modalClientesNuevosPeriodo .cnp-filtro-actions .btn-modern {
+    min-height: 42px;
+    padding: 0.55rem 1.25rem;
+}
+
+#modalClientesNuevosPeriodo #cnpFiltroAlert {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+#modalClientesNuevosPeriodo .cnp-table-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+#modalClientesNuevosPeriodo .cnp-table-card .table-responsive {
+    max-height: min(55vh, 420px);
+}
+
+#modalClientesNuevosPeriodo .cnp-modal-footer {
+    padding: 0.75rem 1.5rem 1.25rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--white);
+    justify-content: flex-end;
+}
+
+#modalClientesNuevosPeriodo .cnp-loading.modern-loading-placeholder {
+    background: var(--white);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--border-radius-lg);
+    min-height: 200px;
+}
+
+#modalClientesNuevosPeriodo .cnp-empty-state.modern-empty-state {
+    background: var(--white);
+    border: 2px dashed var(--border-color);
+}
+
+#modalClientesNuevosPeriodo .cnp-msg-box {
+    border-radius: 12px;
+    font-size: 0.9375rem;
+}
+
+@media (max-width: 576px) {
+    #modalClientesNuevosPeriodo .cnp-filtro-actions {
+        justify-content: stretch;
+    }
+
+    #modalClientesNuevosPeriodo .cnp-filtro-actions .btn-modern {
+        width: 100%;
+        justify-content: center;
+    }
+}

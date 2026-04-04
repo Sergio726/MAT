@@ -18,6 +18,7 @@ using System.Text;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using MAT.MVC.Infrastructure;
+using System.Web.Security;
 using System.Configuration;
 
 namespace MAT.MVC.Controllers.PersonaCliente
@@ -118,58 +119,32 @@ namespace MAT.MVC.Controllers.PersonaCliente
                     catch { vendedorId = null; }
                 }
 
-                string connStr = ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString();
-                string sql = @"
-                    ;WITH PrimeraFactura AS (
-                        SELECT f.ClienteID, MIN(f.Fecha) AS PrimeraFecha
-                        FROM dbo.Factura f
-                        WHERE f.Fecha IS NOT NULL
-                        GROUP BY f.ClienteID
-                    )
-                    SELECT
-                        ISNULL(p.Nombre, '') + ' ' + ISNULL(p.Apellido, '') AS ClienteNombre,
-                        ISNULL(p.NroDocumento, '') AS NroDocumento,
-                        ISNULL(p.Celular, '') AS Celular,
-                        ISNULL(p.Email, '') AS Email,
-                        c.FechaAlta,
-                        pf.PrimeraFecha,
-                        ISNULL(perVen.Nombre, '') + ' ' + ISNULL(perVen.Apellido, '') AS VendedorNombre
-                    FROM dbo.Cliente c
-                    INNER JOIN dbo.Persona p ON c.ClienteID = p.PersonaID
-                    LEFT JOIN PrimeraFactura pf ON pf.ClienteID = c.ClienteID
-                    LEFT JOIN dbo.Persona perVen ON c.VendedorID = perVen.PersonaID
-                    WHERE c.FechaAlta >= @FechaInicio
-                      AND c.FechaAlta < @FechaFin
-                      AND (@VendedorId IS NULL OR c.VendedorID = @VendedorId)
-                    ORDER BY c.FechaAlta DESC";
+                SqlParameter[] spParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@FechaInicio", SqlDbType.DateTime,         0, fechaInicio),
+                    DBHelper.MakeParam("@FechaFin",    SqlDbType.DateTime,         0, fechaFin),
+                    DBHelper.MakeParam("@VendedorId",  SqlDbType.UniqueIdentifier, 0, vendedorId.HasValue ? (object)vendedorId.Value : DBNull.Value)
+                };
 
                 var clientes = new List<object>();
-                using (var cn = new SqlConnection(connStr))
-                using (var cmd = new SqlCommand(sql, cn))
+                using (SqlDataReader reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reportes_ClientesNuevos", spParams))
                 {
-                    cmd.Parameters.AddWithValue("@FechaInicio", fechaInicio);
-                    cmd.Parameters.AddWithValue("@FechaFin", fechaFin.AddDays(1));
-                    cmd.Parameters.AddWithValue("@VendedorId", vendedorId.HasValue ? (object)vendedorId.Value : DBNull.Value);
-                    cn.Open();
-                    using (var reader = cmd.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        clientes.Add(new
                         {
-                            clientes.Add(new
-                            {
-                                ClienteNombre  = reader["ClienteNombre"]?.ToString() ?? "",
-                                NroDocumento   = reader["NroDocumento"]?.ToString() ?? "",
-                                Celular        = reader["Celular"]?.ToString() ?? "",
-                                Email          = reader["Email"]?.ToString() ?? "",
-                                FechaAlta      = reader["FechaAlta"] != DBNull.Value
-                                                    ? Convert.ToDateTime(reader["FechaAlta"]).ToString("dd/MM/yyyy")
-                                                    : "",
-                                PrimeraFactura = reader["PrimeraFecha"] != DBNull.Value
-                                                    ? Convert.ToDateTime(reader["PrimeraFecha"]).ToString("dd/MM/yyyy")
-                                                    : "",
-                                VendedorNombre = reader["VendedorNombre"]?.ToString() ?? ""
-                            });
-                        }
+                            ClienteNombre  = reader["ClienteNombre"]?.ToString() ?? "",
+                            NroDocumento   = reader["NroDocumento"]?.ToString() ?? "",
+                            Celular        = reader["Celular"]?.ToString() ?? "",
+                            Email          = reader["Email"]?.ToString() ?? "",
+                            FechaAlta      = reader["FechaAlta"] != DBNull.Value
+                                                ? Convert.ToDateTime(reader["FechaAlta"]).ToString("dd/MM/yyyy")
+                                                : "",
+                            PrimeraFactura = reader["PrimeraFecha"] != DBNull.Value
+                                                ? Convert.ToDateTime(reader["PrimeraFecha"]).ToString("dd/MM/yyyy")
+                                                : "",
+                            VendedorNombre = reader["VendedorNombre"]?.ToString() ?? ""
+                        });
                     }
                 }
 

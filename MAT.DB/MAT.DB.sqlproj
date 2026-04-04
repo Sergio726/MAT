@@ -635,6 +635,7 @@
     </Build>
     <Build Include="dbo\Stored Procedures\usp_MAT_TransHotelHabitacionViaje_Delete.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_Ventas.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_ClientesNuevos.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedureServicio_Get_List.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>
@@ -1232,8 +1233,8 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_Delete.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_GetByViajeID.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_UpdateOrden.sql" />
-    <Build Include="Scripts\Cliente_AddFechaAlta.sql" />
-    <Build Include="Scripts\Presupuesto_AddContactoColumns.sql" />
+    <None Include="Scripts\Cliente_AddFechaAlta.sql" />
+    <None Include="Scripts\Presupuesto_AddContactoColumns.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare.scmp" />
