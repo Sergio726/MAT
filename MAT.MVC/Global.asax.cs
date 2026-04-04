@@ -8,6 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Caching;
 using AutoMapper;
+using MAT.MVC.Infrastructure;
 using MAT.MVC.Integration;
 using MAT.MVC.Models;
 using MAT.Utilities;
@@ -119,6 +120,18 @@ namespace MAT.MVC
                 var correlationId = MatRequestContext.GetOrCreateCorrelationId();
                 MATLogger.Log($"[{correlationId}] Application_Error: {ex.GetType().Name} - {ex.Message}", 1);
                 MATLogger.Log($"[{correlationId}] {ex.StackTrace}", 1);
+
+                string url = null;
+                string usuario = null;
+                try
+                {
+                    var ctx = HttpContext.Current;
+                    url = ctx?.Request?.Url?.ToString();
+                    usuario = ctx?.User?.Identity?.Name;
+                }
+                catch { /* ignore */ }
+
+                DbErrorLogger.Log(correlationId, ex, url, usuario);
             }
             catch { /* no-op */ }
         }

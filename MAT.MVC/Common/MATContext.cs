@@ -1,4 +1,4 @@
-﻿using MAT.MVC.Models;
+using MAT.MVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,7 +131,9 @@ namespace MAT.MVC.Common
                 {
                     userId = MATContext.CurrentUserId;
                 }
-                currentpersona = personaService.GetAll().Where(p => p.UserId == userId).FirstOrDefault();                
+                currentpersona = personaService.GetAll().Where(p => p.UserId == userId).FirstOrDefault();
+                if (currentpersona == null)
+                    return null;
 
                 return vendedorService.GetByVendedorId(currentpersona.PersonaId);
             }
