@@ -216,76 +216,13 @@ namespace MAT.MVC.Controllers.Home
         }
 
         /// <summary>
-        /// Detalle de clientes nuevos del mes (para popup) - SQL directo
+        /// Delega al endpoint canónico en PersonaClienteController.
         /// </summary>
         [Authorize]
-        public JsonResult GetClientesNuevosDetalle()
+        public JsonResult GetClientesNuevosDetalle(string fechaDesde = null, string fechaHasta = null)
         {
-            try
-            {
-                Guid? vendedorId = GetCurrentVendedorId();
-                var fechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                var fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
-
-                string connStr = ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString();
-                string sql = @"
-                    ;WITH PrimeraFactura AS (
-                        SELECT f.ClienteID, MIN(f.Fecha) AS PrimeraFecha
-                        FROM dbo.Factura f
-                        WHERE f.Fecha IS NOT NULL
-                        GROUP BY f.ClienteID
-                    )
-                    SELECT
-                        p.PersonaID AS ClienteId,
-                        ISNULL(p.Nombre, '') + ' ' + ISNULL(p.Apellido, '') AS ClienteNombre,
-                        ISNULL(p.NroDocumento, '') AS NroDocumento,
-                        ISNULL(p.Celular, '') AS Celular,
-                        ISNULL(p.Email, '') AS Email,
-                        pf.PrimeraFecha,
-                        ISNULL(perVen.Nombre, '') + ' ' + ISNULL(perVen.Apellido, '') AS VendedorNombre
-                    FROM PrimeraFactura pf
-                    INNER JOIN dbo.Persona p ON pf.ClienteID = p.PersonaID
-                    INNER JOIN dbo.Cliente c ON c.ClienteID = p.PersonaID
-                    LEFT JOIN dbo.Persona perVen ON c.VendedorID = perVen.PersonaID
-                    WHERE pf.PrimeraFecha >= @FechaInicio
-                      AND pf.PrimeraFecha < @FechaFin
-                      AND (@VendedorId IS NULL OR c.VendedorID = @VendedorId)
-                    ORDER BY pf.PrimeraFecha DESC";
-
-                var clientesNuevos = new List<object>();
-                using (var cn = new SqlConnection(connStr))
-                using (var cmd = new SqlCommand(sql, cn))
-                {
-                    cmd.Parameters.AddWithValue("@FechaInicio", fechaInicio);
-                    cmd.Parameters.AddWithValue("@FechaFin", fechaFin.AddDays(1));
-                    cmd.Parameters.AddWithValue("@VendedorId", vendedorId.HasValue ? (object)vendedorId.Value : DBNull.Value);
-                    cn.Open();
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            clientesNuevos.Add(new
-                            {
-                                ClienteNombre = reader["ClienteNombre"]?.ToString() ?? "",
-                                NroDocumento = reader["NroDocumento"]?.ToString() ?? "",
-                                Celular = reader["Celular"]?.ToString() ?? "",
-                                Email = reader["Email"]?.ToString() ?? "",
-                                PrimeraFactura = reader["PrimeraFecha"] != DBNull.Value
-                                    ? Convert.ToDateTime(reader["PrimeraFecha"]).ToString("dd/MM/yyyy")
-                                    : "",
-                                VendedorNombre = reader["VendedorNombre"]?.ToString() ?? ""
-                            });
-                        }
-                    }
-                }
-
-                return Json(new { success = true, data = clientesNuevos }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
+            return new MAT.MVC.Controllers.PersonaCliente.PersonaClienteController()
+                        .GetClientesNuevosDetalle(fechaDesde, fechaHasta);
         }
 
         /// <summary>

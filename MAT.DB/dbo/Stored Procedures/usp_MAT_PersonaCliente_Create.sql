@@ -99,7 +99,8 @@ BEGIN
 			  Idioma	  ,
 			  Promotor	  ,
 			  Observacion ,
-			  TipoID
+			  TipoID	  ,
+			  FechaAlta
 			)
 			VALUES
 			(
@@ -116,7 +117,8 @@ BEGIN
 				@Idioma		 ,
 				@Promotor	 ,
 				@Observacion ,
-				@TipoID
+				@TipoID		 ,
+				GETDATE()
 			)
 
 			/*INSERT CuentaCorriente*/

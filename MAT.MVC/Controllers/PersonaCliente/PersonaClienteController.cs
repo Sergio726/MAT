@@ -89,6 +89,99 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
         }
 
+        /// <summary>
+        /// Detalle de clientes dados de alta en un rango de fechas (para modal con selector).
+        /// Filtra por FechaAlta del cliente. Si el usuario es vendedor, filtra solo sus clientes.
+        /// </summary>
+        [Authorize]
+        public JsonResult GetClientesNuevosDetalle(string fechaDesde = null, string fechaHasta = null)
+        {
+            try
+            {
+                // Parsear rango; fallback al mes actual
+                DateTime fechaInicio, fechaFin;
+                if (!DateTime.TryParseExact(fechaDesde, "dd/MM/yyyy",
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None, out fechaInicio))
+                    fechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                if (!DateTime.TryParseExact(fechaHasta, "dd/MM/yyyy",
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None, out fechaFin))
+                    fechaFin = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
+
+                // Filtro por vendedor: null = admin (ver todos)
+                Guid? vendedorId = null;
+                bool isAdmin = Roles.IsUserInRole(User.Identity.Name, "Administrador");
+                if (!isAdmin)
+                {
+                    try { vendedorId = MATContext.CurrentVendedor?.VendedorId; }
+                    catch { vendedorId = null; }
+                }
+
+                string connStr = ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString();
+                string sql = @"
+                    ;WITH PrimeraFactura AS (
+                        SELECT f.ClienteID, MIN(f.Fecha) AS PrimeraFecha
+                        FROM dbo.Factura f
+                        WHERE f.Fecha IS NOT NULL
+                        GROUP BY f.ClienteID
+                    )
+                    SELECT
+                        ISNULL(p.Nombre, '') + ' ' + ISNULL(p.Apellido, '') AS ClienteNombre,
+                        ISNULL(p.NroDocumento, '') AS NroDocumento,
+                        ISNULL(p.Celular, '') AS Celular,
+                        ISNULL(p.Email, '') AS Email,
+                        c.FechaAlta,
+                        pf.PrimeraFecha,
+                        ISNULL(perVen.Nombre, '') + ' ' + ISNULL(perVen.Apellido, '') AS VendedorNombre
+                    FROM dbo.Cliente c
+                    INNER JOIN dbo.Persona p ON c.ClienteID = p.PersonaID
+                    LEFT JOIN PrimeraFactura pf ON pf.ClienteID = c.ClienteID
+                    LEFT JOIN dbo.Persona perVen ON c.VendedorID = perVen.PersonaID
+                    WHERE c.FechaAlta >= @FechaInicio
+                      AND c.FechaAlta < @FechaFin
+                      AND (@VendedorId IS NULL OR c.VendedorID = @VendedorId)
+                    ORDER BY c.FechaAlta DESC";
+
+                var clientes = new List<object>();
+                using (var cn = new SqlConnection(connStr))
+                using (var cmd = new SqlCommand(sql, cn))
+                {
+                    cmd.Parameters.AddWithValue("@FechaInicio", fechaInicio);
+                    cmd.Parameters.AddWithValue("@FechaFin", fechaFin.AddDays(1));
+                    cmd.Parameters.AddWithValue("@VendedorId", vendedorId.HasValue ? (object)vendedorId.Value : DBNull.Value);
+                    cn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            clientes.Add(new
+                            {
+                                ClienteNombre  = reader["ClienteNombre"]?.ToString() ?? "",
+                                NroDocumento   = reader["NroDocumento"]?.ToString() ?? "",
+                                Celular        = reader["Celular"]?.ToString() ?? "",
+                                Email          = reader["Email"]?.ToString() ?? "",
+                                FechaAlta      = reader["FechaAlta"] != DBNull.Value
+                                                    ? Convert.ToDateTime(reader["FechaAlta"]).ToString("dd/MM/yyyy")
+                                                    : "",
+                                PrimeraFactura = reader["PrimeraFecha"] != DBNull.Value
+                                                    ? Convert.ToDateTime(reader["PrimeraFecha"]).ToString("dd/MM/yyyy")
+                                                    : "",
+                                VendedorNombre = reader["VendedorNombre"]?.ToString() ?? ""
+                            });
+                        }
+                    }
+                }
+
+                return Json(new { success = true, data = clientes }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.GetClientesNuevosDetalle");
+                return Json(new { success = false, message = msg }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [Authorize]
         public ActionResult Create(string msj)
         {

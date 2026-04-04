@@ -102,6 +102,8 @@
             </div>
         </div>
 
+        @Html.Partial("_ModalClientesNuevosPorPeriodo")
+
         <!-- Separador Visual -->
         <div class="section-divider">
             <div class="section-divider-line"></div>
@@ -549,6 +551,12 @@
 
         // === Funciones para modales de detalle de indicadores ===
         function openDetalleModal(tipo) {
+            // Clientes usa el modal con selector de rango (partial compartido)
+            if (tipo === 'clientes') {
+                openClientesNuevosModal();
+                return;
+            }
+
             var modal = new bootstrap.Modal(document.getElementById('dashboardDetalleModal'));
             var body = document.getElementById('dashboardDetalleBody');
             var title = document.getElementById('dashboardDetalleModalLabel');
@@ -558,13 +566,11 @@
 
             var urlMap = {
                 'presupuestos': '/Home/GetPresupuestosDetalle',
-                'clientes': '/Home/GetClientesNuevosDetalle',
                 'ventas': '/Home/GetVentasDetalle'
             };
 
             var titleMap = {
                 'presupuestos': 'Presupuestos del Mes',
-                'clientes': 'Clientes Nuevos del Mes',
                 'ventas': 'Ventas Realizadas del Mes'
             };
 
@@ -608,26 +614,6 @@
                     html += '<td>' + escapeHtml(p.FechaCreacion) + '</td>';
                     html += '<td>' + escapeHtml(p.ViajeDescripcion || '') + '</td>';
                     html += '<td>' + escapeHtml(p.VendedorOrigenNombre || '') + '</td>';
-                    html += '</tr>';
-                }
-                html += '</tbody></table></div>';
-                return html;
-            }
-
-            if (tipo === 'clientes') {
-                var html = '<div class="detalle-resumen"><div class="detalle-resumen-item"><strong>' + data.length + '</strong> clientes nuevos</div></div>';
-                html += '<div class="table-responsive"><table class="table table-sm table-bordered detalle-table"><thead><tr>';
-                html += '<th>Nombre</th><th>Documento</th><th>Celular</th><th>Email</th><th>1ra Factura</th><th>Vendedor</th>';
-                html += '</tr></thead><tbody>';
-                for (var i = 0; i < data.length; i++) {
-                    var c = data[i];
-                    html += '<tr>';
-                    html += '<td>' + escapeHtml(c.ClienteNombre) + '</td>';
-                    html += '<td>' + escapeHtml(c.NroDocumento) + '</td>';
-                    html += '<td>' + escapeHtml(c.Celular) + '</td>';
-                    html += '<td>' + escapeHtml(c.Email) + '</td>';
-                    html += '<td>' + escapeHtml(c.PrimeraFactura) + '</td>';
-                    html += '<td>' + escapeHtml(c.VendedorNombre || '') + '</td>';
                     html += '</tr>';
                 }
                 html += '</tbody></table></div>';

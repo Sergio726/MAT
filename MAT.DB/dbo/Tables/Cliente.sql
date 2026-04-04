@@ -14,6 +14,7 @@
     [Promotor]     VARCHAR (50)     NULL,
     [Observacion]  VARCHAR (250)    NULL,
     [TipoID]       INT              NOT NULL,
+    [FechaAlta]    DATETIME         NULL,
     CONSTRAINT [PK_Cliente] PRIMARY KEY CLUSTERED ([ClienteID] ASC),
     CONSTRAINT [FK_Cliente_Persona] FOREIGN KEY ([ClienteID]) REFERENCES [dbo].[Persona] ([PersonaID])
 );
