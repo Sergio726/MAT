@@ -40,7 +40,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.RenderGridClientes");
                 return PartialView();
             }
             
@@ -80,10 +80,11 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception ex)
             {
+                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "PersonaClienteController.GetClientesTop");
                 return Json(new
                 {
                     success = false,
-                    message = ex.Message,
+                    message = msg,
                     data = new List<PersonaClienteModel>(),
                     count = 0
                 }, JsonRequestBehavior.AllowGet);

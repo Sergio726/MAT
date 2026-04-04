@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Viajes por Fecha";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -38,7 +38,7 @@
             }
         });
         $("#calendar_vendedor").datepicker({
-            dateFormat: 'dd-mm-yy',
+            dateFormat: 'dd/mm/yy',
             onSelect: function () {
                 var date = escape($(this).datepicker().val());
                 console.log(date);

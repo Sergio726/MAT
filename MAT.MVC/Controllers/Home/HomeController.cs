@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -333,8 +333,11 @@ namespace MAT.MVC.Controllers.Home
             }
             catch (Exception ex)
             {
-                Console.WriteLine("❌ Error en GetFechasDeViajes: " + ex.Message);
-                return string.Empty; // o devolver un mensaje como "Error" si preferís
+                var correlationId = MAT.MVC.Infrastructure.RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] HomeController.GetFechasDeViajes - {ex.GetType().Name}: {ex.Message}", 1);
+                MATLogger.Log($"[{correlationId}] {ex.StackTrace}", 1);
+                MAT.MVC.Infrastructure.DbErrorLogger.Log(correlationId, ex, Request?.Url?.ToString(), User?.Identity?.Name);
+                return string.Empty;
             }
         }
 
@@ -342,34 +345,65 @@ namespace MAT.MVC.Controllers.Home
         [Authorize]
         public ActionResult TodosLosViajesIndex()
         {
-            ViajeService vServ = new ViajeService();
-            int yearinicio = vServ.GetAll().OrderBy(v => v.FechaSalida).FirstOrDefault().FechaSalida.Value.Year;
-            int yearfinal = vServ.GetAll().OrderByDescending(v => v.FechaSalida).FirstOrDefault().FechaSalida.Value.Year;
-            int currentYear = DateTime.Now.Year;
-            // Si el año actual está fuera del rango, usar el año más reciente
-            int selectedYear = (currentYear >= yearinicio && currentYear <= yearfinal) ? currentYear : yearfinal;
-
-            List<SelectListItem> yearlistitem = new List<SelectListItem>();
-            for (int i = yearinicio; i < yearfinal +1 ; i++)
+            try
             {
-                SelectListItem item = new SelectListItem();
-                item.Text = i.ToString();
-                item.Value = i.ToString();
-                item.Selected = (i == selectedYear);
-                yearlistitem.Add(item);
+                ViajeService vServ = new ViajeService();
+                var todos = vServ.GetAll()
+                    .Where(v => v.FechaSalida.HasValue)
+                    .OrderBy(v => v.FechaSalida)
+                    .ToList();
+
+                int currentYear = DateTime.Now.Year;
+
+                if (!todos.Any())
+                {
+                    var soloActual = new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = currentYear.ToString(), Value = currentYear.ToString(), Selected = true }
+                    };
+                    return View(soloActual);
+                }
+
+                int yearinicio = todos.First().FechaSalida.Value.Year;
+                int yearfinal  = todos.Last().FechaSalida.Value.Year;
+                int selectedYear = (currentYear >= yearinicio && currentYear <= yearfinal) ? currentYear : yearfinal;
+
+                var yearlistitem = new List<SelectListItem>();
+                for (int i = yearinicio; i <= yearfinal; i++)
+                {
+                    yearlistitem.Add(new SelectListItem
+                    {
+                        Text     = i.ToString(),
+                        Value    = i.ToString(),
+                        Selected = (i == selectedYear)
+                    });
+                }
+                return View(yearlistitem);
             }
-            return View(yearlistitem);
+            catch (Exception ex)
+            {
+                var msg = MAT.MVC.Infrastructure.ErrorUtil.LogAndGetPublicMessage(ex, "HomeController.TodosLosViajesIndex");
+                TempData["Error"] = msg;
+                return View(new List<SelectListItem>());
+            }
         }
 
         [Authorize]
         public ActionResult TodosLosViajes(string yearfilter)
         {
-       
-            List<ViajeModel> Viajes = new List<ViajeModel>();
+            try
+            {
+                if (!int.TryParse(yearfilter, out int year))
+                    year = DateTime.Now.Year;
 
-            Viajes = MVC.Models.ViajeMethod.ViajeByDate(null, Convert.ToInt32(yearfilter));
-
-            return PartialView(Viajes);
+                var viajes = MVC.Models.ViajeMethod.ViajeByDate(null, year);
+                return PartialView(viajes);
+            }
+            catch (Exception ex)
+            {
+                MAT.MVC.Infrastructure.ErrorUtil.LogAndGetPublicMessage(ex, "HomeController.TodosLosViajes");
+                return PartialView(new List<ViajeModel>());
+            }
         }
 
         public ActionResult GenerarPasajes()
@@ -417,11 +451,11 @@ namespace MAT.MVC.Controllers.Home
             
             catch (Exception ex)
             {
-                StringBuilder excepcion = new StringBuilder();
-                excepcion.AppendLine(ex.Message);
-                excepcion.AppendLine(ex.Source);
-                excepcion.AppendLine(ex.StackTrace);
-                return excepcion.ToString();
+                var correlationId = MAT.MVC.Infrastructure.RequestContext.GetOrCreateCorrelationId();
+                MATLogger.Log($"[{correlationId}] HomeController.GetViajes - {ex.GetType().Name}: {ex.Message}", 1);
+                MATLogger.Log($"[{correlationId}] {ex.StackTrace}", 1);
+                MAT.MVC.Infrastructure.DbErrorLogger.Log(correlationId, ex, Request?.Url?.ToString(), User?.Identity?.Name);
+                return string.Empty;
             }
            
         }
