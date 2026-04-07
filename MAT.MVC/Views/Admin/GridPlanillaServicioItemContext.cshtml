@@ -1,4 +1,4 @@
-﻿@model List<MAT.Entities.PlanillaServicioItem>
+@model List<MAT.Entities.PlanillaServicioItem>
 @using MAT.Utilities
 
 <table class="mat-customtable">
@@ -43,8 +43,10 @@
     </tbody>
 </table>
 <h4 id="total"></h4>
-<p class="botonera-form">
-    <a id="btn-generar-planilla" href="#" class="btn btn-danger">Generar Planilla</a>
+<p class="botonera-form mt-2">
+    <a id="btn-generar-planilla" href="#" class="btn btn-danger">
+        <i class="bi bi-file-earmark-plus me-1"></i>Generar planilla
+    </a>
 </p>
 <script type="text/javascript">
     $(function () {

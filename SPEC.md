@@ -17,7 +17,7 @@
 
 ### P2 — Mejoras de producto
 
-- [ ] **Admin: Migrar ErrorLog.cshtml y Logs.cshtml a Bootstrap 5**
+- [x] **Admin: Migrar ErrorLog.cshtml y Logs.cshtml a Bootstrap 5**
   Ambas vistas usan Bootstrap 2 (`glyphicon`, `btn-default`, `btn-xs`, `form-inline`, `table-condensed`). Son las únicas vistas del panel Admin que quedaron sin migrar. Reemplazar con Bootstrap Icons y clases BS5. No cambiar la lógica JS de carga/filtrado.
   Archivos: `Views/Admin/ErrorLog.cshtml`, `Views/Admin/Logs.cshtml`
   Criterio de éxito: Las vistas renderizan correctamente en IIS Express sin glyphicons ni clases BS2. MSBuild pasa sin errores.

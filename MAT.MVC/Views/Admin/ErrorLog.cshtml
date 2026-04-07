@@ -19,60 +19,67 @@
         border: 1px solid #555; padding: 12px; resize: vertical; width: 100%;
         line-height: 1.5;
     }
+    .errorlog-filters {
+        margin-bottom: 16px;
+        background: #f8f9fa;
+        padding: 12px 14px;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+    }
+    .spinning { animation: spin 1s linear infinite; display: inline-block; }
+    @@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
 
-<div class="container-fluid" style="padding: 20px; max-width: 1500px;">
+<div class="container-fluid py-3 px-3" style="max-width: 1500px;">
 
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-        <h2 style="margin:0;">
-            Error Log &nbsp;<small class="text-muted" id="lbl-count"></small>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <h2 class="mb-0">
+            Error Log <small class="text-muted" id="lbl-count"></small>
         </h2>
-        <div class="btn-group">
-            <button type="button" class="btn btn-default btn-sm active" id="btn-tabla" onclick="mostrarVista('tabla')">
-                <span class="glyphicon glyphicon-th-list"></span>&nbsp; Tabla
+        <div class="btn-group" role="group" aria-label="Vista">
+            <button type="button" class="btn btn-outline-secondary btn-sm active" id="btn-tabla" onclick="mostrarVista('tabla')">
+                <i class="bi bi-list-ul me-1"></i>Tabla
             </button>
-            <button type="button" class="btn btn-default btn-sm" id="btn-diag" onclick="mostrarVista('diagnostico')">
-                <span class="glyphicon glyphicon-paste"></span>&nbsp; Diagnóstico
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-diag" onclick="mostrarVista('diagnostico')">
+                <i class="bi bi-clipboard-data me-1"></i>Diagnóstico
             </button>
         </div>
     </div>
 
-    <!-- Filtros -->
-    <div style="margin-bottom:16px; background:#f5f5f5; padding:12px 14px; border-radius:4px; border:1px solid #ddd;">
-        <div class="form-inline">
-            <div class="form-group" style="margin-right:8px;">
-                <input type="text" id="filtro-correlation" class="form-control input-sm"
+    <div class="errorlog-filters">
+        <div class="d-flex flex-wrap align-items-end gap-2">
+            <div>
+                <label class="form-label visually-hidden" for="filtro-correlation">Correlation ID</label>
+                <input type="text" id="filtro-correlation" class="form-control form-control-sm"
                        placeholder="Correlation ID" style="width:290px; font-family:monospace;" />
             </div>
-            <div class="form-group" style="margin-right:8px;">
-                <input type="date" id="filtro-fecha" class="form-control input-sm" title="Desde fecha" />
+            <div>
+                <label class="form-label visually-hidden" for="filtro-fecha">Desde fecha</label>
+                <input type="date" id="filtro-fecha" class="form-control form-control-sm" title="Desde fecha" />
             </div>
-            <button class="btn btn-primary btn-sm" onclick="cargarDatos()">
-                <span class="glyphicon glyphicon-filter"></span>&nbsp;Filtrar
+            <button type="button" class="btn btn-primary btn-sm" onclick="cargarDatos()">
+                <i class="bi bi-funnel me-1"></i>Filtrar
             </button>
-            <button class="btn btn-default btn-sm" style="margin-left:4px;" onclick="limpiarFiltros()">
-                <span class="glyphicon glyphicon-remove"></span>&nbsp;Limpiar
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()">
+                <i class="bi bi-x-lg me-1"></i>Limpiar
             </button>
-            <button class="btn btn-default btn-sm" style="margin-left:4px;" onclick="cargarDatos()" title="Recargar">
-                <span class="glyphicon glyphicon-refresh"></span>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cargarDatos()" title="Recargar">
+                <i class="bi bi-arrow-clockwise"></i>
             </button>
         </div>
     </div>
 
-    <!-- Estado de carga -->
-    <div id="estado-carga" style="text-align:center; padding:30px; color:#888;">
-        <span class="glyphicon glyphicon-refresh spinning"></span>&nbsp; Cargando...
+    <div id="estado-carga" class="text-center py-4 text-secondary">
+        <i class="bi bi-arrow-clockwise spinning me-1"></i>Cargando...
     </div>
 
     <div id="estado-vacio" class="alert alert-info" style="display:none;">
-        <span class="glyphicon glyphicon-info-sign"></span>
-        &nbsp;No hay errores registrados con los filtros aplicados.
+        <i class="bi bi-info-circle me-1"></i>No hay errores registrados con los filtros aplicados.
     </div>
 
-    <!-- Vista Tabla -->
     <div id="vista-tabla" style="display:none;">
-        <div style="overflow-x:auto;">
-            <table class="table table-condensed table-bordered table-hover" id="tabla-errores" style="margin-bottom:0;">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover mb-0" id="tabla-errores">
                 <thead>
                     <tr>
                         <th style="width:48px;">ID</th>
@@ -91,19 +98,18 @@
         </div>
     </div>
 
-    <!-- Vista Diagnóstico -->
     <div id="vista-diagnostico" style="display:none;">
-        <div style="margin-bottom:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <button class="btn btn-success btn-sm" onclick="copiarTodo()">
-                <span class="glyphicon glyphicon-copy"></span>&nbsp;Copiar todo
+        <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+            <button type="button" class="btn btn-success btn-sm" onclick="copiarTodo()">
+                <i class="bi bi-copy me-1"></i>Copiar todo
             </button>
-            <button class="btn btn-default btn-sm" onclick="seleccionarTodo()">
-                <span class="glyphicon glyphicon-text-background"></span>&nbsp;Seleccionar todo
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="seleccionarTodo()">
+                <i class="bi bi-textarea-resize me-1"></i>Seleccionar todo
             </button>
-            <span id="msg-copiado" style="display:none; color:#3c763d; font-weight:bold;">
-                <span class="glyphicon glyphicon-ok"></span>&nbsp;¡Copiado!
+            <span id="msg-copiado" style="display:none; color:#198754; font-weight:bold;">
+                <i class="bi bi-check-lg me-1"></i>¡Copiado!
             </span>
-            <span class="text-muted" style="font-size:12px;">
+            <span class="text-muted small">
                 — Pegá este texto directamente en el chat para diagnóstico
             </span>
         </div>
@@ -112,17 +118,11 @@
 
 </div>
 
-<style>
-    .spinning { animation: spin 1s linear infinite; display: inline-block; }
-    @@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-</style>
-
 <script>
 (function () {
     var ERRORES = [];
     var VISTA_ACTUAL = 'tabla';
 
-    // Carga inicial
     document.addEventListener('DOMContentLoaded', function () {
         cargarDatos();
     });
@@ -159,34 +159,33 @@
         cargarDatos();
     };
 
-    // ---- Renderizar tabla ----
     function renderizarTabla() {
         var tbody = document.getElementById('tabla-body');
         var html = '';
         for (var i = 0; i < ERRORES.length; i++) {
             var e = ERRORES[i];
-            var rowCss = e.imp === '3' ? 'danger' : (e.imp === '2' ? 'warning' : '');
+            var rowClass = e.imp === '3' ? 'table-danger' : (e.imp === '2' ? 'table-warning' : '');
             var stackId = 'stack-' + e.id;
-            html += '<tr class="' + rowCss + '">';
-            html += '<td style="text-align:center;color:#888;">'  + esc(e.id)    + '</td>';
-            html += '<td style="white-space:nowrap;">'             + esc(e.fecha) + '</td>';
-            html += '<td style="font-family:monospace;font-size:10px;word-break:break-all;">' + esc(e.corrId) + '</td>';
-            html += '<td style="font-size:11px;word-break:break-word;">' + esc(e.tipo) + '</td>';
+            html += '<tr class="' + rowClass + '">';
+            html += '<td class="text-center text-secondary">'  + esc(e.id)    + '</td>';
+            html += '<td class="text-nowrap">'             + esc(e.fecha) + '</td>';
+            html += '<td class="font-monospace small text-break">' + esc(e.corrId) + '</td>';
+            html += '<td class="small text-break">' + esc(e.tipo) + '</td>';
             html += '<td>'                                          + esc(e.msg)   + '</td>';
-            html += '<td style="word-break:break-all;font-size:11px;">' + esc(e.url) + '</td>';
+            html += '<td class="text-break small">' + esc(e.url) + '</td>';
             html += '<td><small>'                                   + esc(e.user)  + '</small></td>';
-            html += '<td style="text-align:center;"><span class="badge badge-' + esc(e.imp) + '">' + esc(e.imp) + '</span></td>';
-            html += '<td style="text-align:center;white-space:nowrap;">';
+            html += '<td class="text-center"><span class="badge badge-' + esc(e.imp) + '">' + esc(e.imp) + '</span></td>';
+            html += '<td class="text-center text-nowrap">';
             if (e.stack) {
-                html += '<button class="btn btn-xs btn-default" onclick="toggleStack(\'' + stackId + '\', this)">Stack</button> ';
+                html += '<button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleStack(\'' + stackId + '\', this)">Stack</button> ';
             }
-            html += '<button class="btn btn-xs btn-info" title="Copiar" onclick="copiarFila(' + i + ', this)">';
-            html += '<span class="glyphicon glyphicon-copy"></span></button>';
+            html += '<button type="button" class="btn btn-sm btn-info" title="Copiar" onclick="copiarFila(' + i + ', this)">';
+            html += '<i class="bi bi-copy"></i></button>';
             html += '</td>';
             html += '</tr>';
             if (e.stack) {
                 html += '<tr id="' + stackId + '" style="display:none;background:#222;">';
-                html += '<td colspan="9" style="padding:0;"><pre class="stack-pre">' + esc(e.stack) + '</pre></td>';
+                html += '<td colspan="9" class="p-0"><pre class="stack-pre">' + esc(e.stack) + '</pre></td>';
                 html += '</tr>';
             }
         }
@@ -194,7 +193,6 @@
         document.getElementById('lbl-count').textContent = ERRORES.length + (ERRORES.length === 1 ? ' entrada' : ' entradas');
     }
 
-    // ---- Renderizar diagnóstico ----
     function renderizarDiagnostico() {
         var lineas = [];
         var sep  = rep('\u2500', 70);
@@ -229,7 +227,6 @@
         document.getElementById('diagnostico-box').value = lineas.join('\n');
     }
 
-    // ---- Mostrar/ocultar estados ----
     function mostrarEstado(estado, msg) {
         document.getElementById('estado-carga').style.display    = estado === 'cargando' ? ''      : 'none';
         document.getElementById('estado-vacio').style.display    = estado === 'vacio'    ? ''      : 'none';
@@ -245,7 +242,6 @@
         }
     }
 
-    // ---- Cambiar vista ----
     window.mostrarVista = function (tipo) {
         VISTA_ACTUAL = tipo;
         document.getElementById('vista-tabla').style.display       = tipo === 'tabla'       ? '' : 'none';
@@ -254,7 +250,6 @@
         document.getElementById('btn-diag').classList.toggle('active',  tipo === 'diagnostico');
     };
 
-    // ---- Toggle stack trace ----
     window.toggleStack = function (id, btn) {
         var tr = document.getElementById(id);
         if (!tr) return;
@@ -263,12 +258,10 @@
         btn.textContent  = visible ? 'Stack' : 'Ocultar';
     };
 
-    // ---- Copiar fila individual ----
     window.copiarFila = function (idx, btn) {
         copiar(formatearError(ERRORES[idx], idx + 1), btn);
     };
 
-    // ---- Copiar todo diagnóstico ----
     window.copiarTodo = function () {
         copiar(document.getElementById('diagnostico-box').value, null, function () {
             var m = document.getElementById('msg-copiado');
@@ -309,7 +302,7 @@
         function ok() {
             if (btn) {
                 var orig = btn.innerHTML;
-                btn.innerHTML = '<span class="glyphicon glyphicon-ok"></span>';
+                btn.innerHTML = '<i class="bi bi-check-lg"></i>';
                 setTimeout(function () { btn.innerHTML = orig; }, 2000);
             }
             if (cb) cb();

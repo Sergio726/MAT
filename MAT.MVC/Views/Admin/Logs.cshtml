@@ -5,21 +5,22 @@
     var correlationId = ViewBag.CorrelationId as string;
 }
 
-<div class="container-fluid" style="padding: 20px;">
-    <h2>Logs del sistema <small>(@logs.Count entradas)</small></h2>
+<div class="container-fluid py-3 px-3">
+    <h2 class="mb-3">
+        Logs del sistema <small class="text-muted">(@logs.Count entradas)</small>
+    </h2>
 
-    <form method="get" class="form-inline" style="margin-bottom: 15px;">
-        <div class="input-group">
+    <form method="get" class="d-flex flex-wrap align-items-end gap-2 mb-3">
+        <div class="input-group" style="max-width: 420px;">
             <input type="text" name="correlationId" value="@correlationId" class="form-control"
-                   placeholder="Filtrar por Correlation ID" style="width: 320px;" />
-            <span class="input-group-btn">
-                <button type="submit" class="btn btn-primary">Filtrar</button>
-                <a href="@Url.Action("Logs")" class="btn btn-default">Limpiar</a>
-            </span>
+                   placeholder="Filtrar por Correlation ID" />
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-funnel me-1"></i>Filtrar
+            </button>
+            <a href="@Url.Action("Logs")" class="btn btn-outline-secondary">Limpiar</a>
         </div>
-        &nbsp;
-        <a href="@Url.Action("LogsRaw", new { correlationId = correlationId })" class="btn btn-default" target="_blank">
-            Ver como texto plano
+        <a href="@Url.Action("LogsRaw", new { correlationId = correlationId })" class="btn btn-outline-secondary" target="_blank" rel="noopener">
+            <i class="bi bi-file-text me-1"></i>Ver como texto plano
         </a>
     </form>
 
@@ -36,6 +37,6 @@
     }
     else
     {
-        <pre style="background:#1e1e1e; color:#d4d4d4; padding:15px; border-radius:5px; font-size:12px; max-height:80vh; overflow-y:auto;">@string.Join("\n", logs)</pre>
+        <pre class="rounded p-3 small overflow-auto font-monospace" style="background:#1e1e1e; color:#d4d4d4; max-height:80vh;">@string.Join("\n", logs)</pre>
     }
 </div>

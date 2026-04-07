@@ -5,7 +5,7 @@
 
 ---
 
-## ✅ COMPLETADAS (51 vistas modernizadas):
+## ✅ COMPLETADAS (65 vistas en tabla principal; otras fases también ✅):
 
 | # | Vista | Fecha | Mejoras Aplicadas |
 |---|-------|-------|-------------------|
@@ -70,6 +70,10 @@
 | 59 | NuevaReserva/SeleccionarPasajero.cshtml | 2026-04-07 | Botón Asignar `btn-modern` |
 | 60 | NuevaReserva/FormReserva.cshtml | 2026-04-07 | Aceptar/Cancelar `btn-modern` |
 | 61 | NuevaReserva/Index.cshtml | 2026-04-07 | Títulos de widget con Bootstrap Icons (`nr-section-title`); Pagar `btn-modern-danger`; link Seleccionar en grid |
+| 62 | Admin/ErrorLog.cshtml | 2026-04-07 | BS5: sin glyphicons; `bi-*`, `table-sm`, filtros `d-flex`, fetch/render sin cambios de contrato |
+| 63 | Admin/Logs.cshtml | 2026-04-07 | BS5: formulario `d-flex`; `btn-outline-secondary`; iconos BI |
+| 64 | Admin/EditarPlanilla.cshtml | 2026-04-07 | Card + grid; ids `#fecha-planilla`, `#total-planilla`, `#btn-guardar-planilla`; datepicker opcional si jQuery UI disponible |
+| 65 | Admin/GridPlanillaServicioItemContext.cshtml | 2026-04-07 | Botón `#btn-generar-planilla` con icono BI |
 
 ---
 
@@ -189,7 +193,7 @@
 - ✅ ReservaHabitacion/ReservaHabitacion.cshtml — Modal fechas/horas `modern-form-input`, botón Reservar `btn-modern` — 2026-04-07 *(además de `ReservaHabitacion/Index` ya en tabla #51)*
 
 #### Reservas:
-- ⏳ Reserva/FormReserva.cshtml *(distinto de `NuevaReserva/FormReserva.cshtml`)*
+- ✅ Reserva/FormReserva.cshtml — Flujo reserva con `reserva-container`, secciones BI, `btn-modern` donde aplica — verificado 2026-04-07 *(distinto de `NuevaReserva/FormReserva.cshtml`)*
 - ⏳ Reserva/VinculacionMenor.cshtml
 - ✅ Reserva/SeleccionarPasajero.cshtml — Botonera confirmar/cancelar con clases `btn-modern` (P1 parcial) — 2026-04-07
 - ⏳ Reserva/QuickSearch.cshtml
@@ -241,6 +245,8 @@
 - ⏳ Habitacion/PartialListHabitacion.cshtml
 
 #### Admin:
+- ✅ Admin/ErrorLog.cshtml — P1/P2: panel tabla/diagnóstico con Bootstrap Icons y clases BS5 — 2026-04-07
+- ✅ Admin/Logs.cshtml — Filtro correlation ID y vista pre en layout admin — 2026-04-07
 - ⏳ Admin/ServiciosAdminList.cshtml
 - ⏳ Admin/ServiciosAdminCreate.cshtml
 - ⏳ Admin/ServiciosAdminPrecioHistorial.cshtml
@@ -252,14 +258,14 @@
 - ⏳ Admin/GridResumenPagos.cshtml
 - ⏳ Admin/GridResumenPagosFecha.cshtml
 - ✅ Admin/PlanillaServicios.cshtml — Botón agregar `btn-primary btn-sm` (sin `btn-inverse`) — 2026-04-07
-- ⏳ Admin/EditarPlanilla.cshtml
+- ✅ Admin/EditarPlanilla.cshtml — Card encabezado BS5, grid, botón Guardar `btn-danger` + icono BI; datepicker si existe — 2026-04-07
 - ⏳ Admin/HistorialPrecios.cshtml
 - ⏳ Admin/AuditoriaFacturas.cshtml
 - ⏳ Admin/ImprimirPlanilla.cshtml
 - ⏳ Admin/ImprimirPlanillaDetalle.cshtml
 - ✅ Admin/GridPlanillasGeneradas.cshtml — Card tabla + `.js-imprimir-planilla-detalle` — 2026-04-07
 - ⏳ Admin/PartialGridServiciosAdmin.cshtml
-- ⏳ Admin/GridPlanillaServicioItemContext.cshtml
+- ✅ Admin/GridPlanillaServicioItemContext.cshtml — Botón Generar planilla `btn-danger` + icono BI; `#btn-generar-planilla` intacto — 2026-04-07
 - ⏳ Admin/GridPlanillaServiciosItemEdit.cshtml
 - ⏳ Admin/GridPlanillaServiciosItemPrint.cshtml
 - ⏳ Admin/GridPlanillaHotelPrint.cshtml
@@ -304,7 +310,7 @@
 
 **TOTAL COMPLETADAS (tabla numerada #1–#61):** 61 filas en la tabla principal + Fase 4 ítem 50–58 ✅ + sublistas Fase 6 actualizadas (Paquetes, Viajes parcial, NuevaReserva, Planillas).  
 **TOTAL PENDIENTES (aprox.):** ~55–65 vistas según lo que siga en ⏳ en Fase 5–6.  
-**Avance global estimado (P1 según este doc):** **~52%** — tras sincronizar listas con el código; conviene seguir auditando ⏳ restantes.  
+**Avance global estimado (P1 según este doc):** **~54%** — tras planillas admin + verificación Reserva/FormReserva; conviene seguir auditando ⏳ restantes.  
 **TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
 
 ---
@@ -628,12 +634,17 @@ else
 | 2026-04-07 | NuevaReserva/SeleccionarPasajero.cshtml | Modal | Botón Asignar `btn-modern` | Quitar `btn-inverse`; typo title pajero→pasajero |
 | 2026-04-07 | NuevaReserva/FormReserva.cshtml | Form pago | Aceptar/Cancelar `btn-modern`; corregida coma inválida en atributo class | P1 |
 | 2026-04-07 | NuevaReserva/Index.cshtml | Wizard | Títulos de widget con Bootstrap Icons (`nr-section-title`); Pagar `btn-modern-danger`; link Seleccionar en tabla pasajeros | Sin glyphicons en esos `<h4>` |
+| 2026-04-07 | Admin/ErrorLog.cshtml | Admin | Eliminados glyphicons y `table-condensed`/`form-inline` BS2; mismas funciones JS | Bootstrap Icons, `table-sm`, utilidades BS5 |
+| 2026-04-07 | Admin/Logs.cshtml | Admin | Formulario inline → flex; botones outline BS5 | P1 |
+| 2026-04-07 | Admin/EditarPlanilla.cshtml | Admin planilla | Reemplazo layout `.form` BS2 por card/grid BS5; mismo contrato AJAX GuardarDatosPlanilla | `#btn-guardar-planilla` sin `href` (evita salto); clase `date` en fecha |
+| 2026-04-07 | Admin/GridPlanillaServicioItemContext.cshtml | Parcial admin | Botón generar con icono; mantiene `#btn-generar-planilla` | P1 |
+| 2026-04-07 | — | Doc | Reserva/FormReserva.cshtml marcado ✅ (vista ya moderna; distinto de NuevaReserva/FormReserva) | Solo listas |
 
-**Total de mejoras registradas:** 42
+**Total de mejoras registradas:** 48+ (ver filas anteriores en esta tabla)
 
 ---
 
-**Última actualización:** 2025-01-27  
+**Última actualización:** 2026-04-07  
 **Fase 2 completada:** 2025-01-27  
 **Fase 3 completada:** 2025-01-27  
 **Optimización PersonaCliente/Index:** 2025-01-27 (SP optimizado, tarjetas, búsqueda en tiempo real)  
