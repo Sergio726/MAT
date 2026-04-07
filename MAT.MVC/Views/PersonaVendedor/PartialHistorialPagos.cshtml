@@ -1,4 +1,4 @@
-@model IList<MAT.Entities.Pago>
+@model IList<MAT.MVC.Models.VendedorHistorialPagoFila>
 @using MAT.Enums
 
 <style>
@@ -85,8 +85,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var row in Model)
             {
+                var item = row.Pago;
                 var estadoRendicion = (eEstadoRendicion)(item.EstadoRendicion.Value);
                 var estadoClass = estadoRendicion == eEstadoRendicion.Rendido ? "estado-rendido" : "estado-pendiente";
                 <tr>
@@ -96,9 +97,16 @@
                         <span class="estado-badge @estadoClass">@estadoRendicion</span>
                     </td>
                     <td>
-                        <a href="#" id="btn-detallepago" data-pagoid="@item.PagoId" class="btn-details" title="Ver detalles">
-                            <i class="bi bi-file-text"></i>
-                        </a>
+                        @if (row.FacturaId.HasValue)
+                        {
+                            <a href="#" data-pagoid="@item.PagoId" data-facturaid="@row.FacturaId.Value" class="btn-details js-detalle-pago-vendedor" title="Ver recibo / detalle">
+                                <i class="bi bi-file-text"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted small" title="Sin factura vinculada en cuenta corriente">—</span>
+                        }
                     </td>
                 </tr>
             }

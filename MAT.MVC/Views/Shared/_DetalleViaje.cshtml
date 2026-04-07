@@ -1,29 +1,30 @@
-﻿@model MAT.MVC.Models.PaqueteModel
+@model MAT.MVC.Models.PaqueteModel
 @using MAT.Entities
 
-<h4>@Model.Paquete.Descripcion</h4>
-<h5>Destino: @Model.Destino.Nombre</h5>
-<h5>Salida: @Model.Viaje.FechaSalida - @Model.Viaje.HoraSalida hs.</h5>
-<h5>
-@if (Model.Bus != null)
-{
-    @("Coche: " + Model.Bus.NroCoche.ToString());
-}
-</h5>
-
-<u><span>Servicios Incluídos</span></u>
-<ul>
-    @foreach (Servicio servicio in Model.Servicios)
+<div class="detalle-viaje-paquete border rounded p-3 bg-white small">
+    <h2 class="h5 fw-semibold mb-2">@Model.Paquete.Descripcion</h2>
+    <p class="mb-1"><i class="bi bi-geo-alt text-primary me-1"></i><strong>Destino:</strong> @Model.Destino.Nombre</p>
+    <p class="mb-1"><i class="bi bi-calendar-event text-primary me-1"></i><strong>Salida:</strong> @Model.Viaje.FechaSalida — @Model.Viaje.HoraSalida hs.</p>
+    @if (Model.Bus != null)
     {
-        <li>@servicio.Descripcion</li>
+        <p class="mb-3"><i class="bi bi-bus-front text-primary me-1"></i><strong>Coche:</strong> @Model.Bus.NroCoche</p>
     }
-</ul>
-<u><span>Excursiones</span></u>
-<ul>
-    @foreach (Excursion excursion in Model.Excursiones)
-    {
-        <li>@excursion.Descripcion</li>
-    }
-</ul>
 
-<input type="hidden" id="hdnPaqueteDesctripcion" value="@Model.Paquete.Descripcion" />
+    <h3 class="h6 fw-semibold text-uppercase text-secondary border-bottom pb-1 mb-2">Servicios incluidos</h3>
+    <ul class="list-unstyled mb-3 ps-1">
+        @foreach (Servicio servicio in Model.Servicios)
+        {
+            <li class="mb-1"><i class="bi bi-check-circle text-success me-1"></i>@servicio.Descripcion</li>
+        }
+    </ul>
+
+    <h3 class="h6 fw-semibold text-uppercase text-secondary border-bottom pb-1 mb-2">Excursiones</h3>
+    <ul class="list-unstyled mb-0 ps-1">
+        @foreach (Excursion excursion in Model.Excursiones)
+        {
+            <li class="mb-1"><i class="bi bi-compass text-primary me-1"></i>@excursion.Descripcion</li>
+        }
+    </ul>
+
+    <input type="hidden" id="hdnPaqueteDesctripcion" value="@Model.Paquete.Descripcion" />
+</div>

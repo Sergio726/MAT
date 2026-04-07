@@ -509,6 +509,18 @@ $(document).on("click", "#btn-cerrar-detalle-pago", function () {
     $("#DetallePago").dialog("close");
 });
 
+$(document).on("click", ".js-detalle-pago-vendedor", function (e) {
+    e.preventDefault();
+    var pagoId = $(this).data("pagoid");
+    var facturaId = $(this).data("facturaid");
+    if (!pagoId || !facturaId) {
+        (window.alertError || window.alert)("No se puede abrir el recibo: faltan datos del pago o la factura.", "Atención");
+        return false;
+    }
+    imprimirReciboPago(pagoId, facturaId);
+    return false;
+});
+
 $(document).on("click", "#btn-buscar-persona", function () {
     $.ajax({
         url: "/Busqueda/Buscar",

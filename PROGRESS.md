@@ -2,6 +2,13 @@
 
 ---
 
+### [2026-04-07] — P1 (~15% doc): Home/Shared partials + historial vendedor + doc ~74%
+
+- Archivos modificados: `MAT.MVC/Models/VendedorHistorialPagoFila.cs`, `MAT.MVC/MAT.MVC.csproj`, `MAT.MVC/Controllers/PersonaVendedor/PersonaVendedorController.cs`, `MAT.MVC/Views/PersonaVendedor/PartialHistorialPagos.cshtml`, `MAT.MVC/Scripts/mat.jquery.binding.js`, `DOCUMENTACION/VISTAS_PENDIENTES_ACTUALIZACION.md`, `PROGRESS.md` (vistas Admin Index, RenderGridHistorialPagos, Shared `_DetalleViaje` / `_ViajesPartial` / `_Search`, PersonaPasajero partial ya auditadas en doc en esta tanda)
+- Qué se implementó: **`PartialHistorialPagos`** ahora usa modelo **`VendedorHistorialPagoFila`** con **`FacturaId`** resuelto vía **`MovimientoCuentaService.GetByPagoId`** (primera fila); enlace **`.js-detalle-pago-vendedor`** llama **`imprimirReciboPago`** cuando hay factura; si no hay movimiento, muestra “—”. Documentación: tabla principal **#76–#82**, Fase 6 ⏳→✅ para esas rutas, **avance global ~59% → ~74%** (inventario P1).
+- Problemas encontrados: Pagos sin fila en `MovimientoCuenta` no ofrecen recibo desde esta UI (esperado).
+- Estado: ✅ MSBuild MAT.MVC Debug OK; P1 sigue abierto en SPEC
+
 ### [2026-04-07] — Retiro Admin: PlanillaServicios / PlanillasGeneradas (SPEC)
 
 - Archivos eliminados: `MAT.MVC/Views/Admin/PlanillaServicios.cshtml`, `GridPlanillasGeneradas.cshtml`, `GridPlanillaServicioItemContext.cshtml`, `PartialGridServiciosAdmin.cshtml`, `PartialDropDownHotel.cshtml`

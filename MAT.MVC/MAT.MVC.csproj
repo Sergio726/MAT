@@ -402,6 +402,7 @@
     <Compile Include="Models\ServicioModel.cs" />
     <Compile Include="Models\TransporteModel.cs" />
     <Compile Include="Models\ViajeModel.cs" />
+    <Compile Include="Models\VendedorHistorialPagoFila.cs" />
     <Compile Include="Models\VoucherModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\PersonaVendedor\PersonaVendedorController.cs" />

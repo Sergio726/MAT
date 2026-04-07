@@ -306,6 +306,41 @@
         </div>
     </div>
 
+    <div class="admin-section">
+        <h2 class="admin-section-title">
+            <i class="bi bi-activity"></i>
+            Sistema y diagnóstico
+        </h2>
+        <div class="admin-cards-grid">
+            <a href="/Admin/ErrorLog" class="admin-card">
+                <div class="admin-card-icon icon-info">
+                    <i class="bi bi-bug"></i>
+                </div>
+                <div class="admin-card-content">
+                    <h3 class="admin-card-title">
+                        Error Log
+                        <span class="admin-card-badge badge-info">1</span>
+                    </h3>
+                    <p class="admin-card-description">Errores en base y correlation ID</p>
+                </div>
+                <i class="bi bi-chevron-right admin-card-arrow"></i>
+            </a>
+            <a href="/Admin/Logs" class="admin-card">
+                <div class="admin-card-icon icon-warning">
+                    <i class="bi bi-terminal"></i>
+                </div>
+                <div class="admin-card-content">
+                    <h3 class="admin-card-title">
+                        Log en memoria
+                        <span class="admin-card-badge badge-warning">2</span>
+                    </h3>
+                    <p class="admin-card-description">Traza del proceso en memoria</p>
+                </div>
+                <i class="bi bi-chevron-right admin-card-arrow"></i>
+            </a>
+        </div>
+    </div>
+
     @if (User.Identity.Name.ToUpper().Equals("ADMINDEV"))
     {
         <div class="admin-section admin-dev-section">

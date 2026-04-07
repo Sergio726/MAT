@@ -27,7 +27,7 @@
   Archivos: `Views/Admin/UsuarioEditar.cshtml`, `Controllers/Admin/AdminController.cs`, `Models/AdminUsuarioEditModel`
   Criterio de éxito: El formulario muestra todos los roles del sistema. Se pueden asignar y quitar roles arbitrarios. Las restricciones existentes (no quitarse admin a uno mismo, no eliminar último admin) se mantienen.
 
-- [ ] **Admin: Exponer ErrorLog y Logs en el panel Index**
+- [x] **Admin: Exponer ErrorLog y Logs en el panel Index**
   Las vistas `/Admin/ErrorLog` y `/Admin/Logs` existen y funcionan pero no están enlazadas desde `Admin/Index.cshtml`. Solo quien conoce las URLs puede acceder. Agregar una sección "Diagnóstico" en el Index (similar a la sección "Herramientas de Desarrollo" de ADMINDEV) que las exponga. Evaluar si debe estar restringida a ADMINDEV o visible para todos los admins.
   Archivos: `Views/Admin/Index.cshtml`
   Criterio de éxito: El panel Admin muestra las tarjetas de ErrorLog y Logs. El acceso respeta la restricción de rol acordada.
@@ -48,7 +48,7 @@
   **Qué no confundir con este task:** Partials y acciones que sigan siendo necesarias para **otros** flujos (p. ej. `ImprimirPlanilla`, `ImprimirPlanillaDetalle`, `EditarPlanilla`, `GridPlanillaServiciosItemEdit`, `GridPlanillaServiciosItemPrint`, grids de hotel en impresión/edición, persistencia en BD) no se eliminan salvo que queden **huérfanas** tras el retiro. Tras `DeletePlanilla`, redirección acordada: `Admin/Index`.
   Criterio de éxito: Ningún enlace en la app apunta a `/Admin/PlanillaServicios` ni `/Admin/PlanillasGeneradas`; MSBuild sin errores; smoke test del panel Admin sin excepciones; `PROGRESS.md` con lista de archivos/rutas eliminados o ajustados.
 
-- [ ] **Admin: Panel Index completo — sección Sistema (sin Planillas en menú)**
+- [x] **Admin: Panel Index completo — sección Sistema (sin Planillas en menú)**
   El panel `Index.cshtml` debe acercarse al menú admin útil: al menos **Sistema / Diagnóstico** (ErrorLog, Logs) y lo que el equipo defina como cards de acceso rápido. **No** incluir enlaces a PlanillaServicios / PlanillasGeneradas (quedan fuera por el task anterior).
   Archivos: `Views/Admin/Index.cshtml` (y, si aplica, enlaces ya cubiertos por el task "Exponer ErrorLog y Logs en el panel Index").
   Criterio de éxito: El Index refleja las secciones acordadas sin las planillas retiradas; sin duplicar lógica contradictoria con el sidebar tras el cleanup.

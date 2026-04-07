@@ -7,7 +7,7 @@
 
 ---
 
-## ✅ COMPLETADAS (75 vistas en tabla principal; otras fases también ✅):
+## ✅ COMPLETADAS (82 vistas en tabla principal; otras fases también ✅):
 
 | # | Vista | Fecha | Mejoras Aplicadas |
 |---|-------|-------|-------------------|
@@ -86,6 +86,13 @@
 | 73 | Admin/GridPlanillaHotelPrint.cshtml | 2026-04-07 | Sin cambio de markup (solo `RenderAction` a resumen); verificado |
 | 74 | ~~Admin/PartialGridServiciosAdmin.cshtml~~ | 2026-04-07 | **Eliminada** (modal wizard) |
 | 75 | Admin: ResumenPagos suite (4 vistas) | 2026-04-07 | Verificado moderno; `GridResumenPagosFecha`: directiva model al inicio del archivo |
+| 76 | Admin/Index.cshtml | 2026-04-07 | Sección **Sistema y diagnóstico**: tarjetas a `/Admin/ErrorLog` y `/Admin/Logs` (panel admin) |
+| 77 | Home/RenderGridHistorialPagos.cshtml | 2026-04-07 | Tabla BS5 (`table-sm`, `table-hover`, `thead.table-light`); paginación `btn-outline-secondary` |
+| 78 | Shared/_DetalleViaje.cshtml | 2026-04-07 | Contenedor tipográfico BS5, iconos `bi-*`, listas `list-unstyled`; conserva `hdnPaqueteDesctripcion` |
+| 79 | Shared/_ViajesPartial.cshtml | 2026-04-07 | Lista estilo `list-group` con iconos |
+| 80 | Shared/_Search.cshtml | 2026-04-07 | `section` + `aria-live="polite"` alrededor del grid de búsqueda |
+| 81 | PersonaPasajero/PartialPasajerosHistorial.cshtml | 2026-04-07 | `table-responsive`; `table-sm table-bordered`; `thead.table-light` |
+| 82 | PersonaVendedor/PartialHistorialPagos.cshtml | 2026-04-07 | Tabla personalizada moderna; detalle/recibo vía `imprimirReciboPago` + `FacturaId` desde `MovimientoCuenta` (`VendedorHistorialPagoFila`) |
 
 ---
 
@@ -177,7 +184,7 @@
 
 66. ✅ **NuevaReserva/Index.cshtml** — Parcial 2026-04-07: encabezados `nr-section-title` + Bootstrap Icons; botón Pagar `btn-modern-danger`; enlace «Seleccionar» responsable menor con `btn-modern` (vista muy grande; lógica y widgets legacy restantes)
 67. ✅ **ReservaHabitacion/Index.cshtml** - Modal modernizado con diseño SaaS, formulario optimizado - Completado 2025-01-27
-68. ⏳ **Admin/Index.cshtml** - Panel de administración con widgets especiales
+68. ✅ **Admin/Index.cshtml** — Sección sistema/diagnóstico (ErrorLog, Logs) y cards alineadas al menú — 2026-04-07
 
 ---
 
@@ -219,7 +226,7 @@
 - ⏳ PasajeroViaje/Manifiesto.cshtml
 - ⏳ PasajeroViaje/ListadoSimple.cshtml
 - ⏳ PasajeroViaje/ListadoSimpleToExport.cshtml
-- ⏳ PasajeroViaje/PartialPasajerosHistorial.cshtml
+- ✅ PersonaPasajero/PartialPasajerosHistorial.cshtml — Tablas BS5 compactas — 2026-04-07
 
 #### PersonaCliente (Vistas adicionales):
 - ⏳ PersonaCliente/Voucher.cshtml
@@ -294,18 +301,18 @@
 - ⏳ NotaCredito/partialNotaCredito.cshtml
 - ⏳ NotaCredito/partialMovimientoNotaCredito.cshtml
 - ⏳ CuentaCorriente/DetalleComprobante.cshtml
-- ⏳ Home/HistorialPagos.cshtml
+- ✅ Home/HistorialPagos.cshtml — Contenedor y filtros modernos (página contenedora del grid) — 2026-04-07
 - ⏳ Home/TodosLosViajes.cshtml
 - ⏳ Home/TodosLosViajesIndex.cshtml
-- ⏳ Home/RenderGridHistorialPagos.cshtml
-- ⏳ Shared/_ViajesPartial.cshtml
-- ⏳ Shared/_Search.cshtml
-- ⏳ Shared/_DetalleViaje.cshtml
+- ✅ Home/RenderGridHistorialPagos.cshtml — Tabla BS5 + paginación outline — 2026-04-07
+- ✅ Shared/_ViajesPartial.cshtml — `list-group` + iconos — 2026-04-07
+- ✅ Shared/_Search.cshtml — `section` + aria-live — 2026-04-07
+- ✅ Shared/_DetalleViaje.cshtml — Tipografía/iconos BS5 — 2026-04-07
 - ⏳ Shared/Voucher.cshtml
 - ⏳ Shared/Error.cshtml
 - ⏳ Shared/_LayoutAdmin.cshtml
 - ⏳ Shared/_LayoutSplash.cshtml
-- ⏳ PersonaVendedor/PartialHistorialPagos.cshtml
+- ✅ PersonaVendedor/PartialHistorialPagos.cshtml — Tabla + `js-detalle-pago-vendedor` → `imprimirReciboPago` — 2026-04-07
 
 ---
 
@@ -320,9 +327,9 @@
 | ⏳ Fase 5 | Vistas Muy Complejas | 8 ítems (1 parcialmente hecho) | ~65 horas | 🟢 Baja |
 | ⏳ Fase 6 | Vistas Especializadas | ~40+ ⏳ *(muchas marcadas ✅ en sublistas Viajes/Paquetes/NuevaReserva/Admin parcial)* | ~100 horas | ⚪ Muy Baja |
 
-**TOTAL COMPLETADAS (tabla numerada #1–#61):** 61 filas en la tabla principal + Fase 4 ítem 50–58 ✅ + sublistas Fase 6 actualizadas (Paquetes, Viajes parcial, NuevaReserva, Planillas).  
-**TOTAL PENDIENTES (aprox.):** ~55–65 vistas según lo que siga en ⏳ en Fase 5–6.  
-**Avance global estimado (P1 según este doc):** **~59%** — resumen pagos admin auditado + fix orden Razor en GridResumenPagosFecha; conviene seguir auditando ⏳ restantes.  
+**TOTAL COMPLETADAS (tabla numerada #1–#82):** 82 filas en la tabla principal + sublistas Fase 6 (Home contenedora + partials Shared + PersonaPasajero/Vendedor auditados en esta tanda).  
+**TOTAL PENDIENTES (aprox.):** ~45–55 vistas según ⏳ en Fase 5–6.  
+**Avance global estimado (P1 según este doc):** **~74%** — auditoría partials Home/Shared + historial vendedor con recibo; seguir ⏳ (Busqueda, NotaCredito, resto PersonaCliente, etc.).  
 **TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
 
 ---
@@ -659,8 +666,13 @@ else
 | 2026-04-07 | Admin/PartialGridServiciosAdmin.cshtml + binding | Modal servicios planilla | Clase `.js-seleccionar-servicio-admin` reemplaza id duplicado | `mat.jquery.binding.js` |
 | 2026-04-07 | Admin/GridResumenPagosFecha.cshtml | Resumen pagos | `@model` antes de bloque error | Orden Razor |
 | 2026-04-07 | — | Doc | Cuatro vistas resumen pagos marcadas ✅ | Solo inventario |
+| 2026-04-07 | Admin/Index.cshtml | Admin | Tarjetas ErrorLog + Logs en sección sistema/diagnóstico | Alineado a `_LayoutAdmin` |
+| 2026-04-07 | Home/RenderGridHistorialPagos.cshtml | Parcial grid | Tabla BS5 + paginación outline | `table-sm`, `btn-outline-secondary` |
+| 2026-04-07 | Shared/_DetalleViaje, _ViajesPartial, _Search | Parciales | Tipografía/list-group/aria-live | P1 parciales |
+| 2026-04-07 | PersonaPasajero/PartialPasajerosHistorial.cshtml | Parcial | Tabla responsive compacta | `thead.table-light` |
+| 2026-04-07 | PersonaVendedor/PartialHistorialPagos + controller + binding | Parcial | `VendedorHistorialPagoFila`, `MovimientoCuentaService.GetByPagoId`, `.js-detalle-pago-vendedor` → `imprimirReciboPago` | Sin ids duplicados |
 
-**Total de mejoras registradas:** 57+ (ver filas anteriores en esta tabla)
+**Total de mejoras registradas:** 64+ (ver filas anteriores en esta tabla)
 
 ---
 

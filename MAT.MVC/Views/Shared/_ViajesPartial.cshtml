@@ -1,11 +1,11 @@
-﻿@model IList<MAT.Entities.Viaje>
+@model IList<MAT.Entities.Viaje>
 
-<ul class="lista-viajes">
+<ul class="list-group list-group-flush viajes-partial-list">
     @foreach (MAT.Entities.Viaje viaje in Model)
-        {
-            <li class="item-viaje">
-                <p>@viaje.HoraSalida</p>
-                <p>@viaje.Medio</p>
-            </li>
-        }            
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-0 border-bottom">
+            <span class="fw-medium"><i class="bi bi-clock text-secondary me-1"></i>@viaje.HoraSalida</span>
+            <span class="text-muted small">@viaje.Medio</span>
+        </li>
+    }
 </ul>

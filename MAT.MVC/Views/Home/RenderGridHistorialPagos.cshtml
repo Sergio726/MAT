@@ -1,104 +1,72 @@
-﻿@model PagedList.IPagedList<MAT.MVC.Models.HistorialModel>
+@model PagedList.IPagedList<MAT.MVC.Models.HistorialModel>
 @using MAT.Enums
 @using MAT.Utilities
 @using MAT.Entities
-<table class="grid mat-customtable">
-    <thead>
-    <tr>
-        <th class="hidden">
-        </th>
-        <th>
-            Tabla
-        </th>
-        <th>
-            Operación
-        </th>
-        <th>
-            Registro
-        </th>
-        <th>
-            Cliente
-        </th>
-        
-        <th>
-            Vendedor
-        </th>
-        
-        <th>
-            Monto
-        </th>
-        <th>
-            Observaciones
-        </th>
-        <th></th>       
-    </tr>
-        </thead>
-    <tbody>    
-@foreach (var item in Model) {
-    <tr>
-        <td class="hidden">
-            @item.Registro.HistorialId
-        </td>
-        <td>
-            @(((eTabla)item.Registro.Tabla).GetDescription())
-        </td>
-        <td>
-            @(((eOperacion)item.Registro.Operacion).GetDescription())
-        </td>
-        <td>
-            @item.Registro.FechaHoraRegistro
-        </td>
-        <td>
-            @item.Cliente.Nombre @item.Cliente.Apellido
-        </td>
-       
-        <td>
-            @item.Vendedor.Nombre @item.Vendedor.Apellido
-        </td>
-        <td>
-            @item.Registro.Monto
-        </td>
-        <td>
-            @item.Registro.Observaciones
-        </td>
-        <td>
-        </td>
-    </tr>
-}
-        </tbody>
-</table>
-<div class="mat-custompaging">
-    Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
-    de @Model.PageCount
 
-    @if (Model.HasPreviousPage)
-    {
-        @Html.ActionLink("<<", "Index", new { page = 1 }, new { @class = "btn-pager" })
-        @Html.Raw(" ");
-        @Html.ActionLink("< Atrás", "Index", new { page = Model.PageNumber - 1 }, new { @class = "btn-pager" })
-    }
-    else
-    {
-        <a id="btn-pager-first" class="btn-pager"><<</a>
-        <a id="btn-pager-previous" class="btn-pager">< Atrás</a>
-    }
-
-    @if (Model.HasNextPage)
-    {
-        @Html.ActionLink("Siguiente >", "Index", new { page = Model.PageNumber + 1 }, new { @class = "btn-pager" })
-        @Html.Raw(" ");
-        @Html.ActionLink(">>", "Index", new { page = Model.PageCount }, new { @class = "btn-pager" })
-    }
-    else
-    {
-        <a class="btn-pager">Siguiente ></a>
-        <a class="btn-pager">>></a>
-    }
-
-
+<div class="historial-grid-wrap p-2">
+    <div class="table-responsive rounded border bg-white">
+        <table class="grid mat-customtable table table-sm table-bordered table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="d-none"></th>
+                    <th>Tabla</th>
+                    <th>Operación</th>
+                    <th>Registro</th>
+                    <th>Cliente</th>
+                    <th>Vendedor</th>
+                    <th>Monto</th>
+                    <th>Observaciones</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="d-none">@item.Registro.HistorialId</td>
+                        <td>@(((eTabla)item.Registro.Tabla).GetDescription())</td>
+                        <td>@(((eOperacion)item.Registro.Operacion).GetDescription())</td>
+                        <td>@item.Registro.FechaHoraRegistro</td>
+                        <td>@item.Cliente.Nombre @item.Cliente.Apellido</td>
+                        <td>@item.Vendedor.Nombre @item.Vendedor.Apellido</td>
+                        <td>@item.Registro.Monto</td>
+                        <td>@item.Registro.Observaciones</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex flex-wrap align-items-center gap-2 py-3 small text-secondary">
+        <span>
+            Página @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) de @Model.PageCount
+        </span>
+        <div class="d-flex flex-wrap gap-1 ms-md-auto">
+            @if (Model.HasPreviousPage)
+            {
+                @Html.ActionLink("« Primera", "Index", new { page = 1 }, new { @class = "btn btn-sm btn-outline-secondary" })
+                @Html.ActionLink("‹ Anterior", "Index", new { page = Model.PageNumber - 1 }, new { @class = "btn btn-sm btn-outline-secondary" })
+            }
+            else
+            {
+                <button type="button" class="btn btn-sm btn-outline-secondary" disabled>« Primera</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" disabled>‹ Anterior</button>
+            }
+            @if (Model.HasNextPage)
+            {
+                @Html.ActionLink("Siguiente ›", "Index", new { page = Model.PageNumber + 1 }, new { @class = "btn btn-sm btn-outline-secondary" })
+                @Html.ActionLink("Última »", "Index", new { page = Model.PageCount }, new { @class = "btn btn-sm btn-outline-secondary" })
+            }
+            else
+            {
+                <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Siguiente ›</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Última »</button>
+            }
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
     $(function () {
-        $("table tbody tr:odd").addClass("odd");
+        $("table tbody tr:odd").addClass("table-light");
     });
 </script>
