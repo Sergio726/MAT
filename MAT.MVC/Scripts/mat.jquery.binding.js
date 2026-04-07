@@ -1702,7 +1702,8 @@ $(document).on("click", "#btn-eliminar-viaje", function () {
 // La mayoría de los flujos (Reserva/Index) actualizan el DOM por JS/AJAX (butacas/estados),
 // y un reload global rompe UX (pierde selección/scroll) y empeora performance.
 
-$(document).on("click", "#btn-cancelar-seleccion", function () {
+$(document).on("click", "#btn-cancelar-seleccion", function (e) {
+    if (e && e.preventDefault) e.preventDefault();
     $("#panel-bus a.selected").removeClass("selected");
     $("#hdnListMenor").val("");
     $("#SeleccionPasajero").dialog("close");
@@ -1977,7 +1978,7 @@ $(document).on("click", "#btn-vincular-hotel", function () {
         }
     });
 });
-$(document).on("click", "#btn-desvincular-hotel", function () {
+$(document).on("click", ".js-desvincular-hotel-viaje", function () {
     var viajeid = $(this).data("viaje");
     var hotelid = $(this).data("hotel");
     var btn = $(this);
@@ -2463,7 +2464,8 @@ $(document).on("click", "#btn-imprimir-planilla", function () {
     window.open(url, '_blank');
 });
 
-$(document).on("click", "#btn-imprimir-planilla-detalle", function () {
+$(document).on("click", ".js-imprimir-planilla-detalle", function (e) {
+    if (e && e.preventDefault) e.preventDefault();
     var planillaid = $(this).data("planilla");
     var url = "/Admin/ImprimirPlanillaDetalle?planillaid=" + planillaid;
     var title = "Planilla";

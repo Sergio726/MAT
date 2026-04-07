@@ -15,6 +15,19 @@
 }
 
 <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
+<style>
+    .nr-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+    .nr-section-title .bi {
+        color: var(--primary-color, #e91e63);
+        font-size: 1.05rem;
+        flex-shrink: 0;
+    }
+</style>
 <div class="MsgError">
     <span>@Html.Raw(@ViewBag.MsgError)</span>
 </div>
@@ -42,7 +55,7 @@ else
                 <section id="panel-detalle">
                     <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
                         <div class="widget-head">
-                            <h4 class="heading glyphicons"><i></i>Detalle de Viaje</h4>
+                            <h4 class="heading nr-section-title"><i class="bi bi-info-square"></i><span>Detalle de Viaje</span></h4>
                             <span class="collapse-toggle"></span>
                         </div>
                         <div id="divDetalleViaje" class="widget-body in collapse" style="height: auto;">
@@ -51,7 +64,7 @@ else
                     </div>
                     <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
                         <div class="widget-head">
-                            <h4 class="heading glyphicons"><i></i>Resumen</h4>
+                            <h4 class="heading nr-section-title"><i class="bi bi-receipt"></i><span>Resumen</span></h4>
                             <span class="collapse-toggle"></span>
                         </div>
                         <div class="widget-body collapse" style="height: 0px;">
@@ -66,7 +79,7 @@ else
                 <section id="panel-cliente" class="container-section">
                     <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
                         <div class="widget-head">
-                            <h4 class="heading glyphicons"><i></i>Cliente</h4>
+                            <h4 class="heading nr-section-title"><i class="bi bi-person-badge"></i><span>Cliente</span></h4>
                             <span class="collapse-toggle"></span>
                         </div>
                         <div id="divCliente" class="widget-body in collapse" style="height: auto;width: 500px">
@@ -84,7 +97,7 @@ else
                 <section id="panel-pasajeros" class="container-section">
                     <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
                         <div class="widget-head">
-                            <h4 class="heading glyphicons"><i></i>Pasajeros</h4>
+                            <h4 class="heading nr-section-title"><i class="bi bi-people"></i><span>Pasajeros</span></h4>
                             <span class="collapse-toggle"></span>
                         </div>
                         <div id="divCliente" class="widget-body in collapse" style="height: auto; width: 100%; box-sizing: border-box">
@@ -105,7 +118,7 @@ else
                 <section id="panel-bus">
                     <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
                         <div class="widget-head">
-                            <h4 class="heading glyphicons"><i></i>Butacas</h4>
+                            <h4 class="heading nr-section-title"><i class="bi bi-grid-3x3-gap"></i><span>Butacas</span></h4>
                             <span class="collapse-toggle"></span>
                         </div>
                         <div id="divButacas" class="widget-body in collapse" style="height: auto; width: 100%; box-sizing: border-box">
@@ -235,7 +248,7 @@ else
                     <div id="tabla-referencia">
                         <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
                             <div class="widget-head">
-                                <h4 class="heading glyphicons"><i></i>Tabla de Referencias</h4>
+                                <h4 class="heading nr-section-title"><i class="bi bi-palette"></i><span>Tabla de Referencias</span></h4>
                                 <span class="collapse-toggle"></span>
                             </div>
                             <div class="widget-body in collapse scroll_x" style="height: 130px;">
@@ -284,7 +297,7 @@ else
                 <section id="panel-habitaciones" class="container-section">
                     <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
                         <div class="widget-head">
-                            <h4 class="heading glyphicons"><i></i>Habitaciones</h4>
+                            <h4 class="heading nr-section-title"><i class="bi bi-door-open"></i><span>Habitaciones</span></h4>
                             <span class="collapse-toggle"></span>
                         </div>
                         <div id="divCliente" class="widget-body in collapse" style="height: auto; width: 100%; box-sizing: border-box">
@@ -297,7 +310,7 @@ else
                 <section id="panel-adicionales" class="container-section">
                     <div class="widget" data-toggle="collapse-widget" data-collapse-closed="false">
                         <div class="widget-head">
-                            <h4 class="heading glyphicons"><i></i>Adicionales</h4>
+                            <h4 class="heading nr-section-title"><i class="bi bi-plus-circle"></i><span>Adicionales</span></h4>
                             <span class="collapse-toggle"></span>
                         </div>
                         <div id="divCliente" class="widget-body in collapse" style="height: auto; width: 100%; box-sizing: border-box">
@@ -316,7 +329,7 @@ else
                    type="button"
                    title="Pagar"
                    value="Pagar"
-                   class="btn btn-small btn-danger"
+                   class="btn-modern btn-modern-danger"
                    onclick="oReserva.reservar();" />
 
         </p>
@@ -491,8 +504,8 @@ else
                 let button = "";
                 if (row.Edad < 20) {
                     if (row.PasajeroAdulto.Id == "") {
-                        button = "<a href=\"#\" onclick=\"oReserva.assignPasajeroResponsable('" + row.Id + "')\" "+
-                            " class=\"btn btn-inverse btn-small\" >Seleccionar</a >";
+                        button = "<a href=\"#\" onclick=\"oReserva.assignPasajeroResponsable('" + row.Id + "')\" " +
+                            "class=\"btn-modern btn-modern-primary btn-modern-sm\">Seleccionar</a>";
                     }
                     else {
                         button = row.PasajeroAdulto.NombreCompleto;

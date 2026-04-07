@@ -1,4 +1,4 @@
-﻿﻿@model List<MAT.MVC.Models.ViajeHotel>
+@model List<MAT.MVC.Models.ViajeHotel>
 
 @{
     ViewBag.Title = "Hoteles";
@@ -218,7 +218,7 @@
                                     <a href="javascript: setEgresoIngreso('@item.ViajeHotelID','@item.ViajeID','@item.Desde');" class="btn-hotel-action btn-hotel-edit" title="Editar ingreso/egreso">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="#" id="btn-desvincular-hotel" data-hotel="@item.HotelID" data-viaje="@item.ViajeID" class="btn-hotel-action btn-hotel-delete" title="Desvincular Hotel">
+                                    <a href="#" data-hotel="@item.HotelID" data-viaje="@item.ViajeID" class="btn-hotel-action btn-hotel-delete js-desvincular-hotel-viaje" title="Desvincular Hotel">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </div>

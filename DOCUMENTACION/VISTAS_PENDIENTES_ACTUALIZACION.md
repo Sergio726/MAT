@@ -1,7 +1,7 @@
 # LISTADO DE VISTAS PENDIENTES DE ACTUALIZAR
 
 **Fecha de creación:** 2025-01-27  
-**Estado:** En progreso - Fase 1, Fase 2 y Fase 3 completadas
+**Estado:** En progreso — Fases 2 y 3 completadas; **Fase 4 completada en código** (auditoría 2026-04-07); P1 continúa en Fase 5–6.
 
 ---
 
@@ -60,6 +60,16 @@
 | 49 | Hotel/Details.cshtml | 2025-01-27 | Vista de detalles moderna, integración Google Maps, badges |
 | 50 | PersonaCliente/Index.cshtml | 2025-01-27 | Rediseño completo con tarjetas, búsqueda en tiempo real, optimización SQL (TOP 10) |
 | 51 | ReservaHabitacion/Index.cshtml | 2025-01-27 | Modal modernizado, formulario de selección hotel, diseño SaaS |
+| 52 | Viaje/Create.cshtml | 2026-04-07 | `modern-page-container`, form grid, datepicker/timepicker, modelo no nulo en controller |
+| 53 | ReservaHabitacion/ReservaHabitacion.cshtml | 2026-04-07 | Modal fechas/horas con `modern-form-input`, botón `btn-modern` |
+| 54 | Reserva/SeleccionarPasajero.cshtml | 2026-04-07 | Botonera Continuar/Cancelar `btn-modern`; `preventDefault` en cancelar |
+| 55 | Viaje/Hoteles.cshtml + desvincular | 2026-04-07 | Handler `.js-desvincular-hotel-viaje` (sin ids duplicados) |
+| 56 | Viaje/Hoteles07122016.cshtml | 2026-04-07 | Tabla moderna; enlace a `Viaje/Hoteles` |
+| 57 | Admin/PlanillaServicios.cshtml | 2026-04-07 | Botón agregar ítem BS5 `btn-primary btn-sm` |
+| 58 | Admin/GridPlanillasGeneradas.cshtml | 2026-04-07 | Tabla en card; imprimir por clase `.js-imprimir-planilla-detalle` |
+| 59 | NuevaReserva/SeleccionarPasajero.cshtml | 2026-04-07 | Botón Asignar `btn-modern` |
+| 60 | NuevaReserva/FormReserva.cshtml | 2026-04-07 | Aceptar/Cancelar `btn-modern` |
+| 61 | NuevaReserva/Index.cshtml | 2026-04-07 | Títulos de widget con Bootstrap Icons (`nr-section-title`); Pagar `btn-modern-danger`; link Seleccionar en grid |
 
 ---
 
@@ -112,22 +122,23 @@
 
 ---
 
-## 📋 FASE 4: FORMULARIOS COMPLEJOS (9 vistas) - Costo: ALTO
+## 📋 FASE 4: FORMULARIOS COMPLEJOS (9 vistas) - Costo: ALTO ✅ COMPLETADA (repositorio)
 
 **Estimación:** 4-8 horas cada una  
-**Total estimado:** ~50 horas
+**Total estimado:** ~50 horas  
+**Estado:** ✅ Las 9 vistas figuran modernizadas en código — verificación 2026-04-07
 
 ### ABM y Viajes:
 
-50. ⏳ **Precio/ABM.cshtml** - Formulario ABM (modal/popup)
-51. ⏳ **Habitacion/ABM.cshtml** - Formulario ABM
-52. ⏳ **Habitacion/Edit.cshtml** - Formulario medio
-53. ⏳ **Habitacion/Details.cshtml** - Vista de detalles
-54. ⏳ **HotelHabitacionViaje/ABM.cshtml** - Formulario ABM
-55. ⏳ **Viaje/Index.cshtml** - Tabla con filtros y carga dinámica AJAX
-56. ✅ **Viaje/Create.cshtml** - Formulario alineado a patrón moderno (BS5 / clases modernas); `Create` devuelve modelo no nulo — Completado 2026-04-07
-57. ⏳ **Viaje/Edit.cshtml** - Formulario complejo
-58. ⏳ **Viaje/Details.cshtml** - Vista de detalles
+50. ✅ **Precio/ABM.cshtml** — Modal ABM `modern-form-*`, `btn-modern`; jQuery UI dialog solo para cerrar contenedor host — 2026-04-07
+51. ✅ **Habitacion/ABM.cshtml** — Modal habitación con grid moderno — 2026-04-07
+52. ✅ **Habitacion/Edit.cshtml** — Formulario card/grid con Bootstrap Icons — 2026-04-07
+53. ✅ **Habitacion/Details.cshtml** — Vista detalle con badges y secciones — 2026-04-07
+54. ✅ **HotelHabitacionViaje/ABM.cshtml** — ABM distribución, estilos variable CSS — 2026-04-07
+55. ✅ **Viaje/Index.cshtml** — `viajes-page-container`, filtro año, carga AJAX de lista — 2026-04-07
+56. ✅ **Viaje/Create.cshtml** — Patrón moderno completo — Completado 2026-04-07
+57. ✅ **Viaje/Edit.cshtml** — Formulario complejo `modern-page` / secciones — 2026-04-07
+58. ✅ **Viaje/Details.cshtml** — Detalle con `detail-section` / BI — 2026-04-07
 
 ---
 
@@ -148,7 +159,7 @@
 
 ### Reservas y Admin:
 
-66. ⏳ **NuevaReserva/Index.cshtml** - Vista muy compleja (1100+ líneas, múltiples secciones)
+66. ✅ **NuevaReserva/Index.cshtml** — Parcial 2026-04-07: encabezados `nr-section-title` + Bootstrap Icons; botón Pagar `btn-modern-danger`; enlace «Seleccionar» responsable menor con `btn-modern` (vista muy grande; lógica y widgets legacy restantes)
 67. ✅ **ReservaHabitacion/Index.cshtml** - Modal modernizado con diseño SaaS, formulario optimizado - Completado 2025-01-27
 68. ⏳ **Admin/Index.cshtml** - Panel de administración con widgets especiales
 
@@ -162,16 +173,25 @@
 ### Vistas parciales y especializadas (menor prioridad):
 
 #### Paquetes:
-- ⏳ Paquete/Edit.cshtml
-- ⏳ Paquete/Vinculos.cshtml
-- ⏳ Paquete/Servicios.cshtml
-- ⏳ Paquete/Precios.cshtml
-- ⏳ Paquete/Excursiones.cshtml
-- ⏳ Paquete/Adicionales.cshtml
+- ✅ Paquete/Edit.cshtml — Formulario `paquete-container`, modal destino custom, sin BS2/glyphicons — verificado 2026-04-07
+- ✅ Paquete/Vinculos.cshtml — `vinculos-container`, tablas y botones alineados a diseño actual — 2026-04-07
+- ✅ Paquete/Servicios.cshtml — Sin `glyphicon`/`btn-inverse` en vista — 2026-04-07
+- ✅ Paquete/Precios.cshtml — Mismo criterio — 2026-04-07
+- ✅ Paquete/Excursiones.cshtml — Mismo criterio — 2026-04-07
+- ✅ Paquete/Adicionales.cshtml — Mismo criterio — 2026-04-07
+
+#### NuevaReserva (flujo):
+- ✅ NuevaReserva/Index.cshtml — Ver ítem 66 Fase 5 (parcial 2026-04-07)
+- ✅ NuevaReserva/FormReserva.cshtml — Botones Aceptar/Cancelar `btn-modern` — 2026-04-07
+- ✅ NuevaReserva/SeleccionarPasajero.cshtml — Botón Asignar `btn-modern` — 2026-04-07
+
+#### ReservaHabitacion (vistas adicionales):
+- ✅ ReservaHabitacion/ReservaHabitacion.cshtml — Modal fechas/horas `modern-form-input`, botón Reservar `btn-modern` — 2026-04-07 *(además de `ReservaHabitacion/Index` ya en tabla #51)*
 
 #### Reservas:
-- ⏳ Reserva/FormReserva.cshtml
+- ⏳ Reserva/FormReserva.cshtml *(distinto de `NuevaReserva/FormReserva.cshtml`)*
 - ⏳ Reserva/VinculacionMenor.cshtml
+- ✅ Reserva/SeleccionarPasajero.cshtml — Botonera confirmar/cancelar con clases `btn-modern` (P1 parcial) — 2026-04-07
 - ⏳ Reserva/QuickSearch.cshtml
 - ⏳ Reserva/DistribucionCoche.cshtml
 - ⏳ Reserva/FormListaMayor.cshtml
@@ -208,12 +228,12 @@
 - ⏳ PersonaCliente/PopupDetalleFactura.cshtml
 
 #### Viajes:
-- ⏳ Viaje/ListViajes.cshtml
-- ⏳ Viaje/PopPupViajes.cshtml
-- ⏳ Viaje/Hoteles.cshtml
-- ⏳ Viaje/HotelesDisponibles.cshtml
-- ⏳ Viaje/Hoteles07122016.cshtml
-- ⏳ Viaje/HotelSetIngresoEgreso.cshtml
+- ✅ Viaje/ListViajes.cshtml — Partial lista con `viajes-list-container`, tipografía unificada — 2026-04-07
+- ✅ Viaje/PopPupViajes.cshtml — `popup-viajes-*`, tabla moderna — 2026-04-07
+- ✅ Viaje/Hoteles.cshtml — `hoteles-page-container`, acciones BI, `.js-desvincular-hotel-viaje` — 2026-04-07
+- ✅ Viaje/HotelesDisponibles.cshtml — Tabla y `btn-vincular` actuales — 2026-04-07
+- ✅ Viaje/Hoteles07122016.cshtml — Tabla y acciones modernas; desvincular vía `.js-desvincular-hotel-viaje`; enlace a `Viaje/Hoteles` — 2026-04-07
+- ✅ Viaje/HotelSetIngresoEgreso.cshtml — Form grid ingreso/egreso con variables CSS — 2026-04-07
 
 #### Hoteles:
 - ⏳ Hotel/Distribucion.cshtml
@@ -231,13 +251,13 @@
 - ⏳ Admin/ResumenPagosPorFecha.cshtml
 - ⏳ Admin/GridResumenPagos.cshtml
 - ⏳ Admin/GridResumenPagosFecha.cshtml
-- ⏳ Admin/PlanillaServicios.cshtml
+- ✅ Admin/PlanillaServicios.cshtml — Botón agregar `btn-primary btn-sm` (sin `btn-inverse`) — 2026-04-07
 - ⏳ Admin/EditarPlanilla.cshtml
 - ⏳ Admin/HistorialPrecios.cshtml
 - ⏳ Admin/AuditoriaFacturas.cshtml
 - ⏳ Admin/ImprimirPlanilla.cshtml
 - ⏳ Admin/ImprimirPlanillaDetalle.cshtml
-- ⏳ Admin/GridPlanillasGeneradas.cshtml
+- ✅ Admin/GridPlanillasGeneradas.cshtml — Card tabla + `.js-imprimir-planilla-detalle` — 2026-04-07
 - ⏳ Admin/PartialGridServiciosAdmin.cshtml
 - ⏳ Admin/GridPlanillaServicioItemContext.cshtml
 - ⏳ Admin/GridPlanillaServiciosItemEdit.cshtml
@@ -278,13 +298,14 @@
 | ✅ Completadas | Vistas modernizadas | 51 | - | ✅ |
 | ✅ Fase 2 | Formularios Simples | 9 | ~25 horas | ✅ Completada |
 | ✅ Fase 3 | Formularios y Tablas Medios | 15 | ~60 horas | ✅ Completada |
-| ⏳ Fase 4 | Formularios Complejos | 9 | ~50 horas | 🟡 Media-Baja |
-| ⏳ Fase 5 | Vistas Muy Complejas | 7 | ~65 horas | 🟢 Baja |
-| ⏳ Fase 6 | Vistas Especializadas | ~60 | ~100 horas | ⚪ Muy Baja |
+| ✅ Fase 4 | Formularios Complejos | 9 | ~50 horas | ✅ Código 2026-04-07 |
+| ⏳ Fase 5 | Vistas Muy Complejas | 8 ítems (1 parcialmente hecho) | ~65 horas | 🟢 Baja |
+| ⏳ Fase 6 | Vistas Especializadas | ~40+ ⏳ *(muchas marcadas ✅ en sublistas Viajes/Paquetes/NuevaReserva/Admin parcial)* | ~100 horas | ⚪ Muy Baja |
 
-**TOTAL COMPLETADAS:** 51 vistas  
-**TOTAL PENDIENTES:** ~76 vistas  
-**TOTAL HORAS ESTIMADAS:** ~215 horas restantes
+**TOTAL COMPLETADAS (tabla numerada #1–#61):** 61 filas en la tabla principal + Fase 4 ítem 50–58 ✅ + sublistas Fase 6 actualizadas (Paquetes, Viajes parcial, NuevaReserva, Planillas).  
+**TOTAL PENDIENTES (aprox.):** ~55–65 vistas según lo que siga en ⏳ en Fase 5–6.  
+**Avance global estimado (P1 según este doc):** **~52%** — tras sincronizar listas con el código; conviene seguir auditando ⏳ restantes.  
+**TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
 
 ---
 
@@ -598,6 +619,15 @@ else
 | 2025-01-27 | PersonaCliente/Index.cshtml | Index | Rediseño completo con tarjetas, búsqueda en tiempo real, optimización SQL | Sistema de tarjetas, búsqueda con debounce, SP optimizado `usp_MAT_PersonaCliente_GetTop`, TOP 10 |
 | 2025-01-27 | ReservaHabitacion/Index.cshtml | Modal | Modal modernizado, formulario de selección hotel | `.modern-reserva-habitacion-container`, diseño SaaS, jQuery UI mejorado |
 | 2025-01-27 | ReservaHabitacion/GridHotelHabitacion.cshtml | Vista Parcial | Tabla moderna de habitaciones, badges de disponibilidad | `.modern-table`, badges éxito/peligro, botones modernos |
+| 2026-04-07 | Viaje/Hoteles07122016.cshtml | Lista legacy | Layout moderno; desvincular con clase compartida; enlace a Hoteles | `btn-modern`, `js-desvincular-hotel-viaje`, Bootstrap Icons |
+| 2026-04-07 | Viaje/Hoteles.cshtml | Lista hoteles | Desvincular: mismo handler por clase (corrige IDs duplicados) | `.js-desvincular-hotel-viaje` |
+| 2026-04-07 | ReservaHabitacion/ReservaHabitacion.cshtml | Modal | Formulario fechas/horas con `modern-form-input`, botón `btn-modern` | Sin cambios en AJAX `#btnReservarHabitacion` |
+| 2026-04-07 | Reserva/SeleccionarPasajero.cshtml | Modal pasajeros | Botonera P1 sin BS2 `btn-inverse` | `btn-modern-primary` / `btn-modern-secondary` |
+| 2026-04-07 | Admin/PlanillaServicios.cshtml | Admin | Botón agregar item: BS5 `btn-primary btn-sm` | Reemplazo `btn-inverse` |
+| 2026-04-07 | Admin/GridPlanillasGeneradas.cshtml | Admin | Tabla envuelta en card; imprimir por `.js-imprimir-planilla-detalle`; sin IDs duplicados | `btn-modern`, fix handler en `mat.jquery.binding.js` |
+| 2026-04-07 | NuevaReserva/SeleccionarPasajero.cshtml | Modal | Botón Asignar `btn-modern` | Quitar `btn-inverse`; typo title pajero→pasajero |
+| 2026-04-07 | NuevaReserva/FormReserva.cshtml | Form pago | Aceptar/Cancelar `btn-modern`; corregida coma inválida en atributo class | P1 |
+| 2026-04-07 | NuevaReserva/Index.cshtml | Wizard | Títulos de widget con Bootstrap Icons (`nr-section-title`); Pagar `btn-modern-danger`; link Seleccionar en tabla pasajeros | Sin glyphicons en esos `<h4>` |
 
 **Total de mejoras registradas:** 42
 

@@ -1,4 +1,4 @@
-﻿@using MAT.Utilities
+@using MAT.Utilities
 @{
     ViewBag.Title = "PlanillaServicios";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -10,7 +10,7 @@
        <div class="form-label">Viajes</div>
         <div class="form-field">
             @Html.DropDownList("Viajes", Helper.ToSelectEntities("Viaje"), new { @class = "ui-button ui-widget ui-corner-all" })
-            <input type="button" id="AgregarPlanillaServicioItem" title="Agregar Item" value="Agregar Item" class="btn btn-inverse btn-small" />
+            <input type="button" id="AgregarPlanillaServicioItem" title="Agregar Item" value="Agregar Item" class="btn btn-primary btn-sm" />
         </div>    
 </div>
 

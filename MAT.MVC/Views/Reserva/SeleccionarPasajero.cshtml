@@ -149,10 +149,10 @@
     </div>
 
     <div class="botonera-form" id="sp-step-confirmar" data-step="4">
-        <button type="button" class="btn btn-primary" id="btn-continuar-reserva">
+        <button type="button" class="btn-modern btn-modern-primary" id="btn-continuar-reserva">
             <i class="bi bi-check-circle"></i> Continuar Reserva
         </button>
-        <a class="btn btn-small btn-inverse" id="btn-cancelar-seleccion">Cancelar</a>
+        <a class="btn-modern btn-modern-secondary" id="btn-cancelar-seleccion" href="#" role="button">Cancelar</a>
     </div>
 </div>
 
@@ -481,7 +481,8 @@
         });
 
         // Botón Cancelar
-        $("#btn-cancelar-seleccion").on("click", function () {
+        $("#btn-cancelar-seleccion").on("click", function (e) {
+            e.preventDefault();
             window.pasajerosSeleccionadosModal = [];
             $("#SeleccionPasajero").dialog("close");
         });
