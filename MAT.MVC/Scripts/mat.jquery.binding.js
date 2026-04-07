@@ -2169,53 +2169,6 @@ $(document).on("click", ".btn-eliminar-precio-habitacion", function () {
     })
 });
 
-$(document).on("click", "#AgregarPlanillaServicioItem", function () {
-    var url = "/Admin/PartialGridServiciosAdmin";
-    var id = "GridServiciosAdmin";
-    var title = "Seleccionar Servicio de Administrador";
-    ShowFormDialog(url, id, title, "default");
-});
-
-$(document).on("click", ".js-seleccionar-servicio-admin", function (e) {
-    if (e && e.preventDefault) e.preventDefault();
-    var servicioid = $(this).data("id");
-    var viajeid = $("#Viajes option:selected").val();
-    $.ajax({
-        url: "/Admin/AgregarPlanillaServicioItem",
-        data: { servicioid: servicioid, viajeid: viajeid },
-        success: function (data) {
-            if (data == "True") {
-                $("#GridServiciosAdmin").dialog("close");
-                $("#grid_items").load("/Admin/GridPlanillaServicioItemContext");
-            } else {
-                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
-            }
-        }
-    });
-});
-
-$(document).on("blur", "input.cantidad", function () {
-    var planillaservicioitemid = $(this).parent().parent().find("td:eq(0)").text();
-    var precio = $(this).parent().parent().find("td:eq(2)").text();
-    var cantidad = $(this).val();
-    var subtotal = parseFloat(precio) * cantidad;
-    $(this).parent().parent().find("td:eq(4)").text(subtotal);
-
-    $.ajax({
-        url: "/Admin/ActualizarPlanillaServicioItem",
-        data: { planillaservicioitemid: planillaservicioitemid, cantidad: cantidad, subtotal: subtotal },
-        success: function (data) {
-            if (data == "True") {
-                console.log(data);
-            } else {
-                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
-            }
-        }
-    });
-
-    ActualizarTotal();
-});
-
 $(document).on("blur", "input.cantidad-servicio-item", function () {
     var planillaservicioitemid = $(this).parent().parent().find("td:eq(0)").text();
     var precio = $(this).parent().parent().find("td:eq(2)").text();
@@ -2240,34 +2193,6 @@ function ActualizarTotal() {
     });
     $("#total").text("Total: $ " + total);
 }
-
-function CalcularTotal() {
-    var total = 0;
-    $("table tbody tr").each(function () {
-        if (!isNaN(parseFloat($(this).find("td:eq(4)").text()))) {
-            total += parseFloat($(this).find("td:eq(4)").text());
-        }
-    });
-    return total;
-}
-
-$(document).on("click", "#btn-generar-planilla", function () {
-    var total = CalcularTotal();
-    var viajeid = $("#Viajes option:selected").val();
-    console.log(total);
-    console.log(viajeid);
-    $.ajax({
-        url: "/Admin/GenerarPlanillaServicio",
-        data: { viajeid: viajeid, total: total },
-        success: function (data) {
-            if (data == "True") {
-                (window.alertSuccess || window.alert)("Planilla generada correctamente.", "Éxito");
-            } else {
-                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
-            }
-        }
-    });
-});
 
 $(document).on("blur", ".txt-dias", function () {
     var total = 0;
@@ -2402,67 +2327,6 @@ $(document).on("click", "#btn-guardar-planilla", function () {
         });
     });
     if (hecho) (window.alertSuccess || window.alert)("Datos guardados correctamente.", "Éxito");
-});
-
-$(document).on("click", "#btn-siguiente-paso-planilla", function () {
-    var viajeid = $("#Viajes option:selected").val();
-    // CREAR PLANILLA
-    $.ajax({
-        url: "/Admin/GenerarPlanilla",
-        data: { viajeid: viajeid },
-        success: function (data) {
-            if (data == "True") {
-                // (mensaje legacy) Planilla generada correctamente
-            } else {
-                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
-            }
-        }
-    });
-    var total = 0;
-    //AGREGAR LISTA
-    $("table.planilla-habitaciones").each(function () {
-        total += parseFloat($(this).parent().find("input.text-total-hotel").val());
-        //AGREGAR HABITACIONES ITEM
-        $(this).find("tbody tr").each(function () {
-            var id = $(this).find("td.id").text();
-            var dias = $(this).find("td.dias input.txt-dias").val();
-            var subtotal = $(this).find("td.subtotal").text();
-            $.ajax({
-                url: "/Admin/AgregarHabitacionesItem",
-                data: { habitacionid: id, dias: dias, subtotal: subtotal},
-                success: function (data) {
-                    if (data == "True") {
-                        // (mensaje legacy) Planilla generada correctamente
-                    } else {
-                        (window.alertError || window.alert)("Error en la operación (agregar habitaciones a planilla). Contacte con el Administrador del Sistema.", "Error");
-                    }
-                }
-            });
-        });
-    });
-
-    $.ajax({
-        url: "/Admin/AgregarTotalHabitaciones",
-        data: { total: total },
-        success: function (data) {
-            if (data == "True") {
-                // (mensaje legacy) Planilla generada correctamente
-            } else {
-                (window.alertError || window.alert)("Error en la operación (agregar total). Contacte con el Administrador del Sistema.", "Error");
-            }
-        }
-    });
-
-    //SIGUIENTE PASO
-    $("#planilla-tabs").find("ul li a:eq(1)").trigger("click");
-});
-
-$(document).on("click", "#btn-imprimir-planilla", function () {
-    var planillaid = $(this).data("planilla");
-    var url = "/Admin/ImprimirPlanilla?planillaid=" + planillaid;
-    var title = "Planilla";
-    var id = "Planilla";
-    window.open(url, '_blank');
 });
 
 $(document).on("click", ".js-imprimir-planilla-detalle", function (e) {

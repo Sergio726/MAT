@@ -810,11 +810,6 @@
     <Content Include="Views\Admin\GridResumenPagos.cshtml" />
     <Content Include="Views\Admin\ResumenPagosPorFecha.cshtml" />
     <Content Include="Views\Admin\GridResumenPagosFecha.cshtml" />
-    <Content Include="Views\Admin\PartialDropDownHotel.cshtml" />
-    <Content Include="Views\Admin\PlanillaServicios.cshtml" />
-    <Content Include="Views\Admin\PartialGridServiciosAdmin.cshtml" />
-    <Content Include="Views\Admin\GridPlanillaServicioItemContext.cshtml" />
-    <Content Include="Views\Admin\GridPlanillasGeneradas.cshtml" />
     <Content Include="Views\Servicio\Edit.cshtml" />
     <Content Include="Views\Adicional\Edit.cshtml" />
     <Content Include="Views\Excursion\Edit.cshtml" />

@@ -3,6 +3,8 @@
 **Fecha de creación:** 2025-01-27  
 **Estado:** En progreso — Fases 2 y 3 completadas; **Fase 4 completada en código** (auditoría 2026-04-07); P1 continúa en Fase 5–6.
 
+> **2026-04-07 — Retiro de producto (SPEC):** se eliminaron del menú Admin y del código las pantallas **PlanillaServicios**, **PlanillasGeneradas** (lista por viaje), el wizard en sesión (`PartialGridServiciosAdmin`, `GridPlanillaServicioItemContext`, `GridPlanillasGeneradas`) y huérfanos asociados (`PartialDropDownHotel`, `GridPlanillaHotel`, `PartialResumenGridPlanillaHotel` en controller). **Siguen disponibles por URL directa** (uso interno): `EditarPlanilla`, `ImprimirPlanilla`, `ImprimirPlanillaDetalle` y partials de datos por `planillaid` / viaje.
+
 ---
 
 ## ✅ COMPLETADAS (75 vistas en tabla principal; otras fases también ✅):
@@ -65,15 +67,15 @@
 | 54 | Reserva/SeleccionarPasajero.cshtml | 2026-04-07 | Botonera Continuar/Cancelar `btn-modern`; `preventDefault` en cancelar |
 | 55 | Viaje/Hoteles.cshtml + desvincular | 2026-04-07 | Handler `.js-desvincular-hotel-viaje` (sin ids duplicados) |
 | 56 | Viaje/Hoteles07122016.cshtml | 2026-04-07 | Tabla moderna; enlace a `Viaje/Hoteles` |
-| 57 | Admin/PlanillaServicios.cshtml | 2026-04-07 | Botón agregar ítem BS5 `btn-primary btn-sm` |
-| 58 | Admin/GridPlanillasGeneradas.cshtml | 2026-04-07 | Tabla en card; imprimir por clase `.js-imprimir-planilla-detalle` |
+| 57 | ~~Admin/PlanillaServicios.cshtml~~ | 2026-04-07 | **Eliminada** (retiro menú planillas); ver nota arriba |
+| 58 | ~~Admin/GridPlanillasGeneradas.cshtml~~ | 2026-04-07 | **Eliminada** |
 | 59 | NuevaReserva/SeleccionarPasajero.cshtml | 2026-04-07 | Botón Asignar `btn-modern` |
 | 60 | NuevaReserva/FormReserva.cshtml | 2026-04-07 | Aceptar/Cancelar `btn-modern` |
 | 61 | NuevaReserva/Index.cshtml | 2026-04-07 | Títulos de widget con Bootstrap Icons (`nr-section-title`); Pagar `btn-modern-danger`; link Seleccionar en grid |
 | 62 | Admin/ErrorLog.cshtml | 2026-04-07 | BS5: sin glyphicons; `bi-*`, `table-sm`, filtros `d-flex`, fetch/render sin cambios de contrato |
 | 63 | Admin/Logs.cshtml | 2026-04-07 | BS5: formulario `d-flex`; `btn-outline-secondary`; iconos BI |
 | 64 | Admin/EditarPlanilla.cshtml | 2026-04-07 | Card + grid; ids `#fecha-planilla`, `#total-planilla`, `#btn-guardar-planilla`; datepicker opcional si jQuery UI disponible |
-| 65 | Admin/GridPlanillaServicioItemContext.cshtml | 2026-04-07 | Botón `#btn-generar-planilla` con icono BI |
+| 65 | ~~Admin/GridPlanillaServicioItemContext.cshtml~~ | 2026-04-07 | **Eliminada** (wizard planilla) |
 | 66 | Admin/ImprimirPlanilla.cshtml | 2026-04-07 | jQuery 3.7.1; encabezado etiquetado; fecha como fecha (corrección vs hora); mismos loads AJAX |
 | 67 | Admin/ImprimirPlanillaDetalle.cshtml | 2026-04-07 | jQuery 3.7.1; encabezado tipografía consistente; mismos loads AJAX |
 | 68 | Admin/GridPlanillaHotelDetalleEdit.cshtml | 2026-04-07 | Tabla BS5 `table-sm bordered`; mantiene `planilla-habitaciones`, `txt-dias`, `text-total-hotel`; total en flex (sin wrapper extra entre tabla y total) |
@@ -82,7 +84,7 @@
 | 71 | Admin/GridPlanillaServiciosItemPrint.cshtml | 2026-04-07 | Total con `Sum`; formato moneda columnas |
 | 72 | Admin/PartialGridResumenPlanillaHotelPrint.cshtml | 2026-04-07 | Mismo patrón impresión resumen hotel |
 | 73 | Admin/GridPlanillaHotelPrint.cshtml | 2026-04-07 | Sin cambio de markup (solo `RenderAction` a resumen); verificado |
-| 74 | Admin/PartialGridServiciosAdmin.cshtml | 2026-04-07 | Selector servicio por clase `.js-seleccionar-servicio-admin` (corrige `id` duplicado por fila); `preventDefault` en binding |
+| 74 | ~~Admin/PartialGridServiciosAdmin.cshtml~~ | 2026-04-07 | **Eliminada** (modal wizard) |
 | 75 | Admin: ResumenPagos suite (4 vistas) | 2026-04-07 | Verificado moderno; `GridResumenPagosFecha`: directiva model al inicio del archivo |
 
 ---
@@ -267,15 +269,15 @@
 - ✅ Admin/ResumenPagosPorFecha.cshtml — Filtros card BS5; verificado 2026-04-07
 - ✅ Admin/GridResumenPagos.cshtml — DataTables; verificado 2026-04-07
 - ✅ Admin/GridResumenPagosFecha.cshtml — Tabla + cancelar pago; `@model` al inicio del archivo — 2026-04-07
-- ✅ Admin/PlanillaServicios.cshtml — Botón agregar `btn-primary btn-sm` (sin `btn-inverse`) — 2026-04-07
+- 🗑️ Admin/PlanillaServicios.cshtml — **Eliminada** 2026-04-07 (retiro menú planillas; SPEC)
 - ✅ Admin/EditarPlanilla.cshtml — Card encabezado BS5, grid, botón Guardar `btn-danger` + icono BI; datepicker si existe — 2026-04-07
 - ⏳ Admin/HistorialPrecios.cshtml
 - ⏳ Admin/AuditoriaFacturas.cshtml
 - ✅ Admin/ImprimirPlanilla.cshtml — Ventana impresión: jQuery 3.7.1, encabezado legible, fecha corregida — 2026-04-07
 - ✅ Admin/ImprimirPlanillaDetalle.cshtml — Igual patrón — 2026-04-07
-- ✅ Admin/GridPlanillasGeneradas.cshtml — Card tabla + `.js-imprimir-planilla-detalle` — 2026-04-07
-- ✅ Admin/PartialGridServiciosAdmin.cshtml — Enlaces seleccionar por clase compartida + handler en `mat.jquery.binding.js` — 2026-04-07
-- ✅ Admin/GridPlanillaServicioItemContext.cshtml — Botón Generar planilla `btn-danger` + icono BI; `#btn-generar-planilla` intacto — 2026-04-07
+- 🗑️ Admin/GridPlanillasGeneradas.cshtml — **Eliminada** 2026-04-07
+- 🗑️ Admin/PartialGridServiciosAdmin.cshtml — **Eliminada** 2026-04-07
+- 🗑️ Admin/GridPlanillaServicioItemContext.cshtml — **Eliminada** 2026-04-07
 - ✅ Admin/GridPlanillaServiciosItemEdit.cshtml — Tabla BS5; corrección bloque Razor; clases JS intactas — 2026-04-07
 - ✅ Admin/GridPlanillaServiciosItemPrint.cshtml — Tipografía/formatos — 2026-04-07
 - ✅ Admin/GridPlanillaHotelPrint.cshtml — Wrapper `RenderAction` sin UI propia; OK — 2026-04-07
@@ -283,7 +285,7 @@
 - ✅ Admin/GridPlanillaHotelDetalleEdit.cshtml — 2026-04-07
 - ✅ Admin/PartialGridResumenPlanillaHotelPrint.cshtml — 2026-04-07
 - ⏳ Admin/PartialGridPlanillaHotelPrint.cshtml *(archivo vacío en repo; sin modernizar hasta definir uso)*
-- ✅ Admin/PartialDropDownHotel.cshtml — Dropdown hoteles con BI y estilos actuales; sin cambios en esta pasada — verificado 2026-04-07
+- 🗑️ Admin/PartialDropDownHotel.cshtml — **Eliminada** 2026-04-07 (no referenciada; asociada a wizard retirado)
 
 #### Herramientas y Otros:
 - ⏳ Herramientas/Cotizador.cshtml

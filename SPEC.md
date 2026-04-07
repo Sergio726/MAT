@@ -42,10 +42,16 @@
   Archivos: `Views/Admin/Usuarios.cshtml`
   Criterio de éxito: La tabla permite buscar por usuario y filtrar por estado. MSBuild pasa sin errores.
 
-- [ ] **Admin: Panel Index completo — agregar secciones Planillas y Sistema**
-  El panel `Index.cshtml` tiene cards para Reportes y Usuarios, pero omite las secciones de Planillas (PlanillaServicios, PlanillasGeneradas) y Sistema (ErrorLog, Logs) que sí aparecen en el sidebar. El Index debería ser el punto de entrada completo, no solo una versión parcial del menú.
-  Archivos: `Views/Admin/Index.cshtml`
-  Criterio de éxito: El Index muestra cards para todas las secciones del sidebar. Sin cambios en el sidebar.
+- [x] **Admin: Eliminar módulo de menú Planillas (PlanillaServicios / PlanillasGeneradas)**
+  Las rutas **`/Admin/PlanillaServicios`** y **`/Admin/PlanillasGeneradas`** no se utilizan en operación; debe retirarse **todo** lo que las exponga o que dependa **exclusivamente** de ese flujo de menú, sin dejar enlaces rotos ni redirecciones inconsistentes.
+  **Alcance orientativo (completar al implementar):** enlaces en `Views/Shared/_LayoutAdmin.cshtml` (nav desktop y offcanvas/móvil); acciones y vistas en `Controllers/Admin/AdminController.cs` ligadas a ese flujo (p. ej. `PlanillaServicios`, `PlanillasGeneradas`, `GridPlanillasGeneradas`); archivos bajo `Views/Admin/` correspondientes (`PlanillaServicios.cshtml`, `GridPlanillasGeneradas.cshtml`, vista `PlanillasGeneradas.cshtml` si aplica); ítems en `MAT.MVC.csproj`; handlers en `Scripts/mat.jquery.binding.js` (u otros scripts) **solo** usados por ese flujo; referencias en `Views/Admin/Index.cshtml`, `DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md`, `HANDOFF.md` u otra documentación interna.
+  **Qué no confundir con este task:** Partials y acciones que sigan siendo necesarias para **otros** flujos (p. ej. `ImprimirPlanilla`, `ImprimirPlanillaDetalle`, `EditarPlanilla`, `GridPlanillaServiciosItemEdit`, `GridPlanillaServiciosItemPrint`, grids de hotel en impresión/edición, persistencia en BD) no se eliminan salvo que queden **huérfanas** tras el retiro. Tras `DeletePlanilla`, redirección acordada: `Admin/Index`.
+  Criterio de éxito: Ningún enlace en la app apunta a `/Admin/PlanillaServicios` ni `/Admin/PlanillasGeneradas`; MSBuild sin errores; smoke test del panel Admin sin excepciones; `PROGRESS.md` con lista de archivos/rutas eliminados o ajustados.
+
+- [ ] **Admin: Panel Index completo — sección Sistema (sin Planillas en menú)**
+  El panel `Index.cshtml` debe acercarse al menú admin útil: al menos **Sistema / Diagnóstico** (ErrorLog, Logs) y lo que el equipo defina como cards de acceso rápido. **No** incluir enlaces a PlanillaServicios / PlanillasGeneradas (quedan fuera por el task anterior).
+  Archivos: `Views/Admin/Index.cshtml` (y, si aplica, enlaces ya cubiertos por el task "Exponer ErrorLog y Logs en el panel Index").
+  Criterio de éxito: El Index refleja las secciones acordadas sin las planillas retiradas; sin duplicar lógica contradictoria con el sidebar tras el cleanup.
 
 #### Reportes administrativos (misma BD que MAT Web; patrones MAT.MVC)
 
@@ -161,7 +167,7 @@
 
 - [ ] **Admin: Agregar [Authorize] + RequireAdministrador() en acciones sin protección**
   Las siguientes acciones no tienen `[Authorize]` ni llaman a `RequireAdministrador()`, por lo que cualquier usuario autenticado puede acceder directamente a sus URLs:
-  `ResumenPagos`, `ResumenPagosPorFecha`, `AuditoriaFacturas`, `GridResumenPagos`, `GridResumenPagosFecha`, `PartialDropDownHotel`, `GridPlanillaHotel`, `GridPlanillaHotelPrint`, `GridPlanillaHotelDetallePrint`, `PlanillaServicios`, `PartialGridServiciosAdmin`, `PlanillasGeneradas`, `GridPlanillasGeneradas`, `ImprimirPlanilla`, `ImprimirPlanillaDetalle`, `EditarPlanilla`, y otras partials del controller.
+  `ResumenPagos`, `ResumenPagosPorFecha`, `AuditoriaFacturas`, `GridResumenPagos`, `GridResumenPagosFecha`, `GridPlanillaHotelPrint`, `GridPlanillaHotelDetallePrint`, `ImprimirPlanilla`, `ImprimirPlanillaDetalle`, `EditarPlanilla`, y otras partials del controller. *(Acciones retiradas 2026-04-07: PlanillaServicios, PlanillasGeneradas, GridPlanillasGeneradas, PartialDropDownHotel, GridPlanillaHotel, wizard planilla en sesión.)*
   Agregar `[Authorize]` en el controller a nivel de clase o en cada acción faltante, y `var redir = RequireAdministrador(); if (redir != null) return redir;` en las que no lo tienen.
   Archivos: `Controllers/Admin/AdminController.cs`
   Criterio de éxito: Ninguna acción del AdminController es accesible sin rol Administrador. MSBuild pasa sin errores.

@@ -609,32 +609,6 @@ namespace MAT.MVC.Controllers.Admin
             }
         }
 
-        public ActionResult PartialDropDownHotel(Guid id)
-        {
-            IEnumerable<SelectListItem> hoteles = MAT.Utilities.Helper.ToSelectEntities("HotelPorViaje", id);
-            return PartialView(hoteles);
-        }
-
-        public ActionResult GridPlanillaHotel(Guid viajeid)
-        {
-            List<List<PlanillaHotelModel>> conjuntoplanillas = new List<List<PlanillaHotelModel>>();
-            Services.ViajeHotelService viajehotelService = new ViajeHotelService();
-            List<Entities.ViajeHotel> hoteles = viajehotelService.GetByViajeId(viajeid).ToList();
-            foreach (var h in hoteles)
-            {
-                Entities.Hotel hotel = new Services.HotelService().GetByHotelId(h.HotelId);
-                List<Entities.Habitacion> _habitaciones = new HabitacionService().GetByHotelId(h.HotelId).ToList();
-                List<Models.PlanillaHotelModel> _planillahotelmodel = new List<Models.PlanillaHotelModel>();
-                foreach (var item in _habitaciones)
-                {
-                    PlanillaHotelModel planillahotellinea = new Models.PlanillaHotelModel(item.HabitacionId, hotel.Nombre, viajeid);
-                    _planillahotelmodel.Add(planillahotellinea);
-                }
-                conjuntoplanillas.Add(_planillahotelmodel.OrderBy(pl => pl.Habitacion.Tipo).ToList());
-            }            
-            return PartialView(conjuntoplanillas);
-        }
-
         public ActionResult GridPlanillaHotelPrint(Guid viajeid, Guid planillaid)
         {
             List<List<PlanillaHotelPrintModel>> conjuntoplanillas = new List<List<PlanillaHotelPrintModel>>();
@@ -675,23 +649,6 @@ namespace MAT.MVC.Controllers.Admin
             return PartialView(conjuntoplanillas);
         }
 
-        public ActionResult PartialResumenGridPlanillaHotel(List<PlanillaHotelModel> planilla)
-        {
-            List<ResumenPlanillaModel> resumen = new List<ResumenPlanillaModel>();
-            foreach (HabitacionTipo item in HabitacionTipoMethod.GetAllHabitacionTipo())
-            {
-                resumen.Add(new ResumenPlanillaModel(planilla, item.Id));
-            }
-          
-            double _total = 0;
-            foreach (var item in resumen)
-            {
-                _total += item.Subtotal;
-            }
-            ViewData["Total"] = _total;
-            return PartialView(resumen);
-        }
-
         public ActionResult PartialGridResumenPlanillaHotelPrint(List<PlanillaHotelPrintModel> planilla)
         {
             List<ResumenPlanillaPrintModel> resumen = new List<ResumenPlanillaPrintModel>();
@@ -712,199 +669,6 @@ namespace MAT.MVC.Controllers.Admin
             ViewData["TotalHotel"] = _total;
             ViewData["Hotel"] = planilla.FirstOrDefault().Hotel;
             return PartialView(resumen);
-        }
-
-        public ActionResult PlanillaServicios()
-        {
-            MATContext.ServiciosSeleccionados = new List<Entities.PlanillaServicioItem>();
-            return View();
-        }
-
-        public ActionResult PartialGridServiciosAdmin()
-        {
-            Services.ServicioService servicioService = new Services.ServicioService();
-            List<MAT.Entities.Servicio> servicios = servicioService.GetAll().Where(se => se.TipoServicio == 1).OrderBy(ser => ser.Descripcion).ToList();
-            return PartialView(servicios);
-        }
-
-        public bool AgregarPlanillaServicioItem(Guid servicioid, Guid viajeid)
-        {
-            bool result = false;
-            try
-            {
-                if (MATContext.ServiciosSeleccionados == null) MATContext.ServiciosSeleccionados = new List<Entities.PlanillaServicioItem>();
-                Entities.PlanillaServicioItem item = new Entities.PlanillaServicioItem();
-                item.PlanillaServicioItemId = Guid.NewGuid();
-                item.ServicioId = servicioid;
-                MATContext.ServiciosSeleccionados.Add(item);
-                result = true;
-            }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-                result = false;
-            }
-            return result;
-        }
-
-        public bool ActualizarPlanillaServicioItem(Guid planillaservicioitemid, string cantidad, string subtotal)
-        {
-            bool result = false;
-            try
-            {
-                int _cantidad = 0;
-                double _subtotal = 0;
-                if (!string.IsNullOrEmpty(cantidad))  _cantidad = Convert.ToInt32(cantidad);
-                if (!string.IsNullOrEmpty(subtotal)) _subtotal = Convert.ToDouble(subtotal);
-                Entities.PlanillaServicioItem item = MATContext.ServiciosSeleccionados.Where(se => se.PlanillaServicioItemId == planillaservicioitemid).FirstOrDefault();
-                item.Cantidad = _cantidad;
-                item.Subtotal = _subtotal;
-                result = true;
-            }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-
-                result = false;
-            }
-            return result;
-        }
-
-        public bool CrearColeccionPlanillas()
-        {
-            bool result = false;
-            try
-            {
-                List<Entities.Planilla> coleccion = new List<Entities.Planilla>();
-                MATContext.ColeccionPlanillas = coleccion;
-                result = true;
-            }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-                result = false;
-            }
-            return result;
-        }
-
-        public bool GenerarPlanilla(string total, string viajeid)
-        {
-            bool result = false;
-            try
-            {
-                double _total = Convert.ToDouble(total);
-                Guid _viajeid = Guid.Parse(viajeid);
-                Entities.Planilla planilla = new Entities.Planilla();
-                planilla.PlanillaId = Guid.NewGuid();
-                planilla.ViajeId = _viajeid;
-                planilla.Total = _total;
-                planilla.FechaRegistro = DateTime.Now;
-                MATContext.Planilla = planilla;
-                MATContext.HabitacionesPlanilla = new List<Entities.PlanillaHabitacionItem>();
-                result = true;
-            }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-
-                result = false; ;
-            }
-            return result;
-        }
-
-        public bool AgregarHabitacionesItem(Guid habitacionid, int dias, double subtotal)
-        {
-            bool result = false;
-            try
-            {
-                Entities.PlanillaHabitacionItem habitacionitem = new Entities.PlanillaHabitacionItem();
-                habitacionitem.PlanillaHabitacionItemId = Guid.NewGuid();
-                habitacionitem.HabitacionId = habitacionid;
-                habitacionitem.PlanillaId = MATContext.Planilla.PlanillaId;
-                habitacionitem.Cantidad = dias;
-                habitacionitem.Subtotal = subtotal;
-                MATContext.HabitacionesPlanilla.Add(habitacionitem);
-                result = true;
-            }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-
-                result = false;
-            }
-            return result;
-        }
-
-        public bool GenerarPlanillaServicio(string total, string viajeid)
-        {
-            bool result = false;
-            try
-            {
-                Services.PlanillaHabitacionItemService habitacionitemService = new PlanillaHabitacionItemService();
-                double _total = Convert.ToDouble(total);
-                Guid _viajeid = Guid.Parse(viajeid);
-                Services.PlanillaService planillaService = new PlanillaService();
-                Services.PlanillaServicioItemService planillaitemService = new PlanillaServicioItemService();
-
-                MATContext.Planilla.Total += _total;
-                planillaService.Insert(MATContext.Planilla);
-                foreach (var itemhabitacion in MATContext.HabitacionesPlanilla)
-                {
-                    habitacionitemService.Insert(itemhabitacion);
-                }
-                foreach (var item in MATContext.ServiciosSeleccionados)
-                {
-                    item.PlanillaId = MATContext.Planilla.PlanillaId;
-                    planillaitemService.Insert(item);
-                }
-                result = true;
-            }
-            catch 
-            {
-
-                result = false;
-            }
-            return result;
-        }
-
-        public bool AgregarTotalHabitaciones(string total)
-        {
-            bool result = false;
-            try
-            {
-                double _total = Convert.ToDouble(total);
-                MATContext.Planilla.Total = _total;
-                result = true;
-            }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-                result = false;
-            }
-            return result;
-        }
-
-        public ActionResult GridPlanillaServicioItemContext()
-        {
-            return PartialView(MATContext.ServiciosSeleccionados);
-        }
-
-        public ActionResult PlanillasGeneradas()
-        {
-            return View();
-        }
-
-        public ActionResult GridPlanillasGeneradas(Guid viajeid)
-        {
-            Services.PlanillaService planillaService = new PlanillaService();
-            List<Entities.Planilla> planillas = planillaService.GetAll().Where(pl => pl.ViajeId == viajeid).OrderBy(pl => pl.FechaRegistro).ToList();
-            return PartialView(planillas);
         }
 
         public ActionResult ImprimirPlanilla(Guid planillaid)
@@ -945,7 +709,7 @@ namespace MAT.MVC.Controllers.Admin
                 planillahotelService.Delete(item.PlanillaHabitacionItemId);
             }
             planillaService.Delete(id);
-            return RedirectToAction("PlanillasGeneradas");
+            return RedirectToAction("Index", "Admin");
         }
 
         public ActionResult EditarPlanilla(Guid id)
