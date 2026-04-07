@@ -125,7 +125,7 @@
 53. ⏳ **Habitacion/Details.cshtml** - Vista de detalles
 54. ⏳ **HotelHabitacionViaje/ABM.cshtml** - Formulario ABM
 55. ⏳ **Viaje/Index.cshtml** - Tabla con filtros y carga dinámica AJAX
-56. ⏳ **Viaje/Create.cshtml** - Formulario complejo
+56. ✅ **Viaje/Create.cshtml** - Formulario alineado a patrón moderno (BS5 / clases modernas); `Create` devuelve modelo no nulo — Completado 2026-04-07
 57. ⏳ **Viaje/Edit.cshtml** - Formulario complejo
 58. ⏳ **Viaje/Details.cshtml** - Vista de detalles
 

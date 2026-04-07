@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -59,7 +59,7 @@ namespace MAT.MVC.Controllers.Viaje
 
         public ActionResult Create()
         {
-            return View();
+            return View(new MAT.Entities.Viaje());
         }
 
         [HttpPost]
@@ -115,13 +115,13 @@ namespace MAT.MVC.Controllers.Viaje
                 else
                 {
                     ViewData["error"] = "Debe asignar un servicio de transporte al paquete antes de crear un viaje.";
-                    return View();
+                    return View(new MAT.Entities.Viaje());
                 }
             }
             else
             {
                 ViewData["error"] = "Seleccione un paquete por favor.";
-                return View();
+                return View(new MAT.Entities.Viaje());
             }
 
 
