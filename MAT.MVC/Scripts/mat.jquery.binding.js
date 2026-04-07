@@ -2176,7 +2176,8 @@ $(document).on("click", "#AgregarPlanillaServicioItem", function () {
     ShowFormDialog(url, id, title, "default");
 });
 
-$(document).on("click", "#btn-seleccionar-servicio-admin", function () {
+$(document).on("click", ".js-seleccionar-servicio-admin", function (e) {
+    if (e && e.preventDefault) e.preventDefault();
     var servicioid = $(this).data("id");
     var viajeid = $("#Viajes option:selected").val();
     $.ajax({

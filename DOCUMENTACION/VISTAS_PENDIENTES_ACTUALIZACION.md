@@ -5,7 +5,7 @@
 
 ---
 
-## ✅ COMPLETADAS (67 vistas en tabla principal; otras fases también ✅):
+## ✅ COMPLETADAS (74 vistas en tabla principal; otras fases también ✅):
 
 | # | Vista | Fecha | Mejoras Aplicadas |
 |---|-------|-------|-------------------|
@@ -76,6 +76,13 @@
 | 65 | Admin/GridPlanillaServicioItemContext.cshtml | 2026-04-07 | Botón `#btn-generar-planilla` con icono BI |
 | 66 | Admin/ImprimirPlanilla.cshtml | 2026-04-07 | jQuery 3.7.1; encabezado etiquetado; fecha como fecha (corrección vs hora); mismos loads AJAX |
 | 67 | Admin/ImprimirPlanillaDetalle.cshtml | 2026-04-07 | jQuery 3.7.1; encabezado tipografía consistente; mismos loads AJAX |
+| 68 | Admin/GridPlanillaHotelDetalleEdit.cshtml | 2026-04-07 | Tabla BS5 `table-sm bordered`; mantiene `planilla-habitaciones`, `txt-dias`, `text-total-hotel`; total en flex (sin wrapper extra entre tabla y total) |
+| 69 | Admin/GridPlanillaServiciosItemEdit.cshtml | 2026-04-07 | Razor válido (`Sum`); tabla `servicios`; inputs `form-control-sm`; total servicios coherente |
+| 70 | Admin/GridPlanillaHotelDetallePrint.cshtml | 2026-04-07 | Tipografías BS5; tablas impresión + `mat-customtable` |
+| 71 | Admin/GridPlanillaServiciosItemPrint.cshtml | 2026-04-07 | Total con `Sum`; formato moneda columnas |
+| 72 | Admin/PartialGridResumenPlanillaHotelPrint.cshtml | 2026-04-07 | Mismo patrón impresión resumen hotel |
+| 73 | Admin/GridPlanillaHotelPrint.cshtml | 2026-04-07 | Sin cambio de markup (solo `RenderAction` a resumen); verificado |
+| 74 | Admin/PartialGridServiciosAdmin.cshtml | 2026-04-07 | Selector servicio por clase `.js-seleccionar-servicio-admin` (corrige `id` duplicado por fila); `preventDefault` en binding |
 
 ---
 
@@ -266,16 +273,16 @@
 - ✅ Admin/ImprimirPlanilla.cshtml — Ventana impresión: jQuery 3.7.1, encabezado legible, fecha corregida — 2026-04-07
 - ✅ Admin/ImprimirPlanillaDetalle.cshtml — Igual patrón — 2026-04-07
 - ✅ Admin/GridPlanillasGeneradas.cshtml — Card tabla + `.js-imprimir-planilla-detalle` — 2026-04-07
-- ⏳ Admin/PartialGridServiciosAdmin.cshtml
+- ✅ Admin/PartialGridServiciosAdmin.cshtml — Enlaces seleccionar por clase compartida + handler en `mat.jquery.binding.js` — 2026-04-07
 - ✅ Admin/GridPlanillaServicioItemContext.cshtml — Botón Generar planilla `btn-danger` + icono BI; `#btn-generar-planilla` intacto — 2026-04-07
-- ⏳ Admin/GridPlanillaServiciosItemEdit.cshtml
-- ⏳ Admin/GridPlanillaServiciosItemPrint.cshtml
-- ⏳ Admin/GridPlanillaHotelPrint.cshtml
-- ⏳ Admin/GridPlanillaHotelDetallePrint.cshtml
-- ⏳ Admin/GridPlanillaHotelDetalleEdit.cshtml
-- ⏳ Admin/PartialGridResumenPlanillaHotelPrint.cshtml
-- ⏳ Admin/PartialGridPlanillaHotelPrint.cshtml
-- ⏳ Admin/PartialDropDownHotel.cshtml
+- ✅ Admin/GridPlanillaServiciosItemEdit.cshtml — Tabla BS5; corrección bloque Razor; clases JS intactas — 2026-04-07
+- ✅ Admin/GridPlanillaServiciosItemPrint.cshtml — Tipografía/formatos — 2026-04-07
+- ✅ Admin/GridPlanillaHotelPrint.cshtml — Wrapper `RenderAction` sin UI propia; OK — 2026-04-07
+- ✅ Admin/GridPlanillaHotelDetallePrint.cshtml — 2026-04-07
+- ✅ Admin/GridPlanillaHotelDetalleEdit.cshtml — 2026-04-07
+- ✅ Admin/PartialGridResumenPlanillaHotelPrint.cshtml — 2026-04-07
+- ⏳ Admin/PartialGridPlanillaHotelPrint.cshtml *(archivo vacío en repo; sin modernizar hasta definir uso)*
+- ✅ Admin/PartialDropDownHotel.cshtml — Dropdown hoteles con BI y estilos actuales; sin cambios en esta pasada — verificado 2026-04-07
 
 #### Herramientas y Otros:
 - ⏳ Herramientas/Cotizador.cshtml
@@ -312,7 +319,7 @@
 
 **TOTAL COMPLETADAS (tabla numerada #1–#61):** 61 filas en la tabla principal + Fase 4 ítem 50–58 ✅ + sublistas Fase 6 actualizadas (Paquetes, Viajes parcial, NuevaReserva, Planillas).  
 **TOTAL PENDIENTES (aprox.):** ~55–65 vistas según lo que siga en ⏳ en Fase 5–6.  
-**Avance global estimado (P1 según este doc):** **~55%** — incluye impresión planilla (ventana nueva); conviene seguir auditando ⏳ restantes.  
+**Avance global estimado (P1 según este doc):** **~57%** — grids edición/impresión planilla alineados BS5 + contrato JS; conviene seguir auditando ⏳ restantes.  
 **TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
 
 ---
@@ -643,8 +650,12 @@ else
 | 2026-04-07 | — | Doc | Reserva/FormReserva.cshtml marcado ✅ (vista ya moderna; distinto de NuevaReserva/FormReserva) | Solo listas |
 | 2026-04-07 | Admin/ImprimirPlanilla.cshtml | Impresión | jQuery 3.7.1; labels `<strong>`; `Fecha` con `ToShortDateString` (antes `ToShortTimeString`) | `mat.planillaprint.css` `.planilla-print-header` |
 | 2026-04-07 | Admin/ImprimirPlanillaDetalle.cshtml | Impresión | Mismo alineamiento técnico | P1 |
+| 2026-04-07 | Admin/GridPlanillaHotelDetalleEdit.cshtml | Planilla edición | BS5 sin romper cadenas `.parent()` del blur `.txt-dias` | `planilla-habitaciones`, `text-total-hotel` |
+| 2026-04-07 | Admin/GridPlanillaServiciosItemEdit.cshtml | Planilla edición | Razor válido + `table.servicios` + totales | `cantidad-servicio-item`, `text-total-servicios` |
+| 2026-04-07 | Admin/GridPlanilla*Print*.cshtml + PartialGridResumen* | Impresión / resumen | Tipografía y tablas; totales con `Sum` donde aplica | P1 |
+| 2026-04-07 | Admin/PartialGridServiciosAdmin.cshtml + binding | Modal servicios planilla | Clase `.js-seleccionar-servicio-admin` reemplaza id duplicado | `mat.jquery.binding.js` |
 
-**Total de mejoras registradas:** 50+ (ver filas anteriores en esta tabla)
+**Total de mejoras registradas:** 55+ (ver filas anteriores en esta tabla)
 
 ---
 

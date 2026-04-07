@@ -1,43 +1,33 @@
-﻿@model List<MAT.Entities.PlanillaServicioItem>
+@model List<MAT.Entities.PlanillaServicioItem>
+@using System.Linq
 @using MAT.Utilities
 
-<h3>SERVICIOS Y AGREGADOS</h3>
 @{
-    double _totalservicios = 0;
-<table class="mat-customtable">
+    var items = Model ?? new List<MAT.Entities.PlanillaServicioItem>();
+    var totalServicios = items.Count > 0 ? items.Sum(x => x.Subtotal) : 0d;
+}
+
+<h3 class="h5 fw-semibold mb-2 mt-3 border-bottom pb-1">Servicios y agregados</h3>
+<table class="mat-customtable table table-sm">
     <thead>
         <tr>
-            <th>Descripcion
-            </th>
-            <th>Precio
-            </th>
-            <th>Cantidad
-            </th>
-            <th>Subtotal
-            </th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th class="text-end">Subtotal</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in items)
         {
             <tr>
-                <td>
-                    @Helper.GetServicioDescripcion(item.ServicioId)
-                </td>
-                <td>
-                    @String.Format("{0:C}", Helper.GetPrecioServicio(item.ServicioId))
-                </td>
-                <td>
-                    @item.Cantidad
-                </td>
-                <td>
-                    @String.Format("{0:C}", item.Subtotal)
-                </td>
+                <td>@Helper.GetServicioDescripcion(item.ServicioId)</td>
+                <td>@String.Format("{0:C}", Helper.GetPrecioServicio(item.ServicioId))</td>
+                <td>@item.Cantidad</td>
+                <td class="text-end">@String.Format("{0:C}", item.Subtotal)</td>
             </tr>
-            _totalservicios += item.Subtotal;
         }
     </tbody>
 </table>
-    
-    <h4>TOTAL SERVICIOS Y AGREGADOS: @String.Format("{0:C}", _totalservicios)</h4>
-}
+
+<p class="fw-semibold mb-3">Total servicios y agregados: @String.Format("{0:C}", totalServicios)</p>
