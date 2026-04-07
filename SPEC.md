@@ -17,15 +17,66 @@
 
 ### P2 — Mejoras de producto
 
-- [ ] **NOMBRE_DEL_TASK**
-  DESCRIPCIÓN
-  Criterio de éxito: CRITERIO
+- [ ] **Admin: Migrar ErrorLog.cshtml y Logs.cshtml a Bootstrap 5**
+  Ambas vistas usan Bootstrap 2 (`glyphicon`, `btn-default`, `btn-xs`, `form-inline`, `table-condensed`). Son las únicas vistas del panel Admin que quedaron sin migrar. Reemplazar con Bootstrap Icons y clases BS5. No cambiar la lógica JS de carga/filtrado.
+  Archivos: `Views/Admin/ErrorLog.cshtml`, `Views/Admin/Logs.cshtml`
+  Criterio de éxito: Las vistas renderizan correctamente en IIS Express sin glyphicons ni clases BS2. MSBuild pasa sin errores.
+
+- [ ] **Admin: Gestión completa de roles en UsuarioEditar**
+  El formulario `UsuarioEditar` solo permite asignar/quitar el rol "Administrador" mediante un checkbox. Otros roles existentes en el sistema (ej. "Vendedor") no pueden gestionarse desde la UI. Extender la vista y el controller para listar todos los roles del sistema como checkboxes y guardar los cambios. El controller debe leer los roles desde `Roles.GetAllRoles()` y aplicar add/remove por diferencia.
+  Archivos: `Views/Admin/UsuarioEditar.cshtml`, `Controllers/Admin/AdminController.cs`, `Models/AdminUsuarioEditModel`
+  Criterio de éxito: El formulario muestra todos los roles del sistema. Se pueden asignar y quitar roles arbitrarios. Las restricciones existentes (no quitarse admin a uno mismo, no eliminar último admin) se mantienen.
+
+- [ ] **Admin: Exponer ErrorLog y Logs en el panel Index**
+  Las vistas `/Admin/ErrorLog` y `/Admin/Logs` existen y funcionan pero no están enlazadas desde `Admin/Index.cshtml`. Solo quien conoce las URLs puede acceder. Agregar una sección "Diagnóstico" en el Index (similar a la sección "Herramientas de Desarrollo" de ADMINDEV) que las exponga. Evaluar si debe estar restringida a ADMINDEV o visible para todos los admins.
+  Archivos: `Views/Admin/Index.cshtml`
+  Criterio de éxito: El panel Admin muestra las tarjetas de ErrorLog y Logs. El acceso respeta la restricción de rol acordada.
+
+- [ ] **Admin: Reemplazar confirm() de jQuery UI por modal Bootstrap 5 en Usuarios**
+  El handler `js-admin-confirm-submit` en `Usuarios.cshtml` llama a una función `confirm()` que usa jQuery UI dialog. Esto crea dependencia mezclada (BS5 + jQuery UI) e inconsistencia visual. Reemplazar por un modal Bootstrap 5 reutilizable (puede ser el mismo patrón que ya usan otras vistas con `data-bs-toggle`).
+  Archivos: `Views/Admin/Usuarios.cshtml`
+  Criterio de éxito: La confirmación de deshabilitar usuario usa modal Bootstrap 5. No queda dependencia de jQuery UI dialog en esta vista.
+
+- [ ] **Admin: Agregar DataTables y filtro de búsqueda en Usuarios**
+  La tabla de usuarios (`Usuarios.cshtml`) es un `foreach` estático sin paginación ni búsqueda. Agregar DataTables con búsqueda por nombre de usuario y filtro por estado (Activo / Deshabilitado / Bloqueado). Seguir el patrón de otras vistas del proyecto.
+  Archivos: `Views/Admin/Usuarios.cshtml`
+  Criterio de éxito: La tabla permite buscar por usuario y filtrar por estado. MSBuild pasa sin errores.
+
+- [ ] **Admin: Panel Index completo — agregar secciones Planillas y Sistema**
+  El panel `Index.cshtml` tiene cards para Reportes y Usuarios, pero omite las secciones de Planillas (PlanillaServicios, PlanillasGeneradas) y Sistema (ErrorLog, Logs) que sí aparecen en el sidebar. El Index debería ser el punto de entrada completo, no solo una versión parcial del menú.
+  Archivos: `Views/Admin/Index.cshtml`
+  Criterio de éxito: El Index muestra cards para todas las secciones del sidebar. Sin cambios en el sidebar.
 
 ### P3 — Nuevas capacidades
 
-- [ ] **NOMBRE_DEL_TASK**
-  DESCRIPCIÓN
-  Criterio de éxito: CRITERIO
+- [ ] **Admin: Agregar acción de eliminar usuario**
+  El sistema permite deshabilitar/habilitar/desbloquear usuarios pero no eliminarlos. Si se necesita borrar un usuario del sistema (membership + UserProfile), no hay UI ni acción en el controller. Implementar `UsuarioEliminar` con confirmación explícita. Restricciones: no puede eliminarse a sí mismo, no puede eliminar al último administrador.
+  Archivos: `Controllers/Admin/AdminController.cs`, `Views/Admin/Usuarios.cshtml`
+  Criterio de éxito: Existe botón "Eliminar" en el listado (solo visible para admins sobre otros usuarios). La acción requiere confirmación. Elimina la fila de `UserProfiles` y la entrada de `webpages_Membership`.
+
+- [ ] **Admin: Exportar Resumen de Pagos a Excel**
+  `ResumenPagos` ya carga los datos de pagos por viaje en una grilla HTML. Agregar un botón "Exportar a Excel" que llame a una acción del controller que use EPPlus (ya disponible en el proyecto) para generar el archivo. No requiere nuevas dependencias.
+  Archivos: `Controllers/Admin/AdminController.cs`, `Views/Admin/GridResumenPagos.cshtml`
+  Criterio de éxito: El botón descarga un .xlsx con los datos del viaje seleccionado. La acción tiene `[Authorize]` y `RequireAdministrador()`.
+
+### Seguridad — correcciones obligatorias
+
+- [ ] **Admin: Agregar [Authorize] + RequireAdministrador() en acciones sin protección**
+  Las siguientes acciones no tienen `[Authorize]` ni llaman a `RequireAdministrador()`, por lo que cualquier usuario autenticado puede acceder directamente a sus URLs:
+  `ResumenPagos`, `ResumenPagosPorFecha`, `AuditoriaFacturas`, `GridResumenPagos`, `GridResumenPagosFecha`, `PartialDropDownHotel`, `GridPlanillaHotel`, `GridPlanillaHotelPrint`, `GridPlanillaHotelDetallePrint`, `PlanillaServicios`, `PartialGridServiciosAdmin`, `PlanillasGeneradas`, `GridPlanillasGeneradas`, `ImprimirPlanilla`, `ImprimirPlanillaDetalle`, `EditarPlanilla`, y otras partials del controller.
+  Agregar `[Authorize]` en el controller a nivel de clase o en cada acción faltante, y `var redir = RequireAdministrador(); if (redir != null) return redir;` en las que no lo tienen.
+  Archivos: `Controllers/Admin/AdminController.cs`
+  Criterio de éxito: Ninguna acción del AdminController es accesible sin rol Administrador. MSBuild pasa sin errores.
+
+- [ ] **Admin: Corregir exposición de e.Message en GridResumenPagosFecha**
+  Línea 606 del controller: `ViewBag.Error = "Error: " + e.Message;` — viola la política del proyecto. Reemplazar con `ErrorUtil.LogAndGetPublicMessage`.
+  Archivos: `Controllers/Admin/AdminController.cs` (línea ~606)
+  Criterio de éxito: El catch usa `ErrorUtil.LogAndGetPublicMessage(e, "AdminController.GridResumenPagosFecha")`. No se expone el mensaje de excepción al usuario.
+
+- [ ] **Admin: Corregir fallback inseguro en IsAdminUser()**
+  `IsAdminUser()` (línea ~1131) hace `return User.Identity.IsAuthenticated` si el sistema de roles lanza excepción. Esto significa que ante un error de configuración del RoleManager, cualquier usuario logueado pasa como administrador. Cambiar el fallback para retornar `false` en el catch.
+  Archivos: `Controllers/Admin/AdminController.cs`
+  Criterio de éxito: El catch de `IsAdminUser()` retorna `false`. Se agrega log del error antes de retornar.
 
 ---
 
