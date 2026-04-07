@@ -1,3 +1,5 @@
+@model List<MAT.MVC.Models.PagoModel>
+
 @if (ViewBag.Error != null)
 {
     <div class="error-message">
@@ -6,8 +8,6 @@
     </div>
     return;
 }
-
-@model List<MAT.MVC.Models.PagoModel>
 
 <style>
     .grid-pagos-fecha-container {

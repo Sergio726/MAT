@@ -5,7 +5,7 @@
 
 ---
 
-## ✅ COMPLETADAS (74 vistas en tabla principal; otras fases también ✅):
+## ✅ COMPLETADAS (75 vistas en tabla principal; otras fases también ✅):
 
 | # | Vista | Fecha | Mejoras Aplicadas |
 |---|-------|-------|-------------------|
@@ -83,6 +83,7 @@
 | 72 | Admin/PartialGridResumenPlanillaHotelPrint.cshtml | 2026-04-07 | Mismo patrón impresión resumen hotel |
 | 73 | Admin/GridPlanillaHotelPrint.cshtml | 2026-04-07 | Sin cambio de markup (solo `RenderAction` a resumen); verificado |
 | 74 | Admin/PartialGridServiciosAdmin.cshtml | 2026-04-07 | Selector servicio por clase `.js-seleccionar-servicio-admin` (corrige `id` duplicado por fila); `preventDefault` en binding |
+| 75 | Admin: ResumenPagos suite (4 vistas) | 2026-04-07 | Verificado moderno; `GridResumenPagosFecha`: directiva model al inicio del archivo |
 
 ---
 
@@ -262,10 +263,10 @@
 - ⏳ Admin/ServiciosAdminPrecioHistorialGrid.cshtml
 - ⏳ Admin/ServiciosAdminPrecioCreate.cshtml
 - ⏳ Admin/ServiciosAdminPrecioEdit.cshtml
-- ⏳ Admin/ResumenPagos.cshtml
-- ⏳ Admin/ResumenPagosPorFecha.cshtml
-- ⏳ Admin/GridResumenPagos.cshtml
-- ⏳ Admin/GridResumenPagosFecha.cshtml
+- ✅ Admin/ResumenPagos.cshtml — Panel búsqueda y layout actuales; verificado 2026-04-07
+- ✅ Admin/ResumenPagosPorFecha.cshtml — Filtros card BS5; verificado 2026-04-07
+- ✅ Admin/GridResumenPagos.cshtml — DataTables; verificado 2026-04-07
+- ✅ Admin/GridResumenPagosFecha.cshtml — Tabla + cancelar pago; `@model` al inicio del archivo — 2026-04-07
 - ✅ Admin/PlanillaServicios.cshtml — Botón agregar `btn-primary btn-sm` (sin `btn-inverse`) — 2026-04-07
 - ✅ Admin/EditarPlanilla.cshtml — Card encabezado BS5, grid, botón Guardar `btn-danger` + icono BI; datepicker si existe — 2026-04-07
 - ⏳ Admin/HistorialPrecios.cshtml
@@ -319,7 +320,7 @@
 
 **TOTAL COMPLETADAS (tabla numerada #1–#61):** 61 filas en la tabla principal + Fase 4 ítem 50–58 ✅ + sublistas Fase 6 actualizadas (Paquetes, Viajes parcial, NuevaReserva, Planillas).  
 **TOTAL PENDIENTES (aprox.):** ~55–65 vistas según lo que siga en ⏳ en Fase 5–6.  
-**Avance global estimado (P1 según este doc):** **~57%** — grids edición/impresión planilla alineados BS5 + contrato JS; conviene seguir auditando ⏳ restantes.  
+**Avance global estimado (P1 según este doc):** **~59%** — resumen pagos admin auditado + fix orden Razor en GridResumenPagosFecha; conviene seguir auditando ⏳ restantes.  
 **TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
 
 ---
@@ -654,8 +655,10 @@ else
 | 2026-04-07 | Admin/GridPlanillaServiciosItemEdit.cshtml | Planilla edición | Razor válido + `table.servicios` + totales | `cantidad-servicio-item`, `text-total-servicios` |
 | 2026-04-07 | Admin/GridPlanilla*Print*.cshtml + PartialGridResumen* | Impresión / resumen | Tipografía y tablas; totales con `Sum` donde aplica | P1 |
 | 2026-04-07 | Admin/PartialGridServiciosAdmin.cshtml + binding | Modal servicios planilla | Clase `.js-seleccionar-servicio-admin` reemplaza id duplicado | `mat.jquery.binding.js` |
+| 2026-04-07 | Admin/GridResumenPagosFecha.cshtml | Resumen pagos | `@model` antes de bloque error | Orden Razor |
+| 2026-04-07 | — | Doc | Cuatro vistas resumen pagos marcadas ✅ | Solo inventario |
 
-**Total de mejoras registradas:** 55+ (ver filas anteriores en esta tabla)
+**Total de mejoras registradas:** 57+ (ver filas anteriores en esta tabla)
 
 ---
 
