@@ -1,52 +1,69 @@
 # CLAUDE.md — Proyecto MAT
 
-Guía de referencia para Claude Code al trabajar en este repositorio.
-
----
-
-## 1. Qué es este proyecto
-
 **MAT** es una aplicación web de intranet para la gestión operativa de una agencia de viajes/turismo. Cubre: reservas, viajes, pasajeros, paquetes, hoteles, transporte, excursiones, precios, clientes, vendedores, proveedores, facturación, cuenta corriente, pagos y presupuestos con seguimiento.
 
 ---
 
-## 2. Arquitectura
+## Stack
 
-| Proyecto | Rol |
-|---|---|
-| **MAT.MVC** | Host principal. ASP.NET MVC 4 / .NET 4.8. Controladores, vistas Razor, Web API, bundles, auth. |
-| **MAT.Services** | Servicios de dominio. `*Service` extienden `*ServiceBase` → `ServiceBase<TEntity, TKey>`. |
-| **MAT.Entities** | POCOs del modelo + claves (`*Key`). |
-| **MAT.Enums** | Enumeraciones compartidas. |
-| **MAT.Data** | Capa de datos estilo NetTiers: `DataRepository`, `NetTiersProvider`. |
-| **MAT.Data.SqlClient** | Implementación SQL Server del provider (`SqlNetTiersProvider`). |
-| **MAT.Utilities** | Utilidades transversales (logging, helpers). |
-| **MAT.DB** | Proyecto SSDT — **fuente de verdad del esquema SQL Server**. |
-| **MAT.Web** | Biblioteca legacy WebForms/NetTiers. No referenciada por MAT.MVC actualmente. |
-| **MAT.WCF** | Servicio WCF legacy InfoPath. Proyecto separado. |
+| Capa | Tecnología |
+|------|-----------|
+| Framework | ASP.NET MVC 4 / .NET 4.8 |
+| UI | Razor 2, Bootstrap 5, jQuery 3 |
+| Lenguaje | C# / T-SQL |
+| ORM | NetTiers + ADO.NET/SqlClient (EF instalado pero **deshabilitado**) |
+| Base de datos | SQL Server |
+| Librerías | AutoMapper 6.0.2, EPPlus 4.5.3.3, Enterprise Library 5 |
 
 ---
 
-## 3. Stack tecnológico
+## Arquitectura de proyectos
 
-- **.NET 4.8**, **ASP.NET MVC 4**, **Web API 4**, **Razor 2**
-- **ORM activo**: NetTiers + ADO.NET/SqlClient. **Entity Framework está instalado pero deshabilitado** (`UseEntityFramework = NO` en `appSettings`). No asumir que EF está en uso.
-- **AutoMapper 6.0.2**, **EPPlus 4.5.3.3**, **Enterprise Library 5**
-- **Base de datos**: SQL Server (connection strings en `MAT.MVC\Web.config`)
-- **Front**: jQuery 3 / Bootstrap 5 (en rama MAT2026; `packages.config` puede reflejar versiones antiguas)
+```
+MAT.sln
+├── MAT.MVC/              # Host principal — controladores, vistas Razor, Web API, bundles, auth
+│   ├── Controllers/<Dominio>/<Dominio>Controller.cs
+│   ├── Views/<Dominio>/
+│   ├── Infrastructure/   # ErrorUtil y helpers transversales
+│   └── Web.config        # Connection strings, appSettings (¡no commitear passwords!)
+├── MAT.Services/         # Servicios de dominio — NombreEntidadService : NombreEntidadServiceBase
+├── MAT.Entities/         # POCOs del modelo + claves (*Key)
+├── MAT.Enums/            # Enumeraciones compartidas
+├── MAT.Data/             # Capa NetTiers: DataRepository, NetTiersProvider
+├── MAT.Data.SqlClient/   # Implementación SQL Server del provider (SqlNetTiersProvider)
+├── MAT.Utilities/        # Utilidades transversales (logging, helpers)
+├── MAT.DB/               # Proyecto SSDT — FUENTE DE VERDAD del esquema SQL Server
+├── MAT.Web/              # Biblioteca legacy WebForms/NetTiers (no referenciada por MAT.MVC)
+└── MAT.WCF/              # Servicio WCF legacy InfoPath
+```
 
 ---
 
-## 4. Convenciones de código C#
+## Comandos esenciales
+
+```bash
+# Compilar solución completa
+"C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" MAT.sln /t:Build /p:Configuration=Debug
+
+# Compilar solo MAT.MVC
+"C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" MAT.MVC\MAT.MVC.csproj /t:Build /p:Configuration=Debug
+
+# Levantar localmente
+# Abrir MAT.sln en Visual Studio 2022, proyecto de inicio MAT.MVC, correr con IIS Express
+```
+
+---
+
+## Convenciones de código C#
 
 - Controladores bajo `MAT.MVC\Controllers\<Dominio>\<Dominio>Controller.cs`
-- Servicios: `NombreEntidadService` extiende `NombreEntidadServiceBase`
-- Acceso a datos vía `DataRepository` + providers, no repositorios DDD manuales
-- Archivos `*.generated.cs` no se editan manualmente (se regeneran con NetTiers)
+- Servicios: `NombreEntidadService` extiende `NombreEntidadServiceBase` → `ServiceBase<TEntity, TKey>`
+- Acceso a datos vía `DataRepository` + providers, nunca repositorios DDD manuales
+- Archivos `*.generated.cs` **no se editan manualmente** (se regeneran con NetTiers)
 
 ### Manejo de errores en controladores (obligatorio)
 
-Siempre usar `ErrorUtil.LogAndGetPublicMessage` en bloques `catch`. Nunca exponer `e.Message` al usuario.
+Siempre usar `ErrorUtil.LogAndGetPublicMessage` en bloques `catch`. **Nunca** exponer `e.Message` al usuario.
 
 ```csharp
 // Para JsonResult:
@@ -68,7 +85,7 @@ catch (Exception e)
 
 ---
 
-## 5. Base de datos
+## Base de datos
 
 - Connection strings en `MAT.MVC\Web.config`: `MAT.Data.ConnectionString` (negocio) y `MAT.Session.ConnectionString` (membership)
 - **`MAT.DB` (SSDT) es la única fuente de verdad del esquema.** Todo cambio de schema debe reflejarse ahí.
@@ -89,7 +106,7 @@ BEGIN
 
 ---
 
-## 6. Git y ramas
+## Git y ramas
 
 - Rama principal de integración: **`MASTER`**
 - Rama de trabajo activa: **`MAT2026`**
@@ -98,19 +115,19 @@ BEGIN
 
 ---
 
-## 7. Lo que NO se debe hacer
+## Lo que NO se debe hacer
 
 - **No commitear** `Web.config` con passwords reales de producción
 - **No aplicar scripts SQL** sin actualizar también `MAT.DB`
 - **No exponer** `e.Message` al usuario en controladores — usar `ErrorUtil.LogAndGetPublicMessage`
 - **No editar masivamente** archivos `*.generated.cs` manualmente
-- **No asumir** que Entity Framework está activo (está desactivado)
+- **No asumir** que Entity Framework está activo (está desactivado: `UseEntityFramework = NO`)
 - **No tocar** `Application_BeginRequest` en `Global.asax.cs` sin entender el impacto (corre en cada request)
 - **No publicar** `MAT.DB` contra la BD equivocada (es destructivo)
 
 ---
 
-## 8. Áreas críticas — confirmar antes de modificar
+## Áreas críticas — confirmar antes de modificar
 
 - `MAT.MVC\Web.config` — connection strings, API keys, flags de entorno
 - `MAT.DB\` — cualquier cambio afecta toda la aplicación
@@ -122,19 +139,55 @@ BEGIN
 
 ---
 
-## 9. Comandos
+## Modo de trabajo autónomo
 
-```bash
-# Compilar
-"C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" MAT.sln /t:Build /p:Configuration=Debug
+### Flujo por feature
+1. Leer el task activo en `SPEC.md` antes de escribir código
+2. Implementar solo lo que el task describe, sin scope creep
+3. Compilar con MSBuild al terminar cada task; corregir errores antes de continuar
+4. Si un error no se resuelve en 2 intentos, pausar y reportar
+5. Marcar el task como `[x]` en `SPEC.md` al completarlo
+6. Registrar en `PROGRESS.md`: fecha, archivos tocados, qué se hizo, problemas
+7. Pasar al siguiente task
 
-# Levantar localmente
-# Abrir MAT.sln en VS, proyecto de inicio MAT.MVC, IIS Express
+### Cuándo pausar y preguntar
+- Decisión de arquitectura que afecta más de 2 proyectos o archivos core
+- Cambio en entidades, claves (`*Key`) o contratos de servicio globales
+- Ambigüedad en lógica de negocio que no se puede inferir del código
+- Error de compilación que no se resuelve tras 2 intentos de autocorrección
+- Cualquier modificación en las áreas críticas listadas arriba
+
+### Cuándo NO pausar
+- Errores de compilación resolubles con el contexto disponible
+- Ajustes de estilos o layout en vistas Razor
+- Refactors internos de un solo controlador o servicio
+- Agregar funcionalidad siguiendo un patrón ya existente en el proyecto
+
+### Definición de "terminado"
+Un task está terminado cuando:
+- MSBuild pasa sin errores nuevos en `MAT.MVC`
+- La feature funciona según la descripción del task
+- Cambios de schema están reflejados en `MAT.DB`
+- `PROGRESS.md` está actualizado
+
+---
+
+## Gestión de archivos de trabajo
+
+- **`SPEC.md`** → fuente de verdad de qué construir. Solo modificar para marcar `[x]` en tasks completados o agregar tasks nuevos acordados con el humano.
+- **`PROGRESS.md`** → bitácora de lo que se fue haciendo. Actualizar al terminar cada task con este formato:
+
+```
+### [YYYY-MM-DD] — nombre del task
+- Archivos modificados: ...
+- Qué se implementó: ...
+- Problemas encontrados: ...
+- Estado: ✅ completo / ⚠️ bloqueado / 🔄 en progreso
 ```
 
 ---
 
-## 10. Documentación interna
+## Documentación interna
 
 - `DOCUMENTACION\GUIA_SISTEMA_MAT.md` — contexto técnico completo
 - `DOCUMENTACION\MAT_DB.md` — proyecto SSDT y flujo de esquema

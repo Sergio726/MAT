@@ -1,0 +1,34 @@
+---
+description: Reglas de seguridad y calidad de código
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.cs"
+  - "**/*.cshtml"
+  - "**/*.csproj"
+  - "**/*.sln"
+  - "**/*.config"
+alwaysApply: true
+---
+
+# Seguridad y calidad
+
+- Nunca loggear API keys, tokens o datos sensibles
+- Nunca exponer secrets al cliente (solo en servidor/backend)
+- Variables de entorno: nunca usar prefijo NEXT_PUBLIC_ con datos sensibles
+- TypeScript: sin uso de `any` salvo casos justificados con comentario
+- Errores de API → mostrar mensaje al usuario, no romper la UI
+- npx tsc --noEmit y npm run lint deben pasar limpios al terminar cada task
+- No introducir warnings nuevos en archivos no relacionados con el task actual
+
+## C# / ASP.NET
+
+- Nunca loggear connection strings, tokens o credenciales
+- Nunca exponer secrets en el cliente (Razor views, JS inline)
+- Usar `ErrorUtil` en todos los controladores para manejo de errores (p. ej. `ErrorUtil.LogAndGetPublicMessage` en `catch`; no exponer `Exception.Message` al usuario)
+- Variables sensibles solo en `appsettings.json` o User Secrets (ASP.NET Core), o en `Web.config` / connection strings en .NET Framework (p. ej. MAT), nunca hardcodeadas
+- No usar credenciales en código fuente ni en comentarios
+- Validar siempre `ModelState` antes de procesar en Controllers
+- Retornar siempre tipos de respuesta consistentes desde los Services

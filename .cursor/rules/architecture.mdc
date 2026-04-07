@@ -1,0 +1,15 @@
+---
+description: Convenciones de arquitectura del proyecto
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+alwaysApply: true
+---
+
+# Arquitectura
+
+- Seguir la estructura de carpetas definida en CLAUDE.md
+- Tipos/interfaces compartidos en un solo archivo central (no duplicar)
+- Importaciones absolutas con alias configurado en tsconfig o jsconfig
+- Lógica pura sin estado de UI → módulos en lib/ o utils/
+- Componentes UI → carpeta components/
+- No crear archivos fuera de la estructura definida en CLAUDE.md sin consultar
+- Seguir los patrones ya existentes antes de inventar nuevos
