@@ -49,7 +49,7 @@
 
 #### Reportes administrativos (misma BD que MAT Web; patrones MAT.MVC)
 
-**Principios:** Implementar en el sistema actual usando `DBHelper`/SqlClient, `ErrorUtil`, `RequireAdministrador()`, vistas Admin Bootstrap 5 y **EPPlus** para Excel. Reutilizar **sin modificar** los SP existentes `usp_MAT_Reportes_Ventas`, `usp_MAT_Reportes_Pagos`, `usp_MAT_Reportes_RankingCompras`. Si el contrato columnas/parámetros no alcanza, crear **nuevos** SP en `MAT.DB` (nombre distinto, p. ej. sufijo `_Admin` o `_V2`) y dejar los originales intactos. Referencia funcional: documento de requisitos reportes MAT Web (paridad endpoints/filtros/DTO).
+**Principios:** Implementar en el sistema actual usando `DBHelper`/SqlClient, `ErrorUtil`, `RequireAdministrador()`, vistas Admin Bootstrap 5 y **EPPlus** para Excel. Reutilizar **sin modificar** los SP existentes `usp_MAT_Reportes_Ventas`, `usp_MAT_Reportes_Pagos`, `usp_MAT_Reportes_RankingCompras`. Si el contrato columnas/parámetros no alcanza, crear **nuevos** SP en `MAT.DB` (nombre distinto, p. ej. sufijo `_Admin` o `_V2`) y dejar los originales intactos. Referencia funcional: `DOCUMENTACION\REPORTES_MAT_WEB.md` (paridad filtros/DTO/Excel con MAT Web; rutas pueden diferir).
 
 - [ ] **Reportes [P2 — Alta]: Inventario read-only de SP y definición de estrategia**
   Revisar en `MAT.DB` los tres SP anteriores: parámetros, columnas devueltas y tipos. Contrastar con el contrato deseado (filtros `from`/`to`/`viajeId`/opcionales, mapeo DTO). Decisión documentada: ¿llamar SP actuales desde C# solo con mapeo? ¿o alta de **nuevo** SP sin `ALTER` sobre los existentes?
@@ -138,6 +138,24 @@
   `ResumenPagos` ya carga los datos de pagos por viaje en una grilla HTML. Agregar un botón "Exportar a Excel" que llame a una acción del controller que use EPPlus (ya disponible en el proyecto) para generar el archivo. No requiere nuevas dependencias.
   Archivos: `Controllers/Admin/AdminController.cs`, `Views/Admin/GridResumenPagos.cshtml`
   Criterio de éxito: El botón descarga un .xlsx con los datos del viaje seleccionado. La acción tiene `[Authorize]` y `RequireAdministrador()`.
+
+- [ ] **Arquitectura [P3 — Baja]: Eliminar NetTiers y capa generada asociada**
+  **Contexto:** Hoy gran parte del acceso a datos y entidades proviene de plantillas NetTiers (`*generated*.cs`, `NetTiersProvider`, `DataRepository`, proyectos `MAT.Data`, `MAT.Data.SqlClient`, `MAT.Data.WebServiceClient`, bases `*ServiceBase.generated.cs` en `MAT.Services`, `*Base.generated.cs` en `MAT.Entities`, y posibles restos en `MAT.Web`). Objetivo final: **ninguna dependencia ni referencia a NetTiers**, y código muerto eliminado.
+  **Restricción:** Épica de alto riesgo; **consultar al humano** antes de arrancar la primera fase (estrategia de reemplazo: SqlClient/SPs ya usados, repositorios manuales, u otra capa acordada). **No agregar paquetes NuGet** (p. ej. Dapper) sin aprobación explícita.
+  **Enfoque por fases (marcar avance en PROGRESS):**
+  1. **Inventario:** Listar referencias a `NetTiers`, `DataRepository`, providers Sql/Ws y usos de `*.generated.cs` desde `MAT.MVC`, `MAT.Services` (clases manuales), `MAT.Web`, `MAT.WCF`. Identificar proyectos/piezas realmente usados en el build de la solución principal vs. legado desreferenciado.
+  2. **Sustitución incremental:** Por dominio o por proyecto, reemplazar llamadas a la capa NetTiers por el método acordado (p. ej. `DBHelper`/SqlCommand, servicios ya existentes sin generated, nuevos repositorios). Mantener contratos públicos de la app estables donde sea posible.
+  3. **Poda:** Eliminar archivos `*.generated.cs` y bases generadas cuando ningún compilado los referencie; retirar proyectos o carpetas enteras si quedan huérfanos (`WebServiceClient`, etc., solo si el análisis confirma que no se usan).
+  4. **Limpieza:** Quitar referencias de ensamblados, `using`, comentarios de plantilla `www.nettiers.com`, y actualizar `CLAUDE.md` / documentación de arquitectura para reflejar la nueva capa de datos.
+  **Criterio de éxito global:** `MAT.sln` compila en Debug sin proyectos NetTiers en la cadena de uso de `MAT.MVC`; búsqueda en repo sin `NetTiers` ni `nettiers.com`; comportamiento funcional validado en pruebas manuales/regresión por módulos migrados. Si una fase no puede cerrarse sin decisión de diseño, documentar bloqueo en PROGRESS y pausar.
+
+- [ ] **Arquitectura [P3 — Baja]: Retirar proyecto `MAT.Web` (legado Web Forms / NetTiers)**
+  **Contexto:** `MAT.Web` sigue en `MAT.sln` y se compila, pero `CLAUDE.md` y `DOCUMENTACION\GUIA_SISTEMA_MAT.md` indican que **no hay `ProjectReference` desde `MAT.MVC` ni `MAT.Services`**. Aun así el host principal declara ensamblado y módulo en `MAT.MVC\Web.config` (`tagPrefix` → `MAT.Web.Data` / `MAT.Web.UI`, `EntityTransactionModule` → `MAT.Web.Data.EntityTransactionModule`). Antes de borrar nada hay que **confirmar uso cero** (vistas `.aspx`/ascx, controles `<data:...>`, scripts de despliegue, otros repos o IIS que referencien `MAT.Web.dll`).
+  **Fases sugeridas:**
+  1. **Inventario:** Búsqueda global `MAT.Web` / `assembly="MAT.Web"` en solution, configs y pipelines; verificar que ningún `.csproj` (salvo el propio) referencie el proyecto; listar dependencias internas (p. ej. solo NetTiers + Entities).
+  2. **Desacople del host:** Si no hay uso real, eliminar de `Web.config` las entradas de `pages/controls` y `httpModules` (o equivalente en la sección migrada a `<system.webServer>`) que apunten a `MAT.Web`; validar arranque y una pasada por pantallas críticas.
+  3. **Solución y carpeta:** Quitar `MAT.Web` de `MAT.sln` y build configurations; eliminar carpeta `MAT.Web\` del repo **o** archivar en rama/documentación según política del equipo; ajustar `CLAUDE.md` / guías que mencionen el proyecto.
+  **Criterio de éxito:** MSBuild de `MAT.sln` (o al menos `MAT.MVC`) en Debug sin errores; aplicación corre en IIS Express; no quedan referencias rotas a `MAT.Web`; documentación alineada.
 
 ### Seguridad — correcciones obligatorias
 
