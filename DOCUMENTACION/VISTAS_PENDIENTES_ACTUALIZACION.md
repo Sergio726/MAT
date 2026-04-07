@@ -5,7 +5,7 @@
 
 ---
 
-## ✅ COMPLETADAS (65 vistas en tabla principal; otras fases también ✅):
+## ✅ COMPLETADAS (67 vistas en tabla principal; otras fases también ✅):
 
 | # | Vista | Fecha | Mejoras Aplicadas |
 |---|-------|-------|-------------------|
@@ -74,6 +74,8 @@
 | 63 | Admin/Logs.cshtml | 2026-04-07 | BS5: formulario `d-flex`; `btn-outline-secondary`; iconos BI |
 | 64 | Admin/EditarPlanilla.cshtml | 2026-04-07 | Card + grid; ids `#fecha-planilla`, `#total-planilla`, `#btn-guardar-planilla`; datepicker opcional si jQuery UI disponible |
 | 65 | Admin/GridPlanillaServicioItemContext.cshtml | 2026-04-07 | Botón `#btn-generar-planilla` con icono BI |
+| 66 | Admin/ImprimirPlanilla.cshtml | 2026-04-07 | jQuery 3.7.1; encabezado etiquetado; fecha como fecha (corrección vs hora); mismos loads AJAX |
+| 67 | Admin/ImprimirPlanillaDetalle.cshtml | 2026-04-07 | jQuery 3.7.1; encabezado tipografía consistente; mismos loads AJAX |
 
 ---
 
@@ -261,8 +263,8 @@
 - ✅ Admin/EditarPlanilla.cshtml — Card encabezado BS5, grid, botón Guardar `btn-danger` + icono BI; datepicker si existe — 2026-04-07
 - ⏳ Admin/HistorialPrecios.cshtml
 - ⏳ Admin/AuditoriaFacturas.cshtml
-- ⏳ Admin/ImprimirPlanilla.cshtml
-- ⏳ Admin/ImprimirPlanillaDetalle.cshtml
+- ✅ Admin/ImprimirPlanilla.cshtml — Ventana impresión: jQuery 3.7.1, encabezado legible, fecha corregida — 2026-04-07
+- ✅ Admin/ImprimirPlanillaDetalle.cshtml — Igual patrón — 2026-04-07
 - ✅ Admin/GridPlanillasGeneradas.cshtml — Card tabla + `.js-imprimir-planilla-detalle` — 2026-04-07
 - ⏳ Admin/PartialGridServiciosAdmin.cshtml
 - ✅ Admin/GridPlanillaServicioItemContext.cshtml — Botón Generar planilla `btn-danger` + icono BI; `#btn-generar-planilla` intacto — 2026-04-07
@@ -310,7 +312,7 @@
 
 **TOTAL COMPLETADAS (tabla numerada #1–#61):** 61 filas en la tabla principal + Fase 4 ítem 50–58 ✅ + sublistas Fase 6 actualizadas (Paquetes, Viajes parcial, NuevaReserva, Planillas).  
 **TOTAL PENDIENTES (aprox.):** ~55–65 vistas según lo que siga en ⏳ en Fase 5–6.  
-**Avance global estimado (P1 según este doc):** **~54%** — tras planillas admin + verificación Reserva/FormReserva; conviene seguir auditando ⏳ restantes.  
+**Avance global estimado (P1 según este doc):** **~55%** — incluye impresión planilla (ventana nueva); conviene seguir auditando ⏳ restantes.  
 **TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
 
 ---
@@ -639,8 +641,10 @@ else
 | 2026-04-07 | Admin/EditarPlanilla.cshtml | Admin planilla | Reemplazo layout `.form` BS2 por card/grid BS5; mismo contrato AJAX GuardarDatosPlanilla | `#btn-guardar-planilla` sin `href` (evita salto); clase `date` en fecha |
 | 2026-04-07 | Admin/GridPlanillaServicioItemContext.cshtml | Parcial admin | Botón generar con icono; mantiene `#btn-generar-planilla` | P1 |
 | 2026-04-07 | — | Doc | Reserva/FormReserva.cshtml marcado ✅ (vista ya moderna; distinto de NuevaReserva/FormReserva) | Solo listas |
+| 2026-04-07 | Admin/ImprimirPlanilla.cshtml | Impresión | jQuery 3.7.1; labels `<strong>`; `Fecha` con `ToShortDateString` (antes `ToShortTimeString`) | `mat.planillaprint.css` `.planilla-print-header` |
+| 2026-04-07 | Admin/ImprimirPlanillaDetalle.cshtml | Impresión | Mismo alineamiento técnico | P1 |
 
-**Total de mejoras registradas:** 48+ (ver filas anteriores en esta tabla)
+**Total de mejoras registradas:** 50+ (ver filas anteriores en esta tabla)
 
 ---
 
