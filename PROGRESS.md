@@ -2,12 +2,33 @@
 
 ---
 
+### [2026-04-08] — P2: Admin Usuarios confirmación con modal Bootstrap 5
+
+- Archivos modificados: `MAT.MVC/Views/Admin/Usuarios.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: reemplazo del flujo `confirm()`/jQuery UI por modal Bootstrap 5 reutilizable (`#adminConfirmModal`) para la acción de deshabilitar usuario. El botón `.js-admin-confirm-submit` ahora abre modal, setea título/mensaje por `data-*` y confirma submit del form al aceptar.
+- Problemas encontrados: ninguno.
+- Estado: ✅ Task marcado `[x]` en SPEC; MSBuild MAT.MVC Debug OK
+
 ### [2026-04-08] — P1 (avance): Shared/Error modernizado
 
 - Archivos modificados: `MAT.MVC/Views/Shared/Error.cshtml`, `DOCUMENTACION/VISTAS_PENDIENTES_ACTUALIZACION.md`, `PROGRESS.md`
 - Qué se implementó: vista de error standalone alineada al estilo actual (`modern-error-*`), corrigiendo botón con contraste correcto, card responsive, bloque de detalles técnicos sólo para `SystemDEV=true`, y manteniendo `correlationId` para soporte. Se marcó `Shared/Error.cshtml` como ✅ en inventario de pendientes.
 - Problemas encontrados: las pendientes de Fase 5 en `PersonaCliente` ya estaban modernizadas en código, por lo que se avanzó con la primera pendiente real no modernizada.
 - Estado: ✅ MSBuild MAT.MVC Debug OK; P1 sigue abierto en SPEC
+
+### [2026-04-08] — P1 (iteración): normalización CSS de Shared/Error
+
+- Archivos modificados: `MAT.MVC/Views/Shared/Error.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: normalización de estilos para vista standalone sin depender de redefinir `:root` local; se reemplazaron variables locales por uso de tokens globales con fallback (`var(--token, fallback)`), preservando consistencia visual aun cuando no se cargue el layout principal.
+- Problemas encontrados: ninguno.
+- Estado: ✅ Task de iteración marcado `[x]` en SPEC; MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — P1 (iteración): extracción de estilos inline en Shared/Error
+
+- Archivos modificados: `MAT.MVC/Views/Shared/Error.cshtml`, `MAT.MVC/Content/modern-error.css`, `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: extracción completa del bloque `<style>` de `Shared/Error.cshtml` hacia `Content/modern-error.css`; la vista ahora carga `saas-variables.css` + `modern-error.css` para mantener render standalone sin depender de `_Layout`.
+- Problemas encontrados: ninguno.
+- Estado: ✅ Task marcado `[x]` en SPEC; MSBuild MAT.MVC Debug OK (sin errores)
 
 ### [2026-04-07] — P2: Admin UsuarioEditar con gestión completa de roles
 

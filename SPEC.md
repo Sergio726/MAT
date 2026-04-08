@@ -15,9 +15,13 @@
   Revisar `DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md` y migrar las vistas listadas a Bootstrap 5 / jQuery 3, eliminando dependencias obsoletas identificadas en `DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md`.
   Criterio de éxito: Las vistas actualizadas renderizan correctamente en IIS Express sin errores de consola JS; MSBuild pasa sin errores.
 
-- [ ] **Iteración CSS: normalizar estilos de `Shared/Error.cshtml`**
+- [x] **Iteración CSS: normalizar estilos de `Shared/Error.cshtml`**
   La vista `MAT.MVC/Views/Shared/Error.cshtml` fue modernizada, pero sus estilos aún no están completamente normalizados con las convenciones de estilos compartidos del proyecto (nombres, tokens/variables y consistencia visual). Realizar una iteración de hardening CSS para alinear la vista con el estándar de UI actual sin cambiar la lógica de manejo de errores.
   Criterio de éxito: estilos de `Shared/Error.cshtml` normalizados y consistentes con el sistema visual del proyecto, sin regresiones de render y con compilación `MAT.MVC` en Debug sin errores.
+
+- [x] **Iteración CSS: extraer estilos inline de `Shared/Error.cshtml` a archivo dedicado**
+  La vista `MAT.MVC/Views/Shared/Error.cshtml` mantiene un bloque `<style>` inline. Crear un CSS dedicado (por ejemplo en `MAT.MVC/Content/`) y mover allí todos los estilos `modern-error-*`, dejando la vista sin estilos embebidos. Mantener la capacidad de render standalone de la pantalla de error sin depender del layout principal.
+  Criterio de éxito: `Shared/Error.cshtml` sin bloque `<style>`; estilos cargados desde archivo CSS dedicado; apariencia y comportamiento sin regresiones; compilación `MAT.MVC` en Debug sin errores.
 
 ### P2 — Mejoras de producto
 
@@ -36,7 +40,7 @@
   Archivos: `Views/Admin/Index.cshtml`
   Criterio de éxito: El panel Admin muestra las tarjetas de ErrorLog y Logs. El acceso respeta la restricción de rol acordada.
 
-- [ ] **Admin: Reemplazar confirm() de jQuery UI por modal Bootstrap 5 en Usuarios**
+- [x] **Admin: Reemplazar confirm() de jQuery UI por modal Bootstrap 5 en Usuarios**
   El handler `js-admin-confirm-submit` en `Usuarios.cshtml` llama a una función `confirm()` que usa jQuery UI dialog. Esto crea dependencia mezclada (BS5 + jQuery UI) e inconsistencia visual. Reemplazar por un modal Bootstrap 5 reutilizable (puede ser el mismo patrón que ya usan otras vistas con `data-bs-toggle`).
   Archivos: `Views/Admin/Usuarios.cshtml`
   Criterio de éxito: La confirmación de deshabilitar usuario usa modal Bootstrap 5. No queda dependencia de jQuery UI dialog en esta vista.

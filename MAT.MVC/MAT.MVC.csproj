@@ -435,6 +435,7 @@
     <Content Include="Content\modern-account.css" />
     <Content Include="Content\modern-dashboard.css" />
     <Content Include="Content\modern-datatable.css" />
+    <Content Include="Content\modern-error.css" />
     <Content Include="Content\modern-facturafiscal.css" />
     <Content Include="Content\modern-facturas.css" />
     <Content Include="Content\factura-detalle.css" />
