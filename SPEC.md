@@ -15,6 +15,10 @@
   Revisar `DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md` y migrar las vistas listadas a Bootstrap 5 / jQuery 3, eliminando dependencias obsoletas identificadas en `DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md`.
   Criterio de éxito: Las vistas actualizadas renderizan correctamente en IIS Express sin errores de consola JS; MSBuild pasa sin errores.
 
+- [ ] **Iteración CSS: normalizar estilos de `Shared/Error.cshtml`**
+  La vista `MAT.MVC/Views/Shared/Error.cshtml` fue modernizada, pero sus estilos aún no están completamente normalizados con las convenciones de estilos compartidos del proyecto (nombres, tokens/variables y consistencia visual). Realizar una iteración de hardening CSS para alinear la vista con el estándar de UI actual sin cambiar la lógica de manejo de errores.
+  Criterio de éxito: estilos de `Shared/Error.cshtml` normalizados y consistentes con el sistema visual del proyecto, sin regresiones de render y con compilación `MAT.MVC` en Debug sin errores.
+
 ### P2 — Mejoras de producto
 
 - [x] **Admin: Migrar ErrorLog.cshtml y Logs.cshtml a Bootstrap 5**

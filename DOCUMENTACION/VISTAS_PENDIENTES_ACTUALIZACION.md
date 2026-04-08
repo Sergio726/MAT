@@ -309,7 +309,7 @@
 - ✅ Shared/_Search.cshtml — `section` + aria-live — 2026-04-07
 - ✅ Shared/_DetalleViaje.cshtml — Tipografía/iconos BS5 — 2026-04-07
 - ⏳ Shared/Voucher.cshtml
-- ⏳ Shared/Error.cshtml
+- ✅ Shared/Error.cshtml — Pantalla de error modernizada con layout standalone (`modern-error-*`), mensaje público + correlation ID y detalle técnico sólo en `SystemDEV=true` — 2026-04-08
 - ⏳ Shared/_LayoutAdmin.cshtml
 - ⏳ Shared/_LayoutSplash.cshtml
 - ✅ PersonaVendedor/PartialHistorialPagos.cshtml — Tabla + `js-detalle-pago-vendedor` → `imprimirReciboPago` — 2026-04-07
