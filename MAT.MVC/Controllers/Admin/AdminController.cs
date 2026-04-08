@@ -92,25 +92,7 @@ namespace MAT.MVC.Controllers.Admin
                 return RedirectToAction("Usuarios");
             }
 
-            var userName = profile.UserName;
-            bool isAdmin = false;
-            try
-            {
-                isAdmin = Roles.IsUserInRole(userName, "Administrador");
-            }
-            catch { }
-
-            bool isApproved, isLocked;
-            TryPopulateMembershipDisplayForAdmin(userName, out isApproved, out isLocked);
-
-            var model = new AdminUsuarioEditModel
-            {
-                UserId = id.Value,
-                UserName = userName,
-                EsAdministrador = isAdmin,
-                IsApproved = isApproved,
-                IsLockedOut = isLocked
-            };
+            var model = BuildUsuarioEditModel(profile.UserId, profile.UserName);
             return View(model);
         }
 
@@ -140,35 +122,53 @@ namespace MAT.MVC.Controllers.Admin
             var targetUserName = profile.UserName;
             model.UserName = targetUserName;
 
-            bool currentlyAdmin = false;
-            try
-            {
-                currentlyAdmin = Roles.IsUserInRole(targetUserName, "Administrador");
-            }
-            catch { }
+            var allRoles = GetAllRolesSafe();
+            var currentRoles = new HashSet<string>(GetRolesForUserSafe(targetUserName), StringComparer.OrdinalIgnoreCase);
+            var selectedRoles = new HashSet<string>(
+                (model.Roles ?? new List<AdminUsuarioRolItemModel>())
+                    .Where(r => r != null && r.Selected && !string.IsNullOrWhiteSpace(r.RoleName))
+                    .Select(r => r.RoleName.Trim()),
+                StringComparer.OrdinalIgnoreCase);
 
-            if (model.EsAdministrador && !currentlyAdmin)
-            {
-                try
-                {
-                    Roles.AddUserToRole(targetUserName, "Administrador");
-                }
-                catch (Exception e)
-                {
-                    ModelState.AddModelError("", ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioEditar.AddRole"));
-                }
-            }
-            else if (!model.EsAdministrador && currentlyAdmin)
+            var adminRoleName = allRoles.FirstOrDefault(r => string.Equals(r, "Administrador", StringComparison.OrdinalIgnoreCase)) ?? "Administrador";
+
+            model.EsAdministrador = selectedRoles.Contains(adminRoleName);
+
+            if (model.EsAdministrador)
+                selectedRoles.Add(adminRoleName);
+            else
+                selectedRoles.Remove(adminRoleName);
+
+            var toAdd = selectedRoles.Except(currentRoles, StringComparer.OrdinalIgnoreCase).ToList();
+            var toRemove = currentRoles.Except(selectedRoles, StringComparer.OrdinalIgnoreCase).ToList();
+
+            if (toRemove.Any(r => string.Equals(r, "Administrador", StringComparison.OrdinalIgnoreCase)))
             {
                 if (string.Equals(User.Identity.Name, targetUserName, StringComparison.OrdinalIgnoreCase))
                     ModelState.AddModelError("", "No puede quitarse el rol Administrador a usted mismo.");
                 else if (CountUsersInRole("Administrador") <= 1)
                     ModelState.AddModelError("", "No puede quitarse el último administrador del sistema.");
-                else
+            }
+
+            if (ModelState.IsValid)
+            {
+                foreach (var role in toAdd)
                 {
                     try
                     {
-                        Roles.RemoveUserFromRole(targetUserName, "Administrador");
+                        Roles.AddUserToRole(targetUserName, role);
+                    }
+                    catch (Exception e)
+                    {
+                        ModelState.AddModelError("", ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioEditar.AddRole"));
+                    }
+                }
+
+                foreach (var role in toRemove)
+                {
+                    try
+                    {
+                        Roles.RemoveUserFromRole(targetUserName, role);
                     }
                     catch (Exception e)
                     {
@@ -183,11 +183,58 @@ namespace MAT.MVC.Controllers.Admin
                 return RedirectToAction("Usuarios");
             }
 
-            TryPopulateMembershipDisplayForAdmin(targetUserName, out bool reIsApproved, out bool reIsLocked);
-            model.IsApproved = reIsApproved;
-            model.IsLockedOut = reIsLocked;
+            return View(BuildUsuarioEditModel(profile.UserId, targetUserName));
+        }
 
-            return View(model);
+        private AdminUsuarioEditModel BuildUsuarioEditModel(int userId, string userName)
+        {
+            var assignedRoles = new HashSet<string>(GetRolesForUserSafe(userName), StringComparer.OrdinalIgnoreCase);
+            bool isApproved, isLocked;
+            TryPopulateMembershipDisplayForAdmin(userName, out isApproved, out isLocked);
+
+            var model = new AdminUsuarioEditModel
+            {
+                UserId = userId,
+                UserName = userName,
+                EsAdministrador = assignedRoles.Contains("Administrador"),
+                IsApproved = isApproved,
+                IsLockedOut = isLocked
+            };
+
+            foreach (var roleName in GetAllRolesSafe().OrderBy(r => r))
+            {
+                model.Roles.Add(new AdminUsuarioRolItemModel
+                {
+                    RoleName = roleName,
+                    Selected = assignedRoles.Contains(roleName)
+                });
+            }
+
+            return model;
+        }
+
+        private static string[] GetAllRolesSafe()
+        {
+            try
+            {
+                return Roles.GetAllRoles() ?? new string[] { };
+            }
+            catch
+            {
+                return new string[] { };
+            }
+        }
+
+        private static string[] GetRolesForUserSafe(string userName)
+        {
+            try
+            {
+                return Roles.GetRolesForUser(userName) ?? new string[] { };
+            }
+            catch
+            {
+                return new string[] { };
+            }
         }
 
         [Authorize]

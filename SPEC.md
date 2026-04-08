@@ -22,7 +22,7 @@
   Archivos: `Views/Admin/ErrorLog.cshtml`, `Views/Admin/Logs.cshtml`
   Criterio de éxito: Las vistas renderizan correctamente en IIS Express sin glyphicons ni clases BS2. MSBuild pasa sin errores.
 
-- [ ] **Admin: Gestión completa de roles en UsuarioEditar**
+- [x] **Admin: Gestión completa de roles en UsuarioEditar**
   El formulario `UsuarioEditar` solo permite asignar/quitar el rol "Administrador" mediante un checkbox. Otros roles existentes en el sistema (ej. "Vendedor") no pueden gestionarse desde la UI. Extender la vista y el controller para listar todos los roles del sistema como checkboxes y guardar los cambios. El controller debe leer los roles desde `Roles.GetAllRoles()` y aplicar add/remove por diferencia.
   Archivos: `Views/Admin/UsuarioEditar.cshtml`, `Controllers/Admin/AdminController.cs`, `Models/AdminUsuarioEditModel`
   Criterio de éxito: El formulario muestra todos los roles del sistema. Se pueden asignar y quitar roles arbitrarios. Las restricciones existentes (no quitarse admin a uno mismo, no eliminar último admin) se mantienen.

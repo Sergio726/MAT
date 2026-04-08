@@ -2,6 +2,13 @@
 
 ---
 
+### [2026-04-07] — P2: Admin UsuarioEditar con gestión completa de roles
+
+- Archivos modificados: `MAT.MVC/Models/AdminUsuarioEditModel.cs`, `MAT.MVC/Controllers/Admin/AdminController.cs`, `MAT.MVC/Views/Admin/UsuarioEditar.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: `UsuarioEditar` ahora lista **todos** los roles del sistema (`Roles.GetAllRoles()`) como checkboxes y guarda por **diferencia** (altas/bajas) contra los roles actuales del usuario. Se mantiene la seguridad existente para el rol Administrador: no quitarse admin a sí mismo y no quitar el último admin.
+- Problemas encontrados: Ninguno bloqueante.
+- Estado: ✅ MSBuild MAT.MVC Debug OK; task de SPEC marcado `[x]`
+
 ### [2026-04-07] — P1 (~15% doc): Home/Shared partials + historial vendedor + doc ~74%
 
 - Archivos modificados: `MAT.MVC/Models/VendedorHistorialPagoFila.cs`, `MAT.MVC/MAT.MVC.csproj`, `MAT.MVC/Controllers/PersonaVendedor/PersonaVendedorController.cs`, `MAT.MVC/Views/PersonaVendedor/PartialHistorialPagos.cshtml`, `MAT.MVC/Scripts/mat.jquery.binding.js`, `DOCUMENTACION/VISTAS_PENDIENTES_ACTUALIZACION.md`, `PROGRESS.md` (vistas Admin Index, RenderGridHistorialPagos, Shared `_DetalleViaje` / `_ViajesPartial` / `_Search`, PersonaPasajero partial ya auditadas en doc en esta tanda)

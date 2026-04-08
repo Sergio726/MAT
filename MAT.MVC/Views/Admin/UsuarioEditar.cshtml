@@ -30,9 +30,27 @@
                             <div class="form-control-plaintext fw-semibold">@Html.Encode(Model.UserName)</div>
                         </div>
 
-                        <div class="mb-3 form-check">
-                            @Html.CheckBoxFor(m => m.EsAdministrador, new { @class = "form-check-input" })
-                            @Html.LabelFor(m => m.EsAdministrador, new { @class = "form-check-label" })
+                        <div class="mb-3">
+                            <label class="form-label text-secondary mb-2">Roles del usuario</label>
+                            <div class="border rounded p-3 bg-light-subtle">
+                                @if (Model.Roles != null && Model.Roles.Count > 0)
+                                {
+                                    for (var i = 0; i < Model.Roles.Count; i++)
+                                    {
+                                        @Html.HiddenFor(m => m.Roles[i].RoleName)
+                                        <div class="form-check mb-2">
+                                            @Html.CheckBoxFor(m => m.Roles[i].Selected, new { @class = "form-check-input", id = "role_" + i })
+                                            <label for="@("role_" + i)" class="form-check-label">@Model.Roles[i].RoleName</label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-secondary small">No hay roles definidos en el sistema.</div>
+                                }
+                            </div>
+                            @Html.HiddenFor(m => m.EsAdministrador)
+                            <div class="form-text">Puede asignar o quitar cualquier rol. La validación de seguridad de Administrador se aplica al guardar.</div>
                         </div>
 
                         <div class="mb-3 small text-secondary">
