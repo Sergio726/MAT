@@ -269,6 +269,19 @@ var ModalConfig = {
     }
 };
 
+/**
+ * Cierra el diálogo jQuery UI creado con ShowFormDialog (elemento raíz #contentElementId).
+ * Permite que vistas incrustadas no invoquen .dialog("close") directamente.
+ */
+window.matCloseShowFormDialog = function (contentElementId) {
+    if (!contentElementId) return;
+    try {
+        var $el = $("#" + String(contentElementId));
+        if (!$el.length || typeof $el.dialog !== "function") return;
+        $el.dialog("close");
+    } catch (e) { /* no-op */ }
+};
+
 function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
     var width = ModalConfig.getWidth(widthsize);
 

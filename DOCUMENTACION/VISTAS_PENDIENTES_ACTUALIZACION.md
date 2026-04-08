@@ -1,7 +1,7 @@
 # LISTADO DE VISTAS PENDIENTES DE ACTUALIZAR
 
 **Fecha de creación:** 2025-01-27  
-**Estado:** En progreso — Fases 2 y 3 completadas; **Fase 4 completada en código** (auditoría 2026-04-07); P1 continúa en Fase 5–6.
+**Estado:** En progreso — Fases 2–4 completadas en código; **Fase 5 cerrada en inventario** (auditoría código vs listado 2026-04-08); P1 continúa en Fase 6 y limpieza de ⏳ restantes.
 
 > **2026-04-07 — Retiro de producto (SPEC):** se eliminaron del menú Admin y del código las pantallas **PlanillaServicios**, **PlanillasGeneradas** (lista por viaje), el wizard en sesión (`PartialGridServiciosAdmin`, `GridPlanillaServicioItemContext`, `GridPlanillasGeneradas`) y huérfanos asociados (`PartialDropDownHotel`, `GridPlanillaHotel`, `PartialResumenGridPlanillaHotel` en controller). **Siguen disponibles por URL directa** (uso interno): `EditarPlanilla`, `ImprimirPlanilla`, `ImprimirPlanillaDetalle` y partials de datos por `planillaid` / viaje.
 
@@ -173,12 +173,12 @@
 ### PersonaCliente y Facturas:
 
 59. ✅ **PersonaCliente/Index.cshtml** - Rediseño completo con tarjetas, búsqueda optimizada (TOP 10), SP optimizado - Completado 2025-01-27
-60. ⏳ **PersonaCliente/Create.cshtml** - Formulario muy complejo (400+ líneas, AJAX, validaciones)
-61. ⏳ **PersonaCliente/Edit.cshtml** - Formulario muy complejo
-62. ⏳ **PersonaCliente/Details.cshtml** - Vista de detalles compleja
-63. ⏳ **Factura/Index.cshtml** - Búsqueda compleja con MagicSearch, múltiples filtros
-64. ⏳ **Factura/FacturaListByViajeID.cshtml** - Vista compleja
-65. ⏳ **PersonaCliente/DetalleFactura.cshtml** - Vista compleja
+60. ✅ **PersonaCliente/Create.cshtml** — `modern-page-container`, cards, AJAX `CreateAjax`; verificado en código — 2026-04-08
+61. ✅ **PersonaCliente/Edit.cshtml** — Mismo patrón moderno + ubicación; verificado — 2026-04-08
+62. ✅ **PersonaCliente/Details.cshtml** — `modern-detail-grid`, Bootstrap Icons; verificado — 2026-04-08
+63. ✅ **Factura/Index.cshtml** — Buscador BS5 + MagicSearch; verificado — 2026-04-08
+64. ✅ **Factura/FacturaListByViajeID.cshtml** — `modern-page-container` + carga AJAX; verificado — 2026-04-08
+65. ✅ **PersonaCliente/DetalleFactura.cshtml** — `factura-detail-container`, iconos BI; verificado — 2026-04-08
 
 ### Reservas y Admin:
 
@@ -213,7 +213,7 @@
 
 #### Reservas:
 - ✅ Reserva/FormReserva.cshtml — Flujo reserva con `reserva-container`, secciones BI, `btn-modern` donde aplica — verificado 2026-04-07 *(distinto de `NuevaReserva/FormReserva.cshtml`)*
-- ⏳ Reserva/VinculacionMenor.cshtml
+- ✅ Reserva/VinculacionMenor.cshtml — Sin `<style>` inline: estilos en `Content/partial-vinculacion-menor.css`; cierre de submodales vía `matCloseShowFormDialog` — 2026-04-08
 - ✅ Reserva/SeleccionarPasajero.cshtml — Botonera confirmar/cancelar con clases `btn-modern` (P1 parcial) — 2026-04-07
 - ⏳ Reserva/QuickSearch.cshtml
 - ⏳ Reserva/DistribucionCoche.cshtml
@@ -302,15 +302,15 @@
 - ⏳ NotaCredito/partialMovimientoNotaCredito.cshtml
 - ⏳ CuentaCorriente/DetalleComprobante.cshtml
 - ✅ Home/HistorialPagos.cshtml — Contenedor y filtros modernos (página contenedora del grid) — 2026-04-07
-- ⏳ Home/TodosLosViajes.cshtml
-- ⏳ Home/TodosLosViajesIndex.cshtml
+- ✅ Home/TodosLosViajes.cshtml — Lista `modern-viajes-container`, tarjetas, `data-searchable`; verificado — 2026-04-08
+- ✅ Home/TodosLosViajesIndex.cshtml — Filtros/año + buscador `todos-viajes-*`, Bootstrap Icons; verificado — 2026-04-08
 - ✅ Home/RenderGridHistorialPagos.cshtml — Tabla BS5 + paginación outline — 2026-04-07
 - ✅ Shared/_ViajesPartial.cshtml — `list-group` + iconos — 2026-04-07
 - ✅ Shared/_Search.cshtml — `section` + aria-live — 2026-04-07
 - ✅ Shared/_DetalleViaje.cshtml — Tipografía/iconos BS5 — 2026-04-07
-- ⏳ Shared/Voucher.cshtml
+- ⏳ Shared/Voucher.cshtml *(archivo vacío en repo; sin UI que modernizar hasta definir uso)*
 - ✅ Shared/Error.cshtml — Pantalla de error modernizada con layout standalone (`modern-error-*`), mensaje público + correlation ID y detalle técnico sólo en `SystemDEV=true` — 2026-04-08
-- ⏳ Shared/_LayoutAdmin.cshtml
+- ✅ Shared/_LayoutAdmin.cshtml — Layout admin BS5 + sidebar/offcanvas + bundles actuales; verificado — 2026-04-08
 - ⏳ Shared/_LayoutSplash.cshtml
 - ✅ PersonaVendedor/PartialHistorialPagos.cshtml — Tabla + `js-detalle-pago-vendedor` → `imprimirReciboPago` — 2026-04-07
 
@@ -324,12 +324,12 @@
 | ✅ Fase 2 | Formularios Simples | 9 | ~25 horas | ✅ Completada |
 | ✅ Fase 3 | Formularios y Tablas Medios | 15 | ~60 horas | ✅ Completada |
 | ✅ Fase 4 | Formularios Complejos | 9 | ~50 horas | ✅ Código 2026-04-07 |
-| ⏳ Fase 5 | Vistas Muy Complejas | 8 ítems (1 parcialmente hecho) | ~65 horas | 🟢 Baja |
-| ⏳ Fase 6 | Vistas Especializadas | ~40+ ⏳ *(muchas marcadas ✅ en sublistas Viajes/Paquetes/NuevaReserva/Admin parcial)* | ~100 horas | ⚪ Muy Baja |
+| ✅ Fase 5 | Vistas Muy Complejas | Inventario alineado al código (2026-04-08) | ~65 horas | ✅ lista principal |
+| ⏳ Fase 6 | Vistas Especializadas | ~30+ ⏳ *(sublistas Viajes/Paquetes/NuevaReserva/Admin mayormente ✅)* | ~100 horas | ⚪ Muy Baja |
 
 **TOTAL COMPLETADAS (tabla numerada #1–#82):** 82 filas en la tabla principal + sublistas Fase 6 (Home contenedora + partials Shared + PersonaPasajero/Vendedor auditados en esta tanda).  
-**TOTAL PENDIENTES (aprox.):** ~45–55 vistas según ⏳ en Fase 5–6.  
-**Avance global estimado (P1 según este doc):** **~74%** — auditoría partials Home/Shared + historial vendedor con recibo; seguir ⏳ (Busqueda, NotaCredito, resto PersonaCliente, etc.).  
+**TOTAL PENDIENTES (aprox.):** ~35–45 vistas según ⏳ en Fase 6 (persona cliente operativo, reservas, print, splash legacy, etc.).  
+**Avance global estimado (P1 según este doc):** **~77%** — auditoría Fase 5 + Home Todos los Viajes + `_LayoutAdmin`; seguir ⏳ (Reserva/*, PersonaCliente vouchers/historial, PasajeroViaje, etc.).  
 **TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
 
 ---
@@ -671,12 +671,13 @@ else
 | 2026-04-07 | Shared/_DetalleViaje, _ViajesPartial, _Search | Parciales | Tipografía/list-group/aria-live | P1 parciales |
 | 2026-04-07 | PersonaPasajero/PartialPasajerosHistorial.cshtml | Parcial | Tabla responsive compacta | `thead.table-light` |
 | 2026-04-07 | PersonaVendedor/PartialHistorialPagos + controller + binding | Parcial | `VendedorHistorialPagoFila`, `MovimientoCuentaService.GetByPagoId`, `.js-detalle-pago-vendedor` → `imprimirReciboPago` | Sin ids duplicados |
+| 2026-04-08 | — | Doc P1 | Fase 5 (#60–#65) + Home TodosLosViajes* + `_LayoutAdmin` marcados ✅ tras auditoría de código; `Shared/Voucher` nota archivo vacío | Inventario al day |
 
-**Total de mejoras registradas:** 64+ (ver filas anteriores en esta tabla)
+**Total de mejoras registradas:** 65+ (ver filas anteriores en esta tabla)
 
 ---
 
-**Última actualización:** 2026-04-07  
+**Última actualización:** 2026-04-08  
 **Fase 2 completada:** 2025-01-27  
 **Fase 3 completada:** 2025-01-27  
 **Optimización PersonaCliente/Index:** 2025-01-27 (SP optimizado, tarjetas, búsqueda en tiempo real)  

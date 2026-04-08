@@ -198,7 +198,7 @@
 
     function closePopup() {
         ListMenorID = [];
-        $("#divFormListaMenor").dialog("close");
+        if (window.matCloseShowFormDialog) window.matCloseShowFormDialog("divFormListaMenor");
     }
 
     function vincularListMenor() {
@@ -212,6 +212,6 @@
             $("#txtMenor").val(ListMenorID.length ? (ListMenorID.length + " menor(es) seleccionado(s)") : "");
         }
         $("#hdnMenorId").val(ListMenorID.length === 1 ? ListMenorID[0] : "");
-        $("#divFormListaMenor").dialog("close");
+        if (window.matCloseShowFormDialog) window.matCloseShowFormDialog("divFormListaMenor");
     }
 </script>

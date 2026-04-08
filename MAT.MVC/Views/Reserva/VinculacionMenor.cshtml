@@ -4,113 +4,6 @@
     string sFacturaIdVinc = ViewBag.SFacturaId as string ?? "";
 }
 
-<style>
-    .vinculacion-menor-container {
-        padding: 0.5rem;
-        min-height: 400px;
-    }
-    .vinculacion-form-panel {
-        margin-bottom: 1rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-    }
-    .vinculacion-form-title {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        margin-bottom: 0.5rem;
-    }
-    .vinculacion-form-row {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.75rem;
-        flex-wrap: wrap;
-    }
-    .vinculacion-input {
-        flex: 1;
-        min-width: 200px;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        background: var(--bg-secondary, #f9fafb);
-        color: var(--text-primary, #374151);
-    }
-    .vinculacion-input:focus {
-        outline: none;
-        border-color: var(--primary-color, #e91e63);
-        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
-        background: white;
-    }
-    .vinculacion-input::placeholder {
-        color: var(--text-secondary, #9ca3af);
-    }
-    .btn-select {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        background: var(--primary-color, #e91e63);
-        color: white;
-        border: none;
-        border-radius: 0.375rem;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .btn-select:hover {
-        background: var(--primary-hover, #d81b60);
-        transform: scale(1.05);
-    }
-    .btn-vincular {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        padding: 0.5rem 1rem;
-        background: var(--primary-color, #e91e63);
-        color: white;
-        border: none;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .btn-vincular:hover {
-        background: var(--primary-hover, #d81b60);
-    }
-    .btn-vincular i {
-        font-size: 0.75rem;
-    }
-    .content-area {
-        background: white;
-        border-radius: 0.5rem;
-        min-height: 300px;
-    }
-    .loading-state {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem;
-        color: var(--text-secondary, #9ca3af);
-    }
-    .loading-spinner {
-        width: 24px;
-        height: 24px;
-        border: 2px solid #e5e7eb;
-        border-top-color: #e91e63;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        margin-right: 0.5rem;
-    }
-    @@keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-</style>
-
 <input type="hidden" id="hdnVinculacionFacturaId" value="@sFacturaIdVinc" />
 
 @if (mostrarNuevaVinculacion)
@@ -172,7 +65,7 @@
         $("#hdnMayorId").val(PersonID);
         $("#hdnPasajeId").val(PasajeID);
 
-        $("#divFormListaMayor").dialog("close");
+        if (window.matCloseShowFormDialog) window.matCloseShowFormDialog("divFormListaMayor");
     }
 
     function addMenor(obj) {
@@ -183,7 +76,7 @@
         $("#txtMenor").val(Apellido + ", " + Nombre);
         $("#hdnMenorId").val(PersonID);
         $("#hdnVinculacionMenoresIds").val(PersonID);
-        $("#divFormListaMenor").dialog("close");
+        if (window.matCloseShowFormDialog) window.matCloseShowFormDialog("divFormListaMenor");
     }
 
     function valForm() {

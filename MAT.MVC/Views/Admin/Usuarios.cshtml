@@ -21,8 +21,18 @@
         <div class="alert alert-success mt-3 mb-0" role="alert">@ViewBag.StatusMessage</div>
     }
 
-    <div class="modern-table-container mt-3 table-responsive">
-        <table class="modern-table table table-striped align-middle">
+    <div class="modern-table-container mt-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <label for="adminUsuariosFiltroEstado" class="form-label mb-0 text-nowrap">Estado</label>
+            <select id="adminUsuariosFiltroEstado" class="form-select form-select-sm w-auto" aria-label="Filtrar por estado de usuario">
+                <option value="">Todos</option>
+                <option value="activo">Activo</option>
+                <option value="deshabilitado">Deshabilitado</option>
+                <option value="bloqueado">Bloqueado</option>
+            </select>
+        </div>
+        <div class="table-responsive">
+        <table id="tblAdminUsuarios" class="modern-table table table-striped align-middle w-100">
             <thead>
                 <tr>
                     <th>Id</th>
@@ -35,7 +45,8 @@
             <tbody>
                 @foreach (var u in Model)
                 {
-                    <tr class="@(!u.IsApproved ? "table-secondary" : null)">
+                    string estadoFiltro = !u.IsApproved ? "deshabilitado" : (u.IsLockedOut ? "bloqueado" : "activo");
+                    <tr class="@(!u.IsApproved ? "table-secondary" : null)" data-mat-estado="@estadoFiltro">
                         <td>@u.UserId</td>
                         <td>@Html.Encode(u.UserName)</td>
                         <td>@Html.Encode(u.RolesSummary)</td>
@@ -94,6 +105,7 @@
                 }
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 
@@ -118,37 +130,71 @@
 @section Scripts {
 <script>
 (function () {
-    var confirmModalEl = document.getElementById("adminConfirmModal");
-    var confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
-    var pendingForm = null;
+    /* _LayoutAdmin renderiza Scripts antes del body principal: usar document.ready. */
+    $(function () {
+        var $tbl = $("#tblAdminUsuarios");
+        if ($tbl.length && $.fn.dataTable) {
+            var estadoFilter = function (settings, data, dataIndex) {
+                if (!settings || !settings.nTable || settings.nTable.id !== "tblAdminUsuarios") return true;
+                var sel = document.getElementById("adminUsuariosFiltroEstado");
+                var v = sel ? sel.value : "";
+                if (!v) return true;
+                var api = new $.fn.dataTable.Api(settings);
+                var row = api.row(dataIndex).node();
+                return row && row.getAttribute("data-mat-estado") === v;
+            };
+            $.fn.dataTable.ext.search.push(estadoFilter);
 
-    $("#adminConfirmModalAccept").on("click", function () {
-        if (!pendingForm) return;
-        var form = pendingForm;
-        pendingForm = null;
-        if (confirmModal) confirmModal.hide();
-        form.submit();
-    });
+            $tbl.DataTable({
+                pageLength: 25,
+                order: [[1, "asc"]],
+                autoWidth: false,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+                },
+                columnDefs: [
+                    { targets: [0, 2, 3, 4], searchable: false },
+                    { targets: 4, orderable: false }
+                ]
+            });
 
-    if (confirmModalEl) {
-        confirmModalEl.addEventListener("hidden.bs.modal", function () {
+            $("#adminUsuariosFiltroEstado").on("change", function () {
+                $tbl.DataTable().draw();
+            });
+        }
+
+        var confirmModalEl = document.getElementById("adminConfirmModal");
+        var confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
+        var pendingForm = null;
+
+        $("#adminConfirmModalAccept").on("click", function () {
+            if (!pendingForm) return;
+            var form = pendingForm;
             pendingForm = null;
+            if (confirmModal) confirmModal.hide();
+            form.submit();
         });
-    }
 
-    $(document).on("click", ".js-admin-confirm-submit", function (e) {
-        e.preventDefault();
-        var form = this.form;
-        if (!form || !confirmModal) return false;
-        var $btn = $(this);
-        var msg = $btn.data("confirmMsg") || "¿Confirmar esta acción?";
-        var title = $btn.data("confirmTitle") || "Confirmación";
+        if (confirmModalEl) {
+            confirmModalEl.addEventListener("hidden.bs.modal", function () {
+                pendingForm = null;
+            });
+        }
 
-        pendingForm = form;
-        $("#adminConfirmModalLabel").text(title);
-        $("#adminConfirmModalMessage").text(msg);
-        confirmModal.show();
-        return false;
+        $(document).on("click", ".js-admin-confirm-submit", function (e) {
+            e.preventDefault();
+            var form = this.form;
+            if (!form || !confirmModal) return false;
+            var $btn = $(this);
+            var msg = $btn.data("confirmMsg") || "¿Confirmar esta acción?";
+            var title = $btn.data("confirmTitle") || "Confirmación";
+
+            pendingForm = form;
+            $("#adminConfirmModalLabel").text(title);
+            $("#adminConfirmModalMessage").text(msg);
+            confirmModal.show();
+            return false;
+        });
     });
 })();
 </script>

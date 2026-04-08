@@ -45,7 +45,7 @@
   Archivos: `Views/Admin/Usuarios.cshtml`
   Criterio de éxito: La confirmación de deshabilitar usuario usa modal Bootstrap 5. No queda dependencia de jQuery UI dialog en esta vista.
 
-- [ ] **Admin: Agregar DataTables y filtro de búsqueda en Usuarios**
+- [x] **Admin: Agregar DataTables y filtro de búsqueda en Usuarios**
   La tabla de usuarios (`Usuarios.cshtml`) es un `foreach` estático sin paginación ni búsqueda. Agregar DataTables con búsqueda por nombre de usuario y filtro por estado (Activo / Deshabilitado / Bloqueado). Seguir el patrón de otras vistas del proyecto.
   Archivos: `Views/Admin/Usuarios.cshtml`
   Criterio de éxito: La tabla permite buscar por usuario y filtrar por estado. MSBuild pasa sin errores.

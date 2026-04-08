@@ -2,6 +2,27 @@
 
 ---
 
+### [2026-04-08] — P2: Admin Usuarios — DataTables + filtro por estado
+
+- Archivos modificados: `MAT.MVC/Views/Admin/Usuarios.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: tabla `#tblAdminUsuarios` con DataTables (traducción ES, 25 por página, orden por usuario). Búsqueda global limitada a la columna **Usuario** (`searchable: false` en Id, Roles, Estado, Acciones). Desplegable **Estado** (Todos / Activo / Deshabilitado / Bloqueado) con `data-mat-estado` en cada fila y `$.fn.dataTable.ext.search`. Scripts de confirmación Bootstrap movidos dentro de `$(function)` porque `_LayoutAdmin` inyecta `@RenderSection("Scripts")` antes de `@RenderBody()`.
+- Problemas encontrados: ninguno.
+- Estado: ✅ Task marcado `[x]` en SPEC; MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — P1: Reserva VinculacionMenor — CSS extraído + cierre de modales
+
+- Archivos modificados: `MAT.MVC/Scripts/mat.jquery.functions.js` (`window.matCloseShowFormDialog`), `MAT.MVC/Content/partial-vinculacion-menor.css`, `MAT.MVC/Views/Reserva/VinculacionMenor.cshtml`, `MAT.MVC/Views/Reserva/FormListaMenor.cshtml`, `DOCUMENTACION/VISTAS_PENDIENTES_ACTUALIZACION.md`, `PROGRESS.md`
+- Qué se implementó: helper global para cerrar diálogos abiertos con `ShowFormDialog` sin llamar a `.dialog("close")` disperso; estilos de `VinculacionMenor.cshtml` movidos al CSS compartido ya enlazado en `_Layout`; `FormListaMenor` alineado al mismo cierre. Inventario: `Reserva/VinculacionMenor.cshtml` marcado ✅.
+- Problemas encontrados: ninguno.
+- Estado: ✅ MSBuild MAT.MVC Debug OK (sin errores)
+
+### [2026-04-08] — P1 (auditoría inventario): Fase 5 + Home Todos los Viajes + `_LayoutAdmin`
+
+- Archivos modificados: `DOCUMENTACION/VISTAS_PENDIENTES_ACTUALIZACION.md`, `PROGRESS.md`
+- Qué se implementó: auditoría código vs listado — **PersonaCliente/Create, Edit, Details**, **Factura/Index**, **Factura/FacturaListByViajeID**, **PersonaCliente/DetalleFactura** y **Home/TodosLosViajes + TodosLosViajesIndex** ya estaban en patrón moderno; inventario Fase 5 marcado ✅. **Shared/_LayoutAdmin** marcado ✅. **Shared/Voucher** anotado como archivo vacío. Resumen global inventario **~74% → ~77%**; pendientes **~35–45** (Fase 6 y restos).
+- Problemas encontrados: ninguno.
+- Estado: ✅ inventario alineado; P1 macro en SPEC sigue `[ ]` hasta cerrar todo el listado ⏳
+
 ### [2026-04-08] — P2: Admin Usuarios confirmación con modal Bootstrap 5
 
 - Archivos modificados: `MAT.MVC/Views/Admin/Usuarios.cshtml`, `SPEC.md`, `PROGRESS.md`
