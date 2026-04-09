@@ -636,6 +636,7 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_TransHotelHabitacionViaje_Delete.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_Ventas.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_ClientesNuevos.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_BuscarViajes.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedureServicio_Get_List.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>

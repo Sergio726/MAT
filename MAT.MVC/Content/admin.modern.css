@@ -357,6 +357,15 @@ body.admin-modern .modern-loading-text {
   color: #64748b;
 }
 
+/* jQuery UI Autocomplete (reportes / formularios Admin): por encima de navbar y cards */
+body.admin-modern .ui-autocomplete {
+  z-index: 1056 !important;
+  max-height: 280px;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(11, 42, 74, 0.18);
+}
+
 /* jQuery UI Datepicker: tema acorde al Admin (sin naranja/amarillo por defecto) */
 body.admin-modern .ui-datepicker {
   width: auto;

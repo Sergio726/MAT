@@ -28,8 +28,11 @@ Entrada desde **Admin → Índice** (tarjeta “Reportes operativos”) y menú 
 | Ventas | `/Admin/Reportes/Ventas` |
 | Pagos | `/Admin/Reportes/Pagos` |
 | Ranking compras | `/Admin/Reportes/Ranking` |
+| Búsqueda de viajes (autocompletar UI) | `/Admin/Reportes/BuscarViajes?q=texto` |
 
 **Respuesta:** JSON con `{ "ok": true|false, "message": "...", "data": [ ... ] }` (propiedades en **camelCase**).
+
+**`BuscarViajes`:** mínimo **2** caracteres en `q`; máximo 30 filas; `data` es `[{ "id": "<guid>", "descripcion": "..." }]`. SP: `usp_MAT_Reportes_BuscarViajes`. Con `q` vacío o de un solo carácter devuelve `ok: true` y `data: []` sin llamar al SP.
 
 **Parámetros query** (misma semántica que en `REPORTES_MAT_WEB.md`):
 

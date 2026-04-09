@@ -185,7 +185,7 @@
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Content/admin.modern.css`
   Criterio de éxito: Los tres datepickers muestran `‹` y `›` correctamente; configuración de rango de años y opciones de panel coherente entre los tres reportes.
 
-- [ ] **Reportes UX: Cards de indicadores resumen en Reporte de Ventas**
+- [x] **Reportes UX: Cards de indicadores resumen en Reporte de Ventas**
   Tras ejecutar una consulta exitosa en `ReporteVentas`, mostrar entre el panel de filtros y la tabla de resultados un bloque de **cards con indicadores agregados** calculados a partir de los datos ya cargados en el cliente (sin nueva petición al servidor). Inspirado en el panel de Estadísticas de Ventas del Home.
   **Indicadores a mostrar (mínimo):**
   - **Total Facturado** — suma de `totalFactura`, desglosado por moneda (ARS / USD).
@@ -201,7 +201,7 @@
   Archivos: `Views/Reportes/ReporteVentas.cshtml` (HTML de las cards + JS de cálculo); opcionalmente extraer a `Scripts/mat.reportes-ventas-indicadores.js` si el bloque crece.
   Criterio de éxito: Al recibir resultados, las cards aparecen con los totales correctos; al cambiar el filtro y re-consultar, los valores se actualizan; la tabla y el Excel no se ven afectados.
 
-- [ ] **Reportes UX: Buscador de viajes en filtro "Por viaje" (autocompletar, sin GUID manual)**
+- [x] **Reportes UX: Buscador de viajes en filtro "Por viaje" (autocompletar, sin GUID manual)**
   En los tres reportes (`ReporteVentas`, `ReportePagos`, `ReporteRanking`) el modo **Por viaje** exige que el usuario ingrese manualmente el GUID del viaje. Reemplazar ese campo de texto libre por un **autocompletar inteligente**: el usuario escribe parte del nombre del viaje, el campo sugiere resultados desde el servidor (endpoint JSON existente o nuevo, según conveniencia) y al seleccionar uno se almacena el GUID internamente sin exponerlo en pantalla. El campo debe mostrar solo el nombre descriptivo del viaje.
   **Detalles de implementación:**
   - Crear (o reutilizar) un endpoint ligero — por ejemplo `GET /Admin/Reportes/BuscarViajes?q=texto` — que devuelva `[{ id, descripcion }]` consultando la tabla/vista de viajes (sin tocar SP de reportes existentes).

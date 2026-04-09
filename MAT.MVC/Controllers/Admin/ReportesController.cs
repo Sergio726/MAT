@@ -159,6 +159,34 @@ namespace MAT.MVC.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// Autocompletar de viajes por nombre (reportes Admin). Mínimo 2 caracteres.
+        /// </summary>
+        [HttpGet]
+        public ActionResult BuscarViajes(string q)
+        {
+            var denied = JsonRequireAdministrator();
+            if (denied != null) return denied;
+
+            var term = (q ?? string.Empty).Trim();
+            if (term.Length < 2)
+                return JsonMessage(ok: true, message: null, data: new List<ReporteViajeLookupDto>());
+
+            if (term.Length > 200)
+                term = term.Substring(0, 200);
+
+            try
+            {
+                var list = LoadViajesBusqueda(term);
+                return JsonMessage(ok: true, message: null, data: list);
+            }
+            catch (Exception ex)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "ReportesController.BuscarViajes");
+                return JsonMessage(ok: false, message: msg, data: null);
+            }
+        }
+
         private ActionResult JsonRequireAdministrator()
         {
             if (!User.Identity.IsAuthenticated)
@@ -308,6 +336,30 @@ namespace MAT.MVC.Controllers.Admin
             var prms = BuildRankingParams(q);
             using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reportes_RankingCompras", prms))
                 return ReportesDataReaderMapper.ReadRanking(reader);
+        }
+
+        private static List<ReporteViajeLookupDto> LoadViajesBusqueda(string q)
+        {
+            var list = new List<ReporteViajeLookupDto>();
+            var prms = new[]
+            {
+                DBHelper.MakeParam("@q", SqlDbType.NVarChar, 200, q)
+            };
+            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reportes_BuscarViajes", prms))
+            {
+                var ordId = reader.GetOrdinal("ViajeID");
+                var ordDesc = reader.GetOrdinal("Descripcion");
+                while (reader.Read())
+                {
+                    list.Add(new ReporteViajeLookupDto
+                    {
+                        Id = reader.GetGuid(ordId).ToString("D"),
+                        Descripcion = reader.IsDBNull(ordDesc) ? string.Empty : reader.GetString(ordDesc)
+                    });
+                }
+            }
+
+            return list;
         }
 
         private static SqlParameter[] BuildVentasParams(ReportesQueryParseResult q)

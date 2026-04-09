@@ -42,9 +42,10 @@
                 </div>
             </div>
             <div class="row g-2 align-items-end mb-2 d-none" id="grpViaje">
-                <div class="col-md-6">
-                    <label class="form-label small mb-0" for="viajeId">ID de viaje</label>
-                    <input type="text" class="form-control form-control-sm font-monospace" id="viajeId" placeholder="00000000-0000-0000-0000-000000000000" />
+                <div class="col-md-8 col-lg-6">
+                    <label class="form-label small mb-0" for="viajeBuscar">Viaje</label>
+                    <input type="text" class="form-control form-control-sm" id="viajeBuscar" placeholder="Escribí al menos 2 letras del nombre del viaje…" autocomplete="off" />
+                    <input type="hidden" id="viajeId" value="" />
                 </div>
             </div>
             <div class="d-flex flex-wrap gap-2 mt-2">
@@ -74,6 +75,70 @@
         </div>
     </div>
 
+    <div id="reporteVentasIndicadores" class="d-none mb-3" aria-live="polite">
+        <h2 class="h6 fw-bold text-primary mb-3">Resumen de la consulta</h2>
+        <p class="small text-secondary mb-3">Totales calculados sobre el resultado devuelto por el servidor (no cambian al filtrar la tabla por vendedor o cliente).</p>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-5 g-3">
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Total facturado</span>
+                            <span class="rounded-circle bg-success bg-opacity-10 text-success p-2"><i class="bi bi-currency-dollar"></i></span>
+                        </div>
+                        <div class="reporte-ventas-kpi-montos" data-kpi="facturado"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Total cobrado</span>
+                            <span class="rounded-circle bg-warning bg-opacity-10 text-warning p-2"><i class="bi bi-credit-card"></i></span>
+                        </div>
+                        <div class="reporte-ventas-kpi-montos" data-kpi="cobrado"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Saldo pendiente</span>
+                            <span class="rounded-circle bg-danger bg-opacity-10 text-danger p-2"><i class="bi bi-cash-stack"></i></span>
+                        </div>
+                        <div class="reporte-ventas-kpi-montos" data-kpi="saldo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Ventas con pago</span>
+                            <span class="rounded-circle bg-primary bg-opacity-10 text-primary p-2"><i class="bi bi-receipt"></i></span>
+                        </div>
+                        <p class="fs-4 fw-bold mb-0" id="indVentasConPago">0</p>
+                        <p class="small text-secondary mb-0">Filas con monto pagado &gt; 0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Total de filas</span>
+                            <span class="rounded-circle bg-secondary bg-opacity-10 text-secondary p-2"><i class="bi bi-list-ul"></i></span>
+                        </div>
+                        <p class="fs-4 fw-bold mb-0" id="indTotalFilas">0</p>
+                        <p class="small text-secondary mb-0">Registros en el resultado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modern-table-container">
         <div class="table-responsive">
             <table class="modern-table table table-striped table-sm w-100" id="tblReporte" style="min-width: 860px"></table>
@@ -83,10 +148,12 @@
 
 @section Scripts {
 <script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
+<script src="@Url.Content("~/Scripts/mat.reportes-viaje-autocomplete.js")"></script>
 <script>
 $(function () {
     var urlJson = '@Url.Action("Ventas", "Reportes")';
     var urlExcel = '@Url.Action("VentasExcel", "Reportes")';
+    var urlBuscarViajes = '@Url.Action("BuscarViajes", "Reportes")';
     var dt = null;
 
     // Inicializar datepicker en español
@@ -105,6 +172,14 @@ $(function () {
         maxDate: '+5y'
     }));
 
+    if (window.MatReportes && window.MatReportes.initViajeAutocomplete) {
+        window.MatReportes.initViajeAutocomplete({
+            urlBuscarViajes: urlBuscarViajes,
+            inputSearch: "#viajeBuscar",
+            inputHidden: "#viajeId"
+        });
+    }
+
     /* ── Helpers ─────────────────────────────────────────────────── */
     function modo() {
         return $("#modoViaje").is(":checked") ? "viaje" : "fechas";
@@ -117,6 +192,8 @@ $(function () {
         } else {
             $("#grpFechas").removeClass("d-none");
             $("#grpViaje").addClass("d-none");
+            $("#viajeBuscar").val("").removeData("matViajeLabel");
+            $("#viajeId").val("");
         }
     }
 
@@ -146,7 +223,85 @@ $(function () {
     var COL_VENDEDOR = 4;  /* vendedorFullName */
     var COL_CLIENTE  = 6;  /* clienteFullName  */
 
+    var moneyFmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+
+    function parseMoneyCell(v) {
+        if (v == null || v === "") return 0;
+        if (typeof v === "number") return isNaN(v) ? 0 : v;
+        var s = String(v).trim().replace(/\s/g, "");
+        var n = parseFloat(s.replace(/\./g, "").replace(",", "."));
+        return isNaN(n) ? 0 : n;
+    }
+
+    function renderMonedaRowsHtml(totPorMoneda) {
+        var parts = [];
+        var order = [
+            { key: "1", label: "$ARS", cls: "success" },
+            { key: "3", label: "U$S", cls: "info" }
+        ];
+        var j, k, val, orderI;
+        for (j = 0; j < order.length; j++) {
+            orderI = order[j];
+            k = orderI.key;
+            val = totPorMoneda[k] || 0;
+            if (val === 0 && !totPorMoneda._showZero) continue;
+            parts.push(
+                "<div class=\"d-flex flex-wrap align-items-center gap-2 py-1 border-bottom border-light\">" +
+                "<span class=\"badge rounded-pill bg-" + orderI.cls + "-subtle text-" + orderI.cls + "\">" + orderI.label + "</span>" +
+                "<span class=\"fw-semibold ms-auto\">$ " + moneyFmt.format(val) + "</span></div>"
+            );
+        }
+        if ((totPorMoneda._otra || 0) !== 0) {
+            parts.push(
+                "<div class=\"d-flex flex-wrap align-items-center gap-2 py-1\">" +
+                "<span class=\"badge rounded-pill bg-secondary-subtle text-secondary\">Otra</span>" +
+                "<span class=\"fw-semibold ms-auto\">$ " + moneyFmt.format(totPorMoneda._otra) + "</span></div>"
+            );
+        }
+        if (parts.length === 0) {
+            parts.push("<span class=\"text-secondary small\">Sin montos</span>");
+        }
+        return parts.join("");
+    }
+
+    function aggregateVentasRows(rows) {
+        var facturado = { "1": 0, "3": 0, _otra: 0 };
+        var cobrado = { "1": 0, "3": 0, _otra: 0 };
+        var saldo = { "1": 0, "3": 0, _otra: 0 };
+        var conPago = 0;
+        var i, r, m, mp;
+        for (i = 0; i < rows.length; i++) {
+            r = rows[i];
+            m = String(r.monedaTipo != null ? r.monedaTipo : "").trim();
+            if (m !== "1" && m !== "3") m = "_otra";
+            mp = parseMoneyCell(r.montoPagado);
+            if (mp > 0) conPago++;
+            facturado[m] = (facturado[m] || 0) + parseMoneyCell(r.totalFactura);
+            cobrado[m] = (cobrado[m] || 0) + mp;
+            saldo[m] = (saldo[m] || 0) + parseMoneyCell(r.saldo);
+        }
+        return { facturado: facturado, cobrado: cobrado, saldo: saldo, conPago: conPago, totalFilas: rows.length };
+    }
+
+    function renderIndicadoresVentas(rows) {
+        var $box = $("#reporteVentasIndicadores");
+        if (!rows || rows.length === 0) {
+            $box.addClass("d-none");
+            return;
+        }
+        var agg = aggregateVentasRows(rows);
+        ["facturado", "cobrado", "saldo"].forEach(function (k) {
+            var obj = agg[k];
+            var flat = { "1": obj["1"] || 0, "3": obj["3"] || 0, _otra: obj._otra || 0, _showZero: true };
+            $box.find("[data-kpi=\"" + k + "\"]").html(renderMonedaRowsHtml(flat));
+        });
+        $("#indVentasConPago").text(String(agg.conPago));
+        $("#indTotalFilas").text(String(agg.totalFilas));
+        $box.removeClass("d-none");
+    }
+
     function renderTable(rows) {
+        renderIndicadoresVentas(rows || []);
         var $tbl = $("#tblReporte");
         if (dt) { dt.destroy(); $tbl.empty(); }
         dt = $tbl.DataTable({
@@ -194,6 +349,7 @@ $(function () {
     /* ── Consultar ───────────────────────────────────────────────── */
     $("#btnBuscar").on("click", function () {
         showErr("");
+        $("#reporteVentasIndicadores").addClass("d-none");
         $("#filtroFront").addClass("d-none");
         $.getJSON(urlJson, queryParams())
             .done(function (res) {

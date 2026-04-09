@@ -2,6 +2,34 @@
 
 ---
 
+### [2026-04-09] — Reportes: autocompletar viaje por nombre (sin GUID manual)
+
+- Archivos modificados:
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Reportes_BuscarViajes.sql` *(nuevo)*
+  - `MAT.DB/MAT.DB.sqlproj`
+  - `database/2026-04-09_usp_MAT_Reportes_BuscarViajes.sql`
+  - `MAT.MVC/Controllers/Admin/ReportesController.cs`
+  - `MAT.MVC/Models/Reportes/ReporteViajeLookupDto.cs` *(nuevo)*
+  - `MAT.MVC/Scripts/mat.reportes-viaje-autocomplete.js` *(nuevo)*
+  - `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`
+  - `MAT.MVC/Content/admin.modern.css`
+  - `MAT.MVC/MAT.MVC.csproj`
+  - `DOCUMENTACION/REPORTES_MAT_MVC_OPERACION.md`, `SPEC.md`
+- Qué se implementó: Endpoint `GET /Admin/Reportes/BuscarViajes?q=` (admin JSON); SP nuevo en SSDT + script en `database/`; UI con jQuery UI Autocomplete + hidden `viajeId` en los tres reportes; limpieza al volver a “Por fechas”.
+- Problemas encontrados: hay que **publicar el SP** en la BD (o ejecutar el script de `database/`) para que funcione en runtime.
+- Estado: ✅ completo
+
+---
+
+### [2026-04-09] — Reporte Ventas: cards de indicadores (KPI) post-consulta
+
+- Archivos modificados: `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Bloque **Resumen de la consulta** entre filtros y tabla: Total facturado / cobrado / saldo por moneda (`monedaTipo` `"1"` ARS, `"3"` U$S, otras agrupadas), cantidad de filas con `montoPagado > 0`, total de filas. Cálculo en JS sobre `res.data`; se oculta si no hay filas; leyenda explícita de que no cambia con el filtro front de vendedor/cliente; al pulsar Consultar se oculta hasta la nueva respuesta.
+- Problemas encontrados: ninguno.
+- Estado: ✅ completo
+
+---
+
 ### [2026-04-09] — Extraer estilos Cotizador.cshtml; modernizar _LayoutSplash.cshtml
 
 - Archivos modificados:

@@ -402,6 +402,7 @@
     <Compile Include="Models\RegistroPagoModel.cs" />
     <Compile Include="Models\Reportes\ReportePagoRowDto.cs" />
     <Compile Include="Models\Reportes\ReporteRankingRowDto.cs" />
+    <Compile Include="Models\Reportes\ReporteViajeLookupDto.cs" />
     <Compile Include="Models\Reportes\ReporteVentaRowDto.cs" />
     <Compile Include="Models\ReservaModel.cs" />
     <Compile Include="Models\ResumenPlanillaModel.cs" />
@@ -747,6 +748,7 @@
     <Content Include="Views\Shared\_ViajesPartial.cshtml" />
     <Content Include="Scripts\mat.jquery.initialize.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
+    <Content Include="Scripts\mat.reportes-viaje-autocomplete.js" />
     <Content Include="Views\Home\ViajesPorFecha.cshtml" />
     <Content Include="Views\Home\TodosLosViajes.cshtml" />
     <Content Include="Views\Shared\_DetalleViaje.cshtml" />

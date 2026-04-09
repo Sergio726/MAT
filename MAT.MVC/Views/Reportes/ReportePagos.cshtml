@@ -40,9 +40,10 @@
                 </div>
             </div>
             <div class="row g-2 align-items-end mb-2 d-none" id="grpViaje">
-                <div class="col-md-6">
-                    <label class="form-label small mb-0" for="viajeId">ID Viaje (GUID)</label>
-                    <input type="text" class="form-control form-control-sm font-monospace" id="viajeId" />
+                <div class="col-md-8 col-lg-6">
+                    <label class="form-label small mb-0" for="viajeBuscar">Viaje</label>
+                    <input type="text" class="form-control form-control-sm" id="viajeBuscar" placeholder="Escribí al menos 2 letras del nombre del viaje…" autocomplete="off" />
+                    <input type="hidden" id="viajeId" value="" />
                 </div>
             </div>
             <div class="row g-2 align-items-end mb-3">
@@ -99,10 +100,12 @@
 
 @section Scripts {
 <script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
+<script src="@Url.Content("~/Scripts/mat.reportes-viaje-autocomplete.js")"></script>
 <script>
 $(function () {
     var urlJson  = '@Url.Action("Pagos", "Reportes")';
     var urlExcel = '@Url.Action("PagosExcel", "Reportes")';
+    var urlBuscarViajes = '@Url.Action("BuscarViajes", "Reportes")';
     var dt = null;
 
     // Inicializar datepicker en español
@@ -121,11 +124,23 @@ $(function () {
         maxDate: '+5y'
     }));
 
+    if (window.MatReportes && window.MatReportes.initViajeAutocomplete) {
+        window.MatReportes.initViajeAutocomplete({
+            urlBuscarViajes: urlBuscarViajes,
+            inputSearch: "#viajeBuscar",
+            inputHidden: "#viajeId"
+        });
+    }
+
     function normalizeDate(val) { return (val || "").trim().replace(/\//g, "-"); }
     function modo() { return $("#modoViaje").is(":checked") ? "viaje" : "fechas"; }
     function syncGrupos() {
         if (modo() === "viaje") { $("#grpFechas").addClass("d-none"); $("#grpViaje").removeClass("d-none"); }
-        else { $("#grpFechas").removeClass("d-none"); $("#grpViaje").addClass("d-none"); }
+        else {
+            $("#grpFechas").removeClass("d-none"); $("#grpViaje").addClass("d-none");
+            $("#viajeBuscar").val("").removeData("matViajeLabel");
+            $("#viajeId").val("");
+        }
     }
     function queryParams() {
         var p = { tipoVentaId: $("#tipoVentaId").val() };
