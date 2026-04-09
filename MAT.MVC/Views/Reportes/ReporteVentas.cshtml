@@ -1,0 +1,159 @@
+@{
+    ViewBag.Title = "Reporte de ventas";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <div>
+            <h1 class="modern-page-title mb-0">
+                <i class="bi bi-receipt-cutoff"></i>
+                <span>Reporte de ventas</span>
+            </h1>
+            <p class="small text-secondary mb-0 mt-1">Indique rango de fechas <strong>o</strong> un viaje (no ambos).</p>
+            <div class="alert alert-info py-2 px-3 small mt-2 mb-0" role="region" aria-label="Comparación de períodos">
+                <strong>Comparación de períodos (tendencias):</strong> no hace falta un endpoint extra. Como en MAT Web, se pueden lanzar <strong>dos</strong> solicitudes GET al mismo reporte de ventas con rangos distintos (p. ej. mes actual vs. mes anterior). Para esas llamadas conviene fechas en formato <code>YYYY-MM-DD</code>; ver <span class="text-nowrap"><code>DOCUMENTACION/REPORTES_MAT_WEB.md</code></span> (Period Comparison).
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="@Url.Action("Index", "Reportes")" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Índice reportes</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="btn-group" role="group" aria-label="Modo filtro">
+                    <input type="radio" class="btn-check" name="modoFiltro" id="modoFechas" value="fechas" checked autocomplete="off" />
+                    <label class="btn btn-outline-primary btn-sm" for="modoFechas">Por fechas</label>
+                    <input type="radio" class="btn-check" name="modoFiltro" id="modoViaje" value="viaje" autocomplete="off" />
+                    <label class="btn btn-outline-primary btn-sm" for="modoViaje">Por viaje</label>
+                </div>
+            </div>
+            <div class="row g-2 align-items-end mb-2" id="grpFechas">
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="from">Desde</label>
+                    <input type="date" class="form-control form-control-sm" id="from" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="to">Hasta</label>
+                    <input type="date" class="form-control form-control-sm" id="to" />
+                </div>
+            </div>
+            <div class="row g-2 align-items-end mb-2 d-none" id="grpViaje">
+                <div class="col-md-6">
+                    <label class="form-label small mb-0" for="viajeId">ID Viaje (GUID)</label>
+                    <input type="text" class="form-control form-control-sm font-monospace" id="viajeId" placeholder="00000000-0000-0000-0000-000000000000" />
+                </div>
+            </div>
+            <div class="row g-2 align-items-end mb-3">
+                <div class="col-md-4">
+                    <label class="form-label small mb-0" for="vendedorId">Vendedor (GUID, opc.)</label>
+                    <input type="text" class="form-control form-control-sm font-monospace" id="vendedorId" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small mb-0" for="clienteId">Cliente (GUID, opc.)</label>
+                    <input type="text" class="form-control form-control-sm font-monospace" id="clienteId" />
+                </div>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-primary btn-sm" id="btnBuscar"><i class="bi bi-search"></i> Consultar</button>
+                <button type="button" class="btn btn-outline-success btn-sm" id="btnExcel"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
+            </div>
+            <div class="alert alert-danger d-none mt-3 mb-0 py-2 small" id="alertErr" role="alert"></div>
+        </div>
+    </div>
+
+    <div class="modern-table-container">
+        <div class="table-responsive">
+            <table class="modern-table table table-striped table-sm w-100" id="tblReporte" style="min-width: 960px"></table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
+<script>
+$(function () {
+    var urlJson = '@Url.Action("Ventas", "Reportes")';
+    var urlExcel = '@Url.Action("VentasExcel", "Reportes")';
+    var dt = null;
+
+    function modo() {
+        return $("#modoViaje").is(":checked") ? "viaje" : "fechas";
+    }
+
+    function syncGrupos() {
+        if (modo() === "viaje") {
+            $("#grpFechas").addClass("d-none");
+            $("#grpViaje").removeClass("d-none");
+        } else {
+            $("#grpFechas").removeClass("d-none");
+            $("#grpViaje").addClass("d-none");
+        }
+    }
+
+    function queryParams() {
+        var p = { vendedorId: $("#vendedorId").val().trim(), clienteId: $("#clienteId").val().trim() };
+        if (modo() === "viaje") p.viajeId = $("#viajeId").val().trim();
+        else {
+            p.from = $("#from").val();
+            p.to = $("#to").val();
+        }
+        return p;
+    }
+
+    function showErr(t) {
+        var $a = $("#alertErr");
+        if (t) { $a.text(t).removeClass("d-none"); } else { $a.addClass("d-none").text(""); }
+    }
+
+    function renderTable(rows) {
+        var $tbl = $("#tblReporte");
+        if (dt) { dt.destroy(); $tbl.empty(); }
+        dt = $tbl.DataTable({
+            data: rows || [],
+            columns: [
+                { data: "viajeId", title: "Viaje ID" },
+                { data: "viajeDescripcion", title: "Viaje" },
+                { data: "fechaSalida", title: "Fecha salida", render: function (d) { return d ? (typeof d === "string" ? d : "") : ""; } },
+                { data: "cantidadButacas", title: "Butacas" },
+                { data: "vendedorId", title: "Vendedor ID" },
+                { data: "vendedorFullName", title: "Vendedor" },
+                { data: "clienteId", title: "Cliente ID" },
+                { data: "clienteFullName", title: "Cliente" },
+                { data: "facturaId", title: "Factura ID" },
+                { data: "facturaFecha", title: "F. factura" },
+                { data: "facturaEstado", title: "Estado" },
+                { data: "monedaTipo", title: "Mon." },
+                { data: "totalFactura", title: "Total" },
+                { data: "montoPagado", title: "Pagado" },
+                { data: "saldo", title: "Saldo" }
+            ],
+            pageLength: 25,
+            autoWidth: false,
+            language: { url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" }
+        });
+    }
+
+    $('input[name="modoFiltro"]').on("change", syncGrupos);
+    syncGrupos();
+
+    $("#btnBuscar").on("click", function () {
+        showErr("");
+        $.getJSON(urlJson, queryParams())
+            .done(function (res) {
+                if (!res.ok) { showErr(res.message || "Error"); return; }
+                renderTable(res.data);
+            })
+            .fail(function (xhr) {
+                showErr(window.MatReportes.parseHttpErrorBody(xhr));
+            });
+    });
+
+    $("#btnExcel").on("click", function () {
+        window.MatReportes.downloadReporteExcel(urlExcel, queryParams, showErr);
+    });
+});
+</script>
+}

@@ -292,6 +292,7 @@
     <Compile Include="Controllers\Account\AccountController.cs" />
     <Compile Include="Controllers\Adicional\AdicionalController.cs" />
     <Compile Include="Controllers\Admin\AdminController.cs" />
+    <Compile Include="Controllers\Admin\ReportesController.cs" />
     <Compile Include="Controllers\Busqueda\BusquedaController.cs" />
     <Compile Include="Controllers\Butaca\ButacaController.cs" />
     <Compile Include="Controllers\Cliente\ClienteController.cs" />
@@ -328,6 +329,11 @@
     <Compile Include="Filters\RequestGuardFilter.cs" />
     <Compile Include="Infrastructure\DbErrorLogger.cs" />
     <Compile Include="Infrastructure\ErrorUtil.cs" />
+    <Compile Include="Infrastructure\ReportesDataReaderMapper.cs" />
+    <Compile Include="Infrastructure\AdminResumenPagosExcelExport.cs" />
+    <Compile Include="Infrastructure\ReportesExcelExport.cs" />
+    <Compile Include="Infrastructure\ReportesQueryHelper.cs" />
+    <Compile Include="Infrastructure\ReportesQueryParseResult.cs" />
     <Compile Include="Infrastructure\RequestContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -394,6 +400,9 @@
     <Compile Include="Models\PresupuestoModel.cs" />
     <Compile Include="Models\ProveedorFiscalModel.cs" />
     <Compile Include="Models\RegistroPagoModel.cs" />
+    <Compile Include="Models\Reportes\ReportePagoRowDto.cs" />
+    <Compile Include="Models\Reportes\ReporteRankingRowDto.cs" />
+    <Compile Include="Models\Reportes\ReporteVentaRowDto.cs" />
     <Compile Include="Models\ReservaModel.cs" />
     <Compile Include="Models\ResumenPlanillaModel.cs" />
     <Compile Include="Models\ResumenPlanillaPrintModel.cs" />
@@ -731,6 +740,7 @@
     <Content Include="Views\PersonaPasajero\Index.cshtml" />
     <Content Include="Views\Shared\_ViajesPartial.cshtml" />
     <Content Include="Scripts\mat.jquery.initialize.js" />
+    <Content Include="Scripts\mat.reportes-excel-export.js" />
     <Content Include="Views\Home\ViajesPorFecha.cshtml" />
     <Content Include="Views\Home\TodosLosViajes.cshtml" />
     <Content Include="Views\Shared\_DetalleViaje.cshtml" />
@@ -877,6 +887,10 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Reserva\GetOffListPassengers.cshtml" />
+    <Content Include="Views\Reportes\Index.cshtml" />
+    <Content Include="Views\Reportes\ReportePagos.cshtml" />
+    <Content Include="Views\Reportes\ReporteRanking.cshtml" />
+    <Content Include="Views\Reportes\ReporteVentas.cshtml" />
     <Content Include="Views\NuevaReserva\Index.cshtml" />
     <Content Include="Views\NuevaReserva\DetalleViaje.cshtml" />
     <Content Include="Views\NuevaReserva\SeleccionarPasajero.cshtml" />

@@ -52,6 +52,17 @@
 }
 
 <div class="grid-resumen-pagos-container">
+    @if (ViewBag.ViajeIdResumen != null)
+    {
+        var viajeIdResumen = (Guid)ViewBag.ViajeIdResumen;
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <a class="btn btn-outline-primary btn-sm"
+               href="@Url.Action("ResumenPagosExcel", "Admin", new { ViajeID = viajeIdResumen })"
+               target="_blank" rel="noopener">
+                <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+            </a>
+        </div>
+    }
     <div class="table-container">
         <table id="tblPagosViaje" class="display">
             <thead>

@@ -1,3 +1,6 @@
-﻿@model MAT.MVC.Models.SearchModel
+@* Vista de respaldo si alguna acción devuelve View(QuickSearch). El endpoint habitual devuelve HTML desde SearchModel vía Content. *@
+@model MAT.MVC.Models.SearchModel
 
-@Model.HtmlGrid
+<div class="table-responsive quick-search-bs5" role="region" aria-label="Resultados búsqueda rápida">
+    @Html.Raw(Model.HtmlGrid)
+</div>

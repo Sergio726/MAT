@@ -1,0 +1,149 @@
+@{
+    ViewBag.Title = "Reporte de pagos";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <div>
+            <h1 class="modern-page-title mb-0">
+                <i class="bi bi-cash-coin"></i>
+                <span>Reporte de pagos</span>
+            </h1>
+            <p class="small text-secondary mb-0 mt-1">Rango de fechas <strong>o</strong> un viaje. Tipo de venta opcional.</p>
+        </div>
+        <a href="@Url.Action("Index", "Reportes")" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Índice reportes</a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="modoFiltro" id="modoFechas" value="fechas" checked autocomplete="off" />
+                    <label class="btn btn-outline-primary btn-sm" for="modoFechas">Por fechas</label>
+                    <input type="radio" class="btn-check" name="modoFiltro" id="modoViaje" value="viaje" autocomplete="off" />
+                    <label class="btn btn-outline-primary btn-sm" for="modoViaje">Por viaje</label>
+                </div>
+            </div>
+            <div class="row g-2 align-items-end mb-2" id="grpFechas">
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="from">Desde</label>
+                    <input type="date" class="form-control form-control-sm" id="from" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="to">Hasta</label>
+                    <input type="date" class="form-control form-control-sm" id="to" />
+                </div>
+            </div>
+            <div class="row g-2 align-items-end mb-2 d-none" id="grpViaje">
+                <div class="col-md-6">
+                    <label class="form-label small mb-0" for="viajeId">ID Viaje (GUID)</label>
+                    <input type="text" class="form-control form-control-sm font-monospace" id="viajeId" />
+                </div>
+            </div>
+            <div class="row g-2 align-items-end mb-3">
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="tipoVentaId">Tipo venta</label>
+                    <select class="form-select form-select-sm" id="tipoVentaId">
+                        <option value="">(Todos)</option>
+                        <option value="1">Oficina</option>
+                        <option value="2">Online</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small mb-0" for="vendedorId">Vendedor (GUID, opc.)</label>
+                    <input type="text" class="form-control form-control-sm font-monospace" id="vendedorId" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small mb-0" for="clienteId">Cliente (GUID, opc.)</label>
+                    <input type="text" class="form-control form-control-sm font-monospace" id="clienteId" />
+                </div>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-primary btn-sm" id="btnBuscar"><i class="bi bi-search"></i> Consultar</button>
+                <button type="button" class="btn btn-outline-success btn-sm" id="btnExcel"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
+            </div>
+            <div class="alert alert-danger d-none mt-3 mb-0 py-2 small" id="alertErr" role="alert"></div>
+        </div>
+    </div>
+
+    <div class="modern-table-container">
+        <div class="table-responsive">
+            <table class="modern-table table table-striped table-sm w-100" id="tblReporte"></table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
+<script>
+$(function () {
+    var urlJson = '@Url.Action("Pagos", "Reportes")';
+    var urlExcel = '@Url.Action("PagosExcel", "Reportes")';
+    var dt = null;
+
+    function modo() { return $("#modoViaje").is(":checked") ? "viaje" : "fechas"; }
+    function syncGrupos() {
+        if (modo() === "viaje") { $("#grpFechas").addClass("d-none"); $("#grpViaje").removeClass("d-none"); }
+        else { $("#grpFechas").removeClass("d-none"); $("#grpViaje").addClass("d-none"); }
+    }
+    function queryParams() {
+        var p = {
+            vendedorId: $("#vendedorId").val().trim(),
+            clienteId: $("#clienteId").val().trim(),
+            tipoVentaId: $("#tipoVentaId").val()
+        };
+        if (modo() === "viaje") p.viajeId = $("#viajeId").val().trim();
+        else { p.from = $("#from").val(); p.to = $("#to").val(); }
+        return p;
+    }
+    function showErr(t) {
+        var $a = $("#alertErr");
+        if (t) { $a.text(t).removeClass("d-none"); } else { $a.addClass("d-none").text(""); }
+    }
+
+    function renderTable(rows) {
+        var $tbl = $("#tblReporte");
+        if (dt) { dt.destroy(); $tbl.empty(); }
+        dt = $tbl.DataTable({
+            data: rows || [],
+            columns: [
+                { data: "facturaId", title: "Factura" },
+                { data: "fechaPago", title: "F. pago" },
+                { data: "monto", title: "Monto" },
+                { data: "monedaTipo", title: "Mon." },
+                { data: "pagoTipoId", title: "Tipo pago ID" },
+                { data: "pagoDescripcion", title: "Tipo pago" },
+                { data: "tipoVentaId", title: "Tipo venta ID" },
+                { data: "tipoVentaDescripcion", title: "Tipo venta" },
+                { data: "cantidadTipoPago", title: "Cant. tipo" },
+                { data: "rankingTipoPago", title: "Rank tipo" },
+                { data: "vendedorId", title: "Vend. ID" },
+                { data: "vendedorFullName", title: "Vendedor" },
+                { data: "clienteId", title: "Cliente ID" },
+                { data: "clienteFullName", title: "Cliente" },
+                { data: "viaje", title: "Viaje" }
+            ],
+            pageLength: 25,
+            autoWidth: false,
+            language: { url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" }
+        });
+    }
+
+    $('input[name="modoFiltro"]').on("change", syncGrupos);
+    syncGrupos();
+
+    $("#btnBuscar").on("click", function () {
+        showErr("");
+        $.getJSON(urlJson, queryParams()).done(function (res) {
+            if (!res.ok) { showErr(res.message || "Error"); return; }
+            renderTable(res.data);
+        }).fail(function (xhr) { showErr(window.MatReportes.parseHttpErrorBody(xhr)); });
+    });
+
+    $("#btnExcel").on("click", function () {
+        window.MatReportes.downloadReporteExcel(urlExcel, queryParams, showErr);
+    });
+});
+</script>
+}

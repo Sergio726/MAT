@@ -2,6 +2,76 @@
 
 ---
 
+### [2026-04-08] — Admin: exportar resumen de pagos por viaje a Excel (P3 SPEC)
+
+- Archivos modificados: `MAT.MVC/Infrastructure/AdminResumenPagosExcelExport.cs` (nuevo), `MAT.MVC/Controllers/Admin/AdminController.cs` (ya tenía `GridResumenPagos` + `ResumenPagosExcel`), `MAT.MVC/Views/Admin/GridResumenPagos.cshtml`, `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: clase estática EPPlus con hoja "Pagos", título + Viaje ID, cabecera #4472C4, columnas alineadas a la grilla (Cliente, Fecha, Tipo de pago, Nro. transacción, Monto), fila Total; GET `ResumenPagosExcel` con `[Authorize]` y `RequireAdministrador()`; `ViewBag.ViajeIdResumen` en el partial; botón BS5 "Exportar a Excel" (`target="_blank"`).
+- Problemas encontrados: ninguno.
+- Estado: ✅ MSBuild MAT.MVC Debug OK; task SPEC P3 marcado `[x]`
+
+### [2026-04-08] — P1: modernización vistas pendientes (lote Reserva Fase 6)
+
+- Archivos modificados: `MAT.MVC/Models/SearchModel.cs`, `MAT.MVC/Controllers/Reserva/ReservaController.cs`, `MAT.MVC/Views/Reserva/QuickSearch.cshtml`, `MAT.MVC/Views/Reserva/PartialVinculacionMenor.cshtml`, `DOCUMENTACION/VISTAS_PENDIENTES_ACTUALIZACION.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: grid de búsqueda rápida pasajeros con clases BS5 en `GridView`; HTML devuelto por `QuickSearch()` envuelto en `table-responsive quick-search-bs5`; vista Razor respaldo con `Html.Raw`; desvincular menor con modal BS5 + fallback `confirm` nativo; inventario Fase 6 Reserva pasado a ✅ con notas.
+- Problemas encontrados: ninguno.
+- Estado: ✅ MSBuild MAT.MVC; SPEC P1 sigue `[ ]` hasta cerrar resto ⏳ del doc
+
+### [2026-04-08] — Admin: `UsuarioEliminar` (membership + UserProfile + roles)
+
+- Archivos modificados: `MAT.MVC/Controllers/Admin/AdminController.cs`, `MAT.MVC/Models/AdminUserListItem.cs`, `MAT.MVC/Views/Admin/Usuarios.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: POST `UsuarioEliminar` con `[Authorize]`, `ValidateAntiForgeryToken`, `RequireAdministrator()`; no eliminar a uno mismo ni al último **Administrador**; `MostrarEliminar` en listado; modal de confirmación reutilizando `js-admin-confirm-submit`; quita roles, `Membership.DeleteUser(..., true)`, limpieza `webpages_UsersInRoles` / `webpages_Membership`, `UserProfile` por EF, e intento opcional `webpages_OAuthMembership` (ignora error 208 si no existe tabla).
+- Problemas encontrados: ninguno.
+- Estado: ✅ Task SPEC marcado `[x]`; MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — Reportes: hardening post-auditoría (401/403 JSON, fetch Excel, EPPlus, SPEC)
+
+- Archivos modificados: `MAT.MVC/Controllers/Admin/ReportesController.cs`, `MAT.MVC/Infrastructure/ReportesQueryHelper.cs`, `MAT.MVC/Infrastructure/ReportesExcelExport.cs`, `MAT.MVC/Scripts/mat.reportes-excel-export.js` (nuevo), `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`, `MAT.MVC/MAT.MVC.csproj`, `DOCUMENTACION/REPORTES_MAT_MVC_OPERACION.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: JSON con **401/403** y cuerpo `{ ok, message, data }`; vistas usan `MatReportes.parseHttpErrorBody` en `getJSON.fail`; Excel con **fetch+blob** y mensaje de error en alerta; cabeceras Excel centradas; columnas GUID como texto; `tipoVentaId` solo 1|2; orden `@From`/`@To` en ranking; fix **`$tbl`** en `ReportePagos`. SPEC: sección **Reportes — hardening** con tareas [x] y backlog [ ] (GUID UI, tests helper, DataTables sin CDN).
+- Problemas encontrados: ninguno.
+- Estado: ✅ MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — Reportes P3: alias `/reportes/...`, doc operación, leyenda tendencias
+
+- Archivos modificados: `MAT.MVC/App_Start/RouteConfig.cs`, `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `DOCUMENTACION/REPORTES_MAT_MVC_OPERACION.md` (nuevo), `DOCUMENTACION/REPORTES_MAT_WEB.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: rutas alias GET hacia `ReportesController` (JSON + Excel) con `namespaces` explícito; página `ReporteVentas` con región informativa sobre comparación de períodos (dos llamadas, `YYYY-MM-DD`, sin backend nuevo); guía de URLs, auth, SP y pruebas en `REPORTES_MAT_MVC_OPERACION.md`.
+- Problemas encontrados: ninguno.
+- Estado: ✅ Tasks Reportes P3 en SPEC marcados `[x]`; MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — Reportes P2: Excel EPPlus + vistas Admin (hub, 3 pantallas) + rutas
+
+- Archivos modificados: `MAT.MVC/Infrastructure/ReportesExcelExport.cs` (nuevo), `MAT.MVC/Controllers/Admin/ReportesController.cs`, `MAT.MVC/App_Start/RouteConfig.cs`, `MAT.MVC/Views/Reportes/*.cshtml` (Index, ReporteVentas, ReportePagos, ReporteRanking), `MAT.MVC/Views/Admin/Index.cshtml`, `MAT.MVC/Views/Shared/_LayoutAdmin.cshtml`, `MAT.MVC/MAT.MVC.csproj`, `DOCUMENTACION/REPORTES_MAT_WEB.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: export **VentasExcel**, **PagosExcel**, **RankingExcel** (mismo filtro que JSON; cabecera #4472C4; fechas es-AR; montos `#,##0.00`; nombres `ventas-|pagos-|ranking-compras-{yyyy-MM-dd}.xlsx`); hub `/Admin/Reportes` + tres vistas con DataTables, filtros fechas/viaje excluyentes, botón export; enlaces en Admin index y sidebar; rutas `AdminReportesHub` + `AdminReportes` con constraint de acciones; `JsonMessage` sobrecarga para `data: null`.
+- Problemas encontrados: `_LayoutAdmin` ejecuta `@RenderSection("Scripts")` antes del body — scripts de reportes deben usar `$(function(){...})` y referenciar `#tblReporte` tras crear la tabla.
+- Estado: ✅ Tasks P2 Excel + vistas + índice + regresión marcados `[x]` en SPEC; `HomeController` sigue llamando `usp_MAT_Reportes_Ventas` sin cambios; MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — Reportes P2: `ReportesController` + JSON Ventas/Pagos/Ranking + ruta Admin
+
+- Archivos modificados: `MAT.MVC/Controllers/Admin/ReportesController.cs`, `MAT.MVC/App_Start/RouteConfig.cs`, `MAT.MVC/MAT.MVC.csproj`, `DOCUMENTACION/REPORTES_SP_INVENTARIO_ESTRATEGIA.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: controlador con `[Authorize]`, `[InitializeSimpleMembership]`, comprobación rol **Administrador** vía JSON (`ok: false`, sin redirección HTML); acciones **Ventas**, **Pagos**, **Ranking** usando `ReportesQueryHelper`, `DBHelper.ExecuteDataReader` y `ReportesDataReaderMapper`; respuesta Newtonsoft **camelCase** `{ ok, message, data }`; ruta explícita `Admin/Reportes/{action}`. Task **Nuevo SP solo si hace falta** cerrado sin SP nuevo (inventario previo).
+- Problemas encontrados: ninguno.
+- Estado: ✅ Tasks reportes (controller + 3 JSON + SP nuevo N/A) marcados `[x]` en SPEC; MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — Reportes P2: `ReportesDataReaderMapper` + DTOs fila
+
+- Archivos modificados: `MAT.MVC/Infrastructure/ReportesDataReaderMapper.cs`, `MAT.MVC/Models/Reportes/ReporteVentaRowDto.cs`, `ReportePagoRowDto.cs`, `ReporteRankingRowDto.cs`, `MAT.MVC/MAT.MVC.csproj`, `DOCUMENTACION/REPORTES_SP_INVENTARIO_ESTRATEGIA.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: mapper central con `ReadVentas`/`ReadPagos`/`ReadRanking` y clase interna de ordinales case-insensitive; lectura `decimal`/`int`/`DateTime`/strings de fecha (`SP`); `MonedaTipo` como string; renombres a propiedades DTO; métodos públicos `MapVenta`/`MapPago`/`MapRanking` por fila. Documentado uso de Newtonsoft camelCase para API.
+- Problemas encontrados: ninguno.
+- Estado: ✅ Task marcado `[x]` en SPEC; MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — Reportes P2: Helper `ReportesQueryHelper` (fechas, viaje, opcionales)
+
+- Archivos modificados: `MAT.MVC/Infrastructure/ReportesQueryHelper.cs`, `MAT.MVC/Infrastructure/ReportesQueryParseResult.cs`, `MAT.MVC/MAT.MVC.csproj`, `DOCUMENTACION/REPORTES_SP_INVENTARIO_ESTRATEGIA.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: clase estática `ReportesQueryHelper.Parse(...)` devolviendo `ReportesQueryParseResult` con `IsValid`, `ShouldExecute`, `FromDdMmYyyy`/`ToDdMmYyyy` (Ventas/Pagos), `FromDate`/`ToDate` (Ranking), `ViajeId`, GUIDs opcionales e `TipoVentaId`. Reglas: fechas `dd-MM-yyyy` o `yyyy-MM-dd`; solo ejecución si par de fechas o `viajeId`; **rechazo** si viaje + fechas juntos; hasta 365 días inclusive; `TryParseDateParameter` público para tests.
+- Problemas encontrados: ninguno.
+- Estado: ✅ Task marcado `[x]` en SPEC; MSBuild MAT.MVC Debug OK
+
+### [2026-04-08] — Reportes P2: Inventario SP + estrategia (sin alterar SP)
+
+- Archivos modificados: `DOCUMENTACION/REPORTES_SP_INVENTARIO_ESTRATEGIA.md` (nuevo), `DOCUMENTACION/REPORTES_MAT_WEB.md` (tabla Ranking + nota fechas), `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: inventario read-only de `usp_MAT_Reportes_Ventas`, `usp_MAT_Reportes_Pagos`, `usp_MAT_Reportes_RankingCompras` (parámetros, ramas viaje vs fechas, columnas). **Decisión:** usar los tres SP actuales desde C# sin `ALTER`; Ventas/Pagos con `@From`/`@To` como `NVARCHAR` `DD-MM-YYYY`; Ranking con `@From`/`@To` como **SQL `DATE`** desde `DateTime` parseado; documentado que `@VendedorId` en ranking no filtra hoy. Nuevo SP solo si aparece requisito no cubierto.
+- Problemas encontrados: SPEC `REPORTES_MAT_WEB` asumía `@From`/`@To` string para Ranking — corregido en doc.
+- Estado: ✅ Task marcado `[x]` en SPEC; no requiere MSBuild (solo documentación)
+
 ### [2026-04-08] — P2: Admin Usuarios — DataTables + filtro por estado
 
 - Archivos modificados: `MAT.MVC/Views/Admin/Usuarios.cshtml`, `SPEC.md`, `PROGRESS.md`

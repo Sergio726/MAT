@@ -83,49 +83,87 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalDesvincularMenorPm" tabindex="-1" aria-labelledby="modalDesvincularMenorPmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="modalDesvincularMenorPmLabel">Desvincular menor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-0">
+                ¿Desvincular este menor del responsable indicado?
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger btn-sm" id="btnConfirmDesvincularMenorPm">Desvincular</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     (function () {
         var viajeId = @Html.Raw(Json.Encode(viajeId));
         var urlDesvincular = @Html.Raw(Json.Encode(urlDesvincular));
+        var pendingPasajeroMenorId = null;
+
+        function runDesvincularAjax(pasajeroMenorId) {
+            $.ajax({
+                url: urlDesvincular,
+                type: "POST",
+                data: { sViajeId: viajeId, pasajeromenorId: pasajeroMenorId },
+                success: function (r) {
+                    if (r && r.success) {
+                        if (typeof loadPasajeroMenor === "function") {
+                            loadPasajeroMenor();
+                        }
+                        if (typeof window.PopupDetalleFactura_Load === "function") {
+                            window.PopupDetalleFactura_Load();
+                        }
+                        if (typeof window.alertSuccess === "function") {
+                            window.alertSuccess("El menor fue desvinculado correctamente.", "Éxito");
+                        }
+                    } else {
+                        (window.alertError || window.alert)((r && r.message) ? r.message : "No se pudo desvincular.", "Error");
+                    }
+                },
+                error: function () {
+                    (window.alertError || window.alert)("Error al desvincular. Intente nuevamente.", "Error");
+                }
+            });
+        }
 
         window.desvincularMenorPm = function (pasajeroMenorId) {
             if (!pasajeroMenorId || !viajeId) {
                 return;
             }
-            confirm("¿Desvincular este menor del responsable indicado?", "Desvincular menor",
-                function () {
-                    var $dlg = $(this);
-                    $.ajax({
-                        url: urlDesvincular,
-                        type: "POST",
-                        data: { sViajeId: viajeId, pasajeromenorId: pasajeroMenorId },
-                        success: function (r) {
-                            if (r && r.success) {
-                                if (typeof loadPasajeroMenor === "function") {
-                                    loadPasajeroMenor();
-                                }
-                                if (typeof window.PopupDetalleFactura_Load === "function") {
-                                    window.PopupDetalleFactura_Load();
-                                }
-                                if (typeof window.alertSuccess === "function") {
-                                    window.alertSuccess("El menor fue desvinculado correctamente.", "Éxito");
-                                }
-                            } else {
-                                (window.alertError || window.alert)((r && r.message) ? r.message : "No se pudo desvincular.", "Error");
-                            }
-                        },
-                        error: function () {
-                            (window.alertError || window.alert)("Error al desvincular. Intente nuevamente.", "Error");
-                        }
-                    });
-                    $dlg.dialog("close");
-                    $dlg.remove();
-                },
-                function () {
-                    var $dlg = $(this);
-                    $dlg.dialog("close");
-                    $dlg.remove();
-                });
+            pendingPasajeroMenorId = pasajeroMenorId;
+            var el = document.getElementById("modalDesvincularMenorPm");
+            if (el && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+                bootstrap.Modal.getOrCreateInstance(el).show();
+                return;
+            }
+            if (window.confirm("¿Desvincular este menor del responsable indicado?")) {
+                runDesvincularAjax(pasajeroMenorId);
+            }
+            pendingPasajeroMenorId = null;
         };
+
+        $(function () {
+            $("#btnConfirmDesvincularMenorPm").on("click", function () {
+                var id = pendingPasajeroMenorId;
+                if (!id) return;
+                var modalEl = document.getElementById("modalDesvincularMenorPm");
+                if (modalEl && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+                    var inst = bootstrap.Modal.getInstance(modalEl);
+                    if (inst) inst.hide();
+                }
+                runDesvincularAjax(id);
+                pendingPasajeroMenorId = null;
+            });
+            $("#modalDesvincularMenorPm").on("hidden.bs.modal", function () {
+                pendingPasajeroMenorId = null;
+            });
+        });
     })();
 </script>

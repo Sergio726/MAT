@@ -99,6 +99,17 @@
                                         <button type="submit" class="btn btn-sm btn-outline-success">Habilitar</button>
                                     }
                                 }
+                                @if (u.MostrarEliminar)
+                                {
+                                    using (Html.BeginForm("UsuarioEliminar", "Admin", FormMethod.Post, new { @class = "d-inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="userId" value="@u.UserId" />
+                                        <button type="submit" class="btn btn-sm btn-danger js-admin-confirm-submit"
+                                                data-confirm-title="Eliminar usuario"
+                                                data-confirm-msg="¿Eliminar definitivamente a este usuario? Se borrarán la cuenta, los roles y el perfil. Esta acción no se puede deshacer.">Eliminar</button>
+                                    }
+                                }
                             </div>
                         </td>
                     </tr>

@@ -1,4 +1,4 @@
-﻿using MAT.Services;
+using MAT.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +45,12 @@ namespace MAT.MVC.Models
                 default:
                     break;
             }
+
+            // Bootstrap 5: grid devuelto por QuickSearch (diálogo búsqueda rápida en Reserva).
+            _grid.CssClass = "table table-sm table-striped table-hover align-middle w-100";
+            _grid.HeaderStyle.CssClass = "table-light";
+            _grid.GridLines = GridLines.None;
+
             _grid.DataBind();
             HtmlGrid = _grid.RenderToString();
             GridSearch = _grid;

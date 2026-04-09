@@ -111,7 +111,7 @@ namespace MAT.MVC.Controllers.Reserva
         {
             SearchModel searchmodel = new SearchModel();
             searchmodel.FillGrid("PersonaPasajero");
-            return searchmodel.HtmlGrid;
+            return "<div class=\"table-responsive quick-search-bs5\">" + searchmodel.HtmlGrid + "</div>";
         }
 
         public JsonResult QuickPasajeroSearch(string query)

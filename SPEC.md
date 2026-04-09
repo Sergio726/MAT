@@ -4,6 +4,8 @@
 (El agente completa esta sección a medida que avanza)
 
 - [x] Setup inicial del proyecto — estructura de solución, CLAUDE.md, SPEC.md, PROGRESS.md
+- [x] Admin — eliminar usuario (`UsuarioEliminar`, confirmación BS5, restricciones auto-eliminación y último administrador)
+- [x] Admin — exportar resumen de pagos por viaje a Excel (EPPlus, `ResumenPagosExcel`)
 
 ---
 
@@ -14,6 +16,7 @@
 - [ ] **Actualizar vistas pendientes de modernización**
   Revisar `DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md` y migrar las vistas listadas a Bootstrap 5 / jQuery 3, eliminando dependencias obsoletas identificadas en `DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md`.
   Criterio de éxito: Las vistas actualizadas renderizan correctamente en IIS Express sin errores de consola JS; MSBuild pasa sin errores.
+  **Iteración 2026-04-08 (lote Fase 6 — Reserva):** `SearchModel` / `QuickSearch` con `GridView` estilizado BS5 y contenedor `table-responsive`; `PartialVinculacionMenor` usa modal Bootstrap 5 para confirmar desvinculación (sin `$.dialog` en ese flujo); demás ítems Reserva del inventario marcados ✅ en el doc (auditoría + criterio actual). Siguen ⏳ otras sublistas (PersonaCliente, PasajeroViaje, Admin servicios, Splash, etc.).
 
 - [x] **Iteración CSS: normalizar estilos de `Shared/Error.cshtml`**
   La vista `MAT.MVC/Views/Shared/Error.cshtml` fue modernizada, pero sus estilos aún no están completamente normalizados con las convenciones de estilos compartidos del proyecto (nombres, tokens/variables y consistencia visual). Realizar una iteración de hardening CSS para alinear la vista con el estándar de UI actual sin cambiar la lógica de manejo de errores.
@@ -65,92 +68,145 @@
 
 **Principios:** Implementar en el sistema actual usando `DBHelper`/SqlClient, `ErrorUtil`, `RequireAdministrador()`, vistas Admin Bootstrap 5 y **EPPlus** para Excel. Reutilizar **sin modificar** los SP existentes `usp_MAT_Reportes_Ventas`, `usp_MAT_Reportes_Pagos`, `usp_MAT_Reportes_RankingCompras`. Si el contrato columnas/parámetros no alcanza, crear **nuevos** SP en `MAT.DB` (nombre distinto, p. ej. sufijo `_Admin` o `_V2`) y dejar los originales intactos. Referencia funcional: `DOCUMENTACION\REPORTES_MAT_WEB.md` (paridad filtros/DTO/Excel con MAT Web; rutas pueden diferir).
 
-- [ ] **Reportes [P2 — Alta]: Inventario read-only de SP y definición de estrategia**
+- [x] **Reportes [P2 — Alta]: Inventario read-only de SP y definición de estrategia**
   Revisar en `MAT.DB` los tres SP anteriores: parámetros, columnas devueltas y tipos. Contrastar con el contrato deseado (filtros `from`/`to`/`viajeId`/opcionales, mapeo DTO). Decisión documentada: ¿llamar SP actuales desde C# solo con mapeo? ¿o alta de **nuevo** SP sin `ALTER` sobre los existentes?
   Criterio de éxito: Nota corta en `DOCUMENTACION` o comentario en PROGRESS; camino elegido acordado y sin cambios a los `.sql` de los SP actuales.
 
-- [ ] **Reportes [P2 — Alta]: Helper de fechas y parámetros (reutilizable)**
+- [x] **Reportes [P2 — Alta]: Helper de fechas y parámetros (reutilizable)**
   Centralizar validación: aceptar `from`/`to` en `DD-MM-YYYY` y `YYYY-MM-DD`; normalizar a `DD-MM-YYYY` para pasar al SP (mismo criterio que usa `HomeController` con los SP); vacíos → `NULL` en SQL; rango máximo **365 días** cuando hay rango; condición de ejecución: solo si (`from` **y** `to`) **o** `viajeId`; filtros rango vs viaje **mutuamente excluyentes** (comportamiento explícito: rechazar o ignorar uno — documentar en código). GUIDs opcionales parseados o `NULL`.
   Criterio de éxito: Una clase/helper testeable; sin duplicar lógica en tres acciones.
 
-- [ ] **Reportes [P2 — Alta]: Mapeo de fila → DTO JSON (columnas heterogéneas)**
+- [x] **Reportes [P2 — Alta]: Mapeo de fila → DTO JSON (columnas heterogéneas)**
   Lectura **case-insensitive** de columnas (`FacturaId` vs `FacturaID`, etc.); renombres (`Descripcion` → `pagoDescripcion`, `FullName` → `clienteFullName`); `monedaTipo` siempre **string** (`"1"`, `"3"`); montos `decimal`; fechas desde string SP (`dd/MM/yyyy`, `dd-MM-yyyy`) o `DateTime` nativo; salida lista para serializar en **camelCase**.
   Criterio de éxito: Cubre las tres consultas sin ramas copiadas por reporte salvo composición mínima.
 
-- [ ] **Reportes [P2 — Alta]: Nuevo SP solo si hace falta (sin tocar los actuales)**
+- [x] **Reportes [P2 — Alta]: Nuevo SP solo si hace falta (sin tocar los actuales)**
   Si el inventario detecta gap irreparable sin `ALTER`: agregar en `MAT.DB` nuevo procedimiento (nombre nuevo), migración en `database\` con paridad SSDT, **sin modificar** los tres SP originales. Las acciones del controller deben apuntar al SP acordado (existente o nuevo).
   Criterio de éxito: Los `.sql` originales de reportes no cambian; si hay SP nuevo, build de `MAT.DB` y documentación del nombre usado.
 
-- [ ] **Reportes [P2 — Alta]: `ReportesController` (o equivalente bajo `Controllers/Admin`) + seguridad**
+- [x] **Reportes [P2 — Alta]: `ReportesController` (o equivalente bajo `Controllers/Admin`) + seguridad**
   Todas las acciones con `[Authorize]` y `RequireAdministrador()` (mismo patrón que `AdminController`). Rutas GET claras para JSON y Excel. Errores con `ErrorUtil.LogAndGetPublicMessage`; respuestas JSON seguras (sin `e.Message`).
   Criterio de éxito: Usuario no administrador no puede ejecutar ni adivinar URL con éxito; MSBuild limpio.
 
-- [ ] **Reportes [P2 — Alta]: Endpoint datos JSON — Ventas**
+- [x] **Reportes [P2 — Alta]: Endpoint datos JSON — Ventas**
   Llamada a `usp_MAT_Reportes_Ventas` vía `DBHelper`/patrón existente; contrato de respuesta alineado al proyecto (`ok`/`success` + `data` según convención que defina el task al implementar, pero **consistente y documentado**); lista vacía si no hay criterio válido.
   Criterio de éxito: Mismo comportamiento de filtros que el spec MAT Web; compilación y prueba manual con admin.
 
-- [ ] **Reportes [P2 — Alta]: Endpoint datos JSON — Pagos**
+- [x] **Reportes [P2 — Alta]: Endpoint datos JSON — Pagos**
   Igual patrón con `usp_MAT_Reportes_Pagos`; parámetro opcional `tipoVentaId`.
   Criterio de éxito: Columnas y rename `pagoDescripcion`; `viaje` como texto.
 
-- [ ] **Reportes [P2 — Alta]: Endpoint datos JSON — Ranking de compras**
+- [x] **Reportes [P2 — Alta]: Endpoint datos JSON — Ranking de compras**
   Igual patrón con `usp_MAT_Reportes_RankingCompras`.
   Criterio de éxito: Rankings y conteos expuestos en JSON correcto.
 
-- [ ] **Reportes [P2 — Media]: Exportación Excel — Ventas (EPPlus)**
+- [x] **Reportes [P2 — Media]: Exportación Excel — Ventas (EPPlus)**
   Columnas en orden funcional acordado con el spec; cabecera con estilo (fondo azul, texto blanco, negrita); fechas formato es-AR; nombre archivo `ventas-YYYY-MM-DD.xlsx`; `Content-Type` correcto; mismos filtros que JSON.
   Criterio de éxito: Archivo válido; datos alineados al JSON del mismo filtro.
 
-- [ ] **Reportes [P2 — Media]: Exportación Excel — Pagos (EPPlus)**
+- [x] **Reportes [P2 — Media]: Exportación Excel — Pagos (EPPlus)**
   Mismos estándares que ventas.
   Criterio de éxito: Columnas en orden esperado; MSBuild limpio.
 
-- [ ] **Reportes [P2 — Media]: Exportación Excel — Ranking (EPPlus)**
+- [x] **Reportes [P2 — Media]: Exportación Excel — Ranking (EPPlus)**
   Mismos estándares que ventas.
   Criterio de éxito: Columnas en orden esperado.
 
-- [ ] **Reportes [P2 — Media]: Vistas Admin — índice y navegación**
+- [x] **Reportes [P2 — Media]: Vistas Admin — índice y navegación**
   Vista listado de los tres reportes (cards o lista) con enlaces; entrada desde `Views/Admin/Index.cshtml` y/o menú lateral si aplica, sin romper diseño existente.
   Criterio de éxito: Solo administrador ve y accede a la sección.
 
-- [ ] **Reportes [P2 — Media]: Vista Admin — Reporte Ventas**
+- [x] **Reportes [P2 — Media]: Vista Admin — Reporte Ventas**
   Formulario filtros (rango fechas **o** viaje, excluyentes); opcionales vendedor/cliente reutilizando selects/autocomplete existentes en el proyecto si ya hay; tabla de resultados (patrón DataTables u otro ya usado en Admin); botón exportar Excel; consumo de endpoint JSON interno (jQuery o fetch según patrón del módulo).
   Criterio de éxito: Flujo completo sin errores de consola; BS5.
 
-- [ ] **Reportes [P2 — Media]: Vista Admin — Reporte Pagos**
+- [x] **Reportes [P2 — Media]: Vista Admin — Reporte Pagos**
   Igual enfoque que ventas; filtros y export.
   Criterio de éxito: Incluye tipo de venta si se expone en UI.
 
-- [ ] **Reportes [P2 — Media]: Vista Admin — Reporte Ranking compras**
+- [x] **Reportes [P2 — Media]: Vista Admin — Reporte Ranking compras**
   Igual enfoque; filtros y export.
   Criterio de éxito: Datos y export coherentes con JSON.
 
-- [ ] **Reportes [P2 — Media]: Regresión — usos existentes de reportes**
+- [x] **Reportes [P2 — Media]: Regresión — usos existentes de reportes**
   Verificar `HomeController` y cualquier otro consumo de `usp_MAT_Reportes_Ventas` u otros SP de reportes; tras extraer helpers/servicios, no romper totales ni popups existentes.
   Criterio de éxito: Estadísticas/home intactos en prueba manual.
 
-- [ ] **Reportes [P3 — Baja]: UI comparación de períodos (tendencias)**
+- [x] **Reportes [P3 — Baja]: UI comparación de períodos (tendencias)**
   Opcional: dos consultas seguidas al endpoint de ventas (periodo actual vs anterior) con fechas predefinidas (mes/mes, año/año, etc.) como en MAT Web, **sin** nuevo endpoint.
   Criterio de éxito: Documentado en pantalla o leyenda; sin lógica duplicada en backend.
 
-- [ ] **Reportes [P3 — Baja]: Alias de rutas REST (opcional)**
+- [x] **Reportes [P3 — Baja]: Alias de rutas REST (opcional)**
   Si hace falta compatibilidad con clientes externos: registrar rutas tipo `reportes/ventas` en `RouteConfig` apuntando a las mismas acciones (GET).
   Criterio de éxito: Documentar URLs finales en `DOCUMENTACION`.
 
-- [ ] **Reportes [P3 — Baja]: Documentación de operación**
+- [x] **Reportes [P3 — Baja]: Documentación de operación**
   Archivo breve en `DOCUMENTACION`: URLs, parámetros, ejemplo JSON, nota sobre SP usados (existentes vs nuevos) y política de no modificar SP legacy.
   Criterio de éxito: Un desarrollador puede reproducir pruebas sin el archivo original de Downloads.
 
+#### Reportes — hardening / calidad (post-auditoría)
+
+- [x] **Reportes: Alineación HTTP JSON con Excel (401 / 403)**
+  Endpoints JSON (`Ventas`, `Pagos`, `Ranking`) devuelven **401** si no hay sesión y **403** si el usuario no es Administrador, con cuerpo JSON `{ "ok", "message", "data" }`; las vistas interpretan el mensaje en `.fail()` de `getJSON`.
+  Criterio de éxito: Paridad con códigos de las acciones Excel; mensaje visible en la UI.
+
+- [x] **Reportes: Export Excel desde el navegador con manejo de error**
+  Sustituir `window.location` por descarga vía `fetch` + blob; ante 400/401/403/500 mostrar el texto de respuesta en el alerta. Lógica en `Scripts/mat.reportes-excel-export.js`.
+  Criterio de éxito: Mismo `.xlsx` en caso OK; error legible sin pantalla en blanco.
+
+- [x] **Reportes: Excel EPPlus — cabeceras y GUIDs**
+  Cabeceras centradas; columnas de identificadores GUID como texto (`@`) para evitar notación científica en Excel.
+  Criterio de éxito: Alineado a `REPORTES_MAT_WEB.md`; revisión manual de una exportación.
+
+- [x] **Reportes: Validación estricta de `tipoVentaId`**
+  Si se envía `tipoVentaId`, solo **1** u **2**; otro valor → validación sin llamar al SP.
+  Criterio de éxito: MSBuild limpio.
+
+- [x] **Reportes: Corrección bug vista Pagos (`$tbl` en `renderTable`)**
+  `ReportePagos.cshtml` define `$("#tblReporte")` antes de `destroy`/`empty` para no romper búsquedas repetidas.
+  Criterio de éxito: Sin error JS en múltiples consultas.
+
+- [ ] **Reportes (mejora futura): Filtros vendedor/cliente sin GUID manual**
+  Complementar inputs GUID con búsqueda/select reutilizando patrones del Admin donde existan. *(Complemento opcional al task **Reportes UX: filtrar vendedor y cliente solo en el front**: ese task prioriza refinado post-consulta sin BD; este sigue siendo útil si se mantiene envío opcional de GUID al SP en la consulta inicial.)*
+  Criterio de éxito: Menos errores de pegado y mejor paridad con el SPEC de “reutilizar selects”.
+
+- [ ] **Reportes (mejora futura): Tests unitarios `ReportesQueryHelper`**
+  Casos: feliz, rango mayor a 365 días, conflicto fechas+viaje, `from` sin `to`, `tipoVentaId` inválido.
+  Criterio de éxito: Suite verde en el pipeline acordado.
+
+- [ ] **Reportes (mejora futura): DataTables i18n sin CDN**
+  Evitar `cdn.datatables.net` para `Spanish.json` (archivo local o bundle).
+  Criterio de éxito: Idioma cargado sin Internet.
+
+#### Reportes — UX/UI (Reporte de ventas, Admin)
+
+**Contexto:** La pantalla **Reporte de ventas** (`/Admin/Reportes/...`) debe comunicar en lenguaje de negocio que el módulo sirve para ver **estadísticas de venta** eligiendo **un rango de fechas** o **un viaje** (criterios mutuamente excluyentes, como ya valida el backend). Las mejoras siguientes refieren principalmente a `Views/Reportes/ReporteVentas.cshtml` y scripts asociados; si el mismo patrón aplica a Pagos/Ranking, documentar paridad o tareas derivadas en `PROGRESS.md`.
+
+- [ ] **Reportes UX: Reporte Ventas — cartel informativo en lenguaje de usuario**
+  Sustituir el aviso celeste actual (texto técnico: comparación de períodos vía GET, formatos `YYYY-MM-DD`, rutas, referencias a `DOCUMENTACION/REPORTES_MAT_WEB.md`, etc.) por una descripción **comprensible para el usuario final**: qué muestra el reporte, que puede acotar por fechas **o** por viaje (no ambos a la vez), y en una frase opcional qué hacen "Consultar" y "Exportar Excel". El detalle técnico para desarrolladores permanece solo en `DOCUMENTACION` (p. ej. `REPORTES_MAT_MVC_OPERACION.md` / `REPORTES_MAT_WEB.md`), no en el cuerpo de la vista.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml` (y ajuste breve en doc si hace falta trasladar texto técnico).
+  Criterio de éxito: Sin jerga HTTP, sin rutas de archivo del repo en la UI; un perfil comercial/administrativo entiende el objetivo del módulo.
+
+- [ ] **Reportes UX: Reporte Ventas — fechas en español (dd/mm/aaaa)**
+  Ajustar los selectores de **Desde** / **Hasta** para **locale y presentación en español**, placeholder y lectura coherentes con **día/mes/año** (`dd/mm/aaaa`), evitando la sensación de calendario “estilo EE.UU.” (`mm/dd/yyyy`). Mantener el contrato con el backend (normalización a lo que ya espera `ReportesQueryHelper` / endpoints, sin romper consultas ni Excel).
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, scripts/bundles que inicialicen datepicker o `input type="date"` según corresponda.
+  Criterio de éxito: En navegador, fechas se entienden y eligen en formato local esperado; una consulta y una exportación manual confirman datos correctos.
+
+- [ ] **Reportes UX: Reporte Ventas — filtrar vendedor y cliente solo en el front (sin reconsultar BD)**
+  Tras una **Consultar** exitosa, conservar en memoria (JavaScript) el arreglo de filas devuelto y permitir **refinar la grilla** por vendedor y/o por cliente (texto libre, coincidencia sobre nombres o campos ya presentes en el JSON; o controles alimentados únicamente con valores distintos del resultado cargado). **No** debe dispararse nueva petición al servidor ni al SP al cambiar estos filtros. Definir y documentar en la implementación si **Exportar Excel** debe reflejar solo las filas **visibles tras el filtro front** o el **total de la última consulta**, y reflejarlo en una nota breve en pantalla si hay riesgo de confusión.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, y/o `Scripts/…` siguiendo el patrón del módulo (p. ej. extracción a `mat.reportes-ventas.js` si conviene).
+  Criterio de éxito: Filtrado en cliente es inmediato; “Consultar” sigue definiendo el universo de datos según fechas o viaje; criterio Excel acordado y probado.
+
 ### P3 — Nuevas capacidades
 
-- [ ] **Admin: Agregar acción de eliminar usuario**
+- [x] **Admin: Agregar acción de eliminar usuario**
   El sistema permite deshabilitar/habilitar/desbloquear usuarios pero no eliminarlos. Si se necesita borrar un usuario del sistema (membership + UserProfile), no hay UI ni acción en el controller. Implementar `UsuarioEliminar` con confirmación explícita. Restricciones: no puede eliminarse a sí mismo, no puede eliminar al último administrador.
   Archivos: `Controllers/Admin/AdminController.cs`, `Views/Admin/Usuarios.cshtml`
   Criterio de éxito: Existe botón "Eliminar" en el listado (solo visible para admins sobre otros usuarios). La acción requiere confirmación. Elimina la fila de `UserProfiles` y la entrada de `webpages_Membership`.
 
-- [ ] **Admin: Exportar Resumen de Pagos a Excel**
+- [x] **Admin: Exportar Resumen de Pagos a Excel**
   `ResumenPagos` ya carga los datos de pagos por viaje en una grilla HTML. Agregar un botón "Exportar a Excel" que llame a una acción del controller que use EPPlus (ya disponible en el proyecto) para generar el archivo. No requiere nuevas dependencias.
-  Archivos: `Controllers/Admin/AdminController.cs`, `Views/Admin/GridResumenPagos.cshtml`
+  Archivos: `Controllers/Admin/AdminController.cs`, `Views/Admin/GridResumenPagos.cshtml`, `Infrastructure/AdminResumenPagosExcelExport.cs`
   Criterio de éxito: El botón descarga un .xlsx con los datos del viaje seleccionado. La acción tiene `[Authorize]` y `RequireAdministrador()`.
 
 - [ ] **Arquitectura [P3 — Baja]: Eliminar NetTiers y capa generada asociada**

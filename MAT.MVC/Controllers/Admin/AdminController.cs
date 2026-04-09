@@ -40,6 +40,7 @@ namespace MAT.MVC.Controllers.Admin
             if (redir != null) return redir;
 
             var list = new List<AdminUserListItem>();
+            var adminCount = CountUsersInRole("Administrador");
             using (var ctx = new UsersContext())
             {
                 foreach (var u in ctx.UserProfiles.AsEnumerable().OrderBy(x => x.UserName))
@@ -57,13 +58,18 @@ namespace MAT.MVC.Controllers.Admin
                     bool isApproved, isLocked;
                     TryPopulateMembershipDisplayForAdmin(u.UserName, out isApproved, out isLocked);
 
+                    bool targetIsAdmin = roleArray.Any(r => string.Equals(r, "Administrador", StringComparison.OrdinalIgnoreCase));
+                    bool isSelf = string.Equals(User.Identity.Name, u.UserName, StringComparison.OrdinalIgnoreCase);
+                    var mostrarEliminar = !isSelf && !(targetIsAdmin && adminCount <= 1);
+
                     list.Add(new AdminUserListItem
                     {
                         UserId = u.UserId,
                         UserName = u.UserName,
                         RolesSummary = roleArray.Length > 0 ? string.Join(", ", roleArray) : "—",
                         IsApproved = isApproved,
-                        IsLockedOut = isLocked
+                        IsLockedOut = isLocked,
+                        MostrarEliminar = mostrarEliminar
                     });
                 }
             }
@@ -415,6 +421,117 @@ namespace MAT.MVC.Controllers.Admin
             return RedirectToAction("Usuarios");
         }
 
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult UsuarioEliminar(int userId)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            var userName = GetUserNameByProfileId(userId);
+            if (string.IsNullOrEmpty(userName))
+            {
+                TempData["UserMessage"] = "Usuario no encontrado.";
+                return RedirectToAction("Usuarios");
+            }
+
+            if (string.Equals(User.Identity.Name, userName, StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["UserMessage"] = "No puede eliminar su propia cuenta.";
+                return RedirectToAction("Usuarios");
+            }
+
+            bool targetIsAdmin = false;
+            try
+            {
+                targetIsAdmin = Roles.IsUserInRole(userName, "Administrador");
+            }
+            catch
+            {
+                // ignore
+            }
+
+            if (targetIsAdmin && CountUsersInRole("Administrador") <= 1)
+            {
+                TempData["UserMessage"] = "No puede eliminar el último administrador del sistema.";
+                return RedirectToAction("Usuarios");
+            }
+
+            try
+            {
+                EliminarUsuarioMembershipYPerfil(userId, userName);
+                TempData["UserMessage"] = "Usuario eliminado correctamente.";
+            }
+            catch (Exception e)
+            {
+                TempData["UserMessage"] = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioEliminar");
+            }
+
+            return RedirectToAction("Usuarios");
+        }
+
+        /// <summary>
+        /// Quita roles, intenta <see cref="Membership.DeleteUser"/> y asegura borrado en <c>UserProfile</c> / tablas SimpleMembership.
+        /// </summary>
+        private static void EliminarUsuarioMembershipYPerfil(int userId, string userName)
+        {
+            foreach (var role in GetRolesForUserSafe(userName).ToList())
+            {
+                try
+                {
+                    Roles.RemoveUserFromRole(userName, role);
+                }
+                catch (Exception e)
+                {
+                    ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioEliminar.RemoveRole");
+                }
+            }
+
+            try
+            {
+                var mu = Membership.GetUser(userName, false);
+                if (mu != null)
+                    Membership.DeleteUser(userName, true);
+            }
+            catch (Exception e)
+            {
+                ErrorUtil.LogAndGetPublicMessage(e, "AdminController.UsuarioEliminar.DeleteUser");
+            }
+
+            using (var ctx = new UsersContext())
+            {
+                TryDeleteOptionalOAuthRow(ctx, userId);
+                ctx.Database.ExecuteSqlCommand("DELETE FROM dbo.webpages_UsersInRoles WHERE UserId = @p0", userId);
+                ctx.Database.ExecuteSqlCommand("DELETE FROM dbo.webpages_Membership WHERE UserId = @p0", userId);
+
+                var profile = ctx.UserProfiles.FirstOrDefault(x => x.UserId == userId);
+                if (profile != null)
+                {
+                    ctx.UserProfiles.Remove(profile);
+                    ctx.SaveChanges();
+                }
+            }
+        }
+
+        private static void TryDeleteOptionalOAuthRow(UsersContext ctx, int userId)
+        {
+            try
+            {
+                ctx.Database.ExecuteSqlCommand("DELETE FROM dbo.webpages_OAuthMembership WHERE UserId = @p0", userId);
+            }
+            catch (Exception e)
+            {
+                // Tabla ausente en algunas BDs (error 208): no bloquear eliminación.
+                for (var x = e; x != null; x = x.InnerException)
+                {
+                    var sql = x as SqlException;
+                    if (sql != null && sql.Number == 208)
+                        return;
+                }
+            }
+        }
+
         private static string GetUserNameByProfileId(int userId)
         {
             using (var ctx = new UsersContext())
@@ -628,6 +745,7 @@ namespace MAT.MVC.Controllers.Admin
             {
                 _model = PagoMethod.GetPagosByViaje(ViajeID);
                 ViewBag.TotalPagos = _model.Sum(l => l.Monto);
+                ViewBag.ViajeIdResumen = ViajeID;
 
                 var jsonPatientList = JsonConvert.SerializeObject(_model);
                 ViewBag.sbDataSetJson = jsonPatientList.ToString();
@@ -637,6 +755,29 @@ namespace MAT.MVC.Controllers.Admin
                 ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.GridResumenPagos");
             }
             return PartialView();
+        }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult ResumenPagosExcel(Guid ViajeID)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            if (ViajeID == Guid.Empty)
+                return new HttpStatusCodeResult(400, "Debe indicar un viaje válido.");
+
+            try
+            {
+                var list = PagoMethod.GetPagosByViaje(ViajeID);
+                var bytes = AdminResumenPagosExcelExport.Build(list, ViajeID);
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"resumen-pagos-{ViajeID:N}-{DateTime.Now:yyyy-MM-dd}.xlsx");
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(500, ErrorUtil.LogAndGetPublicMessage(ex, "AdminController.ResumenPagosExcel"));
+            }
         }
 
         public ActionResult GridResumenPagosFecha(string fecha)

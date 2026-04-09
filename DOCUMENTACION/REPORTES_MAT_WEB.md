@@ -31,6 +31,14 @@ Each report has a data endpoint (JSON) and an Excel export endpoint.
 | GET    | `/reportes/ranking-compras`    | Purchase ranking data      | ADMIN  |
 | GET    | `/reportes/ranking-compras/excel` | Purchase ranking Excel export | ADMIN |
 
+**Rutas JSON en MAT.MVC (2026-04):** `GET /Admin/Reportes/Ventas`, `/Admin/Reportes/Pagos`, `/Admin/Reportes/Ranking` — mismos query params que en las tablas siguientes; rol **Administrador**; respuesta `{ "ok", "message", "data" }` en camelCase vía Newtonsoft (ver `ReportesController`).
+
+**Rutas Excel en MAT.MVC (2026-04):** `GET /Admin/Reportes/VentasExcel`, `/Admin/Reportes/PagosExcel`, `/Admin/Reportes/RankingExcel` — mismos query params que el JSON correspondiente; respuesta binaria `.xlsx` (ver `ReportesExcelExport`).
+
+**Hub y vistas HTML:** `GET /Admin/Reportes` (índice), `ReporteVentas`, `ReportePagos`, `ReporteRanking` — `RequireAdministratorView()`.
+
+**Operación y pruebas en MAT.MVC:** ver `DOCUMENTACION/REPORTES_MAT_MVC_OPERACION.md`.
+
 ---
 
 ## Standard Response Format
@@ -195,12 +203,15 @@ Same as other reports: requires (`from` + `to`) or `viajeId`.
 
 #### Stored Procedure: `[dbo].[usp_MAT_Reportes_RankingCompras]`
 
-| SP Parameter | SQL Type           | Nullable |
-|--------------|--------------------|----------|
-| `@From`      | VARCHAR / NVARCHAR | YES      |
-| `@To`        | VARCHAR / NVARCHAR | YES      |
-| `@ViajeId`   | UNIQUEIDENTIFIER   | YES      |
-| `@ClienteId` | UNIQUEIDENTIFIER   | YES      |
+| SP Parameter  | SQL Type           | Nullable | Notes |
+|---------------|--------------------|----------|-------|
+| `@From`       | **DATE**           | YES      | **Not** `NVARCHAR`: backend should pass `SqlDbType.Date` / parsed `DateTime`, not `DD-MM-YYYY` strings like Ventas/Pagos. |
+| `@To`         | **DATE**           | YES      | Same as `@From`. |
+| `@ViajeId`    | UNIQUEIDENTIFIER   | YES      | |
+| `@VendedorId` | UNIQUEIDENTIFIER   | YES      | Present in signature; **currently not applied** in the SP `WHERE` (filter commented in `MAT.DB`). |
+| `@ClienteId`  | UNIQUEIDENTIFIER   | YES      | |
+
+See `DOCUMENTACION/REPORTES_SP_INVENTARIO_ESTRATEGIA.md` for full inventory and MAT.MVC strategy.
 
 #### SP Output Columns → Response DTO Mapping
 
@@ -260,14 +271,17 @@ An optional `viajeId` filter may be included in both calls.
 | Manual date filters (statistics) | `DD-MM-YYYY`   |
 | Period comparison (trends)       | `YYYY-MM-DD`   |
 
-The stored procedures expect `DD-MM-YYYY` format for their `@From` and `@To` parameters.
+The stored procedures **`usp_MAT_Reportes_Ventas`** and **`usp_MAT_Reportes_Pagos`** expect `DD-MM-YYYY` format for their `@From` and `@To` **string** parameters.
+
+**Exception:** **`usp_MAT_Reportes_RankingCompras`** uses SQL **`DATE`** parameters for `@From` and `@To`. After parsing the HTTP query to `DateTime`, pass them as date-typed parameters to SQL (do not send `DD-MM-YYYY` strings to that procedure).
 
 The backend **must**:
 1. Accept both formats in `from` and `to` query parameters.
 2. Detect the format (check if the string matches `YYYY-MM-DD` or `DD-MM-YYYY`).
-3. Normalize to `DD-MM-YYYY` before passing to the SP.
+3. For **Ventas** and **Pagos**: normalize to `DD-MM-YYYY` before passing to the SP.
+4. For **Ranking**: parse to `DateTime` and pass as `DATE` (`SqlDbType.Date` or equivalent).
 
-**Recommended approach:** Parse the input string to a `DateTime` object, then format it as `DD-MM-YYYY` for the SP. Alternatively, modify the SPs to accept `DATE` type parameters to eliminate format ambiguity.
+**Recommended approach:** Parse the input string to a `DateTime` object, then format as `DD-MM-YYYY` for Ventas/Pagos SPs only; use the same `DateTime` for Ranking with correct SQL type.
 
 ### Date Parsing from SP Results
 

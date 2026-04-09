@@ -215,12 +215,12 @@
 - ✅ Reserva/FormReserva.cshtml — Flujo reserva con `reserva-container`, secciones BI, `btn-modern` donde aplica — verificado 2026-04-07 *(distinto de `NuevaReserva/FormReserva.cshtml`)*
 - ✅ Reserva/VinculacionMenor.cshtml — Sin `<style>` inline: estilos en `Content/partial-vinculacion-menor.css`; cierre de submodales vía `matCloseShowFormDialog` — 2026-04-08
 - ✅ Reserva/SeleccionarPasajero.cshtml — Botonera confirmar/cancelar con clases `btn-modern` (P1 parcial) — 2026-04-07
-- ⏳ Reserva/QuickSearch.cshtml
-- ⏳ Reserva/DistribucionCoche.cshtml
-- ⏳ Reserva/FormListaMayor.cshtml
-- ⏳ Reserva/FormListaMenor.cshtml
-- ⏳ Reserva/PartialVinculacionMenor.cshtml
-- ⏳ Reserva/GetOffListPassengers.cshtml
+- ✅ Reserva/QuickSearch.cshtml — `SearchModel`/`GridView` con clases BS5; HTML envuelto en `table-responsive quick-search-bs5` (`ReservaController.QuickSearch` + vista respaldo) — 2026-04-08
+- ✅ Reserva/DistribucionCoche.cshtml — Standalone BS5 + BI (auditoría Fase 6; sin cambios de markup en esta iteración) — 2026-04-08
+- ✅ Reserva/FormListaMayor.cshtml — Tabla + DataTables + help badge BI (auditoría) — 2026-04-08
+- ✅ Reserva/FormListaMenor.cshtml — Mismo patrón — 2026-04-08
+- ✅ Reserva/PartialVinculacionMenor.cshtml — Confirmación desvincular: **modal Bootstrap 5** en lugar de `confirm` jQuery UI — 2026-04-08
+- ✅ Reserva/GetOffListPassengers.cshtml — Lista de espera + BI (auditoría) — 2026-04-08
 
 #### Pasajeros:
 - ⏳ PasajeroViaje/Manifiesto.cshtml
@@ -328,8 +328,8 @@
 | ⏳ Fase 6 | Vistas Especializadas | ~30+ ⏳ *(sublistas Viajes/Paquetes/NuevaReserva/Admin mayormente ✅)* | ~100 horas | ⚪ Muy Baja |
 
 **TOTAL COMPLETADAS (tabla numerada #1–#82):** 82 filas en la tabla principal + sublistas Fase 6 (Home contenedora + partials Shared + PersonaPasajero/Vendedor auditados en esta tanda).  
-**TOTAL PENDIENTES (aprox.):** ~35–45 vistas según ⏳ en Fase 6 (persona cliente operativo, reservas, print, splash legacy, etc.).  
-**Avance global estimado (P1 según este doc):** **~77%** — auditoría Fase 5 + Home Todos los Viajes + `_LayoutAdmin`; seguir ⏳ (Reserva/*, PersonaCliente vouchers/historial, PasajeroViaje, etc.).  
+**TOTAL PENDIENTES (aprox.):** ~30–40 vistas según ⏳ en Fase 6 (tras cierre lote Reserva 2026-04-08).  
+**Avance global estimado (P1 según este doc):** **~79%** — + lote Reserva (QuickSearch grid BS5, PartialVinculacionMenor modal BS5, resto auditado).  
 **TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
 
 ---
@@ -672,6 +672,8 @@ else
 | 2026-04-07 | PersonaPasajero/PartialPasajerosHistorial.cshtml | Parcial | Tabla responsive compacta | `thead.table-light` |
 | 2026-04-07 | PersonaVendedor/PartialHistorialPagos + controller + binding | Parcial | `VendedorHistorialPagoFila`, `MovimientoCuentaService.GetByPagoId`, `.js-detalle-pago-vendedor` → `imprimirReciboPago` | Sin ids duplicados |
 | 2026-04-08 | — | Doc P1 | Fase 5 (#60–#65) + Home TodosLosViajes* + `_LayoutAdmin` marcados ✅ tras auditoría de código; `Shared/Voucher` nota archivo vacío | Inventario al day |
+| 2026-04-08 | Reserva/QuickSearch + `SearchModel` | P1 Fase 6 | Grid BS5 (`table-sm`, `striped`, `hover`); respuesta envuelta en `table-responsive` | QuickSearch dialog |
+| 2026-04-08 | Reserva/PartialVinculacionMenor.cshtml | P1 Fase 6 | Modal BS5 `#modalDesvincularMenorPm`; fallback `confirm` nativo si no hay Bootstrap | Sin jQuery UI en este flujo |
 
 **Total de mejoras registradas:** 65+ (ver filas anteriores en esta tabla)
 
