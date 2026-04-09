@@ -69,16 +69,25 @@
 <script type="text/javascript">
     var _dataTable = "";
     $(document).ready(function () {
-        var auditDpOpts = {
-            dateFormat: "dd/mm/yy",
-            firstDay: 1,
+        $.datepicker.regional['es'] = {
+            closeText: 'Cerrar', prevText: '‹', nextText: '›',
+            currentText: 'Hoy',
+            monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+            monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+            dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+            weekHeader: 'Sm', dateFormat: 'dd/mm/yy', firstDay: 1,
+            isRTL: false, showMonthAfterYear: false, yearSuffix: ''
+        };
+        var auditDpOpts = $.extend({}, $.datepicker.regional['es'], {
             changeMonth: true,
             changeYear: true,
             yearRange: "2015:2035",
             showButtonPanel: true,
             showOtherMonths: true,
             selectOtherMonths: true
-        };
+        });
         $("#dateFrom").datepicker($.extend({}, auditDpOpts, {
             onClose: function (selected) {
                 if (selected) {
@@ -185,7 +194,8 @@
                 { title: "Vendedor", data: "Vendedor" }
             ],
             autoWidth: false,
-            pageLength: 25
+            pageLength: 25,
+            language: { url: "/Scripts/dataTable/i18n/Spanish.json" }
         });
 
         $tbl.show();

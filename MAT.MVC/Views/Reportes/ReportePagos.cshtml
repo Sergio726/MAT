@@ -10,7 +10,11 @@
                 <i class="bi bi-cash-coin"></i>
                 <span>Reporte de pagos</span>
             </h1>
-            <p class="small text-secondary mb-0 mt-1">Rango de fechas <strong>o</strong> un viaje. Tipo de venta opcional.</p>
+            <p class="small text-secondary mb-0 mt-1">
+                Consultá los pagos registrados filtrando por <strong>rango de fechas</strong> o por <strong>viaje</strong> (no ambos a la vez).
+                Podés indicar también el tipo de venta. Una vez cargados los resultados, afinás la vista por vendedor o cliente sin volver a consultar.
+                Usá <em>Exportar Excel</em> para descargar el listado completo de la consulta.
+            </p>
         </div>
         <a href="@Url.Action("Index", "Reportes")" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Índice reportes</a>
     </div>
@@ -28,11 +32,11 @@
             <div class="row g-2 align-items-end mb-2" id="grpFechas">
                 <div class="col-md-3">
                     <label class="form-label small mb-0" for="from">Desde</label>
-                    <input type="date" class="form-control form-control-sm" id="from" />
+                    <input type="text" class="form-control form-control-sm mat-datepicker" id="from" placeholder="dd/mm/aaaa" autocomplete="off" />
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small mb-0" for="to">Hasta</label>
-                    <input type="date" class="form-control form-control-sm" id="to" />
+                    <input type="text" class="form-control form-control-sm mat-datepicker" id="to" placeholder="dd/mm/aaaa" autocomplete="off" />
                 </div>
             </div>
             <div class="row g-2 align-items-end mb-2 d-none" id="grpViaje">
@@ -43,27 +47,46 @@
             </div>
             <div class="row g-2 align-items-end mb-3">
                 <div class="col-md-3">
-                    <label class="form-label small mb-0" for="tipoVentaId">Tipo venta</label>
+                    <label class="form-label small mb-0" for="tipoVentaId">Tipo de venta</label>
                     <select class="form-select form-select-sm" id="tipoVentaId">
                         <option value="">(Todos)</option>
                         <option value="1">Oficina</option>
                         <option value="2">Online</option>
                     </select>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label small mb-0" for="vendedorId">Vendedor (GUID, opc.)</label>
-                    <input type="text" class="form-control form-control-sm font-monospace" id="vendedorId" />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small mb-0" for="clienteId">Cliente (GUID, opc.)</label>
-                    <input type="text" class="form-control form-control-sm font-monospace" id="clienteId" />
-                </div>
             </div>
             <div class="d-flex flex-wrap gap-2">
                 <button type="button" class="btn btn-primary btn-sm" id="btnBuscar"><i class="bi bi-search"></i> Consultar</button>
-                <button type="button" class="btn btn-outline-success btn-sm" id="btnExcel"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
+                <button type="button" class="btn btn-outline-success btn-sm" id="btnExcel"
+                        title="Descarga todos los registros de la última consulta, sin importar los filtros de vista">
+                    <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                </button>
             </div>
             <div class="alert alert-danger d-none mt-3 mb-0 py-2 small" id="alertErr" role="alert"></div>
+        </div>
+    </div>
+
+    <div id="filtroFront" class="card shadow-sm border-0 mb-3 d-none">
+        <div class="card-body py-2">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="filtVendedor"><i class="bi bi-person-badge"></i> Filtrar vendedor</label>
+                    <input type="text" class="form-control form-control-sm" id="filtVendedor" placeholder="Nombre del vendedor…" autocomplete="off" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="filtCliente"><i class="bi bi-person"></i> Filtrar cliente</label>
+                    <input type="text" class="form-control form-control-sm" id="filtCliente" placeholder="Nombre del cliente…" autocomplete="off" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="filtTipoPago"><i class="bi bi-credit-card"></i> Filtrar medio de pago</label>
+                    <input type="text" class="form-control form-control-sm" id="filtTipoPago" placeholder="Ej. efectivo, tarjeta…" autocomplete="off" />
+                </div>
+                <div class="col-md-auto">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnLimpiarFiltro">
+                        <i class="bi bi-x-circle"></i> Limpiar
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -78,23 +101,36 @@
 <script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
 <script>
 $(function () {
-    var urlJson = '@Url.Action("Pagos", "Reportes")';
+    var urlJson  = '@Url.Action("Pagos", "Reportes")';
     var urlExcel = '@Url.Action("PagosExcel", "Reportes")';
     var dt = null;
 
+    // Inicializar datepicker en español
+    $.datepicker.regional['es'] = {
+        closeText: 'Cerrar', prevText: '‹', nextText: '›',
+        currentText: 'Hoy', monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+        monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+        dayNamesShort: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'], dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+        weekHeader: 'Sm', dateFormat: 'dd/mm/yy', firstDay: 1,
+        isRTL: false, showMonthAfterYear: false, yearSuffix: ''
+    };
+    $(".mat-datepicker").datepicker($.extend({}, $.datepicker.regional['es'], {
+        changeMonth: true, changeYear: true, yearRange: '2015:2035',
+        showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true,
+        maxDate: '+5y'
+    }));
+
+    function normalizeDate(val) { return (val || "").trim().replace(/\//g, "-"); }
     function modo() { return $("#modoViaje").is(":checked") ? "viaje" : "fechas"; }
     function syncGrupos() {
         if (modo() === "viaje") { $("#grpFechas").addClass("d-none"); $("#grpViaje").removeClass("d-none"); }
         else { $("#grpFechas").removeClass("d-none"); $("#grpViaje").addClass("d-none"); }
     }
     function queryParams() {
-        var p = {
-            vendedorId: $("#vendedorId").val().trim(),
-            clienteId: $("#clienteId").val().trim(),
-            tipoVentaId: $("#tipoVentaId").val()
-        };
+        var p = { tipoVentaId: $("#tipoVentaId").val() };
         if (modo() === "viaje") p.viajeId = $("#viajeId").val().trim();
-        else { p.from = $("#from").val(); p.to = $("#to").val(); }
+        else { p.from = normalizeDate($("#from").val()); p.to = normalizeDate($("#to").val()); }
         return p;
     }
     function showErr(t) {
@@ -108,26 +144,31 @@ $(function () {
         dt = $tbl.DataTable({
             data: rows || [],
             columns: [
-                { data: "facturaId", title: "Factura" },
-                { data: "fechaPago", title: "F. pago" },
-                { data: "monto", title: "Monto" },
-                { data: "monedaTipo", title: "Mon." },
-                { data: "pagoTipoId", title: "Tipo pago ID" },
-                { data: "pagoDescripcion", title: "Tipo pago" },
-                { data: "tipoVentaId", title: "Tipo venta ID" },
+                { data: "fechaPago",            title: "Fecha pago" },
+                { data: "monto",                title: "Monto",       className: "text-end" },
+                { data: "monedaTipo",           title: "Mon." },
+                { data: "pagoDescripcion",      title: "Medio de pago" },
                 { data: "tipoVentaDescripcion", title: "Tipo venta" },
-                { data: "cantidadTipoPago", title: "Cant. tipo" },
-                { data: "rankingTipoPago", title: "Rank tipo" },
-                { data: "vendedorId", title: "Vend. ID" },
-                { data: "vendedorFullName", title: "Vendedor" },
-                { data: "clienteId", title: "Cliente ID" },
-                { data: "clienteFullName", title: "Cliente" },
-                { data: "viaje", title: "Viaje" }
+                { data: "cantidadTipoPago",     title: "Cant." },
+                { data: "rankingTipoPago",      title: "Rank." },
+                { data: "vendedorFullName",     title: "Vendedor" },
+                { data: "clienteFullName",      title: "Cliente" },
+                { data: "viaje",                title: "Viaje" },
+                { data: "facturaId",            title: "Factura",     visible: false }
             ],
             pageLength: 25,
             autoWidth: false,
-            language: { url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" }
+            language: { url: "/Scripts/dataTable/i18n/Spanish.json" }
         });
+        $("#filtroFront").toggleClass("d-none", !rows || rows.length === 0);
+        limpiarFiltros();
+    }
+
+    function limpiarFiltros() {
+        $("#filtVendedor,#filtCliente,#filtTipoPago").val("");
+        if (dt) {
+            dt.columns(7).search("").columns(8).search("").columns(3).search("").draw();
+        }
     }
 
     $('input[name="modoFiltro"]').on("change", syncGrupos);
@@ -144,6 +185,17 @@ $(function () {
     $("#btnExcel").on("click", function () {
         window.MatReportes.downloadReporteExcel(urlExcel, queryParams, showErr);
     });
+
+    $("#filtVendedor").on("input", function () {
+        if (dt) { dt.columns(7).search($(this).val()).draw(); }
+    });
+    $("#filtCliente").on("input", function () {
+        if (dt) { dt.columns(8).search($(this).val()).draw(); }
+    });
+    $("#filtTipoPago").on("input", function () {
+        if (dt) { dt.columns(3).search($(this).val()).draw(); }
+    });
+    $("#btnLimpiarFiltro").on("click", limpiarFiltros);
 });
 </script>
 }

@@ -2,6 +2,99 @@
 
 ---
 
+### [2026-04-09] — Extraer estilos Cotizador.cshtml; modernizar _LayoutSplash.cshtml
+
+- Archivos modificados:
+  - `Content/mat.cotizador.css` *(nuevo)*
+  - `Views/Herramientas/Cotizador.cshtml`
+  - `Views/Shared/_LayoutSplash.cshtml`
+  - `Views/Shared/_Layout.cshtml`
+  - `MAT.MVC.csproj`
+  - `VISTAS_PENDIENTES_ACTUALIZACION.md`
+- Qué se implementó:
+  - **Cotizador.cshtml**: eliminado bloque `<style>` de 266 líneas → `Content/mat.cotizador.css`; partial sin estilos embebidos; CSS registrado en `_Layout.cshtml` y `MAT.MVC.csproj`.
+  - **_LayoutSplash.cshtml**: reemplazados jQuery 1.8.2 / jQuery UI 1.8.24 (2012) por jQuery 3.7.1 + migrate 3.4.1 + UI 1.13.2; agregados Bootstrap 5.3.2 + Bootstrap Icons; CSS modernos (`saas-variables.css`, `mat.forms.css`, CSS UI 1.13.2); `@section Styles` disponible; scripts movidos al pie del `<body>` (patrón correcto); ninguna vista actualmente referencia este layout (verificado: no hay `Layout = "_LayoutSplash"` en el codebase) — actualizado de forma preventiva para futura reutilización.
+  - 2 vistas marcadas ✅ en `VISTAS_PENDIENTES_ACTUALIZACION.md`.
+- Problemas encontrados: ninguno — build 0 errores.
+- Estado: ✅ completo
+
+---
+
+### [2026-04-09] — Extraer estilos inline Hotel/Distribucion, EsquemaDistribucion, Habitacion/PartialListHabitacion
+
+- Archivos modificados:
+  - `Content/mat.hotel.distribucion.css` *(nuevo — estilos de Distribucion + EsquemaDistribucion)*
+  - `Content/mat.habitacion.list.css` *(nuevo — estilos de PartialListHabitacion)*
+  - `Views/Hotel/Distribucion.cshtml`
+  - `Views/Hotel/EsquemaDistribucion.cshtml`
+  - `Views/Habitacion/PartialListHabitacion.cshtml`
+  - `Views/Shared/_Layout.cshtml`
+  - `MAT.MVC.csproj`
+  - `VISTAS_PENDIENTES_ACTUALIZACION.md`
+- Qué se implementó:
+  - **Hotel/Distribucion.cshtml**: eliminados dos bloques `<style>` inline (principal 234 líneas + modal 15 líneas) → `mat.hotel.distribucion.css`; error message usa clase `.hotel-distribucion-error` con BI icon; `@section Styles` queda solo con links externos.
+  - **Hotel/EsquemaDistribucion.cshtml**: eliminado bloque `<style>` inline de 263 líneas → `mat.hotel.distribucion.css`; partial cargado vía AJAX sin estilos embebidos.
+  - **Habitacion/PartialListHabitacion.cshtml**: eliminado bloque `<style>` inline de 81 líneas → `mat.habitacion.list.css`; DataTable ya usaba i18n local (`/Scripts/dataTable/i18n/Spanish.json`).
+  - Ambos CSS registrados en `MAT.MVC.csproj` e incluidos en `_Layout.cshtml`.
+  - 3 vistas marcadas ✅ en `VISTAS_PENDIENTES_ACTUALIZACION.md`.
+- Problemas encontrados: ninguno — build 0 errores, 0 advertencias.
+- Estado: ✅ completo
+
+---
+
+### [2026-04-09] — Lote 10 tasks: DataTables i18n, UX Reportes Pagos/Ranking, extraer estilos inline, locale datepicker
+
+- Archivos modificados:
+  - `Scripts/dataTable/i18n/Spanish.json` *(nuevo)*
+  - `Content/mat.busqueda.css` *(nuevo)*
+  - `Content/mat.notacredito.css` *(nuevo)*
+  - `Views/Reportes/ReportePagos.cshtml`
+  - `Views/Reportes/ReporteRanking.cshtml`
+  - `Views/Admin/AuditoriaFacturas.cshtml`
+  - `Views/Busqueda/Perfil.cshtml`
+  - `Views/Busqueda/Card.cshtml`
+  - `Views/NotaCredito/partialMovimientoNotaCredito.cshtml`
+  - `Views/CuentaCorriente/DetalleComprobante.cshtml`
+  - `Views/PersonaCliente/partialHistorialdePagosByFactura.cshtml`
+  - `Views/Shared/_Layout.cshtml`
+  - `MAT.MVC.csproj`
+  - `SPEC.md`, `VISTAS_PENDIENTES_ACTUALIZACION.md`
+- Qué se implementó:
+  - **DataTables i18n sin CDN**: `Spanish.json` local en `Scripts/dataTable/i18n/`; reemplazadas 17 referencias de 3 variantes CDN (`1.10.25/Spanish.json`, `1.13.7/es-AR.json`, `1.13.7/es-ES.json`) en todas las vistas del proyecto.
+  - **ReportePagos UX**: descripción en lenguaje de negocio; datepicker jQuery UI en español (`dd/mm/aaaa`); eliminados inputs GUID `vendedorId`/`clienteId` del formulario de consulta; sección `filtroFront` con filtros por vendedor, cliente y medio de pago en el front (sin reconsultar BD); columnas DataTable limpias (sin GUIDs visibles). `tipoVentaId` permanece en la consulta.
+  - **ReporteRanking UX**: misma mejora — descripción, datepicker ES, filtros front por cliente y viaje.
+  - **AuditoriaFacturas**: locale `$.datepicker.regional['es']` cargado antes de init; nombres de meses y días en español; DataTable con `language` local.
+  - **Extraer estilos inline**:
+    - `Busqueda/Perfil.cshtml` + `Busqueda/Card.cshtml` → `Content/mat.busqueda.css`
+    - `NotaCredito/partialMovimientoNotaCredito.cshtml` + `CuentaCorriente/DetalleComprobante.cshtml` → `Content/mat.notacredito.css`
+    - Ambos CSS registrados en `MAT.MVC.csproj` e incluidos en `_Layout.cshtml`.
+  - **VISTAS_PENDIENTES_ACTUALIZACION.md**: 8 vistas marcadas ✅ (`partialHistorialdePagosByFactura`, `PopupDetalleFactura`, `AuditoriaFacturas`, `Busqueda/Card`, `Busqueda/Perfil`, `partialNotaCredito`, `partialMovimientoNotaCredito`, `DetalleComprobante`).
+- Problemas encontrados: ninguno — build limpio.
+- Estado: ✅ completo
+
+---
+
+### [2026-04-09] — Seguridad: hardening AdminController (3 tasks SPEC)
+
+- Archivos modificados: `MAT.MVC/Controllers/Admin/AdminController.cs`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó:
+  - **`[Authorize]` a nivel de clase**: agregado al `AdminController` para que todo el controller exija autenticación sin excepciones; ya no depende de que cada acción lo declare individualmente.
+  - **`RequireAdministrador()` en acciones sin protección de rol**: `Index`, `ResumenPagos`, `ResumenPagosPorFecha`, `GridResumenPagos`, `GridResumenPagosFecha`, `GridPlanillaHotelPrint`, `GridPlanillaHotelDetallePrint`, `PartialGridResumenPlanillaHotelPrint`, `ImprimirPlanilla`, `ImprimirPlanillaDetalle`, `GridPlanillaServiciosItemPrint`, `DeletePlanilla`, `EditarPlanilla`, `GridPlanillaHotelDetalleEdit`, `GridPlanillaServiciosItemEdit`, `AuditoriaFacturas`. Para los métodos `bool` (`GuardarDatosPlanilla`, `GuardarDatosItem`, `GuardarDatosServiciosItem`) se usó `if (!IsAdminUser()) return false`.
+  - **Fix `e.Message` en `GridResumenPagosFecha`**: reemplazado `ViewBag.Error = "Error: " + e.Message` por `ErrorUtil.LogAndGetPublicMessage(e, ...)`.
+  - **Fix `IsAdminUser()` fallback inseguro**: el `catch` ya no retorna `User.Identity.IsAuthenticated`; retorna `false` y loguea la excepción con `ErrorUtil`.
+- Problemas encontrados: ninguno.
+- Estado: ✅ 3 tasks SPEC marcados `[x]`; MSBuild MAT.MVC Debug OK
+
+### [2026-04-09] — Reportes UX/UI: Reporte Ventas (3 tasks SPEC)
+
+- Archivos modificados: `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó:
+  - **Texto descriptivo**: eliminado el aviso técnico `alert-info` (comparación de períodos, URLs, referencias a DOCUMENTACION); reemplazado por párrafo orientado al usuario (qué es el reporte, filtro fechas/viaje, refinar resultados, Excel).
+  - **Fechas en español**: `input[type=date]` → `input[type=text]` + jQuery UI datepicker en español (locale definido inline; ya incluido en `_LayoutAdmin`); `dd/mm/yyyy` → `dd-mm-yyyy` en `normalizeDate()` antes de enviar al backend (compatible con `TryParseDateParameter`).
+  - **Filtro front vendedor/cliente**: campos GUID de vendedorId/clienteId retirados del formulario de consulta (ya no se envían al SP); panel "Acotar resultados" (hidden → visible tras primer Consultar exitoso) con inputs de texto que filtran `vendedorFullName`/`clienteFullName` vía `dt.column().search().draw()` sin nueva petición; botón Limpiar; Excel exporta total de la consulta (tooltip indica esto); columnas GUID ocultadas en la grilla (IDs de viaje, vendedor, cliente, factura).
+- Problemas encontrados: ninguno.
+- Estado: ✅ 3 tasks SPEC marcados `[x]`; MSBuild MAT.MVC Debug OK
+
 ### [2026-04-08] — Admin: exportar resumen de pagos por viaje a Excel (P3 SPEC)
 
 - Archivos modificados: `MAT.MVC/Infrastructure/AdminResumenPagosExcelExport.cs` (nuevo), `MAT.MVC/Controllers/Admin/AdminController.cs` (ya tenía `GridResumenPagos` + `ResumenPagosExcel`), `MAT.MVC/Views/Admin/GridResumenPagos.cshtml`, `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`

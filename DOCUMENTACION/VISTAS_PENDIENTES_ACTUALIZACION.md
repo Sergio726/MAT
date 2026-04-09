@@ -247,8 +247,8 @@
 - ⏳ PersonaCliente/PartialFacturas.cshtml
 - ⏳ PersonaCliente/PartialCuentaCorriente.cshtml
 - ⏳ PersonaCliente/partialHistorialdePagos.cshtml
-- ⏳ PersonaCliente/partialHistorialdePagosByFactura.cshtml
-- ⏳ PersonaCliente/PopupDetalleFactura.cshtml
+- ✅ PersonaCliente/partialHistorialdePagosByFactura.cshtml — DataTable con `language` local; estilos `mat-pagos-*`, `modern-loading-*`; lógica pago detalle AJAX — 2026-04-09
+- ✅ PersonaCliente/PopupDetalleFactura.cshtml — `modern-loading-container`, `modern-alert-error`; pagosFactura vía `ShowFormDialog`; fallback endpoint legacy — 2026-04-09
 
 #### Viajes:
 - ✅ Viaje/ListViajes.cshtml — Partial lista con `viajes-list-container`, tipografía unificada — 2026-04-07
@@ -259,9 +259,9 @@
 - ✅ Viaje/HotelSetIngresoEgreso.cshtml — Form grid ingreso/egreso con variables CSS — 2026-04-07
 
 #### Hoteles:
-- ⏳ Hotel/Distribucion.cshtml
-- ⏳ Hotel/EsquemaDistribucion.cshtml
-- ⏳ Habitacion/PartialListHabitacion.cshtml
+- ✅ Hotel/Distribucion.cshtml — estilos extraídos a `mat.hotel.distribucion.css`; `@section Styles` reducido a CSS externo + print; modal BS5 quitar pasajero — 2026-04-09
+- ✅ Hotel/EsquemaDistribucion.cshtml — estilos extraídos a `mat.hotel.distribucion.css`; partial AJAX sin `<style>` inline; `schema-container`, `room-table`, `person-entry` — 2026-04-09
+- ✅ Habitacion/PartialListHabitacion.cshtml — estilos extraídos a `mat.habitacion.list.css`; DataTable con i18n local; `habitacion-list-container`, `btn-action-icon` — 2026-04-09
 
 #### Admin:
 - ✅ Admin/ErrorLog.cshtml — P1/P2: panel tabla/diagnóstico con Bootstrap Icons y clases BS5 — 2026-04-07
@@ -279,7 +279,7 @@
 - 🗑️ Admin/PlanillaServicios.cshtml — **Eliminada** 2026-04-07 (retiro menú planillas; SPEC)
 - ✅ Admin/EditarPlanilla.cshtml — Card encabezado BS5, grid, botón Guardar `btn-danger` + icono BI; datepicker si existe — 2026-04-07
 - ⏳ Admin/HistorialPrecios.cshtml
-- ⏳ Admin/AuditoriaFacturas.cshtml
+- ✅ Admin/AuditoriaFacturas.cshtml — datepicker jQuery UI en español (locale `es`); DataTable con `language` local; `modern-page-*`; carga AJAX con spinner — 2026-04-09
 - ✅ Admin/ImprimirPlanilla.cshtml — Ventana impresión: jQuery 3.7.1, encabezado legible, fecha corregida — 2026-04-07
 - ✅ Admin/ImprimirPlanillaDetalle.cshtml — Igual patrón — 2026-04-07
 - 🗑️ Admin/GridPlanillasGeneradas.cshtml — **Eliminada** 2026-04-07
@@ -295,12 +295,12 @@
 - 🗑️ Admin/PartialDropDownHotel.cshtml — **Eliminada** 2026-04-07 (no referenciada; asociada a wizard retirado)
 
 #### Herramientas y Otros:
-- ⏳ Herramientas/Cotizador.cshtml
-- ⏳ Busqueda/Card.cshtml
-- ⏳ Busqueda/Perfil.cshtml
-- ⏳ NotaCredito/partialNotaCredito.cshtml
-- ⏳ NotaCredito/partialMovimientoNotaCredito.cshtml
-- ⏳ CuentaCorriente/DetalleComprobante.cshtml
+- ✅ Herramientas/Cotizador.cshtml — estilos extraídos a `mat.cotizador.css`; partial AJAX sin `<style>` inline; `cotizador-container`, radio cards, calculadora ARS/USD — 2026-04-09
+- ✅ Busqueda/Card.cshtml — estilos extraídos a `mat.busqueda.css`; `profile-card`, `profile-header`, `btn-profile-action` — 2026-04-09
+- ✅ Busqueda/Perfil.cshtml — estilos extraídos a `mat.busqueda.css`; layout `perfil-page-container` / `perfil-sidebar` / `perfil-content`; `search-input-wrapper` — 2026-04-09
+- ✅ NotaCredito/partialNotaCredito.cshtml — `mat-nc-*`, montos y aplicaciones modernos; PDF link; script de título en dialog — 2026-04-09
+- ✅ NotaCredito/partialMovimientoNotaCredito.cshtml — estilos extraídos a `mat.notacredito.css`; `movimiento-card`, total disponible, botón Ver nota — 2026-04-09
+- ✅ CuentaCorriente/DetalleComprobante.cshtml — estilos extraídos a `mat.notacredito.css`; `comprobante-detail-*`, iconos BI, montos con color — 2026-04-09
 - ✅ Home/HistorialPagos.cshtml — Contenedor y filtros modernos (página contenedora del grid) — 2026-04-07
 - ✅ Home/TodosLosViajes.cshtml — Lista `modern-viajes-container`, tarjetas, `data-searchable`; verificado — 2026-04-08
 - ✅ Home/TodosLosViajesIndex.cshtml — Filtros/año + buscador `todos-viajes-*`, Bootstrap Icons; verificado — 2026-04-08
@@ -311,7 +311,7 @@
 - ⏳ Shared/Voucher.cshtml *(archivo vacío en repo; sin UI que modernizar hasta definir uso)*
 - ✅ Shared/Error.cshtml — Pantalla de error modernizada con layout standalone (`modern-error-*`), mensaje público + correlation ID y detalle técnico sólo en `SystemDEV=true` — 2026-04-08
 - ✅ Shared/_LayoutAdmin.cshtml — Layout admin BS5 + sidebar/offcanvas + bundles actuales; verificado — 2026-04-08
-- ⏳ Shared/_LayoutSplash.cshtml
+- ✅ Shared/_LayoutSplash.cshtml — jQuery 1.8.2/UI 1.8.24 reemplazados por jQuery 3.7.1 + migrate 3.4.1 + UI 1.13.2; Bootstrap 5.3.2 + BI; CSS modernos (`saas-variables.css`, `mat.forms.css`); `@section Styles`; scripts al pie; `global.js` conservado — 2026-04-09
 - ✅ PersonaVendedor/PartialHistorialPagos.cshtml — Tabla + `js-detalle-pago-vendedor` → `imprimirReciboPago` — 2026-04-07
 
 ---

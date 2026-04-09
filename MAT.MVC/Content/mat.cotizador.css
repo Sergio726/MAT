@@ -1,0 +1,277 @@
+/* ======================================================
+   mat.cotizador.css — Estilos extraídos de
+     Herramientas/Cotizador.cshtml
+   ====================================================== */
+
+.cotizador-container {
+    background: white;
+    border-radius: 0.625rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.cotizador-header {
+    background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.cotizador-icon {
+    width: 36px;
+    height: 36px;
+    background: white;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brand-primary, #e91e63);
+    font-size: 1.125rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cotizador-title h4 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #831843;
+}
+
+.cotizador-source {
+    font-size: 0.625rem;
+    color: #9d174d;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cotizador-body {
+    padding: 1rem;
+}
+
+.cotizador-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.cotizador-radio-card {
+    display: block;
+    padding: 0.625rem 0.875rem;
+    border: 2px solid var(--border-color, #e5e7eb);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.cotizador-radio-card:hover {
+    border-color: var(--brand-primary, #e91e63);
+    background: #fdf2f8;
+}
+
+.cotizador-radio-card.active {
+    border-color: var(--brand-primary, #e91e63);
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+}
+
+.cotizador-radio-card input[type="radio"] {
+    display: none;
+}
+
+.radio-card-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.radio-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary, #374151);
+}
+
+.radio-card-header i {
+    color: var(--brand-primary, #e91e63);
+    font-size: 0.875rem;
+}
+
+.radio-card-value {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.currency-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary, #6b7280);
+}
+
+.currency-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--brand-primary, #e91e63);
+}
+
+.currency-value.loading {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-secondary, #6b7280);
+    font-style: italic;
+}
+
+.cotizador-link {
+    font-size: 0.7rem;
+    color: var(--brand-primary, #e91e63);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.cotizador-link:hover {
+    text-decoration: underline;
+}
+
+.cotizador-input-inline {
+    width: 90px;
+    padding: 0.375rem 0.5rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--brand-primary, #e91e63);
+    text-align: right;
+    background: white;
+}
+
+.cotizador-input-inline:disabled {
+    background: var(--bg-secondary, #f9fafb);
+    color: var(--text-secondary, #9ca3af);
+}
+
+.cotizador-input-inline:focus {
+    outline: none;
+    border-color: var(--brand-primary, #e91e63);
+    box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.15);
+}
+
+.cotizador-calculator {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.cotizador-field {
+    flex: 1;
+}
+
+.cotizador-label {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-secondary, #6b7280);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.currency-badge {
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.55rem;
+    font-weight: 700;
+}
+
+.currency-badge.ars {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.currency-badge.usd {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.cotizador-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cotizador-input-wrapper .input-prefix {
+    position: absolute;
+    left: 0.5rem;
+    color: var(--text-secondary, #9ca3af);
+    font-size: 0.75rem;
+    pointer-events: none;
+}
+
+.cotizador-input {
+    width: 100%;
+    min-width: 110px;
+    padding: 0.5rem 0.625rem 0.5rem 1.5rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary, #1f2937);
+    background: white;
+    text-align: right;
+    transition: all 0.2s ease;
+}
+
+.cotizador-input:focus {
+    outline: none;
+    border-color: var(--brand-primary, #e91e63);
+    box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.1);
+}
+
+.cotizador-swap {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary, #9ca3af);
+    flex-shrink: 0;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.cotizador-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.cotizador-error {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.5rem;
+    color: #dc2626;
+    font-size: 0.8rem;
+}
+
+.cotizador-api-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.375rem 0.625rem;
+    background: var(--bg-secondary, #f9fafb);
+    border-radius: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.cotizador-last-update {
+    font-size: 0.6rem;
+    color: var(--text-secondary, #9ca3af);
+}

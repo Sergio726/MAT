@@ -166,7 +166,7 @@
   `ReportePagos.cshtml` define `$("#tblReporte")` antes de `destroy`/`empty` para no romper búsquedas repetidas.
   Criterio de éxito: Sin error JS en múltiples consultas.
 
-- [ ] **Reportes (mejora futura): Filtros vendedor/cliente sin GUID manual**
+- [x] **Reportes (mejora futura): Filtros vendedor/cliente sin GUID manual**
   Complementar inputs GUID con búsqueda/select reutilizando patrones del Admin donde existan. *(Complemento opcional al task **Reportes UX: filtrar vendedor y cliente solo en el front**: ese task prioriza refinado post-consulta sin BD; este sigue siendo útil si se mantiene envío opcional de GUID al SP en la consulta inicial.)*
   Criterio de éxito: Menos errores de pegado y mejor paridad con el SPEC de “reutilizar selects”.
 
@@ -174,25 +174,59 @@
   Casos: feliz, rango mayor a 365 días, conflicto fechas+viaje, `from` sin `to`, `tipoVentaId` inválido.
   Criterio de éxito: Suite verde en el pipeline acordado.
 
-- [ ] **Reportes (mejora futura): DataTables i18n sin CDN**
+- [x] **Reportes (mejora futura): DataTables i18n sin CDN**
   Evitar `cdn.datatables.net` para `Spanish.json` (archivo local o bundle).
   Criterio de éxito: Idioma cargado sin Internet.
+
+#### Reportes — UX/UI / diseño datepicker
+
+- [x] **Reportes UX: Corregir diseño de datepickers en vistas de reportes**
+  Los botones de navegación `‹` / `›` del calendario jQuery UI se renderizaban incorrectamente en `ReporteVentas.cshtml`: las entidades HTML `&#x3C;` y `&#x3E;` dentro del bloque `<script>` no son decodificadas por JavaScript y aparecían como texto literal en el header del popup. Adicionalmente, el CSS en `admin.modern.css` exponía el texto interno del span (al resetear `text-indent` a 0 y usar `overflow: visible`), solapándolo con el `::after` que renderiza la flecha real. Se unificó también la configuración del datepicker de Ventas con los de Pagos y Ranking (`yearRange`, `maxDate`, `showButtonPanel`, `showOtherMonths`).
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Content/admin.modern.css`
+  Criterio de éxito: Los tres datepickers muestran `‹` y `›` correctamente; configuración de rango de años y opciones de panel coherente entre los tres reportes.
+
+- [ ] **Reportes UX: Cards de indicadores resumen en Reporte de Ventas**
+  Tras ejecutar una consulta exitosa en `ReporteVentas`, mostrar entre el panel de filtros y la tabla de resultados un bloque de **cards con indicadores agregados** calculados a partir de los datos ya cargados en el cliente (sin nueva petición al servidor). Inspirado en el panel de Estadísticas de Ventas del Home.
+  **Indicadores a mostrar (mínimo):**
+  - **Total Facturado** — suma de `totalFactura`, desglosado por moneda (ARS / USD).
+  - **Total Cobrado** — suma de `montoPagado`, desglosado por moneda.
+  - **Saldo Pendiente** — suma de `saldo`, desglosado por moneda.
+  - **Ventas con pago parcial/total** — cantidad de filas donde `montoPagado > 0`.
+  - **Total de reservas** — cantidad total de filas del resultado.
+  **Detalles de implementación:**
+  - Los cálculos se realizan en JavaScript sobre el array `rows` recibido del endpoint, en la misma función `renderTable` o en una función auxiliar `renderIndicadores(rows)`.
+  - Las cards se ocultan antes de la primera consulta y cuando el resultado está vacío.
+  - El diseño sigue el sistema de cards moderno ya presente en el proyecto (Bootstrap 5, `card shadow-sm border-0`, iconos Bootstrap Icons); no usar el tema oscuro del Home — mantener el estilo claro del panel Admin.
+  - Los montos se formatean con separador de miles en `es-AR`.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml` (HTML de las cards + JS de cálculo); opcionalmente extraer a `Scripts/mat.reportes-ventas-indicadores.js` si el bloque crece.
+  Criterio de éxito: Al recibir resultados, las cards aparecen con los totales correctos; al cambiar el filtro y re-consultar, los valores se actualizan; la tabla y el Excel no se ven afectados.
+
+- [ ] **Reportes UX: Buscador de viajes en filtro "Por viaje" (autocompletar, sin GUID manual)**
+  En los tres reportes (`ReporteVentas`, `ReportePagos`, `ReporteRanking`) el modo **Por viaje** exige que el usuario ingrese manualmente el GUID del viaje. Reemplazar ese campo de texto libre por un **autocompletar inteligente**: el usuario escribe parte del nombre del viaje, el campo sugiere resultados desde el servidor (endpoint JSON existente o nuevo, según conveniencia) y al seleccionar uno se almacena el GUID internamente sin exponerlo en pantalla. El campo debe mostrar solo el nombre descriptivo del viaje.
+  **Detalles de implementación:**
+  - Crear (o reutilizar) un endpoint ligero — por ejemplo `GET /Admin/Reportes/BuscarViajes?q=texto` — que devuelva `[{ id, descripcion }]` consultando la tabla/vista de viajes (sin tocar SP de reportes existentes).
+  - Usar jQuery UI Autocomplete (ya disponible) o el plugin `magicsearch` que ya usa el proyecto si resulta más natural; respetar patrón existente.
+  - El GUID se envía al SP solo cuando el usuario seleccionó un ítem de la lista (no texto libre sin match).
+  - Si el usuario borra el texto, limpiar también el GUID guardado.
+  - Aplicar el mismo cambio en los tres reportes para mantener paridad.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Views/Reportes/ReportePagos.cshtml`, `Views/Reportes/ReporteRanking.cshtml`, `Controllers/Admin/ReportesController.cs` (nuevo endpoint `BuscarViajes`).
+  Criterio de éxito: El usuario puede buscar un viaje por nombre sin conocer ni pegar GUIDs; la consulta y exportación Excel funcionan igual que antes; MSBuild limpio.
 
 #### Reportes — UX/UI (Reporte de ventas, Admin)
 
 **Contexto:** La pantalla **Reporte de ventas** (`/Admin/Reportes/...`) debe comunicar en lenguaje de negocio que el módulo sirve para ver **estadísticas de venta** eligiendo **un rango de fechas** o **un viaje** (criterios mutuamente excluyentes, como ya valida el backend). Las mejoras siguientes refieren principalmente a `Views/Reportes/ReporteVentas.cshtml` y scripts asociados; si el mismo patrón aplica a Pagos/Ranking, documentar paridad o tareas derivadas en `PROGRESS.md`.
 
-- [ ] **Reportes UX: Reporte Ventas — cartel informativo en lenguaje de usuario**
+- [x] **Reportes UX: Reporte Ventas — cartel informativo en lenguaje de usuario**
   Sustituir el aviso celeste actual (texto técnico: comparación de períodos vía GET, formatos `YYYY-MM-DD`, rutas, referencias a `DOCUMENTACION/REPORTES_MAT_WEB.md`, etc.) por una descripción **comprensible para el usuario final**: qué muestra el reporte, que puede acotar por fechas **o** por viaje (no ambos a la vez), y en una frase opcional qué hacen "Consultar" y "Exportar Excel". El detalle técnico para desarrolladores permanece solo en `DOCUMENTACION` (p. ej. `REPORTES_MAT_MVC_OPERACION.md` / `REPORTES_MAT_WEB.md`), no en el cuerpo de la vista.
   Archivos: `Views/Reportes/ReporteVentas.cshtml` (y ajuste breve en doc si hace falta trasladar texto técnico).
   Criterio de éxito: Sin jerga HTTP, sin rutas de archivo del repo en la UI; un perfil comercial/administrativo entiende el objetivo del módulo.
 
-- [ ] **Reportes UX: Reporte Ventas — fechas en español (dd/mm/aaaa)**
+- [x] **Reportes UX: Reporte Ventas — fechas en español (dd/mm/aaaa)**
   Ajustar los selectores de **Desde** / **Hasta** para **locale y presentación en español**, placeholder y lectura coherentes con **día/mes/año** (`dd/mm/aaaa`), evitando la sensación de calendario “estilo EE.UU.” (`mm/dd/yyyy`). Mantener el contrato con el backend (normalización a lo que ya espera `ReportesQueryHelper` / endpoints, sin romper consultas ni Excel).
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, scripts/bundles que inicialicen datepicker o `input type="date"` según corresponda.
   Criterio de éxito: En navegador, fechas se entienden y eligen en formato local esperado; una consulta y una exportación manual confirman datos correctos.
 
-- [ ] **Reportes UX: Reporte Ventas — filtrar vendedor y cliente solo en el front (sin reconsultar BD)**
+- [x] **Reportes UX: Reporte Ventas — filtrar vendedor y cliente solo en el front (sin reconsultar BD)**
   Tras una **Consultar** exitosa, conservar en memoria (JavaScript) el arreglo de filas devuelto y permitir **refinar la grilla** por vendedor y/o por cliente (texto libre, coincidencia sobre nombres o campos ya presentes en el JSON; o controles alimentados únicamente con valores distintos del resultado cargado). **No** debe dispararse nueva petición al servidor ni al SP al cambiar estos filtros. Definir y documentar en la implementación si **Exportar Excel** debe reflejar solo las filas **visibles tras el filtro front** o el **total de la última consulta**, y reflejarlo en una nota breve en pantalla si hay riesgo de confusión.
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, y/o `Scripts/…` siguiendo el patrón del módulo (p. ej. extracción a `mat.reportes-ventas.js` si conviene).
   Criterio de éxito: Filtrado en cliente es inmediato; “Consultar” sigue definiendo el universo de datos según fechas o viaje; criterio Excel acordado y probado.
@@ -229,19 +263,19 @@
 
 ### Seguridad — correcciones obligatorias
 
-- [ ] **Admin: Agregar [Authorize] + RequireAdministrador() en acciones sin protección**
+- [x] **Admin: Agregar [Authorize] + RequireAdministrador() en acciones sin protección**
   Las siguientes acciones no tienen `[Authorize]` ni llaman a `RequireAdministrador()`, por lo que cualquier usuario autenticado puede acceder directamente a sus URLs:
   `ResumenPagos`, `ResumenPagosPorFecha`, `AuditoriaFacturas`, `GridResumenPagos`, `GridResumenPagosFecha`, `GridPlanillaHotelPrint`, `GridPlanillaHotelDetallePrint`, `ImprimirPlanilla`, `ImprimirPlanillaDetalle`, `EditarPlanilla`, y otras partials del controller. *(Acciones retiradas 2026-04-07: PlanillaServicios, PlanillasGeneradas, GridPlanillasGeneradas, PartialDropDownHotel, GridPlanillaHotel, wizard planilla en sesión.)*
   Agregar `[Authorize]` en el controller a nivel de clase o en cada acción faltante, y `var redir = RequireAdministrador(); if (redir != null) return redir;` en las que no lo tienen.
   Archivos: `Controllers/Admin/AdminController.cs`
   Criterio de éxito: Ninguna acción del AdminController es accesible sin rol Administrador. MSBuild pasa sin errores.
 
-- [ ] **Admin: Corregir exposición de e.Message en GridResumenPagosFecha**
+- [x] **Admin: Corregir exposición de e.Message en GridResumenPagosFecha**
   Línea 606 del controller: `ViewBag.Error = "Error: " + e.Message;` — viola la política del proyecto. Reemplazar con `ErrorUtil.LogAndGetPublicMessage`.
   Archivos: `Controllers/Admin/AdminController.cs` (línea ~606)
   Criterio de éxito: El catch usa `ErrorUtil.LogAndGetPublicMessage(e, "AdminController.GridResumenPagosFecha")`. No se expone el mensaje de excepción al usuario.
 
-- [ ] **Admin: Corregir fallback inseguro en IsAdminUser()**
+- [x] **Admin: Corregir fallback inseguro en IsAdminUser()**
   `IsAdminUser()` (línea ~1131) hace `return User.Identity.IsAuthenticated` si el sistema de roles lanza excepción. Esto significa que ante un error de configuración del RoleManager, cualquier usuario logueado pasa como administrador. Cambiar el fallback para retornar `false` en el catch.
   Archivos: `Controllers/Admin/AdminController.cs`
   Criterio de éxito: El catch de `IsAdminUser()` retorna `false`. Se agrega log del error antes de retornar.

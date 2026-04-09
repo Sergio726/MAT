@@ -10,7 +10,11 @@
                 <i class="bi bi-trophy"></i>
                 <span>Ranking de compras</span>
             </h1>
-            <p class="small text-secondary mb-0 mt-1">Rango de fechas <strong>o</strong> un viaje.</p>
+            <p class="small text-secondary mb-0 mt-1">
+                Visualizá quiénes compraron más, filtrando por <strong>rango de fechas</strong> o por <strong>viaje</strong> (no ambos a la vez).
+                Una vez que se cargan los resultados podés buscar un cliente específico sin repetir la consulta.
+                Usá <em>Exportar Excel</em> para descargar el listado completo.
+            </p>
         </div>
         <a href="@Url.Action("Index", "Reportes")" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Índice reportes</a>
     </div>
@@ -28,11 +32,11 @@
             <div class="row g-2 align-items-end mb-2" id="grpFechas">
                 <div class="col-md-3">
                     <label class="form-label small mb-0" for="from">Desde</label>
-                    <input type="date" class="form-control form-control-sm" id="from" />
+                    <input type="text" class="form-control form-control-sm mat-datepicker" id="from" placeholder="dd/mm/aaaa" autocomplete="off" />
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small mb-0" for="to">Hasta</label>
-                    <input type="date" class="form-control form-control-sm" id="to" />
+                    <input type="text" class="form-control form-control-sm mat-datepicker" id="to" placeholder="dd/mm/aaaa" autocomplete="off" />
                 </div>
             </div>
             <div class="row g-2 align-items-end mb-2 d-none" id="grpViaje">
@@ -41,21 +45,34 @@
                     <input type="text" class="form-control form-control-sm font-monospace" id="viajeId" />
                 </div>
             </div>
-            <div class="row g-2 align-items-end mb-3">
-                <div class="col-md-4">
-                    <label class="form-label small mb-0" for="vendedorId">Vendedor (GUID, opc.; SP puede ignorar)</label>
-                    <input type="text" class="form-control form-control-sm font-monospace" id="vendedorId" />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small mb-0" for="clienteId">Cliente (GUID, opc.)</label>
-                    <input type="text" class="form-control form-control-sm font-monospace" id="clienteId" />
-                </div>
-            </div>
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap gap-2 mt-3">
                 <button type="button" class="btn btn-primary btn-sm" id="btnBuscar"><i class="bi bi-search"></i> Consultar</button>
-                <button type="button" class="btn btn-outline-success btn-sm" id="btnExcel"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
+                <button type="button" class="btn btn-outline-success btn-sm" id="btnExcel"
+                        title="Descarga todos los registros de la última consulta, sin importar los filtros de vista">
+                    <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                </button>
             </div>
             <div class="alert alert-danger d-none mt-3 mb-0 py-2 small" id="alertErr" role="alert"></div>
+        </div>
+    </div>
+
+    <div id="filtroFront" class="card shadow-sm border-0 mb-3 d-none">
+        <div class="card-body py-2">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="filtCliente"><i class="bi bi-person"></i> Filtrar cliente</label>
+                    <input type="text" class="form-control form-control-sm" id="filtCliente" placeholder="Nombre del cliente…" autocomplete="off" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small mb-0" for="filtViaje"><i class="bi bi-geo-alt"></i> Filtrar viaje</label>
+                    <input type="text" class="form-control form-control-sm" id="filtViaje" placeholder="Nombre del viaje…" autocomplete="off" />
+                </div>
+                <div class="col-md-auto">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnLimpiarFiltro">
+                        <i class="bi bi-x-circle"></i> Limpiar
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -70,19 +87,35 @@
 <script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
 <script>
 $(function () {
-    var urlJson = '@Url.Action("Ranking", "Reportes")';
+    var urlJson  = '@Url.Action("Ranking", "Reportes")';
     var urlExcel = '@Url.Action("RankingExcel", "Reportes")';
     var dt = null;
 
+    $.datepicker.regional['es'] = {
+        closeText: 'Cerrar', prevText: '‹', nextText: '›',
+        currentText: 'Hoy', monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+        monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+        dayNamesShort: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'], dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+        weekHeader: 'Sm', dateFormat: 'dd/mm/yy', firstDay: 1,
+        isRTL: false, showMonthAfterYear: false, yearSuffix: ''
+    };
+    $(".mat-datepicker").datepicker($.extend({}, $.datepicker.regional['es'], {
+        changeMonth: true, changeYear: true, yearRange: '2015:2035',
+        showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true,
+        maxDate: '+5y'
+    }));
+
+    function normalizeDate(val) { return (val || "").trim().replace(/\//g, "-"); }
     function modo() { return $("#modoViaje").is(":checked") ? "viaje" : "fechas"; }
     function syncGrupos() {
         if (modo() === "viaje") { $("#grpFechas").addClass("d-none"); $("#grpViaje").removeClass("d-none"); }
         else { $("#grpFechas").removeClass("d-none"); $("#grpViaje").addClass("d-none"); }
     }
     function queryParams() {
-        var p = { vendedorId: $("#vendedorId").val().trim(), clienteId: $("#clienteId").val().trim() };
+        var p = {};
         if (modo() === "viaje") p.viajeId = $("#viajeId").val().trim();
-        else { p.from = $("#from").val(); p.to = $("#to").val(); }
+        else { p.from = normalizeDate($("#from").val()); p.to = normalizeDate($("#to").val()); }
         return p;
     }
     function showErr(t) {
@@ -96,24 +129,33 @@ $(function () {
         dt = $tbl.DataTable({
             data: rows || [],
             columns: [
-                { data: "facturaId", title: "Factura" },
-                { data: "fecha", title: "Fecha" },
-                { data: "clienteId", title: "Cliente ID" },
-                { data: "clienteFullName", title: "Cliente" },
-                { data: "viajeId", title: "Viaje ID" },
-                { data: "viajeDescripcion", title: "Viaje" },
-                { data: "viajeFechaSalida", title: "F. salida viaje" },
-                { data: "cantidadPasajesXFactura", title: "Pasajes x fact." },
-                { data: "cantViajesCompradosXCliente", title: "Viajes cl." },
-                { data: "cantPasajesCompradosXCliente", title: "Pasajes cl." },
-                { data: "cantClientesEligieronViaje", title: "Clientes viaje" },
+                { data: "fecha",                          title: "Fecha" },
+                { data: "clienteFullName",                title: "Cliente" },
+                { data: "viajeDescripcion",               title: "Viaje" },
+                { data: "viajeFechaSalida",               title: "F. salida" },
+                { data: "cantidadPasajesXFactura",        title: "Pasajes x fact." },
+                { data: "cantViajesCompradosXCliente",    title: "Viajes cl." },
+                { data: "cantPasajesCompradosXCliente",   title: "Pasajes cl." },
+                { data: "cantClientesEligieronViaje",     title: "Clientes viaje" },
                 { data: "rankingClientesCompradoresViajes", title: "Rank. clientes" },
-                { data: "rankingViajes", title: "Rank. viajes" }
+                { data: "rankingViajes",                  title: "Rank. viajes" },
+                { data: "facturaId",                      title: "Factura", visible: false },
+                { data: "clienteId",                      title: "Cliente ID", visible: false },
+                { data: "viajeId",                        title: "Viaje ID", visible: false }
             ],
             pageLength: 25,
             autoWidth: false,
-            language: { url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" }
+            language: { url: "/Scripts/dataTable/i18n/Spanish.json" }
         });
+        $("#filtroFront").toggleClass("d-none", !rows || rows.length === 0);
+        limpiarFiltros();
+    }
+
+    function limpiarFiltros() {
+        $("#filtCliente,#filtViaje").val("");
+        if (dt) {
+            dt.columns(1).search("").columns(2).search("").draw();
+        }
     }
 
     $('input[name="modoFiltro"]').on("change", syncGrupos);
@@ -130,6 +172,14 @@ $(function () {
     $("#btnExcel").on("click", function () {
         window.MatReportes.downloadReporteExcel(urlExcel, queryParams, showErr);
     });
+
+    $("#filtCliente").on("input", function () {
+        if (dt) { dt.columns(1).search($(this).val()).draw(); }
+    });
+    $("#filtViaje").on("input", function () {
+        if (dt) { dt.columns(2).search($(this).val()).draw(); }
+    });
+    $("#btnLimpiarFiltro").on("click", limpiarFiltros);
 });
 </script>
 }

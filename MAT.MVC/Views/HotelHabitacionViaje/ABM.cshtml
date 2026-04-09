@@ -1,4 +1,4 @@
-ï»¿ï»¿@model MAT.MVC.Models.HotelHabitacionViajeModel
+?@model MAT.MVC.Models.HotelHabitacionViajeModel
 
 <style>
     .modal-container {
@@ -300,7 +300,7 @@
     <div class="distribution-section">
         <div class="section-header">
             <i class="bi bi-grid-3x3-gap-fill"></i>
-            DistribuciÃ³n de Habitaciones
+            Distribución de Habitaciones
         </div>
 
         <!-- Formulario de agregar -->
@@ -338,7 +338,7 @@
 
         <!-- Botones de plantillas -->
         <div class="form-buttons">
-            <button type="button" class="btn-action btn-secondary-sm" onclick="javascript: showNombrePlantila()" title="Guardar distribuciÃ³n en una plantilla">
+            <button type="button" class="btn-action btn-secondary-sm" onclick="javascript: showNombrePlantila()" title="Guardar distribución en una plantilla">
                 <i class="bi bi-save"></i>
                 Guardar Plantilla
             </button>
@@ -359,7 +359,7 @@
                         <th>Tipo</th>
                         <th>Capacidad</th>
                         <th>Precio</th>
-                        <th>DescripciÃ³n</th>
+                        <th>Descripción</th>
                         <th style="width: 80px;">Acciones</th>
                     </tr>
                 </thead>
@@ -408,7 +408,7 @@
             "bAutoWidth": false,
             "pageLength": 25,
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                "url": "/Scripts/dataTable/i18n/Spanish.json"
             }
         });
     };
@@ -436,7 +436,7 @@
             dataType: "json",
             success: function (data) {
                 if (data.Mensaje == "Done.") {
-                    (window.alertSuccess || window.alert)("La distribuciÃ³n se agregÃ³ con Ã©xito", "OperaciÃ³n Exitosa");
+                    (window.alertSuccess || window.alert)("La distribución se agregó con éxito", "Operación Exitosa");
                     getDistribucion();
                 }
                 else {
@@ -518,7 +518,7 @@
         var HotelID = "@Model.HotelID";
 
         if (Nombre === "") {
-            (window.alertInfo || window.alert)("Por favor ingrese un nombre para asignar a la plantilla.", "ValidaciÃ³n");
+            (window.alertInfo || window.alert)("Por favor ingrese un nombre para asignar a la plantilla.", "Validación");
         }
         else {
             $("#btnGuardarPlantilla").attr('disabled', true);
@@ -532,12 +532,12 @@
                 dataType: "json",
                 success: function (data) {
                     if (data.Mensaje == "Done.") {
-                        (window.alertSuccess || window.alert)("La plantilla se guardÃ³ con Ã©xito", "OperaciÃ³n Exitosa");
+                        (window.alertSuccess || window.alert)("La plantilla se guardó con éxito", "Operación Exitosa");
                         $("#popin_NombrePlantila").dialog("close");
                     }
                     else {
                         if (data.Mensaje == "Alert.") {
-                            (window.alertInfo || window.alert)(data.Error, "AtenciÃ³n");
+                            (window.alertInfo || window.alert)(data.Error, "Atención");
                             $("#btnGuardarPlantilla").attr('disabled', false);
                         }
                         else {
@@ -551,7 +551,7 @@
     };
 
     function showPlantilas() {
-        var title = "Plantillas - DistribuciÃ³n de Habitaciones";
+        var title = "Plantillas - Distribución de Habitaciones";
         var id = "popup_PlantillaDistribucionHabitacion";
         var url = "/HotelHabitacionViaje/GetPlantillasDistribucion";
         ShowFormDialog(url, id, title, 'medium');
@@ -575,7 +575,7 @@
             dataType: "json",
             success: function (data) {
                 if (data.Mensaje == "Done.") {
-                    (window.alertSuccess || window.alert)("Se agregaron habitaciones de la distribuciÃ³n de la Plantilla seleccionada.", "OperaciÃ³n Exitosa");
+                    (window.alertSuccess || window.alert)("Se agregaron habitaciones de la distribución de la Plantilla seleccionada.", "Operación Exitosa");
                     $("#popup_PlantillaDistribucionHabitacion").dialog("close");
                     getDistribucion();
                 }

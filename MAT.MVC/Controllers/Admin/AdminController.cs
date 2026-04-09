@@ -21,6 +21,7 @@ using Microsoft.Web.WebPages.OAuth;
 using AccountManageMessageId = MAT.MVC.Controllers.Account.AccountController.ManageMessageId;
 namespace MAT.MVC.Controllers.Admin
 {
+    [Authorize]
     [InitializeSimpleMembership]
     public class AdminController : Controller
     {
@@ -29,7 +30,8 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult Index()
         {
-            if (!Roles.IsUserInRole(User.Identity.Name, "Administrador")) return RedirectToAction("Index", "Home");
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             return View();
         }
 
@@ -714,6 +716,8 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult ResumenPagos()
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             try
             {
                 List<DDViaje> _DDViaje = new List<DDViaje>();
@@ -735,11 +739,15 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult ResumenPagosPorFecha()
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             return View();
         }
 
         public ActionResult GridResumenPagos(Guid ViajeID)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             List<PagoModel> _model = new List<PagoModel>();
             try
             {
@@ -782,6 +790,8 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult GridResumenPagosFecha(string fecha)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             try
             {
                 List<PagoModel> model = new List<PagoModel>();
@@ -791,14 +801,15 @@ namespace MAT.MVC.Controllers.Admin
             }
             catch (Exception e)
             {
-                ViewBag.Error = "Error: " + e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.GridResumenPagosFecha");
                 return PartialView();
-
             }
         }
 
         public ActionResult GridPlanillaHotelPrint(Guid viajeid, Guid planillaid)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             List<List<PlanillaHotelPrintModel>> conjuntoplanillas = new List<List<PlanillaHotelPrintModel>>();
             Services.ViajeHotelService viajehotelService = new ViajeHotelService();
             List<Entities.ViajeHotel> hoteles = viajehotelService.GetByViajeId(viajeid).ToList();
@@ -819,6 +830,8 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult GridPlanillaHotelDetallePrint(Guid viajeid, Guid planillaid)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             List<List<PlanillaHotelPrintModel>> conjuntoplanillas = new List<List<PlanillaHotelPrintModel>>();
             Services.ViajeHotelService viajehotelService = new ViajeHotelService();
             List<Entities.ViajeHotel> hoteles = viajehotelService.GetByViajeId(viajeid).ToList();
@@ -839,6 +852,8 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult PartialGridResumenPlanillaHotelPrint(List<PlanillaHotelPrintModel> planilla)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             List<ResumenPlanillaPrintModel> resumen = new List<ResumenPlanillaPrintModel>();
             foreach (HabitacionTipo item in HabitacionTipoMethod.GetAllHabitacionTipo())
             {
@@ -861,18 +876,22 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult ImprimirPlanilla(Guid planillaid)
         {
-            
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             return PartialView(new Services.PlanillaService().GetByPlanillaId(planillaid));
         }
 
         public ActionResult ImprimirPlanillaDetalle(Guid planillaid)
         {
-
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             return PartialView(new Services.PlanillaService().GetByPlanillaId(planillaid));
         }
 
         public ActionResult GridPlanillaServiciosItemPrint(Guid planillaid)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             Services.PlanillaServicioItemService servicioitemService = new PlanillaServicioItemService();
             List<Entities.PlanillaServicioItem> servicioitems = servicioitemService.GetByPlanillaId(planillaid).ToList();
             return PartialView(servicioitems);
@@ -880,6 +899,8 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult DeletePlanilla(Guid id)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             Services.PlanillaServicioItemService planillaservicioService = new PlanillaServicioItemService();
             Services.PlanillaHabitacionItemService planillahotelService = new PlanillaHabitacionItemService();
             Services.PlanillaService planillaService = new PlanillaService();
@@ -902,11 +923,15 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult EditarPlanilla(Guid id)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             return View(new Services.PlanillaService().GetByPlanillaId(id));
         }
 
         public ActionResult GridPlanillaHotelDetalleEdit(Guid planillaid, Guid viajeid)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             List<List<PlanillaHotelPrintModel>> conjuntoplanillas = new List<List<PlanillaHotelPrintModel>>();
             Services.ViajeHotelService viajehotelService = new ViajeHotelService();
             List<Entities.ViajeHotel> hoteles = viajehotelService.GetByViajeId(viajeid).ToList();
@@ -927,6 +952,8 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult GridPlanillaServiciosItemEdit(Guid planillaid)
         {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             Services.PlanillaServicioItemService servicioitemService = new PlanillaServicioItemService();
             List<Entities.PlanillaServicioItem> servicioitems = servicioitemService.GetByPlanillaId(planillaid).ToList();
             return PartialView(servicioitems);
@@ -934,6 +961,7 @@ namespace MAT.MVC.Controllers.Admin
 
         public bool GuardarDatosPlanilla(Guid planillaid, string fecha, string total)
         {
+            if (!IsAdminUser()) return false;
             bool result = false;
             try
             {
@@ -957,6 +985,7 @@ namespace MAT.MVC.Controllers.Admin
 
         public bool GuardarDatosItem(Guid itemid, string dias, string subtotal)
         {
+            if (!IsAdminUser()) return false;
             bool result = false;
             try
             {
@@ -978,6 +1007,7 @@ namespace MAT.MVC.Controllers.Admin
 
         public bool GuardarDatosServiciosItem(Guid id, string cantidad, string subtotal)
         {
+            if (!IsAdminUser()) return false;
             bool result = false;
             try
             {
@@ -996,7 +1026,10 @@ namespace MAT.MVC.Controllers.Admin
         }
 
         [Authorize]
-        public ActionResult AuditoriaFacturas() {
+        public ActionResult AuditoriaFacturas()
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
             return View();
         }
 
@@ -1077,10 +1110,10 @@ namespace MAT.MVC.Controllers.Admin
             {
                 return Roles.IsUserInRole(User.Identity.Name, "Administrador");
             }
-            catch
+            catch (Exception ex)
             {
-                // RoleManager puede no estar configurado; en ese caso permitir a cualquier usuario autenticado
-                return User.Identity.IsAuthenticated;
+                ErrorUtil.LogAndGetPublicMessage(ex, "AdminController.IsAdminUser");
+                return false;
             }
         }
 

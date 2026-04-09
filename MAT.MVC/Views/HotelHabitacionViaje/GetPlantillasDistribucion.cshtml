@@ -1,4 +1,4 @@
-ï»¿ï»¿<style>
+?<style>
     .plantillas-container {
         padding: 0.5rem;
         max-height: calc(80vh - 60px);
@@ -103,7 +103,7 @@
 <div id="divMSGDeletePlantilla" class="hide">
     <div class="confirm-dialog">
         <div class="confirm-message">
-            Al eliminar esta plantilla no podrÃ¡ recuperarla. Â¿Desea continuar?
+            Al eliminar esta plantilla no podrá recuperarla. ¿Desea continuar?
         </div>
         <div class="confirm-buttons">
             <button type="button" class="btn-action btn-secondary-sm" onclick="javascript: $('#popup_divMSGDeletePlantilla').dialog('close')">
@@ -144,7 +144,7 @@
             "bAutoWidth": false,
             "pageLength": 25,
             "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                "url": "/Scripts/dataTable/i18n/Spanish.json"
             }
         });
     }
@@ -152,6 +152,6 @@
     function deletePlantillaMSG(PlantillaId) {
         var html = $("#divMSGDeletePlantilla").html();
         html = html.replace('##PlantillaId##', PlantillaId);
-        ShowFormDialogHTML(html, 'popup_divMSGDeletePlantilla', 'AtenciÃ³n', '30%');
+        ShowFormDialogHTML(html, 'popup_divMSGDeletePlantilla', 'Atención', '30%');
     }
 </script>

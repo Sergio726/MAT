@@ -425,6 +425,11 @@
     <Content Include="Content\magicsearch\jquery.magicsearch.css" />
     <Content Include="Content\magicsearch\jquery.magicsearch.min.css" />
     <Content Include="Content\magicsearch\normalize.css" />
+    <Content Include="Content\mat.busqueda.css" />
+    <Content Include="Content\mat.cotizador.css" />
+    <Content Include="Content\mat.habitacion.list.css" />
+    <Content Include="Content\mat.hotel.distribucion.css" />
+    <Content Include="Content\mat.notacredito.css" />
     <Content Include="Content\mat.tblVinculacionMenorPrint.css" />
     <Content Include="Content\glyphicons.css" />
     <Content Include="Content\hoteles.css" />
@@ -629,6 +634,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\common.js" />
     <Content Include="Scripts\dataTable\dataTables.rowGroup.min.js" />
+    <Content Include="Scripts\dataTable\i18n\Spanish.json" />
     <Content Include="Scripts\dataTable\jquery.dataTables.min.css" />
     <Content Include="Scripts\dataTable\jquery.dataTables.min.js" />
     <Content Include="Scripts\formatNumber\numeral.min.js" />

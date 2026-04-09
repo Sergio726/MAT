@@ -10,10 +10,11 @@
                 <i class="bi bi-receipt-cutoff"></i>
                 <span>Reporte de ventas</span>
             </h1>
-            <p class="small text-secondary mb-0 mt-1">Indique rango de fechas <strong>o</strong> un viaje (no ambos).</p>
-            <div class="alert alert-info py-2 px-3 small mt-2 mb-0" role="region" aria-label="Comparación de períodos">
-                <strong>Comparación de períodos (tendencias):</strong> no hace falta un endpoint extra. Como en MAT Web, se pueden lanzar <strong>dos</strong> solicitudes GET al mismo reporte de ventas con rangos distintos (p. ej. mes actual vs. mes anterior). Para esas llamadas conviene fechas en formato <code>YYYY-MM-DD</code>; ver <span class="text-nowrap"><code>DOCUMENTACION/REPORTES_MAT_WEB.md</code></span> (Period Comparison).
-            </div>
+            <p class="small text-secondary mb-0 mt-1">
+                Consultá las ventas realizadas filtrando por <strong>rango de fechas</strong> o por <strong>viaje</strong> (no ambos a la vez).
+                Una vez que carguen los resultados podés acotar la vista por vendedor o cliente sin necesidad de volver a consultar.
+                Usá <em>Exportar Excel</em> para descargar el listado completo de la consulta.
+            </p>
         </div>
         <div class="d-flex flex-wrap gap-2">
             <a href="@Url.Action("Index", "Reportes")" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Índice reportes</a>
@@ -33,40 +34,49 @@
             <div class="row g-2 align-items-end mb-2" id="grpFechas">
                 <div class="col-md-3">
                     <label class="form-label small mb-0" for="from">Desde</label>
-                    <input type="date" class="form-control form-control-sm" id="from" />
+                    <input type="text" class="form-control form-control-sm mat-datepicker" id="from" placeholder="dd/mm/aaaa" autocomplete="off" />
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small mb-0" for="to">Hasta</label>
-                    <input type="date" class="form-control form-control-sm" id="to" />
+                    <input type="text" class="form-control form-control-sm mat-datepicker" id="to" placeholder="dd/mm/aaaa" autocomplete="off" />
                 </div>
             </div>
             <div class="row g-2 align-items-end mb-2 d-none" id="grpViaje">
                 <div class="col-md-6">
-                    <label class="form-label small mb-0" for="viajeId">ID Viaje (GUID)</label>
+                    <label class="form-label small mb-0" for="viajeId">ID de viaje</label>
                     <input type="text" class="form-control form-control-sm font-monospace" id="viajeId" placeholder="00000000-0000-0000-0000-000000000000" />
                 </div>
             </div>
-            <div class="row g-2 align-items-end mb-3">
-                <div class="col-md-4">
-                    <label class="form-label small mb-0" for="vendedorId">Vendedor (GUID, opc.)</label>
-                    <input type="text" class="form-control form-control-sm font-monospace" id="vendedorId" />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small mb-0" for="clienteId">Cliente (GUID, opc.)</label>
-                    <input type="text" class="form-control form-control-sm font-monospace" id="clienteId" />
-                </div>
-            </div>
-            <div class="d-flex flex-wrap gap-2">
+            <div class="d-flex flex-wrap gap-2 mt-2">
                 <button type="button" class="btn btn-primary btn-sm" id="btnBuscar"><i class="bi bi-search"></i> Consultar</button>
-                <button type="button" class="btn btn-outline-success btn-sm" id="btnExcel"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
+                <button type="button" class="btn btn-outline-success btn-sm" id="btnExcel" title="Descarga todos los resultados de la consulta, sin aplicar el filtro de la tabla"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</button>
             </div>
             <div class="alert alert-danger d-none mt-3 mb-0 py-2 small" id="alertErr" role="alert"></div>
         </div>
     </div>
 
+    <div id="filtroFront" class="card shadow-sm border-0 mb-3 d-none">
+        <div class="card-body py-2">
+            <p class="small text-secondary mb-2"><i class="bi bi-funnel"></i> Acotar resultados en pantalla (sin nueva consulta):</p>
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label small mb-0" for="filtVendedor">Vendedor</label>
+                    <input type="text" class="form-control form-control-sm" id="filtVendedor" placeholder="Nombre del vendedor…" autocomplete="off" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small mb-0" for="filtCliente">Cliente</label>
+                    <input type="text" class="form-control form-control-sm" id="filtCliente" placeholder="Nombre del cliente…" autocomplete="off" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnLimpiarFiltro"><i class="bi bi-x-lg"></i> Limpiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modern-table-container">
         <div class="table-responsive">
-            <table class="modern-table table table-striped table-sm w-100" id="tblReporte" style="min-width: 960px"></table>
+            <table class="modern-table table table-striped table-sm w-100" id="tblReporte" style="min-width: 860px"></table>
         </div>
     </div>
 </div>
@@ -79,6 +89,23 @@ $(function () {
     var urlExcel = '@Url.Action("VentasExcel", "Reportes")';
     var dt = null;
 
+    // Inicializar datepicker en español
+    $.datepicker.regional['es'] = {
+        closeText: 'Cerrar', prevText: '‹', nextText: '›',
+        currentText: 'Hoy', monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+        monthNamesShort: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+        dayNamesShort: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'], dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+        weekHeader: 'Sm', dateFormat: 'dd/mm/yy', firstDay: 1,
+        isRTL: false, showMonthAfterYear: false, yearSuffix: ''
+    };
+    $(".mat-datepicker").datepicker($.extend({}, $.datepicker.regional['es'], {
+        changeMonth: true, changeYear: true, yearRange: '2015:2035',
+        showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true,
+        maxDate: '+5y'
+    }));
+
+    /* ── Helpers ─────────────────────────────────────────────────── */
     function modo() {
         return $("#modoViaje").is(":checked") ? "viaje" : "fechas";
     }
@@ -93,12 +120,18 @@ $(function () {
         }
     }
 
+    /* Convierte dd/mm/yyyy → dd-mm-yyyy que el backend acepta */
+    function normalizeDate(val) {
+        return (val || "").trim().replace(/\//g, "-");
+    }
+
     function queryParams() {
-        var p = { vendedorId: $("#vendedorId").val().trim(), clienteId: $("#clienteId").val().trim() };
-        if (modo() === "viaje") p.viajeId = $("#viajeId").val().trim();
-        else {
-            p.from = $("#from").val();
-            p.to = $("#to").val();
+        var p = {};
+        if (modo() === "viaje") {
+            p.viajeId = $("#viajeId").val().trim();
+        } else {
+            p.from = normalizeDate($("#from").val());
+            p.to   = normalizeDate($("#to").val());
         }
         return p;
     }
@@ -108,39 +141,60 @@ $(function () {
         if (t) { $a.text(t).removeClass("d-none"); } else { $a.addClass("d-none").text(""); }
     }
 
+    /* ── Tabla ───────────────────────────────────────────────────── */
+    /* Índices de columna usados en el filtro front */
+    var COL_VENDEDOR = 4;  /* vendedorFullName */
+    var COL_CLIENTE  = 6;  /* clienteFullName  */
+
     function renderTable(rows) {
         var $tbl = $("#tblReporte");
         if (dt) { dt.destroy(); $tbl.empty(); }
         dt = $tbl.DataTable({
             data: rows || [],
             columns: [
-                { data: "viajeId", title: "Viaje ID" },
-                { data: "viajeDescripcion", title: "Viaje" },
-                { data: "fechaSalida", title: "Fecha salida", render: function (d) { return d ? (typeof d === "string" ? d : "") : ""; } },
-                { data: "cantidadButacas", title: "Butacas" },
-                { data: "vendedorId", title: "Vendedor ID" },
-                { data: "vendedorFullName", title: "Vendedor" },
-                { data: "clienteId", title: "Cliente ID" },
-                { data: "clienteFullName", title: "Cliente" },
-                { data: "facturaId", title: "Factura ID" },
-                { data: "facturaFecha", title: "F. factura" },
-                { data: "facturaEstado", title: "Estado" },
-                { data: "monedaTipo", title: "Mon." },
-                { data: "totalFactura", title: "Total" },
-                { data: "montoPagado", title: "Pagado" },
-                { data: "saldo", title: "Saldo" }
+                { data: "viajeDescripcion",  title: "Viaje" },
+                { data: "fechaSalida",        title: "Fecha salida",
+                  render: function (d) { return d ? (typeof d === "string" ? d : "") : ""; } },
+                { data: "cantidadButacas",   title: "Butacas" },
+                { data: "facturaFecha",       title: "F. factura" },
+                { data: "vendedorFullName",   title: "Vendedor" },
+                { data: "facturaEstado",      title: "Estado" },
+                { data: "clienteFullName",    title: "Cliente" },
+                { data: "monedaTipo",         title: "Mon." },
+                { data: "totalFactura",       title: "Total" },
+                { data: "montoPagado",        title: "Pagado" },
+                { data: "saldo",              title: "Saldo" }
             ],
             pageLength: 25,
             autoWidth: false,
-            language: { url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json" }
+            language: { url: "/Scripts/dataTable/i18n/Spanish.json" }
         });
+        /* Mostrar panel de filtro front y limpiar valores anteriores */
+        $("#filtVendedor, #filtCliente").val("");
+        dt.columns().search("").draw();
+        $("#filtroFront").removeClass("d-none");
     }
 
+    /* ── Filtro front (vendedor / cliente) ───────────────────────── */
+    $("#filtVendedor").on("input", function () {
+        if (dt) dt.column(COL_VENDEDOR).search($(this).val().trim()).draw();
+    });
+    $("#filtCliente").on("input", function () {
+        if (dt) dt.column(COL_CLIENTE).search($(this).val().trim()).draw();
+    });
+    $("#btnLimpiarFiltro").on("click", function () {
+        $("#filtVendedor, #filtCliente").val("");
+        if (dt) dt.columns([COL_VENDEDOR, COL_CLIENTE]).search("").draw();
+    });
+
+    /* ── Modo filtro ─────────────────────────────────────────────── */
     $('input[name="modoFiltro"]').on("change", syncGrupos);
     syncGrupos();
 
+    /* ── Consultar ───────────────────────────────────────────────── */
     $("#btnBuscar").on("click", function () {
         showErr("");
+        $("#filtroFront").addClass("d-none");
         $.getJSON(urlJson, queryParams())
             .done(function (res) {
                 if (!res.ok) { showErr(res.message || "Error"); return; }
@@ -151,6 +205,7 @@ $(function () {
             });
     });
 
+    /* ── Excel (exporta el total de la consulta, sin filtro front) ─ */
     $("#btnExcel").on("click", function () {
         window.MatReportes.downloadReporteExcel(urlExcel, queryParams, showErr);
     });

@@ -1,33 +1,56 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
     <title>Inicio del Sistema</title>
-    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+
+    <!-- Bootstrap 5 + Bootstrap Icons -->
+    <link href="~/Content/bootstrap-5.3.2.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- jQuery UI CSS (1.13.2) -->
+    <link href="~/Content/themes/base/jquery-ui-1.13.2.css" rel="stylesheet" />
+
+    <!-- Estilos MAT -->
+    <link href="~/Content/saas-variables.css" rel="stylesheet" />
     <link href="~/Content/mat.styles.css" rel="stylesheet" />
     <link href="~/Content/mat.splash.css" rel="stylesheet" />
     <link href="~/Content/mat.busplugin.css" rel="stylesheet" />
     <link href="~/Content/preset.css" rel="stylesheet" />
+    <link href="~/Content/mat.forms.css" rel="stylesheet" />
 
-    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <section id="body_section">
+        @RenderBody()
+    </section>
+
+    <!-- jQuery 3.7.1 + migrate + jQuery UI 1.13.2 -->
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+    <script src="~/Scripts/jquery-migrate-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>
+
+    <!-- Bootstrap 5 -->
+    <script src="~/Scripts/bootstrap-5.3.2.bundle.min.js"></script>
+
+    <!-- Validación -->
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
+
+    <!-- Scripts base MAT -->
     <script src="~/Scripts/javascript.core.js"></script>
     <script src="~/Scripts/mat.jquery.binding.js"></script>
     <script src="~/Scripts/mat.jquery.functions.js"></script>
     <script src="~/Scripts/mat.jquery.initialize.js"></script>
     <script src="~/Scripts/jquery.quick.pagination.min.js"></script>
-    <script src="~/Scripts/global.js"></script>
     <script src="~/Scripts/mat.jquery.hashtable.js"></script>
-</head>
-<body>
+    <script src="~/Scripts/global.js"></script>
+
     <section id="script_section">
         @RenderSection("Scripts", required: false)
-    </section>
-    <section id="body_section">
-        @RenderBody()
     </section>
 </body>
 </html>
