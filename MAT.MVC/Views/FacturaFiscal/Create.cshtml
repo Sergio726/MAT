@@ -3,15 +3,16 @@
     Response.Charset = "utf-8";
     int tipoFactura = ViewBag.TipoFactura ?? 1;
     string tipoNombre = tipoFactura == 1 ? "Compra" : "Venta";
-    ViewBag.Title = "Nueva Factura de " + tipoNombre;
+    bool esEdicion = ViewBag.EsEdicion == true;
+    ViewBag.Title = esEdicion ? "Editar Factura de " + tipoNombre : "Nueva Factura de " + tipoNombre;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="modern-page-container">
     <div class="modern-page-header">
         <h2 class="modern-page-title">
-            <i class="bi @(tipoFactura == 1 ? "bi-cart-plus" : "bi-shop")"></i>
-            <span>Nueva Factura de @tipoNombre</span>
+            <i class="bi @(esEdicion ? "bi-pencil" : (tipoFactura == 1 ? "bi-cart-plus" : "bi-shop"))"></i>
+            <span>@(esEdicion ? "Editar Factura de " + tipoNombre : "Nueva Factura de " + tipoNombre)</span>
         </h2>
         <div class="modern-page-actions">
             <a href="@Url.Action("Index", "FacturaFiscal")" class="btn-modern btn-modern-secondary">
@@ -23,6 +24,10 @@
     <div class="modern-card">
         <div class="modern-card-content" style="padding: 1.5rem;">
             <input type="hidden" id="hdnTipo" value="@tipoFactura" />
+            @if (esEdicion)
+            {
+                <input type="hidden" id="hdnFacturaId" value="@ViewBag.FacturaID" />
+            }
 
             <!-- Proveedor / Cliente -->
             <div class="row g-3 mb-4">
@@ -256,11 +261,17 @@
 
 <script type="text/javascript">
     var tipoFactura = @tipoFactura;
+    var esEdicion = @esEdicion.ToString().ToLower();
 
     $(document).ready(function () {
-        // Set fecha emision = hoy
-        var hoy = new Date().toISOString().split('T')[0];
-        $('#txtFechaEmision').val(hoy);
+        // Set fecha emision = hoy si no es edición
+        if (!esEdicion) {
+            var hoy = new Date().toISOString().split('T')[0];
+            $('#txtFechaEmision').val(hoy);
+        } else {
+            // Cargar datos de la factura para edición
+            cargarDatosEdicion();
+        }
 
         // Cargar proveedores si es compra
         if (tipoFactura === 1) cargarProveedoresDropdown();
@@ -270,6 +281,51 @@
             validarDuplicado();
         });
     });
+
+    function cargarDatosEdicion() {
+        var facturaId = $('#hdnFacturaId').val();
+        if (!facturaId) return;
+
+        $.ajax({
+            url: '@Url.Action("GetDetalle", "FacturaFiscal")',
+            type: 'POST',
+            data: { id: facturaId },
+            dataType: 'json',
+            success: function (r) {
+                if (r.success && r.factura) {
+                    var f = r.factura;
+                    // Datos del proveedor/cliente
+                    if (tipoFactura === 1 && f.proveedorId) {
+                        $('#ddlProveedor').val(f.proveedorId).trigger('change');
+                    }
+                    $('#txtCuit').val(f.cuit || '');
+                    $('#ddlCondicionIva').val(f.condicionIva || '');
+                    if (tipoFactura === 2 && f.clienteId) {
+                        $('#txtClienteNombre').val(f.clienteNombre || '');
+                        $('#hdnClienteId').val(f.clienteId || '');
+                    }
+                    // Datos del comprobante
+                    $('#ddlTipoComprobante').val(f.tipoComprobante || 1);
+                    $('#txtPuntoVenta').val(f.puntoVenta || '');
+                    $('#txtNumero').val(f.numero || '');
+                    $('#txtCAE').val(f.cae || '');
+                    $('#ddlMoneda').val(f.moneda || 1);
+                    // Fechas
+                    $('#txtFechaEmision').val(f.fechaEmision || '');
+                    $('#txtFechaVencimiento').val(f.fechaVencimiento || '');
+                    $('#txtCondicionVenta').val(f.condicionVenta || '');
+                    // Montos
+                    $('#ddlAlicuota').val(f.alicuotaIva || 4);
+                    $('#txtNeto').val(f.neto || 0);
+                    $('#txtPercepciones').val(f.percepciones || 0);
+                    $('#txtOtrosImpuestos').val(f.otrosImpuestos || 0);
+                    $('#txtObservaciones').val(f.observaciones || '');
+                    // Calcular totales
+                    calcularMontos();
+                }
+            }
+        });
+    }
 
     function cargarProveedoresDropdown() {
         $.ajax({
@@ -356,31 +412,36 @@
 
         $('#btnGuardar').prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Guardando...');
 
+        var url = esEdicion ? '@Url.Action("UpdateFactura", "FacturaFiscal")' : '@Url.Action("CreateFactura", "FacturaFiscal")';
+        
+        var data = {
+            FacturaFiscalID: esEdicion ? $('#hdnFacturaId').val() : '',
+            tipo: tipoFactura,
+            tipoComprobante: $('#ddlTipoComprobante').val(),
+            puntoVenta: pv,
+            numero: num,
+            fechaEmision: fechaEmision,
+            fechaVencimiento: $('#txtFechaVencimiento').val(),
+            proveedorId: tipoFactura === 1 ? $('#ddlProveedor').val() : '',
+            clienteId: tipoFactura === 2 ? $('#hdnClienteId').val() : '',
+            cuit: cuit,
+            condicionIva: $('#ddlCondicionIva').val(),
+            neto: parseFloat($('#txtNeto').val()) || 0,
+            iva: parseFloat($('#txtIva').val()) || 0,
+            otrosImpuestos: parseFloat($('#txtOtrosImpuestos').val()) || 0,
+            total: parseFloat($('#txtTotal').val()) || 0,
+            moneda: $('#ddlMoneda').val(),
+            cae: $('#txtCAE').val(),
+            alicuotaIva: $('#ddlAlicuota').val(),
+            percepciones: parseFloat($('#txtPercepciones').val()) || 0,
+            condicionVenta: $('#txtCondicionVenta').val(),
+            observaciones: $('#txtObservaciones').val()
+        };
+
         $.ajax({
-            url: '@Url.Action("CreateFactura", "FacturaFiscal")',
+            url: url,
             type: 'POST',
-            data: {
-                tipo: tipoFactura,
-                tipoComprobante: $('#ddlTipoComprobante').val(),
-                puntoVenta: pv,
-                numero: num,
-                fechaEmision: fechaEmision,
-                fechaVencimiento: $('#txtFechaVencimiento').val(),
-                proveedorId: tipoFactura === 1 ? $('#ddlProveedor').val() : '',
-                clienteId: tipoFactura === 2 ? $('#hdnClienteId').val() : '',
-                cuit: cuit,
-                condicionIva: $('#ddlCondicionIva').val(),
-                neto: parseFloat($('#txtNeto').val()) || 0,
-                iva: parseFloat($('#txtIva').val()) || 0,
-                otrosImpuestos: parseFloat($('#txtOtrosImpuestos').val()) || 0,
-                total: parseFloat($('#txtTotal').val()) || 0,
-                moneda: $('#ddlMoneda').val(),
-                cae: $('#txtCAE').val(),
-                alicuotaIva: $('#ddlAlicuota').val(),
-                percepciones: parseFloat($('#txtPercepciones').val()) || 0,
-                condicionVenta: $('#txtCondicionVenta').val(),
-                observaciones: $('#txtObservaciones').val()
-            },
+            data: data,
             dataType: 'json',
             success: function (r) {
                 if (r.success) {

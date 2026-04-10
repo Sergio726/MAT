@@ -216,6 +216,7 @@
                     render: function (data, type, row) {
                         var html = '<button class="ff-btn-accion" onclick="verDetalle(\'' + row.facturaFiscalId + '\')" title="Ver detalle"><i class="bi bi-eye"></i></button>';
                         if (row.estado === 1) {
+                            html += '<button class="ff-btn-accion" onclick="editarFactura(\'' + row.facturaFiscalId + '\')" title="Editar"><i class="bi bi-pencil"></i></button>';
                             html += '<button class="ff-btn-accion ff-btn-anular" onclick="anularFactura(\'' + row.facturaFiscalId + '\')" title="Anular"><i class="bi bi-x-circle"></i></button>';
                         }
                         if (row.archivoAdjunto) {
@@ -321,6 +322,10 @@
             },
             error: function () { mostrarMensaje('Error al obtener detalle.', 'danger'); }
         });
+    }
+
+    function editarFactura(id) {
+        window.location.href = '@Url.Action("Edit", "FacturaFiscal")' + '?id=' + id;
     }
 
     function mostrarModalDetalle(f) {

@@ -2,6 +2,22 @@
 
 ---
 
+### [2026-04-10] — Editar facturas de compra (Facturación Fiscal)
+
+- Archivos modificados:
+  - `MAT.MVC/Controllers/FacturaFiscal/FacturaFiscalController.cs` (acción Edit GET + POST UpdateFactura)
+  - `MAT.MVC/Views/FacturaFiscal/Create.cshtml` (reutilizado para edición con ViewBag.EsEdicion)
+  - `MAT.MVC/Views/FacturaFiscal/Index.cshtml` (agregado botón Editar en columna acciones)
+- Qué se implementó:
+  - Acción Edit en controller que carga factura existente
+  - POST UpdateFactura valida que no esté anulada antes de guardar
+  - Vista Create.cshtml ahora soporta modo edición (carga datos vía GetDetalle)
+  - Tabla Index muestra botón editar (lápiz) para facturas activas
+- Problemas encontrados: Ninguno — MSBuild limpio.
+- Estado: ✅ completo
+
+---
+
 ### [2026-04-10] — Códigos de confirmación en BD (PersonaCliente)
 
 - Archivos modificados:

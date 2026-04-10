@@ -13,6 +13,37 @@
 
 ### P1 — Crítico / Deuda técnica
 
+- [x] **BUG: Factura de compra no editable tras carga**
+  Una vez que el usuario carga una factura de compra, ya no puede editarla. El sistema debe permitir editar facturas de compra que fueron creadas con errores o que necesitan actualización de datos.
+  Archivos probables: `Controllers/PersonaCliente/PersonaClienteController.cs`, `Views/PersonaCliente/RegistrarPago.cshtml`, `Views/PersonaCliente/RegistrarPagoTotal.cshtml`
+  Criterio de éxito: Las facturas de compra pueden editarse después de ser creadas.
+  **Implementación 2026-04-10:** Agregada funcionalidad de edición en módulo Facturación Fiscal (FacturaFiscalController, Index.cshtml con botón Editar, Create.cshtml reutilizado para edición, FacturaFiscalMethod.Update ya existía).
+
+- [ ] **Facturación Fiscal: Validación de duplicado en edición**
+  El `CheckDuplicate` actual no excluye la factura en edición, puede dar falsos positivos al editar. Modificar la llamada para pasar el ID de la factura actual y actualizar el SP para excluirla de la búsqueda.
+  Archivos: `Views/FacturaFiscal/Create.cshtml`, `Controllers/FacturaFiscal/FacturaFiscalController.cs`, `Models/FacturaFiscalModel.cs`, `MAT.DB/Stored Procedures/usp_MAT_FacturaFiscal_CheckDuplicate.sql`
+  Criterio de éxito: Al editar una factura, la validación de duplicado no muestra alerta para esa misma factura.
+
+- [ ] **Facturación Fiscal: Resaltar filtros activos**
+  Los filtros aplicados (tipo, estado, fechas) deben mostrarse visualmente como activos para que el usuario sepa cuáles están aplicados.
+  Archivos: `Views/FacturaFiscal/Index.cshtml`
+  Criterio de éxito: Filtros activos tienen estilo diferenciado, limpiar filtros reinicia el estado visual.
+
+- [ ] **Facturación Fiscal: Lazy loading de proveedores**
+  El dropdown carga todos los proveedores al inicio; con muchos registros puede lentificar. Implementar búsqueda asíncrona con debounce.
+  Archivos: `Views/FacturaFiscal/Create.cshtml`, `Controllers/FacturaFiscal/FacturaFiscalController.cs`
+  Criterio de éxito: Dropdown de proveedores con búsqueda en lugar de lista estática.
+
+- [ ] **Facturación Fiscal: Guardar filtros en localStorage**
+  Recordar los últimos filtros usados para no tener que reingresarlos cada vez que el usuario vuelve al listado.
+  Archivos: `Views/FacturaFiscal/Index.cshtml`
+  Criterio de éxito: Al volver al listado, los últimos filtros aplicados se restauran automáticamente.
+
+- [ ] **Facturación Fiscal: Mejora de tooltips en acciones**
+  Agregar descripción más clara en los botones de acción de la tabla (Ver detalle, Editar, Anular, Adjunto).
+  Archivos: `Views/FacturaFiscal/Index.cshtml`
+  Criterio de éxito: Todos los botones tienen tooltips descriptivos.
+
 - [x] **Actualizar vistas pendientes de modernización**
   Revisar `DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md` y migrar las vistas listadas a Bootstrap 5 / jQuery 3, eliminando dependencias obsoletas identificadas en `DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md`.
   Criterio de éxito: Las vistas actualizadas renderizan correctamente en IIS Express sin errores de consola JS; MSBuild pasa sin errores.
@@ -265,6 +296,272 @@
   Tras una **Consultar** exitosa, conservar en memoria (JavaScript) el arreglo de filas devuelto y permitir **refinar la grilla** por vendedor y/o por cliente (texto libre, coincidencia sobre nombres o campos ya presentes en el JSON; o controles alimentados únicamente con valores distintos del resultado cargado). **No** debe dispararse nueva petición al servidor ni al SP al cambiar estos filtros. Definir y documentar en la implementación si **Exportar Excel** debe reflejar solo las filas **visibles tras el filtro front** o el **total de la última consulta**, y reflejarlo en una nota breve en pantalla si hay riesgo de confusión.
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, y/o `Scripts/…` siguiendo el patrón del módulo (p. ej. extracción a `mat.reportes-ventas.js` si conviene).
   Criterio de éxito: Filtrado en cliente es inmediato; “Consultar” sigue definiendo el universo de datos según fechas o viaje; criterio Excel acordado y probado.
+
+- [ ] **Reportes UX: Reporte Ventas — tarjeta “Total facturado” + modal “Listado de facturas” + Excel en tarjeta**
+
+  **Contexto (estado actual — análisis):**
+  - La pantalla `Views/Reportes/ReporteVentas.cshtml` ya obtiene filas vía `GET` `Reportes/Ventas` y las guarda solo en memoria dentro del `DataTable` y de las funciones `renderTable` / `aggregateVentasRows`. El contrato de fila es `ReporteVentaRowDto` (camelCase en JSON): `viajeDescripcion`, `fechaSalida`, `cantidadButacas`, `vendedorFullName`, `clienteFullName`, `facturaId`, `facturaFecha`, `facturaEstado`, `monedaTipo` (`"1"` ARS, `"3"` U$S), `totalFactura`, `montoPagado`, `saldo`, etc.
+  - Los KPI del bloque **Resumen de la consulta** se calculan en cliente con la misma lógica que debe reutilizarse (o extraerse a helper JS compartido) para los totales del modal **sobre el subconjunto filtrado**.
+  - La exportación Excel del reporte la genera el servidor (`Reportes/VentasExcel` → `ReportesExcelExport.BuildVentas`): columnas fijas (Viaje ID, Viaje, Fecha salida, Butacas, Vendedor ID, Vendedor, Cliente ID, Cliente, Factura ID, Fecha factura, Estado, Moneda, Total / Pagado / Saldo). El helper `Scripts/mat.reportes-excel-export.js` hoy deshabilita solo `#btnExcel` durante la descarga; conviene parametrizar el botón objetivo o soportar múltiples disparadores sin duplicar lógica.
+  - Los mockups adjuntos (tema oscuro) definen **layout y comportamiento**; la implementación debe mantener **coherencia visual con el Admin actual** (Bootstrap 5, cards claras en `_LayoutAdmin`) salvo decisión explícita de producto de adoptar tema oscuro en este módulo.
+
+  **A) Tarjeta “Total facturado” (solo esta card):**
+  - Es la única card interactiva: `cursor-pointer`, estados **hover** discretos (borde/sombra/fondo) acordes al sistema Admin.
+  - **Tooltip** al posar el cursor sobre el área clicable de la tarjeta (no sobre el botón): texto *“Haz clic para ver el listado de facturas”* (Bootstrap 5 tooltip o `title` accesible, según patrón del proyecto).
+  - **Clic** en la tarjeta (fuera del botón): abrir el modal de listado (equivalente a `isInvoiceModalOpen` / `InvoiceListModal` en el pseudocódigo); **no** nueva llamada al API: trabajar sobre la **última respuesta** de la consulta de ventas (mismo universo que la grilla principal).
+  - Incorporar en el pie de la card un botón **“Exportar a Excel”** (icono documento + texto). En el handler del botón usar **`event.stopPropagation()`** para que **no** abra el modal; la acción de exportación debe ser la **misma** que el botón global **Exportar Excel** de la página (mismos `queryParams` → `VentasExcel`), de modo que el archivo coincida con el generado hoy por `ReportesExcelExport.BuildVentas` (mismo criterio: **toda la última consulta**, sin aplicar filtros del modal ni del filtro front vendedor/cliente, salvo que negocio documente lo contrario en `PROGRESS`).
+
+  **B) Modal “Listado de Facturas”:**
+  - **Fuente de datos:** copia de trabajo sobre el arreglo de filas de la última consulta exitosa (`ventasData` / nombre acordado). Al abrir, **sin** `getJSON` adicional.
+  - **Orden por defecto:** fecha de factura **más reciente primero** (normalizar parsing si el JSON trae `Date` ISO o string).
+  - **Búsqueda de texto** (un solo campo): filtra en cliente por coincidencia en número o identificadores visibles de factura, nombre cliente, vendedor y descripción de viaje (campos ya presentes en el DTO / columnas actuales).
+  - **Filtros adicionales:** estado de factura (desplegable **dinámico** con valores distintos presentes en los datos + opción “Todos”), moneda (Todas / ARS / U$S alineado a `monedaTipo`), rango **fecha desde / hasta** aplicado sobre **fecha de factura**, botón **Limpiar filtros** que resetea búsqueda y filtros.
+  - **Contador:** texto tipo *“Mostrando X de Y facturas”* (Y = total filas de la última consulta; X = tras búsqueda + filtros).
+  - **Tabla:** columnas Fecha (factura), Cliente, Vendedor, Estado, Moneda, Total factura, Monto pagado, Saldo, **Acciones** (copiar **Factura ID** al portapapeles con feedback; expandir/contraer fila).
+  - **Detalle expandido:** al menos Viaje, Fecha salida, Factura ID (GUID), Cantidad butacas — datos ya disponibles en el DTO.
+  - **Resumen en modal:** totales **recalculados** sobre el subconjunto filtrado: facturado, cobrado y saldo **por moneda** (misma regla de agregación que KPI actuales para `"1"`, `"3"` y otras); opcionalmente subtotales de saldo destacados como en mockup (texto secundario).
+  - **Accesibilidad:** modal Bootstrap 5, foco y cierre con teclado/Escape, `aria-*` razonables.
+
+  **C) Implementación y archivos:**
+  - Principal: `Views/Reportes/ReporteVentas.cshtml` (marcado modal + card); si el JS supera ~150–200 líneas relevantes, extraer a `Scripts/mat.reportes-ventas-facturado-modal.js` (o nombre alineado al proyecto) y referenciar en la vista + `MAT.MVC.csproj` si aplica.
+  - Ajuste mínimo esperado: `Scripts/mat.reportes-excel-export.js` (botón a deshabilitar durante fetch parametrizable o soporte multi-botón).
+  - **No** requiere cambio de SP ni `ReportesController` salvo se decida exportar solo filas filtradas del modal (nuevo contrato); fuera de alcance por defecto.
+
+  **D) Mejoras opcionales recomendadas (funcionalidad + UI)** — implementar las que quepan en el mismo entregable o dejar documentadas para una segunda iteración:
+  - **Funcionalidad**
+    - **Exportar subconjunto del modal:** botón dentro del modal que genere Excel/CSV **solo con las filas que pasan** búsqueda + filtros (sin nuevo SP: export en cliente con las columnas visibles, o endpoint POST que reciba lista de `FacturaId` — acordar en implementación y límites de tamaño).
+    - **Ordenación por columna** en la tabla del modal (clic en encabezado: fecha, total, saldo, cliente, etc.; indicador ▲/▼).
+    - **Expandir / contraer todas** las filas de detalle con un control en la barra de herramientas del modal.
+    - **Debounce** en el campo de búsqueda (~200–300 ms) para listas grandes y menos trabajo en cada tecla.
+    - **Sincronía con el filtro front** de la página (vendedor/cliente): opción de que, al abrir el modal desde la tarjeta, el listado arranque **ya acotado** con los mismos criterios que la grilla principal (con leyenda “Aplicando filtros de la tabla” o botón “Ver todas las facturas de la consulta” para volver al universo completo).
+    - **Deep link / estado en URL** (opcional, baja prioridad): query `?invoiceList=1` o hash para reabrir el modal tras F5 — solo si no complica el routing Admin.
+    - **Atajo de teclado:** con foco en la tarjeta o en la página, `Enter`/`Alt+L` para abrir el modal (documentar en tooltip o ayuda breve).
+  - **UI / UX**
+    - **Subtítulo contextual** en el modal: mostrar en texto legible el criterio de la última consulta (rango de fechas `dd/mm/aaaa` o nombre del viaje seleccionado), para orientar al usuario.
+    - **Estado vacío** cuando no hay resultados tras filtrar: mensaje claro + sugerencia “Limpiar filtros”; si no hubo consulta aún, deshabilitar la tarjeta o mostrar tooltip “Primero ejecutá Consultar”.
+    - **Cabecera de tabla fija** (`sticky`) dentro del cuerpo del modal con scroll vertical en listas largas.
+    - **Montos y saldos con jerarquía visual:** alinear con el reporte principal (saldo > 0 en énfasis rojo suave o `text-danger` acorde a BS5; moneda con badge como en KPI).
+    - **Feedback de “Copiado”** accesible: toast o `aria-live` además del ícono, y soporte si `navigator.clipboard` falla (fallback seleccionar texto).
+    - **Responsive:** en viewport angosto, modal **fullscreen** o casi fullscreen; filtros en acordeón o apilados; tabla con scroll horizontal explícito.
+    - **Movimiento reducido:** respetar `prefers-reduced-motion` en transiciones del modal y hover de la tarjeta.
+    - **Indicador sutil en la tarjeta** cuando hay datos cargados (p. ej. punto o borde accent), coherente con el sistema de iconos Admin — sin parecer “notificación” de error.
+    - **Enlace opcional** a pantalla de detalle de factura / cliente si en el proyecto ya existe ruta estable (abrir en nueva pestaña); si no hay ruta, omitir.
+
+  **Criterio de éxito:** Tras **Consultar**, la tarjeta Total facturado abre el modal con listado consistente con los datos mostrados en la tabla principal; filtros y búsqueda solo afectan el modal y sus totales; el botón Excel en la tarjeta descarga el mismo tipo de archivo que el export global; `stopPropagation` evita abrir modal al exportar; las demás cards del resumen siguen no clicables; MSBuild `MAT.MVC` Debug sin errores; breve nota en `PROGRESS.md` al cerrar el task **indicando qué ítems de D** se implementaron o se posponen.
+
+#### Reportes — Top Vendedores y Top Destinos (derivado de datos ya cargados)
+
+- [ ] **Reportes: Persistir `lastRows` como fuente compartida en ReporteVentas (prerequisito)**
+  **Contexto:** Hoy el resultado de la consulta de ventas vive solo dentro del `DataTable` y de las funciones `renderTable` / `aggregateVentasRows`. Los tasks de modal de facturas, Top Vendedores y Top Destinos necesitan acceder al mismo arreglo en cualquier momento sin relanzar el `$.getJSON`.
+  **Acción (mínima y no regresiva):** declarar `var lastRows = [];` en el closure de `$(function(){...})` de `ReporteVentas.cshtml` y asignarlo dentro de `renderTable(rows)` antes de cualquier otra operación (`lastRows = rows || [];`). Al limpiar / nueva consulta, `lastRows = []`. No cambia nada más del flujo existente.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`.
+  Criterio de éxito: `lastRows` disponible en el scope del módulo tras Consultar exitoso; DataTable, KPI y filtro front funcionan igual; MSBuild limpio. *Este task es bloqueante para los dos tasks siguientes y para el task del modal de facturas.*
+
+- [ ] **Reportes UX: Reporte Ventas — sección "Top 3 Vendedores" con cards y modal "Lista completa"**
+
+  **Contexto técnico (estado del código):**
+  - `ReporteVentaRowDto` ya expone `VendedorId`, `VendedorFullName`, `MonedaTipo`, `TotalFactura`, `MontoPagado`, `Saldo` — todos los campos necesarios.
+  - `aggregateVentasRows` acumula totales globales pero no por vendedor; hay que agregar `aggregateByVendedor(rows)` como función hermana que hace `reduce` por `vendedorId`.
+  - `renderMonedaRowsHtml` y `parseMoneyCell` son helpers reutilizables para mostrar los montos por moneda en las cards.
+  - No se necesita cambio de SP ni de backend; todo el cálculo es en cliente sobre `lastRows`.
+
+  **A) Agregación `aggregateByVendedor(rows)`:**
+  Por cada fila de `rows`, hacer `reduce` usando `vendedorId` como clave:
+  ```
+  { vendedorId, nombre, ventas++, total += totalFactura,
+    totalesPorMoneda["1"|"3"] += totalFactura,
+    saldosPorMoneda["1"|"3"] += saldo }
+  ```
+  Ordenar el resultado por `total` descendente (suma numérica cruda de monedas mezcladas — mismo criterio del sistema de referencia). `Top 3` = primeros 3 del arreglo ordenado.
+
+  **B) Bloque HTML "Top 3 Vendedores" (entre KPI y la grilla):**
+  - Visible solo cuando `lastRows.length > 0`; oculto/desmontado al limpiar o al inicio.
+  - Cabecera: título "Top 3 Vendedores" + botón "Ver todos" alineado a la derecha.
+  - Tres cards Bootstrap 5 en grid `row-cols-1 row-cols-md-3 g-3` con diseño coherente con los KPI del bloque "Resumen":
+    - **Medalla de posición:** `#1` con icono `bi-trophy-fill text-warning`, `#2` con `bi-medal text-secondary`, `#3` con `bi-award text-danger` (o variante acordada; respetar tema claro del Admin actual).
+    - **Nombre del vendedor** (truncado a una línea con `text-truncate`).
+    - **Cantidad de ventas** en texto secundario.
+    - **Totales por moneda** (solo mostrar monedas con valor > 0): reutilizar `renderMonedaRowsHtml` o patrón inline con badges `$ARS` / `U$D` + monto formateado `es-AR`.
+    - **Saldo por cobrar por moneda** (solo si saldo > 0; si no, texto "Sin saldo pendiente" en `text-muted small`).
+  - Hover en cada card: transición sutil de sombra acordada con el task de hover de cards del admin.
+
+  **C) Modal "Lista completa de vendedores":**
+  - Disparado por botón "Ver todos" — sin nuevo `$.getJSON`; trabajar sobre `aggregateByVendedor(lastRows)` completo.
+  - Modal Bootstrap 5 tamaño `modal-xl`; título "Lista completa de vendedores" + icono `bi-people`.
+  - **Búsqueda:** un campo `<input>` que filtra en tiempo real por nombre de vendedor (debounce ~250ms).
+  - **Tabla ordenable:** columnas `#`, Vendedor, Total ventas, Total $ARS, Total U$D, Saldo $ARS, Saldo U$D, Promedio.
+    - Promedio = `total / ventas` formateado con `es-AR`.
+    - Saldo U$D: si 0 → "Sin saldo" (texto muted).
+    - Orden default: `total` desc; clic en encabezado numérico invierte asc/desc con indicador ▲/▼.
+  - **Contador:** "Mostrando X de Y vendedores".
+  - **Exportar CSV:** botón "Exportar CSV" en la cabecera del modal; genera en cliente (sin servidor) un CSV con columnas: Vendedor, Total ventas, Total ARS, Total USD, Saldo ARS, Saldo USD, Promedio. Nombre de archivo `vendedores-YYYY-MM-DD.csv`. Usar `Blob` + `URL.createObjectURL` (mismo patrón que el Excel export del reporte).
+  - **Estado vacío:** si no hay datos (lastRows vacío al abrir), mostrar mensaje + ícono `bi-people` sin tabla.
+
+  **D) Implementación y archivos:**
+  - `Views/Reportes/ReporteVentas.cshtml`: marcado HTML del bloque Top 3 y del modal.
+  - Si el JS supera ~150 líneas relevantes, extraer a `Scripts/mat.reportes-vendedores.js`; registrar en vista + `MAT.MVC.csproj` si aplica.
+  - **No** requiere cambios en `ReportesController`, SP ni modelos C#.
+
+  Criterio de éxito: Tras Consultar, el bloque Top 3 Vendedores aparece con datos correctos; "Ver todos" abre el modal con lista completa; búsqueda, orden y CSV funcionan sin nueva llamada al servidor; las tres medallas muestran el vendedor correcto según suma de `totalFactura`; bloque oculto antes de la primera consulta; MSBuild limpio.
+
+- [ ] **Reportes UX: Reporte Ventas — sección "Top 3 Destinos" con cards y modal "Lista completa"**
+
+  **Contexto técnico (estado del código):**
+  - `ReporteVentaRowDto` expone `ViajeId`, `ViajeDescripcion`, `MonedaTipo`, `TotalFactura`.
+  - Mismos helpers reutilizables que el task anterior.
+  - **Criterio de ranking diferente al de vendedores:** destinos se ordenan por **cantidad de ventas** (filas por `viajeId`), no por monto.
+
+  **A) Agregación `aggregateByViaje(rows)`:**
+  Por cada fila de `rows`, `reduce` usando `viajeId` como clave:
+  ```
+  { viajeId, descripcion, ventas++, total += totalFactura,
+    totalesPorMoneda["1"|"3"] += totalFactura }
+  ```
+  Ordenar por `ventas` descendente. `Top 3` = primeros 3.
+
+  **B) Bloque HTML "Top 3 Destinos" (después del Top 3 Vendedores, antes de la grilla):**
+  - Mismo comportamiento de visibilidad (visible solo con datos).
+  - Cabecera: "Top 3 Destinos" + botón "Ver todos".
+  - Tres cards con:
+    - **Posición** `#1` / `#2` / `#3` con iconos `bi-geo-alt-fill` o variante.
+    - **Nombre del viaje** (truncado).
+    - **Cantidad de ventas.**
+    - **Monto total** formateado (suma numérica cruda de ambas monedas, con prefijo `$` y `es-AR`; nota: sin distinguir moneda, equivalente al sistema de referencia — documentar la limitación en comentario HTML o leyenda).
+
+  **C) Modal "Lista completa de destinos":**
+  - Mismo patrón que el modal de vendedores.
+  - Tabla: `#`, Destino, Total ventas, Monto total, Promedio (total / ventas).
+  - Orden default: ventas desc; ordenable también por descripcion y total.
+  - Búsqueda por descripción del viaje.
+  - Exportar CSV: `destinos-YYYY-MM-DD.csv`; columnas: Destino, Total ventas, Monto total, Promedio.
+  - Estado vacío coherente.
+
+  **D) Archivos:**
+  - `Views/Reportes/ReporteVentas.cshtml`; si conviene, `Scripts/mat.reportes-destinos.js`.
+  - **No** requiere backend.
+
+  Criterio de éxito: Top 3 Destinos muestra los viajes con más filas en el resultado; modal con búsqueda, orden y CSV; ranking correcto por cantidad de ventas (no por monto); bloque oculto hasta Consultar; MSBuild limpio.
+
+#### Reportes — Calidad de datos en tablas (formato visual)
+
+- [ ] **Reportes UI: Fechas en formato dd/mm/aaaa en todas las tablas de reportes**
+  Los tres reportes (Ventas, Pagos, Ranking) muestran columnas de fecha con el valor crudo del JSON (timestamp ISO `2026-04-02T00:00:00` o string del SP). La única excepción correcta es Ranking que ya usa `Intl.DateTimeFormat("es-AR")`. Unificar con un helper JS reutilizable `formatFechaES(val)` (solo fecha, sin hora) e inyectarlo en `render` de DataTables en las tres vistas.
+  **Columnas afectadas:** `fechaSalida` y `facturaFecha` en Ventas; `fechaPago` en Pagos; `fecha` y `viajeFechaSalida` en Ranking (ya parcialmente resuelto — verificar paridad).
+  **Regla de formateo:** entrada puede ser ISO string, `Date` serializado de .NET (`/Date(ms)/`) o `dd/MM/yyyy` — normalizar a `dd/mm/aaaa` en pantalla. El Excel no cambia (ya tiene `ToString("d", es-AR)` en `ReportesExcelExport`).
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`; si conviene, helper en `Scripts/mat.reportes-utils.js` y registro en bundle.
+  Criterio de éxito: Todas las fechas en las tres tablas Admin se leen en `dd/mm/aaaa`; sin hora ni milisegundos; MSBuild limpio.
+
+- [ ] **Reportes UI: Unificar columna "Viaje" + "Fecha salida" en una sola celda (Ventas y Ranking)**
+  En el Reporte de Ventas y Ranking las columnas "Viaje" y "Fecha salida" son adyacentes y separar la fecha en columna propia consume ancho sin aportar legibilidad. Combinarlas en una celda de **dos líneas**: primera línea descripción del viaje (texto truncado con `title` al hover), segunda línea la fecha en `dd/mm/aaaa` en gris/pequeño, con icono `bi-calendar3` como indicador visual.
+  La columna combinada se llama "Viaje" en el encabezado; la fecha se renderiza debajo en tono `text-muted small`.
+  Actualizar `columnDefs` de DataTables y el `render` correspondiente; el Export Excel **no cambia** (sigue con columnas separadas en el archivo).
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Views/Reportes/ReporteRanking.cshtml`.
+  Criterio de éxito: Una sola columna "Viaje" muestra descripción + fecha; tabla más compacta; export Excel intacto; MSBuild limpio.
+
+- [ ] **Reportes UI: Chips/badges para estado de factura en tablas de reportes**
+  La columna `facturaEstado` (Ventas) y equivalente en Pagos muestra texto plano (`Pagado`, `Pre-Reserva`, `Anulado`, etc.) sin diferenciación visual. Usar **badges Bootstrap 5** con color semántico según valor: `Pagado` → `bg-success-subtle text-success`; `Pre-Reserva` → `bg-warning-subtle text-warning`; `Anulado` → `bg-danger-subtle text-danger`; otros → `bg-secondary-subtle text-secondary`.
+  El mapeo se define en un helper JS `estadoBadgeHtml(val)` reutilizable para ambos reportes.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Views/Reportes/ReportePagos.cshtml`; helper en `Scripts/mat.reportes-utils.js` si ya existe por el task de fechas.
+  Criterio de éxito: Estados se leen con color semántico en las tres tablas; sin regresión en filtros DataTables; MSBuild limpio.
+
+- [ ] **Reportes UI: Moneda y montos — "$ARS" / "U$D" y formateo numérico en tablas**
+  **Problema actual:** la columna "Mon." muestra el código numérico (`1`, `3`); los montos (Total, Pagado, Saldo) son números crudos sin separador de miles ni símbolo de moneda. Los KPI del resumen ya resuelven esto correctamente con badges y `Intl.NumberFormat("es-AR")`.
+  **Cambios requeridos:**
+  - Reemplazar la columna "Mon." por un **badge de moneda** reutilizando el mismo patrón del KPI: `"1"` → badge `$ARS` (success-subtle), `"3"` → badge `U$D` (info-subtle).
+  - En las columnas de montos (Total factura / Pagado / Saldo), anteponer el **símbolo según la moneda de la fila** y aplicar `Intl.NumberFormat("es-AR")` con separador de miles.
+  - En Reporte Pagos: igual criterio para la columna `monto`.
+  - El helper `renderMontoCurrency(monto, monedaTipo)` encapsula el formateo y se reutiliza en las tres vistas.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`; helper en `Scripts/mat.reportes-utils.js`.
+  Criterio de éxito: Ningún código numérico visible para moneda; montos con separador de miles y símbolo; Export Excel sin cambio; MSBuild limpio.
+
+#### Admin — Modernización visual del panel (UI/UX transversal)
+
+- [ ] **Admin UI: Unificar sistema de tokens CSS (`--admin-*`) en todo el panel**
+  **Problema:** el panel Admin usa tres "mundos" de variables CSS que no convergen: `--admin-*` (en `admin.modern.css`), `--text-primary` / `--primary-color` (fallback rosa del ecosistema principal, en `Admin/Index` y `GridResumenPagos`), y valores hardcodeados inline en vistas legacy. Esto provoca que colores, tipografía y tamaños difieran entre pantallas del mismo panel.
+  **Acción:** en `admin.modern.css` mapear alias `--text-primary: var(--admin-text)`, `--text-secondary: var(--admin-text-muted)`, `--border-color: var(--admin-border)`, `--primary-color: var(--admin-primary)`, `--primary-rgb: var(--admin-primary-rgb)`, `--bg-secondary: var(--admin-surface-2)` en el selector `:root body.admin-modern` (o clase equivalente del body en `_LayoutAdmin`). Eliminar definiciones inline duplicadas en `Admin/Index.cshtml` y `GridResumenPagos.cshtml`.
+  Archivos: `Content/admin.modern.css`, `Views/Admin/Index.cshtml`, `Views/Admin/GridResumenPagos.cshtml`.
+  Criterio de éxito: Sin múltiples sistemas de variables conviviendo; paleta visual uniforme entre pantallas Admin; MSBuild limpio; smoke test visual de las 5 vistas Admin principales.
+
+- [ ] **Admin UI: Transiciones y hover en cards del panel (Index, Reportes/Index)**
+  **Problema:** las tarjetas de `Admin/Index.cshtml` ya tienen `cursor-pointer` y algo de `transform`, pero no son totalmente coherentes con `Reportes/Index.cshtml` (más plano) ni con el modal de confirmación. Unificar la experiencia de **hover** en **todas** las cards navegables del admin:
+  - **Elevación:** `box-shadow` más pronunciado al hover (transición `0.18s ease`).
+  - **Desplazamiento sutil:** `translateY(-3px)` al hover.
+  - **Borde accent:** borde izquierdo `3px solid --admin-primary` aparece suavemente al hover.
+  - **Transición de icono:** el icono circular de fondo hace `scale(1.08)` al hover.
+  - **Clases reutilizables:** extractar todo en `.admin-card-link` en `admin.modern.css`; aplicar en `Admin/Index` y `Reportes/Index`; documentar uso.
+  - Respetar `prefers-reduced-motion` (no translate ni transition si el usuario lo pidió).
+  Archivos: `Content/admin.modern.css`, `Views/Admin/Index.cshtml`, `Views/Reportes/Index.cshtml`.
+  Criterio de éxito: Hover coherente y animado (pero sutil) en todas las cards del admin; sin regresión en tarjetas del dashboard principal; MSBuild limpio.
+
+- [ ] **Admin UI: Sticky header en tablas DataTables del panel**
+  Las tablas largas (Usuarios, Reportes, SistemaParametros) pierden los encabezados al hacer scroll vertical. Implementar cabecera fija (`position: sticky; top: 0; z-index: 2`) para `thead` en las tablas `.modern-table` dentro del panel Admin.
+  **Alcance:** agregar regla en `admin.modern.css` dentro de `.admin-modern .modern-table-container thead th` con `position: sticky` y fondo `--admin-surface` para opacar el contenido al pasar por debajo. Verificar que no rompa las columnas congeladas de DataTables en las vistas afectadas.
+  **Vistas a verificar:** `Usuarios.cshtml`, `ErrorLog.cshtml`, `SistemaParametros.cshtml`, `ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`.
+  Archivos: `Content/admin.modern.css`.
+  Criterio de éxito: Encabezado visible en scroll vertical en todas las tablas Admin; sin artefactos visuales con DataTables; MSBuild limpio.
+
+- [ ] **Admin UI: Indicadores de carga (spinner) en todas las operaciones async del panel**
+  Varias acciones admin disparan `$.getJSON` o `fetch` sin ningún indicador visible de carga (p. ej. Consultar en Reportes Ventas/Pagos/Ranking). El CSS ya tiene `.modern-loading-spinner`; el uso es esporádico.
+  **Patrón a implementar:** `MatAdmin.showLoading(container)` / `MatAdmin.hideLoading(container)` en `Scripts/mat.admin-utils.js` (crear si no existe, registrar en bundle). `container` puede ser el botón disparador (poner `disabled` + spinner inline en el texto) o un overlay sobre la tabla.
+  **Aplicar en:** botón "Consultar" de los tres reportes (antes del `$.getJSON`, restaurar en `.done`/`.fail`); acciones CRUD de SistemaParametros.
+  Archivos: `Scripts/mat.admin-utils.js` (nuevo o extender), `Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`, `Views/Admin/SistemaParametros.cshtml`.
+  Criterio de éxito: Toda operación async del panel muestra feedback visual durante la espera; sin doble click posible en acciones de escritura; MSBuild limpio.
+
+- [ ] **Admin UI: Estados vacíos amigables en tablas del panel**
+  Cuando una consulta devuelve cero filas, DataTables muestra el mensaje por defecto de internacionalización del plugin (texto plano, sin contexto). Reemplazar por un componente de **estado vacío** con icono `bi-inbox` (o similar), título contextual ("No hay resultados para este filtro") y sugerencia de acción ("Probá con otro rango de fechas o limpiar los filtros"), siguiendo el patrón de los `<div class="alert alert-info">` ya usados en `ErrorLog` y `Logs`.
+  **Implementación:** `columnDefs` de DataTables con `language.emptyTable` personalizado, o función `renderEmpty(msg, sugerencia)` que retorna HTML usado en `language.emptyTable` y/o en el `initComplete` callback. Aplicar en los tres reportes y en SistemaParametros.
+  Archivos: `Content/admin.modern.css` (estilos del estado vacío), `Views/Reportes/*.cshtml`, `Views/Admin/SistemaParametros.cshtml`.
+  Criterio de éxito: DataTables vacío muestra icono + texto contextual; ningún reporte muestra solo "No hay datos disponibles" del plugin sin contexto; MSBuild limpio.
+
+- [ ] **Admin UI: Breadcrumbs contextuales en el panel**
+  Ninguna pantalla Admin muestra la ubicación actual dentro del panel (solo el `<title>` cambia). Un breadcrumb `Administración › Reportes › Ventas` (o equivalente) en la cabecera de cada vista orienta al usuario, especialmente en módulos anidados.
+  **Implementación:** sección `@section BreadcrumbItems` en `_LayoutAdmin.cshtml` que renderiza un `<nav aria-label="breadcrumb">` debajo del topbar si se provee; las vistas que lo soporten declaran la sección con ítems `<li class="breadcrumb-item">`. Vistas prioritarias: `ReporteVentas`, `ReportePagos`, `ReporteRanking`, `SistemaParametros`, `Usuarios`, `ErrorLog`.
+  Archivos: `Views/Shared/_LayoutAdmin.cshtml`, `Content/admin.modern.css` (estilos breadcrumb), vistas prioritarias.
+  Criterio de éxito: Las vistas listadas muestran breadcrumb; las que no declaran `BreadcrumbItems` no muestran nada extra; Bootstrap 5 `breadcrumb` estilizado con `--admin-*`; MSBuild limpio.
+
+- [ ] **Admin UI: Sidebar — completar navegación (SistemaParametros + enlace a módulos activos)**
+  El menú lateral de `_LayoutAdmin.cshtml` expone Reportes y Usuarios pero **no** enlaza a `SistemaParametros`. Si el usuario accede desde una URL directa o bookmark, no tiene forma de volver al módulo ni de descubrir otros módulos del admin desde el sidebar.
+  **Acción:** agregar ítem "Parámetros del sistema" bajo la sección "Sistema" en el menú lateral (desktop y offcanvas mobile), con icono `bi-sliders`. Evaluar si agregar también `AuditoriaFacturas` si está activa. Revisar que todos los ítems del sidebar tengan `aria-current="page"` cuando corresponde.
+  Archivos: `Views/Shared/_LayoutAdmin.cshtml`.
+  Criterio de éxito: Todos los módulos admin activos aparecen en el sidebar; `SistemaParametros` accesible desde el menú; sin ítems huérfanos; MSBuild limpio.
+
+- [ ] **Admin UI: Reemplazar `confirm()` y `alert()` nativos en SistemaParametros por modales Bootstrap 5**
+  `Views/Admin/SistemaParametros.cshtml` usa `confirm()` del navegador para toggle de estado y `alert()` para errores de validación frontend. Esto rompe la consistencia visual con Usuarios (que ya usa modal Bootstrap) y bloquea el hilo JS.
+  **Reemplazar por:** modal de confirmación BS5 reutilizando el patrón de `Usuarios.cshtml` (`data-bs-toggle`, handler JS) para toggle; `mostrarMensaje(msg, tipo)` (o equivalente inline con `alert-dismissible` Bootstrap) para errores de validación.
+  Archivos: `Views/Admin/SistemaParametros.cshtml`.
+  Criterio de éxito: Sin `confirm()` ni `alert()` en la vista; confirmaciones con modal Bootstrap; MSBuild limpio.
+
+- [ ] **Admin UI: Modernizar ErrorLog.cshtml al estilo `modern-*` del panel**
+  `ErrorLog.cshtml` usa colores hardcodeados (`#2c3e50`), badges numéricos custom (`.badge-1`, `.badge-2`, `.badge-3`) y clases propias que no corresponden al sistema visual del panel Admin moderno.
+  **Cambios:**
+  - Reemplazar paleta hardcodeada por variables `--admin-*`.
+  - Convertir badges de importancia numérica (1/2/3) a badges semánticos Bootstrap 5: `1` → `bg-secondary-subtle` "Baja"; `2` → `bg-warning-subtle` "Media"; `3` → `bg-danger-subtle` "Alta".
+  - Cabecera y layout con `.modern-page-title`, `.modern-page-container`.
+  - Formulario de filtros con `.form-control`, `.form-select` BS5, input de fecha `type="date"` alineado visualmente con el resto.
+  - El filtro de fecha `type="date"` muestra `yyyy-mm-dd` según el navegador — agregar un placeholder o label explícito.
+  Archivos: `Views/Admin/ErrorLog.cshtml`.
+  Criterio de éxito: Sin colores hardcodeados; badges semánticos con etiqueta; layout coherente con el resto del Admin; funcionalidad intacta; MSBuild limpio.
+
+- [ ] **Admin UI: Modernizar Logs.cshtml — look de herramienta, no de página en blanco**
+  `Logs.cshtml` es un formulario GET + `<pre>` sin estructura visual moderna. Es una herramienta técnica pero igual forma parte del panel Admin.
+  **Cambios mínimos:** envolver en `.modern-page-container`; formulario de filtros (fecha, cantidad de líneas) con cards BS5; el `<pre>` dentro de un bloque `card` con fondo `--admin-surface-2`, borde, `font-family: monospace`, scroll vertical máx 600px; agregar enlace de retorno al panel en la cabecera con `.modern-page-header`.
+  Archivos: `Views/Admin/Logs.cshtml`.
+  Criterio de éxito: Vista encuadrada en el sistema visual del admin; `<pre>` con scroll; navegación de retorno; MSBuild limpio.
+
+- [ ] **Admin UI: Consistencia tipográfica y ortográfica en todo el panel**
+  Problemas encontrados en el análisis:
+  1. `Admin/Index` usa `h1` a `1.75rem`; el resto del admin usa `.modern-page-title` a `1.5rem` — **inconsistencia de escala**.
+  2. Textos sin tildes: "Administracion", "Seccion", "Auditoria", "Configuracion" — **calidad percibida baja**.
+  3. Los números 1–4 en las tarjetas del Index parecen cantidad de ítems; en realidad son orden — usar icono o eliminar si confunden.
+  **Acción:** corregir tildes en `Admin/Index.cshtml` y `_LayoutAdmin.cshtml`; unificar tamaño de título con `.modern-page-title`; revisar si los badges numéricos del Index aportan o confunden.
+  Archivos: `Views/Admin/Index.cshtml`, `Views/Shared/_LayoutAdmin.cshtml`.
+  Criterio de éxito: Sin palabras con tildes faltantes en el panel; escala de título uniforme; MSBuild limpio.
+
+- [ ] **Admin UI: Feedback con toasts (Bootstrap 5) para acciones async en el panel**
+  Hoy las acciones CRUD de SistemaParametros y otras vistas admin muestran feedback con `mostrarMensaje` (alert fijo en la página) o alerts que desaparecen tras 3s de forma abrupta. Los Toasts de Bootstrap 5 (ya incluido en el bundle del admin) son el patrón idiomático para confirmar acciones async sin interrumpir el flujo.
+  **Acción:** crear `MatAdmin.toast(msg, tipo)` en `Scripts/mat.admin-utils.js` que instancia y muestra un `<div class="toast">` BS5 posicionado en `bottom-end` o `top-end` del viewport; reemplazar `mostrarMensaje` en SistemaParametros por este helper. Aplicar también en cualquier CRUD async del panel que hoy use alerts flotantes.
+  Archivos: `Scripts/mat.admin-utils.js`, `Views/Admin/SistemaParametros.cshtml`, y registro en bundle si aplica.
+  Criterio de éxito: Confirmaciones de éxito/error como toasts en el extremo del viewport; sin bloqueo de UI; `mostrarMensaje` legacy puede coexistir o quedar en desuso; MSBuild limpio.
 
 ### P3 — Nuevas capacidades
 

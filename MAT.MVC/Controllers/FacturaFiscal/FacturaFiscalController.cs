@@ -59,6 +59,121 @@ namespace MAT.MVC.Controllers.FacturaFiscal
             }
         }
 
+        public ActionResult Edit(string id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    return RedirectToAction("Index");
+                }
+
+                Guid facturaId;
+                if (!Guid.TryParse(id, out facturaId))
+                {
+                    return RedirectToAction("Index");
+                }
+
+                var factura = FacturaFiscalMethod.GetById(facturaId);
+                if (factura == null)
+                {
+                    ViewBag.Error = "Factura no encontrada.";
+                    return RedirectToAction("Index");
+                }
+
+                if (factura.Estado == eEstadoFacturaFiscal.Anulada)
+                {
+                    ViewBag.Error = "No se puede editar una factura anulada.";
+                    return RedirectToAction("Index");
+                }
+
+                ViewBag.TipoFactura = (int)factura.Tipo;
+                ViewBag.EsEdicion = true;
+                ViewBag.FacturaID = factura.FacturaFiscalID.ToString();
+                return View("Create", factura);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en FacturaFiscalController.Edit: {ex.Message}", 1);
+                ViewBag.Error = "Error al cargar la factura.";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public JsonResult UpdateFactura(string FacturaFiscalID, int tipo, int tipoComprobante, int puntoVenta, long numero, 
+            string fechaEmision, string fechaVencimiento, string proveedorId, string clienteId, string cuit, int condicionIva,
+            decimal neto, decimal iva, decimal otrosImpuestos, decimal total, int moneda, string cae, int alicuotaIva,
+            decimal percepciones, string condicionVenta, string observaciones)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(FacturaFiscalID))
+                {
+                    return Json(new { success = false, message = "Datos inválidos." });
+                }
+
+                Guid facturaId = new Guid(FacturaFiscalID);
+                var existing = FacturaFiscalMethod.GetById(facturaId);
+                if (existing == null)
+                {
+                    return Json(new { success = false, message = "Factura no encontrada." });
+                }
+
+                if (existing.Estado == eEstadoFacturaFiscal.Anulada)
+                {
+                    return Json(new { success = false, message = "No se puede editar una factura anulada." });
+                }
+
+                Guid? provId = null;
+                if (!string.IsNullOrEmpty(proveedorId))
+                {
+                    provId = Guid.Parse(proveedorId);
+                }
+
+                Guid? cliId = null;
+                if (!string.IsNullOrEmpty(clienteId))
+                {
+                    cliId = Guid.Parse(clienteId);
+                }
+
+                var factura = new FacturaFiscalStandard
+                {
+                    FacturaFiscalID = facturaId,
+                    Tipo = (eTipoFacturaFiscal)tipo,
+                    TipoComprobante = (eTipoComprobante)tipoComprobante,
+                    PuntoVenta = puntoVenta,
+                    Numero = numero,
+                    FechaEmision = DateTime.Parse(fechaEmision),
+                    FechaVencimiento = string.IsNullOrEmpty(fechaVencimiento) ? (DateTime?)null : DateTime.Parse(fechaVencimiento),
+                    ProveedorID = provId,
+                    ClienteID = cliId,
+                    Cuit = cuit,
+                    CondicionIva = (eCondicionIVA)condicionIva,
+                    Neto = neto,
+                    Iva = iva,
+                    OtrosImpuestos = otrosImpuestos,
+                    Total = total,
+                    Moneda = moneda,
+                    CAE = cae,
+                    AlicuotaIva = (eAlicuotaIva)alicuotaIva,
+                    Percepciones = percepciones,
+                    CondicionVenta = condicionVenta,
+                    Observaciones = observaciones,
+                    Estado = existing.Estado
+                };
+
+                FacturaFiscalMethod.Update(factura);
+
+                return Json(new { success = true, message = "Factura actualizada exitosamente." });
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en FacturaFiscalController.UpdateFactura: {ex.Message} - {ex.StackTrace}", 1);
+                return Json(new { success = false, message = "Error al actualizar la factura." });
+            }
+        }
+
         [HttpPost]
         public JsonResult GetAll(int? tipo = null, int? tipoComprobante = null, string proveedorId = null, string clienteId = null, string cuit = null, int? estado = null, string fechaDesde = null, string fechaHasta = null, string busqueda = null)
         {
