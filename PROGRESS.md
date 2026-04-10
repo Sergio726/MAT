@@ -2,6 +2,46 @@
 
 ---
 
+### [2026-04-10] — Códigos de confirmación en BD (PersonaCliente)
+
+- Archivos modificados:
+  - `MAT.DB/dbo/Tables/SistemaParametro.sql` (nueva tabla)
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_SistemaParametro_GetByClave.sql`, `GetAll.sql`, `Insert.sql`, `Update.sql`, `Toggle.sql`
+  - `MAT.DB/MAT.DB.sqlproj` (agregados tabla y SPs)
+  - `database/2026-04-10_SistemaParametro_Migration.sql` (script de migración con datos iniciales)
+  - `MAT.MVC/Models/SistemaParametroItem.cs` (nuevo modelo)
+  - `MAT.MVC/Infrastructure/SistemaParametroHelper.cs` (helper con caché de 5 min)
+  - `MAT.MVC/Controllers/PersonaCliente/PersonaClienteController.cs` (validación vía helper en `EliminarVenta` y `EliminarPasajeroDeFactura`)
+  - `MAT.MVC/Controllers/Admin/AdminController.cs` (acciones CRUD JSON + vista)
+  - `MAT.MVC/Views/Admin/SistemaParametros.cshtml` (nueva vista con DataTable + modal Bootstrap 5)
+  - `MAT.MVC/Views/Admin/Index.cshtml` (enlace en sección Sistema)
+  - `MAT.MVC/MAT.MVC.csproj` (agregados archivos nuevos)
+- Qué se implementó:
+  - Tabla `SistemaParametro` con clave única, valor, descripción, estado y fechas.
+  - 5 SPs para CRUD + uno de búsqueda.
+  - Datos iniciales: `Tinto.29` y `Martes.2025` (claves `CodigoConfirmacion_1` y `_2`).
+  - Helper con caché en memoria (5 min) para validar códigos sin golpear BD en cada request.
+  - Controller `PersonaCliente` ahora usa `SistemaParametroHelper.ValidarCodigo()` en lugar de `ConfigurationManager.AppSettings`.
+  - UI Admin para gestionar códigos (listado, crear, editar, activar/desactivar).
+  - Panel Admin linkeable desde `/Admin/SistemaParametros`.
+- Problemas encontrados: Ninguno — MSBuild limpio (solo warnings preexistentes).
+- Estado: ✅ completo
+
+---
+
+### [2026-04-10] — Sincronización documento VISTAS_PENDIENTES_ACTUALIZACION.md
+
+- Archivos modificados: `DOCUMENTACION/VISTAS_PENDIENTES_ACTUALIZACION.md`, `SPEC.md`
+- Qué se implementó: Auditoría completa de vistas ⏳ del documento vs código real:
+  - PasajeroViaje (Manifiesto, ListadoSimple, ListadoSimpleToExport): modernas, sin glyphicons
+  - PersonaCliente (todas las vistas): modernas, sin BS2/glyphicons
+  - Admin/ServiciosAdmin*: no existen en repositorio (marcadas 🗑️)
+  - Admin/HistorialPrecios: no existe (marcado 🗑️)
+  - Actualizado resumen: 100% completado (~144 vistas)
+- Estado: ✅ completo
+
+---
+
 ### [2026-04-09] — Tests unitarios `ReportesQueryHelper` (NUnit)
 
 - Archivos modificados: `MAT.sln`, `MAT.MVC.Tests\` (nuevo: `.csproj`, `packages.config`, `Properties\AssemblyInfo.cs`, `Infrastructure\ReportesQueryHelperTests.cs`), `packages\NUnit.3.14.0\`, `packages\NUnit3TestAdapter.4.6.0\`

@@ -335,6 +335,7 @@
     <Compile Include="Infrastructure\ReportesQueryHelper.cs" />
     <Compile Include="Infrastructure\ReportesQueryParseResult.cs" />
     <Compile Include="Infrastructure\RequestContext.cs" />
+    <Compile Include="Infrastructure\SistemaParametroHelper.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -408,6 +409,7 @@
     <Compile Include="Models\ResumenPlanillaModel.cs" />
     <Compile Include="Models\ResumenPlanillaPrintModel.cs" />
     <Compile Include="Models\SearchModel.cs" />
+    <Compile Include="Models\SistemaParametroItem.cs" />
     <Compile Include="Models\SeleccionarPasajeroModel.cs" />
     <Compile Include="Models\ServicioModel.cs" />
     <Compile Include="Models\TransporteModel.cs" />

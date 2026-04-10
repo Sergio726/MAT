@@ -1166,10 +1166,10 @@ namespace MAT.MVC.Controllers.PersonaCliente
         [HttpPost]
         public bool EliminarVenta(Guid facturaid, Guid clienteid, string code)
         {
-            string Code1 = System.Configuration.ConfigurationManager.AppSettings["PersonaClienteCode"];
-            string Code2 = System.Configuration.ConfigurationManager.AppSettings["PersonaClienteCode2"];
-
-            if (!(code.Equals(Code1) || code.Equals(Code2))) return false;
+            if (!SistemaParametroHelper.ValidarCodigo(code))
+            {
+                return false;
+            }
                     
             bool result = false;
             try
@@ -1205,11 +1205,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             string[] sResult = new string[2];
             try
             {
-                // Validar código de seguridad contra valores configurados en Web.config
-                var code1 = ConfigurationManager.AppSettings["PersonaClienteCode"];
-                var code2 = ConfigurationManager.AppSettings["PersonaClienteCode2"];
-                
-                if (string.IsNullOrWhiteSpace(code) || !(code.Equals(code1) || code.Equals(code2)))
+                if (!SistemaParametroHelper.ValidarCodigo(code))
                 {
                     sResult[0] = "Error.";
                     sResult[1] = "Código de seguridad incorrecto. Verifique el código ingresado.";

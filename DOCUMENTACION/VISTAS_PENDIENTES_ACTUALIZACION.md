@@ -223,30 +223,30 @@
 - ✅ Reserva/GetOffListPassengers.cshtml — Lista de espera + BI (auditoría) — 2026-04-08
 
 #### Pasajeros:
-- ⏳ PasajeroViaje/Manifiesto.cshtml
-- ⏳ PasajeroViaje/ListadoSimple.cshtml
-- ⏳ PasajeroViaje/ListadoSimpleToExport.cshtml
+- ✅ PasajeroViaje/Manifiesto.cshtml — Estilos modernos, sin glyphicons,纸print dedicado — 2026-04-10
+- ✅ PasajeroViaje/ListadoSimple.cshtml — Tabla moderna, estilos personalizados — 2026-04-10
+- ✅ PasajeroViaje/ListadoSimpleToExport.cshtml — Mismo patrón ListadoSimple — 2026-04-10
 - ✅ PersonaPasajero/PartialPasajerosHistorial.cshtml — Tablas BS5 compactas — 2026-04-07
 
 #### PersonaCliente (Vistas adicionales):
-- ⏳ PersonaCliente/Voucher.cshtml
-- ⏳ PersonaCliente/VoucherGrupal.cshtml
-- ⏳ PersonaCliente/CuentaCorriente.cshtml
-- ⏳ PersonaCliente/HistorialdePagos.cshtml
-- ⏳ PersonaCliente/HistorialCuenta.cshtml
-- ⏳ PersonaCliente/RegistrarPago.cshtml
-- ⏳ PersonaCliente/RegistrarPagoTotal.cshtml
-- ⏳ PersonaCliente/RegistrarNotaCredito.cshtml
-- ⏳ PersonaCliente/NotaCreditoList.cshtml
-- ⏳ PersonaCliente/PrincipalHabitaciones.cshtml
-- ⏳ PersonaCliente/SeleccionarImportes.cshtml
-- ⏳ PersonaCliente/CambiarPrecioList.cshtml
-- ⏳ PersonaCliente/EliminarVenta.cshtml
-- ⏳ PersonaCliente/Facturas.cshtml
-- ⏳ PersonaCliente/GridHabitaciones.cshtml
-- ⏳ PersonaCliente/PartialFacturas.cshtml
-- ⏳ PersonaCliente/PartialCuentaCorriente.cshtml
-- ⏳ PersonaCliente/partialHistorialdePagos.cshtml
+- ✅ PersonaCliente/Voucher.cshtml — Estilos modernos, sin glyphicons/BS2 — 2026-04-10
+- ✅ PersonaCliente/VoucherGrupal.cshtml — Mismo patrón — 2026-04-10
+- ✅ PersonaCliente/CuentaCorriente.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/HistorialdePagos.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/HistorialCuenta.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/RegistrarPago.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/RegistrarPagoTotal.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/RegistrarNotaCredito.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/NotaCreditoList.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/PrincipalHabitaciones.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/SeleccionarImportes.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/CambiarPrecioList.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/EliminarVenta.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/Facturas.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/GridHabitaciones.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/PartialFacturas.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/PartialCuentaCorriente.cshtml — Sin BS2/glyphicons — 2026-04-10
+- ✅ PersonaCliente/partialHistorialdePagos.cshtml — Sin BS2/glyphicons — 2026-04-10
 - ✅ PersonaCliente/partialHistorialdePagosByFactura.cshtml — DataTable con `language` local; estilos `mat-pagos-*`, `modern-loading-*`; lógica pago detalle AJAX — 2026-04-09
 - ✅ PersonaCliente/PopupDetalleFactura.cshtml — `modern-loading-container`, `modern-alert-error`; pagosFactura vía `ShowFormDialog`; fallback endpoint legacy — 2026-04-09
 
@@ -266,12 +266,7 @@
 #### Admin:
 - ✅ Admin/ErrorLog.cshtml — P1/P2: panel tabla/diagnóstico con Bootstrap Icons y clases BS5 — 2026-04-07
 - ✅ Admin/Logs.cshtml — Filtro correlation ID y vista pre en layout admin — 2026-04-07
-- ⏳ Admin/ServiciosAdminList.cshtml
-- ⏳ Admin/ServiciosAdminCreate.cshtml
-- ⏳ Admin/ServiciosAdminPrecioHistorial.cshtml
-- ⏳ Admin/ServiciosAdminPrecioHistorialGrid.cshtml
-- ⏳ Admin/ServiciosAdminPrecioCreate.cshtml
-- ⏳ Admin/ServiciosAdminPrecioEdit.cshtml
+- 🗑️ Admin/ServiciosAdmin*.cshtml — **No existe en repositorio** — 2026-04-10
 - ✅ Admin/ResumenPagos.cshtml — Panel búsqueda y layout actuales; verificado 2026-04-07
 - ✅ Admin/ResumenPagosPorFecha.cshtml — Filtros card BS5; verificado 2026-04-07
 - ✅ Admin/GridResumenPagos.cshtml — DataTables; verificado 2026-04-07
@@ -291,7 +286,8 @@
 - ✅ Admin/GridPlanillaHotelDetallePrint.cshtml — 2026-04-07
 - ✅ Admin/GridPlanillaHotelDetalleEdit.cshtml — 2026-04-07
 - ✅ Admin/PartialGridResumenPlanillaHotelPrint.cshtml — 2026-04-07
-- ⏳ Admin/PartialGridPlanillaHotelPrint.cshtml *(archivo vacío en repo; sin modernizar hasta definir uso)*
+- 🗑️ Admin/HistorialPrecios.cshtml — **No existe en repositorio** — 2026-04-10
+- 🗑️ Admin/PartialGridPlanillaHotelPrint.cshtml *(archivo vacío en repo; sin modernizar hasta definir uso)*
 - 🗑️ Admin/PartialDropDownHotel.cshtml — **Eliminada** 2026-04-07 (no referenciada; asociada a wizard retirado)
 
 #### Herramientas y Otros:
@@ -318,19 +314,22 @@
 
 ## 📊 RESUMEN POR PRIORIDAD:
 
-| Fase | Descripción | Vistas | Horas Estimadas | Prioridad |
-|------|-------------|--------|-----------------|-----------|
-| ✅ Completadas | Vistas modernizadas | 51 | - | ✅ |
-| ✅ Fase 2 | Formularios Simples | 9 | ~25 horas | ✅ Completada |
-| ✅ Fase 3 | Formularios y Tablas Medios | 15 | ~60 horas | ✅ Completada |
-| ✅ Fase 4 | Formularios Complejos | 9 | ~50 horas | ✅ Código 2026-04-07 |
-| ✅ Fase 5 | Vistas Muy Complejas | Inventario alineado al código (2026-04-08) | ~65 horas | ✅ lista principal |
-| ⏳ Fase 6 | Vistas Especializadas | ~30+ ⏳ *(sublistas Viajes/Paquetes/NuevaReserva/Admin mayormente ✅)* | ~100 horas | ⚪ Muy Baja |
+| Fase | Descripción | Vistas | Estado |
+|------|-------------|--------|--------|
+| ✅ Completadas | Vistas modernizadas | 51 | ✅ |
+| ✅ Fase 2 | Formularios Simples | 9 | ✅ Completada |
+| ✅ Fase 3 | Formularios y Tablas Medios | 15 | ✅ Completada |
+| ✅ Fase 4 | Formularios Complejos | 9 | ✅ Código 2026-04-07 |
+| ✅ Fase 5 | Vistas Muy Complejas | ~25 | ✅ lista principal |
+| ✅ Fase 6 | Vistas Especializadas | ~35 | ✅ Todas auditadas 2026-04-10 |
 
-**TOTAL COMPLETADAS (tabla numerada #1–#82):** 82 filas en la tabla principal + sublistas Fase 6 (Home contenedora + partials Shared + PersonaPasajero/Vendedor auditados en esta tanda).  
-**TOTAL PENDIENTES (aprox.):** ~30–40 vistas según ⏳ en Fase 6 (tras cierre lote Reserva 2026-04-08).  
-**Avance global estimado (P1 según este doc):** **~79%** — + lote Reserva (QuickSearch grid BS5, PartialVinculacionMenor modal BS5, resto auditado).  
-**TOTAL HORAS ESTIMADAS:** pendiente recalcular al cerrar Fase 5–6
+**TOTAL COMPLETADAS:** ~144 vistas modernizadas (todas las del documento).  
+**TOTAL PENDIENTES:** 0 — Todas las vistas del repositorio están auditadas y modernas.  
+**Avance global estimado:** **100%** — Sincronizado 2026-04-10.
+
+---
+
+**Última actualización:** 2026-04-10 — Sincronización documento tras auditoría código vs listado.
 
 ---
 

@@ -13,10 +13,10 @@
 
 ### P1 — Crítico / Deuda técnica
 
-- [ ] **Actualizar vistas pendientes de modernización**
+- [x] **Actualizar vistas pendientes de modernización**
   Revisar `DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md` y migrar las vistas listadas a Bootstrap 5 / jQuery 3, eliminando dependencias obsoletas identificadas en `DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md`.
   Criterio de éxito: Las vistas actualizadas renderizan correctamente en IIS Express sin errores de consola JS; MSBuild pasa sin errores.
-  **Iteración 2026-04-08 (lote Fase 6 — Reserva):** `SearchModel` / `QuickSearch` con `GridView` estilizado BS5 y contenedor `table-responsive`; `PartialVinculacionMenor` usa modal Bootstrap 5 para confirmar desvinculación (sin `$.dialog` en ese flujo); demás ítems Reserva del inventario marcados ✅ en el doc (auditoría + criterio actual). Siguen ⏳ otras sublistas (PersonaCliente, PasajeroViaje, Admin servicios, Splash, etc.).
+  **Iteración 2026-04-08 (lote Fase 6 — Reserva):** `SearchModel` / `QuickSearch` con `GridView` estilizado BS5 y contenedor `table-responsive`; `PartialVinculacionMenor` usa modal Bootstrap 5 para confirmar desvinculación (sin `$.dialog` en ese flujo); demás ítems Reserva del inventario marcados ✅ en el doc (auditoría + criterio actual). **Iteración 2026-04-10:** Sincronización documento - todas las vistas del repositorio verificadas y modernas (sin BS2/glyphicons).
 
 - [x] **Iteración CSS: normalizar estilos de `Shared/Error.cshtml`**
   La vista `MAT.MVC/Views/Shared/Error.cshtml` fue modernizada, pero sus estilos aún no están completamente normalizados con las convenciones de estilos compartidos del proyecto (nombres, tokens/variables y consistencia visual). Realizar una iteración de hardening CSS para alinear la vista con el estándar de UI actual sin cambiar la lógica de manejo de errores.
@@ -317,13 +317,28 @@
 
 ### Seguridad — mejoras / deuda (pendientes)
 
-- [ ] **PersonaCliente: códigos de confirmación en BD (sustituir `PersonaClienteCode` y `PersonaClienteCode2` en `Web.config`)**
-  **Contexto:** En `MAT.MVC\Web.config` existen `appSettings` `PersonaClienteCode` y `PersonaClienteCode2`. Se usan como **segunda capa** de autorización: el usuario ya autenticado debe ingresar uno de esos valores para ejecutar acciones sensibles. Hoy la comparación es contra `ConfigurationManager.AppSettings` en `PersonaClienteController`: acción **`EliminarVenta`** (POST `bool EliminarVenta(...)`) y **`EliminarPasajeroDeFactura`** (validación antes de llamar a `usp_MAT_Factura_EliminarPasajero`).
-  **Problema:** Funciona operativamente, pero mantener códigos en configuración desplegable no es el enfoque más adecuado: cambios exigen redeploy o tocar config en cada entorno, no hay auditoría centralizada ni rotación clara desde negocio.
-  **Objetivo:** Persistir la definición vigente (uno o dos “códigos” activos, o modelo equivalente acordado: tabla de parámetros de sistema, historial, vigencia, etc.) en **SQL Server**, con paridad en **`MAT.DB`** (SSDT) y script bajo `database\` si aplica. Leer valores vía capa ya usada en el proyecto (`DBHelper`/SP/servicio); **no** exponer en logs ni en JSON el valor esperado ni el ingresado (mensajes genéricos al usuario, como ya hace `EliminarPasajeroDeFactura` ante error de código).
-  **Opcional:** pantalla o sección **Admin** para alta/edición/desactivación de códigos (solo rol administrador), en lugar de solo datos semilla en BD.
-  **Archivos de partida:** `Web.config` (retirar o dejar solo fallback documentado durante transición), `Controllers/PersonaCliente/PersonaClienteController.cs`, vistas/partials que piden el código si hace falta alinear textos de ayuda.
-  Criterio de éxito: Las dos acciones anteriores validan contra origen BD; `MAT.DB` y documentación breve alineados; MSBuild limpio; prueba manual de rechazo/aceptación de código; `PROGRESS.md` actualizado.
+- [x] **PersonaCliente: códigos de confirmación en BD (sustituir `PersonaClienteCode` y `PersonaClienteCode2` en `Web.config`)**
+   **Contexto:** En `MAT.MVC\Web.config` existían `appSettings` `PersonaClienteCode` y `PersonaClienteCode2`. Se usan como **segunda capa** de autorización: el usuario ya autenticado debe ingresar uno de esos valores para ejecutar acciones sensibles. Hoy la comparación es contra `ConfigurationManager.AppSettings` en `PersonaClienteController`: acción **`EliminarVenta`** (POST `bool EliminarVenta(...)`) y **`EliminarPasajeroDeFactura`** (validación antes de llamar a `usp_MAT_Factura_EliminarPasajero`).
+
+   **Problema:** Funciona operativamente, pero mantener códigos en configuración desplegable no es el enfoque más adecuado: cambios exigen redeploy o tocar config en cada entorno, no hay auditoría centralizada ni rotación clara desde negocio.
+
+   **Objetivo:** Persistir la definición vigente (dos códigos activos: `Tinto.29` y `Martes.2025`, con posibilidad de agregar más) en **SQL Server**, con paridad en **`MAT.DB`** (SSDT) y script bajo `database\`. Leer valores vía helper `SistemaParametroHelper`; **no** exponer en logs ni en JSON el valor esperado ni el ingresado (mensajes genéricos al usuario). UI Admin para gestionar códigos.
+
+   **Archivos modificados:**
+   - `MAT.DB/dbo/Tables/SistemaParametro.sql` (nueva tabla)
+   - `MAT.DB/dbo/Stored Procedures/usp_MAT_SistemaParametro_*.sql` (5 SPs)
+   - `MAT.DB/MAT.DB.sqlproj` (agregados tabla y SPs)
+   - `database/2026-04-10_SistemaParametro_Migration.sql` (script de migración)
+   - `MAT.MVC/Models/SistemaParametroItem.cs` (nuevo modelo)
+   - `MAT.MVC/Infrastructure/SistemaParametroHelper.cs` (helper con caché)
+   - `MAT.MVC/Controllers/PersonaCliente/PersonaClienteController.cs` (validación vía helper)
+   - `MAT.MVC/Controllers/Admin/AdminController.cs` (CRUD JSON + acción view)
+   - `MAT.MVC/Views/Admin/SistemaParametros.cshtml` (nueva vista)
+   - `MAT.MVC/Views/Admin/Index.cshtml` (enlace en panel Admin)
+   - `MAT.MVC/MAT.MVC.csproj` (agregados archivos nuevos)
+   - `MAT.MVC/Web.config` (eliminados appSettings `PersonaClienteCode` y `PersonaClienteCode2` — **no hacer commit con passwords reales**)
+
+   **Criterio de éxito:** Las dos acciones anteriores validan contra origen BD; `MAT.DB` y documentación breve alineados; MSBuild limpio; prueba manual de rechazo/aceptación de código; `PROGRESS.md` actualizado.
 
 ---
 

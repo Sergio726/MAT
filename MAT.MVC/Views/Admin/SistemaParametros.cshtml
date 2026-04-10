@@ -1,0 +1,167 @@
+@model IEnumerable<MAT.MVC.Models.SistemaParametroItem>
+@{
+    ViewBag.Title = "Códigos de Confirmación";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="modern-page-container">
+    <div class="modern-page-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h2 class="modern-page-title mb-0">
+            <i class="bi bi-shield-lock"></i>
+            <span>Códigos de Confirmación</span>
+        </h2>
+        <button type="button" class="btn-modern btn-modern-primary" data-bs-toggle="modal" data-bs-target="#parametroModal" onclick="limpiarFormulario()">
+            <i class="bi bi-plus-circle"></i>
+            <span>Nuevo código</span>
+        </button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Error as string))
+    {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">@ViewBag.Error</div>
+    }
+
+    <div class="modern-table-container mt-3">
+        <div class="table-responsive">
+            <table id="tblParametros" class="modern-table table table-striped align-middle w-100">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Clave</th>
+                        <th>Valor</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
+                        <th>Fecha Creación</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-id="@item.Id">
+                            <td>@item.Id</td>
+                            <td><code>@item.Clave</code></td>
+                            <td><span class="badge bg-secondary">••••••••</span></td>
+                            <td>@item.Descripcion</td>
+                            <td>
+                                @if (item.EstaActivo)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                }
+                            </td>
+                            <td>@item.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="text-end">
+                                <button type="button" class="btn btn-outline-primary btn-sm" title="Editar" onclick="editarParametro(@item.Id, '@item.Clave', '@item.Valor', '@item.Descripcion')">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" title="@(item.EstaActivo ? "Desactivar" : "Activar")" onclick="toggleParametro(@item.Id)">
+                                    <i class="bi @(item.EstaActivo ? "bi-toggle-on" : "bi-toggle-off")"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="parametroModal" tabindex="-1" aria-labelledby="parametroModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="parametroModalLabel">Nuevo Código de Confirmación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form id="parametroForm">
+                <div class="modal-body">
+                    <input type="hidden" id="parametroId" name="Id" value="0" />
+                    <div class="mb-3">
+                        <label for="parametroClave" class="form-label">Clave</label>
+                        <input type="text" class="form-control" id="parametroClave" name="Clave" required placeholder="Ej: CodigoConfirmacion_3" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="parametroValor" class="form-label">Código</label>
+                        <input type="text" class="form-control" id="parametroValor" name="Valor" required placeholder="Ingrese el código" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="parametroDescripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="parametroDescripcion" name="Descripcion" rows="2" placeholder="Descripción opcional"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            if ($.fn.DataTable.isDataTable('#tblParametros')) {
+                $('#tblParametros').DataTable().destroy();
+            }
+            $('#tblParametros').DataTable({
+                language: {
+                    url: '/Scripts/dataTable/i18n/Spanish.json'
+                },
+                order: [[0, 'desc']],
+                pageLength: 25
+            });
+        });
+
+        function limpiarFormulario() {
+            $('#parametroId').val('0');
+            $('#parametroClave').val('');
+            $('#parametroValor').val('');
+            $('#parametroDescripcion').val('');
+            $('#parametroModalLabel').text('Nuevo Código de Confirmación');
+        }
+
+        function editarParametro(id, clave, valor, descripcion) {
+            $('#parametroId').val(id);
+            $('#parametroClave').val(clave);
+            $('#parametroValor').val(valor);
+            $('#parametroDescripcion').val(descripcion || '');
+            $('#parametroModalLabel').text('Editar Código de Confirmación');
+            var modal = new bootstrap.Modal(document.getElementById('parametroModal'));
+            modal.show();
+        }
+
+        function toggleParametro(id) {
+            if (!confirm('¿Está seguro de cambiar el estado de este código?')) return;
+            $.post('/Admin/SistemaParametroToggle', { id: id, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() }, function (res) {
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert(res.message || 'Error al cambiar estado');
+                }
+            }).fail(function () {
+                alert('Error de conexión');
+            });
+        }
+
+        $('#parametroForm').submit(function (e) {
+            e.preventDefault();
+            var id = $('#parametroId').val();
+            var url = id === '0' || id === 0 ? '/Admin/SistemaParametroSave' : '/Admin/SistemaParametroUpdate';
+            var data = $(this).serialize();
+            $.post(url, data, function (res) {
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert(res.message || 'Error al guardar');
+                }
+            }).fail(function () {
+                alert('Error de conexión');
+            });
+        });
+    </script>
+}

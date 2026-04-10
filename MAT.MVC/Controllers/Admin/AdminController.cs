@@ -1186,5 +1186,171 @@ namespace MAT.MVC.Controllers.Admin
             // Devolver el array directamente; Json() ya serializa (evita doble JSON string).
             return Json(listFactura, JsonRequestBehavior.AllowGet);
         }
+
+        [Authorize]
+        public ActionResult SistemaParametros()
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return redir;
+
+            var items = new List<SistemaParametroItem>();
+            try
+            {
+                using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_SistemaParametro_GetAll", null))
+                {
+                    while (reader.Read())
+                    {
+                        items.Add(new SistemaParametroItem
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Clave = reader["Clave"]?.ToString() ?? "",
+                            Valor = reader["Valor"]?.ToString() ?? "",
+                            Descripcion = reader["Descripcion"]?.ToString() ?? "",
+                            EstaActivo = reader["EstaActivo"] != DBNull.Value && Convert.ToBoolean(reader["EstaActivo"]),
+                            FechaCreacion = reader["FechaCreacion"] != DBNull.Value ? Convert.ToDateTime(reader["FechaCreacion"]) : DateTime.MinValue,
+                            FechaModificacion = reader["FechaModificacion"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["FechaModificacion"]) : null
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.SistemaParametros");
+            }
+
+            return View(items);
+        }
+
+        [Authorize]
+        public JsonResult SistemaParametroJson()
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return Json(new { ok = false, message = "Sin permisos" }, JsonRequestBehavior.AllowGet);
+
+            var items = new List<SistemaParametroItem>();
+            try
+            {
+                using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_SistemaParametro_GetAll", null))
+                {
+                    while (reader.Read())
+                    {
+                        items.Add(new SistemaParametroItem
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+                            Clave = reader["Clave"]?.ToString() ?? "",
+                            Valor = reader["Valor"]?.ToString() ?? "",
+                            Descripcion = reader["Descripcion"]?.ToString() ?? "",
+                            EstaActivo = reader["EstaActivo"] != DBNull.Value && Convert.ToBoolean(reader["EstaActivo"]),
+                            FechaCreacion = reader["FechaCreacion"] != DBNull.Value ? Convert.ToDateTime(reader["FechaCreacion"]) : DateTime.MinValue,
+                            FechaModificacion = reader["FechaModificacion"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["FechaModificacion"]) : null
+                        });
+                    }
+                }
+                return Json(new { ok = true, data = items }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.SistemaParametroJson");
+                return Json(new { ok = false, message = msg }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public JsonResult SistemaParametroSave(SistemaParametroItem model)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return Json(new { ok = false, message = "Sin permisos" });
+
+            if (model == null || string.IsNullOrWhiteSpace(model.Clave) || string.IsNullOrWhiteSpace(model.Valor))
+            {
+                return Json(new { ok = false, message = "Datos incompletos" });
+            }
+
+            try
+            {
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@Clave", SqlDbType.VarChar, 100, model.Clave),
+                    DBHelper.MakeParam("@Valor", SqlDbType.NVarChar, -1, model.Valor),
+                    DBHelper.MakeParam("@Descripcion", SqlDbType.NVarChar, 500, model.Descripcion ?? (object)DBNull.Value)
+                };
+
+                DBHelper.ExecuteNonQuery("dbo.usp_MAT_SistemaParametro_Insert", dbParams);
+                SistemaParametroHelper.ClearCache();
+                return Json(new { ok = true });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.SistemaParametroSave");
+                return Json(new { ok = false, message = msg });
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public JsonResult SistemaParametroUpdate(SistemaParametroItem model)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return Json(new { ok = false, message = "Sin permisos" });
+
+            if (model == null || model.Id <= 0 || string.IsNullOrWhiteSpace(model.Clave) || string.IsNullOrWhiteSpace(model.Valor))
+            {
+                return Json(new { ok = false, message = "Datos incompletos" });
+            }
+
+            try
+            {
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@Id", SqlDbType.Int, 0, model.Id),
+                    DBHelper.MakeParam("@Clave", SqlDbType.VarChar, 100, model.Clave),
+                    DBHelper.MakeParam("@Valor", SqlDbType.NVarChar, -1, model.Valor),
+                    DBHelper.MakeParam("@Descripcion", SqlDbType.NVarChar, 500, model.Descripcion ?? (object)DBNull.Value)
+                };
+
+                DBHelper.ExecuteNonQuery("dbo.usp_MAT_SistemaParametro_Update", dbParams);
+                SistemaParametroHelper.ClearCache();
+                return Json(new { ok = true });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.SistemaParametroUpdate");
+                return Json(new { ok = false, message = msg });
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public JsonResult SistemaParametroToggle(int id)
+        {
+            var redir = RequireAdministrator();
+            if (redir != null) return Json(new { ok = false, message = "Sin permisos" });
+
+            if (id <= 0)
+            {
+                return Json(new { ok = false, message = "ID inválido" });
+            }
+
+            try
+            {
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@Id", SqlDbType.Int, 0, id)
+                };
+
+                DBHelper.ExecuteNonQuery("dbo.usp_MAT_SistemaParametro_Toggle", dbParams);
+                SistemaParametroHelper.ClearCache();
+                return Json(new { ok = true });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.SistemaParametroToggle");
+                return Json(new { ok = false, message = msg });
+            }
+        }
     }
 }
