@@ -14,6 +14,7 @@ namespace MAT.MVC.Infrastructure
     public static class ReportesExcelExport
     {
         private static readonly CultureInfo EsAr = CultureInfo.GetCultureInfo("es-AR");
+        private const string FechaDdMmYyyy = "dd/MM/yyyy";
 
         public static byte[] BuildVentas(IList<ReporteVentaRowDto> rows)
         {
@@ -119,12 +120,12 @@ namespace MAT.MVC.Infrastructure
                 foreach (var row in rows)
                 {
                     SetGuidText(ws.Cells[r, 1], row.FacturaId);
-                    ws.Cells[r, 2].Value = row.Fecha.HasValue ? row.Fecha.Value.ToString("d", EsAr) : "";
+                    ws.Cells[r, 2].Value = row.Fecha.HasValue ? row.Fecha.Value.ToString(FechaDdMmYyyy, EsAr) : "";
                     SetGuidText(ws.Cells[r, 3], row.ClienteId);
                     ws.Cells[r, 4].Value = row.ClienteFullName;
                     SetGuidText(ws.Cells[r, 5], row.ViajeId);
                     ws.Cells[r, 6].Value = row.ViajeDescripcion;
-                    ws.Cells[r, 7].Value = row.ViajeFechaSalida.HasValue ? row.ViajeFechaSalida.Value.ToString("d", EsAr) : "";
+                    ws.Cells[r, 7].Value = row.ViajeFechaSalida.HasValue ? row.ViajeFechaSalida.Value.ToString(FechaDdMmYyyy, EsAr) : "";
                     ws.Cells[r, 8].Value = row.CantidadPasajesXFactura;
                     ws.Cells[r, 9].Value = row.CantViajesCompradosXCliente;
                     ws.Cells[r, 10].Value = row.CantPasajesCompradosXCliente;

@@ -378,6 +378,7 @@ body.admin-modern .ui-datepicker {
   font-size: 0.875rem;
   z-index: 1055 !important;
   background: #fff;
+  overflow: visible;
 }
 
 body.admin-modern .ui-datepicker .ui-datepicker-header {
@@ -388,25 +389,35 @@ body.admin-modern .ui-datepicker .ui-datepicker-header {
   border-radius: 11px 11px 0 0;
   background: linear-gradient(180deg, var(--admin-primary-2) 0%, var(--admin-primary) 100%);
   color: #fff;
+  /* El desplegable nativo del mes/año queda fuera del header; no recortar */
+  overflow: visible;
 }
 
 body.admin-modern .ui-datepicker .ui-datepicker-title {
   margin: 0;
-  line-height: 1.5;
+  line-height: normal;
   font-weight: 600;
   font-size: 0.9375rem;
   color: #fff;
 }
 
+/* Selects nativos: texto oscuro y fondo claro para que la lista desplegable sea legible (evita ítems “invisibles” en Windows/Chrome) */
 body.admin-modern .ui-datepicker select.ui-datepicker-month,
 body.admin-modern .ui-datepicker select.ui-datepicker-year {
   margin: 0 0.15rem;
-  padding: 0.2rem 0.35rem;
+  padding: 0.2rem 0.45rem;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  background: #fff;
+  color: #0f172a;
   font-weight: 600;
+  font-size: 0.8125rem;
+  line-height: normal;
+  height: auto;
+  min-height: 1.75rem;
+  vertical-align: middle;
+  appearance: auto;
+  -webkit-appearance: menulist;
 }
 
 body.admin-modern .ui-datepicker .ui-datepicker-prev,

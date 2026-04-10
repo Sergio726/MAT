@@ -42,7 +42,10 @@
             <div class="row g-2 align-items-end mb-2 d-none" id="grpViaje">
                 <div class="col-md-8 col-lg-6">
                     <label class="form-label small mb-0" for="viajeBuscar">Viaje</label>
-                    <input type="text" class="form-control form-control-sm" id="viajeBuscar" placeholder="Escribí al menos 2 letras del nombre del viaje…" autocomplete="off" />
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" id="viajeBuscar" placeholder="Buscá por nombre o abrí la lista reciente…" autocomplete="off" />
+                        <button type="button" class="btn btn-outline-secondary" id="btnViajeLista" title="Últimos 30 viajes por fecha de salida" aria-label="Abrir lista de viajes recientes"><i class="bi bi-chevron-down" aria-hidden="true"></i></button>
+                    </div>
                     <input type="hidden" id="viajeId" value="" />
                 </div>
             </div>
@@ -75,6 +78,78 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="reporteRankingIndicadores" class="d-none mb-3" aria-live="polite">
+        <h2 class="h6 fw-bold text-primary mb-3">Resumen de la consulta</h2>
+        <p class="small text-secondary mb-3">Totales sobre el resultado del servidor (no cambian al filtrar cliente o viaje en la tabla).</p>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-5 g-3">
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="small fw-semibold text-body-secondary">Registros</span>
+                            <span class="rounded-circle bg-secondary bg-opacity-10 text-secondary p-2"><i class="bi bi-list-ul"></i></span>
+                        </div>
+                        <p class="fs-4 fw-bold mb-0" id="indRankFilas">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="small fw-semibold text-body-secondary">Clientes distintos</span>
+                            <span class="rounded-circle bg-primary bg-opacity-10 text-primary p-2"><i class="bi bi-people"></i></span>
+                        </div>
+                        <p class="fs-4 fw-bold mb-0" id="indRankClientes">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="small fw-semibold text-body-secondary">Viajes distintos</span>
+                            <span class="rounded-circle bg-success bg-opacity-10 text-success p-2"><i class="bi bi-geo-alt"></i></span>
+                        </div>
+                        <p class="fs-4 fw-bold mb-0" id="indRankViajes">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="small fw-semibold text-body-secondary">Facturas distintas</span>
+                            <span class="rounded-circle bg-warning bg-opacity-10 text-warning p-2"><i class="bi bi-receipt"></i></span>
+                        </div>
+                        <p class="fs-4 fw-bold mb-0" id="indRankFacturas">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="small fw-semibold text-body-secondary">Mejor rank. viajes</span>
+                            <span class="rounded-circle bg-info bg-opacity-10 text-info p-2"><i class="bi bi-trophy"></i></span>
+                        </div>
+                        <p class="fs-4 fw-bold mb-0" id="indRankMejorViaje">—</p>
+                        <p class="small text-secondary mb-0">Menor número = viaje más “popular” según la métrica del sistema</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rankingLeyenda" class="alert alert-light border small mb-3 d-none" role="note">
+        <p class="fw-semibold mb-2"><i class="bi bi-info-circle"></i> Cómo leer el ranking</p>
+        <ul class="mb-0 ps-3">
+            <li><strong>Clientes viaje:</strong> cantidad de <em>filas de factura</em> del resultado asociadas a ese viaje (no es cantidad de clientes únicos). El nombre en base de datos puede sugerir otra cosa.</li>
+            <li><strong>Rank. viajes:</strong> posición del viaje según ese valor (ranking denso en base de datos, orden descendente): el número <strong>1</strong> corresponde a los viajes con el valor más alto.</li>
+            <li><strong>Rank. clientes:</strong> posición del cliente según cuántos viajes distintos compró en el conjunto filtrado (mismo tipo de ranking denso).</li>
+        </ul>
     </div>
 
     <div class="modern-table-container">
@@ -113,7 +188,8 @@ $(function () {
         window.MatReportes.initViajeAutocomplete({
             urlBuscarViajes: urlBuscarViajes,
             inputSearch: "#viajeBuscar",
-            inputHidden: "#viajeId"
+            inputHidden: "#viajeId",
+            buttonLista: "#btnViajeLista"
         });
     }
 
@@ -138,16 +214,70 @@ $(function () {
         if (t) { $a.text(t).removeClass("d-none"); } else { $a.addClass("d-none").text(""); }
     }
 
+    var fmtSoloFecha = new Intl.DateTimeFormat("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+    function parseToDate(val) {
+        if (val == null || val === "") return null;
+        if (Object.prototype.toString.call(val) === "[object Date]" && !isNaN(val.getTime())) return val;
+        if (typeof val === "string") {
+            var d = new Date(val);
+            if (!isNaN(d.getTime())) return d;
+        }
+        if (typeof val === "number") {
+            var d2 = new Date(val);
+            if (!isNaN(d2.getTime())) return d2;
+        }
+        return null;
+    }
+
+    function cellSoloFecha(val) {
+        var d = parseToDate(val);
+        return d ? fmtSoloFecha.format(d) : "";
+    }
+
+    function renderIndicadoresRanking(rows) {
+        var $box = $("#reporteRankingIndicadores");
+        var $leg = $("#rankingLeyenda");
+        if (!rows || rows.length === 0) {
+            $box.addClass("d-none");
+            $leg.addClass("d-none");
+            return;
+        }
+        var setC = {};
+        var setV = {};
+        var setF = {};
+        var minRankViajes = null;
+        var i, r, n;
+        for (i = 0; i < rows.length; i++) {
+            r = rows[i];
+            if (r.clienteId) setC[r.clienteId] = 1;
+            if (r.viajeId) setV[r.viajeId] = 1;
+            if (r.facturaId) setF[r.facturaId] = 1;
+            if (r.rankingViajes != null && r.rankingViajes !== "") {
+                n = parseInt(r.rankingViajes, 10);
+                if (!isNaN(n)) minRankViajes = minRankViajes === null ? n : Math.min(minRankViajes, n);
+            }
+        }
+        $("#indRankFilas").text(String(rows.length));
+        $("#indRankClientes").text(String(Object.keys(setC).length));
+        $("#indRankViajes").text(String(Object.keys(setV).length));
+        $("#indRankFacturas").text(String(Object.keys(setF).length));
+        $("#indRankMejorViaje").text(minRankViajes !== null ? String(minRankViajes) : "—");
+        $box.removeClass("d-none");
+        $leg.removeClass("d-none");
+    }
+
     function renderTable(rows) {
+        renderIndicadoresRanking(rows || []);
         var $tbl = $("#tblReporte");
         if (dt) { dt.destroy(); $tbl.empty(); }
         dt = $tbl.DataTable({
             data: rows || [],
             columns: [
-                { data: "fecha",                          title: "Fecha" },
+                { data: "fecha", title: "Fecha", render: function (d) { return cellSoloFecha(d); } },
                 { data: "clienteFullName",                title: "Cliente" },
                 { data: "viajeDescripcion",               title: "Viaje" },
-                { data: "viajeFechaSalida",               title: "F. salida" },
+                { data: "viajeFechaSalida", title: "F. salida", render: function (d) { return cellSoloFecha(d); } },
                 { data: "cantidadPasajesXFactura",        title: "Pasajes x fact." },
                 { data: "cantViajesCompradosXCliente",    title: "Viajes cl." },
                 { data: "cantPasajesCompradosXCliente",   title: "Pasajes cl." },
@@ -178,6 +308,8 @@ $(function () {
 
     $("#btnBuscar").on("click", function () {
         showErr("");
+        $("#reporteRankingIndicadores").addClass("d-none");
+        $("#rankingLeyenda").addClass("d-none");
         $.getJSON(urlJson, queryParams()).done(function (res) {
             if (!res.ok) { showErr(res.message || "Error"); return; }
             renderTable(res.data);

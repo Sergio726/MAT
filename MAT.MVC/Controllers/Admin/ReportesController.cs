@@ -160,24 +160,30 @@ namespace MAT.MVC.Controllers.Admin
         }
 
         /// <summary>
-        /// Autocompletar de viajes por nombre (reportes Admin). Mínimo 2 caracteres.
+        /// Autocompletar de viajes por nombre (reportes Admin). Mínimo 2 caracteres, salvo <paramref name="recent"/> (últimos 30 por fecha salida).
         /// </summary>
         [HttpGet]
-        public ActionResult BuscarViajes(string q)
+        public ActionResult BuscarViajes(string q, bool recent = false)
         {
             var denied = JsonRequireAdministrator();
             if (denied != null) return denied;
 
-            var term = (q ?? string.Empty).Trim();
-            if (term.Length < 2)
-                return JsonMessage(ok: true, message: null, data: new List<ReporteViajeLookupDto>());
-
-            if (term.Length > 200)
-                term = term.Substring(0, 200);
-
             try
             {
-                var list = LoadViajesBusqueda(term);
+                if (recent)
+                {
+                    var listRecent = LoadViajesBusqueda(null, recentOnly: true);
+                    return JsonMessage(ok: true, message: null, data: listRecent);
+                }
+
+                var term = (q ?? string.Empty).Trim();
+                if (term.Length < 2)
+                    return JsonMessage(ok: true, message: null, data: new List<ReporteViajeLookupDto>());
+
+                if (term.Length > 200)
+                    term = term.Substring(0, 200);
+
+                var list = LoadViajesBusqueda(term, recentOnly: false);
                 return JsonMessage(ok: true, message: null, data: list);
             }
             catch (Exception ex)
@@ -338,23 +344,29 @@ namespace MAT.MVC.Controllers.Admin
                 return ReportesDataReaderMapper.ReadRanking(reader);
         }
 
-        private static List<ReporteViajeLookupDto> LoadViajesBusqueda(string q)
+        private static List<ReporteViajeLookupDto> LoadViajesBusqueda(string q, bool recentOnly)
         {
             var list = new List<ReporteViajeLookupDto>();
+            object qVal = string.IsNullOrEmpty(q) ? (object)DBNull.Value : q;
             var prms = new[]
             {
-                DBHelper.MakeParam("@q", SqlDbType.NVarChar, 200, q)
+                DBHelper.MakeParam("@q", SqlDbType.NVarChar, 200, qVal),
+                DBHelper.MakeParam("@RecentOnly", SqlDbType.Bit, 0, recentOnly)
             };
             using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reportes_BuscarViajes", prms))
             {
                 var ordId = reader.GetOrdinal("ViajeID");
                 var ordDesc = reader.GetOrdinal("Descripcion");
+                var ordFs = reader.GetOrdinal("FechaSalida");
                 while (reader.Read())
                 {
                     list.Add(new ReporteViajeLookupDto
                     {
                         Id = reader.GetGuid(ordId).ToString("D"),
-                        Descripcion = reader.IsDBNull(ordDesc) ? string.Empty : reader.GetString(ordDesc)
+                        Descripcion = reader.IsDBNull(ordDesc) ? string.Empty : reader.GetString(ordDesc),
+                        FechaSalida = reader.IsDBNull(ordFs)
+                            ? null
+                            : reader.GetDateTime(ordFs).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)
                     });
                 }
             }

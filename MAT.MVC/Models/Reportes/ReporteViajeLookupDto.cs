@@ -7,5 +7,7 @@ namespace MAT.MVC.Models.Reportes
     {
         public string Id { get; set; }
         public string Descripcion { get; set; }
+        /// <summary>Fecha de salida del viaje (solo fecha, ISO <c>yyyy-MM-dd</c> en JSON).</summary>
+        public string FechaSalida { get; set; }
     }
 }

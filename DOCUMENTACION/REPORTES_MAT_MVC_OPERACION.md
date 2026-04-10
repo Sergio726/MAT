@@ -28,11 +28,15 @@ Entrada desde **Admin → Índice** (tarjeta “Reportes operativos”) y menú 
 | Ventas | `/Admin/Reportes/Ventas` |
 | Pagos | `/Admin/Reportes/Pagos` |
 | Ranking compras | `/Admin/Reportes/Ranking` |
-| Búsqueda de viajes (autocompletar UI) | `/Admin/Reportes/BuscarViajes?q=texto` |
+| Búsqueda de viajes (autocompletar UI) | `/Admin/Reportes/BuscarViajes?q=texto` o `?recent=true` |
 
 **Respuesta:** JSON con `{ "ok": true|false, "message": "...", "data": [ ... ] }` (propiedades en **camelCase**).
 
-**`BuscarViajes`:** mínimo **2** caracteres en `q`; máximo 30 filas; `data` es `[{ "id": "<guid>", "descripcion": "..." }]`. SP: `usp_MAT_Reportes_BuscarViajes`. Con `q` vacío o de un solo carácter devuelve `ok: true` y `data: []` sin llamar al SP.
+**`BuscarViajes`:**
+- Con **`recent=true`**: lista los **últimos 30** viajes con descripción, ordenados por **fecha de salida** descendente (sin filtro de texto). Útil para el botón “flecha abajo” en la UI.
+- Con **`q`**: mínimo **2** caracteres; búsqueda por nombre (`LIKE`, insensible a acentos); máximo 30 filas.
+- Cada ítem: `{ "id", "descripcion", "fechaSalida" }` (`fechaSalida` en ISO `yyyy-MM-dd`).
+- SP: `usp_MAT_Reportes_BuscarViajes` (`@RecentOnly`, `@q`). Si `q` tiene menos de 2 caracteres y no es `recent`, el controller devuelve `data: []` sin ejecutar el SP.
 
 **Parámetros query** (misma semántica que en `REPORTES_MAT_WEB.md`):
 
@@ -79,8 +83,15 @@ Mismas acciones que arriba, rutas alternativas:
 | Ventas | `[dbo].[usp_MAT_Reportes_Ventas]` |
 | Pagos | `[dbo].[usp_MAT_Reportes_Pagos]` |
 | Ranking | `[dbo].[usp_MAT_Reportes_RankingCompras]` |
+| Búsqueda viajes (Admin) | `[dbo].[usp_MAT_Reportes_BuscarViajes]` |
 
 **Política:** los cambios de esquema van a `MAT.DB` (SSDT) y se documentan; no alterar SP por este módulo salvo requisito acordado.
+
+### Ranking de compras — lectura de columnas (SP `usp_MAT_Reportes_RankingCompras`)
+
+- **`CantClientesEligieronViaje` (UI “Clientes viaje”):** en el SP es `COUNT(ViajeID) OVER (PARTITION BY ViajeID)` sobre el conjunto filtrado: cuenta **filas** (facturas con pasajes a ese viaje), **no** `COUNT(DISTINCT ClienteID)`. El nombre histórico en SQL puede interpretarse mal.
+- **`RankingViajes` (UI “Rank. viajes”):** `DENSE_RANK() OVER (ORDER BY CantClientesEligieronViaje DESC)`. El **1** indica el grupo de viajes con el **mayor** valor de esa métrica (empates comparten rank).
+- **`RankingClientesCompradoresViajes` (UI “Rank. clientes”):** `DENSE_RANK() OVER (ORDER BY CantViajesCompradosXCliente DESC)` sobre el mismo CTE.
 
 **Nota:** el **Home** sigue usando `usp_MAT_Reportes_Ventas` vía `HomeController` para estadísticas; el módulo Admin no reemplaza ese flujo.
 

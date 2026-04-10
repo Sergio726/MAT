@@ -1,23 +1,40 @@
 CREATE PROCEDURE [dbo].[usp_MAT_Reportes_BuscarViajes]
 (
-    @q NVARCHAR(200)
+    @q           NVARCHAR(200) = NULL,
+    @RecentOnly  BIT           = 0
 )
 AS
 /*-- =============================================
   -- Author:    Sebastian Garcia
   -- Create date: 2026-04-09
-  -- Description: Búsqueda ligera de viajes por texto en Descripcion (autocompletar
-  --              en reportes Admin). Máximo 30 filas, orden por FechaSalida desc.
+  -- Description: Búsqueda de viajes para autocompletar reportes Admin. Si @RecentOnly=1,
+  --              devuelve los últimos 30 viajes con descripción por FechaSalida desc (sin filtro texto).
+  --              Si @RecentOnly=0, filtra Descripcion por @q (LIKE). Siempre devuelve FechaSalida.
+  -- 2026-04-09: parámetro @RecentOnly y columna FechaSalida.
   ============================================= */
 BEGIN
     SET NOCOUNT ON;
     SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
+    IF @RecentOnly = 1
+    BEGIN
+        SELECT TOP (30)
+               v.ViajeID,
+               v.Descripcion,
+               v.FechaSalida
+        FROM   dbo.Viaje AS v
+        WHERE  v.Descripcion IS NOT NULL
+        ORDER BY v.FechaSalida DESC,
+                 v.Descripcion ASC;
+        RETURN;
+    END;
+
     IF @q IS NULL OR LEN(LTRIM(RTRIM(@q))) = 0
     BEGIN
         SELECT TOP (0)
                CAST(NULL AS UNIQUEIDENTIFIER) AS ViajeID,
-               CAST(NULL AS NVARCHAR(200))    AS Descripcion;
+               CAST(NULL AS NVARCHAR(200))    AS Descripcion,
+               CAST(NULL AS DATE)             AS FechaSalida;
         RETURN;
     END;
 
@@ -26,7 +43,8 @@ BEGIN
 
     SELECT TOP (30)
            v.ViajeID,
-           v.Descripcion
+           v.Descripcion,
+           v.FechaSalida
     FROM   dbo.Viaje AS v
     WHERE  v.Descripcion IS NOT NULL
            AND v.Descripcion LIKE @like COLLATE Latin1_General_CI_AI

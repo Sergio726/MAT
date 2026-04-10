@@ -170,9 +170,10 @@
   Complementar inputs GUID con búsqueda/select reutilizando patrones del Admin donde existan. *(Complemento opcional al task **Reportes UX: filtrar vendedor y cliente solo en el front**: ese task prioriza refinado post-consulta sin BD; este sigue siendo útil si se mantiene envío opcional de GUID al SP en la consulta inicial.)*
   Criterio de éxito: Menos errores de pegado y mejor paridad con el SPEC de “reutilizar selects”.
 
-- [ ] **Reportes (mejora futura): Tests unitarios `ReportesQueryHelper`**
+- [x] **Reportes (mejora futura): Tests unitarios `ReportesQueryHelper`**
   Casos: feliz, rango mayor a 365 días, conflicto fechas+viaje, `from` sin `to`, `tipoVentaId` inválido.
   Criterio de éxito: Suite verde en el pipeline acordado.
+  **Implementación (2026-04-09):** proyecto `MAT.MVC.Tests` (NUnit 3.14 + referencia a `MAT.MVC`); paquetes en `packages\` (`NUnit`, `NUnit3TestAdapter`). Ejecución local: `vstest.console.exe` con `/TestAdapterPath` apuntando a `packages\NUnit3TestAdapter.4.6.0\build\net462`.
 
 - [x] **Reportes (mejora futura): DataTables i18n sin CDN**
   Evitar `cdn.datatables.net` para `Spanish.json` (archivo local o bundle).
@@ -184,6 +185,13 @@
   Los botones de navegación `‹` / `›` del calendario jQuery UI se renderizaban incorrectamente en `ReporteVentas.cshtml`: las entidades HTML `&#x3C;` y `&#x3E;` dentro del bloque `<script>` no son decodificadas por JavaScript y aparecían como texto literal en el header del popup. Adicionalmente, el CSS en `admin.modern.css` exponía el texto interno del span (al resetear `text-indent` a 0 y usar `overflow: visible`), solapándolo con el `::after` que renderiza la flecha real. Se unificó también la configuración del datepicker de Ventas con los de Pagos y Ranking (`yearRange`, `maxDate`, `showButtonPanel`, `showOtherMonths`).
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Content/admin.modern.css`
   Criterio de éxito: Los tres datepickers muestran `‹` y `›` correctamente; configuración de rango de años y opciones de panel coherente entre los tres reportes.
+
+- [x] **Admin / Reportes: Revisar bug del desplegable de mes en jQuery UI Datepicker (`changeMonth`)**
+  Con `changeMonth: true` y `changeYear: true`, al abrir el combo del **mes** el listado se renderiza mal: contenedor alargado en vertical, casi vacío, solo se ve el ítem seleccionado arriba y el resto del calendario queda tapado (regresión visual; posible conflicto entre estilos de `admin.modern.css` sobre `select.ui-datepicker-month` / `.ui-datepicker-title` y el tema `jquery-ui-1.13.2.css`, o `overflow`/`height`/`line-height` en el popup).
+  **Alcance:** reproducir en pantallas Admin que usen datepicker con esas opciones (p. ej. reportes Ventas/Pagos/Ranking, `AuditoriaFacturas`, otras con `mat-datepicker`). Documentar navegador si aplica.
+  **Enfoque sugerido:** inspeccionar en DevTools el `<select class="ui-datepicker-month">`; ajustar CSS scoped a `body.admin-modern .ui-datepicker` sin romper el header ni el año; validar también el desplegable de año.
+  Archivos probables: `Content/admin.modern.css`, eventualmente `Content/themes/base/jquery-ui-1.13.2.css` solo si hace falta override mínimo documentado.
+  Criterio de éxito: Los dos combos muestran todas las opciones legibles, altura acotada al contenido o scroll coherente, sin cubrir el grilla de días ni salirse del popup; MSBuild limpio.
 
 - [x] **Reportes UX: Cards de indicadores resumen en Reporte de Ventas**
   Tras ejecutar una consulta exitosa en `ReporteVentas`, mostrar entre el panel de filtros y la tabla de resultados un bloque de **cards con indicadores agregados** calculados a partir de los datos ya cargados en el cliente (sin nueva petición al servidor). Inspirado en el panel de Estadísticas de Ventas del Home.
@@ -211,6 +219,33 @@
   - Aplicar el mismo cambio en los tres reportes para mantener paridad.
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Views/Reportes/ReportePagos.cshtml`, `Views/Reportes/ReporteRanking.cshtml`, `Controllers/Admin/ReportesController.cs` (nuevo endpoint `BuscarViajes`).
   Criterio de éxito: El usuario puede buscar un viaje por nombre sin conocer ni pegar GUIDs; la consulta y exportación Excel funcionan igual que antes; MSBuild limpio.
+
+- [x] **Reportes UX: Buscador de viajes — botón “flecha abajo” y lista con nombre + fecha de salida**
+  Complementar el autocompletar actual del filtro **Por viaje** con un control tipo **combo**: además de escribir para filtrar, el usuario debe poder hacer clic en un **botón** (icono flecha hacia abajo, accesible con `aria-label`) que **abra la lista de viajes** sin tener que tipear (equivalente a desplegar opciones).
+  **Contenido de cada ítem:** siempre **nombre del viaje** (descripción) **+ fecha de salida** visible en la misma fila (formato coherente con el resto del Admin, p. ej. `dd/mm/yyyy`). El valor enviado al backend sigue siendo el **GUID** en campo oculto tras seleccionar.
+  **Backend:** extender `BuscarViajes` / `usp_MAT_Reportes_BuscarViajes` (o endpoint adicional si se prefiere) para devolver `fechaSalida` (o string formateado) junto a `id` y `descripcion`; definir comportamiento cuando `q` está vacío o es comodín (p. ej. últimos N viajes por `FechaSalida` desc) para alimentar la lista al pulsar la flecha.
+  **Frontend:** mismo patrón en `ReporteVentas`, `ReportePagos`, `ReporteRanking`; reutilizar o extender `mat.reportes-viaje-autocomplete.js` (menú custom, Autocomplete con `minLength: 0` + trigger en botón, u otro patrón acordado con BS5).
+  Criterio de éxito: Clic en la flecha muestra lista usable con nombre y fecha; selección setea GUID oculto; teclado y lectores de pantalla razonables; MSBuild y SP/SSDT alineados.
+
+#### Reportes — UX/UI (Ranking de compras, Admin)
+
+- [x] **Reportes UX: Ranking — tarjetas de estadísticas (KPI)**
+  Mejorar **Ranking de compras** (`ReporteRanking.cshtml`) con un bloque de **cards resumen** entre filtros y tabla, en la línea de **Reporte de ventas** (Bootstrap 5, tema claro Admin). Los indicadores se calculan en **cliente** sobre el JSON de la última consulta (sin nueva petición); no deben cambiar al usar filtros front de cliente/viaje salvo que se documente lo contrario.
+  **Indicadores sugeridos (definir en implementación):** total de filas, clientes distintos, viajes distintos, suma o máximos relevantes de columnas ya expuestas (`cantClientesEligieronViaje`, rankings, etc.).
+  Archivos: `Views/Reportes/ReporteRanking.cshtml`; opcional CSS compartido o reutilizar patrón de cards de ventas.
+  Criterio de éxito: Tras consultar con datos, las cards muestran valores coherentes; consulta vacía u error no rompe la UI; MSBuild limpio.
+
+- [x] **Reportes UX: Ranking — columna “F. salida” en formato `dd/mm/aaaa`**
+  En la grilla, **`viajeFechaSalida`** hoy se muestra como ISO (`YYYY-MM-DDTHH:MM:SS`). Formatear solo **fecha** en locale **es-AR** (`dd/mm/aaaa`) vía `render` de DataTables (o helper JS). Revisar si la columna **“Fecha”** (`fecha` de factura) debe usar el mismo criterio para consistencia.
+  Archivos: `Views/Reportes/ReporteRanking.cshtml`; export Excel (`ReportesExcelExport` ranking) si debe reflejar el mismo formato de fecha en celdas visibles.
+  Criterio de éxito: Usuario ve fechas legibles sin hora innecesaria en pantalla; Excel acordado con negocio.
+
+- [x] **Reportes: Ranking — documentar métrica “Rank. viajes” y claridad en UI**
+  **Definición en BD (verificado en `usp_MAT_Reportes_RankingCompras`):**
+  - **`RankingViajes`** = `DENSE_RANK() OVER (ORDER BY CantClientesEligieronViaje DESC)`: posición del **viaje** según un valor numérico asociado (empates = mismo rank, sin huecos por `DENSE_RANK`).
+  - **`CantClientesEligieronViaje`** = `COUNT(tCompras.ViajeID) OVER (PARTITION BY tCompras.ViajeID)` en el CTE: por cada viaje, cuenta **filas** del conjunto filtrado (facturas con pasajes a ese viaje que cumplen `@From`/`@To`/`@ViajeId`/etc.). **No** equivale a `COUNT(DISTINCT ClienteID)`; el nombre de columna en SQL puede ser **engañoso** si se interpreta como “clientes únicos”.
+  **Acciones:** actualizar `DOCUMENTACION/REPORTES_MAT_MVC_OPERACION.md` (y si aplica `REPORTES_MAT_WEB.md`) con esta definición; en pantalla, **tooltip** y/o **texto de ayuda** bajo el título o junto a la tabla explicando qué mide “Rank. viajes” y la columna “Clientes viaje”. **Opcional (decisión de negocio):** encabezados más fieles a la métrica o evolución futura del SP para medir clientes distintos.
+  Criterio de éxito: Documentación alineada al SP; usuario sin perfil técnico tiene pista de lectura del rank; sin cambiar contrato del SP salvo task aparte explícito.
 
 #### Reportes — UX/UI (Reporte de ventas, Admin)
 
@@ -279,6 +314,16 @@
   `IsAdminUser()` (línea ~1131) hace `return User.Identity.IsAuthenticated` si el sistema de roles lanza excepción. Esto significa que ante un error de configuración del RoleManager, cualquier usuario logueado pasa como administrador. Cambiar el fallback para retornar `false` en el catch.
   Archivos: `Controllers/Admin/AdminController.cs`
   Criterio de éxito: El catch de `IsAdminUser()` retorna `false`. Se agrega log del error antes de retornar.
+
+### Seguridad — mejoras / deuda (pendientes)
+
+- [ ] **PersonaCliente: códigos de confirmación en BD (sustituir `PersonaClienteCode` y `PersonaClienteCode2` en `Web.config`)**
+  **Contexto:** En `MAT.MVC\Web.config` existen `appSettings` `PersonaClienteCode` y `PersonaClienteCode2`. Se usan como **segunda capa** de autorización: el usuario ya autenticado debe ingresar uno de esos valores para ejecutar acciones sensibles. Hoy la comparación es contra `ConfigurationManager.AppSettings` en `PersonaClienteController`: acción **`EliminarVenta`** (POST `bool EliminarVenta(...)`) y **`EliminarPasajeroDeFactura`** (validación antes de llamar a `usp_MAT_Factura_EliminarPasajero`).
+  **Problema:** Funciona operativamente, pero mantener códigos en configuración desplegable no es el enfoque más adecuado: cambios exigen redeploy o tocar config en cada entorno, no hay auditoría centralizada ni rotación clara desde negocio.
+  **Objetivo:** Persistir la definición vigente (uno o dos “códigos” activos, o modelo equivalente acordado: tabla de parámetros de sistema, historial, vigencia, etc.) en **SQL Server**, con paridad en **`MAT.DB`** (SSDT) y script bajo `database\` si aplica. Leer valores vía capa ya usada en el proyecto (`DBHelper`/SP/servicio); **no** exponer en logs ni en JSON el valor esperado ni el ingresado (mensajes genéricos al usuario, como ya hace `EliminarPasajeroDeFactura` ante error de código).
+  **Opcional:** pantalla o sección **Admin** para alta/edición/desactivación de códigos (solo rol administrador), en lugar de solo datos semilla en BD.
+  **Archivos de partida:** `Web.config` (retirar o dejar solo fallback documentado durante transición), `Controllers/PersonaCliente/PersonaClienteController.cs`, vistas/partials que piden el código si hace falta alinear textos de ayuda.
+  Criterio de éxito: Las dos acciones anteriores validan contra origen BD; `MAT.DB` y documentación breve alineados; MSBuild limpio; prueba manual de rechazo/aceptación de código; `PROGRESS.md` actualizado.
 
 ---
 

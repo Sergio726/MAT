@@ -2,6 +2,34 @@
 
 ---
 
+### [2026-04-09] — Tests unitarios `ReportesQueryHelper` (NUnit)
+
+- Archivos modificados: `MAT.sln`, `MAT.MVC.Tests\` (nuevo: `.csproj`, `packages.config`, `Properties\AssemblyInfo.cs`, `Infrastructure\ReportesQueryHelperTests.cs`), `packages\NUnit.3.14.0\`, `packages\NUnit3TestAdapter.4.6.0\`
+- Qué se implementó: 11 casos (rango válido `yyyy-MM-dd` / `dd-MM-yyyy`, >365 días, viaje+fechas, `from` sin `to`, `tipoVentaId` 3 / no numérico / 1, solo viaje, sin criterio, `TryParseDateParameter`). Compilación `MAT.MVC.Tests` y solución OK; `vstest.console` + adaptador NUnit3: 11/11 correctas.
+- Si falta carpeta `packages\`: `nuget install MAT.MVC.Tests\packages.config -OutputDirectory packages` (o instalar los dos paquetes con las versiones del `packages.config`).
+- Estado: ✅ completo
+
+---
+
+### [2026-04-09] — Lote SPEC: datepicker mes/año, viaje combo+recent, ranking KPI/fechas/docs
+
+- Archivos modificados:
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Reportes_BuscarViajes.sql`, `database/2026-04-09_usp_MAT_Reportes_BuscarViajes.sql`
+  - `MAT.MVC/Content/admin.modern.css`, `Views/Shared/_LayoutAdmin.cshtml`
+  - `MAT.MVC/Controllers/Admin/ReportesController.cs`, `Models/Reportes/ReporteViajeLookupDto.cs`
+  - `MAT.MVC/Scripts/mat.reportes-viaje-autocomplete.js`
+  - `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`
+  - `MAT.MVC/Infrastructure/ReportesExcelExport.cs`
+  - `DOCUMENTACION/REPORTES_MAT_MVC_OPERACION.md`, `SPEC.md`
+- Qué se implementó:
+  - **Datepicker Admin:** selects mes/año con `appearance` nativo, texto oscuro sobre fondo blanco, `overflow: visible` en header/popup para desplegables legibles.
+  - **BuscarViajes:** parámetro `recent=true` + SP `@RecentOnly`; respuesta con `fechaSalida`; botón chevron en input-group abre últimos 30 viajes; etiquetas “descripción — dd/mm/aaaa”.
+  - **Ranking:** cards resumen (filas, clientes/viajes/facturas distintos, mejor rank viajes); columnas Fecha y F. salida en `dd/mm/aaaa`; caja de ayuda; Excel ranking fechas `dd/MM/yyyy`.
+- Problemas encontrados: redeploy del SP obligatorio (script `database/` o publicar SSDT).
+- Estado: ✅ completo
+
+---
+
 ### [2026-04-09] — Reportes: autocompletar viaje por nombre (sin GUID manual)
 
 - Archivos modificados:
