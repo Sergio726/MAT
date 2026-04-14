@@ -2,6 +2,64 @@
 
 ---
 
+### [2026-04-14] — Mejora: FacturaFiscal — separadores de miles y decimales en inputs de monto
+
+- Archivos modificados:
+  - `MAT.MVC/Views/FacturaFiscal/Create.cshtml`
+- Qué se implementó:
+  - `txtNeto`, `txtPercepciones`, `txtOtrosImpuestos` cambiados de `type="number"` a `type="text"` con `inputmode="decimal"` y clase `ff-monto-input`.
+  - Helper `parseMonto(val)`: soporta formato es-AR (`1.234,56`) y English (`1234.56`).
+  - Helper `formatMonto(n)`: formatea a es-AR con 2 decimales.
+  - `blur` → formatea con miles y decimales (`1.234,56`). `focus` → muestra valor editable con coma decimal, selecciona todo el texto.
+  - `calcularMontos()` y `guardarFactura()` usan `parseMonto()` en lugar de `parseFloat()`.
+  - `cargarDatosEdicion()` aplica `formatMonto()` a neto/percepciones/otrosImpuestos al cargar.
+- Problemas encontrados: Ninguno — MSBuild limpio.
+- Estado: ✅ completo
+
+---
+
+### [2026-04-14] — BUG: FacturaFiscal/Edit — fechas y moneda/alicuota sin autocompletar
+
+- Archivos modificados:
+  - `MAT.MVC/Views/FacturaFiscal/Create.cshtml` (`cargarDatosEdicion`, nueva helper `fechaDdMmAaaa_a_ISO`)
+- Qué se implementó:
+  - `GetDetalle` devuelve fechas como `dd/MM/yyyy`; `<input type="date">` requiere `yyyy-MM-dd`. Agregada helper `fechaDdMmAaaa_a_ISO()` para la conversión.
+  - `alicuotaIva || 4` reemplazado por `f.alicuotaIva != null ? String(...) : '4'` para no pisar el valor `0` (0% de IVA) con el default 21%.
+  - `moneda` y `alicuota` ahora usan `String()` explícito para garantizar match con los `value` de las `<option>`.
+- Problemas encontrados: Ninguno — MSBuild limpio.
+- Estado: ✅ completo
+
+---
+
+### [2026-04-14] — P1 Facturación Fiscal: 4 tasks (resaltar filtros, lazy loading proveedores, localStorage, tooltips)
+
+- Archivos modificados:
+  - `MAT.MVC/Views/FacturaFiscal/Index.cshtml` (filtros activos, localStorage, tooltips Bootstrap 5)
+  - `MAT.MVC/Views/FacturaFiscal/Create.cshtml` (autocomplete de proveedores, seleccionarProveedor, crearProveedorRapido)
+  - `MAT.MVC/Controllers/FacturaFiscal/FacturaFiscalController.cs` (nuevo action BuscarProveedores)
+- Qué se implementó:
+  - **Resaltar filtros activos:** CSS `.ff-filtro-activo` + badge contador en el header del panel de filtros; se actualiza en `aplicarFiltros`/`limpiarFiltros`.
+  - **Lazy loading de proveedores:** `<select>` reemplazado por `<input>` + `<ul>` de sugerencias; nuevo endpoint `GET BuscarProveedores?q=` con debounce 280ms; límite 20 resultados; click fuera cierra sugerencias; edición carga nombre del proveedor en el input.
+  - **Guardar filtros en localStorage:** clave `ff_filtros_v1`; se guarda en `aplicarFiltros`, se restaura en `document.ready`, se limpia en `limpiarFiltros`.
+  - **Mejora de tooltips:** `data-bs-toggle="tooltip"` en los 4 botones de acción de la tabla; re-inicialización en `drawCallback` de DataTables.
+- Problemas encontrados: Ninguno — MSBuild limpio (solo warnings preexistentes).
+- Estado: ✅ completo
+
+---
+
+### [2026-04-14] — Facturación Fiscal: Validación de duplicado en edición
+
+- Archivos modificados:
+  - `MAT.MVC/Views/FacturaFiscal/Create.cshtml` (función JS `validarDuplicado`)
+- Qué se implementó:
+  - El SP `usp_MAT_FacturaFiscal_CheckDuplicate`, el modelo y el controller ya soportaban `@ExcludeID`/`excludeId`. Solo faltaba que la llamada AJAX del cliente lo enviara.
+  - Agregado `excludeId: esEdicion ? ($('#hdnFacturaId').val() || '') : ''` en el `data` de la llamada AJAX a `CheckDuplicate`.
+  - En modo edición el backend excluye la factura actual de la búsqueda de duplicados, eliminando el falso positivo.
+- Problemas encontrados: Ninguno — MSBuild limpio.
+- Estado: ✅ completo
+
+---
+
 ### [2026-04-10] — Editar facturas de compra (Facturación Fiscal)
 
 - Archivos modificados:

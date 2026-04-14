@@ -490,6 +490,39 @@ namespace MAT.MVC.Controllers.FacturaFiscal
             }
         }
 
+        [HttpGet]
+        public JsonResult BuscarProveedores(string q)
+        {
+            try
+            {
+                var todos = ProveedorFiscalMethod.GetAll(1); // Solo activos
+                if (!string.IsNullOrWhiteSpace(q))
+                {
+                    var lower = q.Trim().ToLowerInvariant();
+                    todos = todos.Where(p =>
+                        (p.RazonSocial != null && p.RazonSocial.ToLowerInvariant().Contains(lower)) ||
+                        (p.Cuit != null && p.Cuit.Contains(lower))
+                    ).ToList();
+                }
+                var resultado = todos.Take(20).Select(p => new
+                {
+                    proveedorId = p.ProveedorID.ToString(),
+                    razonSocial = p.RazonSocial,
+                    cuit = p.Cuit,
+                    condicionIva = p.CondicionIva,
+                    domicilio = p.Domicilio,
+                    email = p.Email,
+                    telefono = p.Telefono
+                }).ToList();
+                return Json(new { success = true, data = resultado }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                MATLogger.Log($"Error en FacturaFiscalController.BuscarProveedores: {ex.Message}", 1);
+                return Json(new { success = false, message = "Error al buscar proveedores." }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpPost]
         public JsonResult GetAllProveedores()
         {

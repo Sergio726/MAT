@@ -5,6 +5,29 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    /* Filtros activos */
+    .ff-filtro-activo {
+        border-color: var(--primary-color, #e91e63) !important;
+        background-color: color-mix(in srgb, var(--primary-color, #e91e63) 6%, transparent) !important;
+    }
+    .ff-filtros-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-color, #e91e63);
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        border-radius: 999px;
+        min-width: 1.25rem;
+        height: 1.25rem;
+        padding: 0 0.35rem;
+        margin-left: 0.5rem;
+        line-height: 1;
+    }
+</style>
+
 <div class="modern-page-container">
     <div class="modern-page-header">
         <h2 class="modern-page-title">
@@ -33,6 +56,7 @@
             <div class="modern-card-title">
                 <i class="bi bi-funnel"></i>
                 <span>Filtros de Busqueda</span>
+                <span id="badgeFiltrosActivos" class="ff-filtros-badge" style="display:none;"></span>
             </div>
             <i class="bi bi-chevron-down" id="iconFiltros"></i>
         </div>
@@ -157,6 +181,7 @@
     var tablaFacturas;
 
     $(document).ready(function () {
+        restaurarFiltrosDeStorage();
         tablaFacturas = $('#tblFacturas').DataTable({
             language: { url: '/Scripts/dataTable/i18n/Spanish.json' },
             pageLength: 25,
@@ -166,6 +191,9 @@
                 { className: "text-center", targets: [1, 8, 9] },
                 { className: "text-end", targets: [5, 6, 7] }
             ],
+            drawCallback: function () {
+                $('[data-bs-toggle="tooltip"]', this.api().table().node()).tooltip({ trigger: 'hover' });
+            },
             data: [],
             columns: [
                 {
@@ -214,13 +242,13 @@
                 {
                     data: null,
                     render: function (data, type, row) {
-                        var html = '<button class="ff-btn-accion" onclick="verDetalle(\'' + row.facturaFiscalId + '\')" title="Ver detalle"><i class="bi bi-eye"></i></button>';
+                        var html = '<button class="ff-btn-accion" onclick="verDetalle(\'' + row.facturaFiscalId + '\')" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalle de la factura"><i class="bi bi-eye"></i></button>';
                         if (row.estado === 1) {
-                            html += '<button class="ff-btn-accion" onclick="editarFactura(\'' + row.facturaFiscalId + '\')" title="Editar"><i class="bi bi-pencil"></i></button>';
-                            html += '<button class="ff-btn-accion ff-btn-anular" onclick="anularFactura(\'' + row.facturaFiscalId + '\')" title="Anular"><i class="bi bi-x-circle"></i></button>';
+                            html += '<button class="ff-btn-accion" onclick="editarFactura(\'' + row.facturaFiscalId + '\')" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar esta factura"><i class="bi bi-pencil"></i></button>';
+                            html += '<button class="ff-btn-accion ff-btn-anular" onclick="anularFactura(\'' + row.facturaFiscalId + '\')" data-bs-toggle="tooltip" data-bs-placement="top" title="Anular esta factura (no reversible)"><i class="bi bi-x-circle"></i></button>';
                         }
                         if (row.archivoAdjunto) {
-                            html += '<a href="' + row.archivoAdjunto + '" target="_blank" class="ff-btn-accion" title="Ver adjunto"><i class="bi bi-paperclip"></i></a>';
+                            html += '<a href="' + row.archivoAdjunto + '" target="_blank" class="ff-btn-accion" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver archivo adjunto"><i class="bi bi-paperclip"></i></a>';
                         }
                         return html;
                     }
@@ -253,6 +281,8 @@
     }
 
     function aplicarFiltros() {
+        guardarFiltrosEnStorage();
+        actualizarEstadoFiltros();
         cargarFacturas();
         cargarTotales();
     }
@@ -260,7 +290,10 @@
     function limpiarFiltros() {
         $('#ddlTipo, #ddlComprobante, #ddlEstado').val('');
         $('#txtFechaDesde, #txtFechaHasta, #txtBusqueda').val('');
-        aplicarFiltros();
+        limpiarFiltrosStorage();
+        actualizarEstadoFiltros();
+        cargarFacturas();
+        cargarTotales();
     }
 
     function cargarFacturas() {
@@ -440,4 +473,61 @@
     }
 
     $('#txtBusqueda').on('keypress', function (e) { if (e.which === 13) aplicarFiltros(); });
+
+    // --- Filtros activos (resaltado visual) ---
+    function actualizarEstadoFiltros() {
+        var controles = ['#ddlTipo', '#ddlComprobante', '#ddlEstado', '#txtFechaDesde', '#txtFechaHasta', '#txtBusqueda'];
+        var activos = 0;
+        $.each(controles, function (i, sel) {
+            var val = $(sel).val();
+            if (val && val.trim() !== '') {
+                $(sel).addClass('ff-filtro-activo');
+                activos++;
+            } else {
+                $(sel).removeClass('ff-filtro-activo');
+            }
+        });
+        var badge = $('#badgeFiltrosActivos');
+        if (activos > 0) {
+            badge.text(activos).show();
+        } else {
+            badge.hide();
+        }
+    }
+
+    // --- Persistencia en localStorage ---
+    var FF_STORAGE_KEY = 'ff_filtros_v1';
+
+    function guardarFiltrosEnStorage() {
+        try {
+            var datos = {
+                tipo: $('#ddlTipo').val(),
+                comprobante: $('#ddlComprobante').val(),
+                estado: $('#ddlEstado').val(),
+                fechaDesde: $('#txtFechaDesde').val(),
+                fechaHasta: $('#txtFechaHasta').val(),
+                busqueda: $('#txtBusqueda').val()
+            };
+            localStorage.setItem(FF_STORAGE_KEY, JSON.stringify(datos));
+        } catch (e) { }
+    }
+
+    function restaurarFiltrosDeStorage() {
+        try {
+            var raw = localStorage.getItem(FF_STORAGE_KEY);
+            if (!raw) return;
+            var datos = JSON.parse(raw);
+            if (datos.tipo) $('#ddlTipo').val(datos.tipo);
+            if (datos.comprobante) $('#ddlComprobante').val(datos.comprobante);
+            if (datos.estado) $('#ddlEstado').val(datos.estado);
+            if (datos.fechaDesde) $('#txtFechaDesde').val(datos.fechaDesde);
+            if (datos.fechaHasta) $('#txtFechaHasta').val(datos.fechaHasta);
+            if (datos.busqueda) $('#txtBusqueda').val(datos.busqueda);
+            actualizarEstadoFiltros();
+        } catch (e) { }
+    }
+
+    function limpiarFiltrosStorage() {
+        try { localStorage.removeItem(FF_STORAGE_KEY); } catch (e) { }
+    }
 </script>

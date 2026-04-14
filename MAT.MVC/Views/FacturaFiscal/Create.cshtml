@@ -41,10 +41,12 @@
                 {
                     <div class="col-md-6">
                         <label class="modern-form-label">Proveedor</label>
-                        <div class="d-flex gap-2">
-                            <select id="ddlProveedor" class="modern-form-select" style="flex:1;">
-                                <option value="">-- Seleccionar --</option>
-                            </select>
+                        <div class="d-flex gap-2" style="position:relative;">
+                            <div style="flex:1; position:relative;">
+                                <input type="text" id="txtProveedorSearch" class="modern-form-input" placeholder="Buscar por razon social o CUIT..." autocomplete="off" />
+                                <input type="hidden" id="hdnProveedorId" />
+                                <ul id="listProveedorSuggestions" style="display:none; position:absolute; top:100%; left:0; right:0; z-index:1050; list-style:none; margin:2px 0 0; padding:0; background:#fff; border:1px solid var(--border-color,#dee2e6); border-radius:6px; max-height:220px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,.12);"></ul>
+                            </div>
                             <button type="button" class="btn-modern btn-modern-secondary" onclick="mostrarModalProveedor()" title="Crear proveedor">
                                 <i class="bi bi-plus-circle"></i>
                             </button>
@@ -166,7 +168,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="modern-form-label">Neto *</label>
-                                <input type="number" id="txtNeto" class="modern-form-input" step="0.01" min="0" value="0" oninput="calcularMontos()" />
+                                <input type="text" id="txtNeto" class="modern-form-input ff-monto-input" inputmode="decimal" placeholder="0,00" value="0,00" />
                             </div>
                             <div class="col-md-4">
                                 <label class="modern-form-label">IVA (calculado)</label>
@@ -175,11 +177,11 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="modern-form-label">Percepciones</label>
-                                <input type="number" id="txtPercepciones" class="modern-form-input" step="0.01" min="0" value="0" oninput="calcularMontos()" />
+                                <input type="text" id="txtPercepciones" class="modern-form-input ff-monto-input" inputmode="decimal" placeholder="0,00" value="0,00" />
                             </div>
                             <div class="col-md-4">
                                 <label class="modern-form-label">Otros Impuestos</label>
-                                <input type="number" id="txtOtrosImpuestos" class="modern-form-input" step="0.01" min="0" value="0" oninput="calcularMontos()" />
+                                <input type="text" id="txtOtrosImpuestos" class="modern-form-input ff-monto-input" inputmode="decimal" placeholder="0,00" value="0,00" />
                             </div>
                             <div class="col-md-4">
                                 <label class="modern-form-label">TOTAL</label>
@@ -273,8 +275,8 @@
             cargarDatosEdicion();
         }
 
-        // Cargar proveedores si es compra
-        if (tipoFactura === 1) cargarProveedoresDropdown();
+        // Inicializar búsqueda lazy de proveedores si es compra
+        if (tipoFactura === 1) initProveedorSearch();
 
         // Validar duplicado on blur
         $('#txtCuit, #txtPuntoVenta, #txtNumero, #ddlTipoComprobante').on('change blur', function () {
@@ -296,7 +298,12 @@
                     var f = r.factura;
                     // Datos del proveedor/cliente
                     if (tipoFactura === 1 && f.proveedorId) {
-                        $('#ddlProveedor').val(f.proveedorId).trigger('change');
+                        $('#hdnProveedorId').val(f.proveedorId);
+                        var label = (f.proveedorRazonSocial || '') + (f.cuit ? ' (' + f.cuit + ')' : '');
+                        $('#txtProveedorSearch').val(label.trim() || f.proveedorId);
+                        $('#provNombre').text(f.proveedorRazonSocial || '');
+                        $('#provCuitInfo').text('CUIT: ' + (f.cuit || ''));
+                        $('#proveedorInfo').show();
                     }
                     $('#txtCuit').val(f.cuit || '');
                     $('#ddlCondicionIva').val(f.condicionIva || '');
@@ -309,16 +316,16 @@
                     $('#txtPuntoVenta').val(f.puntoVenta || '');
                     $('#txtNumero').val(f.numero || '');
                     $('#txtCAE').val(f.cae || '');
-                    $('#ddlMoneda').val(f.moneda || 1);
-                    // Fechas
-                    $('#txtFechaEmision').val(f.fechaEmision || '');
-                    $('#txtFechaVencimiento').val(f.fechaVencimiento || '');
+                    $('#ddlMoneda').val(String(f.moneda || 1));
+                    // Fechas — GetDetalle devuelve dd/MM/yyyy; input[type=date] requiere yyyy-MM-dd
+                    $('#txtFechaEmision').val(fechaDdMmAaaa_a_ISO(f.fechaEmision));
+                    $('#txtFechaVencimiento').val(fechaDdMmAaaa_a_ISO(f.fechaVencimiento));
                     $('#txtCondicionVenta').val(f.condicionVenta || '');
-                    // Montos
-                    $('#ddlAlicuota').val(f.alicuotaIva || 4);
-                    $('#txtNeto').val(f.neto || 0);
-                    $('#txtPercepciones').val(f.percepciones || 0);
-                    $('#txtOtrosImpuestos').val(f.otrosImpuestos || 0);
+                    // Montos — alicuotaIva puede ser 0 (0%), no usar || para evitar falso default
+                    $('#ddlAlicuota').val(f.alicuotaIva != null ? String(f.alicuotaIva) : '4');
+                    $('#txtNeto').val(formatMonto(f.neto || 0));
+                    $('#txtPercepciones').val(formatMonto(f.percepciones || 0));
+                    $('#txtOtrosImpuestos').val(formatMonto(f.otrosImpuestos || 0));
                     $('#txtObservaciones').val(f.observaciones || '');
                     // Calcular totales
                     calcularMontos();
@@ -327,51 +334,121 @@
         });
     }
 
-    function cargarProveedoresDropdown() {
-        $.ajax({
-            url: '@Url.Action("GetProveedores", "FacturaFiscal")',
-            type: 'POST',
-            dataType: 'json',
-            success: function (r) {
-                if (r.success && r.data) {
-                    var ddl = $('#ddlProveedor');
-                    ddl.find('option:not(:first)').remove();
-                    $.each(r.data, function (i, p) {
-                        ddl.append($('<option></option>').val(p.proveedorId).text(p.razonSocial + ' (' + p.cuit + ')').data('prov', p));
-                    });
-                }
+    var _provDebounce;
+
+    function initProveedorSearch() {
+        $('#txtProveedorSearch').on('input', function () {
+            clearTimeout(_provDebounce);
+            var q = $(this).val().trim();
+            if (!q) {
+                $('#hdnProveedorId').val('');
+                $('#proveedorInfo').hide();
+                $('#listProveedorSuggestions').hide();
+                return;
             }
+            _provDebounce = setTimeout(function () { buscarProveedores(q); }, 280);
         });
 
-        $('#ddlProveedor').on('change', function () {
-            var opt = $(this).find(':selected');
-            var p = opt.data('prov');
-            if (p) {
-                $('#txtCuit').val(p.cuit);
-                if (p.condicionIva) $('#ddlCondicionIva').val(p.condicionIva);
-                $('#provNombre').text(p.razonSocial);
-                $('#provCuitInfo').text('CUIT: ' + p.cuit);
-                $('#proveedorInfo').show();
-            } else {
-                $('#proveedorInfo').hide();
+        // Cerrar sugerencias al hacer click fuera
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('#txtProveedorSearch, #listProveedorSuggestions').length) {
+                $('#listProveedorSuggestions').hide();
             }
         });
     }
 
+    function buscarProveedores(q) {
+        $.ajax({
+            url: '@Url.Action("BuscarProveedores", "FacturaFiscal")',
+            type: 'GET',
+            data: { q: q },
+            dataType: 'json',
+            success: function (r) {
+                var ul = $('#listProveedorSuggestions');
+                ul.empty();
+                if (!r.success || !r.data || r.data.length === 0) {
+                    ul.append('<li style="padding:0.5rem 0.75rem; color:var(--text-secondary); font-size:0.85rem;">Sin resultados</li>');
+                    ul.show();
+                    return;
+                }
+                $.each(r.data, function (i, p) {
+                    var li = $('<li></li>').css({
+                        padding: '0.5rem 0.75rem',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        borderBottom: '1px solid var(--border-color, #f0f0f0)'
+                    });
+                    li.html('<div style="font-weight:600;">' + p.razonSocial + '</div><div style="font-size:0.75rem;color:var(--text-secondary);">CUIT: ' + p.cuit + '</div>');
+                    li.on('mouseenter', function () { $(this).css('background', 'var(--bg-secondary, #f8f9fa)'); });
+                    li.on('mouseleave', function () { $(this).css('background', ''); });
+                    li.on('click', function () { seleccionarProveedor(p); });
+                    ul.append(li);
+                });
+                ul.show();
+            }
+        });
+    }
+
+    function seleccionarProveedor(p) {
+        $('#hdnProveedorId').val(p.proveedorId);
+        $('#txtProveedorSearch').val(p.razonSocial + ' (' + p.cuit + ')');
+        $('#txtCuit').val(p.cuit);
+        if (p.condicionIva) $('#ddlCondicionIva').val(p.condicionIva);
+        $('#provNombre').text(p.razonSocial);
+        $('#provCuitInfo').text('CUIT: ' + p.cuit);
+        $('#proveedorInfo').show();
+        $('#listProveedorSuggestions').hide();
+    }
+
+    // --- Helpers de monto (separadores de miles y decimales) ---
+
+    // Parsea un string en formato es-AR ("1.234,56") o English ("1234.56") a float
+    function parseMonto(val) {
+        if (val === '' || val == null) return 0;
+        var s = String(val).trim();
+        if (s.indexOf(',') !== -1) {
+            // Formato es-AR: punto como miles, coma como decimal
+            s = s.replace(/\./g, '').replace(',', '.');
+        }
+        return parseFloat(s) || 0;
+    }
+
+    // Formatea un número a string es-AR con 2 decimales ("1.234,56")
+    function formatMonto(n) {
+        return n.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Eventos de los inputs de monto: formatear en blur, mostrar raw en focus
+    $(document).ready(function () {
+        $(document).on('input', '.ff-monto-input', function () {
+            calcularMontos();
+        });
+        $(document).on('blur', '.ff-monto-input', function () {
+            var raw = parseMonto($(this).val());
+            $(this).val(formatMonto(raw));
+        });
+        $(document).on('focus', '.ff-monto-input', function () {
+            var raw = parseMonto($(this).val());
+            // Mostrar número plano con punto decimal para facilitar la edición
+            $(this).val(raw === 0 ? '' : String(raw).replace('.', ','));
+            this.select();
+        });
+    });
+
     var alicuotaMap = { '0': 0, '1': 2.5, '2': 5, '3': 10.5, '4': 21, '5': 27 };
 
     function calcularMontos() {
-        var neto = parseFloat($('#txtNeto').val()) || 0;
+        var neto = parseMonto($('#txtNeto').val());
         var alicuota = alicuotaMap[$('#ddlAlicuota').val()] || 0;
         var iva = Math.round(neto * alicuota / 100 * 100) / 100;
-        var percepciones = parseFloat($('#txtPercepciones').val()) || 0;
-        var otros = parseFloat($('#txtOtrosImpuestos').val()) || 0;
+        var percepciones = parseMonto($('#txtPercepciones').val());
+        var otros = parseMonto($('#txtOtrosImpuestos').val());
         var total = neto + iva + percepciones + otros;
 
         $('#txtIva').val(iva.toFixed(2));
-        $('#divIvaCalc').text('$' + iva.toLocaleString('es-AR', { minimumFractionDigits: 2 }));
+        $('#divIvaCalc').text('$' + formatMonto(iva));
         $('#txtTotal').val(total.toFixed(2));
-        $('#divTotal').text('$' + total.toLocaleString('es-AR', { minimumFractionDigits: 2 }));
+        $('#divTotal').text('$' + formatMonto(total));
     }
 
     function validarDuplicado() {
@@ -384,7 +461,7 @@
         $.ajax({
             url: '@Url.Action("CheckDuplicate", "FacturaFiscal")',
             type: 'POST',
-            data: { cuit: cuit, tipoComprobante: tc, puntoVenta: pv, numero: num },
+            data: { cuit: cuit, tipoComprobante: tc, puntoVenta: pv, numero: num, excludeId: esEdicion ? ($('#hdnFacturaId').val() || '') : '' },
             dataType: 'json',
             success: function (r) {
                 if (r.success && r.isDuplicate) {
@@ -422,18 +499,18 @@
             numero: num,
             fechaEmision: fechaEmision,
             fechaVencimiento: $('#txtFechaVencimiento').val(),
-            proveedorId: tipoFactura === 1 ? $('#ddlProveedor').val() : '',
+            proveedorId: tipoFactura === 1 ? $('#hdnProveedorId').val() : '',
             clienteId: tipoFactura === 2 ? $('#hdnClienteId').val() : '',
             cuit: cuit,
             condicionIva: $('#ddlCondicionIva').val(),
-            neto: parseFloat($('#txtNeto').val()) || 0,
+            neto: parseMonto($('#txtNeto').val()),
             iva: parseFloat($('#txtIva').val()) || 0,
-            otrosImpuestos: parseFloat($('#txtOtrosImpuestos').val()) || 0,
+            otrosImpuestos: parseMonto($('#txtOtrosImpuestos').val()),
             total: parseFloat($('#txtTotal').val()) || 0,
             moneda: $('#ddlMoneda').val(),
             cae: $('#txtCAE').val(),
             alicuotaIva: $('#ddlAlicuota').val(),
-            percepciones: parseFloat($('#txtPercepciones').val()) || 0,
+            percepciones: parseMonto($('#txtPercepciones').val()),
             condicionVenta: $('#txtCondicionVenta').val(),
             observaciones: $('#txtObservaciones').val()
         };
@@ -507,17 +584,22 @@
                 if (r.success) {
                     mostrarMensaje(r.message, 'success');
                     cerrarModalProveedor();
-                    // Reload proveedores y seleccionar el nuevo
-                    cargarProveedoresDropdown();
-                    setTimeout(function () {
-                        $('#ddlProveedor').val(r.proveedorId).trigger('change');
-                    }, 500);
+                    // Seleccionar el proveedor recién creado directamente
+                    seleccionarProveedor({ proveedorId: r.proveedorId, razonSocial: rs, cuit: cuit, condicionIva: $('#provCondicionIva').val() || '' });
                 } else {
                     mostrarMensaje(r.message, 'danger');
                 }
             },
             error: function () { mostrarMensaje('Error al crear proveedor.', 'danger'); }
         });
+    }
+
+    // Convierte "dd/MM/yyyy" (formato servidor) a "yyyy-MM-dd" (requerido por input[type=date])
+    function fechaDdMmAaaa_a_ISO(val) {
+        if (!val) return '';
+        var p = val.split('/');
+        if (p.length !== 3) return val; // ya viene en otro formato, lo pasa tal cual
+        return p[2] + '-' + p[1] + '-' + p[0];
     }
 
     function mostrarMensaje(mensaje, tipo) {

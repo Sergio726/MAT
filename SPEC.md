@@ -19,27 +19,27 @@
   Criterio de éxito: Las facturas de compra pueden editarse después de ser creadas.
   **Implementación 2026-04-10:** Agregada funcionalidad de edición en módulo Facturación Fiscal (FacturaFiscalController, Index.cshtml con botón Editar, Create.cshtml reutilizado para edición, FacturaFiscalMethod.Update ya existía).
 
-- [ ] **Facturación Fiscal: Validación de duplicado en edición**
+- [x] **Facturación Fiscal: Validación de duplicado en edición**
   El `CheckDuplicate` actual no excluye la factura en edición, puede dar falsos positivos al editar. Modificar la llamada para pasar el ID de la factura actual y actualizar el SP para excluirla de la búsqueda.
   Archivos: `Views/FacturaFiscal/Create.cshtml`, `Controllers/FacturaFiscal/FacturaFiscalController.cs`, `Models/FacturaFiscalModel.cs`, `MAT.DB/Stored Procedures/usp_MAT_FacturaFiscal_CheckDuplicate.sql`
   Criterio de éxito: Al editar una factura, la validación de duplicado no muestra alerta para esa misma factura.
 
-- [ ] **Facturación Fiscal: Resaltar filtros activos**
+- [x] **Facturación Fiscal: Resaltar filtros activos**
   Los filtros aplicados (tipo, estado, fechas) deben mostrarse visualmente como activos para que el usuario sepa cuáles están aplicados.
   Archivos: `Views/FacturaFiscal/Index.cshtml`
   Criterio de éxito: Filtros activos tienen estilo diferenciado, limpiar filtros reinicia el estado visual.
 
-- [ ] **Facturación Fiscal: Lazy loading de proveedores**
+- [x] **Facturación Fiscal: Lazy loading de proveedores**
   El dropdown carga todos los proveedores al inicio; con muchos registros puede lentificar. Implementar búsqueda asíncrona con debounce.
   Archivos: `Views/FacturaFiscal/Create.cshtml`, `Controllers/FacturaFiscal/FacturaFiscalController.cs`
   Criterio de éxito: Dropdown de proveedores con búsqueda en lugar de lista estática.
 
-- [ ] **Facturación Fiscal: Guardar filtros en localStorage**
+- [x] **Facturación Fiscal: Guardar filtros en localStorage**
   Recordar los últimos filtros usados para no tener que reingresarlos cada vez que el usuario vuelve al listado.
   Archivos: `Views/FacturaFiscal/Index.cshtml`
   Criterio de éxito: Al volver al listado, los últimos filtros aplicados se restauran automáticamente.
 
-- [ ] **Facturación Fiscal: Mejora de tooltips en acciones**
+- [x] **Facturación Fiscal: Mejora de tooltips en acciones**
   Agregar descripción más clara en los botones de acción de la tabla (Ver detalle, Editar, Anular, Adjunto).
   Archivos: `Views/FacturaFiscal/Index.cshtml`
   Criterio de éxito: Todos los botones tienen tooltips descriptivos.
