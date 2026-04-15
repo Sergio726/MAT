@@ -2,6 +2,56 @@
 
 ---
 
+### [2026-04-15] — Reportes UX: Reporte Pagos — tarjetas de estadísticas (KPI) antes de la tabla
+
+- Archivos modificados:
+  - `MAT.MVC/Views/Reportes/ReportePagos.cshtml`
+  - `SPEC.md`
+  - `PROGRESS.md`
+- Qué se implementó:
+  - Bloque `#reportePagosIndicadores` con 4 cards Bootstrap 5 entre el panel de filtros front y la tabla DataTables.
+  - **Total cobrado:** suma de `monto` desglosado por moneda ($ARS / U$S) con badges y `Intl.NumberFormat("es-AR")`.
+  - **Resumen operativo:** total de pagos y facturas distintas (conteo de `facturaId` únicos).
+  - **Por tipo de venta:** agrupación por `tipoVentaDescripcion`, conteo, porcentaje del total de filas, barras de progreso y montos por moneda.
+  - **Por medio de pago:** agrupación por `pagoDescripcion`, ordenado por total de filas desc, Top 6 + agrupación "Otros" si hay más; barras de progreso y montos.
+  - Los KPI se calculan en cliente sobre `rows` (sin nueva consulta); no se alteran al filtrar la tabla por vendedor/cliente/medio. Leyenda explícita en pantalla.
+  - `renderIndicadoresPagos(rows)` invocada al inicio de `renderTable`; bloque oculto si no hay datos.
+- Problemas encontrados: Ninguno — MSBuild limpio.
+- Estado: ✅ completo
+
+---
+
+### [2026-04-15] — Reporte Ventas: SPEC — tareas UX modal facturas, rankings y podio
+
+- Archivos modificados:
+  - `SPEC.md` (tres ítems nuevos marcados `[x]` + alineación del bullet histórico de medallas Top 3)
+  - `PROGRESS.md` (esta entrada)
+- Qué se documentó en SPEC como completado:
+  - Modal listado de facturas: datepickers en español (`mat-datepicker`, `mat.reportes-ventas-facturado-modal.js`).
+  - Panel `reporte-rankings-strip` y estilos de cards para contraste Top Vendedores / Top Destinos.
+  - Top 3 vendedores: medallas Unicode 🥇🥈🥉, efecto 1er puesto y ajustes cromáticos ya implementados en código en sesiones previas.
+- Estado: ✅ completo (documentación)
+
+---
+
+### [2026-04-14] — Reportes UI: Unificar columna "Viaje" + "Fecha salida" en una sola celda
+
+- Archivos modificados:
+  - `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`
+  - `MAT.MVC/Views/Reportes/ReporteRanking.cshtml`
+- Qué se implementó:
+  - En ambas vistas, las columnas "Viaje" y "Fecha salida" (o "F. salida") se fusionaron en una sola celda de dos líneas.
+  - Primera línea: descripción del viaje con atributo `title` para tooltip al hover (texto completo sin truncar).
+  - Segunda línea: fecha en `dd/mm/aaaa` con icono `bi-calendar3` en `text-muted small`.
+  - `render(d, type, row)` retorna texto plano cuando `type !== "display"` para que DataTables pueda ordenar y filtrar correctamente.
+  - En ReporteVentas: ajustados `COL_VENDEDOR` (4→3) y `COL_CLIENTE` (6→5) por la columna eliminada.
+  - En ReporteRanking: la columna viaje permanece en índice 2; sin cambios en índices de filtros front.
+  - HTML escapado manualmente (`&`, `"`, `<`, `>`) para prevenir XSS.
+- Problemas encontrados: Ninguno.
+- Estado: ✅ completo
+
+---
+
 ### [2026-04-14] — Mejora: FacturaFiscal — separadores de miles y decimales en inputs de monto
 
 - Archivos modificados:
@@ -506,3 +556,57 @@
 - Qué se implementó: Tablas con Bootstrap 5 (`table-sm`, `table-bordered`, `form-control-sm`, encabezados) conservando **contrato JS** en `mat.jquery.binding.js` (`planilla-habitaciones`, `txt-dias`, `text-total-hotel`, `table.servicios`, `item-id`, `cantidad-servicio-item`, `text-total-servicios`). **GridPlanillaServiciosItemEdit**: Razor válido (antes HTML dentro de `@{ }`) y total con `Sum`. Vistas impresión/resumen: totales con `Sum` y listas null-safe. Doc: filas **#68–#73**, avance **~57%**; `PartialGridPlanillaHotelPrint.cshtml` sigue vacío.
 - Problemas encontrados: Ninguno.
 - Estado: ✅ MSBuild MAT.MVC OK
+
+### [2026-04-14] — Reportes: Persistir `lastRows` en ReporteVentas (prerequisito)
+
+- Archivos modificados: `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Declarado `var lastRows = []` junto a `var dt = null` en el closure del módulo. Asignado `lastRows = rows || []` como primera operación en `renderTable(rows)`. Reseteo explícito `lastRows = []` al inicio del handler `#btnBuscar`. Sin cambio de contrato: DataTable, KPI, filtro front y Excel funcionan igual.
+- Problemas encontrados: Ninguno.
+- Estado: ✅ MSBuild MAT.MVC Debug OK; `lastRows` disponible en scope del módulo para tasks siguientes (modal facturas, Top Vendedores, Top Destinos)
+
+### [2026-04-14] — Reportes UX: Tarjeta "Total facturado" + modal "Listado de facturas" + Excel en tarjeta
+
+- Archivos modificados: `MAT.MVC/Scripts/mat.reportes-ventas-facturado-modal.js` (nuevo), `MAT.MVC/Scripts/mat.reportes-excel-export.js`, `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó:
+  - **Card "Total facturado"** interactiva: `cursor-pointer`, hover con sombra y borde verde sutil, tooltip BS5, `role=button tabindex=0`, estado deshabilitado (`card-facturado-sin-datos`) hasta que haya datos; botón "Exportar Excel" en el footer con `stopPropagation`.
+  - **Modal "Listado de Facturas"** (`#modalListadoFacturas`): externo en `mat.reportes-ventas-facturado-modal.js`. Filtros: texto libre (debounce 250ms), estado dinámico, moneda, rango de fecha de factura (input[type=date]), botón Limpiar. Tabla con orden por columna (▲/▼), filas expandibles con detalle (Viaje, fecha salida, butacas, GUID), copiar FacturaId al portapapeles con feedback visual, estado vacío. Totales recalculados sobre subconjunto filtrado por moneda; saldo en `text-danger` si > 0. Botón "Expandir todo". Subtítulo contextual con criterio de la última consulta.
+  - **`mat.reportes-excel-export.js`**: parametrizado con `extraBtnSel` (4º param opcional) para deshabilitar múltiples botones durante la descarga.
+  - CSS inline en la vista: `.card-facturado-interactiva` / `.card-facturado-sin-datos`, con `prefers-reduced-motion`.
+- Ítems D implementados: debounce búsqueda, ordenación por columna, expandir/contraer todo, sticky-header (max-height + overflow-y), estado vacío, jerarquía visual saldo (text-danger), feedback "Copiado", responsive (modal-fullscreen-md-down), subtítulo contextual, prefers-reduced-motion.
+- Ítems D pospuestos: exportar subconjunto del modal (requeriría nuevo endpoint o Excel en cliente), deep link/URL state, sincronía con filtro front de página, atajo de teclado Alt+L.
+- Problemas encontrados: Ninguno.
+- Estado: ✅ MSBuild MAT.MVC Debug OK
+
+### [2026-04-14] — Reportes UX: Top 3 Vendedores + Top 3 Destinos con cards y modales
+
+- Archivos modificados: `MAT.MVC/Scripts/mat.reportes-vendedores.js` (nuevo), `MAT.MVC/Scripts/mat.reportes-destinos.js` (nuevo), `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó:
+  - **`mat.reportes-vendedores.js`**: `aggregateByVendedor` reduce por `vendedorId` acumulando ventas, total, arsTotal, usdTotal, arsSaldo, usdSaldo; ordena por `total` desc. Cards Top 3 con medallas (`bi-trophy-fill`/`bi-medal`/`bi-award`), badges de moneda, saldo en rojo o "Sin saldo pendiente". Modal con búsqueda debounced, tabla ordenable (Vendedor, Total ventas, $ARS, U$S, Saldo $ARS, Saldo U$S, Promedio), Exportar CSV en cliente.
+  - **`mat.reportes-destinos.js`**: `aggregateByViaje` reduce por `viajeId` acumulando ventas y total (suma cruda de ambas monedas — limitación documentada en comentario); ordena por `ventas` desc. Cards Top 3 con `bi-geo-alt-fill`, nombre truncado, ventas, monto y promedio. Modal con búsqueda, tabla ordenable, Exportar CSV.
+  - **Vista**: bloques `#topVendedores` y `#topDestinos` ocultos hasta Consultar; dos modales Bootstrap 5 modal-xl; CSS `.card-top-ranking` con hover; `renderTable` renderiza ambos; `btnBuscar` oculta ambos.
+- Problemas encontrados: Ninguno.
+- Estado: ✅ MSBuild MAT.MVC Debug OK
+- Estado: ✅ MSBuild MAT.MVC OK
+
+### [2026-04-14] — Reportes UI: Fechas dd/mm/aaaa en las tres tablas de reportes
+
+- Archivos modificados: `MAT.MVC/Scripts/mat.reportes-utils.js` (nuevo), `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`, `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Helper `window.MatReportes.formatFechaES(val)` en `mat.reportes-utils.js`. Maneja: ISO con hora (`2024-03-15T00:00:00` → local), ISO solo fecha (`2024-03-15` → local para evitar offset UTC), `/Date(ms)/` (legacy .NET), número (ms) y Date. Devuelve `dd/mm/aaaa` o `""`. Ventas: `fechaSalida` reemplazó render anterior (`d ? string : ""`); `facturaFecha` recibió render por primera vez. Pagos: `fechaPago` recibió render. Ranking: eliminados `fmtSoloFecha`, `parseToDate`, `cellSoloFecha` inline; `fecha` y `viajeFechaSalida` apuntan al helper compartido.
+- Problemas encontrados: Ninguno.
+- Estado: ✅ MSBuild MAT.MVC Debug OK
+
+### [2026-04-15] — Reportes UX: Ranking — mejoras UX/UI en tabla tblReporte
+
+- Archivos modificados: `MAT.MVC/Views/Reportes/ReporteRanking.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó:
+  - **Badges de ranking:** columnas "Rank. clientes" y "Rank. viajes" muestran badges de color semántico (#1 oro/warning, #2 plata/secondary, #3 bronce/danger) en vez de número plano; posiciones >3 quedan en texto muted.
+  - **Columnas numéricas centradas:** "Pasajes fact.", "Viajes cl.", "Pasajes cl.", "Fact. viaje" con `className: "text-center"` y render `fw-semibold`; valores nulos como `-` en muted.
+  - **Íconos en encabezados DataTables:** Fecha → `bi-calendar3`, Cliente → `bi-person`, Viaje → `bi-geo-alt` (HTML en `title` de `columns`).
+  - **Tooltips explicativos en th:** `COL_TOOLTIPS` aplica Bootstrap 5 `Tooltip` vía `initComplete` a las columnas numéricas y de ranking, explicando cada métrica al usuario.
+  - **Constantes de columna:** `COL_CLIENTE = 1`, `COL_VIAJE = 2` reemplazan índices mágicos en filtros front y `limpiarFiltros`.
+  - **Leyenda colapsable:** la caja "Cómo leer el ranking" pasó de `alert alert-light` fijo a botón `btn-outline-secondary` + `collapse` de BS5; texto actualizado ("Fact. viaje" en vez de "Clientes viaje").
+  - **Renombrado columna:** "Clientes viaje" → "Fact. viaje" (refleja con más precisión que cuenta filas de factura, no clientes únicos).
+  - **Render helpers:** `escHtml`, `renderRankBadge`, `renderNumCentered` como funciones reutilizables en el scope de la vista.
+  - **Viaje truncado:** columna Viaje con `text-truncate` y `max-width: 220px` + `title` para tooltip nativo al hover.
+- Problemas encontrados: Ninguno.
+- Estado: ✅ MSBuild MAT.MVC Debug OK

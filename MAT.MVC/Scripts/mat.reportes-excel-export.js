@@ -27,11 +27,13 @@
      * @param {function():Object} getQueryParams objeto plano para $.param
      * @param {function(string)} showErr
      */
-    window.MatReportes.downloadReporteExcel = function (excelUrl, getQueryParams, showErr) {
+    window.MatReportes.downloadReporteExcel = function (excelUrl, getQueryParams, showErr, extraBtnSel) {
         showErr('');
         var q = $.param(getQueryParams());
         var url = excelUrl + (q ? '?' + q : '');
-        var $btn = $('#btnExcel').prop('disabled', true);
+        var $btns = $('#btnExcel');
+        if (extraBtnSel) $btns = $btns.add($(extraBtnSel));
+        $btns.prop('disabled', true);
         var p = fetch(url, { credentials: 'same-origin' })
             .then(function (res) {
                 if (!res.ok) {
@@ -66,7 +68,7 @@
             .catch(function (err) {
                 showErr(err.message || 'No se pudo exportar.');
             });
-        if (p.finally) p.finally(function () { $btn.prop('disabled', false); });
-        else p.then(function () { $btn.prop('disabled', false); }, function () { $btn.prop('disabled', false); });
+        if (p.finally) p.finally(function () { $btns.prop('disabled', false); });
+        else p.then(function () { $btns.prop('disabled', false); }, function () { $btns.prop('disabled', false); });
     };
 })(window, jQuery);

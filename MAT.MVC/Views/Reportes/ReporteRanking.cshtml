@@ -143,13 +143,20 @@
         </div>
     </div>
 
-    <div id="rankingLeyenda" class="alert alert-light border small mb-3 d-none" role="note">
-        <p class="fw-semibold mb-2"><i class="bi bi-info-circle"></i> Cómo leer el ranking</p>
-        <ul class="mb-0 ps-3">
-            <li><strong>Clientes viaje:</strong> cantidad de <em>filas de factura</em> del resultado asociadas a ese viaje (no es cantidad de clientes únicos). El nombre en base de datos puede sugerir otra cosa.</li>
-            <li><strong>Rank. viajes:</strong> posición del viaje según ese valor (ranking denso en base de datos, orden descendente): el número <strong>1</strong> corresponde a los viajes con el valor más alto.</li>
-            <li><strong>Rank. clientes:</strong> posición del cliente según cuántos viajes distintos compró en el conjunto filtrado (mismo tipo de ranking denso).</li>
-        </ul>
+    <div id="rankingLeyenda" class="d-none mb-3">
+        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#rankingLeyendaBody"
+                aria-expanded="false" aria-controls="rankingLeyendaBody">
+            <i class="bi bi-question-circle me-1"></i> Cómo leer el ranking
+        </button>
+        <div class="collapse mt-2" id="rankingLeyendaBody">
+            <div class="alert alert-light border small mb-0" role="note">
+                <ul class="mb-0 ps-3">
+                    <li><strong>Fact. viaje:</strong> cantidad de <em>filas de factura</em> del resultado asociadas a ese viaje (no es cantidad de clientes únicos).</li>
+                    <li><strong>Rank. viajes:</strong> posición del viaje según ese valor (ranking denso, orden descendente): <strong>#1</strong> = viaje con el valor más alto.</li>
+                    <li><strong>Rank. clientes:</strong> posición del cliente según cuántos viajes distintos compró en el conjunto filtrado (ranking denso).</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <div class="modern-table-container">
@@ -160,6 +167,7 @@
 </div>
 
 @section Scripts {
+<script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
 <script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
 <script src="@Url.Content("~/Scripts/mat.reportes-viaje-autocomplete.js")"></script>
 <script>
@@ -214,27 +222,6 @@ $(function () {
         if (t) { $a.text(t).removeClass("d-none"); } else { $a.addClass("d-none").text(""); }
     }
 
-    var fmtSoloFecha = new Intl.DateTimeFormat("es-AR", { day: "2-digit", month: "2-digit", year: "numeric" });
-
-    function parseToDate(val) {
-        if (val == null || val === "") return null;
-        if (Object.prototype.toString.call(val) === "[object Date]" && !isNaN(val.getTime())) return val;
-        if (typeof val === "string") {
-            var d = new Date(val);
-            if (!isNaN(d.getTime())) return d;
-        }
-        if (typeof val === "number") {
-            var d2 = new Date(val);
-            if (!isNaN(d2.getTime())) return d2;
-        }
-        return null;
-    }
-
-    function cellSoloFecha(val) {
-        var d = parseToDate(val);
-        return d ? fmtSoloFecha.format(d) : "";
-    }
-
     function renderIndicadoresRanking(rows) {
         var $box = $("#reporteRankingIndicadores");
         var $leg = $("#rankingLeyenda");
@@ -267,6 +254,57 @@ $(function () {
         $leg.removeClass("d-none");
     }
 
+    /* ── Render helpers ──────────────────────────────────────────── */
+
+    function escHtml(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function renderRankBadge(val) {
+        if (val == null || val === "") return '<span class="text-muted">-</span>';
+        var n = parseInt(val, 10);
+        if (isNaN(n)) return escHtml(String(val));
+        if (n === 1) return '<span class="badge bg-warning-subtle text-warning fw-bold">#1</span>';
+        if (n === 2) return '<span class="badge bg-secondary-subtle text-secondary fw-bold">#2</span>';
+        if (n === 3) return '<span class="badge bg-danger-subtle text-danger fw-bold">#3</span>';
+        return '<span class="text-muted small">#' + n + '</span>';
+    }
+
+    function renderNumCentered(val, type) {
+        if (type !== "display") return val != null ? val : 0;
+        if (val == null || val === "") return '<span class="text-muted">-</span>';
+        var n = parseInt(val, 10);
+        if (isNaN(n)) return escHtml(String(val));
+        return '<span class="fw-semibold">' + n + '</span>';
+    }
+
+    /* tooltips en th: DataTables no soporta title nativo en columns, se aplica post-init */
+    var COL_TOOLTIPS = {
+        3: "Pasajes incluidos en esta factura",
+        4: "Viajes distintos que compró este cliente en la consulta",
+        5: "Pasajes totales que compró este cliente en la consulta",
+        6: "Filas de factura asociadas a este viaje (no clientes únicos)",
+        7: "Posición del cliente por cantidad de viajes comprados (ranking denso)",
+        8: "Posición del viaje por su métrica de popularidad (ranking denso)"
+    };
+
+    function applyHeaderTooltips() {
+        if (!dt) return;
+        dt.columns().every(function (idx) {
+            if (COL_TOOLTIPS[idx]) {
+                var $th = $(dt.column(idx).header());
+                $th.attr("title", COL_TOOLTIPS[idx]).css("cursor", "help");
+                if (window.bootstrap && bootstrap.Tooltip) {
+                    new bootstrap.Tooltip($th[0], { trigger: "hover focus", placement: "top" });
+                }
+            }
+        });
+    }
+
+    /* Índices de columna para filtros front */
+    var COL_CLIENTE = 1;
+    var COL_VIAJE   = 2;
+
     function renderTable(rows) {
         renderIndicadoresRanking(rows || []);
         var $tbl = $("#tblReporte");
@@ -274,23 +312,43 @@ $(function () {
         dt = $tbl.DataTable({
             data: rows || [],
             columns: [
-                { data: "fecha", title: "Fecha", render: function (d) { return cellSoloFecha(d); } },
-                { data: "clienteFullName",                title: "Cliente" },
-                { data: "viajeDescripcion",               title: "Viaje" },
-                { data: "viajeFechaSalida", title: "F. salida", render: function (d) { return cellSoloFecha(d); } },
-                { data: "cantidadPasajesXFactura",        title: "Pasajes x fact." },
-                { data: "cantViajesCompradosXCliente",    title: "Viajes cl." },
-                { data: "cantPasajesCompradosXCliente",   title: "Pasajes cl." },
-                { data: "cantClientesEligieronViaje",     title: "Clientes viaje" },
-                { data: "rankingClientesCompradoresViajes", title: "Rank. clientes" },
-                { data: "rankingViajes",                  title: "Rank. viajes" },
-                { data: "facturaId",                      title: "Factura", visible: false },
-                { data: "clienteId",                      title: "Cliente ID", visible: false },
-                { data: "viajeId",                        title: "Viaje ID", visible: false }
+                { data: "fecha", title: '<i class="bi bi-calendar3 me-1"></i>Fecha',
+                  render: function (d) { return window.MatReportes.formatFechaES(d); } },
+                { data: "clienteFullName", title: '<i class="bi bi-person me-1"></i>Cliente' },
+                { data: "viajeDescripcion", title: '<i class="bi bi-geo-alt me-1"></i>Viaje',
+                  render: function (d, type, row) {
+                      if (type !== "display") return d || "";
+                      var fecha = window.MatReportes.formatFechaES(row.viajeFechaSalida);
+                      var esc = escHtml(d);
+                      return '<span class="text-truncate d-inline-block" style="max-width:220px" title="' + esc + '">' + (esc || "-") + '</span>' +
+                          (fecha ? '<br><span class="text-muted small"><i class="bi bi-calendar3 me-1"></i>' + fecha + '</span>' : '');
+                  } },
+                { data: "cantidadPasajesXFactura", title: "Pasajes fact.", className: "text-center",
+                  render: function (d, type) { return renderNumCentered(d, type); } },
+                { data: "cantViajesCompradosXCliente", title: "Viajes cl.", className: "text-center",
+                  render: function (d, type) { return renderNumCentered(d, type); } },
+                { data: "cantPasajesCompradosXCliente", title: "Pasajes cl.", className: "text-center",
+                  render: function (d, type) { return renderNumCentered(d, type); } },
+                { data: "cantClientesEligieronViaje", title: "Fact. viaje", className: "text-center",
+                  render: function (d, type) { return renderNumCentered(d, type); } },
+                { data: "rankingClientesCompradoresViajes", title: "Rank. clientes", className: "text-center",
+                  render: function (d, type) {
+                      if (type !== "display") return d != null ? d : "";
+                      return renderRankBadge(d);
+                  } },
+                { data: "rankingViajes", title: "Rank. viajes", className: "text-center",
+                  render: function (d, type) {
+                      if (type !== "display") return d != null ? d : "";
+                      return renderRankBadge(d);
+                  } },
+                { data: "facturaId",  title: "Factura",    visible: false },
+                { data: "clienteId",  title: "Cliente ID", visible: false },
+                { data: "viajeId",    title: "Viaje ID",   visible: false }
             ],
             pageLength: 25,
             autoWidth: false,
-            language: { url: "/Scripts/dataTable/i18n/Spanish.json" }
+            language: { url: "/Scripts/dataTable/i18n/Spanish.json" },
+            initComplete: function () { applyHeaderTooltips(); }
         });
         $("#filtroFront").toggleClass("d-none", !rows || rows.length === 0);
         limpiarFiltros();
@@ -299,7 +357,7 @@ $(function () {
     function limpiarFiltros() {
         $("#filtCliente,#filtViaje").val("");
         if (dt) {
-            dt.columns(1).search("").columns(2).search("").draw();
+            dt.columns(COL_CLIENTE).search("").columns(COL_VIAJE).search("").draw();
         }
     }
 
@@ -321,10 +379,10 @@ $(function () {
     });
 
     $("#filtCliente").on("input", function () {
-        if (dt) { dt.columns(1).search($(this).val()).draw(); }
+        if (dt) dt.columns(COL_CLIENTE).search($(this).val()).draw();
     });
     $("#filtViaje").on("input", function () {
-        if (dt) { dt.columns(2).search($(this).val()).draw(); }
+        if (dt) dt.columns(COL_VIAJE).search($(this).val()).draw();
     });
     $("#btnLimpiarFiltro").on("click", limpiarFiltros);
 });

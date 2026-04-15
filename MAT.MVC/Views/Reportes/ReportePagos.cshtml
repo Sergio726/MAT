@@ -94,6 +94,64 @@
         </div>
     </div>
 
+    <div id="reportePagosIndicadores" class="d-none mb-3" aria-live="polite">
+        <h2 class="h6 fw-bold text-primary mb-3">Resumen de la consulta</h2>
+        <p class="small text-secondary mb-3">Totales calculados sobre el resultado devuelto por el servidor (no cambian al filtrar la tabla por vendedor, cliente o medio de pago).</p>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 mb-3">
+            <!-- Total cobrado -->
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Total cobrado</span>
+                            <span class="rounded-circle bg-success bg-opacity-10 text-success p-2"><i class="bi bi-currency-dollar"></i></span>
+                        </div>
+                        <div id="kpiTotalCobrado"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Resumen operativo -->
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Resumen operativo</span>
+                            <span class="rounded-circle bg-primary bg-opacity-10 text-primary p-2"><i class="bi bi-receipt"></i></span>
+                        </div>
+                        <p class="fs-4 fw-bold mb-1" id="kpiTotalPagos">0</p>
+                        <p class="small text-secondary mb-1">pagos registrados</p>
+                        <p class="small text-secondary mb-0"><span class="fw-semibold" id="kpiFacturasDistintas">0</span> facturas distintas</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Por tipo de venta -->
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Por tipo de venta</span>
+                            <span class="rounded-circle bg-warning bg-opacity-10 text-warning p-2"><i class="bi bi-shop"></i></span>
+                        </div>
+                        <div id="kpiTipoVenta"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Por medio de pago -->
+            <div class="col">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="small fw-semibold text-body-secondary">Por medio de pago</span>
+                            <span class="rounded-circle bg-info bg-opacity-10 text-info p-2"><i class="bi bi-credit-card"></i></span>
+                        </div>
+                        <div id="kpiMedioPago"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modern-table-container">
         <div class="table-responsive">
             <table class="modern-table table table-striped table-sm w-100" id="tblReporte"></table>
@@ -102,6 +160,7 @@
 </div>
 
 @section Scripts {
+<script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
 <script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
 <script src="@Url.Content("~/Scripts/mat.reportes-viaje-autocomplete.js")"></script>
 <script>
@@ -157,23 +216,238 @@ $(function () {
         if (t) { $a.text(t).removeClass("d-none"); } else { $a.addClass("d-none").text(""); }
     }
 
+    /* ── KPI helpers ────────────────────────────────────────────── */
+    var moneyFmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+
+    function parseMoneyCell(v) {
+        if (v == null || v === "") return 0;
+        if (typeof v === "number") return isNaN(v) ? 0 : v;
+        var s = String(v).trim().replace(/\s/g, "");
+        var n = parseFloat(s.replace(/\./g, "").replace(",", "."));
+        return isNaN(n) ? 0 : n;
+    }
+
+    function renderMonedaLines(obj) {
+        var order = [
+            { key: "1", label: "$ARS", cls: "success" },
+            { key: "3", label: "U$S",  cls: "info" }
+        ];
+        var parts = [];
+        for (var j = 0; j < order.length; j++) {
+            var o = order[j], val = obj[o.key] || 0;
+            if (val === 0 && !obj._showZero) continue;
+            parts.push(
+                '<div class="d-flex flex-wrap align-items-center gap-2 py-1 border-bottom border-light">' +
+                '<span class="badge rounded-pill bg-' + o.cls + '-subtle text-' + o.cls + '">' + o.label + '</span>' +
+                '<span class="fw-semibold ms-auto">$ ' + moneyFmt.format(val) + '</span></div>'
+            );
+        }
+        if ((obj._otra || 0) !== 0) {
+            parts.push(
+                '<div class="d-flex flex-wrap align-items-center gap-2 py-1">' +
+                '<span class="badge rounded-pill bg-secondary-subtle text-secondary">Otra</span>' +
+                '<span class="fw-semibold ms-auto">$ ' + moneyFmt.format(obj._otra) + '</span></div>'
+            );
+        }
+        return parts.length ? parts.join("") : '<span class="text-secondary small">Sin montos</span>';
+    }
+
+    function pct(n, total) {
+        if (!total) return "0";
+        var v = (n / total * 100);
+        return v < 1 && v > 0 ? "< 1" : v.toFixed(0);
+    }
+
+    function escHtml(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function aggregatePagos(rows) {
+        var cobrado = { "1": 0, "3": 0, _otra: 0, _showZero: true };
+        var facturas = {};
+        var porTipoVenta = {};
+        var porMedio = {};
+        var total = rows.length;
+
+        for (var i = 0; i < total; i++) {
+            var r = rows[i];
+            var m = String(r.monedaTipo != null ? r.monedaTipo : "").trim();
+            if (m !== "1" && m !== "3") m = "_otra";
+            var monto = parseMoneyCell(r.monto);
+            cobrado[m] = (cobrado[m] || 0) + monto;
+
+            if (r.facturaId) facturas[r.facturaId] = true;
+
+            var tv = r.tipoVentaDescripcion || "Sin dato";
+            if (!porTipoVenta[tv]) porTipoVenta[tv] = { count: 0, "1": 0, "3": 0, _otra: 0 };
+            porTipoVenta[tv].count++;
+            porTipoVenta[tv][m] = (porTipoVenta[tv][m] || 0) + monto;
+
+            var mp = r.pagoDescripcion || "Sin descripción";
+            if (!porMedio[mp]) porMedio[mp] = { count: 0, "1": 0, "3": 0, _otra: 0 };
+            porMedio[mp].count++;
+            porMedio[mp][m] = (porMedio[mp][m] || 0) + monto;
+        }
+
+        return {
+            cobrado: cobrado,
+            totalPagos: total,
+            facturasDistintas: Object.keys(facturas).length,
+            porTipoVenta: porTipoVenta,
+            porMedio: porMedio
+        };
+    }
+
+    function renderGroupCard(groups, totalRows, containerId) {
+        var arr = [];
+        for (var k in groups) { if (groups.hasOwnProperty(k)) arr.push({ nombre: k, data: groups[k] }); }
+        arr.sort(function (a, b) { return b.data.count - a.data.count; });
+
+        var html = "";
+        var limit = 6;
+        var othersData = null;
+
+        for (var i = 0; i < arr.length; i++) {
+            var g = arr[i];
+            if (i >= limit) {
+                if (!othersData) othersData = { count: 0, "1": 0, "3": 0, _otra: 0 };
+                othersData.count += g.data.count;
+                othersData["1"] += g.data["1"];
+                othersData["3"] += g.data["3"];
+                othersData._otra += g.data._otra;
+                continue;
+            }
+            html += renderGroupItem(g.nombre, g.data, totalRows);
+        }
+        if (othersData) {
+            html += renderGroupItem("Otros", othersData, totalRows);
+        }
+        if (!html) html = '<span class="text-secondary small">Sin datos</span>';
+        $(containerId).html(html);
+    }
+
+    function renderGroupItem(nombre, data, totalRows) {
+        var h = '<div class="mb-2">';
+        h += '<div class="d-flex justify-content-between align-items-center">';
+        h += '<span class="small fw-semibold">' + escHtml(nombre) + '</span>';
+        h += '<span class="small text-secondary">' + data.count + ' (' + pct(data.count, totalRows) + '%)</span>';
+        h += '</div>';
+        var barWidth = totalRows ? Math.max(2, data.count / totalRows * 100) : 0;
+        h += '<div class="progress mt-1" style="height:5px">';
+        h += '<div class="progress-bar bg-primary bg-opacity-75" style="width:' + barWidth.toFixed(1) + '%"></div>';
+        h += '</div>';
+        var monedas = { "1": data["1"] || 0, "3": data["3"] || 0, _otra: data._otra || 0 };
+        var monedaParts = [];
+        if (monedas["1"]) monedaParts.push('<span class="badge rounded-pill bg-success-subtle text-success me-1">$ARS</span>$ ' + moneyFmt.format(monedas["1"]));
+        if (monedas["3"]) monedaParts.push('<span class="badge rounded-pill bg-info-subtle text-info me-1">U$S</span>$ ' + moneyFmt.format(monedas["3"]));
+        if (monedas._otra) monedaParts.push('<span class="badge rounded-pill bg-secondary-subtle text-secondary me-1">Otra</span>$ ' + moneyFmt.format(monedas._otra));
+        if (monedaParts.length) {
+            h += '<div class="small text-secondary mt-1 d-flex flex-wrap gap-2">' + monedaParts.join(" ") + '</div>';
+        }
+        h += '</div>';
+        return h;
+    }
+
+    function renderIndicadoresPagos(rows) {
+        var $box = $("#reportePagosIndicadores");
+        if (!rows || rows.length === 0) { $box.addClass("d-none"); return; }
+        var agg = aggregatePagos(rows);
+        $("#kpiTotalCobrado").html(renderMonedaLines(agg.cobrado));
+        $("#kpiTotalPagos").text(String(agg.totalPagos));
+        $("#kpiFacturasDistintas").text(String(agg.facturasDistintas));
+        renderGroupCard(agg.porTipoVenta, agg.totalPagos, "#kpiTipoVenta");
+        renderGroupCard(agg.porMedio, agg.totalPagos, "#kpiMedioPago");
+        $box.removeClass("d-none");
+    }
+
+    /* ── Tabla ───────────────────────────────────────────────────── */
+
+    /* ── Render helpers para celdas ─────────────────────────────── */
+
+    function renderMonedaBadge(tipo) {
+        if (tipo === "1") return '<span class="badge rounded-pill bg-success-subtle text-success">$ARS</span>';
+        if (tipo === "3") return '<span class="badge rounded-pill bg-info-subtle text-info">U$S</span>';
+        return '<span class="badge rounded-pill bg-secondary-subtle text-secondary">' + escHtml(tipo || "-") + '</span>';
+    }
+
+    function renderMontoCurrency(monto, monedaTipo, type) {
+        var n = parseMoneyCell(monto);
+        if (type !== "display") return n;
+        return '<span class="text-nowrap">$ ' + moneyFmt.format(n) + '</span>';
+    }
+
+    function renderTipoVentaBadge(val) {
+        if (!val) return '<span class="badge bg-secondary-subtle text-secondary">-</span>';
+        var lower = val.toLowerCase();
+        var cls = "secondary";
+        if (lower.indexOf("oficina") !== -1) cls = "primary";
+        else if (lower.indexOf("online") !== -1) cls = "info";
+        return '<span class="badge bg-' + cls + '-subtle text-' + cls + '">' + escHtml(val) + '</span>';
+    }
+
+    function renderMedioPagoBadge(val) {
+        if (!val) return '<span class="text-muted small">-</span>';
+        var lower = val.toLowerCase();
+        var icon = "bi-credit-card";
+        if (lower.indexOf("efect") !== -1) icon = "bi-cash-stack";
+        else if (lower.indexOf("transfer") !== -1) icon = "bi-bank";
+        else if (lower.indexOf("cheque") !== -1) icon = "bi-file-earmark-text";
+        else if (lower.indexOf("tarjeta") !== -1 || lower.indexOf("débito") !== -1 || lower.indexOf("debito") !== -1) icon = "bi-credit-card-2-front";
+        return '<span class="text-nowrap"><i class="bi ' + icon + ' text-secondary me-1"></i>' + escHtml(val) + '</span>';
+    }
+
+    function renderRank(val) {
+        if (val == null || val === "") return '<span class="text-muted">-</span>';
+        var n = parseInt(val, 10);
+        if (isNaN(n)) return escHtml(String(val));
+        if (n === 1) return '<span class="badge bg-warning-subtle text-warning fw-bold">#1</span>';
+        if (n === 2) return '<span class="badge bg-secondary-subtle text-secondary fw-bold">#2</span>';
+        if (n === 3) return '<span class="badge bg-danger-subtle text-danger fw-bold">#3</span>';
+        return '<span class="text-muted small">#' + n + '</span>';
+    }
+
+    /* Índices de columna para filtros front — deben coincidir con el orden de columns[] */
+    var COL_MEDIO    = 3;
+    var COL_VENDEDOR = 7;
+    var COL_CLIENTE  = 8;
+
     function renderTable(rows) {
+        renderIndicadoresPagos(rows);
         var $tbl = $("#tblReporte");
         if (dt) { dt.destroy(); $tbl.empty(); }
         dt = $tbl.DataTable({
             data: rows || [],
             columns: [
-                { data: "fechaPago",            title: "Fecha pago" },
-                { data: "monto",                title: "Monto",       className: "text-end" },
-                { data: "monedaTipo",           title: "Mon." },
-                { data: "pagoDescripcion",      title: "Medio de pago" },
-                { data: "tipoVentaDescripcion", title: "Tipo venta" },
-                { data: "cantidadTipoPago",     title: "Cant." },
-                { data: "rankingTipoPago",      title: "Rank." },
-                { data: "vendedorFullName",     title: "Vendedor" },
-                { data: "clienteFullName",      title: "Cliente" },
-                { data: "viaje",                title: "Viaje" },
-                { data: "facturaId",            title: "Factura",     visible: false }
+                { data: "fechaPago", title: "Fecha pago",
+                  render: function (d) { return window.MatReportes.formatFechaES(d); } },
+                { data: "monto", title: "Monto", className: "text-end",
+                  render: function (d, type, row) { return renderMontoCurrency(d, row.monedaTipo, type); } },
+                { data: "monedaTipo", title: "Mon.",
+                  render: function (d, type) {
+                      if (type !== "display") return d || "";
+                      return renderMonedaBadge(d);
+                  } },
+                { data: "pagoDescripcion", title: "Medio de pago",
+                  render: function (d, type) {
+                      if (type !== "display") return d || "";
+                      return renderMedioPagoBadge(d);
+                  } },
+                { data: "tipoVentaDescripcion", title: "Tipo venta",
+                  render: function (d, type) {
+                      if (type !== "display") return d || "";
+                      return renderTipoVentaBadge(d);
+                  } },
+                { data: "cantidadTipoPago", title: "Cant.", visible: false },
+                { data: "rankingTipoPago", title: "Rank.", visible: false },
+                { data: "vendedorFullName", title: "Vendedor" },
+                { data: "clienteFullName",  title: "Cliente" },
+                { data: "viaje", title: "Viaje",
+                  render: function (d, type) {
+                      if (type !== "display") return d || "";
+                      var esc = escHtml(d);
+                      return '<span class="text-truncate d-inline-block" style="max-width:220px" title="' + esc + '">' + (esc || "-") + '</span>';
+                  } },
+                { data: "facturaId", title: "Factura", visible: false }
             ],
             pageLength: 25,
             autoWidth: false,
@@ -186,7 +460,9 @@ $(function () {
     function limpiarFiltros() {
         $("#filtVendedor,#filtCliente,#filtTipoPago").val("");
         if (dt) {
-            dt.columns(7).search("").columns(8).search("").columns(3).search("").draw();
+            dt.columns(COL_VENDEDOR).search("")
+              .columns(COL_CLIENTE).search("")
+              .columns(COL_MEDIO).search("").draw();
         }
     }
 
@@ -206,13 +482,13 @@ $(function () {
     });
 
     $("#filtVendedor").on("input", function () {
-        if (dt) { dt.columns(7).search($(this).val()).draw(); }
+        if (dt) dt.columns(COL_VENDEDOR).search($(this).val()).draw();
     });
     $("#filtCliente").on("input", function () {
-        if (dt) { dt.columns(8).search($(this).val()).draw(); }
+        if (dt) dt.columns(COL_CLIENTE).search($(this).val()).draw();
     });
     $("#filtTipoPago").on("input", function () {
-        if (dt) { dt.columns(3).search($(this).val()).draw(); }
+        if (dt) dt.columns(COL_MEDIO).search($(this).val()).draw();
     });
     $("#btnLimpiarFiltro").on("click", limpiarFiltros);
 });

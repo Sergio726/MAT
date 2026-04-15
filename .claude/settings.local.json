@@ -7,7 +7,9 @@
       "Bash(\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\" MAT.MVC/MAT.MVC.csproj /t:Build /p:Configuration=Debug /v:minimal)",
       "Bash(\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\" \"MAT.MVC\\\\MAT.MVC.csproj\" /t:Build /p:Configuration=Debug /v:minimal)",
       "Bash(\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\" /noautoresponse \"MAT.MVC\\\\MAT.MVC.csproj\" /t:Build /p:Configuration=Debug /v:minimal)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\" \"C:\\\\Users\\\\Sebastian\\\\source\\\\repos\\\\MAT\\\\MAT.MVC\\\\MAT.MVC.csproj\" /t:Build /p:Configuration=Debug /v:minimal)",
+      "Bash(\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\" MAT.MVC\\\\MAT.MVC.csproj /t:Build /p:Configuration=Debug /v:minimal)"
     ]
   }
 }

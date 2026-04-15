@@ -749,7 +749,11 @@
     <Content Include="Views\PersonaPasajero\Index.cshtml" />
     <Content Include="Views\Shared\_ViajesPartial.cshtml" />
     <Content Include="Scripts\mat.jquery.initialize.js" />
+    <Content Include="Scripts\mat.reportes-utils.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
+    <Content Include="Scripts\mat.reportes-ventas-facturado-modal.js" />
+    <Content Include="Scripts\mat.reportes-vendedores.js" />
+    <Content Include="Scripts\mat.reportes-destinos.js" />
     <Content Include="Scripts\mat.reportes-viaje-autocomplete.js" />
     <Content Include="Views\Home\ViajesPorFecha.cshtml" />
     <Content Include="Views\Home\TodosLosViajes.cshtml" />

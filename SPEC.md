@@ -271,6 +271,18 @@
   Archivos: `Views/Reportes/ReporteRanking.cshtml`; export Excel (`ReportesExcelExport` ranking) si debe reflejar el mismo formato de fecha en celdas visibles.
   Criterio de éxito: Usuario ve fechas legibles sin hora innecesaria en pantalla; Excel acordado con negocio.
 
+- [x] **Reportes UX: Ranking — mejoras UX/UI en tabla tblReporte**
+  Aplicar mejoras visuales y de usabilidad en la tabla de resultados de `ReporteRanking.cshtml`:
+  - **Badges de ranking:** columnas "Rank. clientes" y "Rank. viajes" con badges de color (#1 oro, #2 plata, #3 bronce).
+  - **Columnas numéricas centradas** y en `fw-semibold`.
+  - **Íconos en encabezados:** Fecha con `bi-calendar3`, Cliente con `bi-person`, Viaje con `bi-geo-alt`.
+  - **Tooltips en encabezados:** columnas numéricas y de ranking con tooltip explicativo (Bootstrap 5 Tooltip).
+  - **Constantes de columna:** `COL_CLIENTE` y `COL_VIAJE` para filtros front.
+  - **Leyenda colapsable:** "Cómo leer el ranking" como botón `collapse` BS5.
+  - **Renombrado:** "Clientes viaje" a "Fact. viaje" (más preciso: cuenta filas de factura).
+  Archivos: `Views/Reportes/ReporteRanking.cshtml`
+  Criterio de éxito: Mejoras aplicadas; MSBuild limpio; leyenda colapsable; badges visibles.
+
 - [x] **Reportes: Ranking — documentar métrica “Rank. viajes” y claridad en UI**
   **Definición en BD (verificado en `usp_MAT_Reportes_RankingCompras`):**
   - **`RankingViajes`** = `DENSE_RANK() OVER (ORDER BY CantClientesEligieronViaje DESC)`: posición del **viaje** según un valor numérico asociado (empates = mismo rank, sin huecos por `DENSE_RANK`).
@@ -297,7 +309,7 @@
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, y/o `Scripts/…` siguiendo el patrón del módulo (p. ej. extracción a `mat.reportes-ventas.js` si conviene).
   Criterio de éxito: Filtrado en cliente es inmediato; “Consultar” sigue definiendo el universo de datos según fechas o viaje; criterio Excel acordado y probado.
 
-- [ ] **Reportes UX: Reporte Ventas — tarjeta “Total facturado” + modal “Listado de facturas” + Excel en tarjeta**
+- [x] **Reportes UX: Reporte Ventas — tarjeta “Total facturado” + modal “Listado de facturas” + Excel en tarjeta**
 
   **Contexto (estado actual — análisis):**
   - La pantalla `Views/Reportes/ReporteVentas.cshtml` ya obtiene filas vía `GET` `Reportes/Ventas` y las guarda solo en memoria dentro del `DataTable` y de las funciones `renderTable` / `aggregateVentasRows`. El contrato de fila es `ReporteVentaRowDto` (camelCase en JSON): `viajeDescripcion`, `fechaSalida`, `cantidadButacas`, `vendedorFullName`, `clienteFullName`, `facturaId`, `facturaFecha`, `facturaEstado`, `monedaTipo` (`"1"` ARS, `"3"` U$S), `totalFactura`, `montoPagado`, `saldo`, etc.
@@ -349,15 +361,30 @@
 
   **Criterio de éxito:** Tras **Consultar**, la tarjeta Total facturado abre el modal con listado consistente con los datos mostrados en la tabla principal; filtros y búsqueda solo afectan el modal y sus totales; el botón Excel en la tarjeta descarga el mismo tipo de archivo que el export global; `stopPropagation` evita abrir modal al exportar; las demás cards del resumen siguen no clicables; MSBuild `MAT.MVC` Debug sin errores; breve nota en `PROGRESS.md` al cerrar el task **indicando qué ítems de D** se implementaron o se posponen.
 
+- [x] **Reportes UX: Modal listado de facturas — datepickers en español (dd/mm/aaaa)**
+  Los filtros **F. desde** / **F. hasta** del modal usaban `input type="date"` (calendario nativo según idioma del SO, a menudo inglés y formato MM/DD). Se alinearon al mismo patrón que **Desde/Hasta** del reporte: `type="text"` + clase `mat-datepicker` + `$.datepicker.regional['es']`. En `mat.reportes-ventas-facturado-modal.js`: limpieza con `datepicker('setDate', null)` y `_parseDate` con año de dos dígitos coherente con `dd/mm/yy` de jQuery UI.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Scripts/mat.reportes-ventas-facturado-modal.js`
+  Criterio de éxito: Calendario y formato en español; filtros por fecha del modal correctos; MSBuild `MAT.MVC` limpio.
+
+- [x] **Reportes UX: Top 3 rankings — contraste panel y tarjetas**
+  Las cards del Top Vendedores / Top Destinos (blancas, `border-0`, sombra muy suave) apenas se distinguían del fondo `#f3f6fb` del admin. Se añadió contenedor **`reporte-rankings-strip`** (gradiente más contrastado, borde e highlight interior) envolviendo ambas secciones y estilos **` .card.card-top-ranking`** con borde sutil, sombra en capas y hover reforzado.
+  Archivos: `Views/Reportes/ReporteVentas.cshtml`
+  Criterio de éxito: Rankings legibles a primera vista; MSBuild limpio.
+
+- [x] **Reportes UX: Top 3 Vendedores — medallas 🥇🥈🥉 y efecto destacado 1er puesto**
+  El 2º puesto refería **`bi-medal`**, que no existe en el `bootstrap-icons.css` versionado del proyecto (quedaba vacío). Se muestran **Unicode** 🥇 🥈 🥉. La tarjeta del **1er** puesto lleva **`card-top-ranking-first`**: animación de franja que cruza **de derecha a izquierda** (efecto “espejado”), borde/oro acorde al podio; iteración final de color a **amarillo oscuro / oro** (sin mezcla negra). Se respeta **`prefers-reduced-motion`** y hover que conserva el realce dorado.
+  Archivos: `Scripts/mat.reportes-vendedores.js`, `Views/Reportes/ReporteVentas.cshtml` (estilos)
+  Criterio de éxito: Tres puestos con medalla visible; 1er puesto claramente destacado; MSBuild limpio.
+
 #### Reportes — Top Vendedores y Top Destinos (derivado de datos ya cargados)
 
-- [ ] **Reportes: Persistir `lastRows` como fuente compartida en ReporteVentas (prerequisito)**
+- [x] **Reportes: Persistir `lastRows` como fuente compartida en ReporteVentas (prerequisito)**
   **Contexto:** Hoy el resultado de la consulta de ventas vive solo dentro del `DataTable` y de las funciones `renderTable` / `aggregateVentasRows`. Los tasks de modal de facturas, Top Vendedores y Top Destinos necesitan acceder al mismo arreglo en cualquier momento sin relanzar el `$.getJSON`.
   **Acción (mínima y no regresiva):** declarar `var lastRows = [];` en el closure de `$(function(){...})` de `ReporteVentas.cshtml` y asignarlo dentro de `renderTable(rows)` antes de cualquier otra operación (`lastRows = rows || [];`). Al limpiar / nueva consulta, `lastRows = []`. No cambia nada más del flujo existente.
   Archivos: `Views/Reportes/ReporteVentas.cshtml`.
   Criterio de éxito: `lastRows` disponible en el scope del módulo tras Consultar exitoso; DataTable, KPI y filtro front funcionan igual; MSBuild limpio. *Este task es bloqueante para los dos tasks siguientes y para el task del modal de facturas.*
 
-- [ ] **Reportes UX: Reporte Ventas — sección "Top 3 Vendedores" con cards y modal "Lista completa"**
+- [x] **Reportes UX: Reporte Ventas — sección "Top 3 Vendedores" con cards y modal "Lista completa"**
 
   **Contexto técnico (estado del código):**
   - `ReporteVentaRowDto` ya expone `VendedorId`, `VendedorFullName`, `MonedaTipo`, `TotalFactura`, `MontoPagado`, `Saldo` — todos los campos necesarios.
@@ -378,7 +405,7 @@
   - Visible solo cuando `lastRows.length > 0`; oculto/desmontado al limpiar o al inicio.
   - Cabecera: título "Top 3 Vendedores" + botón "Ver todos" alineado a la derecha.
   - Tres cards Bootstrap 5 en grid `row-cols-1 row-cols-md-3 g-3` con diseño coherente con los KPI del bloque "Resumen":
-    - **Medalla de posición:** `#1` con icono `bi-trophy-fill text-warning`, `#2` con `bi-medal text-secondary`, `#3` con `bi-award text-danger` (o variante acordada; respetar tema claro del Admin actual).
+    - **Medalla de posición:** `#1` / `#2` / `#3` con **Unicode** 🥇 🥈 🥉 *(reemplazo 2026-04: `bi-medal` no existía en el CSS de Bootstrap Icons del repo; ver task “Top 3 Vendedores — medallas” más abajo).*
     - **Nombre del vendedor** (truncado a una línea con `text-truncate`).
     - **Cantidad de ventas** en texto secundario.
     - **Totales por moneda** (solo mostrar monedas con valor > 0): reutilizar `renderMonedaRowsHtml` o patrón inline con badges `$ARS` / `U$D` + monto formateado `es-AR`.
@@ -404,7 +431,7 @@
 
   Criterio de éxito: Tras Consultar, el bloque Top 3 Vendedores aparece con datos correctos; "Ver todos" abre el modal con lista completa; búsqueda, orden y CSV funcionan sin nueva llamada al servidor; las tres medallas muestran el vendedor correcto según suma de `totalFactura`; bloque oculto antes de la primera consulta; MSBuild limpio.
 
-- [ ] **Reportes UX: Reporte Ventas — sección "Top 3 Destinos" con cards y modal "Lista completa"**
+- [x] **Reportes UX: Reporte Ventas — sección "Top 3 Destinos" con cards y modal "Lista completa"**
 
   **Contexto técnico (estado del código):**
   - `ReporteVentaRowDto` expone `ViajeId`, `ViajeDescripcion`, `MonedaTipo`, `TotalFactura`.
@@ -442,16 +469,29 @@
 
   Criterio de éxito: Top 3 Destinos muestra los viajes con más filas en el resultado; modal con búsqueda, orden y CSV; ranking correcto por cantidad de ventas (no por monto); bloque oculto hasta Consultar; MSBuild limpio.
 
+#### Reportes — UX/UI (Reporte de pagos, Admin)
+
+- [x] **Reportes UX: Reporte Pagos — tarjetas de estadísticas (KPI) antes de la tabla**
+  Añadir entre el panel de filtros front y la tabla de resultados un bloque de **cards de indicadores** calculados en cliente sobre el JSON de la última consulta (sin nueva petición al servidor), alineado al patrón de `ReporteVentas`.
+  **Indicadores:**
+  - **Total cobrado** — suma de `monto` desglosado por moneda ($ARS / U$S), badges + `Intl.NumberFormat("es-AR")`.
+  - **Resumen operativo** — total de registros (pagos) y cantidad de facturas distintas (`facturaId` único).
+  - **Por tipo de venta** — agrupar por `tipoVentaDescripcion`: conteo, porcentaje del total de filas, montos ARS/U$S.
+  - **Por medio de pago** — agrupar por `pagoDescripcion`: ordenar por total de filas; cada ítem con nombre, % filas y montos ARS/U$S.
+  Las cards se ocultan antes de la primera consulta y si el resultado está vacío. Los filtros front (vendedor, cliente, medio) **no** alteran los KPI; leyenda explícita en pantalla.
+  Archivos: `Views/Reportes/ReportePagos.cshtml`.
+  Criterio de éxito: Tras Consultar con datos, las tarjetas muestran totales coherentes; consulta vacía/error mantiene bloque oculto; tabla y Excel sin regresión; MSBuild limpio.
+
 #### Reportes — Calidad de datos en tablas (formato visual)
 
-- [ ] **Reportes UI: Fechas en formato dd/mm/aaaa en todas las tablas de reportes**
+- [x] **Reportes UI: Fechas en formato dd/mm/aaaa en todas las tablas de reportes**
   Los tres reportes (Ventas, Pagos, Ranking) muestran columnas de fecha con el valor crudo del JSON (timestamp ISO `2026-04-02T00:00:00` o string del SP). La única excepción correcta es Ranking que ya usa `Intl.DateTimeFormat("es-AR")`. Unificar con un helper JS reutilizable `formatFechaES(val)` (solo fecha, sin hora) e inyectarlo en `render` de DataTables en las tres vistas.
   **Columnas afectadas:** `fechaSalida` y `facturaFecha` en Ventas; `fechaPago` en Pagos; `fecha` y `viajeFechaSalida` en Ranking (ya parcialmente resuelto — verificar paridad).
   **Regla de formateo:** entrada puede ser ISO string, `Date` serializado de .NET (`/Date(ms)/`) o `dd/MM/yyyy` — normalizar a `dd/mm/aaaa` en pantalla. El Excel no cambia (ya tiene `ToString("d", es-AR)` en `ReportesExcelExport`).
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`; si conviene, helper en `Scripts/mat.reportes-utils.js` y registro en bundle.
   Criterio de éxito: Todas las fechas en las tres tablas Admin se leen en `dd/mm/aaaa`; sin hora ni milisegundos; MSBuild limpio.
 
-- [ ] **Reportes UI: Unificar columna "Viaje" + "Fecha salida" en una sola celda (Ventas y Ranking)**
+- [x] **Reportes UI: Unificar columna "Viaje" + "Fecha salida" en una sola celda (Ventas y Ranking)**
   En el Reporte de Ventas y Ranking las columnas "Viaje" y "Fecha salida" son adyacentes y separar la fecha en columna propia consume ancho sin aportar legibilidad. Combinarlas en una celda de **dos líneas**: primera línea descripción del viaje (texto truncado con `title` al hover), segunda línea la fecha en `dd/mm/aaaa` en gris/pequeño, con icono `bi-calendar3` como indicador visual.
   La columna combinada se llama "Viaje" en el encabezado; la fecha se renderiza debajo en tono `text-muted small`.
   Actualizar `columnDefs` de DataTables y el `render` correspondiente; el Export Excel **no cambia** (sigue con columnas separadas en el archivo).

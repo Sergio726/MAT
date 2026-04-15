@@ -3,6 +3,99 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
+<style>
+.card-facturado-interactiva {
+    cursor: pointer;
+    transition: box-shadow .15s, border-color .15s;
+}
+.card-facturado-interactiva:hover {
+    box-shadow: 0 .25rem .75rem rgba(0,0,0,.13) !important;
+    border: 1px solid rgba(25,135,84,.35) !important;
+}
+.card-facturado-sin-datos {
+    cursor: default;
+    opacity: .75;
+}
+.card-facturado-sin-datos:hover {
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+@@media (prefers-reduced-motion: reduce) {
+    .card-facturado-interactiva { transition: none; }
+}
+/* Contenedor rankings: más contraste que #f3f6fb del admin para que resalten las cards blancas */
+.reporte-rankings-strip {
+    padding: 1.25rem 1.35rem 1.45rem;
+    background: linear-gradient(168deg, #d8e4f4 0%, #e4ecf6 42%, #e8f0f9 100%);
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+.card.card-top-ranking {
+    background-color: #fff !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.06),
+        0 8px 22px rgba(15, 23, 42, 0.1);
+    transition: box-shadow .18s ease, border-color .18s ease;
+}
+.card.card-top-ranking:hover {
+    border-color: rgba(15, 23, 42, 0.16) !important;
+    box-shadow:
+        0 2px 6px rgba(15, 23, 42, 0.08),
+        0 14px 32px rgba(15, 23, 42, 0.14) !important;
+}
+.card.card-top-ranking.card-top-ranking-first:hover {
+    border-color: rgba(210, 155, 15, 0.85) !important;
+    box-shadow:
+        0 2px 6px rgba(15, 23, 42, 0.08),
+        0 14px 32px rgba(15, 23, 42, 0.14),
+        inset 0 0 0 1px rgba(255, 236, 160, 0.55) !important;
+}
+/* 1er puesto: franja “espejada” amarillo oscuro / oro (sin mezcla negra) */
+.card-top-ranking-first {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(200, 150, 25, 0.7) !important;
+    box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.06),
+        0 8px 22px rgba(15, 23, 42, 0.1),
+        inset 0 0 0 1px rgba(255, 228, 130, 0.45) !important;
+}
+.card-top-ranking-first::before {
+    content: "";
+    position: absolute;
+    inset: -65% -45%;
+    background: linear-gradient(
+        105deg,
+        transparent 32%,
+        rgba(220, 175, 35, 0.28) 43%,
+        rgba(185, 135, 0, 0.52) 49.5%,
+        rgba(170, 125, 0, 0.58) 50.5%,
+        rgba(220, 175, 35, 0.28) 57%,
+        transparent 68%
+    );
+    transform: translateX(60%);
+    animation: mat-rank-shine-rtl 2.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+.card-top-ranking-first .card-body {
+    position: relative;
+    z-index: 2;
+}
+@@keyframes mat-rank-shine-rtl {
+    0%, 8% { transform: translateX(60%); opacity: 0; }
+    14% { opacity: 1; }
+    52% { transform: translateX(-60%); opacity: 1; }
+    58%, 100% { transform: translateX(-60%); opacity: 0; }
+}
+@@media (prefers-reduced-motion: reduce) {
+    .card.card-top-ranking { transition: none; }
+    .card-top-ranking-first::before { animation: none; opacity: 0; }
+}
+</style>
+
 <div class="modern-page-container">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
         <div>
@@ -83,13 +176,22 @@
         <p class="small text-secondary mb-3">Totales calculados sobre el resultado devuelto por el servidor (no cambian al filtrar la tabla por vendedor o cliente).</p>
         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-5 g-3">
             <div class="col">
-                <div class="card shadow-sm border-0 h-100">
+                <div class="card shadow-sm border-0 h-100 card-facturado-interactiva card-facturado-sin-datos"
+                     id="cardFacturado"
+                     role="button" tabindex="0"
+                     title="Haz clic para ver el listado de facturas"
+                     aria-label="Total facturado — clic para ver listado de facturas">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <span class="small fw-semibold text-body-secondary">Total facturado</span>
                             <span class="rounded-circle bg-success bg-opacity-10 text-success p-2"><i class="bi bi-currency-dollar"></i></span>
                         </div>
                         <div class="reporte-ventas-kpi-montos" data-kpi="facturado"></div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top pt-2 pb-2">
+                        <button type="button" class="btn btn-outline-success btn-sm w-100" id="btnExcelCardFacturado" disabled>
+                            <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+                        </button>
                     </div>
                 </div>
             </div>
@@ -142,6 +244,29 @@
         </div>
     </div>
 
+    <!-- Top 3 Vendedores -->
+    <div id="topVendedores" class="d-none mb-3 reporte-rankings-strip">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h6 fw-bold text-primary mb-0"><i class="bi bi-people-fill me-1"></i>Top 3 Vendedores</h2>
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="btnVerTodosVendedores">
+                <i class="bi bi-list-ul"></i> Ver todos
+            </button>
+        </div>
+        <div class="row row-cols-1 row-cols-md-3 g-3" id="topVendedoresCards"></div>
+    </div>
+
+    <!-- Top 3 Destinos -->
+    <div id="topDestinos" class="d-none mb-3 reporte-rankings-strip">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h6 fw-bold text-primary mb-0"><i class="bi bi-geo-alt-fill me-1"></i>Top 3 Destinos <span class="text-secondary fw-normal small">(por cantidad de ventas)</span></h2>
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="btnVerTodosDestinos">
+                <i class="bi bi-list-ul"></i> Ver todos
+            </button>
+        </div>
+        <!-- Nota: el monto total suma ambas monedas sin distinguir ARS/U$S -->
+        <div class="row row-cols-1 row-cols-md-3 g-3" id="topDestinosCards"></div>
+    </div>
+
     <div class="modern-table-container">
         <div class="table-responsive">
             <table class="modern-table table table-striped table-sm w-100" id="tblReporte" style="min-width: 860px"></table>
@@ -149,8 +274,169 @@
     </div>
 </div>
 
+<!-- Modal Lista completa de Vendedores -->
+<div class="modal fade" id="modalListadoVendedores" tabindex="-1"
+     aria-labelledby="modalListadoVendedoresLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-fullscreen-md-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalListadoVendedoresLabel">
+                    <i class="bi bi-people me-1"></i> Lista completa de vendedores
+                </h5>
+                <button type="button" class="btn-close ms-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div class="row g-2 mb-3 align-items-end">
+                    <div class="col-12 col-md-5">
+                        <label class="form-label small mb-0" for="modalVendedoresBuscar">Buscar vendedor</label>
+                        <input type="text" class="form-control form-control-sm" id="modalVendedoresBuscar"
+                               placeholder="Nombre del vendedor…" autocomplete="off" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-success btn-sm" id="btnCsvVendedores">
+                            <i class="bi bi-filetype-csv"></i> Exportar CSV
+                        </button>
+                    </div>
+                </div>
+                <p class="small text-secondary mb-2" id="modalVendedoresContador">Mostrando 0 de 0 vendedores</p>
+                <div class="table-responsive" id="modalVendedoresTablaWrap" style="max-height:450px;overflow-y:auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Lista completa de Destinos -->
+<div class="modal fade" id="modalListadoDestinos" tabindex="-1"
+     aria-labelledby="modalListadoDestinosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-fullscreen-md-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalListadoDestinosLabel">
+                    <i class="bi bi-geo-alt me-1"></i> Lista completa de destinos
+                </h5>
+                <button type="button" class="btn-close ms-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div class="row g-2 mb-3 align-items-end">
+                    <div class="col-12 col-md-5">
+                        <label class="form-label small mb-0" for="modalDestinosBuscar">Buscar destino</label>
+                        <input type="text" class="form-control form-control-sm" id="modalDestinosBuscar"
+                               placeholder="Nombre del viaje…" autocomplete="off" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-success btn-sm" id="btnCsvDestinos">
+                            <i class="bi bi-filetype-csv"></i> Exportar CSV
+                        </button>
+                    </div>
+                </div>
+                <p class="small text-secondary mb-2" id="modalDestinosContador">Mostrando 0 de 0 destinos</p>
+                <div class="table-responsive" id="modalDestinosTablaWrap" style="max-height:450px;overflow-y:auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Listado de Facturas -->
+<div class="modal fade" id="modalListadoFacturas" tabindex="-1"
+     aria-labelledby="modalListadoFacturasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-fullscreen-md-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title" id="modalListadoFacturasLabel">
+                        <i class="bi bi-receipt-cutoff me-1"></i> Listado de facturas
+                    </h5>
+                    <p class="small text-secondary mb-0 mt-1" id="modalFacturasSubtitulo"></p>
+                </div>
+                <button type="button" class="btn-close ms-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div class="row g-2 mb-3 align-items-end">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label small mb-0" for="modalFacturasTexto">Buscar</label>
+                        <input type="text" class="form-control form-control-sm" id="modalFacturasTexto"
+                               placeholder="Factura, cliente, vendedor, viaje…" autocomplete="off" />
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label small mb-0" for="modalFacturasEstado">Estado</label>
+                        <select class="form-select form-select-sm" id="modalFacturasEstado">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label small mb-0" for="modalFacturasMoneda">Moneda</label>
+                        <select class="form-select form-select-sm" id="modalFacturasMoneda">
+                            <option value="">Todas</option>
+                            <option value="1">$ARS</option>
+                            <option value="3">U$S</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label small mb-0" for="modalFacturasDesde">F. desde</label>
+                        <input type="text" class="form-control form-control-sm mat-datepicker" id="modalFacturasDesde"
+                               placeholder="dd/mm/aaaa" autocomplete="off" />
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label small mb-0" for="modalFacturasHasta">F. hasta</label>
+                        <input type="text" class="form-control form-control-sm mat-datepicker" id="modalFacturasHasta"
+                               placeholder="dd/mm/aaaa" autocomplete="off" />
+                    </div>
+                    <div class="col-auto d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="modalFacturasLimpiar" title="Limpiar filtros">
+                            <i class="bi bi-x-lg"></i> Limpiar
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnExpandAll" title="Expandir / contraer todos los detalles">
+                            <i class="bi bi-arrows-expand"></i> Expandir todo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                    <p class="small text-secondary mb-0" id="modalFacturasContador">Mostrando 0 de 0 facturas</p>
+                </div>
+
+                <div class="row g-2 mb-3 small">
+                    <div class="col-12 col-md-4">
+                        <div class="p-2 border rounded bg-light d-flex flex-wrap gap-1 align-items-center">
+                            <span class="text-secondary me-1">Facturado:</span>
+                            <span id="modalTotFact">—</span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="p-2 border rounded bg-light d-flex flex-wrap gap-1 align-items-center">
+                            <span class="text-secondary me-1">Cobrado:</span>
+                            <span id="modalTotCob">—</span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="p-2 border rounded bg-light d-flex flex-wrap gap-1 align-items-center">
+                            <span class="text-secondary me-1">Saldo:</span>
+                            <span id="modalTotSaldo">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive" id="modalFacturasTablaWrap" style="max-height:420px;overflow-y:auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+<script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
 <script src="@Url.Content("~/Scripts/mat.reportes-excel-export.js")"></script>
+<script src="@Url.Content("~/Scripts/mat.reportes-ventas-facturado-modal.js")"></script>
+<script src="@Url.Content("~/Scripts/mat.reportes-vendedores.js")"></script>
+<script src="@Url.Content("~/Scripts/mat.reportes-destinos.js")"></script>
 <script src="@Url.Content("~/Scripts/mat.reportes-viaje-autocomplete.js")"></script>
 <script>
 $(function () {
@@ -158,6 +444,7 @@ $(function () {
     var urlExcel = '@Url.Action("VentasExcel", "Reportes")';
     var urlBuscarViajes = '@Url.Action("BuscarViajes", "Reportes")';
     var dt = null;
+    var lastRows = [];
 
     // Inicializar datepicker en español
     $.datepicker.regional['es'] = {
@@ -222,10 +509,22 @@ $(function () {
         if (t) { $a.text(t).removeClass("d-none"); } else { $a.addClass("d-none").text(""); }
     }
 
+    function getQueryLabel() {
+        if (modo() === "viaje") {
+            var label = $("#viajeBuscar").data("matViajeLabel") || $("#viajeBuscar").val();
+            return label ? "Viaje: " + label : "Búsqueda por viaje";
+        }
+        var from = $("#from").val(), to = $("#to").val();
+        if (from && to) return "Desde " + from + " hasta " + to;
+        if (from) return "Desde " + from;
+        if (to) return "Hasta " + to;
+        return "Por fechas";
+    }
+
     /* ── Tabla ───────────────────────────────────────────────────── */
     /* Índices de columna usados en el filtro front */
-    var COL_VENDEDOR = 4;  /* vendedorFullName */
-    var COL_CLIENTE  = 6;  /* clienteFullName  */
+    var COL_VENDEDOR = 3;  /* vendedorFullName (viaje+fecha unidos → -1 col) */
+    var COL_CLIENTE  = 5;  /* clienteFullName  (viaje+fecha unidos → -1 col) */
 
     var moneyFmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
@@ -305,17 +604,31 @@ $(function () {
     }
 
     function renderTable(rows) {
-        renderIndicadoresVentas(rows || []);
+        lastRows = rows || [];
+        renderIndicadoresVentas(lastRows);
+        /* Habilitar card Total facturado y renderizar rankings */
+        if (lastRows.length) {
+            $("#cardFacturado").removeClass("card-facturado-sin-datos");
+            $("#btnExcelCardFacturado").prop("disabled", false);
+        }
+        if (window.MatReportes.Vendedores) window.MatReportes.Vendedores.render(lastRows);
+        if (window.MatReportes.Destinos)   window.MatReportes.Destinos.render(lastRows);
         var $tbl = $("#tblReporte");
         if (dt) { dt.destroy(); $tbl.empty(); }
         dt = $tbl.DataTable({
             data: rows || [],
             columns: [
-                { data: "viajeDescripcion",  title: "Viaje" },
-                { data: "fechaSalida",        title: "Fecha salida",
-                  render: function (d) { return d ? (typeof d === "string" ? d : "") : ""; } },
+                { data: "viajeDescripcion", title: "Viaje",
+                  render: function (d, type, row) {
+                      if (type !== "display") return d || "";
+                      var fecha = window.MatReportes.formatFechaES(row.fechaSalida);
+                      var esc = (d || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                      return "<span title=\"" + esc + "\">" + (esc || "-") + "</span>" +
+                          (fecha ? "<br><span class=\"text-muted small\"><i class=\"bi bi-calendar3 me-1\"></i>" + fecha + "</span>" : "");
+                  } },
                 { data: "cantidadButacas",   title: "Butacas" },
-                { data: "facturaFecha",       title: "F. factura" },
+                { data: "facturaFecha",  title: "F. factura",
+                  render: function (d) { return window.MatReportes.formatFechaES(d); } },
                 { data: "vendedorFullName",   title: "Vendedor" },
                 { data: "facturaEstado",      title: "Estado" },
                 { data: "clienteFullName",    title: "Cliente" },
@@ -353,6 +666,11 @@ $(function () {
     /* ── Consultar ───────────────────────────────────────────────── */
     $("#btnBuscar").on("click", function () {
         showErr("");
+        lastRows = [];
+        $("#cardFacturado").addClass("card-facturado-sin-datos");
+        $("#btnExcelCardFacturado").prop("disabled", true);
+        if (window.MatReportes.Vendedores) window.MatReportes.Vendedores.hide();
+        if (window.MatReportes.Destinos)   window.MatReportes.Destinos.hide();
         $("#reporteVentasIndicadores").addClass("d-none");
         $("#filtroFront").addClass("d-none");
         $.getJSON(urlJson, queryParams())
@@ -369,6 +687,25 @@ $(function () {
     $("#btnExcel").on("click", function () {
         window.MatReportes.downloadReporteExcel(urlExcel, queryParams, showErr);
     });
+
+    /* ── Top Rankings ───────────────────────────────────────────── */
+    if (window.MatReportes.Vendedores) {
+        window.MatReportes.Vendedores.init({ getLastRows: function () { return lastRows; } });
+    }
+    if (window.MatReportes.Destinos) {
+        window.MatReportes.Destinos.init({ getLastRows: function () { return lastRows; } });
+    }
+
+    /* ── Modal Listado de Facturas ──────────────────────────────── */
+    if (window.MatReportes && window.MatReportes.FacturadoModal) {
+        window.MatReportes.FacturadoModal.init({
+            getLastRows:    function () { return lastRows; },
+            getQueryLabel:  getQueryLabel,
+            getQueryParams: queryParams,
+            urlExcel:       urlExcel,
+            showErr:        showErr
+        });
+    }
 });
 </script>
 }
