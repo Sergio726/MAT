@@ -752,6 +752,9 @@
     <Content Include="Scripts\mat.reportes-utils.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
     <Content Include="Scripts\mat.reportes-ventas-facturado-modal.js" />
+    <Content Include="Scripts\mat.reportes-ranking-dashboard.js" />
+    <Content Include="Scripts\mat.reportes-ranking-modals.js" />
+    <Content Include="Scripts\lib\html2pdf.bundle.min.js" />
     <Content Include="Scripts\mat.reportes-vendedores.js" />
     <Content Include="Scripts\mat.reportes-destinos.js" />
     <Content Include="Scripts\mat.reportes-viaje-autocomplete.js" />

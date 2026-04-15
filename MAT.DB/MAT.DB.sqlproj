@@ -1246,4 +1246,8 @@
   <ItemGroup>
     <None Include="SqlSchemaCompare.scmp" />
   </ItemGroup>
+  <!-- Reportes: ranking de compras V2 (dashboard). Referencia explícita al final del proyecto para evitar que el IDE omita el ítem. -->
+  <ItemGroup>
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_RankingCompras_V2.sql" />
+  </ItemGroup>
 </Project>

@@ -290,6 +290,20 @@
   **Acciones:** actualizar `DOCUMENTACION/REPORTES_MAT_MVC_OPERACION.md` (y si aplica `REPORTES_MAT_WEB.md`) con esta definición; en pantalla, **tooltip** y/o **texto de ayuda** bajo el título o junto a la tabla explicando qué mide “Rank. viajes” y la columna “Clientes viaje”. **Opcional (decisión de negocio):** encabezados más fieles a la métrica o evolución futura del SP para medir clientes distintos.
   Criterio de éxito: Documentación alineada al SP; usuario sin perfil técnico tiene pista de lectura del rank; sin cambiar contrato del SP salvo task aparte explícito.
 
+- [x] **Reportes UX: Ranking — dashboard interactivo (reescritura completa)**
+  Rediseño completo del módulo Ranking de compras como dashboard de tarjetas interactivas:
+  - **Nuevo SP** `usp_MAT_Reportes_RankingCompras_V2`: granularidad factura x viaje, sin window functions (agregación en JS), con `CantPasajerosDistintos`.
+  - **DTO simplificado**: `ReporteRankingRowDto` con 9 campos (sin rankings ni conteos por window function).
+  - **Controller**: endpoint `Ranking` apunta al nuevo SP; `RankingExcel` eliminado.
+  - **5 tarjetas KPI clicables**: Registros, Clientes, Pasajeros, Facturas, Top viajes. Cada una abre un modal con detalle.
+  - **5 modales Bootstrap 5**: tablas con búsqueda debounce, ordenación por columna, contador.
+  - **Carga automática**: al iniciar la vista se consulta el último mes; datepickers pre-cargados.
+  - **Descarga PDF**: integra `html2pdf.js` (local) para captura del dashboard a PDF A4 horizontal.
+  - **Sin DataTable visible**: eliminados tabla, filtros front, KPI cards anteriores, leyenda.
+  Archivos nuevos: `MAT.DB/dbo/Stored Procedures/usp_MAT_Reportes_RankingCompras_V2.sql`, `database/2026-04-15_usp_MAT_Reportes_RankingCompras_V2.sql`, `Scripts/mat.reportes-ranking-dashboard.js`, `Scripts/mat.reportes-ranking-modals.js`, `Scripts/lib/html2pdf.bundle.min.js`
+  Archivos modificados: `Views/Reportes/ReporteRanking.cshtml`, `Models/Reportes/ReporteRankingRowDto.cs`, `Controllers/Admin/ReportesController.cs`, `Infrastructure/ReportesDataReaderMapper.cs`, `Infrastructure/ReportesExcelExport.cs`, `MAT.MVC.csproj`, `MAT.DB.sqlproj`
+  Criterio de éxito: Dashboard funcional con 5 tarjetas y modales; carga automática último mes; PDF descargable; MSBuild MAT.MVC + MAT.DB sin errores.
+
 #### Reportes — UX/UI (Reporte de ventas, Admin)
 
 **Contexto:** La pantalla **Reporte de ventas** (`/Admin/Reportes/...`) debe comunicar en lenguaje de negocio que el módulo sirve para ver **estadísticas de venta** eligiendo **un rango de fechas** o **un viaje** (criterios mutuamente excluyentes, como ya valida el backend). Las mejoras siguientes refieren principalmente a `Views/Reportes/ReporteVentas.cshtml` y scripts asociados; si el mismo patrón aplica a Pagos/Ranking, documentar paridad o tareas derivadas en `PROGRESS.md`.

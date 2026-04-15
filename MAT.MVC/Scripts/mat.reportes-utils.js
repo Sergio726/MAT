@@ -54,4 +54,23 @@
                (month < 10 ? '0' : '') + month + '/' + year;
     };
 
+    if (!window.MatReportes.parseHttpErrorBody) {
+        /**
+         * Extrae un mensaje legible del body de una respuesta AJAX fallida.
+         * Intenta parsear JSON { message: "..." }, si no, devuelve statusText o fallback.
+         */
+        window.MatReportes.parseHttpErrorBody = function (xhr) {
+            if (!xhr) return 'Error de red';
+            var txt = xhr.responseText;
+            if (txt) {
+                try {
+                    var o = JSON.parse(txt);
+                    if (o && o.message) return o.message;
+                } catch (_) { /* JSON inválido, ignorar */ }
+            }
+            if (xhr.statusText && xhr.statusText !== 'error') return xhr.statusText;
+            return 'Error de conexión';
+        };
+    }
+
 })(window);

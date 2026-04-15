@@ -3,7 +3,8 @@ using System;
 namespace MAT.MVC.Models.Reportes
 {
     /// <summary>
-    /// Fila del ranking de compras (<c>usp_MAT_Reportes_RankingCompras</c>). Serializar JSON con <c>CamelCasePropertyNamesContractResolver</c>.
+    /// Fila del ranking de compras V2 (<c>usp_MAT_Reportes_RankingCompras_V2</c>).
+    /// Una fila por factura × viaje. Serializar JSON con <c>CamelCasePropertyNamesContractResolver</c>.
     /// </summary>
     public sealed class ReporteRankingRowDto
     {
@@ -15,10 +16,6 @@ namespace MAT.MVC.Models.Reportes
         public string ViajeDescripcion { get; set; }
         public DateTime? ViajeFechaSalida { get; set; }
         public int? CantidadPasajesXFactura { get; set; }
-        public int? CantViajesCompradosXCliente { get; set; }
-        public int? CantPasajesCompradosXCliente { get; set; }
-        public int? CantClientesEligieronViaje { get; set; }
-        public int? RankingClientesCompradoresViajes { get; set; }
-        public int? RankingViajes { get; set; }
+        public int? CantPasajerosDistintos { get; set; }
     }
 }

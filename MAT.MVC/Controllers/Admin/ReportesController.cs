@@ -277,29 +277,7 @@ namespace MAT.MVC.Controllers.Admin
             }
         }
 
-        [HttpGet]
-        public ActionResult RankingExcel(string from, string to, string viajeId = null, string vendedorId = null, string clienteId = null)
-        {
-            var denied = ExcelRequireAdministrator();
-            if (denied != null) return denied;
-
-            var q = ReportesQueryHelper.Parse(from, to, viajeId, vendedorId, clienteId, tipoVentaId: null);
-            if (!q.IsValid)
-                return new HttpStatusCodeResult(400, q.ValidationMessage);
-
-            try
-            {
-                var list = q.ShouldExecute ? LoadRanking(q) : new List<ReporteRankingRowDto>();
-                var bytes = ReportesExcelExport.BuildRanking(list);
-                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    $"ranking-compras-{DateTime.Now:yyyy-MM-dd}.xlsx");
-            }
-            catch (Exception ex)
-            {
-                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "ReportesController.RankingExcel");
-                return new HttpStatusCodeResult(500, msg);
-            }
-        }
+        /* RankingExcel retirado — el dashboard V2 usa descarga PDF en cliente. */
 
         private ActionResult ExcelRequireAdministrator()
         {
@@ -340,7 +318,7 @@ namespace MAT.MVC.Controllers.Admin
         private static List<ReporteRankingRowDto> LoadRanking(ReportesQueryParseResult q)
         {
             var prms = BuildRankingParams(q);
-            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reportes_RankingCompras", prms))
+            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reportes_RankingCompras_V2", prms))
                 return ReportesDataReaderMapper.ReadRanking(reader);
         }
 
@@ -418,7 +396,6 @@ namespace MAT.MVC.Controllers.Admin
                 DBHelper.MakeParam("@From", SqlDbType.Date, 0, from),
                 DBHelper.MakeParam("@To", SqlDbType.Date, 0, to),
                 DBHelper.MakeParam("@ViajeId", SqlDbType.UniqueIdentifier, 0, viaje),
-                DBHelper.MakeParam("@VendedorId", SqlDbType.UniqueIdentifier, 0, q.VendedorId.HasValue ? (object)q.VendedorId.Value : DBNull.Value),
                 DBHelper.MakeParam("@ClienteId", SqlDbType.UniqueIdentifier, 0, q.ClienteId.HasValue ? (object)q.ClienteId.Value : DBNull.Value)
             };
         }

@@ -107,8 +107,7 @@ namespace MAT.MVC.Infrastructure
             var headers = new[]
             {
                 "Factura ID", "Fecha", "Cliente ID", "Cliente", "Viaje ID", "Viaje", "Fecha Salida",
-                "Pasajes x Factura", "Viajes Comprados", "Pasajes Comprados", "Clientes Eligieron Viaje",
-                "Ranking Clientes", "Ranking Viajes"
+                "Pasajes x Factura", "Pasajeros Distintos"
             };
 
             using (var pck = new ExcelPackage())
@@ -127,11 +126,7 @@ namespace MAT.MVC.Infrastructure
                     ws.Cells[r, 6].Value = row.ViajeDescripcion;
                     ws.Cells[r, 7].Value = row.ViajeFechaSalida.HasValue ? row.ViajeFechaSalida.Value.ToString(FechaDdMmYyyy, EsAr) : "";
                     ws.Cells[r, 8].Value = row.CantidadPasajesXFactura;
-                    ws.Cells[r, 9].Value = row.CantViajesCompradosXCliente;
-                    ws.Cells[r, 10].Value = row.CantPasajesCompradosXCliente;
-                    ws.Cells[r, 11].Value = row.CantClientesEligieronViaje;
-                    ws.Cells[r, 12].Value = row.RankingClientesCompradoresViajes;
-                    ws.Cells[r, 13].Value = row.RankingViajes;
+                    ws.Cells[r, 9].Value = row.CantPasajerosDistintos;
                     r++;
                 }
 

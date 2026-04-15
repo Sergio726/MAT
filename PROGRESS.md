@@ -610,3 +610,24 @@
   - **Viaje truncado:** columna Viaje con `text-truncate` y `max-width: 220px` + `title` para tooltip nativo al hover.
 - Problemas encontrados: Ninguno.
 - Estado: ✅ MSBuild MAT.MVC Debug OK
+
+### [2026-04-15] — Reportes UX: Ranking — dashboard interactivo (reescritura completa)
+
+- Archivos nuevos:
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Reportes_RankingCompras_V2.sql`
+  - `database/2026-04-15_usp_MAT_Reportes_RankingCompras_V2.sql`
+  - `MAT.MVC/Scripts/mat.reportes-ranking-dashboard.js`
+  - `MAT.MVC/Scripts/mat.reportes-ranking-modals.js`
+  - `MAT.MVC/Scripts/lib/html2pdf.bundle.min.js`
+- Archivos modificados: `MAT.MVC/Views/Reportes/ReporteRanking.cshtml` (reescritura completa), `MAT.MVC/Models/Reportes/ReporteRankingRowDto.cs`, `MAT.MVC/Controllers/Admin/ReportesController.cs`, `MAT.MVC/Infrastructure/ReportesDataReaderMapper.cs`, `MAT.MVC/Infrastructure/ReportesExcelExport.cs`, `MAT.MVC/MAT.MVC.csproj`, `MAT.DB/MAT.DB.sqlproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó:
+  - **Nuevo SP `usp_MAT_Reportes_RankingCompras_V2`**: devuelve una fila por factura x viaje con `CantidadPasajesXFactura` y `CantPasajerosDistintos` (COUNT DISTINCT PasajeroID). Eliminadas window functions de rankings y conteos por cliente/viaje (se hacen en JS). Parámetros: `@From`, `@To`, `@ViajeId`, `@ClienteId`.
+  - **DTO simplificado**: 9 propiedades (sin `CantViajesCompradosXCliente`, `CantPasajesCompradosXCliente`, `CantClientesEligieronViaje`, `RankingClientesCompradoresViajes`, `RankingViajes`). Mapper actualizado con alias `ClienteFullName`/`FullName`.
+  - **Controller**: `Ranking` apunta al nuevo SP V2. `RankingExcel` eliminado (reemplazado por PDF en cliente). `BuildRankingParams` sin `@VendedorId`.
+  - **Vista reescrita**: eliminados DataTable `#tblReporte`, filtros front `#filtroFront`, KPI cards `#reporteRankingIndicadores`, leyenda `#rankingLeyenda`. Reemplazados por 5 tarjetas KPI clicables (Registros, Clientes, Pasajeros, Facturas, Top viajes) con hover, role=button, data-modal; 5 modales Bootstrap 5 (`modal-xl modal-fullscreen-md-down`); filtros con datepickers pre-cargados (último mes) y auto-consulta al cargar; botón "Descargar PDF" en vez de "Exportar Excel"; estado vacío con ícono y mensaje.
+  - **`mat.reportes-ranking-dashboard.js`**: agregaciones JS (`countDistinct`, `sumField`, `aggregateViajes`), render de las 5 tarjetas, PDF via `html2pdf.js` con fallback a `window.print()`.
+  - **`mat.reportes-ranking-modals.js`**: 5 funciones de render de tabla (Registros, Clientes agrupados por clienteId, Pasajeros agrupados por viajeDescripcion, Facturas agrupados por facturaId, Top viajes). Búsqueda con debounce 250ms, ordenación por columna con flechas, contador "X de Y".
+  - **`html2pdf.js`** v0.10.2 descargado como archivo local en `Scripts/lib/`. Captura dashboard a PDF A4 horizontal.
+  - **`ReportesExcelExport.BuildRanking`**: actualizado para compilar con el nuevo DTO (dead code, no hay callers tras eliminar `RankingExcel`).
+- Problemas encontrados: `ReportesExcelExport.cs` rompía compilación al referenciar propiedades del DTO eliminadas; se actualizó `BuildRanking` para compilar.
+- Estado: ✅ MSBuild MAT.MVC + MAT.DB Debug OK

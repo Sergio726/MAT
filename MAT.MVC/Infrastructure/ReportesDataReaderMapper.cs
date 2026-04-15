@@ -94,23 +94,17 @@ namespace MAT.MVC.Infrastructure
 
         public static ReporteRankingRowDto MapRanking(SqlDataReader reader, ReportesColumnMap map)
         {
-            var fullName = ReadString(map.GetValue(reader, "FullName"));
-
             return new ReporteRankingRowDto
             {
                 FacturaId = ReadGuidString(map.GetValue(reader, "FacturaID", "FacturaId")),
                 Fecha = ReadDateTime(map.GetValue(reader, "Fecha")),
                 ClienteId = ReadGuidString(map.GetValue(reader, "ClienteID", "ClienteId")),
-                ClienteFullName = fullName,
+                ClienteFullName = ReadString(map.GetValue(reader, "ClienteFullName", "FullName")),
                 ViajeId = ReadGuidString(map.GetValue(reader, "ViajeID", "ViajeId")),
                 ViajeDescripcion = ReadString(map.GetValue(reader, "ViajeDescripcion")),
                 ViajeFechaSalida = ReadDateTime(map.GetValue(reader, "ViajeFechaSalida")),
                 CantidadPasajesXFactura = ReadInt32(map.GetValue(reader, "CantidadPasajesXFactura")),
-                CantViajesCompradosXCliente = ReadInt32(map.GetValue(reader, "CantViajesCompradosXCliente")),
-                CantPasajesCompradosXCliente = ReadInt32(map.GetValue(reader, "CantPasajesCompradosXCliente")),
-                CantClientesEligieronViaje = ReadInt32(map.GetValue(reader, "CantClientesEligieronViaje")),
-                RankingClientesCompradoresViajes = ReadInt32(map.GetValue(reader, "RankingClientesCompradoresViajes")),
-                RankingViajes = ReadInt32(map.GetValue(reader, "RankingViajes"))
+                CantPasajerosDistintos = ReadInt32(map.GetValue(reader, "CantPasajerosDistintos"))
             };
         }
 
