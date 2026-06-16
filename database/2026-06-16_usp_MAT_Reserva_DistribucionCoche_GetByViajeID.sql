@@ -1,4 +1,11 @@
-﻿
+-- Migración: DistribucionCoche Fase 2 — PasajeID y EstadoPasaje
+-- Paridad con MAT.DB/dbo/Stored Procedures/usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql
+-- Ejecutar en el entorno destino antes de desplegar la app con Fase 2.
+
+IF OBJECT_ID(N'dbo.usp_MAT_Reserva_DistribucionCoche_GetByViajeID', N'P') IS NOT NULL
+    DROP PROCEDURE dbo.usp_MAT_Reserva_DistribucionCoche_GetByViajeID;
+GO
+
 CREATE PROCEDURE [dbo].[usp_MAT_Reserva_DistribucionCoche_GetByViajeID](@ViajeID varchar(36))
 AS
 /*-- =============================================
@@ -36,3 +43,4 @@ BEGIN
 	where v.ViajeID = @ViajeID
 
 END
+GO

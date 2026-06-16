@@ -1307,7 +1307,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.MsgError = e.Message;
+                ViewBag.MsgError = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ElegirNuevaButaca");
             }
 
             return PartialView(Model);
@@ -1322,20 +1322,19 @@ namespace MAT.MVC.Controllers.PersonaCliente
             SeleccionarPasajeroModel seleccionarpasajeromodel = new SeleccionarPasajeroModel(paqueteid);
             return PartialView(seleccionarpasajeromodel);
         }
-        public bool ConfirmarCambioButaca(Guid pasajeid, string adicional, Guid nuevopasaje)
+        [HttpPost]
+        public JsonResult ConfirmarCambioButaca(Guid pasajeid, string adicional, Guid nuevopasaje)
         {
-            bool result = false;
             try
             {
-                MVC.Models.ReservaMethod.CambioButacas(adicional, pasajeid, nuevopasaje);
-                
-                result = true;
+                MVC.Models.ReservaMethod.CambioButacas(adicional ?? string.Empty, pasajeid, nuevopasaje);
+                return Json(new { success = true });
             }
-            catch 
+            catch (Exception e)
             {
-                result = false;
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ConfirmarCambioButaca");
+                return Json(new { success = false, message = msg });
             }
-            return result;
         }
 
         public ActionResult PrincipalHabitaciones(string pasajeid, string viajeid, string facturaid)

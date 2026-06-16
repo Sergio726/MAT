@@ -2,6 +2,97 @@
 
 ---
 
+### [2026-06-16] — DistribucionCoche: auditoría post-Fase 2 y compatibilidad servidor
+
+- Archivos modificados:
+  - `MAT.MVC/Controllers/Reserva/ReservaController.cs`
+  - `MAT.MVC/Views/Reserva/DistribucionCoche.cshtml`
+  - `MAT.MVC/Views/Reserva/_DistribucionCocheAsiento.cshtml`
+  - `database/2026-06-16_usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql` (script de despliegue)
+  - `SPEC.md`
+  - `PROGRESS.md`
+- Qué se implementó:
+  - **SPEC:** fases 3+ documentadas como mejoras futuras (modal Index, clic en butaca, lista mobile, refactor layout, menores en mapa).
+  - **Servidor sin SP nuevo:** lectura defensiva `HasColumn` / `ReadIntOrDefault` para `EstadoPasaje` y `PasajeID`; banner `SpMigrationWarning` en vista; fallback de estado (libre=1, ocupado=Pagado) si el SP no está publicado.
+  - **`[Authorize]`** en `DistribucionCoche`.
+  - **Robustez vista:** eliminados `.First()` en butacas 3/4/7/8/59/60 → `butacaByNro` + placeholders vacíos; `HtmlAttributeEncode` en tooltips/`data-search`; guard null en partial.
+- Problemas encontrados (documentados, no bloqueantes):
+  - SP solo devuelve butacas con `Pasaje` (libres no aparecen en mapa); métricas total/disponibles son aproximadas → futuro en SPEC refactor layout.
+  - `id` del asiento = `PasajeroID` (duplicado si mismo pasajero en dos butacas); diseño intencional para tutores.
+  - Sin SP publicado, colores por estado pueden ser inexactos hasta migrar BD.
+- Estado: ✅ MSBuild MAT.MVC Debug OK — **publicar SP en cada entorno antes de validar Fase 2 en servidor**
+
+---
+
+### [2026-06-16] — Fase 2 DistribucionCoche (Operativa)
+
+- Archivos modificados:
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql`
+  - `MAT.MVC/Models/ReservaModel.cs`
+  - `MAT.MVC/Controllers/Reserva/ReservaController.cs`
+  - `MAT.MVC/Views/Reserva/_DistribucionCocheAsiento.cshtml` (nuevo)
+  - `MAT.MVC/Views/Reserva/DistribucionCoche.cshtml`
+  - `MAT.MVC/Content/mat.distribucioncoche.css` (nuevo)
+  - `MAT.MVC/MAT.MVC.csproj`
+  - `PROGRESS.md`
+- Qué se implementó:
+  - **SP:** `PasajeID` y `EstadoPasaje` en resultado principal.
+  - **Modelo:** campos extendidos + `GetCssClassEstadoButaca` / `GetDescripcionEstadoButaca` + `DistribucionCocheSeatViewModel`.
+  - **Vista:** partial de asiento, colores por estado (alineados con Index), leyenda completa, métricas por estado en toolbar.
+  - **UX:** búsqueda con resaltado/navegación (Enter/F3), tooltips Bootstrap 5, CSS dedicado.
+- Problemas encontrados: requiere publicar SP en BD antes de probar en runtime.
+- Estado: ✅ completo
+
+---
+
+
+- Archivos modificados:
+  - `MAT.MVC/Controllers/Reserva/ReservaController.cs`
+  - `MAT.MVC/Views/Reserva/DistribucionCoche.cshtml`
+  - `MAT.MVC/Views/Hotel/EsquemaDistribucion.cshtml`
+  - `PROGRESS.md`
+- Qué se implementó:
+  - **Controller:** `DistribucionCoche` con `ErrorUtil`, validación de `ViajeID`, métricas ocupadas/total, datos de viaje vía `ViajeMethod.ViajeByViajeID`.
+  - **Tutores:** `GetListTutoresByViajeID` devuelve array JSON directo (sin doble serialización) + `try/catch` con `ErrorUtil`.
+  - **Vista:** cabecera del viaje (descripción, fechas, logo), toolbar con métricas y botón Imprimir (`HideToPrint`), loading de tutores, banner de error AJAX.
+  - **Bug fix:** `indexOf >= 0` para marcar tutores (antes omitía el primer tutor) en DistribucionCoche y EsquemaDistribucion.
+- Problemas encontrados: ninguno en compilación.
+- Estado: ✅ completo
+
+---
+
+
+- Archivos modificados:
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Reserva_CambioButacas.sql`
+  - `MAT.MVC/Controllers/PersonaCliente/PersonaClienteController.cs`
+  - `MAT.MVC/Scripts/mat.jquery.binding.js`
+  - `PROGRESS.md`
+- Qué se implementó:
+  - **Auditoría:** el error JS en FacturaListByViajeID era correlación temporal (factura sin DetalleFactura → Monto NULL), no fallo directo del AJAX post-cambio.
+  - **SP:** sincroniza línea `Butaca XX` en DetalleFactura, recalcula `Factura.Monto`, inserta `AuditFactura`, llama `usp_MAT_Reserva_ActualizarEstados`.
+  - **Controller:** `ConfirmarCambioButaca` → `JsonResult` + `ErrorUtil`; `ElegirNuevaButaca` catch con `ErrorUtil`.
+  - **JS:** cierre de diálogos solo en success, IDs corregidos (`SeleccionImportes`), respuesta JSON `{ success, message }`, error handler AJAX.
+- Problemas encontrados: facturas con Monto $0 e Items vacíos tras cambio de butaca por SP incompleto; excepciones no registradas en ErrorLog.
+- Estado: ✅ completo (requiere publicar SP en BD)
+
+---
+
+### [2026-06-16] — Fix FacturaListByViajeID: error JS y registro en ErrorLog
+
+- Archivos modificados:
+  - `MAT.MVC/Models/FacturaModel.cs`
+  - `MAT.MVC/Controllers/Factura/FacturaController.cs`
+  - `MAT.MVC/Views/Factura/FacturaResultSearch.cshtml`
+  - `PROGRESS.md`
+- Qué se implementó:
+  - `FacturaSearch`: manejo seguro de `DBNull` en `Monto` (SUM nulo), `Fecha` y demás campos.
+  - `FacturaResultSearch` / `FacturaMoreDetails`: `ErrorUtil.LogAndGetPublicMessage` en catch (persiste en `ErrorLog` + log archivo).
+  - `FacturaResultSearch.cshtml`: tabla y script solo en `@else`; mensaje con `modern-alert-error`; fallback `[]` en JSON.
+- Problemas encontrados: `Convert.ToDouble` sobre `Monto` NULL del SP causaba excepción; el partial renderizaba `var dataSet = ;` y jQuery fallaba al inyectar HTML.
+- Estado: ✅ completo
+
+---
+
 ### [2026-04-15] — Reportes UX: Reporte Pagos — tarjetas de estadísticas (KPI) antes de la tabla
 
 - Archivos modificados:

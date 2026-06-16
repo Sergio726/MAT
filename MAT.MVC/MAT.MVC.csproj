@@ -444,6 +444,7 @@
     <Content Include="Content\mat.esquemadistribucion.print.css" />
     <Content Include="Content\mat.forms.admin.css" />
     <Content Include="Content\mat.listadosimple.css" />
+    <Content Include="Content\mat.distribucioncoche.css" />
     <Content Include="Content\mat.forms.css" />
     <Content Include="Content\mat.metroui.css" />
     <Content Include="Content\mat.splash.css" />
@@ -848,6 +849,7 @@
     <Content Include="Views\Admin\PartialGridResumenPlanillaHotelPrint.cshtml" />
     <Content Include="Views\Admin\GridPlanillaServiciosItemPrint.cshtml" />
     <Content Include="Views\Reserva\DistribucionCoche.cshtml" />
+    <Content Include="Views\Reserva\_DistribucionCocheAsiento.cshtml" />
     <Content Include="Views\Admin\GridPlanillaHotelDetallePrint.cshtml" />
     <Content Include="Views\Admin\PartialGridPlanillaHotelPrint.cshtml" />
     <Content Include="Views\Admin\ImprimirPlanillaDetalle.cshtml" />

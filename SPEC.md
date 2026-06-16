@@ -691,9 +691,46 @@
 
    **Criterio de éxito:** Las dos acciones anteriores validan contra origen BD; `MAT.DB` y documentación breve alineados; MSBuild limpio; prueba manual de rechazo/aceptación de código; `PROGRESS.md` actualizado.
 
----
+#### Reserva — Distribución de Coche (`Reserva/DistribucionCoche`)
 
-## Criterios globales (aplican a todos los tasks)
+**Contexto:** Mejoras operativas sobre la vista standalone de mapa de butacas abierta desde `Reserva/Index` (`#btn-distribucion-coche`). **Completado en sesión 2026-06-16:** Fase 1 (cabecera, toolbar, imprimir, tutores, `ErrorUtil`) y Fase 2 (estados alineados con Index, búsqueda, tooltips, partial `_DistribucionCocheAsiento`, SP con `EstadoPasaje`/`PasajeID`). **Requisito de despliegue:** publicar `usp_MAT_Reserva_DistribucionCoche_GetByViajeID` desde `MAT.DB` (o `database/2026-06-16_usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql`) en cada entorno antes de usar Fase 2 en producción.
+
+- [x] **DistribucionCoche Fase 1 — Quick wins**
+  Cabecera del viaje, métricas básicas, botón imprimir, fix JSON tutores, loading/errores AJAX, `ErrorUtil` en controller.
+  Archivos: `ReservaController.cs`, `DistribucionCoche.cshtml`, `EsquemaDistribucion.cshtml`.
+  Criterio de éxito: MSBuild limpio; mapa imprimible; tutores marcados (incl. índice 0).
+
+- [x] **DistribucionCoche Fase 2 — Operativa**
+  Estados de butaca (colores como Index), leyenda completa, búsqueda/resaltado de pasajero, tooltips BS5, partial de asiento, CSS `mat.distribucioncoche.css`, SP extendido.
+  Archivos: ver `PROGRESS.md` entrada 2026-06-16 Fase 2.
+  Criterio de éxito: Colores por `EstadoPasaje`; búsqueda con Enter/F3; SP publicado en BD del entorno.
+
+- [ ] **DistribucionCoche Fase 3 — Integración en Reserva/Index**
+  Abrir distribución en modal fullscreen o panel lateral dentro de `Reserva/Index` (en lugar de `window.open`), manteniendo contexto del viaje y botón cerrar.
+  Archivos: `mat.jquery.binding.js`, `Reserva/Index.cshtml`, posible partial contenedor.
+  Criterio de éxito: Misma funcionalidad que la pestaña standalone; sin regresión al imprimir desde el modal.
+
+- [ ] **DistribucionCoche Fase 3 — Acciones al clic en butaca**
+  En butaca ocupada: menú o popover con enlaces a detalle de factura/pasajero y flujo de cambio de butaca (`ConfirmarCambioButaca` / `usp_MAT_Reserva_CambioButacas`). Requiere `data-pasaje-id` en el partial (sin reemplazar `id`=`PasajeroID` usado por tutores).
+  Archivos: `_DistribucionCocheAsiento.cshtml`, `DistribucionCoche.cshtml` (JS), posible endpoint ligero.
+  Criterio de éxito: Clic en butaca con pasajero abre acciones útiles; errores con `ErrorUtil`.
+
+- [ ] **DistribucionCoche — Vista lista alternativa (mobile)**
+  Toggle "Mapa / Lista" para pantallas angostas: tabla ordenada por butaca con nombre, estado y código; complementa el scroll horizontal del mapa.
+  Archivos: `DistribucionCoche.cshtml`, `mat.distribucioncoche.css`.
+  Criterio de éxito: En viewport angosto la lista es usable; impresión sigue usando mapa o lista acordada.
+
+- [ ] **DistribucionCoche — Refactor layout por tipo de transporte**
+  Unificar lógica duplicada (MINIBUS, CAMION 4X4, PISOELEVADO, semicama `NroCoche` 81/101) en partials o metadata de butaca; alinear fuente de datos con `ReservaStandard` / `usp_MAT_Reserva_GetPasajeByViajeID` para **butacas vacías visibles en el mapa** (el SP actual solo devuelve filas con `Pasaje`; las libres no aparecen y las métricas de total/disponibles son aproximadas).
+  Archivos: `DistribucionCoche.cshtml`, posibles partials por plantilla de coche.
+  Criterio de éxito: Un solo lugar define posición de butacas por tipo; menos de 400 líneas en la vista principal.
+
+- [ ] **DistribucionCoche — Menores vinculados en mapa**
+  Marcar menores (no solo tutores) con icono/color distinto y opcional línea visual tutor ↔ menor, como en `ListadoSimple`.
+  Archivos: SP o reutilizar `usp_MAT_Reserva_GetPasajeroMenor`, partial, CSS.
+  Criterio de éxito: Menores identificables en el mapa sin confundirse con estado de butaca.
+
+---
 
 - MSBuild sobre `MAT.MVC` debe pasar limpio al finalizar cada task
 - Todo cambio de schema SQL debe reflejarse en `MAT.DB` (SSDT)

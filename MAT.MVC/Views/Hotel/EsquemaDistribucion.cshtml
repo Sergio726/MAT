@@ -152,18 +152,40 @@
 
     $(document).ready(function () {
         var sViajeId = "@ViewData["viajeid"].ToString()";
+
+        function parseTutoresList(tutores) {
+            if (Array.isArray(tutores)) {
+                return tutores;
+            }
+            if (typeof tutores === "string" && tutores.length > 0) {
+                try {
+                    return JSON.parse(tutores);
+                } catch (e) {
+                    return [];
+                }
+            }
+            return [];
+        }
+
         $.ajax({
             url: "/Reserva/GetListTutoresByViajeID",
             data: { sViajeId: sViajeId },
             dataType: "json",
             success: function (data) {
-                var list = data.Tutores;
-                $(".divPersona").each(function (e) {
-                    var Id = $(this).attr("id");
-                    if (list.indexOf(Id) > 0) {
+                if (data.error) {
+                    mostrarErrorDistribucion(data.error);
+                    return;
+                }
+                var list = parseTutoresList(data.Tutores);
+                $(".divPersona").each(function () {
+                    var id = $(this).attr("id");
+                    if (id && list.indexOf(id) >= 0) {
                         $(this).addClass("tutor-person");
                     }
                 });
+            },
+            error: function () {
+                mostrarErrorDistribucion("No se pudieron cargar los tutores de menores. El esquema se muestra sin esa información.");
             }
         });
     });

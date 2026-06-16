@@ -1,0 +1,43 @@
+@model MAT.MVC.Models.DistribucionCocheSeatViewModel
+@using MAT.MVC.Models
+@using System.Web
+@if (Model == null || Model.Item == null)
+{
+    return;
+}
+@{
+    var item = Model.Item;
+    var estadoCss = ReservaMethod.GetCssClassEstadoButaca(item.EstadoPasaje);
+    var pasajeroId = !string.IsNullOrWhiteSpace(item.PasajeroID) ? item.PasajeroID : "";
+    var nombreCompleto = string.Format("{0} {1}",
+        (item.PasajeroNombre ?? "").ToUpper(),
+        (item.PasajeroApellido ?? "").ToUpper()).Trim();
+    var estadoLabel = ReservaMethod.GetDescripcionEstadoButaca(item.EstadoPasaje);
+    var tooltip = !string.IsNullOrWhiteSpace(nombreCompleto)
+        ? string.Format("{0} — {1}", nombreCompleto, estadoLabel)
+        : string.Format("Butaca {0} — {1}", item.ButacaCodigo, estadoLabel);
+    var searchKey = string.Format("{0} {1} {2}",
+        item.ButacaCodigo ?? "",
+        item.PasajeroNombre ?? "",
+        item.PasajeroApellido ?? "").ToLowerInvariant();
+    var posClass = Model.PosicionClass ?? "";
+    if (string.IsNullOrWhiteSpace(posClass) && !string.IsNullOrWhiteSpace(item.ButacaPosicion)
+        && (Model.SeatClass == "asiento_invertido" || Model.SeatClass == "asiento_parabrisa"))
+    {
+        posClass = "posicion_" + item.ButacaPosicion;
+    }
+}
+<div class="@Model.SeatClass @posClass @estadoCss bus-seat"
+     id="@pasajeroId"
+     data-pasaje-id="@(item.PasajeID ?? "")"
+     data-estado="@item.EstadoPasaje"
+     data-codigo="@HttpUtility.HtmlAttributeEncode(item.ButacaCodigo)"
+     data-search="@HttpUtility.HtmlAttributeEncode(searchKey)"
+     data-bs-toggle="tooltip"
+     data-bs-title="@HttpUtility.HtmlAttributeEncode(tooltip)">
+    <span class="spnCodB">@item.ButacaCodigo</span>
+    @if (!string.IsNullOrWhiteSpace(pasajeroId))
+    {
+        <span class="spnB">@nombreCompleto</span>
+    }
+</div>

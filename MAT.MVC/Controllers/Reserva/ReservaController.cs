@@ -68,43 +68,108 @@ namespace MAT.MVC.Controllers.Reserva
             return View(Model);
         }
         
+        [Authorize]
         public ActionResult DistribucionCoche(string ViajeID)
         {
             ViewBag.ViajeID = ViajeID;
+            ViewBag.Error = "";
+            ViewBag.ViajeDescripcion = "";
+            ViewBag.ViajeFechaSalida = "";
+            ViewBag.ViajeFechaRegreso = "";
+            ViewBag.NroCoche = "";
+            ViewBag.TransporteTipo = "";
+            ViewBag.TotalButacas = 0;
+            ViewBag.ButacasOcupadas = 0;
+            ViewBag.ButacasDisponibles = 0;
+            ViewBag.ConteoPagados = 0;
+            ViewBag.ConteoSenados = 0;
+            ViewBag.ConteoPrereserva = 0;
+            ViewBag.ConteoReservaHotel = 0;
+            ViewBag.ConteoAnulados = 0;
+            ViewBag.SpMigrationWarning = "";
 
-            List<Models.DistribucionCoche> DistCoche = new List<Models.DistribucionCoche>();
-            List<FacturaDetalle> DetalleFactura = new List<FacturaDetalle>();
-            
-            SqlParameter[] dbParams = new SqlParameter[]
-                {                    
+            var distCoche = new List<Models.DistribucionCoche>();
+
+            if (string.IsNullOrWhiteSpace(ViajeID))
+            {
+                ViewBag.Error = "No se especificó el viaje.";
+                return PartialView(distCoche);
+            }
+
+            try
+            {
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
                     DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, ViajeID),
                 };
-            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_DistribucionCoche_GetByViajeID", dbParams))
-            {
-                while (_reader.Read())
+                var spHasEstadoPasaje = false;
+                var spHasPasajeID = false;
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_DistribucionCoche_GetByViajeID", dbParams))
                 {
-                    Models.DistribucionCoche Item = new Models.DistribucionCoche();
-                    if (_reader["ButacaNro"].ToString() != "")
+                    spHasEstadoPasaje = HasColumn(_reader, "EstadoPasaje");
+                    spHasPasajeID = HasColumn(_reader, "PasajeID");
+
+                    while (_reader.Read())
                     {
-                        Item.ButacaNro = Convert.ToInt32(_reader["ButacaNro"].ToString());
-                        Item.ButacaPosicion = _reader["ButacaPosicion"].ToString();
-                        Item.ButacaCodigo = _reader["ButacaCodigo"].ToString();
-                        Item.PasajeroID = _reader["PasajeroID"].ToString();
-                        Item.PasajeroApellido = _reader["PasajeroApellido"].ToString();
-                        Item.PasajeroNombre = _reader["PasajeroNombre"].ToString();
-                        DistCoche.Add(Item);
+                        if (_reader["ButacaNro"].ToString() != "")
+                        {
+                            var pasajeroId = _reader["PasajeroID"].ToString();
+                            var estadoPasaje = spHasEstadoPasaje
+                                ? ReadIntOrDefault(_reader, "EstadoPasaje", string.IsNullOrWhiteSpace(pasajeroId) ? 1 : (int)eEstadoPasaje.Pagado)
+                                : (string.IsNullOrWhiteSpace(pasajeroId) ? 1 : (int)eEstadoPasaje.Pagado);
+
+                            distCoche.Add(new Models.DistribucionCoche
+                            {
+                                ButacaNro = Convert.ToInt32(_reader["ButacaNro"].ToString()),
+                                ButacaPosicion = _reader["ButacaPosicion"].ToString(),
+                                ButacaCodigo = _reader["ButacaCodigo"].ToString(),
+                                PasajeID = spHasPasajeID ? _reader["PasajeID"].ToString() : "",
+                                EstadoPasaje = estadoPasaje,
+                                PasajeroID = pasajeroId,
+                                PasajeroApellido = _reader["PasajeroApellido"].ToString(),
+                                PasajeroNombre = _reader["PasajeroNombre"].ToString()
+                            });
+                        }
+                    }
+
+                    _reader.NextResult();
+                    while (_reader.Read())
+                    {
+                        ViewBag.NroCoche = _reader["NroCoche"].ToString();
+                        ViewBag.TransporteTipo = _reader["TransporteTipo"].ToString();
                     }
                 }
 
-                _reader.NextResult();
-                while (_reader.Read())
+                if (!spHasEstadoPasaje)
                 {
-                    ViewBag.NroCoche = _reader["NroCoche"].ToString();
-                    ViewBag.TransporteTipo = _reader["TransporteTipo"].ToString();
+                    ViewBag.SpMigrationWarning = "El servidor aún no tiene el SP actualizado de distribución de coche. Los colores por estado pueden no ser exactos hasta publicar usp_MAT_Reserva_DistribucionCoche_GetByViajeID (ver database/2026-06-16_usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql).";
+                }
+
+                ViewBag.TotalButacas = distCoche.Count;
+                ViewBag.ButacasOcupadas = distCoche.Count(x => !string.IsNullOrWhiteSpace(x.PasajeroID));
+                ViewBag.ButacasDisponibles = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Disponible);
+                ViewBag.ConteoPagados = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Pagado);
+                ViewBag.ConteoSenados = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Señado || x.EstadoPasaje == (int)eEstadoPasaje.Reservado);
+                ViewBag.ConteoPrereserva = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Prereserva);
+                ViewBag.ConteoReservaHotel = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.ReservaHotel
+                    || x.EstadoPasaje == (int)eEstadoPasaje.PasajeHotelPrereserva
+                    || x.EstadoPasaje == 9);
+                ViewBag.ConteoAnulados = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Anulado);
+
+                var viaje = ViajeMethod.ViajeByViajeID(ViajeID);
+                if (viaje != null)
+                {
+                    ViewBag.ViajeDescripcion = viaje.Descripcion ?? "";
+                    ViewBag.ViajeFechaSalida = viaje.FechaSalida ?? "";
+                    ViewBag.ViajeFechaRegreso = viaje.FechaRegreso ?? "";
                 }
             }
+            catch (Exception e)
+            {
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.DistribucionCoche");
+            }
 
-            return PartialView(DistCoche);
+            return PartialView(distCoche);
         }
 
         public string QuickSearch()
@@ -538,33 +603,34 @@ namespace MAT.MVC.Controllers.Reserva
         }
 
         public JsonResult GetListTutoresByViajeID(string sViajeId = "")
-        { 
-            List<PasajeroMenorModel> model = new List<PasajeroMenorModel>();
-            SqlParameter[] dbParams = new SqlParameter[]
-                {                    
+        {
+            try
+            {
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
                     DBHelper.MakeParam("@ViajeID", SqlDbType.VarChar, 0, Convert.ToString(sViajeId)),
                 };
-            List<string> listTutores = new List<string>();
-            
-            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPasajeroMenor", dbParams))
-            {
-                while (_reader.Read())
+                var listTutores = new List<string>();
+
+                using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_GetPasajeroMenor", dbParams))
                 {
-                    string item = _reader["MayorID"].ToString();
-                    if (!listTutores.Contains(item))
+                    while (_reader.Read())
                     {
-                        listTutores.Add(item);
+                        string item = _reader["MayorID"].ToString();
+                        if (!listTutores.Contains(item))
+                        {
+                            listTutores.Add(item);
+                        }
                     }
                 }
+
+                return Json(new { Tutores = listTutores }, JsonRequestBehavior.AllowGet);
             }
-
-            var jsonPatientList = JsonConvert.SerializeObject(listTutores);
-
-            return Json(new 
-                        { 
-                            Tutores = jsonPatientList 
-                        },
-                        JsonRequestBehavior.AllowGet);
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.GetListTutoresByViajeID");
+                return Json(new { Tutores = new List<string>(), error = msg }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult PartialVinculacionMenor(string sViajeId = "", string sPrint = "", string sFacturaId = "")
@@ -1167,6 +1233,32 @@ namespace MAT.MVC.Controllers.Reserva
             }
 
             return PartialView(oDetalleViaje);
+        }
+
+        private static bool HasColumn(SqlDataReader reader, string columnName)
+        {
+            try
+            {
+                reader.GetOrdinal(columnName);
+                return true;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return false;
+            }
+        }
+
+        private static int ReadIntOrDefault(SqlDataReader reader, string columnName, int defaultValue)
+        {
+            try
+            {
+                var ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? defaultValue : Convert.ToInt32(reader.GetValue(ordinal));
+            }
+            catch
+            {
+                return defaultValue;
+            }
         }
 
 

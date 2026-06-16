@@ -61,7 +61,8 @@ namespace MAT.MVC.Controllers.Factura
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "FacturaController.FacturaResultSearch");
+                ViewBag.sbDataSetJson = "[]";
                 return PartialView();
             }
         }
@@ -78,7 +79,7 @@ namespace MAT.MVC.Controllers.Factura
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "FacturaController.FacturaMoreDetails");
                 return PartialView();
             }
         }

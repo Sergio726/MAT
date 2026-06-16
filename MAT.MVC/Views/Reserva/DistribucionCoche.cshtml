@@ -3,6 +3,12 @@
 @using MAT.Enums
 @{
     Layout = null;
+    var fechaSalida = ViewBag.ViajeFechaSalida as string ?? "";
+    var fechaRegreso = ViewBag.ViajeFechaRegreso as string ?? "";
+    DateTime dtTmp;
+    if (DateTime.TryParse(fechaSalida, out dtTmp)) { fechaSalida = dtTmp.ToString("dd/MM/yyyy"); }
+    if (DateTime.TryParse(fechaRegreso, out dtTmp)) { fechaRegreso = dtTmp.ToString("dd/MM/yyyy"); }
+    Func<int, DistribucionCoche> butacaByNro = n => Model != null ? Model.FirstOrDefault(bt => bt.ButacaNro == n) : null;
 }
 <!DOCTYPE html>
 <html>
@@ -12,6 +18,10 @@
     <title>Distribución de Coche</title>
     <link href="~/Content/bootstrap-5.3.2.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/Content/saas-variables.css" rel="stylesheet" />
+    <link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
+    <link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
+    <link href="~/Content/mat.distribucioncoche.css" rel="stylesheet" />
     <style>
         /* ===== MODERN BUS DISTRIBUTION STYLES ===== */
         body {
@@ -59,22 +69,12 @@
             border: 1px solid rgba(0,0,0,0.1);
         }
 
-        .legend-color.occupied {
-            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-        }
-
         .legend-color.empty {
             background: #f1f5f9;
             border: 2px dashed #cbd5e1;
         }
 
-        .legend-color.tutor {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        }
-
-        .legend-color.facility {
-            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-        }
+        /* legend-color estados: mat.distribucioncoche.css */
 
         /* Bus layout container */
         #cole1 {
@@ -152,46 +152,7 @@
             vertical-align: top;
         }
 
-        /* Occupied seat styling */
-        .asiento:not(.vacio)[id]:not([id=""]),
-        .asiento_parabrisa:not(.vacio)[id]:not([id=""]),
-        .asiento_invertido:not(.vacio)[id]:not([id=""]),
-        .asiento_largo:not(.vacio)[id]:not([id=""]) {
-            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-            border: none;
-            box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3);
-        }
-
-        .asiento:not(.vacio)[id]:not([id=""]) .spnCodB,
-        .asiento_parabrisa:not(.vacio)[id]:not([id=""]) .spnCodB,
-        .asiento_invertido:not(.vacio)[id]:not([id=""]) .spnCodB,
-        .asiento_largo:not(.vacio)[id]:not([id=""]) .spnCodB {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .asiento:not(.vacio)[id]:not([id=""]) .spnB,
-        .asiento_parabrisa:not(.vacio)[id]:not([id=""]) .spnB,
-        .asiento_invertido:not(.vacio)[id]:not([id=""]) .spnB,
-        .asiento_largo:not(.vacio)[id]:not([id=""]) .spnB {
-            color: white;
-        }
-
-        /* Tutor styling */
-        div.asiento.Tutor, div.asiento_parabrisa.Tutor, div.asiento_invertido.Tutor, div.asiento_largo.Tutor {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
-            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
-        }
-
-        div.asiento.Tutor::after, div.asiento_parabrisa.Tutor::after,
-        div.asiento_invertido.Tutor::after, div.asiento_largo.Tutor::after {
-            content: '\f4fc';
-            font-family: 'bootstrap-icons';
-            position: absolute;
-            bottom: 2px;
-            right: 4px;
-            font-size: 0.875rem;
-            color: rgba(255,255,255,0.7);
-        }
+        /* Tutor styling — ver mat.distribucioncoche.css */
 
         /* Facility styling (vacio) */
         .vacio {
@@ -323,7 +284,7 @@
 
         /* Print styles */
         @@page {
-            margin: 1.5cm;
+            margin: 10mm;
             size: A4 portrait;
         }
 
@@ -335,6 +296,7 @@
 
             .bus-distribution-page {
                 padding: 0;
+                max-width: none;
             }
 
             .bus-card {
@@ -348,6 +310,14 @@
                 -webkit-print-color-adjust: exact;
             }
 
+            /* Escalar el mapa completo para que entre en A4 sin tocar el layout de butacas */
+            #cole1 {
+                transform: scale(0.9);
+                transform-origin: top center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
             .piso-section {
                 break-after: page;
                 page-break-after: always;
@@ -356,6 +326,10 @@
             .piso-section:last-child {
                 break-after: auto;
                 page-break-after: auto;
+            }
+
+            .HideToPrint {
+                display: none !important;
             }
         }
 
@@ -380,24 +354,122 @@
 </head>
 <body>
 
-<div class="bus-distribution-page">
+<div class="bus-distribution-page listado-simple">
+    @if (ViewBag.Error != null && !string.IsNullOrEmpty(ViewBag.Error.ToString()))
+    {
+        <div class="alert alert-warning" role="alert">@ViewBag.Error</div>
+    }
+    @if (ViewBag.SpMigrationWarning != null && !string.IsNullOrEmpty(ViewBag.SpMigrationWarning.ToString()))
+    {
+        <div class="alert alert-info" role="alert">@ViewBag.SpMigrationWarning</div>
+    }
+
+    <div class="listado-simple-header EncabezadoViaje distribucion-coche-header">
+        <div class="viaje-info">
+            <div class="viaje-titulo">@(string.IsNullOrWhiteSpace((string)ViewBag.ViajeDescripcion) ? "Distribución de Coche" : ViewBag.ViajeDescripcion)</div>
+            @if (!string.IsNullOrWhiteSpace(fechaSalida) || !string.IsNullOrWhiteSpace(fechaRegreso))
+            {
+                <div class="viaje-fechas">
+                    @if (!string.IsNullOrWhiteSpace(fechaSalida))
+                    {
+                        <span><strong>Salida:</strong> @fechaSalida</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(fechaSalida) && !string.IsNullOrWhiteSpace(fechaRegreso))
+                    {
+                        <span class="fecha-separador">|</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(fechaRegreso))
+                    {
+                        <span><strong>Regreso:</strong> @fechaRegreso</span>
+                    }
+                </div>
+            }
+        </div>
+        <div class="viaje-logo">
+            <img src="/Images/marco_antonio_back3.png" alt="Marco Antonio Turismo" />
+        </div>
+    </div>
+
+    <div class="bus-search-bar HideToPrint" role="search" aria-label="Buscar pasajero en el mapa">
+        <label for="buscar-pasajero" class="bus-search-label">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            Buscar pasajero
+        </label>
+        <div class="bus-search-field-wrap">
+            <i class="bi bi-search bus-search-field-icon" aria-hidden="true"></i>
+            <input type="search" id="buscar-pasajero" placeholder="Nombre, apellido o butaca (ej. V01, P02)..." autocomplete="off" />
+        </div>
+        <span id="buscar-resultado" class="bus-search-resultado" aria-live="polite"></span>
+        <span class="bus-search-hint"><kbd>Enter</kbd> o <kbd>F3</kbd> para ir a la siguiente</span>
+    </div>
+
+    <div class="toolbar HideToPrint">
+        <span>Ocupadas: <strong>@(ViewBag.ButacasOcupadas ?? 0) / @(ViewBag.TotalButacas ?? 0)</strong></span>
+        <span class="ms-3">Disponibles: <strong>@(ViewBag.ButacasDisponibles ?? 0)</strong></span>
+        <span class="ms-3">Pagados: <strong>@(ViewBag.ConteoPagados ?? 0)</strong></span>
+        <span class="ms-3">Se&ntilde;ados: <strong>@(ViewBag.ConteoSenados ?? 0)</strong></span>
+        <span class="ms-3">Pre-reserva: <strong>@(ViewBag.ConteoPrereserva ?? 0)</strong></span>
+        @if (!string.IsNullOrWhiteSpace((string)ViewBag.TransporteTipo))
+        {
+            <span class="ms-3">Transporte: <strong>@ViewBag.TransporteTipo</strong></span>
+        }
+        @if (!string.IsNullOrWhiteSpace((string)ViewBag.NroCoche))
+        {
+            <span class="ms-3">Coche N&deg; <strong>@ViewBag.NroCoche</strong></span>
+        }
+        <span id="tutores-loading" class="ms-3 text-muted" style="font-size:0.875rem;">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Cargando tutores...
+        </span>
+        <button type="button" class="btn-print" onclick="window.print();">
+            <i class="bi bi-printer-fill"></i>
+            Imprimir
+        </button>
+    </div>
+
     <div class="bus-card">
         <div class="bus-legend">
-            <div class="legend-item">
-                <div class="legend-color occupied"></div>
-                <span>Ocupado</span>
+            <div class="bus-legend-estados">
+                <div class="legend-item">
+                    <div class="legend-color disponible"></div>
+                    <span>Disponible</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color señado"></div>
+                    <span>Se&ntilde;ado</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color reservado"></div>
+                    <span>Pagado</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color prereserva"></div>
+                    <span>Pre-reserva</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color reservahotel"></div>
+                    <span>Pagado + Hotel</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color reservapasajehotel"></div>
+                    <span>Se&ntilde;ado + Hotel</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color prereservahotel"></div>
+                    <span>Pre-reserva + Hotel</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color tutor"></div>
+                    <span>Tutor de Menor</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color facility"></div>
+                    <span>Servicio (Bar/Ba&ntilde;o)</span>
+                </div>
             </div>
-            <div class="legend-item">
-                <div class="legend-color empty"></div>
-                <span>Disponible</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color tutor"></div>
-                <span>Tutor de Menor</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color facility"></div>
-                <span>Servicio (Bar/Baño)</span>
+            <div class="legend-item" id="legend-tutores-loading">
+                <span class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></span>
+                <span class="text-muted">Cargando tutores...</span>
             </div>
         </div>
         <div id="cole1">
@@ -409,36 +481,16 @@
             <div class="grupo1">
                 @foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
                 {
-                    <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
-                        <span class="spnCodB">@item.ButacaCodigo </span>
-                    
-                        @if (item.PasajeroID != null && item.PasajeroID != "")
-                        {
-                            <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                        }
-                    
-                    </div>
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
                 }                        
             </div>
             <div class="pasillo">
                 <div class="tv tv1">TV</div>
             </div>
             <div class="grupo2">
-                 @{
-                var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
-                var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
-                  }
-
                 @foreach (var item in Model.Where(bt => bt.ButacaNro > 2 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
                 {
-                    <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                       <span class="spnCodB">@item.ButacaCodigo</span> 
-                   
-                         @if (item.PasajeroID != null && item.PasajeroID != "")
-                         {
-                        <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                         }
-                    </div>
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
                 }
             
             </div>
@@ -453,40 +505,20 @@
     <div class="grupo1">
         @foreach (var item in Model.Where(bt => bt.ButacaNro < 23 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
         {
-            <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
-                <span class="spnCodB">@item.ButacaCodigo </span>
-
-                @if (item.PasajeroID != null && item.PasajeroID != "")
-                {
-                    <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                }
-
-            </div>
+            @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
         }
         </div>
         <div class="pasillo">
             <div class="tv tv1">TV</div>
         </div>
         <div class="grupo2">
-            @{
-                var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
-                var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
-            }
-
             <div class="asiento vacio custom_margin_top_47"></div>
             <div class="asiento vacio custom_margin_top_47"></div>
 
 
             @foreach (var item in Model.Where(bt => bt.ButacaNro > 2 && bt.ButacaNro < 23 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
             {
-                <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                    <span class="spnCodB">@item.ButacaCodigo</span>
-
-                    @if (item.PasajeroID != null && item.PasajeroID != "")
-                    {
-                        <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                    }
-                </div>
+                @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
             }
 
         </div>
@@ -500,15 +532,7 @@
             <div class="grupo1">
                 @foreach (var item in Model.Where(bt => (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
                 {
-                    <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
-                        <span class="spnCodB">@item.ButacaCodigo </span>
-
-                        @if (item.PasajeroID != null && item.PasajeroID != "")
-                             {
-                            <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                        }
-                    
-                    </div>
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
                 }                        
             </div>
             <div class="pasillo">
@@ -518,21 +542,9 @@
                 <div class="tv tv4">TV</div>
             </div>
             <div class="grupo2">
-                 @{
-                var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
-                     var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
-                  }
-
                 @foreach (var item in Model.Where(bt => (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
                 {
-                    <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                       <span class="spnCodB">@item.ButacaCodigo</span>
-
-                         @if (item.PasajeroID != null && item.PasajeroID != "")
-                     {
-                        <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                         }
-                    </div>
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
                 }
                 <div class="asiento vacio custom_margin_top_20">
                     <span>BAR</span>
@@ -558,30 +570,14 @@
                 {
                     foreach (var item in Model.Where(bt => bt.ButacaNro < 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
                     {
-                        <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
-                            <span class="spnCodB">@item.ButacaCodigo </span>
-
-                            @if (item.PasajeroID != null && item.PasajeroID != "")
-                            {
-                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                            }
-
-                        </div>
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
                     }
                 }
                 else
                 {
                     foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
                     {
-                        <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID.ToString() : "")">
-                            <span class="spnCodB">@item.ButacaCodigo </span>
-
-                            @if (item.PasajeroID != null && item.PasajeroID != "")
-                            {
-                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                            }
-
-                        </div>
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
                     }
                 }
 
@@ -595,73 +591,54 @@
             </div>
             <div class="grupo2">
                 @{
-                    var ItemPasajero3 = Model.Where(bt => bt.ButacaNro == 3).First();
-                    var ItemPasajero4 = Model.Where(bt => bt.ButacaNro == 4).First();
-
+                    var ItemPasajero3 = butacaByNro(3);
+                    var ItemPasajero4 = butacaByNro(4);
                 }
-                <div class="asiento_parabrisa posicion_@ItemPasajero3.ButacaPosicion" id="@(ItemPasajero3 != null ? ItemPasajero3.PasajeroID : "")">
-                    <span class="spnCodB">@ItemPasajero3.ButacaCodigo </span>
-
-                    @if (ItemPasajero3.PasajeroID != null)
-                    {
-                        <span class="spnB"> @ItemPasajero3.PasajeroNombre.ToUpper() @ItemPasajero3.PasajeroApellido.ToUpper()</span>
-                    }
-                </div>
-                <div class="asiento_parabrisa posicion_@ItemPasajero4.ButacaPosicion" id="@(ItemPasajero4 != null ? ItemPasajero4.PasajeroID : "")">
-                    <span class="spnCodB"> @ItemPasajero4.ButacaCodigo</span>
-
-                    @if (ItemPasajero4.PasajeroID != null)
-                    {
-                        <span class="spnB">@ItemPasajero4.PasajeroNombre.ToUpper() @ItemPasajero4.PasajeroApellido.ToUpper()</span>
-                    }
-                </div>
+                @if (ItemPasajero3 != null)
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero3, SeatClass = "asiento_parabrisa" })
+                }
+                else
+                {
+                    <div class="asiento_parabrisa vacio"></div>
+                }
+                @if (ItemPasajero4 != null)
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero4, SeatClass = "asiento_parabrisa" })
+                }
+                else
+                {
+                    <div class="asiento_parabrisa vacio"></div>
+                }
 
                 @if (ViewBag.NroCoche == "81")
                 {
-                    var ItemPasajero59 = Model.Where(bt => bt.ButacaNro == 59).First();
-                    var ItemPasajero60 = Model.Where(bt => bt.ButacaNro == 60).First();
+                    var ItemPasajero59 = butacaByNro(59);
+                    var ItemPasajero60 = butacaByNro(60);
 
-                    <div class="asiento_invertido posicion_@ItemPasajero59.ButacaPosicion" id="@(ItemPasajero59.PasajeroID != null && ItemPasajero59.PasajeroID != "" ? ItemPasajero59.PasajeroID : "")">
-                        <span class="spnCodB">@ItemPasajero59.ButacaCodigo</span>
-
-                        @if (ItemPasajero59.PasajeroID != null && ItemPasajero59.PasajeroID != "")
-                        {
-                            <span class="spnB">@ItemPasajero59.PasajeroNombre.ToUpper() @ItemPasajero59.PasajeroApellido.ToUpper()</span>
-                        }
-                    </div>
-
-                    <div class="asiento_invertido posicion_@ItemPasajero60.ButacaPosicion" id="@(ItemPasajero60.PasajeroID != null && ItemPasajero60.PasajeroID != "" ? ItemPasajero60.PasajeroID : "")">
-                        <span class="spnCodB">@ItemPasajero60.ButacaCodigo</span>
-
-                        @if (ItemPasajero60.PasajeroID != null && ItemPasajero60.PasajeroID != "")
-                        {
-                            <span class="spnB">@ItemPasajero60.PasajeroNombre.ToUpper() @ItemPasajero60.PasajeroApellido.ToUpper()</span>
-                        }
-                    </div>
+                    if (ItemPasajero59 != null)
+                    {
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero59, SeatClass = "asiento_invertido" })
+                    }
+                    if (ItemPasajero60 != null)
+                    {
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero60, SeatClass = "asiento_invertido" })
+                    }
                 }
 
                 @if (ViewBag.NroCoche == "101")
                 {
-                    var ItemPasajero7 = Model.Where(bt => bt.ButacaNro == 7).First();
-                    var ItemPasajero8 = Model.Where(bt => bt.ButacaNro == 8).First();
+                    var ItemPasajero7 = butacaByNro(7);
+                    var ItemPasajero8 = butacaByNro(8);
 
-                    <div class="asiento_invertido posicion_@ItemPasajero7.ButacaPosicion" id="@(ItemPasajero7.PasajeroID != null && ItemPasajero7.PasajeroID != "" ? ItemPasajero7.PasajeroID : "")">
-                        <span class="spnCodB">@ItemPasajero7.ButacaCodigo</span>
-
-                        @if (ItemPasajero7.PasajeroID != null && ItemPasajero7.PasajeroID != "")
-                        {
-                            <span class="spnB">@ItemPasajero7.PasajeroNombre.ToUpper() @ItemPasajero7.PasajeroApellido.ToUpper()</span>
-                        }
-                    </div>
-
-                    <div class="asiento_invertido posicion_@ItemPasajero8.ButacaPosicion" id="@(ItemPasajero8.PasajeroID != null && ItemPasajero8.PasajeroID != "" ? ItemPasajero8.PasajeroID : "")">
-                        <span class="spnCodB">@ItemPasajero8.ButacaCodigo</span>
-
-                        @if (ItemPasajero8.PasajeroID != null && ItemPasajero8.PasajeroID != "")
-                        {
-                            <span class="spnB">@ItemPasajero8.PasajeroNombre.ToUpper() @ItemPasajero8.PasajeroApellido.ToUpper()</span>
-                        }
-                    </div>
+                    if (ItemPasajero7 != null)
+                    {
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero7, SeatClass = "asiento_invertido" })
+                    }
+                    if (ItemPasajero8 != null)
+                    {
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero8, SeatClass = "asiento_invertido" })
+                    }
 
 
                     <div class="asiento_largo vacio" style="padding-top:5px">
@@ -671,28 +648,14 @@
 
                     foreach (var item in Model.Where(bt => bt.ButacaNro > 8 && bt.ButacaNro < 49 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
                     {
-                        <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                            <span class="spnCodB">@item.ButacaCodigo</span>
-
-                            @if (item.PasajeroID != null && item.PasajeroID != "")
-                            {
-                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                            }
-                        </div>
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
                     }
                 }
                 else
                 {
                     foreach (var item in Model.Where(bt => bt.ButacaNro > 4 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
                     {
-                        <div class="asiento_invertido posicion_@item.ButacaPosicion" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                            <span class="spnCodB">@item.ButacaCodigo</span>
-
-                            @if (item.PasajeroID != null && item.PasajeroID != "")
-                            {
-                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                            }
-                        </div>
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
                     }
 
                     <div class="asiento_largo vacio" style="padding-top:5px">
@@ -725,28 +688,14 @@
                 {
                     foreach (var item in Model.Where(bt => bt.ButacaNro >= 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
                     {
-                        <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                            <span class="spnCodB">@item.ButacaCodigo</span>
-
-                            @if (item.PasajeroID != null && item.PasajeroID != "")
-                            {
-                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                            }
-                        </div>
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
                     }
                 }
                 else
                 {
                     foreach (var item in Model.Where(bt => bt.ButacaNro >= 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
                     {
-                        <div class="asiento" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                            <span class="spnCodB">@item.ButacaCodigo</span>
-
-                            @if (item.PasajeroID != null && item.PasajeroID != "")
-                            {
-                                <span class="spnB">@item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()</span>
-                            }
-                        </div>
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
                     }
                 }
 
@@ -763,28 +712,14 @@
                 {
                     foreach (var item in Model.Where(bt => bt.ButacaNro > 48 && bt.ButacaNro < 61 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
                     {
-                        <div class="asiento_largo" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                            <span class="spnCodB"> @item.ButacaCodigo</span>
-
-                            @if (item.PasajeroID != null && item.PasajeroID != "")
-                            {
-                                @item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()
-                            }
-                        </div>
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_largo" })
                     }
                 }
                 else
                 {
                     foreach (var item in Model.Where(bt => bt.ButacaNro > 46 && bt.ButacaNro < 59 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
                     {
-                        <div class="asiento_largo" id="@(item.PasajeroID != null && item.PasajeroID != "" ? item.PasajeroID : "")">
-                            <span class="spnCodB"> @item.ButacaCodigo</span>
-
-                            @if (item.PasajeroID != null && item.PasajeroID != "")
-                            {
-                                @item.PasajeroNombre.ToUpper() @item.PasajeroApellido.ToUpper()
-                            }
-                        </div>
+                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_largo" })
                     }
                 }
 
@@ -798,40 +733,147 @@
 </div>
 
 <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+<script src="~/Scripts/bootstrap-5.3.2.bundle.min.js"></script>
 <script type="text/javascript">
+    function mostrarErrorDistribucion(msg) {
+        $(".distribucion-error-banner").remove();
+        var $banner = $('<div class="distribucion-error-banner" style="background:#ffebee;color:#c62828;padding:10px 15px;border-left:4px solid #c62828;margin:8px 0;border-radius:4px;font-size:13px;display:flex;align-items:center;gap:8px;">' +
+            '<i class="bi bi-exclamation-triangle-fill" style="font-size:16px;flex-shrink:0;"></i>' +
+            '<span style="flex:1;"></span>' +
+            '<button type="button" style="background:none;border:none;color:#c62828;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;" title="Cerrar">&times;</button>' +
+            '</div>');
+        $banner.find("span").first().text(msg);
+        $banner.find("button").on("click", function () { $banner.fadeOut(200, function () { $banner.remove(); }); });
+        $(".bus-distribution-page").prepend($banner);
+        setTimeout(function () { $banner.fadeOut(300, function () { $banner.remove(); }); }, 15000);
+    }
+
+    function parseTutoresList(tutores) {
+        if (Array.isArray(tutores)) {
+            return tutores;
+        }
+        if (typeof tutores === "string" && tutores.length > 0) {
+            try {
+                return JSON.parse(tutores);
+            } catch (e) {
+                return [];
+            }
+        }
+        return [];
+    }
+
+    function markTutors(list) {
+        $(".bus-seat").each(function () {
+            var id = $(this).attr("id");
+            if (id && list.indexOf(id) >= 0) {
+                $(this).addClass("Tutor");
+            }
+        });
+    }
+
+    function hideTutoresLoading() {
+        $("#tutores-loading, #legend-tutores-loading").hide();
+    }
+
+    function normalizeSearchText(text) {
+        return (text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    var searchMatches = [];
+    var searchIndex = -1;
+    var searchTimer = null;
+
+    function applyBusSearch(query) {
+        var q = normalizeSearchText(query);
+        $(".bus-seat").removeClass("bus-seat-match bus-seat-dimmed bus-seat-current");
+        searchMatches = [];
+        searchIndex = -1;
+        $("#buscar-resultado").text("");
+
+        if (!q) {
+            return;
+        }
+
+        $(".bus-seat").each(function () {
+            var key = normalizeSearchText($(this).attr("data-search") || "");
+            if (key.indexOf(q) >= 0) {
+                searchMatches.push(this);
+                $(this).addClass("bus-seat-match");
+            } else {
+                $(this).addClass("bus-seat-dimmed");
+            }
+        });
+
+        if (searchMatches.length > 0) {
+            searchIndex = 0;
+            focusSearchMatch(0);
+            $("#buscar-resultado").text(searchMatches.length + (searchMatches.length === 1 ? " coincidencia" : " coincidencias"));
+        } else {
+            $("#buscar-resultado").text("Sin coincidencias");
+        }
+    }
+
+    function focusSearchMatch(idx) {
+        $(".bus-seat").removeClass("bus-seat-current");
+        if (searchMatches.length === 0) {
+            return;
+        }
+        var el = searchMatches[idx];
+        $(el).addClass("bus-seat-current");
+        if (el.scrollIntoView) {
+            el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        }
+    }
+
+    function initBusSeatTooltips() {
+        if (typeof bootstrap === "undefined" || !bootstrap.Tooltip) {
+            return;
+        }
+        [].slice.call(document.querySelectorAll(".bus-seat[data-bs-toggle='tooltip']")).forEach(function (el) {
+            new bootstrap.Tooltip(el);
+        });
+    }
+
     $(document).ready(function () {
-        
+        initBusSeatTooltips();
+
+        $("#buscar-pasajero").on("input", function () {
+            var val = $(this).val();
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(function () {
+                applyBusSearch(val);
+            }, 200);
+        });
+
+        $("#buscar-pasajero").on("keydown", function (e) {
+            if (e.key === "Enter" || e.key === "F3") {
+                e.preventDefault();
+                if (searchMatches.length === 0) {
+                    return;
+                }
+                searchIndex = (searchIndex + 1) % searchMatches.length;
+                focusSearchMatch(searchIndex);
+            }
+        });
+
         var sViajeId = "@ViewBag.ViajeID";
         $.ajax({
             url: "/Reserva/GetListTutoresByViajeID",
-            data: { sViajeId: sViajeId},
+            data: { sViajeId: sViajeId },
             dataType: "json",
             success: function (data) {
-                var list = data.Tutores;
-                $(".asiento").each(function (e) {
-                    var Id = $(this).attr("id");
-                    if (list.indexOf(Id) > 0) {
-                        $(this).addClass("Tutor");
-                    }
-                });
-                $(".asiento_parabrisa").each(function (e) {
-                    var Id = $(this).attr("id");
-                    if (list.indexOf(Id) > 0) {
-                        $(this).addClass("Tutor");
-                    }
-                });
-                $(".asiento_invertido").each(function (e) {
-                    var Id = $(this).attr("id");
-                    if (list.indexOf(Id) > 0) {
-                        $(this).addClass("Tutor");
-                    }
-                });
-                $(".asiento_largo").each(function (e) {
-                    var Id = $(this).attr("id");
-                    if (list.indexOf(Id) > 0 ) {
-                        $(this).addClass("Tutor");
-                    }
-                });
+                if (data.error) {
+                    mostrarErrorDistribucion(data.error);
+                    return;
+                }
+                var list = parseTutoresList(data.Tutores);
+                markTutors(list);
+            },
+            error: function () {
+                mostrarErrorDistribucion("No se pudieron cargar los tutores de menores. El mapa se muestra sin esa información.");
+            },
+            complete: function () {
+                hideTutoresLoading();
             }
         });
     });

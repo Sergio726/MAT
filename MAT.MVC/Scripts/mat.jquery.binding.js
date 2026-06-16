@@ -2072,12 +2072,9 @@ $(document).on("click", "#btn-editar-butaca", function () {
 });
 
 $(document).on("click", "#btn-aceptar-cambio-butaca", function () {
-  
-        //var anteriorid = $("#input-anterior").val();
         var pasajeid = $("#input-pasaje").val();
         var piso = $("#input-piso").val();
         var nuevopasaje = $("#input-nuevopasaje").val();
-       // var precio = $("input[name=radio_precio]:checked").data("id");
         var adicionales = new Array();
         $("input[name=check_adicional]:checked").each(function () {
             adicionales.push($(this).data("id"));
@@ -2086,22 +2083,27 @@ $(document).on("click", "#btn-aceptar-cambio-butaca", function () {
 
         $.ajax({
             url: "/PersonaCliente/ConfirmarCambioButaca",
+            type: "POST",
+            dataType: "json",
             data: { pasajeid: pasajeid, piso: piso, adicional: adicional, nuevopasaje: nuevopasaje },
             success: function (data) {
-                if (data == "True") {
-                    $("#SeleccionImportes").dialog("close");
-                    $("#ElegirNuevaButaca").dialog("close");
-                    $("#DetalleFactura").dialog("close");
-                    //$("#btn-detallefactura").click();
-                    PopupDetalleFactura_Load();
+                if (data && data.success) {
+                    try {
+                        if ($("#SeleccionImportes").length) { $("#SeleccionImportes").dialog("close"); }
+                        if ($("#ElegirNuevaButaca").length) { $("#ElegirNuevaButaca").dialog("close"); }
+                    } catch (e) { /* no-op */ }
+                    if (typeof PopupDetalleFactura_Load === "function") {
+                        PopupDetalleFactura_Load();
+                    }
                 } else {
-                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
+                    var errMsg = (data && data.message) ? data.message : "Error en la operación. Contacte con el Administrador del Sistema.";
+                    (window.alertError || window.alert)(errMsg, "Error");
                 }
+            },
+            error: function () {
+                (window.alertError || window.alert)("Error de comunicación al confirmar el cambio de butaca.", "Error");
             }
         });
-
-        $("#SeleccionarImportes").dialog("close");
-   
 });
 
 $(document).on("click", "#btn-editar-habitacion", function () {

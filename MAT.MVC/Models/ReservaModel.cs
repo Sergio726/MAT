@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using MAT.Entities;
 using MAT.Services;
@@ -410,9 +412,18 @@ namespace MAT.MVC.Models
         public int ButacaNro { get; set; }
         public string ButacaPosicion { get; set; }
         public string ButacaCodigo { get; set; }
+        public string PasajeID { get; set; }
+        public int EstadoPasaje { get; set; }
         public string PasajeroID { get; set; }
         public string PasajeroApellido { get; set; }
         public string PasajeroNombre { get; set; }
+    }
+
+    public class DistribucionCocheSeatViewModel
+    {
+        public DistribucionCoche Item { get; set; }
+        public string SeatClass { get; set; }
+        public string PosicionClass { get; set; }
     }
 
     public class PreReserva {
@@ -431,6 +442,49 @@ namespace MAT.MVC.Models
     }
 
     public class ReservaMethod {
+        /// <summary>
+        /// Clase CSS de estado de butaca (misma lógica que Reserva/Index).
+        /// </summary>
+        public static string GetCssClassEstadoButaca(int estado)
+        {
+            switch (estado)
+            {
+                case 1: return "disponible";
+                case 2:
+                case 3: return "señado";
+                case 4: return "reservado";
+                case 5: return "prereserva";
+                case 6: return "reservahotel";
+                case 7: return "anulado";
+                case 8: return "reservapasajehotel";
+                case 9: return "prereservahotel";
+                default: return "disponible";
+            }
+        }
+
+        public static string GetDescripcionEstadoButaca(int estado)
+        {
+            if (estado == 9)
+            {
+                return "Pre-reserva + Hotel";
+            }
+
+            if (!Enum.IsDefined(typeof(eEstadoPasaje), estado))
+            {
+                return estado > 0 ? estado.ToString() : "Disponible";
+            }
+
+            var name = Enum.GetName(typeof(eEstadoPasaje), estado);
+            var field = typeof(eEstadoPasaje).GetField(name);
+            if (field == null)
+            {
+                return name;
+            }
+
+            var attr = (DescriptionAttribute)Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute));
+            return attr != null ? attr.Description : name;
+        }
+
         public static List<PreReserva> GetPreReservaVencidas(string ViajeID)
         {
             List<PreReserva> ListPreReserva = new List<PreReserva>();

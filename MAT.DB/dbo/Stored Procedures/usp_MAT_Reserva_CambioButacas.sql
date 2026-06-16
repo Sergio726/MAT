@@ -1,20 +1,34 @@
 ﻿CREATE PROCEDURE [dbo].[usp_MAT_Reserva_CambioButacas](@AdicionalesIDs varchar(1000),@OldPasaje uniqueidentifier, @NewPasaje uniqueidentifier)
 AS
-/*-- =============================================   
--- Author:    Garcia Sergio   
--- Create date: 10-02-2017   
--- Description:  CHANGE BUTACA
-   2018-01-28	Garcia Sergio: delete adiccional butaca cama when user go butaca change;
-							   update reserva habitacion
---2018-05-30	Garcia Sergio: Quit Precio Id from Pasaje   
---2019-07-31	Garcia Sergio: Fix, only insert  adicional when adicional not exists in Detalle factura    
--- =============================================*/ 
+/*-- =============================================
+  -- Author:    Sebastian Garcia
+  -- Create date: 2026-06-16
+  -- Description: Cambio de butaca: mueve pasaje, sincroniza DetalleFactura (línea Butaca),
+  --              adicionales CAMA, Monto de factura, estados y auditoría.
+  -- Historial:
+  --   2017-02-10  Garcia Sergio   Creación del SP (cambio de butaca).
+  --   2018-01-28  Garcia Sergio   Elimina adicional butaca cama al bajar de piso;
+  --                               actualiza ReservaHabitacion al nuevo PasajeID.
+  --   2018-05-30  Garcia Sergio   Quita PrecioID del flujo de Pasaje.
+  --   2019-07-31  Garcia Sergio   Inserta adicional solo si no existe en DetalleFactura.
+  --   2026-06-16  Sebastian Garcia Sincroniza línea Butaca en DetalleFactura (update/insert);
+  --                               recalcula Factura.Monto; inserta AuditFactura (CAMBIO BUTACA);
+  --                               ejecuta usp_MAT_Reserva_ActualizarEstados tras el cambio.
+  ============================================= */
 		SET nocount, xact_abort ON; 
 		SET TRANSACTION isolation level READ uncommitted; 
 begin
 	BEGIN TRY
 
-		declare @FacturaID uniqueidentifier 
+		declare @FacturaID uniqueidentifier,
+				@ClienteID uniqueidentifier,
+				@VendedorID uniqueidentifier,
+				@OldCodigoButaca varchar(50),
+				@NewCodigoButaca varchar(50),
+				@OldDetalle varchar(300),
+				@NewDetalle varchar(300),
+				@AuditDesc varchar(200)
+
 		select p.PasajeID,
 			   p.PasajeroID,
 			   p.FechaReserva,
@@ -27,11 +41,31 @@ begin
 		from dbo.Pasaje p
 		where p.PasajeID = @OldPasaje	
 
-	
-		--insert adicional
+		select @FacturaID = t.FacturaID from #tOldPasaje t
+
+		if @FacturaID is null
+			RAISERROR('No se encontró la factura asociada al pasaje original.', 16, 1)
+
+		select @ClienteID = f.ClienteID,
+			   @VendedorID = f.VendedorID
+		from dbo.Factura f
+		where f.FacturaID = @FacturaID
+
+		select @OldCodigoButaca = isnull(b.CodigoButaca, '')
+		from dbo.Pasaje p
+		inner join dbo.Butaca b on b.ButacaID = p.ButacaID
+		where p.PasajeID = @OldPasaje
+
+		select @NewCodigoButaca = isnull(b.CodigoButaca, '')
+		from dbo.Pasaje p
+		inner join dbo.Butaca b on b.ButacaID = p.ButacaID
+		where p.PasajeID = @NewPasaje
+
+		set @OldDetalle = 'Butaca ' + @OldCodigoButaca
+		set @NewDetalle = 'Butaca ' + @NewCodigoButaca
+
 		BEGIN TRAN
 
-		select @FacturaID = t.FacturaID from #tOldPasaje t
 		if (@AdicionalesIDs != '')
 		begin
 			insert into dbo.DetalleFactura (FacturaID,Detalle,Precio,Cantidad,AdicionalID)
@@ -53,8 +87,6 @@ begin
 										where a.Descripcion	like 'BUTACA CAMA%'
 										and df.FacturaID = @FacturaID
 										)
-			
-			
 		end
 
 		/*update Old pasaje*/
@@ -81,6 +113,44 @@ begin
 		from dbo.Pasaje p
 		inner join #tOldPasaje t
 			on p.PasajeID = t.NewPasajeID
+
+		/* Sincronizar línea Butaca en DetalleFactura */
+		if @NewCodigoButaca <> ''
+		begin
+			update df
+			set df.Detalle = @NewDetalle
+			from dbo.DetalleFactura df
+			where df.FacturaID = @FacturaID
+			  and df.Detalle = @OldDetalle
+
+			if @@ROWCOUNT = 0
+			begin
+				insert into dbo.DetalleFactura (FacturaID, Detalle, Precio, Cantidad)
+				values (@FacturaID, @NewDetalle, 0, 1)
+			end
+		end
+
+		/* Recalcular Monto de factura */
+		update dbo.Factura
+		set Monto = isnull((
+			select sum(df.Precio * df.Cantidad)
+			from dbo.DetalleFactura df
+			where df.FacturaID = @FacturaID
+		), 0)
+		where FacturaID = @FacturaID
+
+		/* Auditoría */
+		set @AuditDesc = left(
+			'Pasaje ' + convert(varchar(36), @OldPasaje) + ' -> ' + convert(varchar(36), @NewPasaje)
+			+ ' Butaca: ' + @OldCodigoButaca + ' -> ' + @NewCodigoButaca
+			+ case when @AdicionalesIDs <> '' then ' Adic:' + @AdicionalesIDs else '' end,
+			200)
+
+		insert into dbo.AuditFactura (FacturaID, PersonaID, VendedorID, Accion, Descripcion)
+		values (@FacturaID, @ClienteID, @VendedorID, 'CAMBIO BUTACA', @AuditDesc)
+
+		exec dbo.usp_MAT_Reserva_ActualizarEstados @FacturaID = @FacturaID
+
 		COMMIT
 
 		/*update reserva habitacion*/
@@ -104,4 +174,3 @@ begin
 					RAISERROR (@errmsg,16,@errState); 
 	END CATCH
 end
-

@@ -683,17 +683,25 @@ namespace MAT.MVC.Models
             List<FacturaStandard> ListFactura = new List<FacturaStandard>();
             foreach (DataRow dr in ds.Tables[0].Rows)
             {
-                FacturaStandard row = new FacturaStandard();
-                row.FacturaID = new Guid(dr["FacturaID"].ToString());
-                row.NroFactura = dr["NroFactura"].ToString();
-                row.Monto = Convert.ToDouble(dr["Monto"]);
-                row.Fecha = Convert.ToDateTime(dr["FechaFactura"]);
-                row.EstadoDescripcion = dr["EstadoFactura"].ToString();
-                row.PaqueteDescripcion = dr["Paquete"].ToString();
-                row.ViajeDescripcion = dr["Viaje"].ToString();
-                row.ClienteFullName = dr["ClienteNomre"].ToString();
-                ListFactura.Add(row);
+                var facturaIdVal = dr["FacturaID"];
+                if (facturaIdVal == null || facturaIdVal == DBNull.Value || string.IsNullOrEmpty(facturaIdVal.ToString()))
+                    continue;
 
+                FacturaStandard row = new FacturaStandard();
+                row.FacturaID = new Guid(facturaIdVal.ToString());
+                row.NroFactura = dr["NroFactura"] == DBNull.Value ? string.Empty : dr["NroFactura"].ToString();
+
+                var montoVal = dr["Monto"];
+                row.Monto = (montoVal != null && montoVal != DBNull.Value) ? Convert.ToDouble(montoVal) : 0;
+
+                var fechaVal = dr["FechaFactura"];
+                row.Fecha = (fechaVal != null && fechaVal != DBNull.Value) ? Convert.ToDateTime(fechaVal) : DateTime.MinValue;
+
+                row.EstadoDescripcion = dr["EstadoFactura"] == DBNull.Value ? string.Empty : dr["EstadoFactura"].ToString();
+                row.PaqueteDescripcion = dr["Paquete"] == DBNull.Value ? string.Empty : dr["Paquete"].ToString();
+                row.ViajeDescripcion = dr["Viaje"] == DBNull.Value ? string.Empty : dr["Viaje"].ToString();
+                row.ClienteFullName = dr["ClienteNomre"] == DBNull.Value ? string.Empty : dr["ClienteNomre"].ToString();
+                ListFactura.Add(row);
             }
 
             return ListFactura;
