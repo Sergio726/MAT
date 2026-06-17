@@ -17,7 +17,7 @@
     <link href="~/Scripts/jquery.timepicker/jquery.timepicker.css" rel="stylesheet" />
     <link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-    <link href="~/Content/admin.modern.css?v=20260617" rel="stylesheet" />
+    <link href="~/Content/admin.modern.css?v=20260617b" rel="stylesheet" />
 
     <!-- JS (nuevo) -->
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
@@ -190,6 +190,17 @@
             <!-- Content -->
             <main class="admin-content">
                 <div class="admin-content-inner">
+                    @if (IsSectionDefined("BreadcrumbItems"))
+                    {
+                        <nav class="admin-breadcrumb" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-3">
+                                <li class="breadcrumb-item">
+                                    <a href="@Url.Action("Index", "Admin")">Administración</a>
+                                </li>
+                                @RenderSection("BreadcrumbItems", required: false)
+                            </ol>
+                        </nav>
+                    }
                     @Html.Partial("_Alerts")
                     @RenderBody()
                 </div>

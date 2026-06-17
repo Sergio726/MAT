@@ -3,6 +3,11 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
+@section BreadcrumbItems {
+    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Reportes")">Reportes</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Ventas</li>
+}
+
 <style>
 .card-facturado-interactiva {
     cursor: pointer;

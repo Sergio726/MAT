@@ -2,7 +2,23 @@
 
 ---
 
-### [2026-06-17] — Admin UI Lote 2 (badges, moneda/montos, spinners, estados vacíos)
+### [2026-06-17] — Admin UI Lote 3 (tokens CSS, hover cards, sticky headers, breadcrumbs)
+
+- Archivos modificados:
+  - `MAT.MVC/Content/admin.modern.css` — tokens `--admin-content-*`, alias ecosistema, `.admin-card-link`, sticky thead, breadcrumb, grid resumen pagos
+  - `MAT.MVC/Views/Admin/Index.cshtml` — clase `admin-card-link` en cards
+  - `MAT.MVC/Views/Reportes/Index.cshtml` — clase `admin-card-link` en cards
+  - `MAT.MVC/Views/Admin/GridResumenPagos.cshtml` — eliminado `<style>` inline; clase `modern-table`
+  - `MAT.MVC/Views/Shared/_LayoutAdmin.cshtml` — sección `BreadcrumbItems`
+  - `MAT.MVC/Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml` — breadcrumbs
+  - `MAT.MVC/Views/Admin/SistemaParametros.cshtml`, `Usuarios.cshtml`, `ErrorLog.cshtml` — breadcrumbs
+  - `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Lote 3 UI Admin — paleta unificada navy en contenido, hover coherente en índices, cabeceras fijas en tablas, breadcrumbs contextuales en 6 vistas prioritarias.
+- Problemas encontrados: Mapeo `--text-primary` usa tokens de contenido claro (no `--admin-text` del sidebar) para mantener contraste en cards blancas.
+- Estado: ✅ completo (smoke test manual pendiente en IIS)
+
+---
+
 
 - Archivos modificados:
   - `MAT.MVC/Scripts/mat.reportes-utils.js` — `parseMoneyCell`, `moneyFmt`, `renderMonedaBadge`, `renderMontoCurrency`, `estadoBadgeHtml`, `emptyTableHtml`, `dataTableEmptyLanguage`

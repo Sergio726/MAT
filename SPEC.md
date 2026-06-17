@@ -530,13 +530,13 @@
 
 #### Admin — Modernización visual del panel (UI/UX transversal)
 
-- [ ] **Admin UI: Unificar sistema de tokens CSS (`--admin-*`) en todo el panel**
+- [x] **Admin UI: Unificar sistema de tokens CSS (`--admin-*`) en todo el panel**
   **Problema:** el panel Admin usa tres "mundos" de variables CSS que no convergen: `--admin-*` (en `admin.modern.css`), `--text-primary` / `--primary-color` (fallback rosa del ecosistema principal, en `Admin/Index` y `GridResumenPagos`), y valores hardcodeados inline en vistas legacy. Esto provoca que colores, tipografía y tamaños difieran entre pantallas del mismo panel.
   **Acción:** en `admin.modern.css` mapear alias `--text-primary: var(--admin-text)`, `--text-secondary: var(--admin-text-muted)`, `--border-color: var(--admin-border)`, `--primary-color: var(--admin-primary)`, `--primary-rgb: var(--admin-primary-rgb)`, `--bg-secondary: var(--admin-surface-2)` en el selector `:root body.admin-modern` (o clase equivalente del body en `_LayoutAdmin`). Eliminar definiciones inline duplicadas en `Admin/Index.cshtml` y `GridResumenPagos.cshtml`.
   Archivos: `Content/admin.modern.css`, `Views/Admin/Index.cshtml`, `Views/Admin/GridResumenPagos.cshtml`.
   Criterio de éxito: Sin múltiples sistemas de variables conviviendo; paleta visual uniforme entre pantallas Admin; MSBuild limpio; smoke test visual de las 5 vistas Admin principales.
 
-- [ ] **Admin UI: Transiciones y hover en cards del panel (Index, Reportes/Index)**
+- [x] **Admin UI: Transiciones y hover en cards del panel (Index, Reportes/Index)**
   **Problema:** las tarjetas de `Admin/Index.cshtml` ya tienen `cursor-pointer` y algo de `transform`, pero no son totalmente coherentes con `Reportes/Index.cshtml` (más plano) ni con el modal de confirmación. Unificar la experiencia de **hover** en **todas** las cards navegables del admin:
   - **Elevación:** `box-shadow` más pronunciado al hover (transición `0.18s ease`).
   - **Desplazamiento sutil:** `translateY(-3px)` al hover.
@@ -547,7 +547,7 @@
   Archivos: `Content/admin.modern.css`, `Views/Admin/Index.cshtml`, `Views/Reportes/Index.cshtml`.
   Criterio de éxito: Hover coherente y animado (pero sutil) en todas las cards del admin; sin regresión en tarjetas del dashboard principal; MSBuild limpio.
 
-- [ ] **Admin UI: Sticky header en tablas DataTables del panel**
+- [x] **Admin UI: Sticky header en tablas DataTables del panel**
   Las tablas largas (Usuarios, Reportes, SistemaParametros) pierden los encabezados al hacer scroll vertical. Implementar cabecera fija (`position: sticky; top: 0; z-index: 2`) para `thead` en las tablas `.modern-table` dentro del panel Admin.
   **Alcance:** agregar regla en `admin.modern.css` dentro de `.admin-modern .modern-table-container thead th` con `position: sticky` y fondo `--admin-surface` para opacar el contenido al pasar por debajo. Verificar que no rompa las columnas congeladas de DataTables en las vistas afectadas.
   **Vistas a verificar:** `Usuarios.cshtml`, `ErrorLog.cshtml`, `SistemaParametros.cshtml`, `ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`.
@@ -567,7 +567,7 @@
   Archivos: `Content/admin.modern.css` (estilos del estado vacío), `Views/Reportes/*.cshtml`, `Views/Admin/SistemaParametros.cshtml`.
   Criterio de éxito: DataTables vacío muestra icono + texto contextual; ningún reporte muestra solo "No hay datos disponibles" del plugin sin contexto; MSBuild limpio.
 
-- [ ] **Admin UI: Breadcrumbs contextuales en el panel**
+- [x] **Admin UI: Breadcrumbs contextuales en el panel**
   Ninguna pantalla Admin muestra la ubicación actual dentro del panel (solo el `<title>` cambia). Un breadcrumb `Administración › Reportes › Ventas` (o equivalente) en la cabecera de cada vista orienta al usuario, especialmente en módulos anidados.
   **Implementación:** sección `@section BreadcrumbItems` en `_LayoutAdmin.cshtml` que renderiza un `<nav aria-label="breadcrumb">` debajo del topbar si se provee; las vistas que lo soporten declaran la sección con ítems `<li class="breadcrumb-item">`. Vistas prioritarias: `ReporteVentas`, `ReportePagos`, `ReporteRanking`, `SistemaParametros`, `Usuarios`, `ErrorLog`.
   Archivos: `Views/Shared/_LayoutAdmin.cshtml`, `Content/admin.modern.css` (estilos breadcrumb), vistas prioritarias.

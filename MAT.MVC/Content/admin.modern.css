@@ -9,10 +9,21 @@
   --admin-primary: #0b2a4a;
   --admin-primary-2: #0a3a66;
   --admin-primary-rgb: 11, 42, 74;
+  --admin-content-text: #0f172a;
+  --admin-content-text-muted: #64748b;
+  --admin-content-border: #e2e8f0;
+  --admin-content-surface: #ffffff;
+  --admin-content-surface-2: #f1f5f9;
 }
 
 /* page shell */
 body.admin-modern {
+  --text-primary: var(--admin-content-text);
+  --text-secondary: var(--admin-content-text-muted);
+  --border-color: var(--admin-content-border);
+  --primary-color: var(--admin-primary);
+  --primary-rgb: var(--admin-primary-rgb);
+  --bg-secondary: var(--admin-content-surface-2);
   background: radial-gradient(1200px 600px at 20% 0%, #0b2a4a 0%, var(--admin-bg) 60%);
   color: var(--admin-text);
 }
@@ -146,7 +157,7 @@ body.admin-modern .modern-page-header {
 body.admin-modern .modern-page-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--admin-content-text);
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -161,7 +172,7 @@ body.admin-modern .modern-page-title i {
 }
 
 body.admin-modern .modern-form-container {
-  background: #fff;
+  background: var(--admin-content-surface);
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.5rem;
@@ -273,7 +284,7 @@ body.admin-modern .btn-modern:focus-visible {
 }
 
 body.admin-modern .modern-table-container {
-  background: #fff;
+  background: var(--admin-content-surface);
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
@@ -286,17 +297,27 @@ body.admin-modern .modern-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
-  color: #1e293b;
+  color: var(--admin-content-text);
 }
 
 body.admin-modern .modern-table thead th {
-  background: #f1f5f9;
+  background: var(--admin-content-surface-2);
   color: #334155;
   font-weight: 600;
   text-align: left;
   padding: 0.75rem 1rem;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--admin-content-border);
   white-space: nowrap;
+}
+
+body.admin-modern .modern-table-container .modern-table thead th,
+body.admin-modern .modern-table-container table.dataTable thead th,
+body.admin-modern .grid-resumen-pagos-container #tblPagosViaje thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--admin-content-surface-2);
+  box-shadow: 0 1px 0 var(--admin-content-border);
 }
 
 body.admin-modern .modern-table tbody td {
@@ -685,7 +706,7 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 .admin-hub .admin-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary, #1f2937);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -693,12 +714,12 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 }
 
 .admin-hub .admin-title i {
-  color: var(--primary-color, #0b2a4a);
+  color: var(--primary-color);
 }
 
 .admin-hub .admin-subtitle {
   font-size: 0.875rem;
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -709,17 +730,17 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 .admin-hub .admin-section-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary, #1f2937);
+  color: var(--text-primary);
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--primary-color, #0b2a4a);
+  border-bottom: 2px solid var(--primary-color);
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .admin-hub .admin-section-title i {
-  color: var(--primary-color, #0b2a4a);
+  color: var(--primary-color);
 }
 
 .admin-hub .admin-cards-grid {
@@ -729,41 +750,14 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 }
 
 .admin-hub .admin-card {
-  background: white;
+  background: var(--admin-content-surface);
   border-radius: 0.75rem;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  text-decoration: none;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 1rem;
-  border: 1px solid var(--border-color, #e5e7eb);
-  position: relative;
-  overflow: hidden;
-}
-
-.admin-hub .admin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(var(--primary-rgb, 11, 42, 74), 0.15);
-  border-color: var(--primary-color, #0b2a4a);
-  text-decoration: none;
-}
-
-.admin-hub .admin-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--primary-color, #0b2a4a);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.admin-hub .admin-card:hover::before {
-  opacity: 1;
+  border: 1px solid var(--border-color);
 }
 
 .admin-hub .admin-card-icon {
@@ -805,7 +799,7 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 .admin-hub .admin-card-title {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary, #1f2937);
+  color: var(--text-primary);
   margin: 0 0 0.25rem 0;
   display: flex;
   align-items: center;
@@ -814,7 +808,7 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 
 .admin-hub .admin-card-description {
   font-size: 0.8rem;
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.4;
 }
@@ -845,20 +839,20 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 }
 
 .admin-hub .admin-card-arrow {
-  color: var(--text-secondary, #9ca3af);
+  color: var(--text-secondary);
   font-size: 1.25rem;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: transform 0.18s ease, color 0.18s ease;
 }
 
-.admin-hub .admin-card:hover .admin-card-arrow {
+body.admin-modern .admin-card-link:hover .admin-card-arrow {
   transform: translateX(4px);
-  color: var(--primary-color, #0b2a4a);
+  color: var(--primary-color);
 }
 
 .admin-hub .admin-dev-section {
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px dashed var(--border-color, #e5e7eb);
+  border-top: 1px dashed var(--border-color);
 }
 
 .admin-hub .admin-dev-badge {
@@ -890,6 +884,139 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
     height: 48px;
     font-size: 1.25rem;
   }
+}
+
+/* Cards navegables — hover unificado (Admin Index, Reportes Index) */
+body.admin-modern .admin-card-link {
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+
+body.admin-modern .admin-card-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--admin-primary);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+body.admin-modern .admin-card-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(var(--admin-primary-rgb), 0.15);
+  border-color: var(--admin-primary) !important;
+  text-decoration: none;
+}
+
+body.admin-modern .admin-card-link:hover::before {
+  opacity: 1;
+}
+
+body.admin-modern .admin-card-link .rounded-circle,
+body.admin-modern .admin-card-link .admin-card-icon {
+  transition: transform 0.18s ease;
+}
+
+body.admin-modern .admin-card-link:hover .rounded-circle,
+body.admin-modern .admin-card-link:hover .admin-card-icon {
+  transform: scale(1.08);
+}
+
+body.admin-modern a.admin-card-link.card {
+  border: 1px solid var(--admin-content-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.admin-modern .admin-card-link,
+  body.admin-modern .admin-card-link::before,
+  body.admin-modern .admin-card-link .rounded-circle,
+  body.admin-modern .admin-card-link .admin-card-icon,
+  body.admin-modern .admin-card-link .admin-card-arrow {
+    transition: none;
+  }
+  body.admin-modern .admin-card-link:hover {
+    transform: none;
+  }
+  body.admin-modern .admin-card-link:hover .rounded-circle,
+  body.admin-modern .admin-card-link:hover .admin-card-icon {
+    transform: none;
+  }
+}
+
+/* Breadcrumbs del panel */
+body.admin-modern .admin-breadcrumb .breadcrumb {
+  font-size: 0.875rem;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 0.75rem;
+}
+
+body.admin-modern .admin-breadcrumb .breadcrumb-item a {
+  color: var(--admin-primary);
+  text-decoration: none;
+}
+
+body.admin-modern .admin-breadcrumb .breadcrumb-item a:hover {
+  text-decoration: underline;
+}
+
+body.admin-modern .admin-breadcrumb .breadcrumb-item.active {
+  color: var(--admin-content-text-muted);
+}
+
+/* Grid resumen pagos (partial AJAX) */
+body.admin-modern .grid-resumen-pagos-container {
+  padding: 0.5rem;
+}
+
+body.admin-modern .grid-resumen-pagos-container .table-container {
+  background: var(--admin-content-surface);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+body.admin-modern .grid-resumen-pagos-container #tblPagosViaje {
+  width: 100% !important;
+}
+
+body.admin-modern .grid-resumen-pagos-container #tblPagosViaje thead th {
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+body.admin-modern .grid-resumen-pagos-container #tblPagosViaje tbody td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body.admin-modern .grid-resumen-pagos-container #tblPagosViaje tbody tr:hover {
+  background: var(--bg-secondary);
+}
+
+body.admin-modern .grid-resumen-pagos-container #tblPagosViaje tfoot th {
+  background: var(--bg-secondary);
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-top: 2px solid var(--border-color);
+}
+
+body.admin-modern .grid-resumen-pagos-container .total-value {
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
 /* Error Log (Admin) */
