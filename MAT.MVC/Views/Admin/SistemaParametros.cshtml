@@ -82,6 +82,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <form id="parametroForm">
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <input type="hidden" id="parametroId" name="Id" value="0" />
                     <div class="mb-3">
@@ -99,7 +100,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-primary" id="parametroFormSubmit">Guardar</button>
                 </div>
             </form>
         </div>
@@ -107,15 +108,20 @@
 </div>
 
 @section Scripts {
+    <script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
     <script>
         $(function () {
             if ($.fn.DataTable.isDataTable('#tblParametros')) {
                 $('#tblParametros').DataTable().destroy();
             }
             $('#tblParametros').DataTable({
-                language: {
-                    url: '/Scripts/dataTable/i18n/Spanish.json'
-                },
+                language: $.extend(
+                    { url: '/Scripts/dataTable/i18n/Spanish.json' },
+                    window.MatReportes.dataTableEmptyLanguage(
+                        'No hay parámetros registrados',
+                        'Creá un código con el botón Nuevo'
+                    )
+                ),
                 order: [[0, 'desc']],
                 pageLength: 25
             });
@@ -131,7 +137,7 @@
                 );
             });
             $(document).on('click', '.js-toggle-parametro', function () {
-                toggleParametro($(this).data('id'));
+                toggleParametro($(this).data('id'), $(this));
             });
         });
 
@@ -153,16 +159,49 @@
             modal.show();
         }
 
-        function toggleParametro(id) {
-            if (!confirm('¿Está seguro de cambiar el estado de este código?')) return;
-            $.post('/Admin/SistemaParametroToggle', { id: id, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() }, function (res) {
-                if (res.ok) {
-                    location.reload();
-                } else {
-                    alert(res.message || 'Error al cambiar estado');
+        function reloadConToast(mensaje) {
+            if (window.MatAdmin && window.MatAdmin.toast) {
+                window.MatAdmin.toast(mensaje, 'success');
+            }
+            setTimeout(function () { location.reload(); }, 800);
+        }
+
+        function mostrarError(msg) {
+            if (window.MatAdmin && window.MatAdmin.toast) {
+                window.MatAdmin.toast(msg, 'danger');
+            }
+        }
+
+        function toggleParametro(id, $triggerBtn) {
+            if (!window.MatAdmin || !window.MatAdmin.confirm) return;
+            window.MatAdmin.confirm({
+                title: 'Cambiar estado',
+                message: '¿Está seguro de cambiar el estado de este código?',
+                confirmLabel: 'Cambiar',
+                confirmClass: 'btn-primary'
+            }).then(function (accepted) {
+                if (!accepted) return;
+                if ($triggerBtn && $triggerBtn.length && window.MatAdmin) {
+                    MatAdmin.showLoading($triggerBtn[0], { loadingText: '...' });
                 }
-            }).fail(function () {
-                alert('Error de conexión');
+                $.post('/Admin/SistemaParametroToggle', {
+                    id: id,
+                    __RequestVerificationToken: $('#parametroForm input[name="__RequestVerificationToken"]').val()
+                }, function (res) {
+                    if (res.ok) {
+                        reloadConToast('Estado actualizado correctamente.');
+                    } else {
+                        mostrarError(res.message || 'Error al cambiar estado');
+                        if ($triggerBtn && $triggerBtn.length && window.MatAdmin) {
+                            MatAdmin.hideLoading($triggerBtn[0]);
+                        }
+                    }
+                }).fail(function () {
+                    mostrarError('Error de conexión');
+                    if ($triggerBtn && $triggerBtn.length && window.MatAdmin) {
+                        MatAdmin.hideLoading($triggerBtn[0]);
+                    }
+                });
             });
         }
 
@@ -170,15 +209,21 @@
             e.preventDefault();
             var id = $('#parametroId').val();
             var url = id === '0' || id === 0 ? '/Admin/SistemaParametroSave' : '/Admin/SistemaParametroUpdate';
-            var data = $(this).serialize();
-            $.post(url, data, function (res) {
+            var $btn = $('#parametroFormSubmit');
+            if (window.MatAdmin) MatAdmin.showLoading($btn[0], { loadingText: 'Guardando...' });
+            $.post(url, $(this).serialize(), function (res) {
                 if (res.ok) {
-                    location.reload();
+                    var modalEl = document.getElementById('parametroModal');
+                    var modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                    reloadConToast('Código guardado correctamente.');
                 } else {
-                    alert(res.message || 'Error al guardar');
+                    mostrarError(res.message || 'Error al guardar');
+                    if (window.MatAdmin) MatAdmin.hideLoading($btn[0]);
                 }
             }).fail(function () {
-                alert('Error de conexión');
+                mostrarError('Error de conexión');
+                if (window.MatAdmin) MatAdmin.hideLoading($btn[0]);
             });
         });
     </script>

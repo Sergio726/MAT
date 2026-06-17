@@ -79,9 +79,10 @@
     </div>
 
     <!-- ── Estado vacío ─────────────────────────────────────────── -->
-    <div id="dashboardEmpty" class="text-center py-5 d-none">
-        <i class="bi bi-inbox text-secondary" style="font-size:3rem"></i>
-        <p class="text-secondary mt-2 mb-0">Sin resultados para el período seleccionado.</p>
+    <div id="dashboardEmpty" class="admin-empty-state text-center py-5 d-none">
+        <i class="bi bi-inbox admin-empty-icon text-secondary d-block mb-2"></i>
+        <p class="admin-empty-title mb-1">Sin resultados para el período seleccionado</p>
+        <p class="admin-empty-hint text-secondary mb-0">Probá otro rango de fechas o un viaje distinto</p>
     </div>
 
     <!-- ── Dashboard de tarjetas ────────────────────────────────── -->
@@ -352,28 +353,35 @@ $(function () {
         showErr("");
         $("#dashboardCards, #dashboardEmpty, #btnDescargarPdf").addClass("d-none");
         $(".ranking-card-kpi").addClass("card-sin-datos");
+        var $btn = $("#btnBuscar");
+        if (window.MatAdmin) MatAdmin.showLoading($btn[0]);
 
-        $.getJSON(urlJson, queryParams()).done(function (res) {
-            if (!res.ok) { showErr(res.message || "Error"); return; }
-            lastRows = res.data || [];
+        $.getJSON(urlJson, queryParams())
+            .done(function (res) {
+                if (!res.ok) { showErr(res.message || "Error"); return; }
+                lastRows = res.data || [];
 
-            if (lastRows.length === 0) {
-                $("#dashboardEmpty").removeClass("d-none");
+                if (lastRows.length === 0) {
+                    $("#dashboardEmpty").removeClass("d-none");
+                    $("#dashboardCards").removeClass("d-none");
+                    return;
+                }
+
+                $(".ranking-card-kpi").removeClass("card-sin-datos");
                 $("#dashboardCards").removeClass("d-none");
-                return;
-            }
+                $("#btnDescargarPdf").removeClass("d-none");
 
-            $(".ranking-card-kpi").removeClass("card-sin-datos");
-            $("#dashboardCards").removeClass("d-none");
-            $("#btnDescargarPdf").removeClass("d-none");
-
-            if (window.MatReportes && window.MatReportes.RankingDashboard) {
-                window.MatReportes.RankingDashboard.render(lastRows);
-            }
-        }).fail(function (xhr) {
-            var parseFn = window.MatReportes && window.MatReportes.parseHttpErrorBody;
-            showErr(parseFn ? parseFn(xhr) : "Error de conexión");
-        });
+                if (window.MatReportes && window.MatReportes.RankingDashboard) {
+                    window.MatReportes.RankingDashboard.render(lastRows);
+                }
+            })
+            .fail(function (xhr) {
+                var parseFn = window.MatReportes && window.MatReportes.parseHttpErrorBody;
+                showErr(parseFn ? parseFn(xhr) : "Error de conexión");
+            })
+            .always(function () {
+                if (window.MatAdmin) MatAdmin.hideLoading($btn[0]);
+            });
     }
 
     $("#btnBuscar").on("click", buscar);

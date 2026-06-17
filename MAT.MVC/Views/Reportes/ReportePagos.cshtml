@@ -217,20 +217,12 @@ $(function () {
     }
 
     /* ── KPI helpers ────────────────────────────────────────────── */
-    var moneyFmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-
-    function parseMoneyCell(v) {
-        if (v == null || v === "") return 0;
-        if (typeof v === "number") return isNaN(v) ? 0 : v;
-        var s = String(v).trim().replace(/\s/g, "");
-        var n = parseFloat(s.replace(/\./g, "").replace(",", "."));
-        return isNaN(n) ? 0 : n;
-    }
+    var MR = window.MatReportes;
 
     function renderMonedaLines(obj) {
         var order = [
             { key: "1", label: "$ARS", cls: "success" },
-            { key: "3", label: "U$S",  cls: "info" }
+            { key: "3", label: "U$D", cls: "info" }
         ];
         var parts = [];
         for (var j = 0; j < order.length; j++) {
@@ -239,14 +231,14 @@ $(function () {
             parts.push(
                 '<div class="d-flex flex-wrap align-items-center gap-2 py-1 border-bottom border-light">' +
                 '<span class="badge rounded-pill bg-' + o.cls + '-subtle text-' + o.cls + '">' + o.label + '</span>' +
-                '<span class="fw-semibold ms-auto">$ ' + moneyFmt.format(val) + '</span></div>'
+                '<span class="fw-semibold ms-auto">' + MR.currencySymbol(o.key) + MR.moneyFmt.format(val) + '</span></div>'
             );
         }
         if ((obj._otra || 0) !== 0) {
             parts.push(
                 '<div class="d-flex flex-wrap align-items-center gap-2 py-1">' +
                 '<span class="badge rounded-pill bg-secondary-subtle text-secondary">Otra</span>' +
-                '<span class="fw-semibold ms-auto">$ ' + moneyFmt.format(obj._otra) + '</span></div>'
+                '<span class="fw-semibold ms-auto">$ ' + MR.moneyFmt.format(obj._otra) + '</span></div>'
             );
         }
         return parts.length ? parts.join("") : '<span class="text-secondary small">Sin montos</span>';
@@ -273,7 +265,7 @@ $(function () {
             var r = rows[i];
             var m = String(r.monedaTipo != null ? r.monedaTipo : "").trim();
             if (m !== "1" && m !== "3") m = "_otra";
-            var monto = parseMoneyCell(r.monto);
+            var monto = MR.parseMoneyCell(r.monto);
             cobrado[m] = (cobrado[m] || 0) + monto;
 
             if (r.facturaId) facturas[r.facturaId] = true;
@@ -338,9 +330,9 @@ $(function () {
         h += '</div>';
         var monedas = { "1": data["1"] || 0, "3": data["3"] || 0, _otra: data._otra || 0 };
         var monedaParts = [];
-        if (monedas["1"]) monedaParts.push('<span class="badge rounded-pill bg-success-subtle text-success me-1">$ARS</span>$ ' + moneyFmt.format(monedas["1"]));
-        if (monedas["3"]) monedaParts.push('<span class="badge rounded-pill bg-info-subtle text-info me-1">U$S</span>$ ' + moneyFmt.format(monedas["3"]));
-        if (monedas._otra) monedaParts.push('<span class="badge rounded-pill bg-secondary-subtle text-secondary me-1">Otra</span>$ ' + moneyFmt.format(monedas._otra));
+        if (monedas["1"]) monedaParts.push('<span class="badge rounded-pill bg-success-subtle text-success me-1">$ARS</span>' + MR.currencySymbol("1") + MR.moneyFmt.format(monedas["1"]));
+        if (monedas["3"]) monedaParts.push('<span class="badge rounded-pill bg-info-subtle text-info me-1">U$D</span>' + MR.currencySymbol("3") + MR.moneyFmt.format(monedas["3"]));
+        if (monedas._otra) monedaParts.push('<span class="badge rounded-pill bg-secondary-subtle text-secondary me-1">Otra</span>$ ' + MR.moneyFmt.format(monedas._otra));
         if (monedaParts.length) {
             h += '<div class="small text-secondary mt-1 d-flex flex-wrap gap-2">' + monedaParts.join(" ") + '</div>';
         }
@@ -363,18 +355,6 @@ $(function () {
     /* ── Tabla ───────────────────────────────────────────────────── */
 
     /* ── Render helpers para celdas ─────────────────────────────── */
-
-    function renderMonedaBadge(tipo) {
-        if (tipo === "1") return '<span class="badge rounded-pill bg-success-subtle text-success">$ARS</span>';
-        if (tipo === "3") return '<span class="badge rounded-pill bg-info-subtle text-info">U$S</span>';
-        return '<span class="badge rounded-pill bg-secondary-subtle text-secondary">' + escHtml(tipo || "-") + '</span>';
-    }
-
-    function renderMontoCurrency(monto, monedaTipo, type) {
-        var n = parseMoneyCell(monto);
-        if (type !== "display") return n;
-        return '<span class="text-nowrap">$ ' + moneyFmt.format(n) + '</span>';
-    }
 
     function renderTipoVentaBadge(val) {
         if (!val) return '<span class="badge bg-secondary-subtle text-secondary">-</span>';
@@ -421,11 +401,10 @@ $(function () {
                 { data: "fechaPago", title: "Fecha pago",
                   render: function (d) { return window.MatReportes.formatFechaES(d); } },
                 { data: "monto", title: "Monto", className: "text-end",
-                  render: function (d, type, row) { return renderMontoCurrency(d, row.monedaTipo, type); } },
+                  render: function (d, type, row) { return MR.renderMontoCurrency(d, row.monedaTipo, type); } },
                 { data: "monedaTipo", title: "Mon.",
                   render: function (d, type) {
-                      if (type !== "display") return d || "";
-                      return renderMonedaBadge(d);
+                      return type !== "display" ? (d || "") : MR.renderMonedaBadge(d);
                   } },
                 { data: "pagoDescripcion", title: "Medio de pago",
                   render: function (d, type) {
@@ -451,7 +430,13 @@ $(function () {
             ],
             pageLength: 25,
             autoWidth: false,
-            language: { url: "/Scripts/dataTable/i18n/Spanish.json" }
+            language: $.extend(
+                { url: "/Scripts/dataTable/i18n/Spanish.json" },
+                MR.dataTableEmptyLanguage(
+                    "No hay pagos para este filtro",
+                    "Probá otro rango de fechas o un viaje distinto"
+                )
+            )
         });
         $("#filtroFront").toggleClass("d-none", !rows || rows.length === 0);
         limpiarFiltros();
@@ -471,10 +456,24 @@ $(function () {
 
     $("#btnBuscar").on("click", function () {
         showErr("");
-        $.getJSON(urlJson, queryParams()).done(function (res) {
-            if (!res.ok) { showErr(res.message || "Error"); return; }
-            renderTable(res.data);
-        }).fail(function (xhr) { showErr(window.MatReportes.parseHttpErrorBody(xhr)); });
+        var $btn = $("#btnBuscar");
+        var $tableWrap = $(".modern-table-container").first();
+        if (window.MatAdmin) {
+            MatAdmin.showLoading($btn[0]);
+            if ($tableWrap.length) MatAdmin.showLoading($tableWrap[0], { mode: "overlay", text: "Consultando..." });
+        }
+        $.getJSON(urlJson, queryParams())
+            .done(function (res) {
+                if (!res.ok) { showErr(res.message || "Error"); return; }
+                renderTable(res.data);
+            })
+            .fail(function (xhr) { showErr(window.MatReportes.parseHttpErrorBody(xhr)); })
+            .always(function () {
+                if (window.MatAdmin) {
+                    MatAdmin.hideLoading($btn[0]);
+                    if ($tableWrap.length) MatAdmin.hideLoading($tableWrap[0]);
+                }
+            });
     });
 
     $("#btnExcel").on("click", function () {

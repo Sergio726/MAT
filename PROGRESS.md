@@ -2,6 +2,41 @@
 
 ---
 
+### [2026-06-17] — Admin UI Lote 2 (badges, moneda/montos, spinners, estados vacíos)
+
+- Archivos modificados:
+  - `MAT.MVC/Scripts/mat.reportes-utils.js` — `parseMoneyCell`, `moneyFmt`, `renderMonedaBadge`, `renderMontoCurrency`, `estadoBadgeHtml`, `emptyTableHtml`, `dataTableEmptyLanguage`
+  - `MAT.MVC/Scripts/mat.admin-utils.js` — `MatAdmin.showLoading`, `MatAdmin.hideLoading` (botón y overlay)
+  - `MAT.MVC/Content/admin.modern.css` — `.admin-empty-state`, estilos `dataTables_empty`
+  - `MAT.MVC/Views/Reportes/ReporteVentas.cshtml` — badges estado/moneda, montos formateados, spinner Consultar, emptyTable
+  - `MAT.MVC/Views/Reportes/ReportePagos.cshtml` — helpers centralizados, USD con `U$D`, spinner, emptyTable
+  - `MAT.MVC/Views/Reportes/ReporteRanking.cshtml` — spinner Consultar, empty dashboard coherente
+  - `MAT.MVC/Views/Admin/SistemaParametros.cshtml` — spinner CRUD/toggle, emptyTable, script reportes-utils
+  - `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Lote 2 UI Admin — chips semánticos de estado factura (Ventas), badges `$ARS`/`U$D` y montos con `Intl.NumberFormat`, feedback de carga en consultas y CRUD, estados vacíos contextuales en DataTables.
+- Problemas encontrados: Pagos no tiene columna `facturaEstado` en el DTO (badges solo en Ventas); Ranking sin columnas monetarias.
+- Estado: ✅ completo (smoke test manual pendiente en IIS)
+
+---
+
+
+- Archivos modificados:
+  - `MAT.MVC/Scripts/mat.admin-utils.js` *(nuevo)* — `MatAdmin.toast`, `MatAdmin.confirm`
+  - `MAT.MVC/Views/Shared/_AdminConfirmModal.cshtml` *(nuevo)*
+  - `MAT.MVC/Views/Shared/_LayoutAdmin.cshtml` — modal/toast compartidos, `mat.admin-utils.js`, cache CSS
+  - `MAT.MVC/Views/Admin/Usuarios.cshtml` — confirmación vía `MatAdmin.confirm`
+  - `MAT.MVC/Views/Admin/SistemaParametros.cshtml` — antiforgery, modales/toasts, sin `alert`/`confirm`
+  - `MAT.MVC/Views/Admin/Index.cshtml` — tildes, sin badges numéricos
+  - `MAT.MVC/Views/Admin/ErrorLog.cshtml` — layout `modern-*`, badges importancia semánticos
+  - `MAT.MVC/Views/Admin/Logs.cshtml` — cards, pre con scroll, volver al panel
+  - `MAT.MVC/Content/admin.modern.css` — estilos ErrorLog/Logs, título Index 1.5rem
+  - `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Lote 1 de modernización UI Admin según plan — utilidades JS compartidas, feedback BS5, pulido tipográfico del Index, ErrorLog y Logs alineados al panel.
+- Problemas encontrados: Ninguno; MSBuild Debug OK.
+- Estado: ✅ completo (smoke test manual pendiente en IIS)
+
+---
+
 ### [2026-06-17] — Admin: auditoría P1–P3 (plan sin planillas)
 
 - Archivos modificados:

@@ -1,6 +1,5 @@
 @{
-    ViewBag.Title = "Panel de Administracion";
-    // Mantener layout Admin (menú Admin es independiente del menú principal)
+    ViewBag.Title = "Panel de Administración";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
@@ -8,12 +7,10 @@
     <div class="admin-header">
         <h1 class="admin-title">
             <i class="bi bi-shield-lock"></i>
-            Panel de Administracion
+            Panel de Administración
         </h1>
-        <p class="admin-subtitle">Seccion exclusiva para administradores del sistema</p>
+        <p class="admin-subtitle">Sección exclusiva para administradores del sistema</p>
     </div>
-
-    @* Menú Admin vive en el layout (_LayoutAdmin). Mantener la vista enfocada solo en contenido. *@
 
     <div class="admin-section">
         <h2 class="admin-section-title">
@@ -26,10 +23,7 @@
                     <i class="bi bi-bus-front"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Pagos por Viaje
-                        <span class="admin-card-badge badge-warning">1</span>
-                    </h3>
+                    <h3 class="admin-card-title">Pagos por Viaje</h3>
                     <p class="admin-card-description">Consultar resumen de pagos agrupados por viaje</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -40,10 +34,7 @@
                     <i class="bi bi-calendar-week"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Pagos por Fecha
-                        <span class="admin-card-badge badge-primary">2</span>
-                    </h3>
+                    <h3 class="admin-card-title">Pagos por Fecha</h3>
                     <p class="admin-card-description">Consultar pagos filtrados por rango de fechas</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -54,10 +45,7 @@
                     <i class="bi bi-clipboard-check"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Auditoría de facturas
-                        <span class="admin-card-badge badge-info">3</span>
-                    </h3>
+                    <h3 class="admin-card-title">Auditoría de facturas</h3>
                     <p class="admin-card-description">Revisar historial y auditoría de facturas</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -68,10 +56,7 @@
                     <i class="bi bi-graph-up-arrow"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Reportes
-                        <span class="admin-card-badge badge-primary">4</span>
-                    </h3>
+                    <h3 class="admin-card-title">Reportes</h3>
                     <p class="admin-card-description">Ventas, pagos y ranking de vendedores</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -90,10 +75,7 @@
                     <i class="bi bi-people"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Listado de usuarios
-                        <span class="admin-card-badge badge-primary">1</span>
-                    </h3>
+                    <h3 class="admin-card-title">Listado de usuarios</h3>
                     <p class="admin-card-description">Ver cuentas registradas y roles asignados</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -104,10 +86,7 @@
                     <i class="bi bi-person-plus"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Registrar vendedor
-                        <span class="admin-card-badge badge-info">2</span>
-                    </h3>
+                    <h3 class="admin-card-title">Registrar vendedor</h3>
                     <p class="admin-card-description">Alta de cuenta y datos de vendedor (mismo flujo que registro público, sin cerrar sesión)</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -118,10 +97,7 @@
                     <i class="bi bi-key"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Mi cuenta
-                        <span class="admin-card-badge badge-warning">3</span>
-                    </h3>
+                    <h3 class="admin-card-title">Mi cuenta</h3>
                     <p class="admin-card-description">Cambiar la contraseña del usuario con el que inició sesión</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -140,10 +116,7 @@
                     <i class="bi bi-bug"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Error Log
-                        <span class="admin-card-badge badge-info">1</span>
-                    </h3>
+                    <h3 class="admin-card-title">Error Log</h3>
                     <p class="admin-card-description">Errores en base y correlation ID</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -153,10 +126,7 @@
                     <i class="bi bi-terminal"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Log en memoria
-                        <span class="admin-card-badge badge-warning">2</span>
-                    </h3>
+                    <h3 class="admin-card-title">Log en memoria</h3>
                     <p class="admin-card-description">Traza del proceso en memoria</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -166,10 +136,7 @@
                     <i class="bi bi-shield-lock"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">
-                        Códigos de confirmación
-                        <span class="admin-card-badge badge-primary">N</span>
-                    </h3>
+                    <h3 class="admin-card-title">Códigos de confirmación</h3>
                     <p class="admin-card-description">Gestionar códigos para eliminar ventas/pasajeros</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -197,10 +164,7 @@
                         <i class="bi bi-clock-history"></i>
                     </div>
                     <div class="admin-card-content">
-                        <h3 class="admin-card-title">
-                            Historial
-                            <span class="admin-card-badge badge-primary">6</span>
-                        </h3>
+                        <h3 class="admin-card-title">Historial</h3>
                         <p class="admin-card-description">Acceder al historial completo de pagos del sistema</p>
                     </div>
                     <i class="bi bi-chevron-right admin-card-arrow"></i>

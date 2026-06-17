@@ -512,13 +512,13 @@
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Views/Reportes/ReporteRanking.cshtml`.
   Criterio de éxito: Una sola columna "Viaje" muestra descripción + fecha; tabla más compacta; export Excel intacto; MSBuild limpio.
 
-- [ ] **Reportes UI: Chips/badges para estado de factura en tablas de reportes**
+- [x] **Reportes UI: Chips/badges para estado de factura en tablas de reportes**
   La columna `facturaEstado` (Ventas) y equivalente en Pagos muestra texto plano (`Pagado`, `Pre-Reserva`, `Anulado`, etc.) sin diferenciación visual. Usar **badges Bootstrap 5** con color semántico según valor: `Pagado` → `bg-success-subtle text-success`; `Pre-Reserva` → `bg-warning-subtle text-warning`; `Anulado` → `bg-danger-subtle text-danger`; otros → `bg-secondary-subtle text-secondary`.
   El mapeo se define en un helper JS `estadoBadgeHtml(val)` reutilizable para ambos reportes.
   Archivos: `Views/Reportes/ReporteVentas.cshtml`, `Views/Reportes/ReportePagos.cshtml`; helper en `Scripts/mat.reportes-utils.js` si ya existe por el task de fechas.
   Criterio de éxito: Estados se leen con color semántico en las tres tablas; sin regresión en filtros DataTables; MSBuild limpio.
 
-- [ ] **Reportes UI: Moneda y montos — "$ARS" / "U$D" y formateo numérico en tablas**
+- [x] **Reportes UI: Moneda y montos — "$ARS" / "U$D" y formateo numérico en tablas**
   **Problema actual:** la columna "Mon." muestra el código numérico (`1`, `3`); los montos (Total, Pagado, Saldo) son números crudos sin separador de miles ni símbolo de moneda. Los KPI del resumen ya resuelven esto correctamente con badges y `Intl.NumberFormat("es-AR")`.
   **Cambios requeridos:**
   - Reemplazar la columna "Mon." por un **badge de moneda** reutilizando el mismo patrón del KPI: `"1"` → badge `$ARS` (success-subtle), `"3"` → badge `U$D` (info-subtle).
@@ -554,14 +554,14 @@
   Archivos: `Content/admin.modern.css`.
   Criterio de éxito: Encabezado visible en scroll vertical en todas las tablas Admin; sin artefactos visuales con DataTables; MSBuild limpio.
 
-- [ ] **Admin UI: Indicadores de carga (spinner) en todas las operaciones async del panel**
+- [x] **Admin UI: Indicadores de carga (spinner) en todas las operaciones async del panel**
   Varias acciones admin disparan `$.getJSON` o `fetch` sin ningún indicador visible de carga (p. ej. Consultar en Reportes Ventas/Pagos/Ranking). El CSS ya tiene `.modern-loading-spinner`; el uso es esporádico.
   **Patrón a implementar:** `MatAdmin.showLoading(container)` / `MatAdmin.hideLoading(container)` en `Scripts/mat.admin-utils.js` (crear si no existe, registrar en bundle). `container` puede ser el botón disparador (poner `disabled` + spinner inline en el texto) o un overlay sobre la tabla.
   **Aplicar en:** botón "Consultar" de los tres reportes (antes del `$.getJSON`, restaurar en `.done`/`.fail`); acciones CRUD de SistemaParametros.
   Archivos: `Scripts/mat.admin-utils.js` (nuevo o extender), `Views/Reportes/ReporteVentas.cshtml`, `ReportePagos.cshtml`, `ReporteRanking.cshtml`, `Views/Admin/SistemaParametros.cshtml`.
   Criterio de éxito: Toda operación async del panel muestra feedback visual durante la espera; sin doble click posible en acciones de escritura; MSBuild limpio.
 
-- [ ] **Admin UI: Estados vacíos amigables en tablas del panel**
+- [x] **Admin UI: Estados vacíos amigables en tablas del panel**
   Cuando una consulta devuelve cero filas, DataTables muestra el mensaje por defecto de internacionalización del plugin (texto plano, sin contexto). Reemplazar por un componente de **estado vacío** con icono `bi-inbox` (o similar), título contextual ("No hay resultados para este filtro") y sugerencia de acción ("Probá con otro rango de fechas o limpiar los filtros"), siguiendo el patrón de los `<div class="alert alert-info">` ya usados en `ErrorLog` y `Logs`.
   **Implementación:** `columnDefs` de DataTables con `language.emptyTable` personalizado, o función `renderEmpty(msg, sugerencia)` que retorna HTML usado en `language.emptyTable` y/o en el `initComplete` callback. Aplicar en los tres reportes y en SistemaParametros.
   Archivos: `Content/admin.modern.css` (estilos del estado vacío), `Views/Reportes/*.cshtml`, `Views/Admin/SistemaParametros.cshtml`.
@@ -573,19 +573,19 @@
   Archivos: `Views/Shared/_LayoutAdmin.cshtml`, `Content/admin.modern.css` (estilos breadcrumb), vistas prioritarias.
   Criterio de éxito: Las vistas listadas muestran breadcrumb; las que no declaran `BreadcrumbItems` no muestran nada extra; Bootstrap 5 `breadcrumb` estilizado con `--admin-*`; MSBuild limpio.
 
-- [ ] **Admin UI: Sidebar — completar navegación (SistemaParametros + enlace a módulos activos)**
+- [x] **Admin UI: Sidebar — completar navegación (SistemaParametros + enlace a módulos activos)**
   El menú lateral de `_LayoutAdmin.cshtml` expone Reportes y Usuarios pero **no** enlaza a `SistemaParametros`. Si el usuario accede desde una URL directa o bookmark, no tiene forma de volver al módulo ni de descubrir otros módulos del admin desde el sidebar.
   **Acción:** agregar ítem "Parámetros del sistema" bajo la sección "Sistema" en el menú lateral (desktop y offcanvas mobile), con icono `bi-sliders`. Evaluar si agregar también `AuditoriaFacturas` si está activa. Revisar que todos los ítems del sidebar tengan `aria-current="page"` cuando corresponde.
   Archivos: `Views/Shared/_LayoutAdmin.cshtml`.
   Criterio de éxito: Todos los módulos admin activos aparecen en el sidebar; `SistemaParametros` accesible desde el menú; sin ítems huérfanos; MSBuild limpio.
 
-- [ ] **Admin UI: Reemplazar `confirm()` y `alert()` nativos en SistemaParametros por modales Bootstrap 5**
+- [x] **Admin UI: Reemplazar `confirm()` y `alert()` nativos en SistemaParametros por modales Bootstrap 5**
   `Views/Admin/SistemaParametros.cshtml` usa `confirm()` del navegador para toggle de estado y `alert()` para errores de validación frontend. Esto rompe la consistencia visual con Usuarios (que ya usa modal Bootstrap) y bloquea el hilo JS.
   **Reemplazar por:** modal de confirmación BS5 reutilizando el patrón de `Usuarios.cshtml` (`data-bs-toggle`, handler JS) para toggle; `mostrarMensaje(msg, tipo)` (o equivalente inline con `alert-dismissible` Bootstrap) para errores de validación.
   Archivos: `Views/Admin/SistemaParametros.cshtml`.
   Criterio de éxito: Sin `confirm()` ni `alert()` en la vista; confirmaciones con modal Bootstrap; MSBuild limpio.
 
-- [ ] **Admin UI: Modernizar ErrorLog.cshtml al estilo `modern-*` del panel**
+- [x] **Admin UI: Modernizar ErrorLog.cshtml al estilo `modern-*` del panel**
   `ErrorLog.cshtml` usa colores hardcodeados (`#2c3e50`), badges numéricos custom (`.badge-1`, `.badge-2`, `.badge-3`) y clases propias que no corresponden al sistema visual del panel Admin moderno.
   **Cambios:**
   - Reemplazar paleta hardcodeada por variables `--admin-*`.
@@ -596,13 +596,13 @@
   Archivos: `Views/Admin/ErrorLog.cshtml`.
   Criterio de éxito: Sin colores hardcodeados; badges semánticos con etiqueta; layout coherente con el resto del Admin; funcionalidad intacta; MSBuild limpio.
 
-- [ ] **Admin UI: Modernizar Logs.cshtml — look de herramienta, no de página en blanco**
+- [x] **Admin UI: Modernizar Logs.cshtml — look de herramienta, no de página en blanco**
   `Logs.cshtml` es un formulario GET + `<pre>` sin estructura visual moderna. Es una herramienta técnica pero igual forma parte del panel Admin.
   **Cambios mínimos:** envolver en `.modern-page-container`; formulario de filtros (fecha, cantidad de líneas) con cards BS5; el `<pre>` dentro de un bloque `card` con fondo `--admin-surface-2`, borde, `font-family: monospace`, scroll vertical máx 600px; agregar enlace de retorno al panel en la cabecera con `.modern-page-header`.
   Archivos: `Views/Admin/Logs.cshtml`.
   Criterio de éxito: Vista encuadrada en el sistema visual del admin; `<pre>` con scroll; navegación de retorno; MSBuild limpio.
 
-- [ ] **Admin UI: Consistencia tipográfica y ortográfica en todo el panel**
+- [x] **Admin UI: Consistencia tipográfica y ortográfica en todo el panel**
   Problemas encontrados en el análisis:
   1. `Admin/Index` usa `h1` a `1.75rem`; el resto del admin usa `.modern-page-title` a `1.5rem` — **inconsistencia de escala**.
   2. Textos sin tildes: "Administracion", "Seccion", "Auditoria", "Configuracion" — **calidad percibida baja**.
@@ -611,7 +611,7 @@
   Archivos: `Views/Admin/Index.cshtml`, `Views/Shared/_LayoutAdmin.cshtml`.
   Criterio de éxito: Sin palabras con tildes faltantes en el panel; escala de título uniforme; MSBuild limpio.
 
-- [ ] **Admin UI: Feedback con toasts (Bootstrap 5) para acciones async en el panel**
+- [x] **Admin UI: Feedback con toasts (Bootstrap 5) para acciones async en el panel**
   Hoy las acciones CRUD de SistemaParametros y otras vistas admin muestran feedback con `mostrarMensaje` (alert fijo en la página) o alerts que desaparecen tras 3s de forma abrupta. Los Toasts de Bootstrap 5 (ya incluido en el bundle del admin) son el patrón idiomático para confirmar acciones async sin interrumpir el flujo.
   **Acción:** crear `MatAdmin.toast(msg, tipo)` en `Scripts/mat.admin-utils.js` que instancia y muestra un `<div class="toast">` BS5 posicionado en `bottom-end` o `top-end` del viewport; reemplazar `mostrarMensaje` en SistemaParametros por este helper. Aplicar también en cualquier CRUD async del panel que hoy use alerts flotantes.
   Archivos: `Scripts/mat.admin-utils.js`, `Views/Admin/SistemaParametros.cshtml`, y registro en bundle si aplica.

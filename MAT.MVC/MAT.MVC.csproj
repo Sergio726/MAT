@@ -746,6 +746,7 @@
     <Content Include="Views\PersonaPasajero\Index.cshtml" />
     <Content Include="Views\Shared\_ViajesPartial.cshtml" />
     <Content Include="Scripts\mat.jquery.initialize.js" />
+    <Content Include="Scripts\mat.admin-utils.js" />
     <Content Include="Scripts\mat.reportes-utils.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
     <Content Include="Scripts\mat.reportes-ventas-facturado-modal.js" />

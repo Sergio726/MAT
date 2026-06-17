@@ -357,6 +357,37 @@ body.admin-modern .modern-loading-text {
   color: #64748b;
 }
 
+body.admin-modern .admin-empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #64748b;
+}
+
+body.admin-modern .admin-empty-state .admin-empty-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+body.admin-modern .admin-empty-state .admin-empty-title {
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.25rem;
+}
+
+body.admin-modern .admin-empty-state .admin-empty-hint {
+  font-size: 0.875rem;
+}
+
+body.admin-modern .dataTables_empty {
+  text-align: center !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+body.admin-modern .dataTables_empty .admin-empty-state {
+  padding: 2.5rem 1rem;
+}
+
 /* jQuery UI Autocomplete (reportes / formularios Admin): por encima de navbar y cards */
 body.admin-modern .ui-autocomplete {
   z-index: 1056 !important;
@@ -652,7 +683,7 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 }
 
 .admin-hub .admin-title {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary, #1f2937);
   display: flex;
@@ -859,5 +890,79 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
     height: 48px;
     font-size: 1.25rem;
   }
+}
+
+/* Error Log (Admin) */
+body.admin-modern .admin-errorlog-table {
+  font-size: 12px;
+}
+
+body.admin-modern .admin-errorlog-table thead th {
+  background: var(--admin-surface-2);
+  color: var(--admin-text);
+  white-space: nowrap;
+  border-color: var(--admin-border);
+}
+
+body.admin-modern .admin-errorlog-stack-pre {
+  font-size: 11px;
+  max-height: 280px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  background: var(--admin-surface-2);
+  color: var(--admin-text);
+  padding: 10px;
+  border-radius: 4px;
+  margin: 0;
+}
+
+body.admin-modern .admin-errorlog-stack-row {
+  background: var(--admin-surface-2) !important;
+}
+
+body.admin-modern #diagnostico-box {
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  height: 620px;
+  background: var(--admin-surface-2);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  padding: 12px;
+  resize: vertical;
+  width: 100%;
+  line-height: 1.5;
+}
+
+body.admin-modern .admin-errorlog-spinning {
+  animation: admin-errorlog-spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes admin-errorlog-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+body.admin-modern .admin-logs-card .card-body {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+
+body.admin-modern .admin-logs-output .card-body {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+}
+
+body.admin-modern .admin-logs-output pre {
+  max-height: 600px;
+  overflow-y: auto;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 0.8rem;
+  background: var(--admin-surface-2);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  margin: 0;
+  padding: 1rem;
+  border-radius: 0.375rem;
 }
 

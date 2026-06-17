@@ -5,38 +5,57 @@
     var correlationId = ViewBag.CorrelationId as string;
 }
 
-<div class="container-fluid py-3 px-3">
-    <h2 class="mb-3">
-        Logs del sistema <small class="text-muted">(@logs.Count entradas)</small>
-    </h2>
-
-    <form method="get" class="d-flex flex-wrap align-items-end gap-2 mb-3">
-        <div class="input-group" style="max-width: 420px;">
-            <input type="text" name="correlationId" value="@correlationId" class="form-control"
-                   placeholder="Filtrar por Correlation ID" />
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-funnel me-1"></i>Filtrar
-            </button>
-            <a href="@Url.Action("Logs")" class="btn btn-outline-secondary">Limpiar</a>
-        </div>
-        <a href="@Url.Action("LogsRaw", new { correlationId = correlationId })" class="btn btn-outline-secondary" target="_blank" rel="noopener">
-            <i class="bi bi-file-text me-1"></i>Ver como texto plano
+<div class="modern-page-container">
+    <div class="modern-page-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h2 class="modern-page-title mb-0">
+            <i class="bi bi-terminal"></i>
+            <span>Logs del sistema <small class="text-muted fw-normal">(@logs.Count entradas)</small></span>
+        </h2>
+        <a href="@Url.Action("Index", "Admin")" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Volver al panel
         </a>
-    </form>
+    </div>
 
-    @if (!string.IsNullOrWhiteSpace(correlationId))
-    {
-        <div class="alert alert-info">
-            Mostrando entradas para Correlation ID: <strong>@correlationId</strong>
+    <div class="card admin-logs-card mt-3 border">
+        <div class="card-body">
+            <form method="get" class="d-flex flex-wrap align-items-end gap-2">
+                <div class="flex-grow-1" style="min-width: 220px; max-width: 420px;">
+                    <label class="form-label mb-1" for="correlationId">Correlation ID</label>
+                    <input type="text" name="correlationId" id="correlationId" value="@correlationId" class="form-control font-monospace"
+                           placeholder="Filtrar por Correlation ID" />
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="bi bi-funnel me-1"></i>Filtrar
+                    </button>
+                    <a href="@Url.Action("Logs")" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+                    <a href="@Url.Action("LogsRaw", new { correlationId = correlationId })" class="btn btn-outline-secondary btn-sm" target="_blank" rel="noopener">
+                        <i class="bi bi-file-text me-1"></i>Ver como texto plano
+                    </a>
+                </div>
+            </form>
         </div>
-    }
+    </div>
 
-    @if (logs.Count == 0)
-    {
-        <div class="alert alert-warning">No hay entradas de log en memoria con ese filtro.</div>
-    }
-    else
-    {
-        <pre class="rounded p-3 small overflow-auto font-monospace" style="background:#1e1e1e; color:#d4d4d4; max-height:80vh;">@string.Join("\n", logs)</pre>
-    }
+    <div class="card admin-logs-output mt-3 border">
+        <div class="card-body">
+            @if (!string.IsNullOrWhiteSpace(correlationId))
+            {
+                <div class="alert alert-info mb-3" role="alert">
+                    Mostrando entradas para Correlation ID: <strong>@correlationId</strong>
+                </div>
+            }
+
+            @if (logs.Count == 0)
+            {
+                <div class="alert alert-warning mb-0" role="alert">
+                    <i class="bi bi-inbox me-1"></i>No hay entradas de log en memoria con ese filtro.
+                </div>
+            }
+            else
+            {
+                <pre>@string.Join("\n", logs)</pre>
+            }
+        </div>
+    </div>
 </div>

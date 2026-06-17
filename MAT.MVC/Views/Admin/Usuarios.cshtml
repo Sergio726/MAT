@@ -120,28 +120,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="adminConfirmModal" tabindex="-1" aria-labelledby="adminConfirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="adminConfirmModalLabel">Confirmación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body" id="adminConfirmModalMessage">
-                ¿Confirmar esta acción?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="adminConfirmModalAccept">Confirmar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
 <script>
 (function () {
-    /* _LayoutAdmin renderiza Scripts antes del body principal: usar document.ready. */
     $(function () {
         var $tbl = $("#tblAdminUsuarios");
         if ($tbl.length && $.fn.dataTable) {
@@ -174,36 +155,17 @@
             });
         }
 
-        var confirmModalEl = document.getElementById("adminConfirmModal");
-        var confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
-        var pendingForm = null;
-
-        $("#adminConfirmModalAccept").on("click", function () {
-            if (!pendingForm) return;
-            var form = pendingForm;
-            pendingForm = null;
-            if (confirmModal) confirmModal.hide();
-            form.submit();
-        });
-
-        if (confirmModalEl) {
-            confirmModalEl.addEventListener("hidden.bs.modal", function () {
-                pendingForm = null;
-            });
-        }
-
         $(document).on("click", ".js-admin-confirm-submit", function (e) {
             e.preventDefault();
             var form = this.form;
-            if (!form || !confirmModal) return false;
+            if (!form || !window.MatAdmin || !window.MatAdmin.confirm) return false;
             var $btn = $(this);
             var msg = $btn.data("confirmMsg") || "¿Confirmar esta acción?";
             var title = $btn.data("confirmTitle") || "Confirmación";
 
-            pendingForm = form;
-            $("#adminConfirmModalLabel").text(title);
-            $("#adminConfirmModalMessage").text(msg);
-            confirmModal.show();
+            window.MatAdmin.confirm({ title: title, message: msg }).then(function (accepted) {
+                if (accepted) form.submit();
+            });
             return false;
         });
     });

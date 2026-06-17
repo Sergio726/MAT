@@ -374,7 +374,7 @@
                         <select class="form-select form-select-sm" id="modalFacturasMoneda">
                             <option value="">Todas</option>
                             <option value="1">$ARS</option>
-                            <option value="3">U$S</option>
+                            <option value="3">U$D</option>
                         </select>
                     </div>
                     <div class="col-6 col-md-2">
@@ -523,24 +523,16 @@ $(function () {
 
     /* ── Tabla ───────────────────────────────────────────────────── */
     /* Índices de columna usados en el filtro front */
-    var COL_VENDEDOR = 3;  /* vendedorFullName (viaje+fecha unidos → -1 col) */
-    var COL_CLIENTE  = 5;  /* clienteFullName  (viaje+fecha unidos → -1 col) */
+    var COL_VENDEDOR = 3;
+    var COL_CLIENTE  = 5;
 
-    var moneyFmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-
-    function parseMoneyCell(v) {
-        if (v == null || v === "") return 0;
-        if (typeof v === "number") return isNaN(v) ? 0 : v;
-        var s = String(v).trim().replace(/\s/g, "");
-        var n = parseFloat(s.replace(/\./g, "").replace(",", "."));
-        return isNaN(n) ? 0 : n;
-    }
+    var MR = window.MatReportes;
 
     function renderMonedaRowsHtml(totPorMoneda) {
         var parts = [];
         var order = [
             { key: "1", label: "$ARS", cls: "success" },
-            { key: "3", label: "U$S", cls: "info" }
+            { key: "3", label: "U$D", cls: "info" }
         ];
         var j, k, val, orderI;
         for (j = 0; j < order.length; j++) {
@@ -551,14 +543,14 @@ $(function () {
             parts.push(
                 "<div class=\"d-flex flex-wrap align-items-center gap-2 py-1 border-bottom border-light\">" +
                 "<span class=\"badge rounded-pill bg-" + orderI.cls + "-subtle text-" + orderI.cls + "\">" + orderI.label + "</span>" +
-                "<span class=\"fw-semibold ms-auto\">$ " + moneyFmt.format(val) + "</span></div>"
+                "<span class=\"fw-semibold ms-auto\">" + MR.currencySymbol(k) + MR.moneyFmt.format(val) + "</span></div>"
             );
         }
         if ((totPorMoneda._otra || 0) !== 0) {
             parts.push(
                 "<div class=\"d-flex flex-wrap align-items-center gap-2 py-1\">" +
                 "<span class=\"badge rounded-pill bg-secondary-subtle text-secondary\">Otra</span>" +
-                "<span class=\"fw-semibold ms-auto\">$ " + moneyFmt.format(totPorMoneda._otra) + "</span></div>"
+                "<span class=\"fw-semibold ms-auto\">$ " + MR.moneyFmt.format(totPorMoneda._otra) + "</span></div>"
             );
         }
         if (parts.length === 0) {
@@ -577,11 +569,11 @@ $(function () {
             r = rows[i];
             m = String(r.monedaTipo != null ? r.monedaTipo : "").trim();
             if (m !== "1" && m !== "3") m = "_otra";
-            mp = parseMoneyCell(r.montoPagado);
+            mp = MR.parseMoneyCell(r.montoPagado);
             if (mp > 0) conPago++;
-            facturado[m] = (facturado[m] || 0) + parseMoneyCell(r.totalFactura);
+            facturado[m] = (facturado[m] || 0) + MR.parseMoneyCell(r.totalFactura);
             cobrado[m] = (cobrado[m] || 0) + mp;
-            saldo[m] = (saldo[m] || 0) + parseMoneyCell(r.saldo);
+            saldo[m] = (saldo[m] || 0) + MR.parseMoneyCell(r.saldo);
         }
         return { facturado: facturado, cobrado: cobrado, saldo: saldo, conPago: conPago, totalFilas: rows.length };
     }
@@ -630,16 +622,31 @@ $(function () {
                 { data: "facturaFecha",  title: "F. factura",
                   render: function (d) { return window.MatReportes.formatFechaES(d); } },
                 { data: "vendedorFullName",   title: "Vendedor" },
-                { data: "facturaEstado",      title: "Estado" },
+                { data: "facturaEstado",      title: "Estado",
+                  render: function (d, type) {
+                      return type !== "display" ? (d || "") : MR.estadoBadgeHtml(d);
+                  } },
                 { data: "clienteFullName",    title: "Cliente" },
-                { data: "monedaTipo",         title: "Mon." },
-                { data: "totalFactura",       title: "Total" },
-                { data: "montoPagado",        title: "Pagado" },
-                { data: "saldo",              title: "Saldo" }
+                { data: "monedaTipo",         title: "Mon.",
+                  render: function (d, type) {
+                      return type !== "display" ? (d || "") : MR.renderMonedaBadge(d);
+                  } },
+                { data: "totalFactura",       title: "Total",
+                  render: function (d, type, row) { return MR.renderMontoCurrency(d, row.monedaTipo, type); } },
+                { data: "montoPagado",        title: "Pagado",
+                  render: function (d, type, row) { return MR.renderMontoCurrency(d, row.monedaTipo, type); } },
+                { data: "saldo",              title: "Saldo",
+                  render: function (d, type, row) { return MR.renderMontoCurrency(d, row.monedaTipo, type); } }
             ],
             pageLength: 25,
             autoWidth: false,
-            language: { url: "/Scripts/dataTable/i18n/Spanish.json" }
+            language: $.extend(
+                { url: "/Scripts/dataTable/i18n/Spanish.json" },
+                MR.dataTableEmptyLanguage(
+                    "No hay ventas para este filtro",
+                    "Probá otro rango de fechas o un viaje distinto"
+                )
+            )
         });
         /* Mostrar panel de filtro front y limpiar valores anteriores */
         $("#filtVendedor, #filtCliente").val("");
@@ -673,6 +680,12 @@ $(function () {
         if (window.MatReportes.Destinos)   window.MatReportes.Destinos.hide();
         $("#reporteVentasIndicadores").addClass("d-none");
         $("#filtroFront").addClass("d-none");
+        var $btn = $("#btnBuscar");
+        var $tableWrap = $(".modern-table-container").first();
+        if (window.MatAdmin) {
+            MatAdmin.showLoading($btn[0]);
+            if ($tableWrap.length) MatAdmin.showLoading($tableWrap[0], { mode: "overlay", text: "Consultando..." });
+        }
         $.getJSON(urlJson, queryParams())
             .done(function (res) {
                 if (!res.ok) { showErr(res.message || "Error"); return; }
@@ -680,6 +693,12 @@ $(function () {
             })
             .fail(function (xhr) {
                 showErr(window.MatReportes.parseHttpErrorBody(xhr));
+            })
+            .always(function () {
+                if (window.MatAdmin) {
+                    MatAdmin.hideLoading($btn[0]);
+                    if ($tableWrap.length) MatAdmin.hideLoading($tableWrap[0]);
+                }
             });
     });
 

@@ -3,38 +3,11 @@
     ViewBag.Title = "Error Log";
 }
 
-<style>
-    #tabla-errores thead th { background: #2c3e50; color: #fff; white-space: nowrap; }
-    #tabla-errores { font-size: 12px; }
-    .stack-pre {
-        font-size: 11px; max-height: 280px; overflow-y: auto; white-space: pre-wrap;
-        background: #2b2b2b; color: #f8f8f2; padding: 10px; border-radius: 4px; margin: 0;
-    }
-    .badge-1 { background: #5bc0de; }
-    .badge-2 { background: #f0ad4e; }
-    .badge-3 { background: #d9534f; }
-    #diagnostico-box {
-        font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 12px; height: 620px; background: #1e1e1e; color: #d4d4d4;
-        border: 1px solid #555; padding: 12px; resize: vertical; width: 100%;
-        line-height: 1.5;
-    }
-    .errorlog-filters {
-        margin-bottom: 16px;
-        background: #f8f9fa;
-        padding: 12px 14px;
-        border-radius: 6px;
-        border: 1px solid #dee2e6;
-    }
-    .spinning { animation: spin 1s linear infinite; display: inline-block; }
-    @@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-</style>
-
-<div class="container-fluid py-3 px-3" style="max-width: 1500px;">
-
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-        <h2 class="mb-0">
-            Error Log <small class="text-muted" id="lbl-count"></small>
+<div class="modern-page-container admin-errorlog-page">
+    <div class="modern-page-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h2 class="modern-page-title mb-0">
+            <i class="bi bi-bug"></i>
+            <span>Error Log <small class="text-muted fw-normal" id="lbl-count"></small></span>
         </h2>
         <div class="btn-group" role="group" aria-label="Vista">
             <button type="button" class="btn btn-outline-secondary btn-sm active" id="btn-tabla" onclick="mostrarVista('tabla')">
@@ -46,40 +19,49 @@
         </div>
     </div>
 
-    <div class="errorlog-filters">
-        <div class="d-flex flex-wrap align-items-end gap-2">
-            <div>
-                <label class="form-label visually-hidden" for="filtro-correlation">Correlation ID</label>
-                <input type="text" id="filtro-correlation" class="form-control form-control-sm"
-                       placeholder="Correlation ID" style="width:290px; font-family:monospace;" />
+    <div class="modern-form-container mt-3">
+        <div class="modern-form-grid">
+            <div class="modern-form-group">
+                <label class="modern-form-label" for="filtro-correlation">
+                    <i class="bi bi-fingerprint"></i>
+                    <span>Correlation ID</span>
+                </label>
+                <input type="text" id="filtro-correlation" class="modern-form-input font-monospace"
+                       placeholder="Filtrar por correlation ID" />
             </div>
-            <div>
-                <label class="form-label visually-hidden" for="filtro-fecha">Desde fecha</label>
-                <input type="date" id="filtro-fecha" class="form-control form-control-sm" title="Desde fecha" />
+            <div class="modern-form-group">
+                <label class="modern-form-label" for="filtro-fecha">
+                    <i class="bi bi-calendar3"></i>
+                    <span>Desde (fecha)</span>
+                </label>
+                <input type="date" id="filtro-fecha" class="modern-form-input" title="Desde fecha" />
             </div>
-            <button type="button" class="btn btn-primary btn-sm" onclick="cargarDatos()">
-                <i class="bi bi-funnel me-1"></i>Filtrar
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()">
-                <i class="bi bi-x-lg me-1"></i>Limpiar
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cargarDatos()" title="Recargar">
-                <i class="bi bi-arrow-clockwise"></i>
-            </button>
+            <div class="modern-form-group d-flex align-items-end flex-wrap gap-2">
+                <button type="button" class="btn-modern btn-modern-primary" onclick="cargarDatos()">
+                    <i class="bi bi-funnel"></i>
+                    <span>Filtrar</span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()">
+                    <i class="bi bi-x-lg me-1"></i>Limpiar
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="cargarDatos()" title="Recargar">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </button>
+            </div>
         </div>
     </div>
 
-    <div id="estado-carga" class="text-center py-4 text-secondary">
-        <i class="bi bi-arrow-clockwise spinning me-1"></i>Cargando...
+    <div id="estado-carga" class="text-center py-4 text-secondary mt-3">
+        <i class="bi bi-arrow-clockwise admin-errorlog-spinning me-1"></i>Cargando...
     </div>
 
-    <div id="estado-vacio" class="alert alert-info" style="display:none;">
+    <div id="estado-vacio" class="alert alert-info mt-3" style="display:none;" role="alert">
         <i class="bi bi-info-circle me-1"></i>No hay errores registrados con los filtros aplicados.
     </div>
 
-    <div id="vista-tabla" style="display:none;">
+    <div id="vista-tabla" class="modern-table-container mt-3" style="display:none;">
         <div class="table-responsive">
-            <table class="table table-sm table-bordered table-hover mb-0" id="tabla-errores">
+            <table class="table table-sm table-bordered table-hover mb-0 admin-errorlog-table" id="tabla-errores">
                 <thead>
                     <tr>
                         <th style="width:48px;">ID</th>
@@ -89,7 +71,7 @@
                         <th>Mensaje</th>
                         <th style="width:210px;">URL</th>
                         <th style="width:85px;">Usuario</th>
-                        <th style="width:32px;" title="Importancia">!</th>
+                        <th style="width:72px;" title="Importancia">Nivel</th>
                         <th style="width:100px;"></th>
                     </tr>
                 </thead>
@@ -98,7 +80,7 @@
         </div>
     </div>
 
-    <div id="vista-diagnostico" style="display:none;">
+    <div id="vista-diagnostico" class="mt-3" style="display:none;">
         <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
             <button type="button" class="btn btn-success btn-sm" onclick="copiarTodo()">
                 <i class="bi bi-copy me-1"></i>Copiar todo
@@ -106,7 +88,7 @@
             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="seleccionarTodo()">
                 <i class="bi bi-textarea-resize me-1"></i>Seleccionar todo
             </button>
-            <span id="msg-copiado" style="display:none; color:#198754; font-weight:bold;">
+            <span id="msg-copiado" class="text-success fw-semibold" style="display:none;">
                 <i class="bi bi-check-lg me-1"></i>¡Copiado!
             </span>
             <span class="text-muted small">
@@ -115,9 +97,9 @@
         </div>
         <textarea id="diagnostico-box" readonly spellcheck="false"></textarea>
     </div>
-
 </div>
 
+@section Scripts {
 <script>
 (function () {
     var ERRORES = [];
@@ -126,6 +108,13 @@
     document.addEventListener('DOMContentLoaded', function () {
         cargarDatos();
     });
+
+    function importanciaBadge(imp) {
+        var v = String(imp || '1');
+        if (v === '3') return '<span class="badge bg-danger-subtle text-danger-emphasis">Alta</span>';
+        if (v === '2') return '<span class="badge bg-warning-subtle text-warning-emphasis">Media</span>';
+        return '<span class="badge bg-secondary-subtle text-secondary-emphasis">Baja</span>';
+    }
 
     window.cargarDatos = function () {
         var corrId = document.getElementById('filtro-correlation').value.trim();
@@ -148,7 +137,7 @@
                 renderizarDiagnostico();
                 mostrarEstado(ERRORES.length === 0 ? 'vacio' : 'datos');
             })
-            .catch(function (err) {
+            .catch(function () {
                 mostrarEstado('error', 'Error al conectar con el servidor.');
             });
     };
@@ -174,18 +163,18 @@
             html += '<td>'                                          + esc(e.msg)   + '</td>';
             html += '<td class="text-break small">' + esc(e.url) + '</td>';
             html += '<td><small>'                                   + esc(e.user)  + '</small></td>';
-            html += '<td class="text-center"><span class="badge badge-' + esc(e.imp) + '">' + esc(e.imp) + '</span></td>';
+            html += '<td class="text-center">' + importanciaBadge(e.imp) + '</td>';
             html += '<td class="text-center text-nowrap">';
             if (e.stack) {
                 html += '<button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleStack(\'' + stackId + '\', this)">Stack</button> ';
             }
-            html += '<button type="button" class="btn btn-sm btn-info" title="Copiar" onclick="copiarFila(' + i + ', this)">';
+            html += '<button type="button" class="btn btn-sm btn-outline-info" title="Copiar" onclick="copiarFila(' + i + ', this)">';
             html += '<i class="bi bi-copy"></i></button>';
             html += '</td>';
             html += '</tr>';
             if (e.stack) {
-                html += '<tr id="' + stackId + '" style="display:none;background:#222;">';
-                html += '<td colspan="9" class="p-0"><pre class="stack-pre">' + esc(e.stack) + '</pre></td>';
+                html += '<tr id="' + stackId + '" class="admin-errorlog-stack-row" style="display:none;">';
+                html += '<td colspan="9" class="p-0"><pre class="admin-errorlog-stack-pre">' + esc(e.stack) + '</pre></td>';
                 html += '</tr>';
             }
         }
@@ -237,8 +226,9 @@
             document.getElementById('vista-diagnostico').style.display = VISTA_ACTUAL === 'diagnostico' ? '' : 'none';
         }
         if (estado === 'error') {
-            document.getElementById('estado-vacio').style.display = '';
-            document.getElementById('estado-vacio').textContent = msg || 'Error';
+            var vacio = document.getElementById('estado-vacio');
+            vacio.style.display = '';
+            vacio.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i>' + esc(msg || 'Error');
         }
     }
 
@@ -338,3 +328,4 @@
     }
 }());
 </script>
+}
