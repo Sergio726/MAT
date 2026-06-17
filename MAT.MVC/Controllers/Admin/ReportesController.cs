@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Web.Mvc;
-using System.Web.Security;
 using MAT.MVC.Filters;
 using MAT.MVC.Infrastructure;
 using MAT.MVC.Models.Reportes;
@@ -20,6 +19,7 @@ namespace MAT.MVC.Controllers.Admin
     /// </summary>
     [Authorize]
     [InitializeSimpleMembership]
+    [RequireAdministrator]
     public class ReportesController : Controller
     {
         private static readonly JsonSerializerSettings JsonReportSettings = new JsonSerializerSettings
@@ -28,56 +28,30 @@ namespace MAT.MVC.Controllers.Admin
             NullValueHandling = NullValueHandling.Include
         };
 
-        #region Vistas (solo Administrador, redirección HTML)
+        #region Vistas
 
         [HttpGet]
         public ActionResult Index()
         {
-            var redir = RequireAdministratorView();
-            if (redir != null) return redir;
             return View();
         }
 
         [HttpGet]
         public ActionResult ReporteVentas()
         {
-            var redir = RequireAdministratorView();
-            if (redir != null) return redir;
             return View();
         }
 
         [HttpGet]
         public ActionResult ReportePagos()
         {
-            var redir = RequireAdministratorView();
-            if (redir != null) return redir;
             return View();
         }
 
         [HttpGet]
         public ActionResult ReporteRanking()
         {
-            var redir = RequireAdministratorView();
-            if (redir != null) return redir;
             return View();
-        }
-
-        private ActionResult RequireAdministratorView()
-        {
-            if (!User.Identity.IsAuthenticated)
-                return RedirectToAction("Login", "Account", new { returnUrl = Request.RawUrl });
-
-            try
-            {
-                if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
-                    return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            return null;
         }
 
         #endregion
@@ -87,9 +61,6 @@ namespace MAT.MVC.Controllers.Admin
         [HttpGet]
         public ActionResult Ventas(string from, string to, string viajeId = null, string vendedorId = null, string clienteId = null)
         {
-            var denied = JsonRequireAdministrator();
-            if (denied != null) return denied;
-
             var q = ReportesQueryHelper.Parse(from, to, viajeId, vendedorId, clienteId, tipoVentaId: null);
             if (!q.IsValid)
                 return JsonMessage(ok: false, message: q.ValidationMessage, data: null);
@@ -112,9 +83,6 @@ namespace MAT.MVC.Controllers.Admin
         [HttpGet]
         public ActionResult Pagos(string from, string to, string viajeId = null, string vendedorId = null, string clienteId = null, string tipoVentaId = null)
         {
-            var denied = JsonRequireAdministrator();
-            if (denied != null) return denied;
-
             var q = ReportesQueryHelper.Parse(from, to, viajeId, vendedorId, clienteId, tipoVentaId);
             if (!q.IsValid)
                 return JsonMessage(ok: false, message: q.ValidationMessage, data: null);
@@ -137,9 +105,6 @@ namespace MAT.MVC.Controllers.Admin
         [HttpGet]
         public ActionResult Ranking(string from, string to, string viajeId = null, string vendedorId = null, string clienteId = null)
         {
-            var denied = JsonRequireAdministrator();
-            if (denied != null) return denied;
-
             var q = ReportesQueryHelper.Parse(from, to, viajeId, vendedorId, clienteId, tipoVentaId: null);
             if (!q.IsValid)
                 return JsonMessage(ok: false, message: q.ValidationMessage, data: null);
@@ -165,9 +130,6 @@ namespace MAT.MVC.Controllers.Admin
         [HttpGet]
         public ActionResult BuscarViajes(string q, bool recent = false)
         {
-            var denied = JsonRequireAdministrator();
-            if (denied != null) return denied;
-
             try
             {
                 if (recent)
@@ -193,31 +155,6 @@ namespace MAT.MVC.Controllers.Admin
             }
         }
 
-        private ActionResult JsonRequireAdministrator()
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                Response.StatusCode = 401;
-                return JsonMessage(ok: false, message: "Debe iniciar sesión.", data: null);
-            }
-
-            try
-            {
-                if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
-                {
-                    Response.StatusCode = 403;
-                    return JsonMessage(ok: false, message: "No tiene permisos para ver este reporte.", data: null);
-                }
-            }
-            catch
-            {
-                Response.StatusCode = 403;
-                return JsonMessage(ok: false, message: "No tiene permisos para ver este reporte.", data: null);
-            }
-
-            return null;
-        }
-
         private ContentResult JsonMessage(bool ok, string message, object data)
         {
             var payload = new { ok, message, data };
@@ -232,9 +169,6 @@ namespace MAT.MVC.Controllers.Admin
         [HttpGet]
         public ActionResult VentasExcel(string from, string to, string viajeId = null, string vendedorId = null, string clienteId = null)
         {
-            var denied = ExcelRequireAdministrator();
-            if (denied != null) return denied;
-
             var q = ReportesQueryHelper.Parse(from, to, viajeId, vendedorId, clienteId, tipoVentaId: null);
             if (!q.IsValid)
                 return new HttpStatusCodeResult(400, q.ValidationMessage);
@@ -256,9 +190,6 @@ namespace MAT.MVC.Controllers.Admin
         [HttpGet]
         public ActionResult PagosExcel(string from, string to, string viajeId = null, string vendedorId = null, string clienteId = null, string tipoVentaId = null)
         {
-            var denied = ExcelRequireAdministrator();
-            if (denied != null) return denied;
-
             var q = ReportesQueryHelper.Parse(from, to, viajeId, vendedorId, clienteId, tipoVentaId);
             if (!q.IsValid)
                 return new HttpStatusCodeResult(400, q.ValidationMessage);
@@ -278,24 +209,6 @@ namespace MAT.MVC.Controllers.Admin
         }
 
         /* RankingExcel retirado — el dashboard V2 usa descarga PDF en cliente. */
-
-        private ActionResult ExcelRequireAdministrator()
-        {
-            if (!User.Identity.IsAuthenticated)
-                return new HttpStatusCodeResult(401, "Debe iniciar sesión.");
-
-            try
-            {
-                if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
-                    return new HttpStatusCodeResult(403, "Sin permisos.");
-            }
-            catch
-            {
-                return new HttpStatusCodeResult(403, "Sin permisos.");
-            }
-
-            return null;
-        }
 
         #endregion
 

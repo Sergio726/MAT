@@ -53,10 +53,6 @@
     <script src="~/Scripts/dataTable/jquery.dataTables.min.js"></script>
 </head>
 <body class="admin-modern">
-    <section id="script_section">
-        @RenderSection("Scripts", required: false)
-    </section>
-
     @{
         var userName = (User != null && User.Identity != null) ? (User.Identity.Name ?? "") : "";
         var isAdminDev = !string.IsNullOrWhiteSpace(userName) && userName.ToUpper().Equals("ADMINDEV");
@@ -125,6 +121,7 @@
 
                 <div class="nav-section-title">Sistema</div>
                 <nav class="nav nav-pills flex-column gap-1">
+                    <a class="nav-link" href="/Admin/SistemaParametros"><i class="bi bi-sliders"></i> Parámetros del sistema</a>
                     <a class="nav-link" href="/Admin/ErrorLog"><i class="bi bi-bug"></i> Error Log</a>
                     <a class="nav-link" href="/Admin/Logs"><i class="bi bi-terminal"></i> Log en memoria</a>
                 </nav>
@@ -174,6 +171,7 @@
 
                     <div class="nav-section-title">Sistema</div>
                     <nav class="nav nav-pills flex-column gap-1">
+                        <a class="nav-link" href="/Admin/SistemaParametros"><i class="bi bi-sliders"></i> Parámetros del sistema</a>
                         <a class="nav-link" href="/Admin/ErrorLog"><i class="bi bi-bug"></i> Error Log</a>
                         <a class="nav-link" href="/Admin/Logs"><i class="bi bi-terminal"></i> Log en memoria</a>
                     </nav>
@@ -198,6 +196,8 @@
         </div>
     </div>
 
+    @RenderSection("Scripts", required: false)
+
     <script>
         (function () {
             // Mark active link in sidebar based on current path
@@ -206,7 +206,9 @@
             for (var i = 0; i < links.length; i++) {
                 var href = (links[i].getAttribute("href") || "").toLowerCase();
                 if (!href) continue;
-                if (path === href || path.indexOf(href + "/") === 0) {
+                if (href === "/admin/reportes" && path.indexOf("/admin/reportes") === 0) {
+                    links[i].classList.add("active");
+                } else if (path === href || path.indexOf(href + "/") === 0) {
                     links[i].classList.add("active");
                 }
             }

@@ -23,6 +23,7 @@ namespace MAT.MVC.Controllers.Admin
 {
     [Authorize]
     [InitializeSimpleMembership]
+    [RequireAdministrator]
     public class AdminController : Controller
     {
         //
@@ -30,17 +31,12 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult Index()
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             return View();
         }
 
         [Authorize]
         public ActionResult Usuarios()
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             var list = new List<AdminUserListItem>();
             var adminCount = CountUsersInRole("Administrador");
             using (var ctx = new UsersContext())
@@ -84,8 +80,6 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ActionResult UsuarioEditar(int? id)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             if (id == null) return RedirectToAction("Usuarios");
 
             UserProfile profile;
@@ -109,9 +103,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult UsuarioEditar(AdminUsuarioEditModel model)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             if (model == null || model.UserId <= 0)
                 return RedirectToAction("Usuarios");
 
@@ -248,8 +239,6 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ActionResult UsuarioResetPassword(int? id)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             if (id == null) return RedirectToAction("Usuarios");
 
             UserProfile profile;
@@ -277,9 +266,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult UsuarioResetPassword(AdminUsuarioResetPasswordModel model)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             if (model == null || model.UserId <= 0)
                 return RedirectToAction("Usuarios");
 
@@ -319,9 +305,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult UsuarioEstablecerEstado(int userId, bool aprobado)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             string userName = GetUserNameByProfileId(userId);
             if (string.IsNullOrEmpty(userName))
             {
@@ -398,9 +381,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult UsuarioDesbloquear(int userId)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             string userName = GetUserNameByProfileId(userId);
             if (string.IsNullOrEmpty(userName))
             {
@@ -428,9 +408,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult UsuarioEliminar(int userId)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             var userName = GetUserNameByProfileId(userId);
             if (string.IsNullOrEmpty(userName))
             {
@@ -559,8 +536,6 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ActionResult RegistrarVendedor()
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             return View();
         }
 
@@ -569,9 +544,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult RegistrarVendedor(FormCollection form)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             if (string.IsNullOrWhiteSpace(form["Password"]) || form["Password"] != form["ConfirmPassword"])
                 ModelState.AddModelError("", "La contraseña y la confirmación no coinciden o están vacías.");
             if (string.IsNullOrWhiteSpace(form["UserName"]))
@@ -602,9 +574,6 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ActionResult MiCuenta(AccountManageMessageId? message)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             ViewBag.StatusMessage =
                 message == AccountManageMessageId.ChangePasswordSuccess ? "La contraseña se ha cambiado."
                 : message == AccountManageMessageId.SetPasswordSuccess ? "Su contraseña se ha establecido."
@@ -622,9 +591,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public ActionResult MiCuenta(LocalPasswordModel model)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
             ViewBag.HasLocalPassword = hasLocalAccount;
             ViewBag.ReturnUrl = Url.Action("MiCuenta", "Admin");
@@ -640,8 +606,9 @@ namespace MAT.MVC.Controllers.Admin
                     {
                         changePasswordSucceeded = WebSecurity.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        ErrorUtil.LogAndGetPublicMessage(e, "AdminController.MiCuenta.ChangePassword");
                         changePasswordSucceeded = false;
                     }
 
@@ -670,9 +637,9 @@ namespace MAT.MVC.Controllers.Admin
                         WebSecurity.CreateAccount(User.Identity.Name, model.NewPassword);
                         return RedirectToAction("MiCuenta", new { Message = AccountManageMessageId.SetPasswordSuccess });
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        ModelState.AddModelError("", string.Format("No se puede crear una cuenta local. Es posible que ya exista una cuenta con el nombre \"{0}\".", User.Identity.Name));
+                        ModelState.AddModelError("", ErrorUtil.LogAndGetPublicMessage(e, "AdminController.MiCuenta.CreateAccount"));
                     }
                 }
             }
@@ -680,22 +647,6 @@ namespace MAT.MVC.Controllers.Admin
             return View("MiCuenta", model);
         }
 
-        private ActionResult RequireAdministrator()
-        {
-            if (!User.Identity.IsAuthenticated)
-                return RedirectToAction("Index", "Home");
-            try
-            {
-                if (!Roles.IsUserInRole(User.Identity.Name, "Administrador"))
-                    return RedirectToAction("Index", "Home");
-            }
-            catch
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            return null;
-        }
 
         private static string MembershipCreateErrorToString(MembershipCreateStatus createStatus)
         {
@@ -716,8 +667,6 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult ResumenPagos()
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             try
             {
                 List<DDViaje> _DDViaje = new List<DDViaje>();
@@ -739,15 +688,11 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult ResumenPagosPorFecha()
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             return View();
         }
 
         public ActionResult GridResumenPagos(Guid ViajeID)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             List<PagoModel> _model = new List<PagoModel>();
             try
             {
@@ -769,9 +714,6 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ActionResult ResumenPagosExcel(Guid ViajeID)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             if (ViajeID == Guid.Empty)
                 return new HttpStatusCodeResult(400, "Debe indicar un viaje válido.");
 
@@ -790,8 +732,6 @@ namespace MAT.MVC.Controllers.Admin
 
         public ActionResult GridResumenPagosFecha(string fecha)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             try
             {
                 List<PagoModel> model = new List<PagoModel>();
@@ -806,238 +746,15 @@ namespace MAT.MVC.Controllers.Admin
             }
         }
 
-        public ActionResult GridPlanillaHotelPrint(Guid viajeid, Guid planillaid)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            List<List<PlanillaHotelPrintModel>> conjuntoplanillas = new List<List<PlanillaHotelPrintModel>>();
-            Services.ViajeHotelService viajehotelService = new ViajeHotelService();
-            List<Entities.ViajeHotel> hoteles = viajehotelService.GetByViajeId(viajeid).ToList();
-            foreach (var h in hoteles)
-            {
-                Entities.Hotel hotel = new Services.HotelService().GetByHotelId(h.HotelId);
-                List<Entities.Habitacion> _habitaciones = new HabitacionService().GetByHotelId(h.HotelId).ToList();
-                List<Models.PlanillaHotelPrintModel> _planillahotelmodel = new List<Models.PlanillaHotelPrintModel>();
-                foreach (var item in _habitaciones)
-                {
-                    PlanillaHotelPrintModel planillahotellinea = new Models.PlanillaHotelPrintModel(item.HabitacionId, planillaid, hotel.Nombre, viajeid);
-                    _planillahotelmodel.Add(planillahotellinea);
-                }
-                conjuntoplanillas.Add(_planillahotelmodel.OrderBy(pl => pl.Habitacion.Tipo).ToList());
-            }
-            return PartialView(conjuntoplanillas);
-        }
-
-        public ActionResult GridPlanillaHotelDetallePrint(Guid viajeid, Guid planillaid)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            List<List<PlanillaHotelPrintModel>> conjuntoplanillas = new List<List<PlanillaHotelPrintModel>>();
-            Services.ViajeHotelService viajehotelService = new ViajeHotelService();
-            List<Entities.ViajeHotel> hoteles = viajehotelService.GetByViajeId(viajeid).ToList();
-            foreach (var h in hoteles)
-            {
-                Entities.Hotel hotel = new Services.HotelService().GetByHotelId(h.HotelId);
-                List<Entities.Habitacion> _habitaciones = new HabitacionService().GetByHotelId(h.HotelId).ToList();
-                List<Models.PlanillaHotelPrintModel> _planillahotelmodel = new List<Models.PlanillaHotelPrintModel>();
-                foreach (var item in _habitaciones)
-                {
-                    PlanillaHotelPrintModel planillahotellinea = new Models.PlanillaHotelPrintModel(item.HabitacionId, planillaid, hotel.Nombre, viajeid);
-                    _planillahotelmodel.Add(planillahotellinea);
-                }
-                conjuntoplanillas.Add(_planillahotelmodel.OrderBy(pl => pl.Habitacion.Tipo).ToList());
-            }
-            return PartialView(conjuntoplanillas);
-        }
-
-        public ActionResult PartialGridResumenPlanillaHotelPrint(List<PlanillaHotelPrintModel> planilla)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            List<ResumenPlanillaPrintModel> resumen = new List<ResumenPlanillaPrintModel>();
-            foreach (HabitacionTipo item in HabitacionTipoMethod.GetAllHabitacionTipo())
-            {
-                resumen.Add(new ResumenPlanillaPrintModel(planilla, item.Id));
-            }
-            //resumen.Add(new ResumenPlanillaPrintModel(planilla, eTipoHabitacion.Single));
-            //resumen.Add(new ResumenPlanillaPrintModel(planilla, eTipoHabitacion.Doble));
-            //resumen.Add(new ResumenPlanillaPrintModel(planilla, eTipoHabitacion.Matrimonial));
-            //resumen.Add(new ResumenPlanillaPrintModel(planilla, eTipoHabitacion.Triple));
-            //resumen.Add(new ResumenPlanillaPrintModel(planilla, eTipoHabitacion.Cuadruple));
-            double _total = 0;
-            foreach (var item in resumen)
-            {
-                _total += item.Subtotal;
-            }
-            ViewData["TotalHotel"] = _total;
-            ViewData["Hotel"] = planilla.FirstOrDefault().Hotel;
-            return PartialView(resumen);
-        }
-
-        public ActionResult ImprimirPlanilla(Guid planillaid)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            return PartialView(new Services.PlanillaService().GetByPlanillaId(planillaid));
-        }
-
-        public ActionResult ImprimirPlanillaDetalle(Guid planillaid)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            return PartialView(new Services.PlanillaService().GetByPlanillaId(planillaid));
-        }
-
-        public ActionResult GridPlanillaServiciosItemPrint(Guid planillaid)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            Services.PlanillaServicioItemService servicioitemService = new PlanillaServicioItemService();
-            List<Entities.PlanillaServicioItem> servicioitems = servicioitemService.GetByPlanillaId(planillaid).ToList();
-            return PartialView(servicioitems);
-        }
-
-        public ActionResult DeletePlanilla(Guid id)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            Services.PlanillaServicioItemService planillaservicioService = new PlanillaServicioItemService();
-            Services.PlanillaHabitacionItemService planillahotelService = new PlanillaHabitacionItemService();
-            Services.PlanillaService planillaService = new PlanillaService();
-            List<Entities.PlanillaServicioItem> servicios = planillaservicioService.GetByPlanillaId(id).ToList();
-            for (int i = servicios.Count-1; i > -1; i--)
-            {
-                var item = servicios[i];
-                planillaservicioService.Delete(item.PlanillaServicioItemId);
-            }
-
-            List<Entities.PlanillaHabitacionItem> habitaciones = planillahotelService.GetByPlanillaId(id).ToList();
-            for (int i = habitaciones.Count-1; i > -1; i--)
-            {
-                var item = habitaciones[i];
-                planillahotelService.Delete(item.PlanillaHabitacionItemId);
-            }
-            planillaService.Delete(id);
-            return RedirectToAction("Index", "Admin");
-        }
-
-        public ActionResult EditarPlanilla(Guid id)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            return View(new Services.PlanillaService().GetByPlanillaId(id));
-        }
-
-        public ActionResult GridPlanillaHotelDetalleEdit(Guid planillaid, Guid viajeid)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            List<List<PlanillaHotelPrintModel>> conjuntoplanillas = new List<List<PlanillaHotelPrintModel>>();
-            Services.ViajeHotelService viajehotelService = new ViajeHotelService();
-            List<Entities.ViajeHotel> hoteles = viajehotelService.GetByViajeId(viajeid).ToList();
-            foreach (var h in hoteles)
-            {
-                Entities.Hotel hotel = new Services.HotelService().GetByHotelId(h.HotelId);
-                List<Entities.Habitacion> _habitaciones = new HabitacionService().GetByHotelId(h.HotelId).ToList();
-                List<Models.PlanillaHotelPrintModel> _planillahotelmodel = new List<Models.PlanillaHotelPrintModel>();
-                foreach (var item in _habitaciones)
-                {
-                    PlanillaHotelPrintModel planillahotellinea = new Models.PlanillaHotelPrintModel(item.HabitacionId, planillaid, hotel.Nombre, viajeid);
-                    _planillahotelmodel.Add(planillahotellinea);
-                }
-                conjuntoplanillas.Add(_planillahotelmodel.OrderBy(pl => pl.Habitacion.Tipo).ToList());
-            }
-            return PartialView(conjuntoplanillas);
-        }
-
-        public ActionResult GridPlanillaServiciosItemEdit(Guid planillaid)
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-            Services.PlanillaServicioItemService servicioitemService = new PlanillaServicioItemService();
-            List<Entities.PlanillaServicioItem> servicioitems = servicioitemService.GetByPlanillaId(planillaid).ToList();
-            return PartialView(servicioitems);
-        }
-
-        public bool GuardarDatosPlanilla(Guid planillaid, string fecha, string total)
-        {
-            if (!IsAdminUser()) return false;
-            bool result = false;
-            try
-            {
-                DateTime _fecha = !string.IsNullOrEmpty(fecha) ? Convert.ToDateTime(fecha) : DateTime.Now;
-                Double _total = !string.IsNullOrEmpty(total) ? Convert.ToDouble(total) : 0;
-                Services.PlanillaService planillaService = new PlanillaService();
-                Entities.Planilla planilla = planillaService.GetByPlanillaId(planillaid);
-                planilla.FechaRegistro = _fecha;
-                planilla.Total = _total;
-                planillaService.Update(planilla);
-                result = true;
-            }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-                result = false;
-            }
-            return result;
-        }
-
-        public bool GuardarDatosItem(Guid itemid, string dias, string subtotal)
-        {
-            if (!IsAdminUser()) return false;
-            bool result = false;
-            try
-            {
-                PlanillaHabitacionItemService habitacionitemService = new PlanillaHabitacionItemService();
-                Entities.PlanillaHabitacionItem habitacionitem = habitacionitemService.GetByPlanillaHabitacionItemId(itemid);
-                habitacionitem.Cantidad = !string.IsNullOrEmpty(dias) ? Convert.ToInt32(dias) : 0 ;
-                habitacionitem.Subtotal = !string.IsNullOrEmpty(subtotal) ? Convert.ToDouble(subtotal) : 0;
-                habitacionitemService.Update(habitacionitem);
-                result = true;
-            }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
-            {
-                result = false;
-            }
-            return result;
-        }
-
-        public bool GuardarDatosServiciosItem(Guid id, string cantidad, string subtotal)
-        {
-            if (!IsAdminUser()) return false;
-            bool result = false;
-            try
-            {
-                Services.PlanillaServicioItemService servicioitemService = new PlanillaServicioItemService();
-                Entities.PlanillaServicioItem servicioitem = servicioitemService.GetByPlanillaServicioItemId(id);
-                servicioitem.Cantidad = !string.IsNullOrEmpty(cantidad) ? Convert.ToInt32(cantidad) : 0;
-                servicioitem.Subtotal = !string.IsNullOrEmpty(subtotal) ? Convert.ToDouble(subtotal) : 0;
-                servicioitemService.Update(servicioitem);
-                result = true;
-            }
-            catch (Exception )
-            {
-                result = false;
-            }
-            return result;
-        }
-
         [Authorize]
         public ActionResult AuditoriaFacturas()
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
             return View();
         }
 
         [Authorize]
         public ActionResult Logs(string correlationId = null)
         {
-            if (!IsAdminUser()) return RedirectToAction("Index", "Home");
-
             var logs = MATLogger.GetRecentLogs(1000);
 
             if (!string.IsNullOrWhiteSpace(correlationId))
@@ -1051,8 +768,6 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ContentResult LogsRaw(string correlationId = null)
         {
-            if (!IsAdminUser()) return Content("Sin permisos");
-
             var logs = MATLogger.GetRecentLogs(1000);
             if (!string.IsNullOrWhiteSpace(correlationId))
                 logs = logs.Where(l => l.Contains(correlationId)).ToList();
@@ -1063,16 +778,12 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public ActionResult ErrorLog()
         {
-            if (!IsAdminUser()) return RedirectToAction("Index", "Home");
             return View();
         }
 
         [Authorize]
         public JsonResult ErrorLogJson(string correlationId = null, string fechaDesde = null)
         {
-            if (!IsAdminUser())
-                return Json(new { ok = false, mensaje = "Sin permisos" }, JsonRequestBehavior.AllowGet);
-
             DateTime? fecha = null;
             if (!string.IsNullOrWhiteSpace(fechaDesde))
             {
@@ -1102,19 +813,6 @@ namespace MAT.MVC.Controllers.Admin
             }
 
             return Json(new { ok = true, errores = lista }, JsonRequestBehavior.AllowGet);
-        }
-
-        private bool IsAdminUser()
-        {
-            try
-            {
-                return Roles.IsUserInRole(User.Identity.Name, "Administrador");
-            }
-            catch (Exception ex)
-            {
-                ErrorUtil.LogAndGetPublicMessage(ex, "AdminController.IsAdminUser");
-                return false;
-            }
         }
 
         /// <summary>
@@ -1159,40 +857,43 @@ namespace MAT.MVC.Controllers.Admin
         [Authorize]
         public JsonResult AuditFactura(string dateFrom, string dateTo)
         {
-            if (!IsAdminUser())
-                return Json(new List<AuditFactura>(), JsonRequestBehavior.AllowGet);
-
-            var listFactura = new List<AuditFactura>();
-            SqlParameter[] _dbParams = new SqlParameter[]
-                        {
-                            DBHelper.MakeParam("@dateFrom", SqlDbType.VarChar, 0, dateFrom),
-                            DBHelper.MakeParam("@dateTo", SqlDbType.VarChar, 0, dateTo)
-                        };
-            using (SqlDataReader _Reader = DBHelper.ExecuteDataReader("usp_MAT_Admin_AuditoriaFacturas", _dbParams))
+            try
             {
-                while (_Reader.Read())
+                var listFactura = new List<AuditFactura>();
+                SqlParameter[] _dbParams = new SqlParameter[]
                 {
-                    AuditFactura _item = new Models.AuditFactura();
-                    _item.ID = _Reader["ID"].ToString();
-                    _item.Accion = _Reader["Accion"].ToString();
-                    _item.Descripcion = _Reader["Descripcion"].ToString();
-                    _item.Fecha = _Reader["Fecha"].ToString();
-                    _item.Cliente = _Reader["Cliente"].ToString();
-                    _item.Vendedor = _Reader["Vendedor"].ToString();
-                    listFactura.Add(_item);
+                    DBHelper.MakeParam("@dateFrom", SqlDbType.VarChar, 0, dateFrom),
+                    DBHelper.MakeParam("@dateTo", SqlDbType.VarChar, 0, dateTo)
+                };
+                using (SqlDataReader _Reader = DBHelper.ExecuteDataReader("usp_MAT_Admin_AuditoriaFacturas", _dbParams))
+                {
+                    while (_Reader.Read())
+                    {
+                        var _item = new AuditFactura
+                        {
+                            ID = _Reader["ID"].ToString(),
+                            Accion = _Reader["Accion"].ToString(),
+                            Descripcion = _Reader["Descripcion"].ToString(),
+                            Fecha = _Reader["Fecha"].ToString(),
+                            Cliente = _Reader["Cliente"].ToString(),
+                            Vendedor = _Reader["Vendedor"].ToString()
+                        };
+                        listFactura.Add(_item);
+                    }
                 }
-            }
 
-            // Devolver el array directamente; Json() ya serializa (evita doble JSON string).
-            return Json(listFactura, JsonRequestBehavior.AllowGet);
+                return Json(new { ok = true, message = (string)null, data = listFactura }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "AdminController.AuditFactura");
+                return Json(new { ok = false, message = msg, data = (object)null }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [Authorize]
         public ActionResult SistemaParametros()
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return redir;
-
             var items = new List<SistemaParametroItem>();
             try
             {
@@ -1221,48 +922,11 @@ namespace MAT.MVC.Controllers.Admin
             return View(items);
         }
 
-        [Authorize]
-        public JsonResult SistemaParametroJson()
-        {
-            var redir = RequireAdministrator();
-            if (redir != null) return Json(new { ok = false, message = "Sin permisos" }, JsonRequestBehavior.AllowGet);
-
-            var items = new List<SistemaParametroItem>();
-            try
-            {
-                using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_SistemaParametro_GetAll", null))
-                {
-                    while (reader.Read())
-                    {
-                        items.Add(new SistemaParametroItem
-                        {
-                            Id = Convert.ToInt32(reader["Id"]),
-                            Clave = reader["Clave"]?.ToString() ?? "",
-                            Valor = reader["Valor"]?.ToString() ?? "",
-                            Descripcion = reader["Descripcion"]?.ToString() ?? "",
-                            EstaActivo = reader["EstaActivo"] != DBNull.Value && Convert.ToBoolean(reader["EstaActivo"]),
-                            FechaCreacion = reader["FechaCreacion"] != DBNull.Value ? Convert.ToDateTime(reader["FechaCreacion"]) : DateTime.MinValue,
-                            FechaModificacion = reader["FechaModificacion"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["FechaModificacion"]) : null
-                        });
-                    }
-                }
-                return Json(new { ok = true, data = items }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception e)
-            {
-                var msg = ErrorUtil.LogAndGetPublicMessage(e, "AdminController.SistemaParametroJson");
-                return Json(new { ok = false, message = msg }, JsonRequestBehavior.AllowGet);
-            }
-        }
-
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
         public JsonResult SistemaParametroSave(SistemaParametroItem model)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return Json(new { ok = false, message = "Sin permisos" });
-
             if (model == null || string.IsNullOrWhiteSpace(model.Clave) || string.IsNullOrWhiteSpace(model.Valor))
             {
                 return Json(new { ok = false, message = "Datos incompletos" });
@@ -1293,9 +957,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public JsonResult SistemaParametroUpdate(SistemaParametroItem model)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return Json(new { ok = false, message = "Sin permisos" });
-
             if (model == null || model.Id <= 0 || string.IsNullOrWhiteSpace(model.Clave) || string.IsNullOrWhiteSpace(model.Valor))
             {
                 return Json(new { ok = false, message = "Datos incompletos" });
@@ -1327,9 +988,6 @@ namespace MAT.MVC.Controllers.Admin
         [ValidateAntiForgeryToken]
         public JsonResult SistemaParametroToggle(int id)
         {
-            var redir = RequireAdministrator();
-            if (redir != null) return Json(new { ok = false, message = "Sin permisos" });
-
             if (id <= 0)
             {
                 return Json(new { ok = false, message = "ID inválido" });

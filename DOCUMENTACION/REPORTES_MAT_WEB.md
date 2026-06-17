@@ -29,13 +29,14 @@ Each report has a data endpoint (JSON) and an Excel export endpoint.
 | GET    | `/reportes/pagos`              | Payments report data       | ADMIN  |
 | GET    | `/reportes/pagos/excel`        | Payments report Excel export | ADMIN |
 | GET    | `/reportes/ranking-compras`    | Purchase ranking data      | ADMIN  |
-| GET    | `/reportes/ranking-compras/excel` | Purchase ranking Excel export | ADMIN |
+
+**Nota (2026-06):** no hay ruta `/reportes/ranking-compras/excel` ni acción `RankingExcel` en MAT.MVC; export del ranking = PDF en cliente.
 
 **Rutas JSON en MAT.MVC (2026-04):** `GET /Admin/Reportes/Ventas`, `/Admin/Reportes/Pagos`, `/Admin/Reportes/Ranking` — mismos query params que en las tablas siguientes; rol **Administrador**; respuesta `{ "ok", "message", "data" }` en camelCase vía Newtonsoft (ver `ReportesController`).
 
-**Rutas Excel en MAT.MVC (2026-04):** `GET /Admin/Reportes/VentasExcel`, `/Admin/Reportes/PagosExcel`, `/Admin/Reportes/RankingExcel` — mismos query params que el JSON correspondiente; respuesta binaria `.xlsx` (ver `ReportesExcelExport`).
+**Rutas Excel en MAT.MVC (2026-04):** `GET /Admin/Reportes/VentasExcel`, `/Admin/Reportes/PagosExcel` — mismos query params que el JSON correspondiente; respuesta binaria `.xlsx` (ver `ReportesExcelExport`). **Ranking:** sin export Excel en servidor (2026-06); el dashboard usa descarga PDF en cliente (`html2pdf`).
 
-**Hub y vistas HTML:** `GET /Admin/Reportes` (índice), `ReporteVentas`, `ReportePagos`, `ReporteRanking` — `RequireAdministratorView()`.
+**Hub y vistas HTML:** `GET /Admin/Reportes` (índice), `ReporteVentas`, `ReportePagos`, `ReporteRanking` — `[RequireAdministrator]` en `ReportesController`.
 
 **Operación y pruebas en MAT.MVC:** ver `DOCUMENTACION/REPORTES_MAT_MVC_OPERACION.md`.
 

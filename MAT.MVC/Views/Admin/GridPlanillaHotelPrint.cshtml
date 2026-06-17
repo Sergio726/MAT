@@ -1,7 +1,0 @@
-﻿@model List<List<MAT.MVC.Models.PlanillaHotelPrintModel>>
-@using MAT.Utilities
-
-@foreach (var item in Model)
-{
-    Html.RenderAction("PartialGridResumenPlanillaHotelPrint", "Admin", new { planilla = item });            
-}

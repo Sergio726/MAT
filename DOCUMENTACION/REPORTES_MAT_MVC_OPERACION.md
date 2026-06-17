@@ -58,9 +58,10 @@ Cookie: .ASPXAUTH=...
 |---------|-----|
 | Ventas | `/Admin/Reportes/VentasExcel` |
 | Pagos | `/Admin/Reportes/PagosExcel` |
-| Ranking | `/Admin/Reportes/RankingExcel` |
 
-Mismos query params que el JSON del mismo reporte.
+**Ranking:** sin endpoint Excel en servidor (2026-06); usar PDF en cliente desde `ReporteRanking`.
+
+Mismos query params que el JSON del mismo reporte (ventas/pagos).
 
 - **Content-Type:** `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
 - **Nombre sugerido:** `ventas-YYYY-MM-DD.xlsx`, `pagos-YYYY-MM-DD.xlsx`, `ranking-compras-YYYY-MM-DD.xlsx`
@@ -74,7 +75,7 @@ Mismas acciones que arriba, rutas alternativas:
 |------|-------|
 | `GET /reportes/ventas` | `GET /reportes/ventas/excel` |
 | `GET /reportes/pagos` | `GET /reportes/pagos/excel` |
-| `GET /reportes/ranking-compras` | `GET /reportes/ranking-compras/excel` |
+| `GET /reportes/ranking-compras` | *(sin Excel; PDF cliente)* |
 
 ## Stored procedures (sin modificar legacy por defecto)
 

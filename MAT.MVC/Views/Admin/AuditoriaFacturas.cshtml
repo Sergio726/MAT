@@ -6,7 +6,7 @@
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-shield-check"></i>
-            <span>Auditoría de Facturas</span>
+            <span>Auditoría de facturas</span>
         </h2>
     </div>
 
@@ -151,7 +151,14 @@
             dataType: "json",
             success: function (data) {
                 $wrap.empty().append($tbl);
-                loadTable(data);
+                if (data && data.ok === false) {
+                    $tbl.hide();
+                    var errMsg = (data.message || "Error al buscar registros.").replace(/</g, "&lt;");
+                    $wrap.prepend('<div class="modern-alert-error" style="margin-bottom:1rem"><i class="bi bi-exclamation-circle"></i><span>' + errMsg + '</span></div>');
+                    return;
+                }
+                var rows = (data && data.data != null) ? data.data : data;
+                loadTable(rows);
             },
             error: function () {
                 $wrap.empty().append($tbl);

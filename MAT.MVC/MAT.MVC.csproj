@@ -324,10 +324,12 @@
     <Compile Include="Controllers\Servicio\ServicioController.cs" />
     <Compile Include="Controllers\Transporte\TransporteController.cs" />
     <Compile Include="Controllers\Viaje\ViajeController.cs" />
+    <Compile Include="Filters\RequireAdministratorAttribute.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Filters\GlobalExceptionFilter.cs" />
     <Compile Include="Filters\RequestGuardFilter.cs" />
     <Compile Include="Infrastructure\DbErrorLogger.cs" />
+    <Compile Include="Infrastructure\AdminAuthorizationHelper.cs" />
     <Compile Include="Infrastructure\ErrorUtil.cs" />
     <Compile Include="Infrastructure\ReportesDataReaderMapper.cs" />
     <Compile Include="Infrastructure\AdminResumenPagosExcelExport.cs" />
@@ -395,7 +397,6 @@
     <Compile Include="Models\PerfilModel.cs" />
     <Compile Include="Models\PersonaClienteModel.cs" />
     <Compile Include="Models\PlanillaHotelModel.cs" />
-    <Compile Include="Models\PlanillaHotelPrintModel.cs" />
     <Compile Include="Models\PrecioModel.cs" />
     <Compile Include="Models\FacturaFiscalModel.cs" />
     <Compile Include="Models\PresupuestoModel.cs" />
@@ -407,7 +408,6 @@
     <Compile Include="Models\Reportes\ReporteVentaRowDto.cs" />
     <Compile Include="Models\ReservaModel.cs" />
     <Compile Include="Models\ResumenPlanillaModel.cs" />
-    <Compile Include="Models\ResumenPlanillaPrintModel.cs" />
     <Compile Include="Models\SearchModel.cs" />
     <Compile Include="Models\SistemaParametroItem.cs" />
     <Compile Include="Models\SeleccionarPasajeroModel.cs" />
@@ -442,7 +442,6 @@
     <Content Include="Content\mat.butaca.css" />
     <Content Include="Content\mat.cnrt.css" />
     <Content Include="Content\mat.esquemadistribucion.print.css" />
-    <Content Include="Content\mat.forms.admin.css" />
     <Content Include="Content\mat.listadosimple.css" />
     <Content Include="Content\mat.distribucioncoche.css" />
     <Content Include="Content\mat.forms.css" />
@@ -465,9 +464,7 @@
     <Content Include="Content\modern-topbar.css" />
     <Content Include="Content\preset.css" />
     <Content Include="Content\saas-variables.css" />
-    <Content Include="Content\style-light-admin.css" />
     <Content Include="Content\style-light.css" />
-    <Content Include="Content\tabla.admin.css" />
     <Content Include="Content\tabla.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
@@ -649,7 +646,6 @@
     <Content Include="Fonts\glyphicons-regular.otf" />
     <Content Include="Fonts\glyphicons-regular.ttf" />
     <Content Include="Content\mat.listadosimple.print.css" />
-    <Content Include="Content\mat.planillaprint.css" />
     <Content Include="Content\mat.manifiesto.print.css" />
     <Content Include="Content\mat.tblVinculacionMenor.css" />
     <Content Include="Content\mat.loguin.css" />
@@ -844,18 +840,8 @@
     <Content Include="Views\Adicional\Edit.cshtml" />
     <Content Include="Views\Excursion\Edit.cshtml" />
     <Content Include="Views\Home\TodosLosViajesIndex.cshtml" />
-    <Content Include="Views\Admin\ImprimirPlanilla.cshtml" />
-    <Content Include="Views\Admin\GridPlanillaHotelPrint.cshtml" />
-    <Content Include="Views\Admin\PartialGridResumenPlanillaHotelPrint.cshtml" />
-    <Content Include="Views\Admin\GridPlanillaServiciosItemPrint.cshtml" />
     <Content Include="Views\Reserva\DistribucionCoche.cshtml" />
     <Content Include="Views\Reserva\_DistribucionCocheAsiento.cshtml" />
-    <Content Include="Views\Admin\GridPlanillaHotelDetallePrint.cshtml" />
-    <Content Include="Views\Admin\PartialGridPlanillaHotelPrint.cshtml" />
-    <Content Include="Views\Admin\ImprimirPlanillaDetalle.cshtml" />
-    <Content Include="Views\Admin\EditarPlanilla.cshtml" />
-    <Content Include="Views\Admin\GridPlanillaHotelDetalleEdit.cshtml" />
-    <Content Include="Views\Admin\GridPlanillaServiciosItemEdit.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\Usuarios.cshtml" />
     <Content Include="Views\Admin\RegistrarVendedor.cshtml" />

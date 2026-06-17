@@ -10,7 +10,7 @@
             <i class="bi bi-shield-lock"></i>
             <span>Códigos de Confirmación</span>
         </h2>
-        <button type="button" class="btn-modern btn-modern-primary" data-bs-toggle="modal" data-bs-target="#parametroModal" onclick="limpiarFormulario()">
+        <button type="button" class="btn-modern btn-modern-primary js-nuevo-parametro" data-bs-toggle="modal" data-bs-target="#parametroModal">
             <i class="bi bi-plus-circle"></i>
             <span>Nuevo código</span>
         </button>
@@ -55,10 +55,14 @@
                             </td>
                             <td>@item.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</td>
                             <td class="text-end">
-                                <button type="button" class="btn btn-outline-primary btn-sm" title="Editar" onclick="editarParametro(@item.Id, '@item.Clave', '@item.Valor', '@item.Descripcion')">
+                                <button type="button" class="btn btn-outline-primary btn-sm js-editar-parametro" title="Editar"
+                                        data-id="@item.Id"
+                                        data-clave="@Html.AttributeEncode(item.Clave)"
+                                        data-valor="@Html.AttributeEncode(item.Valor)"
+                                        data-descripcion="@Html.AttributeEncode(item.Descripcion ?? "")">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" title="@(item.EstaActivo ? "Desactivar" : "Activar")" onclick="toggleParametro(@item.Id)">
+                                <button type="button" class="btn btn-outline-secondary btn-sm js-toggle-parametro" title="@(item.EstaActivo ? "Desactivar" : "Activar")" data-id="@item.Id">
                                     <i class="bi @(item.EstaActivo ? "bi-toggle-on" : "bi-toggle-off")"></i>
                                 </button>
                             </td>
@@ -114,6 +118,20 @@
                 },
                 order: [[0, 'desc']],
                 pageLength: 25
+            });
+
+            $('.js-nuevo-parametro').on('click', limpiarFormulario);
+            $(document).on('click', '.js-editar-parametro', function () {
+                var $btn = $(this);
+                editarParametro(
+                    $btn.data('id'),
+                    $btn.attr('data-clave') || '',
+                    $btn.attr('data-valor') || '',
+                    $btn.attr('data-descripcion') || ''
+                );
+            });
+            $(document).on('click', '.js-toggle-parametro', function () {
+                toggleParametro($(this).data('id'));
             });
         });
 

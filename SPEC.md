@@ -617,6 +617,115 @@
   Archivos: `Scripts/mat.admin-utils.js`, `Views/Admin/SistemaParametros.cshtml`, y registro en bundle si aplica.
   Criterio de éxito: Confirmaciones de éxito/error como toasts en el extremo del viewport; sin bloqueo de UI; `mostrarMensaje` legacy puede coexistir o quedar en desuso; MSBuild limpio.
 
+#### Admin — Auditoría funcional, seguridad y UX (2026-06-17)
+
+**Contexto:** Revisión del módulo `/Admin` (`AdminController`, `ReportesController`, 24 vistas en `Views/Admin/`, 4 en `Views/Reportes/`, `_LayoutAdmin.cshtml`). Hallazgos documentados como tasks pendientes. *Tasks de UI transversal ya listados arriba (sidebar SistemaParametros, tokens CSS, tipografía, modales BS5 en SistemaParametros, etc.) no se repiten salvo referencia.*
+
+##### P1 — Crítico (bugs)
+
+- [x] **Admin [P1]: `DeletePlanilla` — borrado destructivo por GET sin CSRF** — *Supersedida: submódulo planillas retirado de `/Admin` (2026-06-17).*
+
+- [x] **Admin [P1]: Guardar planilla — éxito prematuro en AJAX async** — *Supersedida: retiro planillas Admin.*
+
+- [x] **Admin [P1]: `PartialGridResumenPlanillaHotelPrint` — null reference si planilla vacía** — *Supersedida: retiro planillas Admin.*
+
+- [x] **Admin [P1]: Rutas huérfanas `RankingExcel` (acción eliminada)**
+  `RouteConfig` registra `RankingExcel` en constraint `AdminReportes` y alias `reportes/ranking-compras/excel`, pero la acción fue eliminada del controller (dashboard Ranking sin Excel server-side). URLs → **404**.
+  **Acción:** quitar rutas/alias obsoletos **o** reimplementar export si negocio lo pide (PDF cliente ya existe vía `html2pdf`).
+  Archivos: `App_Start/RouteConfig.cs`; opcional `ReportesController.cs`.
+  Criterio de éxito: Ninguna ruta publicada apunta a acción inexistente; MSBuild limpio.
+
+- [x] **Admin [P1]: `AuditFactura` sin manejo de errores**
+  Endpoint GET que ejecuta SP de auditoría sin `try/catch` ni `ErrorUtil`; fallos SQL propagan error genérico ASP.NET.
+  Archivos: `Controllers/Admin/AdminController.cs` (~L1160–1188), `Views/Admin/AuditoriaFacturas.cshtml` (interpretar JSON de error).
+  Criterio de éxito: Excepciones logueadas con `ErrorUtil`; respuesta JSON segura al cliente; MSBuild limpio.
+
+##### P2 — Seguridad
+
+- [x] **Admin [P2 — Seguridad]: Mutaciones planilla (`GuardarDatos*`) sin anti-forgery** — *Supersedida: retiro planillas Admin.*
+
+- [x] **Admin [P2 — Seguridad]: XSS en `SistemaParametros` — valor en `onclick`**
+  L58: `onclick="editarParametro(..., '@item.Valor', ...)"` inserta valor sin encoding HTML/JS; comillas en el valor rompen el script o abren XSS almacenado.
+  **Acción:** pasar datos vía `data-*` attributes + `Html.AttributeEncode` / JSON en script; eliminar concatenación inline.
+  Archivos: `Views/Admin/SistemaParametros.cshtml`.
+  Criterio de éxito: Valores con comillas/apóstrofes editables sin romper JS; MSBuild limpio.
+
+- [x] **Admin [P2 — Seguridad]: Redirect unificado para no autenticado / no admin**
+  `AdminController.RequireAdministrator()` redirige a `Home/Index` sin login; `ReportesController.RequireAdministratorView()` redirige a `Account/Login` con `returnUrl`. Comportamiento inconsistente.
+  **Acción:** unificar en helper compartido (p. ej. redirect a Login con `returnUrl` si no auth; Home o 403 si auth sin rol).
+  Archivos: `AdminController.cs`, `ReportesController.cs`; opcional `Infrastructure/AdminAuthorizationHelper.cs`.
+  Criterio de éxito: Mismo comportamiento en todo `/Admin` y `/Admin/Reportes`; MSBuild limpio.
+
+- [x] **Admin [P2 — Seguridad]: Filtro `[AdminOnly]` en lugar de checks manuales**
+  No hay `[Authorize(Roles = "Administrador")]`; cada acción llama `RequireAdministrator()` / `IsAdminUser()` manualmente — riesgo de olvido en acciones nuevas.
+  **Acción:** action filter o authorize attribute centralizado; mantener reglas especiales (ADMINDEV) documentadas.
+  Archivos: nuevo filter en `MAT.MVC/Filters/`, aplicar en controllers Admin.
+  Criterio de éxito: Acciones nuevas protegidas por defecto; regresión manual en URLs sensibles.
+
+##### P2 — Funcional / calidad de código
+
+- [x] **Admin [P2]: `MiCuenta` POST — usar `ErrorUtil` en catch**
+  Cambio/creación de contraseña captura excepciones con catch vacío (L643–646, L673–676); sin log ni correlationId.
+  Archivos: `Controllers/Admin/AdminController.cs`.
+  Criterio de éxito: `ErrorUtil.LogAndGetPublicMessage` en catch; mensaje genérico al usuario; MSBuild limpio.
+
+- [x] **Admin [P2]: `GuardarDatos*` — logging en catch silencioso** — *Supersedida: retiro planillas Admin.*
+
+- [x] **Admin [P2]: Acciones planilla (grillas, impresión) — try/catch + `ErrorUtil`** — *Supersedida: retiro planillas Admin.*
+
+- [x] **Admin [P2]: Limpiar JS muerto `PrecioHotelDelete`** — *Supersedida: bloque JS planilla eliminado.*
+
+- [x] **Admin [P2]: `BuscarViajes` — alinear ruta con prefijo `/Admin/Reportes`**
+  Endpoint existe pero no está en constraint `AdminReportes`; URL generada puede ser `/Reportes/BuscarViajes` en lugar de `/Admin/Reportes/BuscarViajes`.
+  Archivos: `App_Start/RouteConfig.cs`, scripts que consuman la URL.
+  Criterio de éxito: URL consistente con el resto del hub Reportes; autocomplete sigue funcionando.
+
+- [x] **Admin [P2]: Eliminar o documentar `SistemaParametroJson` sin consumidor**
+  Endpoint JSON en controller sin uso en vistas; código muerto o feature incompleta.
+  Archivos: `AdminController.cs`, `Views/Admin/SistemaParametros.cshtml`.
+  Criterio de éxito: Endpoint usado o eliminado; sin dead code.
+
+##### P2 — UX / UI (específicos de auditoría)
+
+- [x] **Admin [P2 — UX]: Planillas — acceso desde menú o documentar URL-only** — *Supersedida: submódulo planillas eliminado (ya no aplica).*
+
+- [x] **Admin [P2 — UX]: Unificar título Auditoría — "Reservas" vs "Facturas"**
+  Card en Index: "Auditoría de Reservas"; vista `AuditoriaFacturas.cshtml`: título orientado a facturas. Alinear nomenclatura con lo que muestra el SP `usp_MAT_Admin_AuditoriaFacturas`.
+  Archivos: `Views/Admin/Index.cshtml`, `Views/Admin/AuditoriaFacturas.cshtml`.
+  Criterio de éxito: Mismo término en card, `<title>` y cabecera de vista.
+
+- [x] **Admin [P2 — UX]: `@section Scripts` en `<head>` del layout Admin**
+  `_LayoutAdmin.cshtml` renderiza `@RenderSection("Scripts")` dentro de `<head>` (L56–58), patrón no estándar; puede causar orden de carga incorrecto.
+  **Acción:** mover sección Scripts antes de `</body>` (como `_Layout.cshtml` principal).
+  Archivos: `Views/Shared/_LayoutAdmin.cshtml`; revisar vistas Admin que dependan del orden actual.
+  Criterio de éxito: Scripts al pie del body; sin regresiones en DataTables/datepickers Admin.
+
+- [x] **Admin [P2 — UX]: Sidebar — resaltar ítem padre en subrutas Reportes**
+  Script de link activo compara pathname exacto; `/Admin/Reportes/ReporteVentas` no marca "Reportes operativos" como activo.
+  Archivos: `Views/Shared/_LayoutAdmin.cshtml` (script L201–214).
+  Criterio de éxito: Subpáginas de Reportes resaltan entrada de menú correspondiente.
+
+- [x] **Admin [P2 — UX]: `Index.cshtml` — null-check en gate ADMINDEV**
+  L371: `User.Identity.Name.ToUpper()` sin verificar null ( `_LayoutAdmin` ya lo hace correctamente).
+  Archivos: `Views/Admin/Index.cshtml`.
+  Criterio de éxito: Sin excepción si `Name` es null; sección Dev oculta.
+
+##### P3 — Deuda técnica / limpieza
+
+- [x] **Admin [P3]: Eliminar CSS admin huérfanos del `.csproj`**
+  `mat.forms.admin.css`, `tabla.admin.css`, `style-light-admin.css` referenciados en proyecto pero no cargados en `_LayoutAdmin`.
+  Archivos: `MAT.MVC.csproj`, carpetas `Content/`.
+  Criterio de éxito: Sin assets muertos en csproj o archivos eliminados si no se usan en ningún lado.
+
+- [x] **Admin [P3]: Eliminar o implementar `PartialGridPlanillaHotelPrint.cshtml` vacío** — *Supersedida: retiro planillas Admin.*
+
+- [x] **Admin [P3]: Extraer CSS inline de `Admin/Index.cshtml` a `admin.modern.css`**
+  ~200 líneas de estilos embebidos duplican tokens; alinear con task "Unificar sistema de tokens CSS".
+  Archivos: `Views/Admin/Index.cshtml`, `Content/admin.modern.css`.
+  Criterio de éxito: Index sin bloque `<style>` grande; apariencia sin regresión.
+
+- [x] **Admin [P3]: Quitar `console.log` de debug en guardado planilla** — *Supersedida: bloque JS planilla eliminado.*
+
 ### P3 — Nuevas capacidades
 
 - [x] **Admin: Agregar acción de eliminar usuario**

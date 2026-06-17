@@ -2,6 +2,34 @@
 
 ---
 
+### [2026-06-17] — Admin: auditoría P1–P3 (plan sin planillas)
+
+- Archivos modificados:
+  - `MAT.MVC/Controllers/Admin/AdminController.cs` — retiro planillas; `AuditFactura` con ErrorUtil; `MiCuenta` ErrorUtil; eliminado `SistemaParametroJson` y checks manuales auth
+  - `MAT.MVC/Controllers/Admin/ReportesController.cs` — `[RequireAdministrator]`; eliminados helpers auth duplicados
+  - `MAT.MVC/Infrastructure/AdminAuthorizationHelper.cs` *(nuevo)*
+  - `MAT.MVC/Filters/RequireAdministratorAttribute.cs` *(nuevo)*
+  - `MAT.MVC/App_Start/RouteConfig.cs` — sin `RankingExcel`; `BuscarViajes` en constraint
+  - `MAT.MVC/Views/Admin/*` — Index, AuditoriaFacturas, SistemaParametros; eliminadas 10 vistas planilla
+  - `MAT.MVC/Views/Shared/_LayoutAdmin.cshtml` — Scripts al pie; sidebar SistemaParametros; activo Reportes
+  - `MAT.MVC/Content/admin.modern.css` — estilos `.admin-hub`
+  - Eliminados: modelos planilla MVC, `mat.planillaprint.css`, CSS huérfanos, JS planilla en `mat.jquery.binding.js`
+  - `DOCUMENTACION/REPORTES_*.md`, `VISTAS_PENDIENTES_ACTUALIZACION.md`, `SPEC.md`
+- Qué se implementó: Plan auditoría Admin en 4 entregas — retiro total submódulo planillas; P1 RankingExcel + AuditFactura; P2 filtro `[RequireAdministrator]`, XSS SistemaParametros, auth unificada; P2 UX layout/sidebar/títulos; P3 CSS huérfanos e Index sin inline styles.
+- Problemas encontrados: Ninguno bloqueante en compilación.
+- Estado: ✅ completo (smoke test manual pendiente en IIS)
+
+---
+
+### [2026-06-17] — Admin: auditoría documentada en SPEC
+
+- Archivos modificados: `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Revisión del módulo `/Admin` (controladores, vistas, layout, JS). Hallazgos clasificados en **22 tasks pendientes** bajo `SPEC.md` → sección **"Admin — Auditoría funcional, seguridad y UX (2026-06-17)"** (P1 bugs, P2 seguridad/funcional/UX, P3 deuda). Tasks de UI transversal ya existentes (sidebar SistemaParametros, tokens CSS, etc.) referenciadas sin duplicar.
+- Problemas encontrados: Prioridad inmediata — `DeletePlanilla` por GET, guardado planilla async con falso éxito, rutas `RankingExcel` huérfanas.
+- Estado: ✅ documentación completa (implementación pendiente)
+
+---
+
 ### [2026-06-16] — DistribucionCoche: auditoría post-Fase 2 y compatibilidad servidor
 
 - Archivos modificados:

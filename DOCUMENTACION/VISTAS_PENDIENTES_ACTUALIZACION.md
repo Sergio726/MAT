@@ -3,7 +3,9 @@
 **Fecha de creación:** 2025-01-27  
 **Estado:** En progreso — Fases 2–4 completadas en código; **Fase 5 cerrada en inventario** (auditoría código vs listado 2026-04-08); P1 continúa en Fase 6 y limpieza de ⏳ restantes.
 
-> **2026-04-07 — Retiro de producto (SPEC):** se eliminaron del menú Admin y del código las pantallas **PlanillaServicios**, **PlanillasGeneradas** (lista por viaje), el wizard en sesión (`PartialGridServiciosAdmin`, `GridPlanillaServicioItemContext`, `GridPlanillasGeneradas`) y huérfanos asociados (`PartialDropDownHotel`, `GridPlanillaHotel`, `PartialResumenGridPlanillaHotel` en controller). **Siguen disponibles por URL directa** (uso interno): `EditarPlanilla`, `ImprimirPlanilla`, `ImprimirPlanillaDetalle` y partials de datos por `planillaid` / viaje.
+> **2026-06-17 — Retiro total planillas Admin:** eliminadas del panel todas las rutas/vistas `*Planilla*` (`EditarPlanilla`, `ImprimirPlanilla*`, partials, modelos MVC, JS y `mat.planillaprint.css`). Las tablas/servicios NetTiers `Planilla*` en BD siguen para otros flujos legacy fuera de `/Admin`.
+
+> **2026-04-07 — Retiro de producto (SPEC):** se eliminaron del menú Admin las pantallas **PlanillaServicios**, **PlanillasGeneradas** (lista por viaje), el wizard en sesión y huérfanos asociados. *(Supersedido 2026-06-17 por retiro completo del submódulo.)*
 
 ---
 

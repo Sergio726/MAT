@@ -47,11 +47,14 @@ namespace MAT.MVC.Controllers.Account
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult LogOff()
         {
-            WebSecurity.Logout();
+            if (WebSecurity.IsAuthenticated)
+            {
+                WebSecurity.Logout();
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
