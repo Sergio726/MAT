@@ -709,6 +709,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Alerts.cshtml" />
+    <Content Include="Views\Shared\_AdminConfirmModal.cshtml" />
     <Content Include="Views\Shared\_Breadcrumb.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_ModalClientesNuevosPorPeriodo.cshtml" />
@@ -861,6 +862,7 @@
     <Content Include="Views\Admin\AuditoriaFacturas.cshtml" />
     <Content Include="Views\Admin\ErrorLog.cshtml" />
     <Content Include="Views\Admin\Logs.cshtml" />
+    <Content Include="Views\Admin\SistemaParametros.cshtml" />
     <Content Include="Views\PersonaCliente\HistorialdePagos.cshtml" />
     <Content Include="Views\PersonaCliente\ReciboPago.cshtml" />
     <Content Include="Views\PersonaCliente\partialHistorialdePagos.cshtml" />
