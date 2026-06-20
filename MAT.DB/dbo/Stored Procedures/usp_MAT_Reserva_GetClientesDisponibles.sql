@@ -1,36 +1,33 @@
-﻿create PROCEDURE [dbo].[usp_MAT_Reserva_GetClientesDisponibles] (@ViajeID varchar(max) = ''
-																 )
+﻿CREATE PROCEDURE [dbo].[usp_MAT_Reserva_GetClientesDisponibles] (@ViajeID varchar(max) = '')
 AS 
--- =============================================
--- Author:		Garcia Sergio
--- Create date: 04-01-2017
--- Description:	mostrar clientes que no esten dentro de un viaje especifico
--- =============================================
+/*-- =============================================
+ -- Author: Garcia Sergio
+ -- Create date: 04-01-2017
+ -- Description: Clientes disponibles para reservar en un viaje.
+ -- 2026-06-19 Sebastian Garcia: excluir también pasajeros en otros viajes
+ --   con la misma FechaSalida.
+ ============================================= */
 BEGIN
 	SET NOCOUNT,
     XACT_ABORT ON;
 	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 	
-	if (@ViajeID != '')
-	begin
+	IF (@ViajeID != '')
+	BEGIN
+		DECLARE @ViajeGuid UNIQUEIDENTIFIER = TRY_CAST(@ViajeID AS UNIQUEIDENTIFIER);
 
-		select PasajeroID 
-		into #temp
-		from Pasaje where ViajeID = @ViajeID
+		IF @ViajeGuid IS NULL
+			RETURN;
 
-		select c.ClienteID,
-			   rtrim(ltrim(p.Apellido)) as Apellido,
+		SELECT c.ClienteID,
+			   RTRIM(LTRIM(p.Apellido)) AS Apellido,
 			   p.Nombre,
-			   isnull(p.TipoDocumento,1) as TipoDocumento,
+			   ISNULL(p.TipoDocumento, 1) AS TipoDocumento,
 			   p.NroDocumento,
-			   isnull(p.Telefono,'') AS Telefono,
-			   isnull(p.Email,'') as Email
-		from dbo.Cliente  c
-		inner join dbo.Persona p on p.PersonaID = c.ClienteID
-		left join #temp on PasajeroID = c.ClienteID
-		where pasajeroid is null
-
-		drop table #temp
-
-	end
+			   ISNULL(p.Telefono, '') AS Telefono,
+			   ISNULL(p.Email, '') AS Email
+		FROM dbo.Cliente c
+		INNER JOIN dbo.Persona p ON p.PersonaID = c.ClienteID
+		WHERE dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(c.ClienteID, @ViajeGuid, NULL) = 0;
+	END
 END

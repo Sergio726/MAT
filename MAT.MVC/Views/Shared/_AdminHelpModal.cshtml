@@ -1,0 +1,62 @@
+@using MAT.MVC.Infrastructure
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@{
+    var adminUserName = (User != null && User.Identity != null) ? (User.Identity.Name ?? "") : "";
+    var isAdminDev = !string.IsNullOrWhiteSpace(adminUserName) && adminUserName.ToUpper().Equals("ADMINDEV");
+    var catalog = AdminHelpCatalog.GetItems(isAdminDev);
+    var catalogJson = JsonConvert.SerializeObject(catalog, new JsonSerializerSettings
+    {
+        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+        NullValueHandling = NullValueHandling.Include
+    });
+}
+<form id="adminAntiforgeryForm" class="d-none" aria-hidden="true">
+    @Html.AntiForgeryToken()
+</form>
+<script type="application/json" id="adminHelpCatalogJson">@Html.Raw(catalogJson)</script>
+
+<div class="modal fade" id="adminHelpSearchModal" tabindex="-1" aria-labelledby="adminHelpSearchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content admin-help-search-modal">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="adminHelpSearchModalLabel">
+                    <i class="bi bi-search me-2"></i>Buscar funciones
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <div class="admin-help-search-input-wrap">
+                    <i class="bi bi-search admin-help-search-icon" aria-hidden="true"></i>
+                    <input type="search" class="form-control form-control-lg admin-help-search-input" id="adminHelpSearchModalInput"
+                           placeholder="Escriba para buscar herramientas del panel…" autocomplete="off" aria-label="Buscar funciones del panel admin" />
+                    <kbd class="admin-help-kbd-hint d-none d-md-inline">Ctrl+K</kbd>
+                </div>
+                <p class="small text-secondary mb-2 mt-2">Accesos a reportes, usuarios, sistema e intranet.</p>
+                <div id="adminHelpSearchModalResults" class="admin-help-search-results" role="listbox" aria-label="Resultados de búsqueda"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="adminTourRoot" class="admin-tour-root d-none" aria-hidden="true">
+    <div id="adminTourSpotlight" class="admin-tour-spotlight"></div>
+    <div id="adminTourCard" class="admin-tour-card" role="dialog" aria-modal="true" aria-labelledby="adminTourTitle">
+        <div class="admin-tour-card-header">
+            <span class="admin-tour-step-badge" id="adminTourStepBadge">1 / 6</span>
+            <button type="button" class="btn-close btn-close-white admin-tour-close" id="adminTourSkipTop" aria-label="Omitir tour"></button>
+        </div>
+        <div class="admin-tour-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progreso del tour">
+            <div class="admin-tour-progress-bar" id="adminTourProgressBar"></div>
+        </div>
+        <h3 class="admin-tour-title" id="adminTourTitle"></h3>
+        <p class="admin-tour-text" id="adminTourText"></p>
+        <div class="admin-tour-actions">
+            <button type="button" class="btn btn-link btn-sm text-white-50 p-0" id="adminTourSkip">Omitir tour</button>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-light btn-sm" id="adminTourPrev">Anterior</button>
+                <button type="button" class="btn btn-light btn-sm" id="adminTourNext">Siguiente</button>
+            </div>
+        </div>
+    </div>
+</div>

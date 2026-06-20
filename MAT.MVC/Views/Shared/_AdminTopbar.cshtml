@@ -1,0 +1,81 @@
+@model MAT.MVC.Infrastructure.AdminTopbarViewModel
+<nav class="navbar admin-topbar navbar-dark" id="adminTopbar">
+    <div class="container-fluid admin-topbar-inner">
+        <div class="admin-topbar-start d-flex align-items-center gap-2 min-w-0">
+            <button class="btn admin-topbar-btn admin-topbar-btn-ghost d-lg-none" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#adminOffcanvas" aria-controls="adminOffcanvas"
+                    aria-label="Abrir menú">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <a class="navbar-brand d-flex align-items-center gap-2 flex-shrink-0" href="/Admin/Index">
+                <i class="bi bi-shield-lock"></i>
+                <span class="d-none d-sm-inline">Administración</span>
+            </a>
+
+            @if (!string.IsNullOrWhiteSpace(Model.PageTitle) && !Model.OnAdminIndex)
+            {
+                <span class="admin-topbar-divider d-none d-md-inline" aria-hidden="true"></span>
+                <span class="admin-topbar-page-title d-none d-md-inline" title="@Model.PageTitle">@Model.PageTitle</span>
+            }
+        </div>
+
+        <div class="admin-topbar-actions d-flex align-items-center gap-2">
+            <button class="btn admin-topbar-btn admin-topbar-btn-primary" type="button" id="adminTopbarSearchBtn"
+                    title="Buscar funciones del panel (Ctrl+K)" aria-label="Buscar funciones del panel">
+                <i class="bi bi-search"></i>
+                <span class="d-none d-sm-inline">Buscar</span>
+                <kbd class="admin-topbar-search-kbd d-none d-md-inline">Ctrl+K</kbd>
+            </button>
+
+            <div class="dropdown" id="admin-tour-user-menu">
+                <button class="btn admin-topbar-btn dropdown-toggle" type="button" id="adminUserDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false" title="Menú de usuario">
+                    <span class="admin-topbar-user-avatar" aria-hidden="true">@Model.UserInitials</span>
+                    <span class="d-none d-sm-inline admin-topbar-user-name">@(string.IsNullOrWhiteSpace(Model.UserName) ? "Usuario" : Model.UserName)</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow admin-user-dropdown" aria-labelledby="adminUserDropdown">
+                    <li class="dropdown-header admin-user-dropdown-header">
+                        <span class="admin-user-dropdown-initials">@Model.UserInitials</span>
+                        <div>
+                            <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.UserName) ? "Usuario" : Model.UserName)</div>
+                            <div class="small text-secondary">Administrador</div>
+                        </div>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <a class="dropdown-item" href="#" id="adminHelpMenuTour">
+                            <i class="bi bi-signpost-split me-2"></i>Ver guía de inicio
+                        </a>
+                    </li>
+                    @if (!Model.OnAdminIndex)
+                    {
+                        <li>
+                            <a class="dropdown-item" href="@Url.Action("Index", "Admin")">
+                                <i class="bi bi-grid-1x2 me-2"></i>Volver al panel
+                            </a>
+                        </li>
+                    }
+                    <li>
+                        <a class="dropdown-item" href="/Home/Index">
+                            <i class="bi bi-house-door me-2"></i>Ir a la intranet
+                        </a>
+                    </li>
+                    @if (Model.IsAuthenticated)
+                    {
+                        <li><hr class="dropdown-divider" /></li>
+                        <li>
+                            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "adminLogoutFormTopModern", @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                                </button>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

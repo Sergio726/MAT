@@ -2,6 +2,61 @@
 
 ---
 
+### [2026-06-19] — Admin UI: barra superior y menú lateral (plan completo UX/UI)
+
+- Archivos modificados/creados:
+  - `MAT.MVC/Infrastructure/AdminNavModels.cs` — view models nav/topbar/page context
+  - `MAT.MVC/Infrastructure/AdminHelpCatalog.cs` — sidebar sections, ResolvePage, títulos canónicos
+  - `MAT.MVC/Views/Shared/_AdminTopbar.cshtml`, `_AdminNav.cshtml` — partials unificados
+  - `MAT.MVC/Views/Shared/_LayoutAdmin.cshtml` — layout simplificado, breadcrumb automático
+  - `MAT.MVC/Scripts/mat.admin-nav.js` — active state, secciones colapsables, sidebar colapsado, offcanvas
+  - `MAT.MVC/Scripts/mat.admin-help.js` — tour menú usuario, búsqueda solo topbar
+  - `MAT.MVC/Content/admin.modern.css` — tokens topbar, nav activa, sidebar colapsado, offcanvas footer
+  - `MAT.MVC/Views/Admin/Index.cshtml`, `UsuarioEditar.cshtml`, `UsuarioResetPassword.cshtml`
+  - `MAT.MVC/MAT.MVC.csproj`
+  - `DOCUMENTACION/MANUAL_USUARIO_ADMINISTRADOR.md`, `PROGRESS.md`
+- Qué se implementó:
+  - **Fase 1:** topbar con botón Buscar + menú usuario (guía, panel, intranet, logout); partial `_AdminTopbar`
+  - **Fase 2:** navegación lateral desde `AdminHelpCatalog.GetSidebarSections`; partial único `_AdminNav`; `mat.admin-nav.js`
+  - **Fase 3:** título de página en topbar; breadcrumb automático desde catálogo; breadcrumbs custom en UsuarioEditar/ResetPassword
+  - **Fase 4:** secciones colapsables, sidebar colapsable desktop, userbox con iniciales, acciones en offcanvas mobile, topbar compact al scroll
+- Problemas encontrados: Ninguno en MSBuild MAT.MVC.
+- Estado: ✅ completo (smoke test manual desktop + mobile recomendado)
+
+---
+
+### [2026-06-19] — Admin: mejoras UX onboarding y buscador (UX-01..10)
+
+- Archivos modificados:
+  - `MAT.MVC/Scripts/mat.admin-help.js` — empty state, posición adaptativa tour card, dropdown Ayuda paso 6, Escape/focus/reduced-motion, barra progreso, collapse hub search, replaceState `?tour=1`, toast OnboardingStatus, flechas modal
+  - `MAT.MVC/Views/Admin/Index.cshtml` — buscador al final del hub; hint compacto post-onboarding
+  - `MAT.MVC/Views/Shared/_AdminHelpModal.cshtml` — barra de progreso tour
+  - `MAT.MVC/Content/admin.modern.css`, `_LayoutAdmin.cshtml` (cache bust)
+  - `DOCUMENTACION/MANUAL_USUARIO_ADMINISTRADOR.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: P1/P2 del plan UX — menos ruido visual en Index, flujo de tour alineado al DOM, accesibilidad básica y pulido de búsqueda modal.
+- Problemas encontrados: Ninguno en compilación.
+- Estado: ✅ completo (smoke test manual recomendado)
+
+---
+
+### [2026-06-19] — Admin: onboarding guiado y buscador de funciones
+
+- Archivos modificados:
+  - `MAT.DB/dbo/Tables/AdminUsuarioPreferencia.sql`, `usp_MAT_AdminUsuarioPreferencia_Get.sql`, `usp_MAT_AdminUsuarioPreferencia_SetOnboarding.sql`, `MAT.DB.sqlproj`
+  - `database/2026-06-19_AdminUsuarioPreferencia.sql`
+  - `MAT.MVC/Infrastructure/AdminHelpCatalog.cs`
+  - `MAT.MVC/Controllers/Admin/AdminController.cs` — `OnboardingStatus`, `OnboardingComplete`
+  - `MAT.MVC/Scripts/mat.admin-help.js`, `Content/admin.modern.css`
+  - `MAT.MVC/Views/Shared/_AdminHelpModal.cshtml`, `_LayoutAdmin.cshtml`
+  - `MAT.MVC/Views/Admin/Index.cshtml`
+  - `MAT.MVC/MAT.MVC.csproj`
+  - `DOCUMENTACION/MANUAL_USUARIO_ADMINISTRADOR.md`, `DOCUMENTACION/README.md`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Tour guiado con spotlight en hub Admin (primera visita persistida en BD por UserId). Buscador en Index + modal global (Ctrl+K). Botón Ayuda en topbar (reabrir guía / buscar). Catálogo centralizado ~18 ítems (+ ADMINDEV).
+- Problemas encontrados: Requiere aplicar script SQL en entorno local antes de probar persistencia.
+- Estado: ✅ completo (aplicar migración SQL + smoke test manual)
+
+---
+
 ### [2026-06-17] — Admin UI Lote 3 (tokens CSS, hover cards, sticky headers, breadcrumbs)
 
 - Archivos modificados:

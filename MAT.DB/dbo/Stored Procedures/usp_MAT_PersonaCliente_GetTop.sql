@@ -12,7 +12,8 @@ AS
 -- Description: Obtiene los TOP N clientes. Sin parámetro de búsqueda: primeros 12 registros.
 -- Con búsqueda: filtra por palabras en Apellido, Nombre, NroDocumento, Telefono, Celular o Email.
 -- Las palabras pueden estar separadas por espacio, coma (,) o guión (-).
--- @ViajeID opcional: si se informa, solo devuelve clientes no inscriptos en ese viaje (disponibles para reserva).
+-- @ViajeID opcional: si se informa, excluye clientes ya inscriptos en ese viaje o en otro viaje
+--   con la misma FechaSalida (fecha de inicio/salida del viaje).
 -- Optimizaciones:
 --   - Solo clientes (INNER JOIN Cliente). Filtro por palabras con dbo.Split.
 --   - IsTituarFactura con EXISTS. TipoDocumento y Email para autocomplete.
@@ -60,9 +61,7 @@ BEGIN
         FROM dbo.Persona p WITH (NOLOCK)
         INNER JOIN dbo.Cliente c WITH (NOLOCK) ON c.ClienteID = p.PersonaID
         LEFT JOIN dbo.Localidad l WITH (NOLOCK) ON p.LocalidadID = l.ID
-        WHERE (@SoloDisponiblesParaViaje = 0 OR NOT EXISTS (
-            SELECT 1 FROM dbo.Pasaje pa WITH (NOLOCK) WHERE pa.ViajeID = @ViajeID AND pa.PasajeroID = p.PersonaID
-        ))
+        WHERE (@SoloDisponiblesParaViaje = 0 OR dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(p.PersonaID, @ViajeID, NULL) = 0)
         ORDER BY p.Apellido ASC, p.Nombre ASC;
         RETURN;
     END
@@ -87,9 +86,7 @@ BEGIN
     FROM dbo.Persona p WITH (NOLOCK)
     INNER JOIN dbo.Cliente c WITH (NOLOCK) ON c.ClienteID = p.PersonaID
     LEFT JOIN dbo.Localidad l WITH (NOLOCK) ON p.LocalidadID = l.ID
-    WHERE (@SoloDisponiblesParaViaje = 0 OR NOT EXISTS (
-        SELECT 1 FROM dbo.Pasaje pa WITH (NOLOCK) WHERE pa.ViajeID = @ViajeID AND pa.PasajeroID = p.PersonaID
-    ))
+    WHERE (@SoloDisponiblesParaViaje = 0 OR dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(p.PersonaID, @ViajeID, NULL) = 0)
     AND NOT EXISTS (
         SELECT 1
         FROM dbo.Split(CAST(@SearchTerm AS VARCHAR(200)), ' ') AS s

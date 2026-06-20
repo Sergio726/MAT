@@ -150,6 +150,15 @@ BEGIN
 			))
 				RAISERROR('Hay menores sin asignar adultos.',16,1)
 
+			IF EXISTS (
+				SELECT 1
+				FROM @tempPasajes tp
+				WHERE tp.PasajeroId IS NOT NULL
+				  AND tp.PasajeId IS NOT NULL
+				  AND dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(tp.PasajeroId, @ViajeId, tp.PasajeId) = 1
+			)
+				RAISERROR('Uno o más pasajeros ya están registrados en otro viaje con la misma fecha de salida.', 16, 1);
+
 			
 			/***** Insert factura *****/ 
 			INSERT INTO dbo.Factura 

@@ -1,3 +1,4 @@
+@using MAT.MVC.Infrastructure
 @using System.Web.Security
 <!DOCTYPE html>
 <html>
@@ -10,18 +11,15 @@
 
     @Scripts.Render("~/bundles/modernizr")
 
-    <!-- CSS (nuevo) -->
     <link href="~/Content/bootstrap-5.3.2.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-icons.css" rel="stylesheet" />
     <link href="~/Content/themes/base/jquery-ui-1.13.2.css" rel="stylesheet" />
     <link href="~/Scripts/jquery.timepicker/jquery.timepicker.css" rel="stylesheet" />
     <link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-    <link href="~/Content/admin.modern.css?v=20260617b" rel="stylesheet" />
+    <link href="~/Content/admin.modern.css?v=20260619e" rel="stylesheet" />
 
-    <!-- JS (nuevo) -->
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
-    @* Migrate siempre hace console.log al cargar; filtramos solo durante su carga. *@
     <script>
         (function () {
             var origLog = console.log.bind(console);
@@ -57,90 +55,48 @@
     @{
         var userName = (User != null && User.Identity != null) ? (User.Identity.Name ?? "") : "";
         var isAdminDev = !string.IsNullOrWhiteSpace(userName) && userName.ToUpper().Equals("ADMINDEV");
+        var helpPath = (Request.Url != null ? Request.Url.AbsolutePath : "") ?? "";
+        var onAdminIndex = helpPath.Equals("/Admin/Index", StringComparison.OrdinalIgnoreCase)
+            || helpPath.Equals("/Admin", StringComparison.OrdinalIgnoreCase);
+        var pageContext = AdminHelpCatalog.ResolvePage(helpPath, isAdminDev);
+        var hasCustomBreadcrumb = IsSectionDefined("BreadcrumbItems");
+
+        var topbarModel = new AdminTopbarViewModel
+        {
+            UserName = userName,
+            UserInitials = AdminHelpCatalog.GetUserInitials(userName),
+            PageTitle = pageContext != null ? pageContext.Title : null,
+            OnAdminIndex = onAdminIndex,
+            IsAuthenticated = Request.IsAuthenticated
+        };
+
+        var navModel = new AdminNavViewModel
+        {
+            UserName = userName,
+            UserInitials = AdminHelpCatalog.GetUserInitials(userName),
+            IsAdminDev = isAdminDev,
+            IsOffcanvas = false,
+            Sections = AdminHelpCatalog.GetSidebarSections(isAdminDev)
+        };
+
+        var navOffcanvasModel = new AdminNavViewModel
+        {
+            UserName = userName,
+            UserInitials = AdminHelpCatalog.GetUserInitials(userName),
+            IsAdminDev = isAdminDev,
+            IsOffcanvas = true,
+            Sections = AdminHelpCatalog.GetSidebarSections(isAdminDev)
+        };
     }
 
     <div class="admin-shell">
-        <!-- Toolbar nueva -->
-        <nav class="navbar admin-topbar navbar-dark">
-            <div class="container-fluid">
-                <button class="btn btn-outline-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminOffcanvas" aria-controls="adminOffcanvas" aria-label="Abrir menú">
-                    <i class="bi bi-list"></i>
-                </button>
-
-                <a class="navbar-brand d-flex align-items-center gap-2" href="/Admin/Index">
-                    <i class="bi bi-shield-lock"></i>
-                    <span>Administración</span>
-                </a>
-
-                <div class="d-flex align-items-center gap-2">
-                    <a class="btn btn-outline-light btn-sm" href="/Home/Index" title="Volver al sitio">
-                        <i class="bi bi-house-door"></i>
-                        <span class="d-none d-sm-inline">Inicio</span>
-                    </a>
-
-                    @if (Request.IsAuthenticated)
-                    {
-                        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "adminLogoutFormTopModern" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-light btn-sm" title="Cerrar sesión">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span class="d-none d-sm-inline">Cerrar sesión</span>
-                            </button>
-                        }
-                    }
-                </div>
-            </div>
-        </nav>
+        @Html.Partial("_AdminTopbar", topbarModel)
 
         <div class="admin-main">
-            <!-- Sidebar nueva (desktop) -->
             <aside class="admin-sidebar d-none d-lg-flex flex-column p-3 gap-2">
-                <div class="admin-userbox">
-                    <div class="name">
-                        <i class="bi bi-person-circle me-2"></i>
-                        @(string.IsNullOrWhiteSpace(userName) ? "Usuario" : userName)
-                    </div>
-                    <div class="muted">Panel Admin</div>
-                </div>
-
-                <div class="nav-section-title">Reportes</div>
-                <nav class="nav nav-pills flex-column gap-1" id="adminNavDesktop">
-                    <a class="nav-link" href="/Admin/Index"><i class="bi bi-grid-1x2"></i> Panel</a>
-                    <a class="nav-link" href="/Admin/ResumenPagos"><i class="bi bi-cash-stack"></i> Pagos por Viaje</a>
-                    <a class="nav-link" href="/Admin/ResumenPagosPorFecha"><i class="bi bi-calendar-check"></i> Pagos por Fecha</a>
-                    <a class="nav-link" href="/Admin/AuditoriaFacturas"><i class="bi bi-clipboard-check"></i> Auditoría</a>
-                    <a class="nav-link" href="/Admin/Reportes"><i class="bi bi-graph-up-arrow"></i> Reportes operativos</a>
-                </nav>
-
-                <div class="nav-section-title">Usuarios</div>
-                <nav class="nav nav-pills flex-column gap-1">
-                    <a class="nav-link" href="/Admin/Usuarios"><i class="bi bi-people"></i> Listado de usuarios</a>
-                    <a class="nav-link" href="/Admin/RegistrarVendedor"><i class="bi bi-person-plus"></i> Registrar vendedor</a>
-                    <a class="nav-link" href="/Admin/MiCuenta"><i class="bi bi-key"></i> Mi cuenta</a>
-                </nav>
-
-                <div class="nav-section-title">Sistema</div>
-                <nav class="nav nav-pills flex-column gap-1">
-                    <a class="nav-link" href="/Admin/SistemaParametros"><i class="bi bi-sliders"></i> Parámetros del sistema</a>
-                    <a class="nav-link" href="/Admin/ErrorLog"><i class="bi bi-bug"></i> Error Log</a>
-                    <a class="nav-link" href="/Admin/Logs"><i class="bi bi-terminal"></i> Log en memoria</a>
-                </nav>
-
-                @if (isAdminDev)
-                {
-                    <div class="nav-section-title">Dev</div>
-                    <nav class="nav nav-pills flex-column gap-1">
-                        <a class="nav-link" href="/Home/HistorialPagos"><i class="bi bi-clock-history"></i> Historial Pagos</a>
-                    </nav>
-                }
-
-                <div class="mt-auto pt-2">
-                    <small class="text-white-50">MAT Admin</small>
-                </div>
+                @Html.Partial("_AdminNav", navModel)
             </aside>
 
-            <!-- Offcanvas nueva (mobile) -->
             <div class="offcanvas offcanvas-start admin-offcanvas d-lg-none" tabindex="-1" id="adminOffcanvas" aria-labelledby="adminOffcanvasLabel">
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title" id="adminOffcanvasLabel">
@@ -148,56 +104,36 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
                 </div>
-                <div class="offcanvas-body">
-                    <div class="admin-userbox mb-3">
-                        <div class="name"><i class="bi bi-person-circle me-2"></i>@(string.IsNullOrWhiteSpace(userName) ? "Usuario" : userName)</div>
-                        <div class="muted">Panel Admin</div>
-                    </div>
-
-                    <div class="nav-section-title">Reportes</div>
-                    <nav class="nav nav-pills flex-column gap-1">
-                        <a class="nav-link" href="/Admin/Index"><i class="bi bi-grid-1x2"></i> Panel</a>
-                        <a class="nav-link" href="/Admin/ResumenPagos"><i class="bi bi-cash-stack"></i> Pagos por Viaje</a>
-                        <a class="nav-link" href="/Admin/ResumenPagosPorFecha"><i class="bi bi-calendar-check"></i> Pagos por Fecha</a>
-                        <a class="nav-link" href="/Admin/AuditoriaFacturas"><i class="bi bi-clipboard-check"></i> Auditoría</a>
-                        <a class="nav-link" href="/Admin/Reportes"><i class="bi bi-graph-up-arrow"></i> Reportes operativos</a>
-                    </nav>
-
-                    <div class="nav-section-title">Usuarios</div>
-                    <nav class="nav nav-pills flex-column gap-1">
-                        <a class="nav-link" href="/Admin/Usuarios"><i class="bi bi-people"></i> Listado de usuarios</a>
-                        <a class="nav-link" href="/Admin/RegistrarVendedor"><i class="bi bi-person-plus"></i> Registrar vendedor</a>
-                        <a class="nav-link" href="/Admin/MiCuenta"><i class="bi bi-key"></i> Mi cuenta</a>
-                    </nav>
-
-                    <div class="nav-section-title">Sistema</div>
-                    <nav class="nav nav-pills flex-column gap-1">
-                        <a class="nav-link" href="/Admin/SistemaParametros"><i class="bi bi-sliders"></i> Parámetros del sistema</a>
-                        <a class="nav-link" href="/Admin/ErrorLog"><i class="bi bi-bug"></i> Error Log</a>
-                        <a class="nav-link" href="/Admin/Logs"><i class="bi bi-terminal"></i> Log en memoria</a>
-                    </nav>
-
-                    @if (isAdminDev)
-                    {
-                        <div class="nav-section-title">Dev</div>
-                        <nav class="nav nav-pills flex-column gap-1">
-                            <a class="nav-link" href="/Home/HistorialPagos"><i class="bi bi-clock-history"></i> Historial Pagos</a>
-                        </nav>
-                    }
+                <div class="offcanvas-body d-flex flex-column">
+                    @Html.Partial("_AdminNav", navOffcanvasModel)
                 </div>
             </div>
 
-            <!-- Content -->
             <main class="admin-content">
                 <div class="admin-content-inner">
-                    @if (IsSectionDefined("BreadcrumbItems"))
+                    @if (hasCustomBreadcrumb || (pageContext != null && pageContext.ShowBreadcrumb))
                     {
                         <nav class="admin-breadcrumb" aria-label="breadcrumb">
                             <ol class="breadcrumb mb-3">
                                 <li class="breadcrumb-item">
                                     <a href="@Url.Action("Index", "Admin")">Administración</a>
                                 </li>
-                                @RenderSection("BreadcrumbItems", required: false)
+                                @if (hasCustomBreadcrumb)
+                                {
+                                    RenderSection("BreadcrumbItems", false);
+                                }
+                                else if (pageContext != null)
+                                {
+                                    if (!string.IsNullOrWhiteSpace(pageContext.SectionTitle)
+                                        && !string.IsNullOrWhiteSpace(pageContext.SectionUrl)
+                                        && !pageContext.Title.Equals(pageContext.SectionTitle, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <li class="breadcrumb-item">
+                                            <a href="@pageContext.SectionUrl">@pageContext.SectionTitle</a>
+                                        </li>
+                                    }
+                                    <li class="breadcrumb-item active" aria-current="page">@pageContext.Title</li>
+                                }
                             </ol>
                         </nav>
                     }
@@ -209,25 +145,12 @@
     </div>
 
     @Html.Partial("_AdminConfirmModal")
+    @Html.Partial("_AdminHelpModal")
     <div id="adminToastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" aria-live="polite" style="z-index:1100"></div>
 
     @RenderSection("Scripts", required: false)
 
-    <script>
-        (function () {
-            // Mark active link in sidebar based on current path
-            var path = (window.location.pathname || "").toLowerCase();
-            var links = document.querySelectorAll(".admin-sidebar .nav-link, .admin-offcanvas .nav-link");
-            for (var i = 0; i < links.length; i++) {
-                var href = (links[i].getAttribute("href") || "").toLowerCase();
-                if (!href) continue;
-                if (href === "/admin/reportes" && path.indexOf("/admin/reportes") === 0) {
-                    links[i].classList.add("active");
-                } else if (path === href || path.indexOf(href + "/") === 0) {
-                    links[i].classList.add("active");
-                }
-            }
-        })();
-    </script>
+    <script src="~/Scripts/mat.admin-nav.js?v=20260619e"></script>
+    <script src="~/Scripts/mat.admin-help.js?v=20260619e"></script>
 </body>
 </html>

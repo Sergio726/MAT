@@ -6,6 +6,20 @@
 - [x] Setup inicial del proyecto — estructura de solución, CLAUDE.md, SPEC.md, PROGRESS.md
 - [x] Admin — eliminar usuario (`UsuarioEliminar`, confirmación BS5, restricciones auto-eliminación y último administrador)
 - [x] Admin — exportar resumen de pagos por viaje a Excel (EPPlus, `ResumenPagosExcel`)
+- [x] **Admin: Onboarding guiado y buscador de funciones**
+  Tour por secciones en `/Admin/Index` (primera visita por usuario, persistido en BD `AdminUsuarioPreferencia`). Buscador en hub + modal global (Ctrl+K). Botón Ayuda en topbar para reabrir guía o búsqueda.
+  Archivos: `AdminController` (OnboardingStatus/Complete), `AdminHelpCatalog.cs`, `mat.admin-help.js`, `_AdminHelpModal.cshtml`, `_LayoutAdmin.cshtml`, `Index.cshtml`, `admin.modern.css`, `MAT.DB` (tabla + SPs).
+  Criterio de éxito: Admin nuevo ve tour una sola vez; Ayuda reabre tour; búsqueda encuentra herramientas del panel; MSBuild limpio.
+
+- [x] **Admin: Mejoras UX onboarding y buscador (UX-01..10)**
+  Empty state en búsqueda sin query; buscador reordenado al final del hub; tarjeta tour adaptativa; paso Ayuda abre dropdown; Escape/focus/reduced-motion; barra de progreso; hub search compacto post-onboarding; limpieza `?tour=1`; toast si falla OnboardingStatus; flechas en modal de búsqueda.
+  Archivos: `mat.admin-help.js`, `Index.cshtml`, `_AdminHelpModal.cshtml`, `admin.modern.css`, `_LayoutAdmin.cshtml`, manual admin.
+
+#### Admin — Onboarding / Ayuda — mejoras futuras (backlog)
+
+- [ ] **Admin [P3]: Búsqueda ampliada a módulos de intranet** — incluir viajes, presupuestos, facturas operativas en el catálogo (fuera de `/Admin`).
+- [ ] **Admin [P3]: Tour contextual por pantalla** — mini-guías en Reportes, Usuarios, etc., sin reemplazar el hub tour.
+- [ ] **Admin [P3]: Reset onboarding desde UI** — acción admin para marcar tour pendiente de nuevo (sin SQL manual).
 
 ---
 

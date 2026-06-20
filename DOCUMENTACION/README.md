@@ -4,6 +4,7 @@ Esta carpeta contiene la documentación del proyecto.
 
 ## Archivos Disponibles
 
+- **MANUAL_USUARIO_ADMINISTRADOR.md** - Manual del rol Administrador (incluye onboarding y buscador del panel)
 - **MAT_DB.md** - Documentación del proyecto de base de datos MAT.DB (esquema SSDT, publicar, comparar)
 - **LIBRERIAS_OBSOLETAS_*.md** - Análisis de librerías JavaScript y CSS obsoletas
 - **TEST_FASE1_*.md** - Plan de pruebas para la Fase 1 de actualización

@@ -4,7 +4,7 @@
 }
 
 <div class="admin-hub admin-container">
-    <div class="admin-header">
+    <div class="admin-header" id="admin-tour-header">
         <h1 class="admin-title">
             <i class="bi bi-shield-lock"></i>
             Panel de Administración
@@ -12,7 +12,7 @@
         <p class="admin-subtitle">Sección exclusiva para administradores del sistema</p>
     </div>
 
-    <div class="admin-section">
+    <div class="admin-section" id="admin-tour-section-reportes">
         <h2 class="admin-section-title">
             <i class="bi bi-bar-chart-line"></i>
             Reportes y Consultas
@@ -56,7 +56,7 @@
                     <i class="bi bi-graph-up-arrow"></i>
                 </div>
                 <div class="admin-card-content">
-                    <h3 class="admin-card-title">Reportes</h3>
+                    <h3 class="admin-card-title">Reportes operativos</h3>
                     <p class="admin-card-description">Ventas, pagos y ranking de vendedores</p>
                 </div>
                 <i class="bi bi-chevron-right admin-card-arrow"></i>
@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <div class="admin-section">
+    <div class="admin-section" id="admin-tour-section-usuarios">
         <h2 class="admin-section-title">
             <i class="bi bi-people"></i>
             Usuarios
@@ -105,7 +105,7 @@
         </div>
     </div>
 
-    <div class="admin-section">
+    <div class="admin-section" id="admin-tour-section-sistema">
         <h2 class="admin-section-title">
             <i class="bi bi-activity"></i>
             Sistema y diagnóstico
@@ -143,6 +143,26 @@
             </a>
         </div>
     </div>
+
+    <section class="admin-help-search-section" id="admin-tour-search" aria-labelledby="adminHelpHubSearchTitle">
+        <h2 class="admin-help-search-section-title" id="adminHelpHubSearchTitle">
+            <i class="bi bi-search"></i>
+            Buscar funciones
+        </h2>
+        <p class="admin-help-search-compact-hint text-secondary small mb-0">
+            <i class="bi bi-keyboard me-1"></i>
+            Buscar herramientas: use el botón <strong>Buscar</strong> en la barra superior, el menú de usuario o el atajo <kbd class="admin-help-kbd-inline">Ctrl+K</kbd>.
+        </p>
+        <div class="admin-help-search-expanded">
+            <div class="admin-help-search-input-wrap">
+                <i class="bi bi-search admin-help-search-icon" aria-hidden="true"></i>
+                <input type="search" class="form-control form-control-lg admin-help-search-input" id="adminHelpHubSearchInput"
+                       placeholder="Buscar reportes, usuarios, logs, códigos…" autocomplete="off" aria-label="Buscar herramientas del panel admin" />
+                <kbd class="admin-help-kbd-hint d-none d-md-inline">Ctrl+K</kbd>
+            </div>
+            <div id="adminHelpHubSearchResults" class="admin-help-search-results" role="listbox" aria-label="Resultados de búsqueda en el panel"></div>
+        </div>
+    </section>
 
     @{
         var adminUserName = (User != null && User.Identity != null) ? (User.Identity.Name ?? "") : "";

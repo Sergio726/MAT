@@ -330,6 +330,8 @@
     <Compile Include="Filters\RequestGuardFilter.cs" />
     <Compile Include="Infrastructure\DbErrorLogger.cs" />
     <Compile Include="Infrastructure\AdminAuthorizationHelper.cs" />
+    <Compile Include="Infrastructure\AdminHelpCatalog.cs" />
+    <Compile Include="Infrastructure\AdminNavModels.cs" />
     <Compile Include="Infrastructure\ErrorUtil.cs" />
     <Compile Include="Infrastructure\ReportesDataReaderMapper.cs" />
     <Compile Include="Infrastructure\AdminResumenPagosExcelExport.cs" />
@@ -710,6 +712,9 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Alerts.cshtml" />
     <Content Include="Views\Shared\_AdminConfirmModal.cshtml" />
+    <Content Include="Views\Shared\_AdminHelpModal.cshtml" />
+    <Content Include="Views\Shared\_AdminNav.cshtml" />
+    <Content Include="Views\Shared\_AdminTopbar.cshtml" />
     <Content Include="Views\Shared\_Breadcrumb.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_ModalClientesNuevosPorPeriodo.cshtml" />
@@ -748,6 +753,8 @@
     <Content Include="Views\Shared\_ViajesPartial.cshtml" />
     <Content Include="Scripts\mat.jquery.initialize.js" />
     <Content Include="Scripts\mat.admin-utils.js" />
+    <Content Include="Scripts\mat.admin-help.js" />
+    <Content Include="Scripts\mat.admin-nav.js" />
     <Content Include="Scripts\mat.reportes-utils.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
     <Content Include="Scripts\mat.reportes-ventas-facturado-modal.js" />

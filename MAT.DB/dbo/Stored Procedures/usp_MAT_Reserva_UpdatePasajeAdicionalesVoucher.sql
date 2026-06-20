@@ -22,6 +22,18 @@ AS
 	  BEGIN TRY 
 			BEGIN TRAN
 
+			DECLARE @ViajeID UNIQUEIDENTIFIER;
+
+			SELECT @ViajeID = p.ViajeID
+			FROM dbo.Pasaje p
+			WHERE p.PasajeID = @PasajeID;
+
+			IF dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(@PasajeroID, @ViajeID, @PasajeID) = 1
+			BEGIN
+				RAISERROR('El pasajero ya está registrado en otro viaje con la misma fecha de salida.', 16, 1);
+				RETURN;
+			END
+
 			/*update pasaje*/
 			UPDATE Pasaje 
 			SET   FacturaID = @FacturaID,

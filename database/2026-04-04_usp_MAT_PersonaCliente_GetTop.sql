@@ -58,9 +58,7 @@ BEGIN
         FROM dbo.Persona p WITH (NOLOCK)
         INNER JOIN dbo.Cliente c WITH (NOLOCK) ON c.ClienteID = p.PersonaID
         LEFT  JOIN dbo.Localidad l WITH (NOLOCK) ON p.LocalidadID = l.ID
-        WHERE (@SoloDisponiblesParaViaje = 0 OR NOT EXISTS (
-            SELECT 1 FROM dbo.Pasaje pa WITH (NOLOCK) WHERE pa.ViajeID = @ViajeID AND pa.PasajeroID = p.PersonaID
-        ))
+        WHERE (@SoloDisponiblesParaViaje = 0 OR dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(p.PersonaID, @ViajeID, NULL) = 0)
         ORDER BY p.Apellido ASC, p.Nombre ASC;
         RETURN;
     END
@@ -84,9 +82,7 @@ BEGIN
     FROM dbo.Persona p WITH (NOLOCK)
     INNER JOIN dbo.Cliente c WITH (NOLOCK) ON c.ClienteID = p.PersonaID
     LEFT  JOIN dbo.Localidad l WITH (NOLOCK) ON p.LocalidadID = l.ID
-    WHERE (@SoloDisponiblesParaViaje = 0 OR NOT EXISTS (
-        SELECT 1 FROM dbo.Pasaje pa WITH (NOLOCK) WHERE pa.ViajeID = @ViajeID AND pa.PasajeroID = p.PersonaID
-    ))
+    WHERE (@SoloDisponiblesParaViaje = 0 OR dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(p.PersonaID, @ViajeID, NULL) = 0)
     AND NOT EXISTS (
         SELECT 1
         FROM dbo.Split(CAST(@SearchTerm AS VARCHAR(200)), ' ') AS s

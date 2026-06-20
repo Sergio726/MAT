@@ -142,6 +142,7 @@
     <Build Include="dbo\Tables\PaquetePrecio.sql" />
     <Build Include="dbo\Tables\ErrorLog.sql" />
     <Build Include="dbo\Tables\SistemaParametro.sql" />
+    <Build Include="dbo\Tables\AdminUsuarioPreferencia.sql" />
     <Build Include="dbo\Tables\ScriptLog.sql" />
     <Build Include="dbo\Tables\PaqueteServicio.sql" />
     <Build Include="dbo\Tables\Seat.sql" />
@@ -179,6 +180,7 @@
     <Build Include="Security\matuser.sql" />
     <Build Include="Security\matuser_1.sql" />
     <Build Include="Security\RoleMemberships.sql" />
+    <Build Include="dbo\Functions\fn_MAT_Pasaje_TieneConflictoFechaSalida.sql" />
     <Build Include="dbo\Functions\fn_MAT_SaldoFactura.sql" />
     <Build Include="dbo\Functions\FilteredIndexFragmentation.sql" />
     <Build Include="dbo\Functions\Split.sql" />
@@ -1063,6 +1065,8 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_SistemaParametro_Update.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_SistemaParametro_Toggle.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Admin_AuditoriaFacturas.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_AdminUsuarioPreferencia_Get.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_AdminUsuarioPreferencia_SetOnboarding.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedurePasaje_Find.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>

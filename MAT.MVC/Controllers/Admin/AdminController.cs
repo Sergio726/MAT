@@ -1010,5 +1010,89 @@ namespace MAT.MVC.Controllers.Admin
                 return Json(new { ok = false, message = msg });
             }
         }
+
+        [HttpGet]
+        [Authorize]
+        public JsonResult OnboardingStatus()
+        {
+            try
+            {
+                var userId = GetCurrentUserIdSafe();
+                if (userId <= 0)
+                    return Json(new { ok = false, message = "Usuario no identificado.", data = (object)null }, JsonRequestBehavior.AllowGet);
+
+                var completed = false;
+                string completedAt = null;
+
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@UserId", SqlDbType.Int, 0, userId)
+                };
+
+                using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_AdminUsuarioPreferencia_Get", dbParams))
+                {
+                    if (reader.Read())
+                    {
+                        completed = reader["AdminOnboardingCompletado"] != DBNull.Value && Convert.ToBoolean(reader["AdminOnboardingCompletado"]);
+                        if (reader["FechaOnboardingCompletado"] != DBNull.Value)
+                            completedAt = Convert.ToDateTime(reader["FechaOnboardingCompletado"]).ToString("yyyy-MM-ddTHH:mm:ss");
+                    }
+                }
+
+                return Json(new
+                {
+                    ok = true,
+                    message = (string)null,
+                    data = new { completed, completedAt }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "AdminController.OnboardingStatus");
+                return Json(new { ok = false, message = msg, data = (object)null }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public JsonResult OnboardingComplete()
+        {
+            try
+            {
+                var userId = GetCurrentUserIdSafe();
+                if (userId <= 0)
+                    return Json(new { ok = false, message = "Usuario no identificado." });
+
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@UserId", SqlDbType.Int, 0, userId),
+                    DBHelper.MakeParam("@Completado", SqlDbType.Bit, 0, true)
+                };
+
+                DBHelper.ExecuteNonQuery("dbo.usp_MAT_AdminUsuarioPreferencia_SetOnboarding", dbParams);
+                return Json(new { ok = true, message = (string)null });
+            }
+            catch (Exception ex)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "AdminController.OnboardingComplete");
+                return Json(new { ok = false, message = msg });
+            }
+        }
+
+        private static int GetCurrentUserIdSafe()
+        {
+            try
+            {
+                if (WebSecurity.Initialized && WebSecurity.HasUserId)
+                    return WebSecurity.CurrentUserId;
+            }
+            catch
+            {
+                // ignore
+            }
+
+            return 0;
+        }
     }
 }

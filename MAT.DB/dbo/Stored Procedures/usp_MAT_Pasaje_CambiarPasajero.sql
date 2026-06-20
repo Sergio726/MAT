@@ -43,6 +43,18 @@ BEGIN
             SET @Result = 'Error: El pasajero especificado no tiene registro en la tabla Pasajero.';
             RETURN;
         END
+
+        DECLARE @ViajeID UNIQUEIDENTIFIER;
+
+        SELECT @ViajeID = p.ViajeID
+        FROM dbo.Pasaje p
+        WHERE p.PasajeID = @PasajeID;
+
+        IF dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(@NuevoPasajeroID, @ViajeID, @PasajeID) = 1
+        BEGIN
+            SET @Result = 'Error: El pasajero ya está registrado en otro viaje con la misma fecha de salida.';
+            RETURN;
+        END
         
         -- Actualizar el PasajeroID del pasaje
         UPDATE dbo.Pasaje

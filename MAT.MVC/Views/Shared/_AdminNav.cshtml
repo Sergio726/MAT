@@ -1,0 +1,73 @@
+@model MAT.MVC.Infrastructure.AdminNavViewModel
+@{
+    var navRootClass = Model.IsOffcanvas ? "admin-nav admin-nav--offcanvas" : "admin-nav admin-nav--sidebar";
+    var displayName = string.IsNullOrWhiteSpace(Model.UserName) ? "Usuario" : Model.UserName;
+}
+
+<div class="@navRootClass" id="@(Model.IsOffcanvas ? "adminNavOffcanvas" : "adminNavDesktop")">
+    <a href="/Admin/MiCuenta" class="admin-userbox text-decoration-none" title="Mi cuenta">
+        <div class="admin-userbox-avatar" aria-hidden="true">@Model.UserInitials</div>
+        <div class="admin-userbox-text">
+            <div class="name">@displayName</div>
+            <div class="muted">Administrador</div>
+        </div>
+    </a>
+
+    @foreach (var navSection in Model.Sections)
+    {
+        var sectionPanelId = "adminNavSection-" + navSection.Id + (Model.IsOffcanvas ? "-mobile" : "");
+        <div class="admin-nav-section" data-nav-section="@navSection.Id">
+            <button type="button" class="admin-nav-section-toggle nav-section-title"
+                    aria-expanded="true" aria-controls="@sectionPanelId"
+                    data-nav-section-toggle="@navSection.Id">
+                <span>@navSection.Title</span>
+                <i class="bi bi-chevron-down admin-nav-section-chevron" aria-hidden="true"></i>
+            </button>
+            <nav class="nav nav-pills flex-column gap-1 admin-nav-section-panel" id="@sectionPanelId">
+                @foreach (var item in navSection.Items)
+                {
+                    <a class="nav-link" href="@item.Url" data-nav-url="@item.Url" title="@item.Description">
+                        <i class="bi @item.Icon admin-nav-link-icon" aria-hidden="true"></i>
+                        <span class="admin-nav-link-label">@item.Title</span>
+                    </a>
+                }
+            </nav>
+        </div>
+    }
+
+    @if (!Model.IsOffcanvas)
+    {
+        <div class="admin-nav-footer mt-auto pt-2">
+            <button type="button" class="btn admin-sidebar-collapse-btn w-100" id="adminSidebarCollapse"
+                    title="Colapsar menú lateral" aria-label="Colapsar menú lateral">
+                <i class="bi bi-layout-sidebar-inset" aria-hidden="true"></i>
+                <span class="admin-nav-link-label">Colapsar menú</span>
+            </button>
+            <small class="text-white-50 d-block mt-2 admin-nav-brand">MAT Admin</small>
+        </div>
+    }
+    else
+    {
+        <div class="admin-offcanvas-actions mt-auto pt-3">
+            <button type="button" class="btn admin-offcanvas-action-btn w-100 mb-2" id="adminOffcanvasSearchBtn">
+                <i class="bi bi-search me-2"></i>Buscar funciones
+            </button>
+            <button type="button" class="btn admin-offcanvas-action-btn w-100 mb-2" id="adminOffcanvasTourBtn">
+                <i class="bi bi-signpost-split me-2"></i>Ver guía de inicio
+            </button>
+            <a href="/Home/Index" class="btn admin-offcanvas-action-btn w-100 mb-2">
+                <i class="bi bi-house-door me-2"></i>Ir a la intranet
+            </a>
+            @if (Request.IsAuthenticated)
+            {
+                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "adminLogoutFormOffcanvas", @class = "w-100" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn admin-offcanvas-action-btn admin-offcanvas-action-btn--danger w-100">
+                        <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                    </button>
+                }
+            }
+        </div>
+    }
+</div>

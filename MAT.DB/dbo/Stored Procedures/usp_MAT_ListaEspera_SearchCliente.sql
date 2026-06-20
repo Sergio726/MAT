@@ -32,13 +32,7 @@ Garcia Sergio: create
         FROM dbo.Persona p
              INNER JOIN @tmp t ON p.FullName LIKE '%' + t.Value + '%'
                                   OR p.NroDocumentoCalc LIKE '' + t.Value + '%'
-        WHERE PersonaID NOT IN
-        (
-            SELECT pas.PasajeroID
-            FROM dbo.Pasaje pas
-            WHERE pas.ViajeID = @ViajeID
-				AND pas.PasajeroID is not null
-        )
+        WHERE dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(p.PersonaID, @ViajeID, NULL) = 0
         GROUP BY p.PersonaID, 
                  p.Apellido, 
                  p.Nombre, 
