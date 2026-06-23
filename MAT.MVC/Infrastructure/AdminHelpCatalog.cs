@@ -67,7 +67,32 @@ namespace MAT.MVC.Infrastructure
                     "log", "memoria", "traza", "diagnóstico"),
 
                 Nav("intranet-home", "Ir a la intranet (Home)", "Volver al panel principal de la agencia.", "/Home/Index", "bi-house-door",
-                    "inicio", "intranet", "operación", "vendedores")
+                    "inicio", "intranet", "operación", "vendedores"),
+
+                Intranet("presupuesto-index", "Presupuestos", "Listado y gestión de presupuestos telefónicos.", "/Presupuesto/Index", "bi-file-earmark-text",
+                    "presupuesto", "presupuestos", "cotización", "seguimiento"),
+                Intranet("presupuesto-seguimiento", "Seguimiento de presupuestos", "Seguimiento y estado de presupuestos en curso.", "/Presupuesto/Seguimiento", "bi-clipboard-data",
+                    "presupuesto", "seguimiento", "estado"),
+                Intranet("presupuesto-metricas", "Métricas de presupuestos", "Dashboard de métricas y conversión de presupuestos.", "/Presupuesto/Metricas", "bi-graph-up",
+                    "presupuesto", "métricas", "conversión", "estadísticas"),
+
+                Intranet("viaje-index", "Viajes", "Administración de viajes, reservas y disponibilidad.", "/Viaje/Index", "bi-bus-front",
+                    "viaje", "viajes", "salida", "transporte"),
+                Intranet("viajes-por-fecha", "Viajes por fecha", "Consultar viajes disponibles en una fecha.", "/Home/ViajesPorFecha", "bi-calendar-event",
+                    "viaje", "fecha", "salida", "disponibilidad"),
+                Intranet("todos-los-viajes", "Todos los viajes", "Listado completo de viajes del sistema.", "/Home/TodosLosViajesIndex", "bi-calendar2-week",
+                    "viaje", "viajes", "listado", "todos"),
+
+                Intranet("factura-fiscal-index", "Facturación fiscal", "Listado de facturas fiscales de compra y venta.", "/FacturaFiscal/Index", "bi-receipt-cutoff",
+                    "factura", "fiscal", "compra", "venta", "arca"),
+                Intranet("factura-fiscal-proveedores", "Proveedores fiscales", "Gestión de proveedores para facturación fiscal.", "/FacturaFiscal/Proveedores", "bi-building",
+                    "proveedor", "proveedores", "fiscal", "factura"),
+
+                Intranet("persona-cliente-index", "Clientes", "Listado y búsqueda de clientes de la agencia.", "/PersonaCliente/Index", "bi-people",
+                    "cliente", "clientes", "persona", "cuenta"),
+
+                Intranet("factura-operativa-index", "Búsqueda de facturas", "Consultar facturas operativas de la intranet.", "/Factura/Index", "bi-search",
+                    "factura", "facturas", "operativa", "buscar")
             };
 
             if (includeAdminDevTools)
@@ -288,6 +313,11 @@ namespace MAT.MVC.Infrastructure
         private static AdminHelpCatalogItem Sys(string id, string title, string desc, string url, string icon, params string[] keywords)
         {
             return Item(id, title, desc, url, "Sistema", icon, keywords);
+        }
+
+        private static AdminHelpCatalogItem Intranet(string id, string title, string desc, string url, string icon, params string[] keywords)
+        {
+            return Item(id, title, desc, url, "Intranet", icon, keywords);
         }
 
         private static AdminHelpCatalogItem Item(string id, string title, string desc, string url, string category, string icon, params string[] keywords)

@@ -2,6 +2,30 @@
 
 ---
 
+### [2026-06-19] — Admin P3: documentación + backlog ayuda (intranet, tours contextuales, reset onboarding)
+
+- Archivos modificados/creados:
+  - `MAT.MVC/Infrastructure/AdminContextualTourCatalog.cs` — definición de tours por pantalla
+  - `MAT.MVC/Infrastructure/AdminHelpCatalog.cs` — ~12 ítems categoría Intranet
+  - `MAT.MVC/Controllers/Admin/AdminController.cs` — `POST OnboardingReset`
+  - `MAT.MVC/Views/Shared/_AdminTopbar.cshtml` — menú: guía contextual + reiniciar onboarding
+  - `MAT.MVC/Views/Shared/_AdminHelpModal.cshtml` — JSON tours contextuales, copy buscador
+  - `MAT.MVC/Views/Shared/_LayoutAdmin.cshtml` — `data-admin-user-id` para localStorage
+  - `MAT.MVC/Scripts/mat.admin-help.js` — intranet UI, tours contextuales, reset onboarding
+  - `MAT.MVC/Content/admin.modern.css` — badge Intranet en resultados
+  - `MAT.MVC/Views/Reportes/Index.cshtml`, `Admin/Usuarios.cshtml`, `SistemaParametros.cshtml`, `ErrorLog.cshtml` — anclas tour
+  - `MAT.MVC/MAT.MVC.csproj`
+  - `SPEC.md`, `DOCUMENTACION/MANUAL_USUARIO_ADMINISTRADOR.md`, `DOCUMENTACION/VISTAS_PENDIENTES_ACTUALIZACION.md`
+- Qué se implementó:
+  - **Fase 0:** SPEC actualizado (topbar [x], copy onboarding); manual §2.4; fix duplicado HistorialPrecios
+  - **Fase 1:** reset onboarding desde menú usuario con confirmación y toast
+  - **Fase 2:** búsqueda Ctrl+K incluye módulos intranet con badge visual
+  - **Fase 3:** tours contextuales (Reportes, Usuarios, Parámetros, Error Log) con persistencia localStorage
+- Problemas encontrados: Ninguno en MSBuild MAT.MVC.
+- Estado: ✅ completo
+
+---
+
 ### [2026-06-19] — Admin UI: barra superior y menú lateral (plan completo UX/UI)
 
 - Archivos modificados/creados:

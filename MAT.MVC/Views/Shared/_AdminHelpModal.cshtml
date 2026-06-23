@@ -5,7 +5,13 @@
     var adminUserName = (User != null && User.Identity != null) ? (User.Identity.Name ?? "") : "";
     var isAdminDev = !string.IsNullOrWhiteSpace(adminUserName) && adminUserName.ToUpper().Equals("ADMINDEV");
     var catalog = AdminHelpCatalog.GetItems(isAdminDev);
+    var contextualTours = AdminContextualTourCatalog.GetDefinitions();
     var catalogJson = JsonConvert.SerializeObject(catalog, new JsonSerializerSettings
+    {
+        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+        NullValueHandling = NullValueHandling.Include
+    });
+    var contextualToursJson = JsonConvert.SerializeObject(contextualTours, new JsonSerializerSettings
     {
         ContractResolver = new CamelCasePropertyNamesContractResolver(),
         NullValueHandling = NullValueHandling.Include
@@ -15,6 +21,7 @@
     @Html.AntiForgeryToken()
 </form>
 <script type="application/json" id="adminHelpCatalogJson">@Html.Raw(catalogJson)</script>
+<script type="application/json" id="adminContextualToursJson">@Html.Raw(contextualToursJson)</script>
 
 <div class="modal fade" id="adminHelpSearchModal" tabindex="-1" aria-labelledby="adminHelpSearchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -32,7 +39,7 @@
                            placeholder="Escriba para buscar herramientas del panel…" autocomplete="off" aria-label="Buscar funciones del panel admin" />
                     <kbd class="admin-help-kbd-hint d-none d-md-inline">Ctrl+K</kbd>
                 </div>
-                <p class="small text-secondary mb-2 mt-2">Accesos a reportes, usuarios, sistema e intranet.</p>
+                <p class="small text-secondary mb-2 mt-2">Accesos al panel Admin y módulos de la intranet (presupuestos, viajes, clientes, facturación).</p>
                 <div id="adminHelpSearchModalResults" class="admin-help-search-results" role="listbox" aria-label="Resultados de búsqueda"></div>
             </div>
         </div>

@@ -7,9 +7,13 @@
 - [x] Admin — eliminar usuario (`UsuarioEliminar`, confirmación BS5, restricciones auto-eliminación y último administrador)
 - [x] Admin — exportar resumen de pagos por viaje a Excel (EPPlus, `ResumenPagosExcel`)
 - [x] **Admin: Onboarding guiado y buscador de funciones**
-  Tour por secciones en `/Admin/Index` (primera visita por usuario, persistido en BD `AdminUsuarioPreferencia`). Buscador en hub + modal global (Ctrl+K). Botón Ayuda en topbar para reabrir guía o búsqueda.
-  Archivos: `AdminController` (OnboardingStatus/Complete), `AdminHelpCatalog.cs`, `mat.admin-help.js`, `_AdminHelpModal.cshtml`, `_LayoutAdmin.cshtml`, `Index.cshtml`, `admin.modern.css`, `MAT.DB` (tabla + SPs).
-  Criterio de éxito: Admin nuevo ve tour una sola vez; Ayuda reabre tour; búsqueda encuentra herramientas del panel; MSBuild limpio.
+  Tour por secciones en `/Admin/Index` (primera visita por usuario, persistido en BD `AdminUsuarioPreferencia`). Buscador en hub + modal global (Ctrl+K). Menú de usuario en topbar (guía, intranet, cerrar sesión) + botón **Buscar** dedicado.
+  Archivos: `AdminController` (OnboardingStatus/Complete), `AdminHelpCatalog.cs`, `mat.admin-help.js`, `_AdminHelpModal.cshtml`, `_AdminTopbar.cshtml`, `_LayoutAdmin.cshtml`, `Index.cshtml`, `admin.modern.css`, `MAT.DB` (tabla + SPs).
+  Criterio de éxito: Admin nuevo ve tour una sola vez; menú usuario reabre tour; búsqueda encuentra herramientas del panel; MSBuild limpio.
+
+- [x] **Admin UI: barra superior y menú lateral (plan UX/UI 2026-06-19)**
+  Topbar unificada (`_AdminTopbar.cshtml`): botón Buscar + menú usuario. Navegación lateral desde `AdminHelpCatalog.GetSidebarSections` en `_AdminNav.cshtml` (sin duplicar desktop/offcanvas). Breadcrumb automático, título de página en topbar, sidebar colapsable, secciones colapsables, offcanvas mobile con acciones globales. `mat.admin-nav.js`.
+  Criterio de éxito: una sola fuente de verdad de nav; nombres alineados con hub; MSBuild limpio.
 
 - [x] **Admin: Mejoras UX onboarding y buscador (UX-01..10)**
   Empty state en búsqueda sin query; buscador reordenado al final del hub; tarjeta tour adaptativa; paso Ayuda abre dropdown; Escape/focus/reduced-motion; barra de progreso; hub search compacto post-onboarding; limpieza `?tour=1`; toast si falla OnboardingStatus; flechas en modal de búsqueda.
@@ -17,9 +21,9 @@
 
 #### Admin — Onboarding / Ayuda — mejoras futuras (backlog)
 
-- [ ] **Admin [P3]: Búsqueda ampliada a módulos de intranet** — incluir viajes, presupuestos, facturas operativas en el catálogo (fuera de `/Admin`).
-- [ ] **Admin [P3]: Tour contextual por pantalla** — mini-guías en Reportes, Usuarios, etc., sin reemplazar el hub tour.
-- [ ] **Admin [P3]: Reset onboarding desde UI** — acción admin para marcar tour pendiente de nuevo (sin SQL manual).
+- [x] **Admin [P3]: Búsqueda ampliada a módulos de intranet** — incluir viajes, presupuestos, facturas operativas en el catálogo (fuera de `/Admin`).
+- [x] **Admin [P3]: Tour contextual por pantalla** — mini-guías en Reportes, Usuarios, etc., sin reemplazar el hub tour.
+- [x] **Admin [P3]: Reset onboarding desde UI** — acción admin para marcar tour pendiente de nuevo (sin SQL manual).
 
 ---
 

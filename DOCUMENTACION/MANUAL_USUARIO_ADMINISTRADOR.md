@@ -66,12 +66,16 @@ El tour incluye barra de progreso, posición adaptativa de la tarjeta según el 
 
 El progreso se guarda en base de datos (`AdminUsuarioPreferencia`) por cuenta de usuario. Tras completar u omitir el tour, **no** vuelve a mostrarse automáticamente en visitas posteriores (incluso desde otro navegador).
 
+**Tours contextuales:** en pantallas como Usuarios, Reportes operativos, Códigos de confirmación y Error Log, la primera visita puede mostrar una mini-guía (2–4 pasos) independiente del tour del panel. El progreso se guarda en el navegador (`localStorage`).
+
 | Acción | Cómo |
 |--------|------|
-| Volver a ver la guía | Menú de usuario → *Ver guía de inicio* (redirige al panel si está en otra pantalla Admin) |
-| Buscar herramientas | Botón **Buscar** en la barra superior, atajo **Ctrl+K** (también `/` fuera de un campo de texto). En mobile también desde el menú hamburguesa → *Buscar funciones* |
+| Volver a ver la guía del panel | Menú de usuario → *Ver guía de inicio* (redirige al panel si está en otra pantalla Admin) |
+| Ver guía de la pantalla actual | Menú de usuario → *Ver guía de esta pantalla* (solo si la ruta tiene tour contextual) |
+| Reiniciar guía del panel | Menú de usuario → *Reiniciar guía de inicio* (solo visible si ya completó el tour; sin SQL manual) |
+| Buscar herramientas | Botón **Buscar** en la barra superior, atajo **Ctrl+K** (también `/` fuera de un campo de texto). Resultados incluyen categoría **Intranet** (presupuestos, viajes, clientes, facturación). En mobile también desde el menú hamburguesa → *Buscar funciones* |
 | Omitir tour | Botón *Omitir tour* o tecla **Escape** |
-| Estado del onboarding | API interna `GET /Admin/OnboardingStatus` |
+| Estado del onboarding | API interna `GET /Admin/OnboardingStatus`; reset: `POST /Admin/OnboardingReset` |
 
 ---
 

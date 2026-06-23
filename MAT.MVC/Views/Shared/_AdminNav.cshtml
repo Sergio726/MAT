@@ -1,18 +1,9 @@
 @model MAT.MVC.Infrastructure.AdminNavViewModel
 @{
     var navRootClass = Model.IsOffcanvas ? "admin-nav admin-nav--offcanvas" : "admin-nav admin-nav--sidebar";
-    var displayName = string.IsNullOrWhiteSpace(Model.UserName) ? "Usuario" : Model.UserName;
 }
 
 <div class="@navRootClass" id="@(Model.IsOffcanvas ? "adminNavOffcanvas" : "adminNavDesktop")">
-    <a href="/Admin/MiCuenta" class="admin-userbox text-decoration-none" title="Mi cuenta">
-        <div class="admin-userbox-avatar" aria-hidden="true">@Model.UserInitials</div>
-        <div class="admin-userbox-text">
-            <div class="name">@displayName</div>
-            <div class="muted">Administrador</div>
-        </div>
-    </a>
-
     @foreach (var navSection in Model.Sections)
     {
         var sectionPanelId = "adminNavSection-" + navSection.Id + (Model.IsOffcanvas ? "-mobile" : "");

@@ -275,8 +275,7 @@
 - ✅ Admin/GridResumenPagosFecha.cshtml — Tabla + cancelar pago; `@model` al inicio del archivo — 2026-04-07
 - 🗑️ Admin/PlanillaServicios.cshtml — **Eliminada** 2026-04-07 (retiro menú planillas; SPEC)
 - ✅ Admin/EditarPlanilla.cshtml — Card encabezado BS5, grid, botón Guardar `btn-danger` + icono BI; datepicker si existe — 2026-04-07
-- ⏳ Admin/HistorialPrecios.cshtml
-- ✅ Admin/AuditoriaFacturas.cshtml — datepicker jQuery UI en español (locale `es`); DataTable con `language` local; `modern-page-*`; carga AJAX con spinner — 2026-04-09
+- 🗑️ Admin/HistorialPrecios.cshtml — **No existe en repositorio** — 2026-04-10
 - ✅ Admin/ImprimirPlanilla.cshtml — Ventana impresión: jQuery 3.7.1, encabezado legible, fecha corregida — 2026-04-07
 - ✅ Admin/ImprimirPlanillaDetalle.cshtml — Igual patrón — 2026-04-07
 - 🗑️ Admin/GridPlanillasGeneradas.cshtml — **Eliminada** 2026-04-07
@@ -288,7 +287,6 @@
 - ✅ Admin/GridPlanillaHotelDetallePrint.cshtml — 2026-04-07
 - ✅ Admin/GridPlanillaHotelDetalleEdit.cshtml — 2026-04-07
 - ✅ Admin/PartialGridResumenPlanillaHotelPrint.cshtml — 2026-04-07
-- 🗑️ Admin/HistorialPrecios.cshtml — **No existe en repositorio** — 2026-04-10
 - 🗑️ Admin/PartialGridPlanillaHotelPrint.cshtml *(archivo vacío en repo; sin modernizar hasta definir uso)*
 - 🗑️ Admin/PartialDropDownHotel.cshtml — **Eliminada** 2026-04-07 (no referenciada; asociada a wizard retirado)
 

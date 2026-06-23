@@ -330,6 +330,7 @@
     <Compile Include="Filters\RequestGuardFilter.cs" />
     <Compile Include="Infrastructure\DbErrorLogger.cs" />
     <Compile Include="Infrastructure\AdminAuthorizationHelper.cs" />
+    <Compile Include="Infrastructure\AdminContextualTourCatalog.cs" />
     <Compile Include="Infrastructure\AdminHelpCatalog.cs" />
     <Compile Include="Infrastructure\AdminNavModels.cs" />
     <Compile Include="Infrastructure\ErrorUtil.cs" />

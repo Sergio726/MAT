@@ -1080,6 +1080,33 @@ namespace MAT.MVC.Controllers.Admin
             }
         }
 
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public JsonResult OnboardingReset()
+        {
+            try
+            {
+                var userId = GetCurrentUserIdSafe();
+                if (userId <= 0)
+                    return Json(new { ok = false, message = "Usuario no identificado." });
+
+                SqlParameter[] dbParams = new SqlParameter[]
+                {
+                    DBHelper.MakeParam("@UserId", SqlDbType.Int, 0, userId),
+                    DBHelper.MakeParam("@Completado", SqlDbType.Bit, 0, false)
+                };
+
+                DBHelper.ExecuteNonQuery("dbo.usp_MAT_AdminUsuarioPreferencia_SetOnboarding", dbParams);
+                return Json(new { ok = true, message = (string)null });
+            }
+            catch (Exception ex)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "AdminController.OnboardingReset");
+                return Json(new { ok = false, message = msg });
+            }
+        }
+
         private static int GetCurrentUserIdSafe()
         {
             try

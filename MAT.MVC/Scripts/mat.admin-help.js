@@ -1,5 +1,5 @@
 /**
- * Panel Admin: tour guiado (onboarding) y buscador de funciones.
+ * Panel Admin: tour guiado (onboarding), tours contextuales y buscador de funciones.
  * Depende de: Bootstrap 5, MatAdmin.toast (mat.admin-utils.js), jQuery opcional para POST.
  */
 (function (window, document) {
@@ -9,23 +9,30 @@
 
     var state = {
         catalog: [],
+        contextualTours: [],
         tourSteps: [],
         tourIndex: 0,
         tourActive: false,
+        tourMode: 'hub',
+        contextualPageId: null,
         onboardingCompleted: false,
         onboardingCompleteUrl: '/Admin/OnboardingComplete',
         onboardingStatusUrl: '/Admin/OnboardingStatus',
+        onboardingResetUrl: '/Admin/OnboardingReset',
+        userId: 0,
         isIndexPage: false,
         searchModal: null,
         resizeHandler: null,
         scrollHandler: null,
         tourKeyHandler: null,
+        tourPersistOnEnd: true,
+        tourControlsBound: false,
         helpDropdownOpenedForTour: false,
         modalSearchActiveIndex: -1,
         prefersReducedMotion: false
     };
 
-    var SEARCH_EMPTY_HINT = 'Escriba para buscar herramientas del panel o use <strong>Ctrl+K</strong> en cualquier pantalla Admin.';
+    var SEARCH_EMPTY_HINT = 'Escriba para buscar herramientas del panel Admin o módulos de la intranet (presupuestos, viajes, clientes). Use <strong>Ctrl+K</strong> en cualquier pantalla Admin.';
 
     function escapeHtml(str) {
         if (str == null) return '';
@@ -44,6 +51,21 @@
             .replace(/[\u0300-\u036f]/g, '');
     }
 
+    function normalizePath(path) {
+        var p = (path || '').split('?')[0].trim().toLowerCase();
+        if (!p) return '/';
+        if (p.charAt(0) !== '/') p = '/' + p;
+        if (p.length > 1 && p.charAt(p.length - 1) === '/') p = p.slice(0, -1);
+        return p;
+    }
+
+    function getUserId() {
+        var shell = document.querySelector('.admin-shell[data-admin-user-id]');
+        if (!shell) return 0;
+        var id = parseInt(shell.getAttribute('data-admin-user-id'), 10);
+        return isNaN(id) ? 0 : id;
+    }
+
     function getAntiforgeryToken() {
         var input = document.querySelector('#adminAntiforgeryForm input[name="__RequestVerificationToken"]');
         return input ? input.value : '';
@@ -59,12 +81,65 @@
         }
     }
 
+    function parseContextualTours() {
+        var el = document.getElementById('adminContextualToursJson');
+        if (!el || !el.textContent) return [];
+        try {
+            return JSON.parse(el.textContent);
+        } catch (e) {
+            return [];
+        }
+    }
+
     function prefersReducedMotion() {
         try {
             return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         } catch (e) {
             return false;
         }
+    }
+
+    function contextualStorageKey(pageId) {
+        return 'mat.admin.contextual.' + (state.userId || 0) + '.' + pageId;
+    }
+
+    function isContextualTourComplete(pageId) {
+        try {
+            return localStorage.getItem(contextualStorageKey(pageId)) === '1';
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function markContextualTourComplete(pageId) {
+        try {
+            localStorage.setItem(contextualStorageKey(pageId), '1');
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    function resolveContextualTour(pathname) {
+        var path = normalizePath(pathname);
+        var tours = state.contextualTours || [];
+        var i;
+
+        for (i = 0; i < tours.length; i++) {
+            if (tours[i].exactMatch && normalizePath(tours[i].pathMatch) === path) {
+                return tours[i];
+            }
+        }
+
+        var best = null;
+        var bestLen = 0;
+        for (i = 0; i < tours.length; i++) {
+            var match = normalizePath(tours[i].pathMatch);
+            if (!tours[i].exactMatch && path.indexOf(match) === 0 && match.length > bestLen) {
+                best = tours[i];
+                bestLen = match.length;
+            }
+        }
+        return best;
     }
 
     function buildDefaultTourSteps() {
@@ -92,15 +167,19 @@
             {
                 selector: '#adminTopbarSearchBtn',
                 title: 'Buscar funciones',
-                text: 'Use este botón o el atajo Ctrl+K en cualquier pantalla Admin para encontrar reportes, usuarios, logs y más herramientas del panel.'
+                text: 'Use este botón o el atajo Ctrl+K en cualquier pantalla Admin para encontrar reportes, usuarios, módulos de intranet y más.'
             },
             {
                 selector: '#admin-tour-user-menu',
                 openHelpDropdown: true,
                 title: 'Menú de usuario',
-                text: 'Desde aquí puede volver a ver la guía de inicio, ir a la intranet o cerrar sesión. El buscador está en el botón Buscar de la barra superior.'
+                text: 'Desde aquí puede volver a ver la guía de inicio, la guía de la pantalla actual, reiniciar el tour del panel o ir a la intranet.'
             }
         ];
+    }
+
+    function isIntranetItem(item) {
+        return item && normalizeText(item.category) === 'intranet';
     }
 
     function filterCatalog(query) {
@@ -123,6 +202,7 @@
             if (cat.indexOf(q) !== -1) score += 20;
             if (desc.indexOf(q) !== -1) score += 10;
             if (kw.indexOf(q) !== -1) score += 5;
+            if (isIntranetItem(item) && (kw.indexOf(q) !== -1 || title.indexOf(q) !== -1)) score += 15;
             scored.push({ item: item, score: score });
         }
 
@@ -153,6 +233,15 @@
         }
     }
 
+    function renderCategoryBadge(category) {
+        var cat = category || '';
+        var norm = normalizeText(cat);
+        if (norm === 'intranet') {
+            return '<span class="badge admin-help-search-badge-intranet mt-1">' + escapeHtml(cat) + '</span>';
+        }
+        return '<span class="badge bg-light text-secondary border mt-1">' + escapeHtml(cat) + '</span>';
+    }
+
     function renderSearchResults(container, query, onNavigate, options) {
         options = options || {};
         if (!container) return;
@@ -176,13 +265,17 @@
         for (var i = 0; i < results.length; i++) {
             var r = results[i];
             var activeClass = options.enableKeyboardNav && i === state.modalSearchActiveIndex ? ' admin-help-search-item--active' : '';
-            html += '<li class="list-group-item admin-help-search-item' + activeClass + '" role="option" tabindex="0" data-url="' + escapeHtml(r.url) + '" data-index="' + i + '">' +
+            var intranetClass = isIntranetItem(r) ? ' admin-help-search-item--intranet' : '';
+            var externalIcon = isIntranetItem(r) && (r.url || '').toLowerCase().indexOf('/admin/') !== 0
+                ? '<i class="bi bi-box-arrow-up-right admin-help-search-external-icon" aria-hidden="true"></i>'
+                : '';
+            html += '<li class="list-group-item admin-help-search-item' + activeClass + intranetClass + '" role="option" tabindex="0" data-url="' + escapeHtml(r.url) + '" data-index="' + i + '">' +
                 '<div class="d-flex align-items-start gap-3">' +
                 '<span class="admin-help-search-item-icon"><i class="bi ' + escapeHtml(r.icon || 'bi-link-45deg') + '"></i></span>' +
                 '<div class="flex-grow-1 min-w-0">' +
-                '<div class="fw-semibold text-truncate">' + escapeHtml(r.title) + '</div>' +
+                '<div class="fw-semibold text-truncate d-flex align-items-center gap-1">' + escapeHtml(r.title) + externalIcon + '</div>' +
                 '<div class="small text-secondary">' + escapeHtml(r.description) + '</div>' +
-                '<span class="badge bg-light text-secondary border mt-1">' + escapeHtml(r.category) + '</span>' +
+                renderCategoryBadge(r.category) +
                 '</div></div></li>';
         }
         html += '</ul>';
@@ -219,6 +312,20 @@
             document.body.classList.add('admin-onboarding-done');
         } else {
             document.body.classList.remove('admin-onboarding-done');
+        }
+        updateHelpMenuVisibility();
+    }
+
+    function updateHelpMenuVisibility() {
+        var resetWrap = document.getElementById('adminHelpMenuResetOnboardingWrap');
+        if (resetWrap) {
+            resetWrap.classList.toggle('d-none', !state.onboardingCompleted);
+        }
+
+        var ctxWrap = document.getElementById('adminHelpMenuContextualTourWrap');
+        var tour = resolveContextualTour(window.location.pathname);
+        if (ctxWrap) {
+            ctxWrap.classList.toggle('d-none', !tour);
         }
     }
 
@@ -390,10 +497,7 @@
     }
 
     function removeTourKeyHandler() {
-        if (state.tourKeyHandler) {
-            document.removeEventListener('keydown', state.tourKeyHandler);
-            state.tourKeyHandler = null;
-        }
+        // El handler global verifica state.tourActive; no se remueve entre tours.
     }
 
     function hideTourUi() {
@@ -501,14 +605,120 @@
 
     function endTour(options) {
         options = options || {};
+        var wasContextual = state.tourMode === 'contextual';
+        var pageId = state.contextualPageId;
+
         hideTourUi();
+
+        if (wasContextual && pageId) {
+            if (options.persist !== false) {
+                markContextualTourComplete(pageId);
+            }
+            state.tourMode = 'hub';
+            state.contextualPageId = null;
+            if (window.MatAdmin && window.MatAdmin.toast) {
+                window.MatAdmin.toast('Guía de pantalla completada.', 'success');
+            }
+            return;
+        }
+
+        state.tourMode = 'hub';
+        state.contextualPageId = null;
+
         if (options.persist) {
             markOnboardingComplete(true).then(function () {
                 if (window.MatAdmin && window.MatAdmin.toast) {
-                    window.MatAdmin.toast('Guía completada. Puede volver a verla desde Ayuda.', 'success');
+                    window.MatAdmin.toast('Guía completada. Puede volver a verla desde el menú de usuario.', 'success');
                 }
             });
         }
+    }
+
+    function tourSkip() {
+        endTour({ persist: state.tourPersistOnEnd });
+    }
+
+    function tourNext() {
+        if (state.tourIndex < state.tourSteps.length - 1) {
+            state.tourIndex++;
+            updateTourStep();
+        } else {
+            endTour({ persist: state.tourPersistOnEnd });
+        }
+    }
+
+    function tourPrev() {
+        if (state.tourIndex > 0) {
+            state.tourIndex--;
+            updateTourStep();
+        }
+    }
+
+    function initTourControlsOnce() {
+        if (state.tourControlsBound) return;
+        state.tourControlsBound = true;
+
+        state.tourKeyHandler = function (ev) {
+            if (!state.tourActive) return;
+            if (ev.key === 'Escape') {
+                ev.preventDefault();
+                tourSkip();
+            }
+        };
+        document.addEventListener('keydown', state.tourKeyHandler);
+
+        var nextBtn = document.getElementById('adminTourNext');
+        var prevBtn = document.getElementById('adminTourPrev');
+        var skipBtn = document.getElementById('adminTourSkip');
+        var skipTop = document.getElementById('adminTourSkipTop');
+
+        if (nextBtn) nextBtn.addEventListener('click', tourNext);
+        if (prevBtn) prevBtn.addEventListener('click', tourPrev);
+        if (skipBtn) skipBtn.addEventListener('click', tourSkip);
+        if (skipTop) skipTop.addEventListener('click', tourSkip);
+    }
+
+    function bindTourControls() {
+        if (state.resizeHandler) {
+            window.removeEventListener('resize', state.resizeHandler);
+            window.removeEventListener('scroll', state.resizeHandler, true);
+        }
+
+        state.resizeHandler = function () {
+            var step = state.tourSteps[state.tourIndex];
+            if (!step) return;
+            var target = getTourSpotlightTarget(step);
+            if (target) {
+                positionSpotlight(target);
+                positionTourCard(target);
+            }
+        };
+        state.scrollHandler = state.resizeHandler;
+
+        window.addEventListener('resize', state.resizeHandler);
+        window.addEventListener('scroll', state.scrollHandler, true);
+    }
+
+    function beginTour(steps, options) {
+        options = options || {};
+        state.prefersReducedMotion = prefersReducedMotion();
+        initTourControlsOnce();
+
+        var root = document.getElementById('adminTourRoot');
+        if (!root || !steps || !steps.length) return;
+
+        state.tourMode = options.mode || 'hub';
+        state.contextualPageId = options.pageId || null;
+        state.tourPersistOnEnd = options.persistOnEnd !== false;
+        state.tourSteps = steps;
+        state.tourIndex = 0;
+        state.tourActive = true;
+        root.classList.remove('d-none');
+        root.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('admin-tour-active');
+
+        bindTourControls();
+        updateTourStep();
     }
 
     function cleanTourQueryFromUrl() {
@@ -526,7 +736,6 @@
 
     window.MatAdminHelp.startTour = function (options) {
         options = options || {};
-        state.prefersReducedMotion = prefersReducedMotion();
 
         var path = (window.location.pathname || '').toLowerCase();
         var onIndex = path === '/admin/index' || path === '/admin' || path === '/admin/';
@@ -540,87 +749,70 @@
             cleanTourQueryFromUrl();
         }
 
-        var root = document.getElementById('adminTourRoot');
-        if (!root) return;
-
-        state.tourSteps = buildDefaultTourSteps();
-        state.tourIndex = 0;
-        state.tourActive = true;
-        root.classList.remove('d-none');
-        root.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('admin-tour-active');
-
         var persistOnEnd = options.persist !== false && !options.force;
-
-        function skip() {
-            endTour({ persist: persistOnEnd });
-        }
-
-        function next() {
-            if (state.tourIndex < state.tourSteps.length - 1) {
-                state.tourIndex++;
-                updateTourStep();
-            } else {
-                endTour({ persist: persistOnEnd });
-            }
-        }
-
-        function prev() {
-            if (state.tourIndex > 0) {
-                state.tourIndex--;
-                updateTourStep();
-            }
-        }
-
-        if (!state.tourKeyHandler) {
-            state.tourKeyHandler = function (ev) {
-                if (!state.tourActive) return;
-                if (ev.key === 'Escape') {
-                    ev.preventDefault();
-                    skip();
-                }
-            };
-            document.addEventListener('keydown', state.tourKeyHandler);
-        }
-
-        state.resizeHandler = function () {
-            var step = state.tourSteps[state.tourIndex];
-            if (!step) return;
-            var target = getTourSpotlightTarget(step);
-            if (target) {
-                positionSpotlight(target);
-                positionTourCard(target);
-            }
-        };
-        state.scrollHandler = state.resizeHandler;
-
-        window.addEventListener('resize', state.resizeHandler);
-        window.addEventListener('scroll', state.scrollHandler, true);
-
-        var nextBtn = document.getElementById('adminTourNext');
-        var prevBtn = document.getElementById('adminTourPrev');
-        var skipBtn = document.getElementById('adminTourSkip');
-        var skipTop = document.getElementById('adminTourSkipTop');
-
-        if (nextBtn && !nextBtn.getAttribute('data-mat-tour-bound')) {
-            nextBtn.setAttribute('data-mat-tour-bound', '1');
-            nextBtn.addEventListener('click', next);
-        }
-        if (prevBtn && !prevBtn.getAttribute('data-mat-tour-bound')) {
-            prevBtn.setAttribute('data-mat-tour-bound', '1');
-            prevBtn.addEventListener('click', prev);
-        }
-        if (skipBtn && !skipBtn.getAttribute('data-mat-tour-bound')) {
-            skipBtn.setAttribute('data-mat-tour-bound', '1');
-            skipBtn.addEventListener('click', skip);
-        }
-        if (skipTop && !skipTop.getAttribute('data-mat-tour-bound')) {
-            skipTop.setAttribute('data-mat-tour-bound', '1');
-            skipTop.addEventListener('click', skip);
-        }
-
-        updateTourStep();
+        beginTour(buildDefaultTourSteps(), { mode: 'hub', persistOnEnd: persistOnEnd });
     };
+
+    window.MatAdminHelp.startContextualTour = function (options) {
+        options = options || {};
+        var tour = resolveContextualTour(window.location.pathname);
+        if (!tour || !tour.steps || !tour.steps.length) return;
+
+        if (!options.force && isContextualTourComplete(tour.pageId)) return;
+
+        var persistOnEnd = options.persist !== false;
+        beginTour(tour.steps, {
+            mode: 'contextual',
+            pageId: tour.pageId,
+            persistOnEnd: persistOnEnd
+        });
+    };
+
+    function postOnboardingReset() {
+        var token = getAntiforgeryToken();
+
+        function onSuccess() {
+            applyOnboardingHubUi(false);
+            if (window.MatAdmin && window.MatAdmin.toast) {
+                window.MatAdmin.toast('Guía de inicio reiniciada. Se mostrará al entrar al panel principal.', 'success');
+            }
+            if (state.isIndexPage) {
+                setTimeout(function () {
+                    window.MatAdminHelp.startTour({ force: false, persist: true });
+                }, 400);
+            }
+        }
+
+        function onError(msg) {
+            if (window.MatAdmin && window.MatAdmin.toast) {
+                window.MatAdmin.toast(msg || 'No se pudo reiniciar la guía de inicio.', 'danger');
+            }
+        }
+
+        if (window.jQuery) {
+            return window.jQuery.ajax({
+                url: state.onboardingResetUrl,
+                type: 'POST',
+                data: { __RequestVerificationToken: token }
+            }).then(function (resp) {
+                if (resp && resp.ok) onSuccess();
+                else onError(resp && resp.message);
+            }).catch(function () {
+                onError();
+            });
+        }
+
+        return fetch(state.onboardingResetUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: '__RequestVerificationToken=' + encodeURIComponent(token)
+        }).then(function (r) { return r.json(); })
+            .then(function (resp) {
+                if (resp && resp.ok) onSuccess();
+                else onError(resp && resp.message);
+            })
+            .catch(function () { onError(); });
+    }
 
     function fetchOnboardingStatus() {
         var url = state.onboardingStatusUrl;
@@ -633,6 +825,7 @@
             if (window.MatAdmin && window.MatAdmin.toast) {
                 window.MatAdmin.toast('No se pudo verificar el estado de la guía de inicio.', 'info');
             }
+            updateHelpMenuVisibility();
             return null;
         }
 
@@ -643,6 +836,7 @@
                 if (window.MatAdmin && window.MatAdmin.toast) {
                     window.MatAdmin.toast('No se pudo verificar el estado de la guía de inicio.', 'info');
                 }
+                updateHelpMenuVisibility();
                 return null;
             });
         }
@@ -654,6 +848,7 @@
                 if (window.MatAdmin && window.MatAdmin.toast) {
                     window.MatAdmin.toast('No se pudo verificar el estado de la guía de inicio.', 'info');
                 }
+                updateHelpMenuVisibility();
                 return null;
             });
     }
@@ -668,6 +863,19 @@
                 }, 400);
             }
         });
+    }
+
+    function maybeAutoStartContextualTour() {
+        if (state.isIndexPage || state.tourActive) return;
+
+        var tour = resolveContextualTour(window.location.pathname);
+        if (!tour || isContextualTourComplete(tour.pageId)) return;
+
+        setTimeout(function () {
+            if (!state.tourActive) {
+                window.MatAdminHelp.startContextualTour({ force: false, persist: true });
+            }
+        }, 500);
     }
 
     function bindKeyboardShortcuts() {
@@ -707,21 +915,49 @@
                 window.MatAdminHelp.startTour({ force: true, persist: false });
             });
         }
+
+        var ctxLink = document.getElementById('adminHelpMenuContextualTour');
+        if (ctxLink) {
+            ctxLink.addEventListener('click', function (ev) {
+                ev.preventDefault();
+                window.MatAdminHelp.startContextualTour({ force: true, persist: true });
+            });
+        }
+
+        var resetLink = document.getElementById('adminHelpMenuResetOnboarding');
+        if (resetLink) {
+            resetLink.addEventListener('click', function (ev) {
+                ev.preventDefault();
+                if (!window.MatAdmin || !window.MatAdmin.confirm) return;
+                window.MatAdmin.confirm({
+                    title: 'Reiniciar guía de inicio',
+                    message: '¿Desea volver a ver el tour del panel principal? La próxima vez que entre al panel se mostrará la guía automáticamente.',
+                    confirmLabel: 'Reiniciar',
+                    confirmClass: 'btn-primary'
+                }).then(function (ok) {
+                    if (ok) postOnboardingReset();
+                });
+            });
+        }
     }
 
     window.MatAdminHelp.init = function (options) {
         options = options || {};
         state.catalog = parseCatalog();
+        state.contextualTours = parseContextualTours();
+        state.userId = getUserId();
         state.isIndexPage = !!options.isIndexPage;
         state.prefersReducedMotion = prefersReducedMotion();
         if (options.onboardingCompleteUrl) state.onboardingCompleteUrl = options.onboardingCompleteUrl;
         if (options.onboardingStatusUrl) state.onboardingStatusUrl = options.onboardingStatusUrl;
+        if (options.onboardingResetUrl) state.onboardingResetUrl = options.onboardingResetUrl;
 
         bindHubSearch();
         bindModalSearch();
         bindKeyboardShortcuts();
         bindHelpMenu();
         bindSearchTriggers();
+        updateHelpMenuVisibility();
 
         if (state.isIndexPage) {
             var params = new URLSearchParams(window.location.search || '');
@@ -730,6 +966,9 @@
             } else {
                 fetchOnboardingStatus();
             }
+        } else {
+            fetchOnboardingStatus();
+            maybeAutoStartContextualTour();
         }
     };
 

@@ -9,7 +9,7 @@
 }
 
 <div class="modern-page-container">
-    <div class="modern-page-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div class="modern-page-header d-flex flex-wrap align-items-center justify-content-between gap-2" id="admin-ctx-tour-usuarios-header">
         <h2 class="modern-page-title mb-0">
             <i class="bi bi-people"></i>
             <span>Usuarios del sistema</span>
@@ -25,8 +25,8 @@
         <div class="alert alert-success mt-3 mb-0" role="alert">@ViewBag.StatusMessage</div>
     }
 
-    <div class="modern-table-container mt-3">
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <div class="modern-table-container mt-3" id="admin-ctx-tour-usuarios-tabla">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3" id="admin-ctx-tour-usuarios-filtro">
             <label for="adminUsuariosFiltroEstado" class="form-label mb-0 text-nowrap">Estado</label>
             <select id="adminUsuariosFiltroEstado" class="form-select form-select-sm w-auto" aria-label="Filtrar por estado de usuario">
                 <option value="">Todos</option>

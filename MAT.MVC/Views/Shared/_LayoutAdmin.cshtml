@@ -1,5 +1,6 @@
 @using MAT.MVC.Infrastructure
 @using System.Web.Security
+@using WebMatrix.WebData
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,7 +18,7 @@
     <link href="~/Scripts/jquery.timepicker/jquery.timepicker.css" rel="stylesheet" />
     <link href="~/Scripts/dataTable/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
-    <link href="~/Content/admin.modern.css?v=20260619e" rel="stylesheet" />
+    <link href="~/Content/admin.modern.css?v=20260620c" rel="stylesheet" />
 
     <script src="~/Scripts/jquery-3.7.1.min.js"></script>
     <script>
@@ -59,7 +60,6 @@
         var onAdminIndex = helpPath.Equals("/Admin/Index", StringComparison.OrdinalIgnoreCase)
             || helpPath.Equals("/Admin", StringComparison.OrdinalIgnoreCase);
         var pageContext = AdminHelpCatalog.ResolvePage(helpPath, isAdminDev);
-        var hasCustomBreadcrumb = IsSectionDefined("BreadcrumbItems");
 
         var topbarModel = new AdminTopbarViewModel
         {
@@ -87,9 +87,15 @@
             IsOffcanvas = true,
             Sections = AdminHelpCatalog.GetSidebarSections(isAdminDev)
         };
+
+        var adminUserId = 0;
+        if (WebSecurity.Initialized && WebSecurity.HasUserId)
+        {
+            adminUserId = WebSecurity.CurrentUserId;
+        }
     }
 
-    <div class="admin-shell">
+    <div class="admin-shell" data-admin-user-id="@adminUserId">
         @Html.Partial("_AdminTopbar", topbarModel)
 
         <div class="admin-main">
@@ -111,16 +117,16 @@
 
             <main class="admin-content">
                 <div class="admin-content-inner">
-                    @if (hasCustomBreadcrumb || (pageContext != null && pageContext.ShowBreadcrumb))
+                    @if (IsSectionDefined("BreadcrumbItems") || (pageContext != null && pageContext.ShowBreadcrumb))
                     {
                         <nav class="admin-breadcrumb" aria-label="breadcrumb">
                             <ol class="breadcrumb mb-3">
                                 <li class="breadcrumb-item">
                                     <a href="@Url.Action("Index", "Admin")">Administración</a>
                                 </li>
-                                @if (hasCustomBreadcrumb)
+                                @if (IsSectionDefined("BreadcrumbItems"))
                                 {
-                                    RenderSection("BreadcrumbItems", false);
+                                    @RenderSection("BreadcrumbItems", required: false)
                                 }
                                 else if (pageContext != null)
                                 {
@@ -150,7 +156,7 @@
 
     @RenderSection("Scripts", required: false)
 
-    <script src="~/Scripts/mat.admin-nav.js?v=20260619e"></script>
-    <script src="~/Scripts/mat.admin-help.js?v=20260619e"></script>
+    <script src="~/Scripts/mat.admin-nav.js?v=20260620a"></script>
+    <script src="~/Scripts/mat.admin-help.js?v=20260620a"></script>
 </body>
 </html>
