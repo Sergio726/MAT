@@ -2,7 +2,51 @@
 
 ---
 
-### [2026-06-19] — Admin P3: documentación + backlog ayuda (intranet, tours contextuales, reset onboarding)
+### [2026-06-30] — ReservaController: normalización ErrorUtil
+
+- Archivos modificados: `MAT.MVC/Controllers/Reserva/ReservaController.cs`
+- Qué se implementó: 13 bloques `catch` que exponían `e.Message` reemplazados por `ErrorUtil.LogAndGetPublicMessage` (partials, JsonResult, `DetalleViaje`, `FormReserva` mantiene `return "Error"` al cliente)
+- Problemas encontrados: Ninguno en MSBuild MAT.MVC.
+- Estado: ✅ completo
+
+---
+
+### [2026-06-30] — Reserva/Index UX Fases 1–2 (header operativo)
+
+- Archivos modificados/creados:
+  - `MAT.MVC/Controllers/Reserva/ReservaController.cs` — `GetDetalleViajeModel`, `ViewBag.Title`, `BreadcrumbActiveTitle`, `OcultarResumenViajeEnPanel`
+  - `MAT.MVC/Views/Reserva/Index.cshtml` — hero, sidebar server-side, sin AJAX `getDetalleViaje`
+  - `MAT.MVC/Views/Reserva/_ReservaViajeHero.cshtml` — **nuevo** partial hero contextual
+  - `MAT.MVC/Views/Reserva/DetalleViaje.cshtml` — ocultar resumen duplicado en panel lateral
+  - `MAT.MVC/Views/Shared/_Breadcrumb.cshtml` — `ViewBag.BreadcrumbActiveTitle`
+  - `MAT.MVC/Content/mat.styles.custom.css` — estilos `.reserva-index-page`, `.reserva-viaje-hero*`
+  - `MAT.MVC/MAT.MVC.csproj`
+  - `DOCUMENTACION/RESERVA_INDEX_UX_MEJORAS.md`
+- Qué se implementó:
+  - Header genérico reemplazado por hero con nombre del viaje, destino, fechas y transporte al primer paint
+  - Breadcrumb activo con nombre abreviado del viaje (no "Listado")
+  - Panel lateral renderizado server-side; una sola carga de `DetalleViaje` (sin AJAX redundante)
+- Problemas encontrados: Ninguno en MSBuild MAT.MVC.
+- **Correcciones post-auditoría:** `ErrorUtil` en `Index`; try separado para detalle; hero sin exigir `Descripcion`; breadcrumb con fallback destino/ID; `ViewBag.Title` ya no se pisa en la vista.
+- Estado: ✅ completo
+- Siguiente task sugerido: Fase 3 — strip de KPIs (`DOCUMENTACION/RESERVA_INDEX_UX_MEJORAS.md`)
+
+---
+
+### [2026-06-30] — DistribucionCoche Fase 3: modal en Reserva/Index — **revertido (decisión UX)**
+
+- Archivos tocados en el experimento (revert manual pendiente por el usuario):
+  - `MAT.MVC/Controllers/Reserva/ReservaController.cs`
+  - `MAT.MVC/Views/Reserva/DistribucionCoche.cshtml`
+  - `MAT.MVC/Content/mat.distribucioncoche.css`
+  - `MAT.MVC/Scripts/mat.jquery.binding.js`
+  - `MAT.MVC/Scripts/mat.jquery.functions.js` (`ShowFormDialogIframe`, `matInjectDialogHtml`, etc.)
+- Qué se probó: modal en `Reserva/Index` (partial + iframe) en lugar de `window.open`.
+- **Decisión:** no usar modal; volver a **pestaña standalone**. Revert de código a cargo del usuario.
+- Problemas del enfoque modal: error 500 con partial embed; iframe operativo pero UX no preferida.
+- Estado: ✅ task cerrado en SPEC (decisión documentada); código en revert manual
+
+---
 
 - Archivos modificados/creados:
   - `MAT.MVC/Infrastructure/AdminContextualTourCatalog.cs` — definición de tours por pantalla

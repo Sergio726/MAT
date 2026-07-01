@@ -34,15 +34,22 @@ namespace MAT.MVC.Controllers.Reserva
         }
         
         [Authorize]
-        public async Task<ActionResult> Index(Guid viajeid, string codigoPresupuesto = null)
+        public async Task<ActionResult> Index(Guid? viajeid = null, string codigoPresupuesto = null)
         {
+            if (!viajeid.HasValue || viajeid.Value == Guid.Empty)
+            {
+                TempData["Error"] = "Debe seleccionar un viaje para ver la reserva.";
+                return RedirectToAction("ViajesPorFecha", "Home");
+            }
+
+            var viajeId = viajeid.Value;
             List<ReservaStandard> Model = new List<ReservaStandard>();
 
             try
             {
-                Model = ReservaMethod.GetListOfPasajesByViajeID(viajeid.ToString());                
-                ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeid.ToString());
-                ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeid.ToString()).Tables[0].Rows[0]["CountListaEspera"];
+                Model = ReservaMethod.GetListOfPasajesByViajeID(viajeId.ToString());                
+                ViewBag.PreReservas = ReservaMethod.GetPreReservaVencidas(viajeId.ToString());
+                ViewBag.ListaEspera = ListaEsperaModel.Method.GetCountListaEsperaByViajeId(viajeId.ToString()).Tables[0].Rows[0]["CountListaEspera"];
 
                 // Si viene de "Convertir en venta" desde Presupuesto, cargar datos del presupuesto
                 if (!string.IsNullOrWhiteSpace(codigoPresupuesto))
@@ -62,7 +69,28 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e)
             {
-                ViewBag.MsgError = e.Message;
+                ViewBag.MsgError = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.Index");
+            }
+
+            if (viajeId != Guid.Empty)
+            {
+                try
+                {
+                    var detalleViaje = ViajeMethod.GetDetalleViajeModel(viajeId);
+                    ViewBag.DetalleViaje = detalleViaje;
+                    ViewBag.OcultarResumenViajeEnPanel = true;
+
+                    var tituloPagina = GetViajeDisplayTitle(detalleViaje);
+                    if (!string.IsNullOrWhiteSpace(tituloPagina))
+                    {
+                        ViewBag.Title = tituloPagina;
+                        ViewBag.BreadcrumbActiveTitle = TruncateBreadcrumbTitle(tituloPagina);
+                    }
+                }
+                catch (Exception e)
+                {
+                    ViewBag.MsgErrorDetalle = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.Index.DetalleViaje");
+                }
             }
 
             return View(Model);
@@ -427,7 +455,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(ex, "ReservaController.ReservarPasajes");
                 return PartialView("FormReserva");
             }
         }
@@ -679,7 +707,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.PartialVinculacionMenor");
             }
 
             if (sPrint != "Print")
@@ -712,7 +740,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.ObservacionesGenerales");
             }
 
             return PartialView(Observaciones);
@@ -757,7 +785,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.ObservacionABM");
             }
 
             return PartialView(Observaciones);
@@ -792,7 +820,7 @@ namespace MAT.MVC.Controllers.Reserva
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.ObservacionesGeneralesEdit");
             }
 
             return Json(new
@@ -814,7 +842,7 @@ namespace MAT.MVC.Controllers.Reserva
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.ObservacionesGeneralesDelete");
             }
 
             return Json(new
@@ -851,7 +879,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.PrintObservaciones");
             }
 
             return PartialView(Observaciones);
@@ -885,7 +913,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.FormListaMayor");
             }
             return PartialView(LPersonaMayor);
         }
@@ -917,7 +945,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.FormListaMenor");
             }
             return PartialView(LPersonaCliente);
         }
@@ -951,7 +979,7 @@ namespace MAT.MVC.Controllers.Reserva
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.VincularMenor");
 
             }
             return Json(new
@@ -1027,7 +1055,7 @@ namespace MAT.MVC.Controllers.Reserva
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.VincularMenorByViaje");
 
             }
             return sResult;
@@ -1155,7 +1183,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception ex)
             {
-                MATLogger.Log(String.Format("{0} {1}", ex.Message, ex.StackTrace), 1);
+                ErrorUtil.LogAndGetPublicMessage(ex, "ReservaController.FormReserva");
                 return "Error";
             }
         }
@@ -1188,7 +1216,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e) { 
                 sResult = ""; 
-                Msg = e.Message; 
+                Msg = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.jSenasIncompletasByViajeID");
             };
 
             return Json(new
@@ -1229,7 +1257,7 @@ namespace MAT.MVC.Controllers.Reserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaController.DetalleViaje");
             }
 
             return PartialView(oDetalleViaje);
@@ -1259,6 +1287,41 @@ namespace MAT.MVC.Controllers.Reserva
             {
                 return defaultValue;
             }
+        }
+
+        private static string GetViajeDisplayTitle(DetalleViaje detalleViaje)
+        {
+            if (detalleViaje == null)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(detalleViaje.Descripcion))
+            {
+                return detalleViaje.Descripcion.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(detalleViaje.Destino))
+            {
+                return detalleViaje.Destino.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(detalleViaje.ViajeID) && detalleViaje.ViajeID.Length >= 8)
+            {
+                return "Viaje " + detalleViaje.ViajeID.Substring(0, 8);
+            }
+
+            return null;
+        }
+
+        private static string TruncateBreadcrumbTitle(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return title;
+            }
+
+            return title.Length > 45 ? title.Substring(0, 42) + "..." : title;
         }
 
 

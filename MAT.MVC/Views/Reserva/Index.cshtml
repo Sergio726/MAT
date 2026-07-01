@@ -13,7 +13,6 @@
 
     if (Model.Count > 0)
     {
-        ViewBag.Title = "Reserva";
         Layout = "~/Views/Shared/_Layout.cshtml";
         ViajeID = Model.First().ViajeId;
         PaqueteID = Model.First().PaqueteID;
@@ -21,6 +20,7 @@
     }
 
     var presupuestoObj = ViewBag.Presupuesto as object;
+    var detalleViaje = ViewBag.DetalleViaje as DetalleViaje;
     if (presupuestoObj != null)
     {
         var tipo = presupuestoObj.GetType();
@@ -69,10 +69,11 @@
 
 <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
 
-<div class="modern-dashboard">
-    <div class="modern-dashboard-header">
-        <h2>Reserva <span>Gestión de reservas y distribución de butacas</span></h2>
-    </div>
+<div class="modern-dashboard reserva-index-page">
+    @if (Model.Count > 0 && detalleViaje != null)
+    {
+        @Html.Partial("_ReservaViajeHero", detalleViaje)
+    }
 
     <div class="MsgError">
         <span>@ViewBag.MsgError</span>
@@ -131,7 +132,17 @@
                                 </div>
                             </div>
                             <div id="divDetalleViaje" class="modern-card-content">
-                                <div class="iconLoading" style="height: 60px;"></div>
+                                @if (detalleViaje != null)
+                                {
+                                    @Html.Partial("DetalleViaje", detalleViaje)
+                                }
+                                else
+                                {
+                                    var msgDetalle = ViewBag.MsgErrorDetalle as string;
+                                    <p class="text-muted mb-0" style="padding: 0.5rem 0;">
+                                        @(string.IsNullOrWhiteSpace(msgDetalle) ? "No se pudo cargar el detalle del viaje." : msgDetalle)
+                                    </p>
+                                }
                             </div>
                         </div>
                     </section>
@@ -609,7 +620,6 @@
 <script type="text/javascript">
     $(document).ready(function () {
         getPasajesSenaIncompleta();
-        getDetalleViaje();
         checkBus();
 
         setTimeout(formatDisplay, 2000);
@@ -825,20 +835,6 @@
                 }
                 
                 
-            },
-            error: function (e) {
-                console.log(e)
-            }
-        });
-    }
-
-    function getDetalleViaje() {
-        $.ajax({
-            url: "/Reserva/DetalleViaje",
-            type: "POST",
-            data: { sViajeID: "@ViajeID"},
-            success: function (data){
-                $("#divDetalleViaje").html(data);
             },
             error: function (e) {
                 console.log(e)

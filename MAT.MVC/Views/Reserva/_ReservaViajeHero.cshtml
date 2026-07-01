@@ -1,0 +1,65 @@
+@model MAT.MVC.Models.DetalleViaje
+@{
+    var titulo = !string.IsNullOrWhiteSpace(Model.Descripcion)
+        ? Model.Descripcion
+        : (!string.IsNullOrWhiteSpace(Model.ViajeID) ? "Reserva · " + Model.ViajeID.Substring(0, Math.Min(8, Model.ViajeID.Length)) : "Reserva");
+
+    string fechaSalidaTexto = null;
+    string fechaRegresoTexto = null;
+    DateTime dtTmp;
+    if (!string.IsNullOrWhiteSpace(Model.FechaSalida) && DateTime.TryParse(Model.FechaSalida, out dtTmp))
+    {
+        fechaSalidaTexto = dtTmp.ToShortDateString();
+    }
+    if (!string.IsNullOrWhiteSpace(Model.FechaRegreso) && DateTime.TryParse(Model.FechaRegreso, out dtTmp))
+    {
+        fechaRegresoTexto = dtTmp.ToShortDateString();
+    }
+
+    var tieneTransporte = !string.IsNullOrWhiteSpace(Model.NroCoche) || !string.IsNullOrWhiteSpace(Model.TransportePatente);
+}
+<div class="reserva-viaje-hero" role="region" aria-label="Resumen del viaje">
+    <div class="reserva-viaje-hero__top">
+        <h2 class="reserva-viaje-hero__title">@titulo</h2>
+        @if (tieneTransporte)
+        {
+            <div class="reserva-viaje-hero__transport">
+                <i class="bi bi-bus-front" aria-hidden="true"></i>
+                <span>
+                    @if (!string.IsNullOrWhiteSpace(Model.NroCoche))
+                    {
+                        <span>Coche @Model.NroCoche</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.TransportePatente))
+                    {
+                        if (!string.IsNullOrWhiteSpace(Model.NroCoche)) { <span> · </span> }
+                        <span>Patente @Model.TransportePatente</span>
+                    }
+                </span>
+            </div>
+        }
+    </div>
+    <div class="reserva-viaje-hero__meta">
+        @if (!string.IsNullOrWhiteSpace(Model.Destino))
+        {
+            <span class="reserva-viaje-hero__chip">
+                <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                <span>@Model.Destino</span>
+            </span>
+        }
+        @if (!string.IsNullOrWhiteSpace(fechaSalidaTexto) || !string.IsNullOrWhiteSpace(Model.HoraSalida))
+        {
+            <span class="reserva-viaje-hero__chip">
+                <i class="bi bi-calendar-event" aria-hidden="true"></i>
+                <span>Salida @(fechaSalidaTexto ?? "")@(!string.IsNullOrWhiteSpace(Model.HoraSalida) ? " - " + Model.HoraSalida + " hs." : "")</span>
+            </span>
+        }
+        @if (!string.IsNullOrWhiteSpace(fechaRegresoTexto) || !string.IsNullOrWhiteSpace(Model.HoraRegreso))
+        {
+            <span class="reserva-viaje-hero__chip">
+                <i class="bi bi-calendar-check" aria-hidden="true"></i>
+                <span>Regreso @(fechaRegresoTexto ?? "")@(!string.IsNullOrWhiteSpace(Model.HoraRegreso) ? " - " + Model.HoraRegreso + " hs." : "")</span>
+            </span>
+        }
+    </div>
+</div>

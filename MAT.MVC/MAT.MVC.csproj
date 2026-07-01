@@ -890,6 +890,7 @@
     <Content Include="Views\PasajeroViaje\ListadoSimpleToExport.cshtml" />
     <Content Include="Views\Habitacion\PartialListHabitacion.cshtml" />
     <Content Include="Views\Reserva\DetalleViaje.cshtml" />
+    <Content Include="Views\Reserva\_ReservaViajeHero.cshtml" />
     <Content Include="Views\Precio\ABM.cshtml" />
     <Content Include="Views\Habitacion\ABM.cshtml" />
     <Content Include="Views\Hotel\ABM.cshtml" />

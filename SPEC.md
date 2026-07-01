@@ -832,10 +832,12 @@
   Archivos: ver `PROGRESS.md` entrada 2026-06-16 Fase 2.
   Criterio de éxito: Colores por `EstadoPasaje`; búsqueda con Enter/F3; SP publicado en BD del entorno.
 
-- [ ] **DistribucionCoche Fase 3 — Integración en Reserva/Index**
-  Abrir distribución en modal fullscreen o panel lateral dentro de `Reserva/Index` (en lugar de `window.open`), manteniendo contexto del viaje y botón cerrar.
-  Archivos: `mat.jquery.binding.js`, `Reserva/Index.cshtml`, posible partial contenedor.
-  Criterio de éxito: Misma funcionalidad que la pestaña standalone; sin regresión al imprimir desde el modal.
+- [x] **DistribucionCoche Fase 3 — Integración en Reserva/Index** *(cerrado — decisión de producto)*
+  ~~Abrir distribución en modal fullscreen o panel lateral dentro de `Reserva/Index` (en lugar de `window.open`).~~
+  **Decisión (2026-06-30, Sebastian):** no integrar en modal. La distribución de butacas sigue abriéndose en **pestaña nueva** (`window.open`), como antes de este experimento. Motivo: el modal (partial AJAX e iframe) no aportó una UX clara frente a la vista standalone; el usuario revierte el código del modal **manualmente**.
+  **Intentos descartados:** `ShowFormDialog` + `embed=1` (error 500 Razor); `ShowFormDialogIframe` (funcional pero rechazado).
+  **Se conserva opcionalmente:** estilos de layout en `mat.distribucioncoche.css` si el revert no los elimina.
+  Criterio de cierre: botón **Distribución de Butacas** vuelve a `window.open`; sin modal en `Reserva/Index`.
 
 - [ ] **DistribucionCoche Fase 3 — Acciones al clic en butaca**
   En butaca ocupada: menú o popover con enlaces a detalle de factura/pasajero y flujo de cambio de butaca (`ConfirmarCambioButaca` / `usp_MAT_Reserva_CambioButacas`). Requiere `data-pasaje-id` en el partial (sin reemplazar `id`=`PasajeroID` usado por tutores).

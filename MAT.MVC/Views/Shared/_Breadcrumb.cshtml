@@ -45,6 +45,13 @@
 
     var controllerDisplayName = controllerNames.ContainsKey(controller) ? controllerNames[controller] : controller;
     var actionDisplayName = actionNames.ContainsKey(action) ? actionNames[action] : action;
+    var breadcrumbActiveTitle = ViewBag.BreadcrumbActiveTitle as string;
+    var breadcrumbParentUrl = ViewBag.BreadcrumbParentUrl as string;
+    if (string.IsNullOrWhiteSpace(breadcrumbParentUrl)
+        && controller.Equals("Reserva", StringComparison.OrdinalIgnoreCase))
+    {
+        breadcrumbParentUrl = "/Home/ViajesPorFecha";
+    }
 
     var isHomePage = controller.Equals("Home", StringComparison.OrdinalIgnoreCase) &&
                      action.Equals("Index", StringComparison.OrdinalIgnoreCase);
@@ -72,8 +79,11 @@
                 {
                     if (!string.IsNullOrEmpty(controller) && !controller.Equals("Home", StringComparison.OrdinalIgnoreCase))
                     {
+                        var parentHref = !string.IsNullOrWhiteSpace(breadcrumbParentUrl)
+                            ? breadcrumbParentUrl
+                            : "/" + controller + "/Index";
                         <li class="breadcrumb-item">
-                            <a href="/@controller/Index">@controllerDisplayName</a>
+                            <a href="@parentHref">@controllerDisplayName</a>
                         </li>
                     }
                     if (!string.IsNullOrEmpty(action) && !action.Equals("Index", StringComparison.OrdinalIgnoreCase))
@@ -85,6 +95,10 @@
                                 <span class="breadcrumb-id">#@id</span>
                             }
                         </li>
+                    }
+                    else if (!string.IsNullOrWhiteSpace(breadcrumbActiveTitle))
+                    {
+                        <li class="breadcrumb-item active" aria-current="page" title="@(ViewBag.Title as string ?? breadcrumbActiveTitle)">@breadcrumbActiveTitle</li>
                     }
                     else
                     {

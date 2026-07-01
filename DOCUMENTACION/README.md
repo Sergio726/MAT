@@ -11,6 +11,7 @@ Esta carpeta contiene la documentación del proyecto.
 - **RESUMEN_FASE1_*.md** - Resumen de implementación de la Fase 1
 - **RESUMEN_EJECUTIVO_MAT2026.md** - Resumen ejecutivo
 - **VISTAS_PENDIENTES_ACTUALIZACION.md** - Vistas pendientes de actualización
+- **RESERVA_INDEX_UX_MEJORAS.md** - Plan por fases UX/UI del header y contexto operativo en `Reserva/Index` (2026-06-30)
 
 ## Fechas en los Nombres
 
