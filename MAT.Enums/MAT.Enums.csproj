@@ -80,6 +80,7 @@
     <Compile Include="eTipoButaca.cs" />
     <Compile Include="eTipoCliente.cs" />
     <Compile Include="eTipoDocumento.cs" />
+    <Compile Include="eTipoTransporte.cs" />
     <Compile Include="eUbicacionButaca.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedModels\Butaca.cs" />

@@ -3,13 +3,14 @@ CREATE PROCEDURE [dbo].[usp_MAT_Transporte_Insert]
     @MaxPasajeros    INT          = NULL,
     @KmRecorridos    INT          = NULL,
     @UltimoService   DATE         = NULL,
-    @Matricula       VARCHAR(10)  = NULL
+    @Matricula       VARCHAR(10)  = NULL,
+    @Tipo            NVARCHAR(50) = NULL
 AS
--- =============================================
--- Author:    Seba Garcia
--- Create date: 2026
--- Description: Inserta un nuevo transporte
--- =============================================
+/*-- =============================================
+ -- Author: Sebastian Garcia
+ -- Create date: 2026-06-30
+ -- Description: Inserta transporte (incluye Tipo para layout de butacas)
+ ============================================= */
 SET NOCOUNT, XACT_ABORT ON;
 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
@@ -22,14 +23,16 @@ BEGIN
             MaxPasajeros,
             KmRecorridos,
             UltimoService,
-            Matricula
+            Matricula,
+            Tipo
         )
         VALUES (
             @NroCoche,
             @MaxPasajeros,
             @KmRecorridos,
             @UltimoService,
-            @Matricula
+            @Matricula,
+            @Tipo
         );
 
         COMMIT;

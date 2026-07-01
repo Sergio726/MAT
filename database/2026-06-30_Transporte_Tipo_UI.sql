@@ -1,0 +1,4 @@
+-- Transporte ABM UX: publicar SPs actualizados en cada entorno.
+-- Fuente de verdad: MAT.DB
+--   usp_MAT_Transporte_Insert.sql   (@Tipo en INSERT)
+--   usp_MAT_Transporte_GetListTransporte.sql   (SELECT t.Tipo)

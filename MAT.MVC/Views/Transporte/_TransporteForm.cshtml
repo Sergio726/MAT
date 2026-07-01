@@ -1,0 +1,79 @@
+@model MAT.MVC.Models.TransporteFormViewModel
+@using MAT.Enums
+@using MAT.Utilities
+
+<style>
+    .modern-form-section { margin-bottom: 1.25rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color, #e5e7eb); }
+    .modern-form-section:last-of-type { border-bottom: none; }
+    .modern-form-section-title { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary, #1f2937); }
+    .modern-form-section-title i { color: var(--brand-primary, #2563eb); }
+</style>
+
+@Html.HiddenFor(m => m.TransporteId)
+
+<div class="modern-form-section">
+    <div class="modern-form-section-title">
+        <i class="bi bi-bus-front"></i>
+        <span>Identificación del coche</span>
+    </div>
+    <div class="modern-form-grid">
+        <div class="modern-form-group">
+            <label class="modern-form-label" for="NroCoche">
+                <i class="bi bi-hash"></i>
+                @Html.LabelFor(m => m.NroCoche) <span style="color: #ef4444;">*</span>
+            </label>
+            @Html.TextBoxFor(m => m.NroCoche, new { @class = "modern-form-input", inputmode = "numeric", placeholder = "Ej: 81, 101", maxlength = "50" })
+            @Html.ValidationMessageFor(m => m.NroCoche, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="modern-form-group">
+            <label class="modern-form-label" for="Matricula">
+                <i class="bi bi-card-text"></i>
+                @Html.LabelFor(m => m.Matricula) <span style="color: #ef4444;">*</span>
+            </label>
+            @Html.TextBoxFor(m => m.Matricula, new { @class = "modern-form-input", placeholder = "Patente del vehículo", maxlength = "10" })
+            @Html.ValidationMessageFor(m => m.Matricula, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="modern-form-group">
+            <label class="modern-form-label" for="Tipo">
+                <i class="bi bi-diagram-3"></i>
+                @Html.LabelFor(m => m.Tipo) <span style="color: #ef4444;">*</span>
+            </label>
+            @Html.DropDownListFor(
+                m => m.Tipo,
+                EnumExtensions.ToSelectListByDbValue<eTipoTransporte>(Model.Tipo),
+                "Seleccionar tipo...",
+                new { @class = "modern-form-select" })
+            @Html.ValidationMessageFor(m => m.Tipo, "", new { @class = "text-danger" })
+            <small class="text-muted" style="display: block; margin-top: 0.35rem;">
+                Define el layout de butacas en reservas (minibús, doble piso, etc.). Los viajes aéreos se configuran en Viaje → Medio.
+            </small>
+        </div>
+    </div>
+</div>
+
+<div class="modern-form-section" style="margin-top: 1.5rem;">
+    <div class="modern-form-section-title">
+        <i class="bi bi-people"></i>
+        <span>Capacidad</span>
+    </div>
+    <div class="modern-form-grid">
+        <div class="modern-form-group">
+            <label class="modern-form-label" for="MaxPasajeros">
+                <i class="bi bi-people-fill"></i>
+                @Html.LabelFor(m => m.MaxPasajeros) <span style="color: #ef4444;">*</span>
+            </label>
+            @Html.TextBoxFor(m => m.MaxPasajeros, new { @class = "modern-form-input", type = "number", min = "1", max = "999", placeholder = "Ej: 45" })
+            @Html.ValidationMessageFor(m => m.MaxPasajeros, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+
+<div class="modern-form-actions">
+    @Html.ActionLink("Volver a la lista", "Index", "Transporte", null, new { @class = "btn-modern btn-modern-secondary" })
+    <button type="submit" class="btn-modern btn-modern-primary">
+        <i class="bi bi-check-circle"></i>
+        <span>@(Model.IsEdit ? "Guardar cambios" : "Crear transporte")</span>
+    </button>
+</div>

@@ -1,106 +1,124 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using MAT.Services;
-using MAT.Entities;
+using MAT.MVC.Infrastructure;
+using MAT.MVC.Models;
 
 namespace MAT.MVC.Controllers.Transporte
 {
     public class TransporteController : Controller
     {
-        //
-        // GET: /Transporte/
-
         public ActionResult Index()
         {
-            //TransporteService STransporte = new TransporteService();
-            //IList<Entities.Transporte> LTransporte = STransporte.GetAll().OrderBy(tr => tr.NroCoche).ToList();
-            List<MAT.MVC.Models.TransporteModel> LTransporte = new List<Models.TransporteModel>();
-            LTransporte = MAT.MVC.Models.TransporteMethod.GetListTransporte();
-            return View(LTransporte);
+            try
+            {
+                List<TransporteModel> lTransporte = TransporteMethod.GetListTransporte();
+                return View(lTransporte);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(ex, "TransporteController.Index");
+                return View(new List<TransporteModel>());
+            }
         }
 
         public ActionResult Create()
         {
-            return View(new Entities.Transporte());
+            return View(new TransporteFormViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Entities.Transporte Transporte)
+        public ActionResult Create(TransporteFormViewModel model)
         {
+            model.Normalize();
+            if (!model.IsTipoValid())
+            {
+                ModelState.AddModelError("Tipo", "Seleccione un tipo de transporte válido.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             try
             {
-                MAT.MVC.Models.TransporteMethod.InsertTransporte(
-                    Transporte.NroCoche,
-                    Transporte.MaxPasajeros ?? 0,
-                    Transporte.KmRecorridos ?? 0,
-                    Transporte.UltimoService,
-                    Transporte.Matricula);
+                TransporteMethod.InsertTransporte(model);
                 return RedirectToAction("Index", "Transporte");
             }
             catch (Exception ex)
             {
-                ViewBag.Error = MAT.MVC.Infrastructure.ErrorUtil.LogAndGetPublicMessage(ex, "TransporteController.Create");
-                return View(Transporte);
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(ex, "TransporteController.Create");
+                return View(model);
             }
         }
 
         public ActionResult Edit(Guid Id)
         {
-            TransporteService Stransporte = new TransporteService();
-            MAT.Entities.Transporte Transporte = Stransporte.Get(new TransporteKey( Id));
-            return View(Transporte);
-        }
-
-
-        
-        [HttpPost]
-        public ActionResult Edit(Guid Id, FormCollection collection)
-        {
-            /*Para editar los regiostros es necesario usar la siguiente esctructra, que es la que reconoce el
-            el comando Update*/
-
-            TransporteService Stransporte = new TransporteService();
-            MAT.Entities.Transporte Transporte = Stransporte.Get(new TransporteKey(Id));
             try
             {
-                if (!string.IsNullOrEmpty(collection.Get("NroCoche"))) Transporte.NroCoche = collection.Get("NroCoche");
-                if (!string.IsNullOrEmpty(collection.Get("MaxPasajeros"))) Transporte.MaxPasajeros = Convert.ToInt16(collection.Get("MaxPasajeros"));
-                if (!string.IsNullOrEmpty(collection.Get("KmRecorridos"))) Transporte.KmRecorridos = Convert.ToInt32(collection.Get("KmRecorridos"));
-                if (!string.IsNullOrEmpty(collection.Get("UltimoService"))) Transporte.UltimoService = Convert.ToDateTime(collection.Get("UltimoService"));
-                if (!string.IsNullOrEmpty(collection.Get("Matricula"))) Transporte.Matricula = collection.Get("Matricula");
+                var model = TransporteMethod.GetFormById(Id);
+                if (model == null)
+                {
+                    TempData["Error"] = "El transporte solicitado no existe.";
+                    return RedirectToAction("Index");
+                }
 
-                Stransporte.Update(Transporte);
-
-               
+                return View(model);
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception e)
-#pragma warning restore CS0168 // Variable is declared but never used
-            { 
-            
+            catch (Exception ex)
+            {
+                TempData["Error"] = ErrorUtil.LogAndGetPublicMessage(ex, "TransporteController.Edit");
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(TransporteFormViewModel model)
+        {
+            model.Normalize();
+            if (!model.TransporteId.HasValue || model.TransporteId.Value == Guid.Empty)
+            {
+                TempData["Error"] = "El transporte solicitado no existe.";
+                return RedirectToAction("Index");
             }
 
-            return RedirectToAction("Index");
+            if (!model.IsTipoValid())
+            {
+                ModelState.AddModelError("Tipo", "Seleccione un tipo de transporte válido.");
+            }
 
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                TransporteMethod.UpdateTransporte(model);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(ex, "TransporteController.Edit");
+                return View(model);
+            }
         }
 
         public ActionResult Delete(Guid Id)
         {
             try
             {
-                TransporteService STransporte = new TransporteService();
-                MAT.Entities.Transporte Transporte = STransporte.Get(new TransporteKey(Id));
-                STransporte.Delete(Transporte);
+                TransporteMethod.DeleteTransporte(Id);
             }
-            catch 
+            catch (Exception ex)
             {
-                string ex = "No se puede eliminar el transporte seleccionado, verifique que ninguna butaca este vinculada con este transporte";
-                return PartialView("Error", ex);
+                var msg = ErrorUtil.LogAndGetPublicMessage(ex, "TransporteController.Delete");
+                return PartialView("Error", msg);
             }
+
             return RedirectToAction("Index", "Transporte");
         }
     }

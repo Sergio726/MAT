@@ -130,7 +130,7 @@ namespace MAT.MVC.Controllers.Viaje
         {
             foreach (var item in servicios)
             {
-                Entities.Servicio servicio = new Services.ServicioService().GetByServicioId(item.ServicioId.Value);
+                Entities.Servicio servicio = Infrastructure.Data.MaestrosDataAccess.GetServicioById(item.ServicioId.Value);
                 if (servicio.TransporteId.HasValue) return true;
             }
             return false;

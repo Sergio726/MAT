@@ -6,6 +6,18 @@
 }
 
 <div class="modern-page-container">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @ViewBag.Error
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+        </div>
+    }
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-cone-striped"></i>

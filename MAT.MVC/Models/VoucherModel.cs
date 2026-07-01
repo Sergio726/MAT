@@ -1,5 +1,6 @@
 ﻿using MAT.Services;
 using MAT.Utilities;
+using MAT.MVC.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,8 +17,6 @@ namespace MAT.MVC.Models
         private PasajeService pasajeService;
         private PersonaPasajeroService pasajeroService;
         private FacturaService facturaService;
-        private ServicioService servicioService;
-        private ExcursionService excursionService;
         private PaqueteServicioService paqueteservicioService;
         private PaqueteExcursionService paqueteexcursionService;
         private PaqueteService paqueteService;
@@ -42,8 +41,6 @@ namespace MAT.MVC.Models
             pasajeService = new PasajeService();
             pasajeroService = new PersonaPasajeroService();
             facturaService = new FacturaService();
-            servicioService = new ServicioService();
-            excursionService = new ExcursionService();
             paqueteservicioService = new PaqueteServicioService();
             paqueteexcursionService = new PaqueteExcursionService();
             paqueteService = new PaqueteService();
@@ -52,7 +49,7 @@ namespace MAT.MVC.Models
             localidadService = new LocalidadService();
 
             Pasaje = pasajeService.GetByPasajeId(pasajeid);
-            Butaca = new ButacaService().GetByButacaId(Pasaje.ButacaId.Value);
+            Butaca = MaestrosDataAccess.GetButacaById(Pasaje.ButacaId.Value);
             Pasajero = pasajeroService.GetAll().Where(psj => psj.PasajeroId == Pasaje.PasajeroId.Value).FirstOrDefault();
             Viaje = viajeService.GetByViajeId(Pasaje.ViajeId.Value);
             Paquete = paqueteService.GetByPaqueteId(Viaje.PaqueteId.Value);
@@ -61,7 +58,7 @@ namespace MAT.MVC.Models
             StringBuilder _servicios = new StringBuilder();
             foreach (var item in _serviciospaquete)
             {
-                _servicios.Append(servicioService.GetByServicioId(item.ServicioId.Value).Descripcion).Append(", ");
+                _servicios.Append(MaestrosDataAccess.GetServicioById(item.ServicioId.Value).Descripcion).Append(", ");
             }
             Servicios = _servicios.ToString();
 
@@ -69,7 +66,7 @@ namespace MAT.MVC.Models
             StringBuilder _excursiones = new StringBuilder();
             foreach (var item in _excursionesPaquete)
             {
-                _excursiones.Append(excursionService.GetByExcursionId(item.ExcursionId).Descripcion).Append(", ");
+                _excursiones.Append(MaestrosDataAccess.GetExcursionById(item.ExcursionId).Descripcion).Append(", ");
             }
             Excursiones = _excursiones.ToString();
 
@@ -98,9 +95,16 @@ namespace MAT.MVC.Models
 
                 ReservaVoucherModel Reserva = new ReservaVoucherModel();
 
-                Entities.Habitacion habitacion = item.HabitacionId.HasValue ? new HabitacionService().GetByHabitacionId(item.HabitacionId.Value) : null;
-                HotelService hotelService = new HotelService();
-                Entities.Hotel hotel = hotelService.GetByHotelId(habitacion.HotelId.Value);
+                Entities.Habitacion habitacion = item.HabitacionId.HasValue
+                    ? MaestrosDataAccess.GetHabitacionById(item.HabitacionId.Value)
+                    : null;
+                Entities.Hotel hotel = habitacion != null && habitacion.HotelId.HasValue
+                    ? MaestrosDataAccess.GetHotelById(habitacion.HotelId.Value)
+                    : null;
+                if (hotel == null || habitacion == null)
+                {
+                    continue;
+                }
                 Reserva.NombreHotel = hotel.Nombre;
                 Reserva.Telefono = hotel.Telefono;
                 Reserva.Direccion = hotel.Direccion;

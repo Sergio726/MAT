@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using MAT.Entities;
 using MAT.Services;
+using MAT.MVC.Infrastructure.Data;
 using System.Text;
 using MAT.Enums;
 using MAT.Data;
@@ -18,7 +19,6 @@ namespace MAT.MVC.Models
         ViajeService viajeServ;
         PaqueteService paqueteServ;
         PaqueteServicioService paqueteservicioServ;
-        ServicioService servicioServ;
         LocalidadService localidadServ;
         PasajeService pasajeServ;
         PasajeroService pasajeroServ;
@@ -43,7 +43,6 @@ namespace MAT.MVC.Models
             viajeServ = new ViajeService();
             paqueteServ = new PaqueteService();
             paqueteservicioServ = new PaqueteServicioService();
-            servicioServ = new ServicioService();
             localidadServ = new LocalidadService();
             pasajeServ = new PasajeService();
             pasajeroServ = new PasajeroService();
@@ -56,7 +55,6 @@ namespace MAT.MVC.Models
                 viajeServ = new ViajeService();
                 paqueteServ = new PaqueteService();
                 paqueteservicioServ = new PaqueteServicioService();
-                servicioServ = new ServicioService();
                 localidadServ = new LocalidadService();
                 pasajeServ = new PasajeService();
                 pasajeroServ = new PasajeroService();
@@ -68,7 +66,7 @@ namespace MAT.MVC.Models
                 Destino = localidadServ.GetById(Paquete.DestinoId);
                 foreach (PaqueteServicio ps in listpaqueteservicio)
                 {
-                    _servicios.Add(servicioServ.GetByServicioId(ps.ServicioId.Value));
+                    _servicios.Add(MaestrosDataAccess.GetServicioById(ps.ServicioId.Value));
                 }
                 Servicios = _servicios;
                 List<Pasaje> _pasajes = pasajeServ.GetByViajeId(viajeid).Where(p => p.PasajeroId.HasValue).ToList();

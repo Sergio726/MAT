@@ -24,6 +24,7 @@ AS
 			   h.Capacidad, 
 			   h.Ocupacion, 
 			   nombre = isnull(h.nombre,''),
+			   h.HotelID,
 			   HabitacionTipo = ht.Descripcion,
 			   HabPrecio = h.Precio,
 			   HabDescripcion = h.Descripcion

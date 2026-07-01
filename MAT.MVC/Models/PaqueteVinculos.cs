@@ -21,8 +21,7 @@ namespace MAT.MVC.Models
         public List<Entities.Adicional> Adicionales { get; set; }
 
         private PaqueteService paqueteService;
-        private ServicioService servicioService;
-        private ExcursionService excursionService;
+        // Campos legacy comentados — ver PaqueteModel / MaestrosDataAccess (NetTiers F3)
         private PrecioService precioService;
         private AdicionalService adicionalService;
 

@@ -470,6 +470,19 @@
     </Build>
     <Build Include="dbo\Stored Procedures\usp_MAT_Transporte_GetListTransporte.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Transporte_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Transporte_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Transporte_Update.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Transporte_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Servicio_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Servicio_Update.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Servicio_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Butaca_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Butaca_GetByTransporteId.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Butaca_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Butaca_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Butaca_Update.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Butaca_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Excursion_GetById.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Update.sql">
       <AnsiNulls>Off</AnsiNulls>
     </Build>

@@ -1,7 +1,7 @@
-@model MAT.Entities.Transporte
+@model MAT.MVC.Models.TransporteFormViewModel
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Nuevo transporte";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -9,7 +9,7 @@
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-bus-front"></i>
-            <span>Crear Transporte</span>
+            <span>Nuevo transporte</span>
         </h2>
     </div>
 
@@ -24,70 +24,11 @@
         {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-            <div class="modern-form-grid">
-                <div class="modern-form-group">
-                    <label class="modern-form-label">
-                        <i class="bi bi-hash"></i>
-                        @Html.LabelFor(model => model.NroCoche)
-                    </label>
-                    @Html.TextBoxFor(model => model.NroCoche, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Número de coche" })
-                    @Html.ValidationMessageFor(model => model.NroCoche, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="modern-form-group">
-                    <label class="modern-form-label">
-                        <i class="bi bi-people"></i>
-                        @Html.LabelFor(model => model.MaxPasajeros)
-                    </label>
-                    @Html.TextBoxFor(model => model.MaxPasajeros, new { @class = "modern-form-input", type = "number", min = "1", placeholder = "Máximo de pasajeros" })
-                    @Html.ValidationMessageFor(model => model.MaxPasajeros, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="modern-form-group">
-                    <label class="modern-form-label">
-                        <i class="bi bi-speedometer2"></i>
-                        @Html.LabelFor(model => model.KmRecorridos)
-                    </label>
-                    @Html.TextBoxFor(model => model.KmRecorridos, new { @class = "modern-form-input", type = "number", min = "0", placeholder = "0" })
-                    @Html.ValidationMessageFor(model => model.KmRecorridos, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="modern-form-group">
-                    <label class="modern-form-label">
-                        <i class="bi bi-calendar3"></i>
-                        @Html.LabelFor(model => model.UltimoService)
-                    </label>
-                    @Html.TextBoxFor(model => model.UltimoService, "{0:yyyy-MM-dd}", new { @class = "modern-form-input", type = "date" })
-                    @Html.ValidationMessageFor(model => model.UltimoService, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="modern-form-group">
-                    <label class="modern-form-label">
-                        <i class="bi bi-card-text"></i>
-                        @Html.LabelFor(model => model.Matricula)
-                    </label>
-                    @Html.TextBoxFor(model => model.Matricula, new { @class = "modern-form-input", placeholder = "Matrícula del vehículo" })
-                    @Html.ValidationMessageFor(model => model.Matricula, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="modern-form-actions">
-                @Html.ActionLink("Volver a la Lista", "Index", null, new { @class = "btn-modern btn-modern-secondary" })
-                <button type="submit" class="btn-modern btn-modern-primary">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Crear Transporte</span>
-                </button>
-            </div>
+            @Html.Partial("_TransporteForm", Model)
         }
     </div>
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("input[type=number]").attr("min", 0);
-        });
-    </script>
 }

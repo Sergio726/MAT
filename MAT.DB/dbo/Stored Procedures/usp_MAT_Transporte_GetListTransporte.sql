@@ -15,7 +15,8 @@ BEGIN
 		   t.MaxPasajeros, 
 		   t.KmRecorridos, 
 		   t.UltimoService, 
-		   t.Matricula 
+		   t.Matricula,
+		   t.Tipo
 	FROM   dbo.Transporte t 
 	WHERE  (CONVERT(VARCHAR(36), t.TransporteID) = @TransporteID ) 
 			OR ( @TransporteID = '' ) 

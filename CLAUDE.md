@@ -61,6 +61,12 @@ MAT.sln
 - Acceso a datos vía `DataRepository` + providers, nunca repositorios DDD manuales
 - Archivos `*.generated.cs` **no se editan manualmente** (se regeneran con NetTiers)
 
+### Migración NetTiers (en curso)
+
+- **Código nuevo en `MAT.MVC`:** solo `DBHelper` + SP en `MAT.DB` (patrones: `HotelModel`, `ServicioMethod`, `MaestrosDataAccess`).
+- **No agregar** nuevos usos de `*Service` NetTiers desde MVC; extender `*Method` / `Infrastructure/Data/`.
+- Épica y fases: `SPEC.md` (NetTiers F0–F12), detalle en `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md`.
+
 ### Manejo de errores en controladores (obligatorio)
 
 Siempre usar `ErrorUtil.LogAndGetPublicMessage` en bloques `catch`. **Nunca** exponer `e.Message` al usuario.

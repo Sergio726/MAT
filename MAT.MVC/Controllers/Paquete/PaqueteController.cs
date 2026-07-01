@@ -11,6 +11,7 @@ using System.IO;
 using System.Data;
 using Newtonsoft.Json;
 using MAT.MVC.Infrastructure;
+using MAT.MVC.Infrastructure.Data;
 
 namespace MAT.MVC.Controllers.Paquete
 {
@@ -240,14 +241,13 @@ namespace MAT.MVC.Controllers.Paquete
         }
         public ActionResult RenderGridServicios(string filter, Guid id)
         {
-            ServicioService service = new ServicioService();
-            List<MAT.Entities.Servicio> list = service.GetAll().ToList();
+            List<MAT.Entities.Servicio> list = ServicioMethod.GetAllEntities();
             #region Except
             List<MAT.Entities.Servicio> vinculados = new List<Entities.Servicio>();
             List<Entities.PaqueteServicio> vinculos = new PaqueteServicioService().GetByPaqueteId(id).ToList();
             foreach (var item in vinculos)
             {
-                vinculados.Add(service.GetByServicioId(item.ServicioId.Value));
+                vinculados.Add(MaestrosDataAccess.GetServicioById(item.ServicioId.Value));
             }
             list = list.Except(vinculados).ToList();
             #endregion

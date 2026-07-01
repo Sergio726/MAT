@@ -10,6 +10,7 @@ using MAT.Data;
 using System.Data.SqlClient;
 using System.Data;
 using MAT.Utilities;
+using MAT.MVC.Infrastructure.Data;
 
 namespace MAT.MVC.Models
 {
@@ -36,11 +37,7 @@ namespace MAT.MVC.Models
         PaqueteService pServ;
         LocalidadService lServ;
         PaqueteServicioService psServ;
-        ServicioService sServ;
-        TransporteService tServ;
-        ButacaService bServ;
         PasajeService pasajeServ;
-        ExcursionService excursionServ;
         PaqueteExcursionService paqueteExcursionServ;
         public Viaje Viaje { get; set; }
         public Paquete Paquete { get; set; }
@@ -56,11 +53,7 @@ namespace MAT.MVC.Models
             paqueteExcursionServ = new PaqueteExcursionService();
             lServ = new LocalidadService();
             psServ = new PaqueteServicioService();
-            sServ = new ServicioService();
-            tServ = new TransporteService();
-            bServ = new ButacaService();
             pasajeServ = new PasajeService();
-            excursionServ = new ExcursionService();
         }
         public PaqueteModel(Guid viajeID)
         {
@@ -74,12 +67,8 @@ namespace MAT.MVC.Models
                 pServ = new PaqueteService();
                 lServ = new LocalidadService();
                 psServ = new PaqueteServicioService();
-                sServ = new ServicioService();
-                tServ = new TransporteService();
-                bServ = new ButacaService();
                 pasajeServ = new PasajeService();
                 paqueteExcursionServ = new PaqueteExcursionService();
-                excursionServ = new ExcursionService();
                 Viaje = vServ.GetByViajeId(viajeID);
                 Paquete = pServ.GetByPaqueteId(Viaje.PaqueteId.Value);
                 listpaqueteservicio = psServ.GetByPaqueteId(Paquete.PaqueteId).ToList();
@@ -88,16 +77,16 @@ namespace MAT.MVC.Models
                 Destino = lServ.GetById(Paquete.DestinoId);
                 foreach (PaqueteServicio ps in listpaqueteservicio)
                 {
-                    _servicios.Add(sServ.GetByServicioId(ps.ServicioId.Value));
+                    _servicios.Add(MaestrosDataAccess.GetServicioById(ps.ServicioId.Value));
                 }
                 foreach (PaqueteExcursion excursion in listpaqueteexcursion)
                 {
-                    _excursiones.Add(excursionServ.GetByExcursionId(excursion.ExcursionId));
+                    _excursiones.Add(MaestrosDataAccess.GetExcursionById(excursion.ExcursionId));
                 }
                 Servicios = _servicios;
                 Excursiones = _excursiones;
                 Servicio servicioTransporte = _servicios.Where(s => s.TransporteId.HasValue).FirstOrDefault();
-                if (servicioTransporte !=null) Bus = tServ.GetByTransporteId(servicioTransporte.TransporteId.Value);
+                if (servicioTransporte !=null) Bus = MaestrosDataAccess.GetTransporteById(servicioTransporte.TransporteId.Value);
             }
             catch (Exception ex)
             {
@@ -121,7 +110,7 @@ namespace MAT.MVC.Models
             bool success = false;
             try
             {
-                List<Butaca> butacas = bServ.GetByTransporteId(Bus.TransporteId).ToList();
+                List<Butaca> butacas = MaestrosDataAccess.GetButacasByTransporteId(Bus.TransporteId);
                 foreach (Butaca butaca in butacas)
                 {
                     Pasaje pasaje = new Pasaje()

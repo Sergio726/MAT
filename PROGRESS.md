@@ -2,6 +2,99 @@
 
 ---
 
+## Handoff — próxima sesión (2026-06-30)
+
+**Rama:** `MAT2026` (cambios locales sin commit; revisar `git status` antes de commitear).
+
+### Hecho hoy (código compila OK)
+
+| Bloque | Estado |
+|--------|--------|
+| NetTiers F0 + F1 + F3 | Implementado; SPEC F3 `[x]` |
+| ErrorUtil en Transporte/Servicio/Butaca | Normalizado |
+| Transporte ABM UX (Create/Edit/Index + Tipo) | Implementado; ver entrada abajo |
+
+### Pendiente operativo (BD + smoke)
+
+1. **Publicar SPs en SQL Server** del entorno local (Publish `MAT.DB` o scripts en `database/`):
+   - `database/2026-06-30_NetTiers_F3_Maestros_SPs.sql` (índice → 12 SPs maestros)
+   - `database/2026-06-30_Transporte_Tipo_UI.sql` → `usp_MAT_Transporte_Insert`, `usp_MAT_Transporte_GetListTransporte`
+2. **Smoke manual:**
+   - `/Transporte/Index`, Create, Edit (4 tipos: MINIBUS, CAMION 4X4, PISOELEVADO, DOBLEPISO)
+   - `/Servicio/Index`, `/Butaca/Index` (ABM + alertas de error)
+   - Reserva: mapa de butacas con un coche de cada tipo
+3. **SQL útil:** `SELECT DISTINCT Tipo FROM dbo.Transporte ORDER BY 1` (legacy sin tipo → editar y asignar)
+
+### Siguiente task SPEC (elegir uno)
+
+- **NetTiers F2** — catálogo geográfico
+- **NetTiers F4** — Paquete / `DataRepository` en `PaqueteModel.GenerarPasajes`
+- **Viaje rentabilidad** — validación con negocio (SPEC § Viaje)
+
+### Archivos clave Transporte UX
+
+- `MAT.Enums/eTipoTransporte.cs`, `MAT.MVC/Models/TransporteFormViewModel.cs`
+- `MAT.MVC/Views/Transporte/_TransporteForm.cshtml`, `Create.cshtml`, `Edit.cshtml`, `Index.cshtml`
+- `TransporteController.cs`, `TransporteModel.cs`, `MaestrosDataAccess.cs`
+
+**Nota:** Aéreo = `Viaje.Medio` (`AEREO`), no `Transporte.Tipo`.
+
+---
+
+### [2026-06-30] — Transporte ABM UX (Create, Edit, Index + Tipo)
+
+- Archivos modificados/creados:
+  - `MAT.Enums/eTipoTransporte.cs` — MINIBUS, CAMION 4X4, PISOELEVADO, DOBLEPISO (códigos BD)
+  - `MAT.Utilities/EnumExtensions.cs` — ToSelectListByDbValue, GetDisplayName, validación Tipo
+  - `MAT.MVC/Models/TransporteFormViewModel.cs`, `TransporteModel.cs`, `TransporteController.cs`
+  - `MAT.MVC/Infrastructure/Data/MaestrosDataAccess.cs` — GetTransporteFormById
+  - `MAT.MVC/Views/Transporte/_TransporteForm.cshtml`, `Create.cshtml`, `Edit.cshtml`, `Index.cshtml`
+  - `MAT.DB/.../usp_MAT_Transporte_Insert.sql`, `usp_MAT_Transporte_GetListTransporte.sql`
+  - `database/2026-06-30_Transporte_Tipo_UI.sql` (índice despliegue)
+- Qué se implementó: Formulario unificado con validación; campo Tipo obligatorio; quitados Km/Último Service de UI; Index con badge de tipo; Edit POST con model binding + AntiForgery; Km/UltimoService preservados en BD al editar
+- Problemas encontrados: MAT.Utilities requería referencia a System.ComponentModel.DataAnnotations
+- Métricas: MSBuild MAT.MVC Debug OK
+- Estado: ✅ completo — **publicar SPs Insert/GetList en BD**
+- Siguiente task: NetTiers F2 o F4
+
+---
+
+
+- Archivos modificados/creados:
+  - **F0:** `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md` §5 inventario; `SPEC.md` F0 marcado
+  - **F1:** `MAT.sln` (sin MAT.Web), `MAT.MVC/Web.config` (sin tagPrefix/httpModule MAT.Web), `MAT.Data.WebServiceClient/README.md`, `CLAUDE.md` política congelamiento
+  - **F3 schema:** 12 SPs en `MAT.DB` + `usp_MAT_Habitacion_GetById` (+HotelID); `MAT.DB.sqlproj`; `database/2026-06-30_NetTiers_F3_Maestros_SPs.sql` (índice)
+  - **F3 código:** `MaestrosDataAccess.cs`, `ButacaModel.cs`, `TransporteMethod`/`ServicioMethod` extendidos, `ButacaController`, `TransporteController`, `ServicioController`, lookups en `PasajeModel`, `VoucherModel`, `PaqueteModel`, `InfopathModel`, `ViajeController`, `PaqueteController`
+- Qué se implementó: Migración Transporte/Servicio/Butaca de NetTiers a DBHelper+SP; cero `TransporteService`/`ServicioService`/`ButacaService` en `.cs` compilados de MVC
+- Problemas encontrados: conflicto namespace `Butaca` en controller (resuelto con `MAT.Entities.Butaca`)
+- Métricas: MSBuild MAT.MVC Debug OK (warnings preexistentes)
+- Estado: ✅ completo — **requiere publicar SPs en BD** del entorno
+- Siguiente task: NetTiers F2 (geo) o F4 (Paquete)
+
+---
+
+### [2026-06-30] — NetTiers: épica dividida en fases F0–F12
+
+- Archivos modificados/creados:
+  - `SPEC.md` — épica NetTiers desglosada en 13 sub-tasks (F0 inventario … F12 limpieza)
+  - `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md` — plan, patrones DBHelper vs Service, orden y riesgos
+- Qué se implementó: Solo documentación/planificación. Cadena actual MAT.MVC → Services → Data → SqlClient; dualidad DBHelper+SP ya usada en módulos nuevos.
+- Problemas encontrados: Ninguno.
+- Estado: 🔄 F0 pendiente de ejecución (inventario con grep por servicio)
+
+---
+
+### [2026-06-30] — Viaje: investigación rentabilidad y gastos por viaje
+
+- Archivos modificados/creados:
+  - `SPEC.md` — nueva sección *Viaje — Rentabilidad y gastos* (hallazgos, opciones A–D, tasks P2)
+  - `DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md` — investigación detallada
+- Qué se implementó: Investigación documentada — ingresos ya trazables vía `Pasaje.ViajeID` y reportes Admin; gap principal en costos (`FacturaFiscal` compra sin viaje; planilla legacy con UI retirada; no hay `ViajeGasto`). Recomendación preliminar híbrido A+B.
+- Problemas encontrados: Ninguno (solo documentación).
+- Estado: ✅ investigación completa; implementación pendiente de validación con negocio
+
+---
+
 ### [2026-06-30] — ReservaController: normalización ErrorUtil
 
 - Archivos modificados: `MAT.MVC/Controllers/Reserva/ReservaController.cs`

@@ -756,17 +756,92 @@
   Archivos: `Controllers/Admin/AdminController.cs`, `Views/Admin/GridResumenPagos.cshtml`, `Infrastructure/AdminResumenPagosExcelExport.cs`
   Criterio de éxito: El botón descarga un .xlsx con los datos del viaje seleccionado. La acción tiene `[Authorize]` y `RequireAdministrador()`.
 
-- [ ] **Arquitectura [P3 — Baja]: Eliminar NetTiers y capa generada asociada**
-  **Contexto:** Hoy gran parte del acceso a datos y entidades proviene de plantillas NetTiers (`*generated*.cs`, `NetTiersProvider`, `DataRepository`, proyectos `MAT.Data`, `MAT.Data.SqlClient`, `MAT.Data.WebServiceClient`, bases `*ServiceBase.generated.cs` en `MAT.Services`, `*Base.generated.cs` en `MAT.Entities`, y posibles restos en `MAT.Web`). Objetivo final: **ninguna dependencia ni referencia a NetTiers**, y código muerto eliminado.
-  **Restricción:** Épica de alto riesgo; **consultar al humano** antes de arrancar la primera fase (estrategia de reemplazo: SqlClient/SPs ya usados, repositorios manuales, u otra capa acordada). **No agregar paquetes NuGet** (p. ej. Dapper) sin aprobación explícita.
-  **Enfoque por fases (marcar avance en PROGRESS):**
-  1. **Inventario:** Listar referencias a `NetTiers`, `DataRepository`, providers Sql/Ws y usos de `*.generated.cs` desde `MAT.MVC`, `MAT.Services` (clases manuales), `MAT.Web`, `MAT.WCF`. Identificar proyectos/piezas realmente usados en el build de la solución principal vs. legado desreferenciado.
-  2. **Sustitución incremental:** Por dominio o por proyecto, reemplazar llamadas a la capa NetTiers por el método acordado (p. ej. `DBHelper`/SqlCommand, servicios ya existentes sin generated, nuevos repositorios). Mantener contratos públicos de la app estables donde sea posible.
-  3. **Poda:** Eliminar archivos `*.generated.cs` y bases generadas cuando ningún compilado los referencie; retirar proyectos o carpetas enteras si quedan huérfanos (`WebServiceClient`, etc., solo si el análisis confirma que no se usan).
-  4. **Limpieza:** Quitar referencias de ensamblados, `using`, comentarios de plantilla `www.nettiers.com`, y actualizar `CLAUDE.md` / documentación de arquitectura para reflejar la nueva capa de datos.
-  **Criterio de éxito global:** `MAT.sln` compila en Debug sin proyectos NetTiers en la cadena de uso de `MAT.MVC`; búsqueda en repo sin `NetTiers` ni `nettiers.com`; comportamiento funcional validado en pruebas manuales/regresión por módulos migrados. Si una fase no puede cerrarse sin decisión de diseño, documentar bloqueo en PROGRESS y pausar.
+- [ ] **Arquitectura [P3]: Eliminar NetTiers y capa generada** *(épica — avanzar por fases)*
+  **Contexto:** Gran parte del acceso a datos usa plantillas NetTiers (`*generated*.cs`, `SqlNetTiersProvider`, `DataRepository`, proyectos `MAT.Data`, `MAT.Data.SqlClient`, `MAT.Services/*ServiceBase.generated.cs`, `MAT.Entities/*Base.generated.cs`). Objetivo final: **ninguna dependencia activa a NetTiers** en la cadena `MAT.MVC`.
+  **Patrón objetivo (sin NuGet nuevo):** `DBHelper` + SPs en `MAT.DB` para lecturas/agregados; clases `*DataAccess` o métodos en `Models/*` para CRUD que hoy pasan por `*Service`; POCOs en `MAT.Entities` reescritos a mano al final.
+  **Estado dual hoy:** `MAT.MVC` ya usa mucho `DBHelper` (reportes, reserva, factura fiscal); los `*Service` NetTiers quedan sobre todo en CRUD de catálogo y entidades core (~50 servicios, la mayoría wrappers vacíos de 40 líneas).
+  **Documento de referencia:** `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md`
+  **Reglas durante la migración:** (1) código nuevo solo `DBHelper`/SP; (2) no editar `*.generated.cs`; (3) una fase = un dominio cerrado + MSBuild + smoke test; (4) no agregar Dapper/EF sin aprobación.
+  **Criterio de éxito global:** `MAT.MVC` compila y corre sin referencias a `MAT.Data` / `MAT.Data.SqlClient`; sin `NetTiers` en `Web.config`; búsqueda en repo sin `nettiers.com`; regresión manual por módulos migrados.
 
-- [ ] **Arquitectura [P3 — Baja]: Retirar proyecto `MAT.Web` (legado Web Forms / NetTiers)**
+  ##### Fase 0 — Inventario y estrategia
+  - [x] **NetTiers F0:** Mapa de dependencias y plantilla de migración
+    Inventario: referencias por proyecto (`MAT.MVC` → `MAT.Services` → `MAT.Data` → `MAT.Data.SqlClient`); conteo de `new *Service()` y `DBHelper` por controller/model; listar `DataRepository` directo (hoy: `PaqueteModel`, `ConnectionScope`); confirmar `MAT.Data.WebServiceClient` **fuera de** `MAT.sln`.
+    Entregable: `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md` § inventario + checklist por entidad.
+    Criterio: documento aprobado; sin cambios de código salvo correcciones triviales de doc.
+
+  ##### Fase 1 — Poda de legado sin tocar el core
+  - [x] **NetTiers F1a:** Archivar o eliminar `MAT.Data.WebServiceClient` (no está en solución; carpeta huérfana).
+  - [x] **NetTiers F1b:** Retirar `MAT.Web` de solución y `Web.config` *(ver task hermano más abajo)*.
+  - [x] **NetTiers F1c:** Política “congelamiento” — en `CLAUDE.md` / reglas: features nuevas solo vía SP + `DBHelper`; no nuevos `*Service` NetTiers.
+    Criterio: MSBuild `MAT.sln` limpio; `MAT.MVC` arranca en IIS Express.
+
+  ##### Fase 2 — Dominios de bajo riesgo (catálogo geográfico)
+  Migrar llamadas en `MAT.MVC` y reemplazar `*Service` por `*DataAccess` (o SPs) para:
+  `Pais`, `Provincia`, `Ciudad`, `Localidad`, `Departamento`, `Destino`.
+  - [ ] **NetTiers F2:** Catálogo geográfico migrado
+    Archivos probables: `LocalidadController`, models que instancien estos servicios, nuevos archivos en `MAT.Utilities` o `MAT.MVC/Infrastructure/Data/`.
+    Criterio: cero usos de `PaisService`…`DestinoService` desde `MAT.MVC`; ABM/localidad sigue funcionando; MSBuild limpio.
+
+  ##### Fase 3 — Maestros operativos
+  `Hotel`, `Habitacion`, `HabitacionTipo`, `Transporte`, `Butaca`, `Proveedor`, `Servicio`, `Excursion`, `Adicional`, `EstadoPasaje`.
+  - [x] **NetTiers F3:** Maestros operativos migrados
+    Archivos probables: `HotelController`, `TransporteController`, `ButacaController`, `ServicioController`, `ExcursionModel`, `HotelModel`, etc.
+    Criterio: módulos hotel/transporte/servicio/excursión sin `*Service` NetTiers en MVC; smoke test ABM.
+
+  ##### Fase 4 — Paquete y precios
+  `Paquete`, `PaqueteServicio`, `PaqueteExcursion`, `PaqueteAdicional`, `PaquetePrecio`, `Precio`, `PrecioServicio`, `PrecioHabitacion`, `Voucher`.
+  - [ ] **NetTiers F4:** Paquete y precios migrados
+    Nota: `PaqueteModel` usa `DataRepository.Provider.CreateTransaction()` — reemplazar por transacción SqlClient explícita o SP transaccional.
+    Archivos probables: `PaqueteController`, `PaqueteModel`, `PrecioModel`, `VoucherModel`.
+    Criterio: armado de paquete y vouchers operativos; sin `DataRepository` en `MAT.MVC`.
+
+  ##### Fase 5 — Viaje y operación de salida
+  `Viaje`, `ViajeHotel`, `ReservaHabitacion`, `PasajeroMenor`, `ObservacionViaje` (si aplica), vistas/consultas asociadas.
+  - [ ] **NetTiers F5:** Viaje y salida migrados
+    Archivos probables: `ViajeController`, `ViajeModel`, `ReservaHabitacionController`, `HotelHabitacionViajeModel`, `ObservacionViaje`.
+    Criterio: alta/edición viaje, hoteles del viaje, reserva habitación; MSBuild + smoke en `/Viaje` y `/Reserva`.
+
+  ##### Fase 6 — Reserva, pasaje y factura operativa *(crítico)*
+  `Factura`, `Pasaje`, `PasajeAdicional`, `Pago`, `Debito`, `MovimientoCuenta`, `Nota`, `AuditFactura`.
+  - [ ] **NetTiers F6:** Facturación y pagos operativos migrados
+    Archivos probables: `FacturaModel`, `ReservaModel`, `PersonaClienteController`, `PagoController`, `PagosClientesModel`, `CuentaModel`.
+    Criterio: flujo reserva → factura → pago manual probado; sin `FacturaService`/`PasajeService`/`PagoService` desde MVC.
+
+  ##### Fase 7 — Personas, clientes y cuenta corriente
+  `Persona`, `Cliente`, `Vendedor`, `TipoCliente`, `Cuenta`, `CuentaCorriente`; vistas `PersonaCliente`, `PersonaPasajero`, `PersonaProveedor`, `PersonaVendedor`.
+  - [ ] **NetTiers F7:** Personas y CC migrados
+    Nota: `PersonaClienteService` es **vista** NetTiers (`MAT.Services/Views/`) — candidato a SP dedicado.
+    Criterio: ABM cliente/pasajero/proveedor/vendedor y CC operativos.
+
+  ##### Fase 8 — Legacy y baja prioridad
+  `Planilla`, `PlanillaServicioItem`, `PlanillaHabitacionItem`, `PlanillaServicio`, `Historial`, `Nota` (si queda), `MATContext` planillas en sesión.
+  - [ ] **NetTiers F8:** Planilla e historial migrados o declarados obsoletos
+    Criterio: sin dependencia de sesión `MATContext` para planilla **o** documentar retiro total; impresión legacy evaluada.
+
+  ##### Fase 9 — Retirar capa Services generada
+  - [ ] **NetTiers F9:** Eliminar `MAT.Services` como capa NetTiers
+    Cuando ningún proyecto referencie `*ServiceBase.generated.cs`: mover lógica restante a `MAT.Utilities` / `Infrastructure/Data`; eliminar `ServiceBaseCore.generated.cs`, `ConnectionScope` NetTiers.
+    Criterio: `MAT.MVC` sin `ProjectReference` a `MAT.Services` **o** `MAT.Services` reducido a helpers sin generated.
+
+  ##### Fase 10 — Retirar MAT.Data y SqlClient
+  - [ ] **NetTiers F10:** Eliminar proyectos `MAT.Data` y `MAT.Data.SqlClient`
+    Quitar `SqlNetTiersProvider` de `Web.config`; eliminar referencias en `.csproj`.
+    Criterio: MSBuild sin esos proyectos; app arranca.
+
+  ##### Fase 11 — Entidades sin generated
+  - [ ] **NetTiers F11:** Reemplazar `MAT.Entities/*Base.generated.cs` por POCOs manuales
+    Mantener claves `*Key` y contratos usados por la app; una entidad por PR o por lote pequeño.
+    Criterio: carpeta `MAT.Entities` sin `*.generated.cs`; tipos públicos estables.
+
+  ##### Fase 12 — Limpieza final
+  - [ ] **NetTiers F12:** Documentación y barrido
+    Actualizar `CLAUDE.md`, `GUIA_SISTEMA_MAT.md`; grep sin `nettiers`, `DataRepository`, `VList`, `TList` legacy; retirar Enterprise Library Logging si quedó huérfano.
+    Criterio: épica cerrada; `PROGRESS.md` con resumen por fase.
+
+  **Orden recomendado:** F0 → F1 → F2 → F3 → F4 → F5 → F6 → F7 → F8 → F9 → F10 → F11 → F12. **F6 y F7** son las de mayor riesgo; no saltar fases de catálogo sin smoke test.
+
+- [x] **Arquitectura [P3 — Baja]: Retirar proyecto `MAT.Web` (legado Web Forms / NetTiers)** *(NetTiers F1b — carpeta conservada; fuera de solución y Web.config)*
   **Contexto:** `MAT.Web` sigue en `MAT.sln` y se compila, pero `CLAUDE.md` y `DOCUMENTACION\GUIA_SISTEMA_MAT.md` indican que **no hay `ProjectReference` desde `MAT.MVC` ni `MAT.Services`**. Aun así el host principal declara ensamblado y módulo en `MAT.MVC\Web.config` (`tagPrefix` → `MAT.Web.Data` / `MAT.Web.UI`, `EntityTransactionModule` → `MAT.Web.Data.EntityTransactionModule`). Antes de borrar nada hay que **confirmar uso cero** (vistas `.aspx`/ascx, controles `<data:...>`, scripts de despliegue, otros repos o IIS que referencien `MAT.Web.dll`).
   **Fases sugeridas:**
   1. **Inventario:** Búsqueda global `MAT.Web` / `assembly="MAT.Web"` en solution, configs y pipelines; verificar que ningún `.csproj` (salvo el propio) referencie el proyecto; listar dependencias internas (p. ej. solo NetTiers + Entities).
@@ -817,6 +892,61 @@
    - `MAT.MVC/Web.config` (eliminados appSettings `PersonaClienteCode` y `PersonaClienteCode2` — **no hacer commit con passwords reales**)
 
    **Criterio de éxito:** Las dos acciones anteriores validan contra origen BD; `MAT.DB` y documentación breve alineados; MSBuild limpio; prueba manual de rechazo/aceptación de código; `PROGRESS.md` actualizado.
+
+#### Viaje — Rentabilidad y gastos asociados al viaje
+
+**Objetivo de producto:** Poder registrar y consultar **costos/gastos** vinculados a un **viaje concreto** (`ViajeID`) y contrastarlos con **ingresos** ya trazables (ventas, pagos), para obtener **margen / rentabilidad** por salida.
+
+**Documento de investigación:** `DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md` (estado del modelo, gaps, opciones, fases y preguntas al negocio).
+
+##### Hallazgos — estado actual (2026-06-30)
+
+| Área | ¿Vinculado a `ViajeID`? | Notas |
+|------|-------------------------|-------|
+| **Ingresos operativos** | Sí | `Factura` → `Pasaje.ViajeID`; reporte `usp_MAT_Reportes_Ventas` con `@ViajeId`; Admin `ResumenPagos` / Excel por viaje (`usp_MAT_Pago_GetPagosByViaje`). |
+| **Factura fiscal compra** (`FacturaFiscal`, Tipo=1) | **No** | Gastos de proveedor sin columna ni UI de viaje; no entra en rentabilidad por salida hoy. |
+| **Planilla** (`Planilla`, `PlanillaServicioItem`, `PlanillaHabitacionItem`) | Sí (vía `Planilla.ViajeID`) | Modelo legacy de costeo por viaje (servicios + hotel); **menú Admin retirado** (2026-04/06); tablas y acciones de impresión/edición persisten en BD/código. |
+| **Catálogo** (`Excursion.Costo`, `Servicio.Precio`) | Indirecto | Costos/precios de referencia, no gasto real imputado al viaje salvo planilla o carga manual. |
+| **Tabla `Gasto` / módulo rentabilidad** | No existe | Sin SP, pantalla ni KPI de margen por viaje. |
+
+**Fórmula objetivo (referencia):** `Rentabilidad ≈ Ingresos del viaje − Costos imputados al viaje` (definir si ingresos = facturado, cobrado, o ambos; si costos = neto, con IVA, prorrateados, etc.).
+
+##### Tasks
+
+- [x] **Viaje [P2 — Investigación]: Modelo actual, gaps y opciones de diseño**
+  Revisión de código/BD documentada en `DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`.
+  Criterio de éxito: SPEC + doc con opciones comparadas y fases propuestas; **sin cambios de schema** en esta fase.
+
+- [ ] **Viaje [P2]: Validación con negocio — definición de rentabilidad**
+  Acordar con operaciones/contabilidad: base de ingresos (facturado vs cobrado vs butacas vendidas), qué entra como costo (compras fiscales, hoteles, transporte, guías, imprevistos), moneda, prorrateo entre viajes, permisos (solo Admin vs vendedores).
+  Criterio de éxito: decisión registrada en el doc de investigación (sección "Decisiones de negocio"); una opción de implementación marcada como preferida.
+
+- [ ] **Viaje [P2 — Opción A]: `ViajeID` opcional en `FacturaFiscal` (Tipo=Compra)**
+  Agregar `ViajeID` nullable + FK en `MAT.DB`; UI en alta/edición de compra fiscal (selector de viaje, filtro por fecha salida); reporte/listado de compras sin asignar.
+  Archivos probables: `MAT.DB` (tabla + migración), entidad/servicio NetTiers o acceso directo, `FacturaFiscalController`, `Views/FacturaFiscal/Create.cshtml`, nuevo SP de resumen costos por viaje.
+  Criterio de éxito: Compra fiscal puede asociarse a un viaje; MSBuild limpio; no romper compras existentes (`ViajeID` null).
+
+- [ ] **Viaje [P2 — Opción B]: Tabla `ViajeGasto` (gastos operativos manuales)**
+  Entidad dedicada: `ViajeGastoID`, `ViajeID`, `ProveedorID` opcional, `Concepto`, `Categoria` (enum o catálogo), `Monto`, `Moneda`, `Fecha`, `FacturaFiscalID` opcional, `Observaciones`, auditoría.
+  CRUD en Admin o pestaña en ficha del viaje; sumar en SP de rentabilidad.
+  Criterio de éxito: Alta/edición/baja de gastos por viaje; totales consultables por SP.
+
+- [ ] **Viaje [P2 — Opción C]: Reemplazo acotado del flujo Planilla**
+  Reutilizar tablas `Planilla*` o migrar datos a modelo nuevo; UI mínima "Costos del viaje" (servicios + hotel) sin wizard en sesión (`MATContext`); enlace desde `Reserva/Index` hero o Admin.
+  Criterio de éxito: Operación puede cargar costos estructurados por viaje sin depender del menú retirado; decisión explícita reutilizar vs. deprecar tablas legacy.
+
+- [ ] **Viaje [P2 — Opción D]: Costos sugeridos desde catálogo**
+  Job o acción "Calcular costos estimados": `Excursion.Costo` × pasajeros, tarifas `Servicio` del paquete del viaje, etc.; guardar como borrador en `ViajeGasto` o planilla para ajuste manual.
+  Criterio de éxito: Propuesta de costos editable antes de confirmar; no sobrescribir gastos reales confirmados.
+
+- [ ] **Viaje [P2]: SP y pantalla de rentabilidad por viaje**
+  Nuevo `usp_MAT_Viaje_Rentabilidad` (o `_GetResumenFinanciero`): ingresos (reutilizar lógica ventas/pagos por `@ViajeId`), costos (según opciones implementadas), margen absoluto y %.
+  UI: reporte Admin + export Excel (EPPlus, patrón `ResumenPagosExcel`); opcional strip KPI en hero `Reserva/Index` (ver `DOCUMENTACION/RESERVA_INDEX_UX_MEJORAS.md` Fase 3+).
+  Criterio de éxito: Un viaje muestra ingresos, costos desglosados y margen; Excel exportable; `ErrorUtil` en controller.
+
+**Recomendación preliminar (investigación):** enfoque **híbrido** — Opción **A** para compras fiscales ya registradas + Opción **B** para gastos sin factura o imprevistos; evaluar **C** solo si operación confirma que el modelo planilla sigue siendo el idioma natural del equipo.
+
+**Dependencias:** decisión de negocio antes de schema; cualquier cambio en `MAT.DB`; no modificar SP de reportes existentes sin versión nueva (misma regla que módulo Reportes Admin).
 
 #### Reserva — Distribución de Coche (`Reserva/DistribucionCoche`)
 

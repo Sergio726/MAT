@@ -1,8 +1,22 @@
 @model List<MAT.MVC.Models.TransporteModel>
+@using MAT.Utilities
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Transportes";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Func<string, string> tipoIcon = tipo =>
+    {
+        if (string.IsNullOrWhiteSpace(tipo)) { return "bi-question-circle"; }
+        switch (tipo.Trim().ToUpperInvariant())
+        {
+            case "MINIBUS": return "bi-bus-front";
+            case "CAMION 4X4": return "bi-truck";
+            case "PISOELEVADO": return "bi-layers";
+            case "DOBLEPISO": return "bi-layers-fill";
+            default: return "bi-bus-front";
+        }
+    };
 }
 
 <script type="text/javascript">
@@ -28,6 +42,18 @@
 </script>
 
 <div class="modern-page-container">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @ViewBag.Error
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+        </div>
+    }
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-bus-front"></i>
@@ -42,10 +68,9 @@
         <table class="modern-table" id="tblTransportes">
             <thead>
                 <tr>
-                    <th>Nro. Coche</th>
-                    <th>Máx. Pasajeros</th>
-                    <th>Km Recorridos</th>
-                    <th>Último Service</th>
+                    <th>Nro. coche</th>
+                    <th>Tipo</th>
+                    <th>Máx. pasajeros</th>
                     <th>Matrícula</th>
                     <th style="width: 100px;">Acciones</th>
                 </tr>
@@ -53,38 +78,30 @@
             <tbody>
                 @foreach (var item in Model)
                 {
+                    var tipoLabel = EnumExtensions.GetTipoTransporteDisplayName(item.Tipo);
+                    var tipoCode = string.IsNullOrWhiteSpace(item.Tipo) ? null : item.Tipo.Trim();
                     <tr>
                         <td>
                             <strong style="color: var(--brand-primary);">@item.NroCoche</strong>
+                        </td>
+                        <td>
+                            @if (string.IsNullOrWhiteSpace(tipoCode))
+                            {
+                                <span class="badge bg-secondary">Sin especificar</span>
+                            }
+                            else
+                            {
+                                <span class="badge-pasajero" title="@tipoCode">
+                                    <i class="bi @tipoIcon(tipoCode)"></i>
+                                    <span>@(tipoLabel ?? tipoCode)</span>
+                                </span>
+                            }
                         </td>
                         <td>
                             <span class="badge-pasajero">
                                 <i class="bi bi-people"></i>
                                 <span>@item.MaxPasajeros</span>
                             </span>
-                        </td>
-                        <td>
-                            @if (item.KmRecorridos > 0)
-                            {
-                                <span>@item.KmRecorridos.ToString("N0") km</span>
-                            }
-                            else
-                            {
-                                <span class="table-text-muted">-</span>
-                            }
-                        </td>
-                        <td>
-                            @if (item.UltimoService.ToString() != "1/1/0001 12:00:00 a. m.")
-                            {
-                                <div class="modern-observaciones-fecha">
-                                    <i class="bi bi-calendar3"></i>
-                                    <span>@item.UltimoService.ToShortDateString()</span>
-                                </div>
-                            }
-                            else
-                            {
-                                <span class="table-text-muted">-</span>
-                            }
                         </td>
                         <td>
                             <strong>@item.Matricula</strong>
