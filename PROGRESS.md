@@ -2,7 +2,35 @@
 
 ---
 
-## Handoff — próxima sesión (2026-06-30)
+## Handoff — próxima sesión (2026-07-01)
+
+**Rama:** `MAT2026` (cambios locales sin commit; revisar `git status` antes de commitear).
+
+### Hecho hoy (código compila OK)
+
+| Bloque | Estado |
+|--------|--------|
+| NetTiers F0 + F1 + F2 + F3 | F2 geo `[x]` en SPEC |
+| Catálogo geográfico | `GeoDataAccess` + 7 SPs `usp_MAT_*` |
+| ErrorUtil | `PaqueteController.Edit`, `HomeController.QuickLocalidadSearch`, validación `AddLocalidad` |
+
+### Pendiente operativo (BD + smoke)
+
+1. **Publicar SPs F2** en SQL Server: `database/2026-07-01_NetTiers_F2_Geo_SPs.sql` (7 SPs nuevos)
+2. **Publicar SPs F3/F3 transporte** si aún no están: `database/2026-06-30_NetTiers_F3_Maestros_SPs.sql`, `database/2026-06-30_Transporte_Tipo_UI.sql`
+3. **Smoke manual F2:**
+   - `/Localidad/Create` — cascada + alta localidad
+   - `/Paquete` create/edit — dropdown países
+   - Home autocomplete (`QuickLocalidadSearch`)
+   - Voucher/paquete con destino y localidad pasajero
+
+### Siguiente task SPEC
+
+- **NetTiers F4** — Paquete y precios (`DataRepository` en `PaqueteModel.GenerarPasajes`)
+
+---
+
+## Handoff — sesión anterior (2026-06-30)
 
 **Rama:** `MAT2026` (cambios locales sin commit; revisar `git status` antes de commitear).
 
@@ -41,7 +69,37 @@
 
 ---
 
-### [2026-06-30] — Transporte ABM UX (Create, Edit, Index + Tipo)
+### [2026-07-01] — Fixes post-auditoría NetTiers F2
+
+- Archivos modificados:
+  - `MAT.MVC/Views/Localidad/Create.cshtml` — alerts de error usan `response.Result`
+  - `MAT.MVC/Controllers/Localidad/LocalidadController.cs` — `[Authorize]` a nivel clase
+  - `MAT.MVC/Controllers/Home/HomeController.cs` — `[Authorize]` en `QuickLocalidadSearch`
+  - `MAT.Utilities/GeoDataAccess.cs` — búsqueda retorna vacío si query tiene menos de 3 caracteres
+  - `MAT.DB/.../usp_MAT_VLocalidad_Search.sql` — mismo mínimo en SP
+  - `MAT.MVC/Models/VoucherModel.cs`, `VoucherModel-05122016.cs` — null-check `Pasajero`
+- Qué se implementó: Correcciones puntos 1–4 de auditoría F2 (UI errores, auth geo, minLength búsqueda, NRE voucher)
+- Problemas encontrados: ninguno en build
+- Métricas: MSBuild MAT.MVC Debug OK
+- Estado: ✅ completo — **republicar `usp_MAT_VLocalidad_Search` en BD**
+- Siguiente task: NetTiers F4
+
+---
+
+- Archivos modificados/creados:
+  - `MAT.Utilities/GeoDataAccess.cs` — Pais, Provincia, Departamento, Localidad, VLocalidad
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Pais_GetAll.sql`, `_Provincia_GetById`, `_Departamento_GetByProvinciaId`, `_Localidad_GetById`, `_Localidad_GetAll`, `_Localidad_Insert`, `_VLocalidad_Search`
+  - `MAT.DB/MAT.DB.sqlproj`, `database/2026-07-01_NetTiers_F2_Geo_SPs.sql`
+  - `LocalidadController.cs`, `PaqueteController.cs`, `HomeController.cs`
+  - `PaqueteModel.cs`, `VoucherModel.cs`, `InfopathModel.cs`, `VoucherModel-05122016.cs`
+  - `MAT.Utilities/Helper.cs` (ramas geo)
+- Qué se implementó: Cero `PaisService`…`VLocalidadService` en `MAT.MVC` y `MAT.Utilities`; `GeoDataAccess` + SP; `ErrorUtil` en `PaqueteController.Edit` y `QuickLocalidadSearch`; validación en `AddLocalidad`
+- Problemas encontrados: `HomeController` perdió `using System.Configuration` al agregar `ErrorUtil` — restaurado
+- Métricas: MSBuild MAT.MVC Debug OK (warnings preexistentes)
+- Estado: ✅ completo — **publicar SPs F2 en BD**
+- Siguiente task: NetTiers F4
+
+---
 
 - Archivos modificados/creados:
   - `MAT.Enums/eTipoTransporte.cs` — MINIBUS, CAMION 4X4, PISOELEVADO, DOBLEPISO (códigos BD)

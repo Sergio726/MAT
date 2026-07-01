@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using MAT.Entities;
 using MAT.Services;
+using MAT.Utilities;
 using MAT.MVC.Infrastructure.Data;
 using System.Text;
 using MAT.Enums;
@@ -19,7 +20,6 @@ namespace MAT.MVC.Models
         ViajeService viajeServ;
         PaqueteService paqueteServ;
         PaqueteServicioService paqueteservicioServ;
-        LocalidadService localidadServ;
         PasajeService pasajeServ;
         PasajeroService pasajeroServ;
 
@@ -43,7 +43,6 @@ namespace MAT.MVC.Models
             viajeServ = new ViajeService();
             paqueteServ = new PaqueteService();
             paqueteservicioServ = new PaqueteServicioService();
-            localidadServ = new LocalidadService();
             pasajeServ = new PasajeService();
             pasajeroServ = new PasajeroService();
 
@@ -55,7 +54,6 @@ namespace MAT.MVC.Models
                 viajeServ = new ViajeService();
                 paqueteServ = new PaqueteService();
                 paqueteservicioServ = new PaqueteServicioService();
-                localidadServ = new LocalidadService();
                 pasajeServ = new PasajeService();
                 pasajeroServ = new PasajeroService();
                 pasajeServ = new PasajeService();
@@ -63,7 +61,7 @@ namespace MAT.MVC.Models
                 Paquete = paqueteServ.GetByPaqueteId(Viaje.PaqueteId.Value);
                 listpaqueteservicio = paqueteservicioServ.GetByPaqueteId(Paquete.PaqueteId).ToList();
                 Servicios = new List<Servicio>();
-                Destino = localidadServ.GetById(Paquete.DestinoId);
+                Destino = GeoDataAccess.GetLocalidadById(Paquete.DestinoId);
                 foreach (PaqueteServicio ps in listpaqueteservicio)
                 {
                     _servicios.Add(MaestrosDataAccess.GetServicioById(ps.ServicioId.Value));

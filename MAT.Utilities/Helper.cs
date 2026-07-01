@@ -140,14 +140,11 @@ namespace MAT.Utilities
             {
 
                 case "Localidad":
-                    MAT.Services.LocalidadService SLocalidad = new MAT.Services.LocalidadService();
-                    IEnumerable<Localidad> Localidad = SLocalidad.GetAll();
-                    listitem = Localidad.Select(e => new SelectListItem()
+                    listitem = GeoDataAccess.GetAllLocalidades().Select(e => new SelectListItem()
                     {
-                        Text = new MAT.Services.LocalidadService().GetById(Convert.ToInt16(e.Id)).Nombre.ToString(),
+                        Text = e.Nombre,
                         Value = Convert.ToString(e.Id)
                     });
-
                     break;
 
                 case "Paquete":
@@ -188,11 +185,9 @@ namespace MAT.Utilities
                     });
                     break;
                 case "Provincia":
-                    MAT.Services.ProvinciaService provinciaService = new ProvinciaService();
-                    IEnumerable<Provincia> enumProvincia = provinciaService.GetAll();
-                    listitem = enumProvincia.Select(e => new SelectListItem()
+                    listitem = GeoDataAccess.GetAllProvincias().Select(e => new SelectListItem()
                     {
-                        Text = new MAT.Services.ProvinciaService().GetById(e.Id).Nombre,
+                        Text = e.Nombre,
                         Value = Convert.ToString(e.Id)
                     });
                     if (selected.HasValue) listitem.Where(it => it.Value == selected.Value.ToString()).FirstOrDefault().Selected = true;
@@ -231,11 +226,9 @@ namespace MAT.Utilities
             switch (Entidad)
             {                
                 case "Provincia":
-                    MAT.Services.ProvinciaService provinciaService = new ProvinciaService();
-                    IEnumerable<Provincia> enumProvincia = provinciaService.GetAll();
-                    listitem = enumProvincia.Select(e => new SelectListItem()
+                    listitem = GeoDataAccess.GetAllProvincias().Select(e => new SelectListItem()
                     {
-                        Text = new MAT.Services.ProvinciaService().GetById(e.Id).Nombre,
+                        Text = e.Nombre,
                         Value = Convert.ToString(e.Id)
                     });
                     if (selected.HasValue) listitem.Where(it => it.Value == selected.Value.ToString()).FirstOrDefault().Selected = true;
@@ -256,10 +249,8 @@ namespace MAT.Utilities
 
 
                 case "Localidad":
-                    MAT.Services.LocalidadService SLocalidad = new MAT.Services.LocalidadService();
-                    MAT.Entities.Localidad Localidad = SLocalidad.Get(new LocalidadKey(Convert.ToInt32(selectvalue)));
-
-                    Item = Localidad.Nombre;
+                    var localidad = GeoDataAccess.GetLocalidadById(Convert.ToInt32(selectvalue));
+                    Item = localidad != null ? localidad.Nombre : "Sin Definir";
                     break;
 
                 case "Transporte":
@@ -283,9 +274,8 @@ namespace MAT.Utilities
                     break;
                 case "Provincia":
                     int ProvinciaId = Convert.ToInt32(selectvalue);
-                    MAT.Services.ProvinciaService provinciaService = new MAT.Services.ProvinciaService();
-                    MAT.Entities.Provincia provincia = provinciaService.GetById(ProvinciaId);
-                    Item = provincia.Nombre;
+                    var provincia = GeoDataAccess.GetProvinciaById(ProvinciaId);
+                    Item = provincia != null ? provincia.Nombre : "Sin Definir";
                     break;
             }
             }
@@ -310,8 +300,8 @@ namespace MAT.Utilities
 
         public static string GetLocalidadName(int localidadId)
         {
-            LocalidadService locServ = new LocalidadService();
-            return locServ.GetById(localidadId).Nombre;
+            var localidad = GeoDataAccess.GetLocalidadById(localidadId);
+            return localidad != null ? localidad.Nombre : "Sin Definir";
         }
 
         public static void AlertMessage(string message, System.Web.UI.Page ctxpage)

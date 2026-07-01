@@ -1,6 +1,5 @@
 ﻿using MAT.Entities;
 using MAT.MVC.Models;
-using MAT.Services;
 using MAT.Utilities;
 using System;
 using System.Collections.Generic;
@@ -14,6 +13,7 @@ using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Localidad
 {
+    [Authorize]
     public class LocalidadController : Controller
     {
         public JsonResult GetProvincia(string sIdPais = "")
@@ -73,15 +73,11 @@ namespace MAT.MVC.Controllers.Localidad
             {
                 if (sIdProvincia != "")
                 {
-                    #region Entidades y Servicios
-                    List<MAT.Entities.Departamento> LDepartamento = new List<MAT.Entities.Departamento>();
-                    MAT.Services.DepartamentoService SDepartamento = new MAT.Services.DepartamentoService();
-                    #endregion
                     int iIdProvincia = Convert.ToInt32(sIdProvincia);
-                    LDepartamento = SDepartamento.GetAll().Where(item => item.IdProvincia == iIdProvincia).ToList();
+                    var departamentos = GeoDataAccess.GetDepartamentosByProvinciaId(iIdProvincia);
 
                     List<MAT.MVC.Models.Departamento> ListDepartamento = new List<MAT.MVC.Models.Departamento>();
-                    foreach (var item in LDepartamento)
+                    foreach (var item in departamentos)
                     {
                         MAT.MVC.Models.Departamento oDepartamento = new MAT.MVC.Models.Departamento();
                         oDepartamento.IdDepartamento = item.Id;
@@ -117,15 +113,18 @@ namespace MAT.MVC.Controllers.Localidad
 
             try
             {
-                
-                #region Entidades y Servicios
-                MAT.Entities.Localidad Localidad = new MAT.Entities.Localidad();
-                MAT.Services.LocalidadService LocalidadServ = new MAT.Services.LocalidadService();
-                #endregion
+                if (string.IsNullOrWhiteSpace(sIdDepartamento) || string.IsNullOrWhiteSpace(sLocalidad))
+                {
+                    sResult[1] = "Error: Departamento y localidad son obligatorios.";
+                    return Json(new
+                    {
+                        Id = sResult[0],
+                        Result = sResult[1]
+                    }, JsonRequestBehavior.AllowGet);
+                }
 
-                Localidad.IdDepartamento = Convert.ToInt32(sIdDepartamento);
-                Localidad.Nombre = sLocalidad.ToUpper();
-                LocalidadServ.Insert(Localidad);
+                int idDepartamento = Convert.ToInt32(sIdDepartamento);
+                GeoDataAccess.InsertLocalidad(idDepartamento, sLocalidad.ToUpper());
                 
                 sResult[0] = "";
                 sResult[1] = "Done.";

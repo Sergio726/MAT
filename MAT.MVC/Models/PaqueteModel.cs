@@ -35,7 +35,6 @@ namespace MAT.MVC.Models
     {
         ViajeService vServ;
         PaqueteService pServ;
-        LocalidadService lServ;
         PaqueteServicioService psServ;
         PasajeService pasajeServ;
         PaqueteExcursionService paqueteExcursionServ;
@@ -51,7 +50,6 @@ namespace MAT.MVC.Models
             vServ = new ViajeService();
             pServ = new PaqueteService();
             paqueteExcursionServ = new PaqueteExcursionService();
-            lServ = new LocalidadService();
             psServ = new PaqueteServicioService();
             pasajeServ = new PasajeService();
         }
@@ -65,7 +63,6 @@ namespace MAT.MVC.Models
             {
                 vServ = new ViajeService();
                 pServ = new PaqueteService();
-                lServ = new LocalidadService();
                 psServ = new PaqueteServicioService();
                 pasajeServ = new PasajeService();
                 paqueteExcursionServ = new PaqueteExcursionService();
@@ -74,7 +71,7 @@ namespace MAT.MVC.Models
                 listpaqueteservicio = psServ.GetByPaqueteId(Paquete.PaqueteId).ToList();
                 listpaqueteexcursion = paqueteExcursionServ.GetByPaqueteId(Paquete.PaqueteId).ToList();
                 Servicios = new List<Servicio>();
-                Destino = lServ.GetById(Paquete.DestinoId);
+                Destino = GeoDataAccess.GetLocalidadById(Paquete.DestinoId);
                 foreach (PaqueteServicio ps in listpaqueteservicio)
                 {
                     _servicios.Add(MaestrosDataAccess.GetServicioById(ps.ServicioId.Value));

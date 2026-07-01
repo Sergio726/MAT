@@ -779,7 +779,7 @@
   ##### Fase 2 — Dominios de bajo riesgo (catálogo geográfico)
   Migrar llamadas en `MAT.MVC` y reemplazar `*Service` por `*DataAccess` (o SPs) para:
   `Pais`, `Provincia`, `Ciudad`, `Localidad`, `Departamento`, `Destino`.
-  - [ ] **NetTiers F2:** Catálogo geográfico migrado
+  - [x] **NetTiers F2:** Catálogo geográfico migrado
     Archivos probables: `LocalidadController`, models que instancien estos servicios, nuevos archivos en `MAT.Utilities` o `MAT.MVC/Infrastructure/Data/`.
     Criterio: cero usos de `PaisService`…`DestinoService` desde `MAT.MVC`; ABM/localidad sigue funcionando; MSBuild limpio.
 

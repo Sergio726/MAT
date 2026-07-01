@@ -1,4 +1,5 @@
 ﻿using MAT.Services;
+using MAT.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,6 @@ namespace MAT.MVC.Models
         private PaqueteService paqueteService;
         private ViajeService viajeService;
         private VoucherService voucherService;
-        private LocalidadService localidadService;
 
         public String Servicios { get; set; }
         public String Excursiones { get; set; }
@@ -44,14 +44,13 @@ namespace MAT.MVC.Models
             paqueteService = new PaqueteService();
             viajeService = new ViajeService();
             voucherService = new VoucherService();
-            localidadService = new LocalidadService();
 
             Pasaje = pasajeService.GetByPasajeId(pasajeid);
             Butaca = new ButacaService().GetByButacaId(Pasaje.ButacaId.Value);
             Pasajero = pasajeroService.GetAll().Where(psj => psj.PasajeroId == Pasaje.PasajeroId.Value).FirstOrDefault();
             Viaje = viajeService.GetByViajeId(Pasaje.ViajeId.Value);
             Paquete = paqueteService.GetByPaqueteId(Viaje.PaqueteId.Value);
-            Destino = localidadService.GetById(Paquete.DestinoId);
+            Destino = GeoDataAccess.GetLocalidadById(Paquete.DestinoId);
             List<Entities.PaqueteServicio> _serviciospaquete = paqueteservicioService.GetByPaqueteId(Paquete.PaqueteId).ToList();
             StringBuilder _servicios = new StringBuilder();
             foreach (var item in _serviciospaquete)
@@ -73,7 +72,7 @@ namespace MAT.MVC.Models
 
             
             Voucher = voucherService.GetByVoucherId(Pasaje.VoucherId.Value);
-            if (Pasajero.LocalidadId.HasValue) Localidad = localidadService.GetById(Pasajero.LocalidadId.Value);
+            if (Pasajero != null && Pasajero.LocalidadId.HasValue) Localidad = GeoDataAccess.GetLocalidadById(Pasajero.LocalidadId.Value);
         }
     }
 

@@ -102,6 +102,14 @@ Para cada `FooService` migrado:
 
 **F1 ejecutado:** `MAT.Web` fuera de `MAT.sln` y `Web.config`; README en `MAT.Data.WebServiceClient`.
 
+**F2 migrado (sin `PaisService`…`VLocalidadService` en `MAT.MVC` ni geo en `Helper.cs`):**
+
+| Entidad | Estado | Archivos |
+|---------|--------|----------|
+| Pais, Provincia, Departamento, Localidad | Completo F2 | `GeoDataAccess.cs`, SPs `usp_MAT_*` + legacy `usp_GetAllProvincia`, etc. |
+| VLocalidad (búsqueda) | Completo F2 | `usp_MAT_VLocalidad_Search`, `HomeController.QuickLocalidadSearch` |
+| Callers | Migrados | `LocalidadController`, `PaqueteController`, models, `Helper.cs` |
+
 **F3 migrado (sin `TransporteService` / `ServicioService` / `ButacaService` en `.cs` activos):**
 
 | Entidad | Estado | Archivos |
@@ -112,7 +120,7 @@ Para cada `FooService` migrado:
 | Butaca | Completo F3 | `ButacaController`, `ButacaMethod` + SPs CRUD |
 | Lookups | MaestrosDataAccess | `PasajeModel`, `VoucherModel`, `PaqueteModel`, `InfopathModel`, `ViajeController`, `PaqueteController.RenderGridServicios` |
 
-**Pendiente NetTiers (siguientes fases):** geo F2, Paquete F4, Viaje F5, Factura/Pago F6, Personas F7, ~40 servicios restantes — ver grep `new \w+Service(` en `MAT.MVC`.
+**Pendiente NetTiers (siguientes fases):** Paquete F4, Viaje F5, Factura/Pago F6, Personas F7, ~40 servicios restantes — ver grep `new \w+Service(` en `MAT.MVC`.
 
 ### Inventario borrador (F0 — sustituido por tabla arriba)
 
@@ -162,6 +170,6 @@ Para cada `FooService` migrado:
 
 ## 8. Próximo paso concreto
 
-**Task SPEC:** `NetTiers F2` — catálogo geográfico (Pais, Provincia, Ciudad, Localidad, Departamento, Destino).
+**Task SPEC:** `NetTiers F4` — Paquete y precios (`PaqueteModel.GenerarPasajes`, transacciones).
 
-**Despliegue BD F3:** publicar SPs nuevos desde `MAT.DB` o `database/2026-06-30_NetTiers_F3_Maestros_SPs.sql` en cada entorno antes de usar Transporte/Servicio/Butaca migrados.
+**Despliegue BD F2:** publicar SPs desde `MAT.DB` o `database/2026-07-01_NetTiers_F2_Geo_SPs.sql` en cada entorno antes de smoke geo.

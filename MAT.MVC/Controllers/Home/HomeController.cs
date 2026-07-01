@@ -14,6 +14,7 @@ using System.Web.Security;
 using System.Data.SqlClient;
 using System.Data;
 using MAT.Utilities;
+using MAT.MVC.Infrastructure;
 using System.Configuration;
 
 namespace MAT.MVC.Controllers.Home
@@ -460,12 +461,19 @@ namespace MAT.MVC.Controllers.Home
            
         }
 
+        [Authorize]
         public JsonResult QuickLocalidadSearch(string query, string sIdProvincia = "")
         {
-            VLocalidadService localidadService = new VLocalidadService();
-            List<Entities.VLocalidad> _localidades = localidadService.GetAll().Where(loc => loc.Nombre.ToUpper().Contains(query.ToUpper())).ToList();
-            
-            return Json(_localidades, JsonRequestBehavior.AllowGet);
+            try
+            {
+                var localidades = GeoDataAccess.SearchVLocalidad(query ?? string.Empty);
+                return Json(localidades, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                ErrorUtil.LogAndGetPublicMessage(ex, "HomeController.QuickLocalidadSearch");
+                return Json(new List<VLocalidad>(), JsonRequestBehavior.AllowGet);
+            }
         }
 
         public ActionResult HistorialPagos()

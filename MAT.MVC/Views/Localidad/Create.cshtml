@@ -79,7 +79,7 @@
                         }
                     }
                     else {
-                        (window.alertError || window.alert)(response.data, "Error");
+                        (window.alertError || window.alert)(response.Result, "Error");
                     }
                 }
             });
@@ -114,7 +114,7 @@
                     $("#AgregarLocalidad").dialog("close");
                 }
                 else {
-                    (window.alertError || window.alert)(response.data, "Error");
+                    (window.alertError || window.alert)(response.Result, "Error");
                 }
             }
         });

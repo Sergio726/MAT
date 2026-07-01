@@ -45,10 +45,7 @@ namespace MAT.MVC.Controllers.Paquete
             {
                 ViewBag.Action = sAction;
                 
-                PaisService PaisService = new Services.PaisService();
-                List<Pais> LPais = new List<Pais>();
-                LPais = PaisService.GetAll().ToList();
-                ViewBag.ListPais = LPais;
+                ViewBag.ListPais = GeoDataAccess.GetAllPaises();
 
 
                 PaqueteStandard Paquete = new PaqueteStandard();
@@ -69,8 +66,10 @@ namespace MAT.MVC.Controllers.Paquete
                 }
                 return View(Paquete);
             }
-            catch {
-                return RedirectToAction("Index", "Paquete");
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.Edit");
+                return RedirectToAction("Index", "Paquete", new { msgerror = msg });
             }
             
         }
