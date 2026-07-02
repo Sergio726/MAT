@@ -71,6 +71,10 @@ No lo encarés todavía, seguí con el orden actual del SPEC.
 - Si un task quedó bloqueado: estado ⚠️ bloqueado + motivo en PROGRESS.md
 - El siguiente agente arranca siempre desde el primer [ ] en SPEC.md
 
+### Épica reciente completada (2026-07-01)
+
+**Normalización Localidad L1–L12:** ver `DOCUMENTACION/LOCALIDAD_NORMALIZACION_PLAN.md`. Siguiente épica sugerida: NetTiers F4 (Paquete).
+
 ---
 
 ## Relación entre herramientas

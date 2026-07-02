@@ -128,6 +128,10 @@ namespace MAT.Utilities
             return listitem;
         }
 
+        /// <summary>
+        /// Lista para dropdowns. El caso <c>Localidad</c> está deprecado: usar autocomplete
+        /// <c>/Localidad/Search</c> o cascada <c>matGeo</c> (no cargar catálogo completo).
+        /// </summary>
         public static IEnumerable<SelectListItem> ToSelectEntities(string Entidad)
         {
             return ToSelectEntities(Entidad, null);
@@ -140,11 +144,8 @@ namespace MAT.Utilities
             {
 
                 case "Localidad":
-                    listitem = GeoDataAccess.GetAllLocalidades().Select(e => new SelectListItem()
-                    {
-                        Text = e.Nombre,
-                        Value = Convert.ToString(e.Id)
-                    });
+                    // Deprecado L11: no cargar toda la tabla. Usar matGeo / /Localidad/Search.
+                    listitem = Enumerable.Empty<SelectListItem>();
                     break;
 
                 case "Paquete":

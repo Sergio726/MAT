@@ -154,15 +154,15 @@
   `matGeo.initAutocomplete` en `@section Scripts`; opcional botón `+`.
   Criterio: smoke UC-05 — `LocalidadId` en formulario hotel.
 
-- [ ] **Localidad [P2] L10:** Consolidar `mat.jquery.binding.js` + deprecar `QuickLocalidadSearch`
+- [x] **Localidad [P2] L10:** Consolidar `mat.jquery.binding.js` + deprecar `QuickLocalidadSearch`
   Migrar handlers `#txt-busqueda-localidad*` a `/Localidad/Search`; wrapper obsoleto o eliminación en `HomeController`.
   Criterio: un solo endpoint de búsqueda activo en código; sin duplicar autocomplete.
 
-- [ ] **Localidad [P2] L11:** Helper — deprecar `ToSelectEntities("Localidad")` masivo
+- [x] **Localidad [P2] L11:** Helper — deprecar `ToSelectEntities("Localidad")` masivo
   No cargar tabla entera; `GetLocalidadName` / `ToSelectItem` sin regresión.
   Criterio: lecturas display (Details, Voucher) OK; sin `GetAllLocalidades` injustificado en dropdowns.
 
-- [ ] **Localidad [P2] L12:** Cierre — docs, grep, smoke global
+- [x] **Localidad [P2] L12:** Cierre — docs, grep, smoke global
   Marcar L1–L11 `[x]`; `PROGRESS.md`; checklist smoke del plan; republicar SPs en BD.
   Criterio: MSBuild limpio; grep cierre (`DBHelper` controller, `response.data`, `/Localidad/Search` roto); smoke manual 8 casos del plan.
 

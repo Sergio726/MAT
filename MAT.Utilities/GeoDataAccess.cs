@@ -87,6 +87,11 @@ namespace MAT.Utilities
             }
         }
 
+        /// <summary>
+        /// Catálogo completo de localidades. No usar para dropdowns UI; preferir
+        /// <see cref="SearchLocalidades"/> o cascada por departamento.
+        /// </summary>
+        [Obsolete("No usar para dropdowns UI. Usar SearchLocalidades o matGeo.")]
         public static List<Localidad> GetAllLocalidades()
         {
             return ReadList("dbo.usp_MAT_Localidad_GetAll", null, reader => new Localidad
@@ -114,14 +119,6 @@ namespace MAT.Utilities
                 DBHelper.MakeParam("@Nombre", SqlDbType.NVarChar, 250, nombre.Trim())
             };
             return DBHelper.ExecuteNonQueryOutput("dbo.usp_MAT_Localidad_Insert", parameters, "@Id", SqlDbType.Int, 0);
-        }
-
-        /// <summary>
-        /// Búsqueda legacy (sin filtros geo). Delega en <see cref="SearchLocalidades"/>.
-        /// </summary>
-        public static List<VLocalidad> SearchVLocalidad(string query)
-        {
-            return SearchLocalidades(query, null, null);
         }
 
         public static List<Provincia> GetProvinciasByPaisId(string paisId)

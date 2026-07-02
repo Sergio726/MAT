@@ -72,7 +72,7 @@ namespace MAT.MVC.Infrastructure.Data
                     GetString(reader, "NroCoche"),
                     GetNullableInt(reader, "MaxPasajeros"),
                     GetString(reader, "Matricula"),
-                    GetString(reader, "Tipo"));
+                    GetOptionalString(reader, "Tipo"));
             }
         }
 
@@ -224,6 +224,24 @@ namespace MAT.MVC.Infrastructure.Data
         {
             var ordinal = reader.GetOrdinal(column);
             return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
+        }
+
+        private static string GetOptionalString(SqlDataReader reader, string column)
+        {
+            return HasColumn(reader, column) ? GetString(reader, column) : null;
+        }
+
+        private static bool HasColumn(IDataRecord reader, string columnName)
+        {
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                if (string.Equals(reader.GetName(i), columnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static int? GetNullableInt(SqlDataReader reader, string column)

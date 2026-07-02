@@ -461,21 +461,6 @@ namespace MAT.MVC.Controllers.Home
            
         }
 
-        [Authorize]
-        public JsonResult QuickLocalidadSearch(string query, string sIdProvincia = "")
-        {
-            try
-            {
-                var localidades = GeoDataAccess.SearchVLocalidad(query ?? string.Empty);
-                return Json(localidades, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                ErrorUtil.LogAndGetPublicMessage(ex, "HomeController.QuickLocalidadSearch");
-                return Json(new List<VLocalidad>(), JsonRequestBehavior.AllowGet);
-            }
-        }
-
         public ActionResult HistorialPagos()
         {
             return View();

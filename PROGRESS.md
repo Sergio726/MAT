@@ -2,63 +2,63 @@
 
 ---
 
-## Handoff — próxima sesión (2026-07-01) — PAUSA: deploy BD
+## Handoff — próxima sesión (2026-07-01)
 
 **Rama:** `MAT2026` (cambios locales sin commit; revisar `git status` antes de commitear).
 
-### Código — Normalización Localidad L1–L9 ✅
+### Normalización Localidad L1–L12 — épica completada
 
-| Bloque | Estado |
-|--------|--------|
-| L1–L2 | Backend `GeoDataAccess` + `LocalidadController` + `usp_MAT_Localidad_Search` |
-| L3–L4 | `mat.geo.localidad.js` + popup Create + evento `mat:localidad-created` |
-| L5–L9 | PersonaCliente, Paquete, Pasajero, Proveedor, Hotel migrados a `matGeo` |
+- Endpoint único de búsqueda: `GET/POST /Localidad/Search`
+- JS unificado: `mat.geo.localidad.js`
+- `QuickLocalidadSearch` eliminado (L12)
+- `ToSelectEntities("Localidad")` deprecado — lista vacía (L11)
 
-MSBuild `MAT.MVC` Debug: OK.
-
-### Bloqueante humano: publicar BD antes de smoke / L10
-
-Ejecutar en SQL Server (entorno donde corre IIS Express / MAT.MVC), en este orden:
-
-1. `database/2026-07-01_NetTiers_F2_Geo_SPs.sql` — 7 SPs geo F2
-2. `database/2026-07-01_Localidad_Normalizacion_SPs.sql` — `usp_MAT_Localidad_Search` (L1)
-3. (Opcional si no están) `database/2026-06-30_NetTiers_F3_Maestros_SPs.sql`, `database/2026-06-30_Transporte_Tipo_UI.sql`
-
-**Verificación rápida post-deploy:**
-
-```sql
-SELECT name FROM sys.procedures
-WHERE name IN (
-  'usp_MAT_Pais_GetAll',
-  'usp_MAT_Provincia_GetById',
-  'usp_MAT_Departamento_GetByProvinciaId',
-  'usp_MAT_Localidad_GetById',
-  'usp_MAT_Localidad_GetAll',
-  'usp_MAT_Localidad_Insert',
-  'usp_MAT_VLocalidad_Search',
-  'usp_MAT_Localidad_Search'
-)
-ORDER BY name;
--- Debe devolver 8 filas
-```
-
-### Smoke sugerido tras deploy (antes de L10)
-
-- PersonaCliente: cascada + botón `+` alta localidad
-- Paquete Edit: modal destino + `+`
-- Pasajero / Proveedor / Hotel: autocomplete ≥3 chars en `/Localidad/Search`
-- `AddLocalidad` devuelve `{ Id, Result: "Done." }`
-
-### Siguiente task SPEC (retomar después del deploy)
-
-- **Localidad L10** — Consolidar `mat.jquery.binding.js` + deprecar `QuickLocalidadSearch`
-- Plan detallado: `.cursor/plans/localidad_l10-l12_cierre_36b4b671.plan.md` (L10 → L11 → L12)
-
-### Después de L12
+### Siguiente task SPEC
 
 - **NetTiers F4** — Paquete y precios (`DataRepository` en `PaqueteModel.GenerarPasajes`)
 
 ---
+
+### [2026-07-02] — Auditoría publish: vistas .cshtml vs MAT.MVC.csproj
+- Método: comparar `Views/**/*.cshtml` en disco vs entradas `Content Include` en csproj + referencias `Html.Partial` / `PartialView`.
+- **Causa clase de bug:** archivo en disco pero omitido en publish → OK en IIS Express local, 500 en producción.
+- **Ya corregidos:** `Views/Transporte/_TransporteForm.cshtml`, `Views/Reserva/_PreReservasSection.cshtml`.
+- **Riesgo activo restante (1):** `Reserva/_PreReservasSection` — AJAX `GET /Reserva/GetPreReservasSection` en `Reserva/Index` (fix en csproj, pendiente redeploy).
+- **En disco pero NO en csproj (bajo riesgo / legacy):** `Cliente/Facturas.cshtml` (huérfano; ruta real es `PersonaCliente/Facturas`), `*- copia.cshtml`, `DistribucionCoche_backup`, `Hoteles07122016`.
+- **Scripts `mat.*` y `Content/**`:** todos incluidos en csproj (0 faltantes).
+- **Recomendación:** al crear partial nuevo `_*.cshtml`, agregar línea en `MAT.MVC.csproj` antes de publish; o migrar a `<Content Include="Views\**\*.cshtml" />` (refactor futuro).
+- Estado: ✅ auditoría completa + fixes en csproj
+
+### [2026-07-02] — Fix Transporte Create/Edit prod: partial no publicado
+- Causa raíz: `Views/Transporte/_TransporteForm.cshtml` existía en disco pero **no** estaba en `MAT.MVC.csproj` → publish a producción omitía el partial → 500 en Create y Edit (Index OK).
+- Archivos modificados: `MAT.MVC.csproj`, `PROGRESS.md`
+- Acción humana: **republicar MAT.MVC** completo; verificar en servidor que exista `Views\Transporte\_TransporteForm.cshtml`.
+- Estado: ✅ fix en repo — pendiente redeploy prod
+
+### [2026-07-02] — Fix Transporte/Edit error 500 (mat.viewdns.net)
+- Archivos modificados: `MaestrosDataAccess.cs`, `Transporte/Edit.cshtml`, `Transporte/Create.cshtml`, `database/2026-07-02_Transporte_Edit_Fix_SPs.sql`, `PROGRESS.md`
+- Diagnóstico (sin acceso a BD prod): Index OK + Edit falla → probable `usp_MAT_Transporte_GetById` no publicado y/o fallo `@section Scripts` (`jqueryval`). CorrelationId reportado: `48880fe81c5441db80c5df56abf55cad` — verificar en `dbo.ErrorLog`.
+- Qué se implementó: lectura segura columna `Tipo` (`GetOptionalString` + `HasColumn`); quitado `@section Scripts` en Create/Edit (validación servidor); script deploy GetById + Update.
+- Acción humana: publicar `database/2026-07-02_Transporte_Edit_Fix_SPs.sql` en mat.viewdns.net y redeploy MVC; smoke Edit GUID `a69ba293-4730-4a4d-84ac-54bfff60a642`.
+- Estado: ✅ código listo — pendiente deploy BD + smoke en prod
+
+### [2026-07-01] — Localidad L12: cierre épica (docs + grep + eliminar QuickLocalidadSearch)
+- Archivos modificados: `HomeController.cs`, `GeoDataAccess.cs`, `SPEC.md`, `PROGRESS.md`, `HANDOFF.md`, `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md`, `DOCUMENTACION/LOCALIDAD_NORMALIZACION_PLAN.md`
+- Qué se implementó: eliminado `QuickLocalidadSearch` y `SearchVLocalidad`; grep de cierre OK; MSBuild OK; documentación actualizada; smoke manual pendiente humano (checklist 8 casos en plan).
+- Problemas encontrados: ninguno en código
+- Estado: ✅ completo (smoke manual a cargo del humano)
+
+### [2026-07-01] — Localidad L11: Helper — deprecar ToSelectEntities("Localidad")
+- Archivos modificados: `MAT.Utilities/Helper.cs`, `MAT.Utilities/GeoDataAccess.cs`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: caso `"Localidad"` en `ToSelectEntities` devuelve lista vacía + XML deprecación; `GetAllLocalidades` marcado `[Obsolete]`; `GetLocalidadName` / `ToSelectItem` sin cambios (display por ID).
+- Problemas encontrados: ninguno
+- Estado: ✅ completo
+
+### [2026-07-01] — Localidad L10: consolidar binding + deprecar QuickLocalidadSearch
+- Archivos modificados: `MAT.MVC/Scripts/mat.jquery.binding.js`, `MAT.MVC/Controllers/Home/HomeController.cs`, `PersonaPasajero/Create|Edit.cshtml`, `PersonaProveedor/Create|Edit.cshtml`, `Hotel/Create|Edit.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: eliminados 3 handlers `keyup.autocomplete` legacy (`#txt-busqueda-localidad*`, `#txt-busqueda-destino`); `QuickLocalidadSearch` marcado `[Obsolete]` y delega en `GeoDataAccess.SearchLocalidades`; quitado `.off('keyup.autocomplete')` en vistas L7–L9.
+- Problemas encontrados: ninguno
+- Estado: ✅ completo
 
 ### [2026-07-01] — Pausa: deploy BD antes de L10–L12
 - Acción humana: publicar scripts en `database/` (ver handoff arriba)

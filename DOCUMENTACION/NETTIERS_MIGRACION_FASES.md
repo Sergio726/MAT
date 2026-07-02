@@ -107,8 +107,8 @@ Para cada `FooService` migrado:
 | Entidad | Estado | Archivos |
 |---------|--------|----------|
 | Pais, Provincia, Departamento, Localidad | Completo F2 | `GeoDataAccess.cs`, SPs `usp_MAT_*` + legacy `usp_GetAllProvincia`, etc. |
-| VLocalidad (búsqueda) | Completo F2 | `usp_MAT_VLocalidad_Search`, `HomeController.QuickLocalidadSearch` |
-| Callers | Migrados | `LocalidadController`, `PaqueteController`, models, `Helper.cs` |
+| VLocalidad (búsqueda) | Completo F2 + L12 | `usp_MAT_Localidad_Search`, `LocalidadController.Search`, `mat.geo.localidad.js` |
+| Callers | Migrados | `LocalidadController`, `PaqueteController`, models, `Helper.cs` (display por ID) |
 
 **F3 migrado (sin `TransporteService` / `ServicioService` / `ButacaService` en `.cs` activos):**
 

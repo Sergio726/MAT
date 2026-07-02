@@ -732,6 +732,7 @@
     <Content Include="Views\Transporte\Index.cshtml" />
     <Content Include="Views\Transporte\Create.cshtml" />
     <Content Include="Views\Transporte\Edit.cshtml" />
+    <Content Include="Views\Transporte\_TransporteForm.cshtml" />
     <Content Include="Views\PersonaCliente\Create.cshtml" />
     <Content Include="Views\PersonaCliente\Edit.cshtml" />
     <Content Include="Views\PersonaCliente\Details.cshtml" />
@@ -895,6 +896,7 @@
     <Content Include="Views\PasajeroViaje\ListadoSimpleToExport.cshtml" />
     <Content Include="Views\Habitacion\PartialListHabitacion.cshtml" />
     <Content Include="Views\Reserva\DetalleViaje.cshtml" />
+    <Content Include="Views\Reserva\_PreReservasSection.cshtml" />
     <Content Include="Views\Reserva\_ReservaViajeHero.cshtml" />
     <Content Include="Views\Precio\ABM.cshtml" />
     <Content Include="Views\Habitacion\ABM.cshtml" />

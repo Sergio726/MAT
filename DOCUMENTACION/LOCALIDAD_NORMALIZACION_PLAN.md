@@ -1,8 +1,9 @@
 # Plan de implementación — Normalización de Localidad
 
 **Fecha:** 2026-07-01  
+**Estado:** Completado (L1–L12, 2026-07-01)  
 **Depende de:** NetTiers F2 (GeoDataAccess + SPs `usp_MAT_*`) — debe estar publicado en BD  
-**SPEC sugerido:** agregar épica P2 *Normalización UX Localidad* (tasks L1–L12 abajo)  
+**SPEC:** épica P2 *Normalización UX Localidad* (tasks L1–L12) — todos `[x]` en `SPEC.md`  
 **Ejecutar en orden:** cada task depende de los anteriores salvo donde se indique
 
 ---
@@ -411,7 +412,7 @@ L1 → L2 → L3 → L4 → L5 → L6 → L7 → L8 → L9 → L10 → L11 → L
 - [ ] **Localidad [P2] L3–L4:** mat.geo.localidad.js + popup alta con evento
 - [ ] **Localidad [P2] L5–L6:** PersonaCliente + Paquete destino
 - [ ] **Localidad [P2] L7–L9:** Pasajero, Proveedor, Hotel autocomplete
-- [ ] **Localidad [P2] L10–L12:** Limpieza QuickLocalidadSearch, Helper, docs
+- [x] **Localidad [P2] L10–L12:** Limpieza QuickLocalidadSearch, Helper, docs
 ```
 
 ---
