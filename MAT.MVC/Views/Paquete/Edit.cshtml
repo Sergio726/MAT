@@ -330,6 +330,15 @@
         border-color: #dc2626;
         background: #fef2f2;
     }
+    .modal-destino-localidad-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+    .modal-destino-localidad-row .modal-destino-select {
+        flex: 1;
+        min-width: 0;
+    }
     .modal-destino-footer {
         padding: 1rem 1.25rem 1.25rem;
         border-top: 1px solid var(--border-color, #e5e7eb);
@@ -556,9 +565,14 @@
                 </div>
                 <div class="modal-destino-group">
                     <label class="modal-destino-label" for="ddLocalidad">Localidad <span class="required">*</span></label>
-                    <select id="ddLocalidad" class="modal-destino-select">
-                        <option value="0">SELECCIONE UNA LOCALIDAD</option>
-                    </select>
+                    <div class="modal-destino-localidad-row">
+                        <select id="ddLocalidad" class="modal-destino-select">
+                            <option value="0">SELECCIONE UNA LOCALIDAD</option>
+                        </select>
+                        <button type="button" id="lnk-Agregar-Localidad-Destino" class="btn-modern-icon" title="Agregar localidad">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -580,6 +594,11 @@
 }
 
 <script type="text/ecmascript">
+    var _paquetePaisId = '@PaisID';
+    var _paqueteProvinciaId = '@ProvinciaID';
+    var _paqueteDepartamentoId = '@DepartamentoID';
+    var _paqueteLocalidadId = '@LocalidadID';
+
     $(document).ready(function () {
         $("input[type='text']").keypress(function () {
             $(this).removeClass("fieldError");
@@ -587,8 +606,19 @@
         $("#ddPais, #ddProvincia, #ddDepartamento, #ddLocalidad").change(function () {
             $(this).removeClass("fieldError");
         });
-        $("#ddDepartamento").change(function () {
+
+        $("#ddDepartamento").on("change", function () {
             LoadLocalidad();
+        });
+
+        $("#lnk-Agregar-Localidad-Destino").on("click", function () {
+            if (window.matGeo) {
+                matGeo.openCreateDialog({
+                    idDepartamentoSelect: '#ddDepartamento',
+                    idLocalidadSelect: '#ddLocalidad'
+                });
+            }
+            return false;
         });
 
         $("#chkPublicWeb").change(function () {
@@ -607,39 +637,38 @@
             }
         });
 
-        var IdPais = '61E1333A-3AE8-4D4B-8678-77125C623AF1';
-        $.ajax({
-            type: "POST",
-            url: "/Localidad/GetProvincia",
-            data: { "sIdPais": IdPais },
-            dataType: "json",
-            success: function (response) {
-                if (response.Result == "Done.") {
-                    var list = eval(response.LDepartamento);
-                    $('#ddProvincia option').remove();
-                    document.getElementById("ddProvincia").options[0] = new Option("SELECCIONE UNA PROVINCIA", "0");
-                    for (var i = 0; i < list.length; i++) {
-                        var sValue = list[i].ID;
-                        var sName = list[i].Nombre;
-                        document.getElementById("ddProvincia").options[document.getElementById("ddProvincia").options.length] = new Option(sName, sValue);
+        var initialPaisId = _paquetePaisId !== '0' ? _paquetePaisId : $("#ddPais").val();
+        if (initialPaisId && initialPaisId !== '0') {
+            $("#ddPais").val(initialPaisId);
+        }
+        if (window.matGeo && initialPaisId && initialPaisId !== '0') {
+            matGeo.loadProvincias(initialPaisId, {
+                provinciaSelect: '#ddProvincia',
+                valueKey: 'ID',
+                selectedId: parseInt(_paqueteProvinciaId, 10) > 0 ? _paqueteProvinciaId : null,
+                context: 'Provincias (paquete destino)',
+                onDone: function () {
+                    var provId = $('#ddProvincia').val();
+                    if (parseInt(provId, 10) > 0) {
+                        var deptoId = parseInt(_paqueteDepartamentoId, 10) > 0 ? parseInt(_paqueteDepartamentoId, 10) : 0;
+                        LoadDepartamento(provId, deptoId);
                     }
-                    $("#ddProvincia").val("@ProvinciaID").change();
                 }
+            });
+        }
+
+        $("#ddPais").on("change", function () {
+            LoadProvincia($(this).val());
+            if (window.matGeo) {
+                matGeo.loadDepartamentos(0, {
+                    departamentoSelect: '#ddDepartamento',
+                    localidadSelect: '#ddLocalidad'
+                });
             }
         });
 
-        $("#ddPais").change(function () {
-            var IdPais = $(this).val();
-            LoadProvincia(IdPais);
-            $('#ddDepartamento option').remove();
-            document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
-            $('#ddLocalidad option').remove();
-            document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
-        });
-
-        $("#ddProvincia").change(function () {
-            var IdProvincia = $("#ddProvincia").val();
-            LoadDepartamento(IdProvincia);
+        $("#ddProvincia").on("change", function () {
+            LoadDepartamento($(this).val());
         });
 
         switch ("@ViewBag.Action") {
@@ -668,82 +697,46 @@
         }
     });
 
-    function LoadProvincia(IdPais) {
-        if (IdPais != "" && IdPais != undefined) {
-            $.ajax({
-                type: "POST",
-                url: "/Localidad/GetProvincia",
-                data: { "sIdPais": IdPais },
-                dataType: "json",
-                success: function (response) {
-                    if (response.Result == "Done.") {
-                        var list = eval(response.LDepartamento);
-                        $('#ddProvincia option').remove();
-                        document.getElementById("ddProvincia").options[0] = new Option("SELECCIONE UNA PROVINCIA", "0");
-                        for (var i = 0; i < list.length; i++) {
-                            var sValue = list[i].ID;
-                            var sName = list[i].Nombre;
-                            document.getElementById("ddProvincia").options[document.getElementById("ddProvincia").options.length] = new Option(sName, sValue);
-                        }
-                    }
-                }
-            });
+    function LoadProvincia(idPais) {
+        if (!idPais || !window.matGeo) {
+            return;
         }
+        matGeo.loadProvincias(idPais, {
+            provinciaSelect: '#ddProvincia',
+            valueKey: 'ID',
+            context: 'Provincias (paquete destino)'
+        });
     }
 
-    function LoadDepartamento(IdProvincia) {
-        if (parseInt(IdProvincia) > 0) {
-            $.ajax({
-                type: "POST",
-                url: "/Localidad/GetDepartamento",
-                data: { "sIdProvincia": IdProvincia },
-                dataType: "json",
-                success: function (response) {
-                    if (response.Result == "Done.") {
-                        var list = eval(response.LDepartamento);
-                        $('#ddDepartamento option').remove();
-                        document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
-                        $('#ddLocalidad option').remove();
-                        document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
-                        for (var i = 0; i < list.length; i++) {
-                            var sValue = list[i].IdDepartamento;
-                            var sName = list[i].Nombre;
-                            document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(sName, sValue);
-                        }
-                        $("#ddDepartamento").val("@DepartamentoID").change();
-                    } else {
-                        (window.alertError || window.alert)(response.data, "Error");
-                    }
-                }
-            });
+    function LoadDepartamento(idProvincia, idDepartamentoSelect) {
+        idDepartamentoSelect = idDepartamentoSelect || 0;
+        if (!window.matGeo || !(parseInt(idProvincia, 10) > 0)) {
+            return;
         }
+        matGeo.loadDepartamentos(idProvincia, {
+            departamentoSelect: '#ddDepartamento',
+            localidadSelect: '#ddLocalidad',
+            selectedId: idDepartamentoSelect > 0 ? idDepartamentoSelect : null,
+            context: 'Departamentos (paquete destino)',
+            onDone: function () {
+                if (idDepartamentoSelect > 0) {
+                    var locId = parseInt(_paqueteLocalidadId, 10) > 0 ? _paqueteLocalidadId : null;
+                    LoadLocalidad(locId);
+                }
+            }
+        });
     }
 
-    function LoadLocalidad() {
-        var IdDepartamento = $("#ddDepartamento").val();
-        if (parseInt(IdDepartamento) > 0) {
-            $.ajax({
-                type: "POST",
-                url: "/Localidad/GetLocalidad",
-                data: { "sIdDepartamento": IdDepartamento },
-                dataType: "json",
-                success: function (response) {
-                    if (response.Result == "Done.") {
-                        var list = eval(response.LLocalidad);
-                        $('#ddLocalidad option').remove();
-                        document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
-                        for (var i = 0; i < list.length; i++) {
-                            var sValue = list[i].Id;
-                            var sName = list[i].Nombre;
-                            document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(sName, sValue);
-                        }
-                        $("#ddLocalidad").val("@LocalidadID");
-                    } else {
-                        (window.alertError || window.alert)(response.data, "Error");
-                    }
-                }
-            });
+    function LoadLocalidad(selectedId) {
+        var idDepartamento = $('#ddDepartamento').val();
+        if (!window.matGeo || !(parseInt(idDepartamento, 10) > 0)) {
+            return;
         }
+        matGeo.loadLocalidades(idDepartamento, {
+            localidadSelect: '#ddLocalidad',
+            selectedId: selectedId,
+            context: 'Localidades (paquete destino)'
+        });
     }
 
     function valForm() {

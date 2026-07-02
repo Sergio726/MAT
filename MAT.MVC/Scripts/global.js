@@ -503,12 +503,14 @@ function ElegirButacaMulti(elto) {
 }
 
 function AgregarLocalidad() {
-    var url = "/Localidad/Create";
-    var dialogid = "AgregarLocalidad";
-    var dialogtitle = "Agregar una Localidad";
-    ShowFormDialog(url, dialogid, dialogtitle, "min");
-   // elto.toggleClass('selected');
-    this.blur();
+    if (window.matGeo && typeof window.matGeo.openCreateDialog === 'function') {
+        window.matGeo.openCreateDialog({
+            idDepartamentoSelect: '#ddDepartamento',
+            idLocalidadSelect: '#ddLocalidad'
+        });
+    } else if (typeof ShowFormDialog === 'function') {
+        ShowFormDialog('/Localidad/Create', 'AgregarLocalidad', 'Agregar una Localidad', 'min');
+    }
     return false;
 }
 

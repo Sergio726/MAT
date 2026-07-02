@@ -1,166 +1,117 @@
-﻿using MAT.Entities;
+﻿using MAT.MVC.Infrastructure;
 using MAT.MVC.Models;
 using MAT.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Localidad
 {
     [Authorize]
     public class LocalidadController : Controller
     {
+        private const string ResultDone = "Done.";
+
         public JsonResult GetProvincia(string sIdPais = "")
         {
-            string[] sResult = new string[2];
-            
+            string payload = string.Empty;
+            string result = string.Empty;
+
             try
             {
-                if (sIdPais != "")
+                if (!string.IsNullOrWhiteSpace(sIdPais))
                 {
-                    List<MAT.MVC.Models.Provincia> ListProvincia = new List<Models.Provincia>();
-                    
-                    SqlParameter[] dbParams = new SqlParameter[]
-                            {                    
-                                DBHelper.MakeParam("@PaisID", SqlDbType.VarChar, 0, sIdPais),
-                            };
-                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_Provincia_GetAllByPaisID", dbParams))
-                    {
-                        while (_reader.Read())
-                        {
-                            MAT.MVC.Models.Provincia _Item = new MAT.MVC.Models.Provincia();
-                            if (_reader["ID"].ToString() != "")
-                            {
-                                _Item.ID = Convert.ToInt32(_reader["ID"]);
-                            }
-                            _Item.IdPais = _reader["IdPais"].ToString();
-                            _Item.Nombre = _reader["Nombre"].ToString();
-                            ListProvincia.Add(_Item);
-                        }
-                    }
-
-                    var jsonSerialiser = new JavaScriptSerializer();
-                    var jLProvincia = jsonSerialiser.Serialize(ListProvincia);
-                    sResult[0] = jLProvincia;
-                    sResult[1] = "Done.";
+                    var listProvincia = GeoDataAccess.GetProvinciasByPaisId(sIdPais)
+                        .Select(MapProvincia)
+                        .ToList();
+                    payload = SerializeJson(listProvincia);
+                    result = ResultDone;
                 }
-
             }
             catch (Exception e)
             {
-                sResult[0] = "";
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.GetProvincia");
+                result = BuildErrorMessage(e, "LocalidadController.GetProvincia");
             }
 
             return Json(new
             {
-                LDepartamento = sResult[0],
-                Result = sResult[1]
+                LDepartamento = payload,
+                LProvincia = payload,
+                Result = result
             }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult GetDepartamento(string sIdProvincia = "")
         {
-            string[] sResult = new string[2];
+            string payload = string.Empty;
+            string result = string.Empty;
 
             try
             {
-                if (sIdProvincia != "")
+                if (!string.IsNullOrWhiteSpace(sIdProvincia))
                 {
-                    int iIdProvincia = Convert.ToInt32(sIdProvincia);
-                    var departamentos = GeoDataAccess.GetDepartamentosByProvinciaId(iIdProvincia);
-
-                    List<MAT.MVC.Models.Departamento> ListDepartamento = new List<MAT.MVC.Models.Departamento>();
-                    foreach (var item in departamentos)
+                    int idProvincia;
+                    if (!TryParsePositiveInt(sIdProvincia, out idProvincia))
                     {
-                        MAT.MVC.Models.Departamento oDepartamento = new MAT.MVC.Models.Departamento();
-                        oDepartamento.IdDepartamento = item.Id;
-                        oDepartamento.Nombre = item.Nombre;
-                        ListDepartamento.Add(oDepartamento);
+                        return JsonCascadeError("Error: Provincia inválida.");
                     }
 
-                    var jsonSerialiser = new JavaScriptSerializer();
-                    var jLDepartamento = jsonSerialiser.Serialize(ListDepartamento.OrderBy(item => item.Nombre));
-                    sResult[0] = jLDepartamento;
-                    sResult[1] = "Done.";
+                    var listDepartamento = GeoDataAccess.GetDepartamentosByProvinciaId(idProvincia)
+                        .Select(MapDepartamento)
+                        .ToList();
+                    payload = SerializeJson(listDepartamento);
+                    result = ResultDone;
                 }
-
             }
             catch (Exception e)
             {
-                sResult[0] = "";
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.GetDepartamento");
+                result = BuildErrorMessage(e, "LocalidadController.GetDepartamento");
             }
 
-            return Json(new
-            {
-                LDepartamento = sResult[0],
-                Result = sResult[1]
-            }, JsonRequestBehavior.AllowGet);
+            return JsonCascade(payload, result);
         }
-        //
-        // GET: /Localidad/Create
 
         public JsonResult AddLocalidad(string sIdDepartamento = "", string sLocalidad = "")
         {
-            string[] sResult = new string[2];
+            string id = string.Empty;
+            string result = string.Empty;
 
             try
             {
                 if (string.IsNullOrWhiteSpace(sIdDepartamento) || string.IsNullOrWhiteSpace(sLocalidad))
                 {
-                    sResult[1] = "Error: Departamento y localidad son obligatorios.";
-                    return Json(new
-                    {
-                        Id = sResult[0],
-                        Result = sResult[1]
-                    }, JsonRequestBehavior.AllowGet);
+                    return JsonAddLocalidad(id, "Error: Departamento y localidad son obligatorios.");
                 }
 
-                int idDepartamento = Convert.ToInt32(sIdDepartamento);
-                GeoDataAccess.InsertLocalidad(idDepartamento, sLocalidad.ToUpper());
-                
-                sResult[0] = "";
-                sResult[1] = "Done.";
-              
+                int idDepartamento;
+                if (!TryParsePositiveInt(sIdDepartamento, out idDepartamento))
+                {
+                    return JsonAddLocalidad(id, "Error: Departamento inválido.");
+                }
 
+                id = GeoDataAccess.InsertLocalidad(idDepartamento, sLocalidad.ToUpper()).ToString();
+                result = ResultDone;
             }
             catch (Exception e)
             {
-                sResult[0] = "";
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.AddLocalidad");
+                result = BuildErrorMessage(e, "LocalidadController.AddLocalidad");
             }
 
-            return Json(new
-            {
-                Id = sResult[0],
-                Result = sResult[1]
-            }, JsonRequestBehavior.AllowGet);
+            return JsonAddLocalidad(id, result);
         }
-
-        
 
         public ActionResult Create()
         {
             return PartialView();
         }
 
-        //
-        // POST: /Localidad/Edit/5
-
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add update logic here
-
                 return RedirectToAction("Index");
             }
             catch
@@ -169,24 +120,16 @@ namespace MAT.MVC.Controllers.Localidad
             }
         }
 
-        //
-        // GET: /Localidad/Delete/5
-
         public ActionResult Delete(int id)
         {
             return View();
         }
-
-        //
-        // POST: /Localidad/Delete/5
 
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
-
                 return RedirectToAction("Index");
             }
             catch
@@ -197,91 +140,160 @@ namespace MAT.MVC.Controllers.Localidad
 
         public JsonResult GetLocalidad(string sIdDepartamento = "")
         {
-            string[] sResult = new string[2];
+            string payload = string.Empty;
+            string result = string.Empty;
+
             try
             {
-                List<Entities.VLocalidad> ListLlocalidades = new List<Entities.VLocalidad>();
-
-
-                if (sIdDepartamento != "")
+                if (!string.IsNullOrWhiteSpace(sIdDepartamento))
                 {
-                    SqlParameter[] dbParams = new SqlParameter[]
-                    {                    
-                        DBHelper.MakeParam("@IdDepartamento", SqlDbType.Int, 0, Convert.ToInt32(sIdDepartamento)),
-                    };
-                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_Localidad_GetByIdDepartamento", dbParams))
+                    int idDepartamento;
+                    if (!TryParsePositiveInt(sIdDepartamento, out idDepartamento))
                     {
-                        while (_reader.Read())
-                        {
-                            VLocalidad item = new VLocalidad();
-                            item.Id = Convert.ToInt32(_reader["ID"].ToString());
-                            item.Nombre = _reader["Nombre"].ToString();
-                            ListLlocalidades.Add(item);
-                        }
+                        return JsonLocalidadError("Error: Departamento inválido.");
                     }
 
-                    var jsonSerialiser = new JavaScriptSerializer();
-                    var jListLlocalidades = jsonSerialiser.Serialize(ListLlocalidades);
-                    sResult[0] = jListLlocalidades;
-                    sResult[1] = "Done.";
+                    payload = SerializeJson(GeoDataAccess.GetLocalidadesByDepartamentoId(idDepartamento));
+                    result = ResultDone;
                 }
             }
             catch (Exception e)
             {
-                sResult[0] = "";
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.GetLocalidad");
+                result = BuildErrorMessage(e, "LocalidadController.GetLocalidad");
             }
 
-            return Json(new
-            {
-                LLocalidad = sResult[0],
-                Result = sResult[1]
-            }, JsonRequestBehavior.AllowGet);
+            return JsonLocalidad(payload, result);
         }
 
         public JsonResult GetInfoByLocalidadId(string sLocalidaId = "")
         {
-            string[] sResult = new string[5];
+            string idLocalidad = string.Empty;
+            string idDepartamento = string.Empty;
+            string idProvincia = string.Empty;
+            string idPais = string.Empty;
+
             try
             {
-                List<Entities.VLocalidad> ListLlocalidades = new List<Entities.VLocalidad>();
-
-
-                if (sLocalidaId != "")
+                if (!string.IsNullOrWhiteSpace(sLocalidaId))
                 {
-                    SqlParameter[] dbParams = new SqlParameter[]
-                    {                    
-                        DBHelper.MakeParam("@idLocalidad", SqlDbType.Int, 0, Convert.ToInt32(sLocalidaId)),
-                    };
-                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_GetInfoByLocalidadId", dbParams))
+                    int localidadId;
+                    if (!TryParsePositiveInt(sLocalidaId, out localidadId))
                     {
-                        while (_reader.Read())
-                        {
-                            sResult[1] = _reader["IdLocalidad"].ToString();
-                            sResult[2] = _reader["IdDepartamento"].ToString();
-                            sResult[3] = _reader["IdProvincia"].ToString();
-                            sResult[4] = _reader["IdPais"].ToString();
-                        }
+                        return JsonGeoInfo(string.Empty, "Error: Localidad inválida.", string.Empty, string.Empty, string.Empty);
                     }
 
-                   
+                    var info = GeoDataAccess.GetLocalidadGeoInfo(localidadId);
+                    if (info != null)
+                    {
+                        idLocalidad = info.IdLocalidad.ToString();
+                        idDepartamento = info.IdDepartamento.ToString();
+                        idProvincia = info.IdProvincia.ToString();
+                        idPais = info.IdPais.ToString();
+                    }
                 }
-                sResult[0] = "Done.";
             }
             catch (Exception e)
             {
-                sResult[0] = "";
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.GetLocalidadId");
+                return JsonGeoInfo(string.Empty, BuildErrorMessage(e, "LocalidadController.GetInfoByLocalidadId"), string.Empty, string.Empty, string.Empty);
             }
 
-            return Json(new
+            return JsonGeoInfo(ResultDone, idLocalidad, idDepartamento, idProvincia, idPais);
+        }
+
+        public JsonResult Search(string term, int? idProvincia = null, int? idDepartamento = null)
+        {
+            try
             {
-                Result = sResult[0],
-                IdLocalidad = sResult[1],
-                IdDepartamento = sResult[2],
-                IdProvincia = sResult[3],
-                IdPais = sResult[4]
-            }, JsonRequestBehavior.AllowGet);
+                var results = GeoDataAccess.SearchLocalidades(term, idProvincia, idDepartamento)
+                    .Select(LocalidadLookupDto.From)
+                    .ToList();
+                return Json(results, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                ErrorUtil.LogAndGetPublicMessage(e, "LocalidadController.Search");
+                return Json(new List<LocalidadLookupDto>(), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private static Provincia MapProvincia(MAT.Entities.Provincia provincia)
+        {
+            return new Provincia
+            {
+                ID = provincia.Id,
+                IdPais = provincia.IdPais.ToString(),
+                Nombre = provincia.Nombre
+            };
+        }
+
+        private static Departamento MapDepartamento(MAT.Entities.Departamento departamento)
+        {
+            return new Departamento
+            {
+                IdDepartamento = departamento.Id,
+                Nombre = departamento.Nombre
+            };
+        }
+
+        private static bool TryParsePositiveInt(string value, out int id)
+        {
+            return int.TryParse(value, out id) && id > 0;
+        }
+
+        private static string SerializeJson(object value)
+        {
+            return new JavaScriptSerializer().Serialize(value);
+        }
+
+        private static string BuildErrorMessage(Exception e, string context)
+        {
+            return "Error: " + ErrorUtil.LogAndGetPublicMessage(e, context);
+        }
+
+        private static JsonResult ToJson(object data)
+        {
+            return new JsonResult
+            {
+                Data = data,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
+        }
+
+        private static JsonResult JsonCascade(string payload, string result)
+        {
+            return ToJson(new { LDepartamento = payload, Result = result });
+        }
+
+        private static JsonResult JsonCascadeError(string errorMessage)
+        {
+            return ToJson(new { LDepartamento = string.Empty, Result = errorMessage });
+        }
+
+        private static JsonResult JsonLocalidad(string payload, string result)
+        {
+            return ToJson(new { LLocalidad = payload, Result = result });
+        }
+
+        private static JsonResult JsonLocalidadError(string errorMessage)
+        {
+            return ToJson(new { LLocalidad = string.Empty, Result = errorMessage });
+        }
+
+        private static JsonResult JsonAddLocalidad(string id, string result)
+        {
+            return ToJson(new { Id = id, Result = result });
+        }
+
+        private static JsonResult JsonGeoInfo(string result, string idLocalidad, string idDepartamento, string idProvincia, string idPais)
+        {
+            return ToJson(new
+            {
+                Result = result ?? string.Empty,
+                IdLocalidad = idLocalidad ?? string.Empty,
+                IdDepartamento = idDepartamento ?? string.Empty,
+                IdProvincia = idProvincia ?? string.Empty,
+                IdPais = idPais ?? string.Empty
+            });
         }
     }
 }

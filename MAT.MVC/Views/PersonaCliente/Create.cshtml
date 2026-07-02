@@ -133,15 +133,15 @@
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">Departamento</label>
-                            <select id="ddDepartamento" class="modern-form-select" onchange="LoadLocalidad();">
-                                <option>SELECCIONE UN DEPARTAMENTO</option>
+                            <select id="ddDepartamento" class="modern-form-select">
+                                <option value="0">SELECCIONE UN DEPARTAMENTO</option>
                             </select>
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">Localidad<span class="field-required" aria-hidden="true"> *</span></label>
                             <div class="d-flex gap-2 align-items-end">
                                 <select id="ddLocalidad" name="LocalidadId" class="modern-form-select flex-grow-1">
-                                    <option>SELECCIONE UNA LOCALIDAD</option>
+                                    <option value="0">SELECCIONE UNA LOCALIDAD</option>
                                 </select>
                                 <button type="button" id="lnk-Agregar-Localidad" class="btn-modern-icon" title="Agregar localidad">
                                     <i class="bi bi-plus"></i>
@@ -324,47 +324,20 @@
             if (keys.indexOf(tecla.charCode) < 0) return false;
         });
 
-        var idProvincia = 16;
-        $.ajax({
-            type: "POST",
-            url: "/Localidad/GetDepartamento",
-            data: { sIdProvincia: idProvincia },
-            dataType: "json",
-            success: function (response) {
-                if (response.Result === "Done.") {
-                    var list = eval(response.LDepartamento);
-                    $("#ddDepartamento option").remove();
-                    document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
-                    for (var i = 0; i < list.length; i++) {
-                        document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(list[i].Nombre, list[i].IdDepartamento);
-                    }
-                    $("#ddDepartamento").val("445");
-                    var idDepto = $("#ddDepartamento").val();
-                    if (parseInt(idDepto, 10) > 0) {
-                        $.ajax({
-                            type: "POST",
-                            url: "/Localidad/GetLocalidad",
-                            data: { sIdDepartamento: idDepto },
-                            dataType: "json",
-                            success: function (r) {
-                                if (r.Result === "Done.") {
-                                    var locs = eval(r.LLocalidad);
-                                    $("#ddLocalidad option").remove();
-                                    document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
-                                    for (var j = 0; j < locs.length; j++) {
-                                        document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(locs[j].Nombre, locs[j].Id);
-                                    }
-                                    $("#ddLocalidad").val("5445");
-                                }
-                            }
-                        });
-                    }
-                }
-            }
+        if (window.matGeo) {
+            matGeo.loadDepartamentos($("#Provincia").val(), {
+                departamentoSelect: '#ddDepartamento',
+                localidadSelect: '#ddLocalidad',
+                context: 'Departamentos (cliente)'
+            });
+        }
+
+        $("#Provincia").on("change", function () {
+            LoadDepartamento($(this).val());
         });
 
-        $("#Provincia").change(function () {
-            LoadDepartamento($(this).val());
+        $("#ddDepartamento").on("change", function () {
+            LoadLocalidad();
         });
 
         $(".datepicker").datepicker({
@@ -379,45 +352,24 @@
     });
 
     function LoadDepartamento(idProvincia) {
-        if (parseInt(idProvincia, 10) > 0) {
-            $.ajax({
-                type: "POST",
-                url: "/Localidad/GetDepartamento",
-                data: { sIdProvincia: idProvincia },
-                dataType: "json",
-                success: function (response) {
-                    if (response.Result === "Done.") {
-                        var list = eval(response.LDepartamento);
-                        $("#ddDepartamento option").remove();
-                        document.getElementById("ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
-                        for (var i = 0; i < list.length; i++) {
-                            document.getElementById("ddDepartamento").options[document.getElementById("ddDepartamento").options.length] = new Option(list[i].Nombre, list[i].IdDepartamento);
-                        }
-                    }
-                }
-            });
+        if (!window.matGeo) {
+            return;
         }
+        matGeo.loadDepartamentos(idProvincia, {
+            departamentoSelect: '#ddDepartamento',
+            localidadSelect: '#ddLocalidad',
+            context: 'Departamentos (cliente)'
+        });
     }
 
-    function LoadLocalidad() {
-        var idDepto = $("#ddDepartamento").val();
-        if (parseInt(idDepto, 10) > 0) {
-            $.ajax({
-                type: "POST",
-                url: "/Localidad/GetLocalidad",
-                data: { sIdDepartamento: idDepto },
-                dataType: "json",
-                success: function (response) {
-                    if (response.Result === "Done.") {
-                        var list = eval(response.LLocalidad);
-                        $("#ddLocalidad option").remove();
-                        document.getElementById("ddLocalidad").options[0] = new Option("SELECCIONE UNA LOCALIDAD", "0");
-                        for (var i = 0; i < list.length; i++) {
-                            document.getElementById("ddLocalidad").options[document.getElementById("ddLocalidad").options.length] = new Option(list[i].Nombre, list[i].Id);
-                        }
-                    }
-                }
-            });
+    function LoadLocalidad(selectedId) {
+        if (!window.matGeo) {
+            return;
         }
+        matGeo.loadLocalidades($('#ddDepartamento').val(), {
+            localidadSelect: '#ddLocalidad',
+            selectedId: selectedId,
+            context: 'Localidades (cliente)'
+        });
     }
 </script>

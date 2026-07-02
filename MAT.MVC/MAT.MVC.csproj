@@ -371,6 +371,7 @@
     <Compile Include="Models\CuentaCorrienteModel.cs" />
     <Compile Include="Models\CuentaModel.cs" />
     <Compile Include="Models\DepartamentoModel.cs" />
+    <Compile Include="Models\LocalidadLookupDto.cs" />
     <Compile Include="Models\EliminarVentaModel.cs" />
     <Compile Include="Models\ExcursionModel.cs" />
     <Compile Include="Models\ExternalModel.cs" />
@@ -697,6 +698,7 @@
     <Content Include="Scripts\mat.jquery.hashtable.js" />
     <Content Include="Scripts\mat.jquery.binding.js" />
     <Content Include="Scripts\mat.jquery.functions.js" />
+    <Content Include="Scripts\mat.geo.localidad.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\modernizr-2.8.3.min.js" />
     <Content Include="Scripts\preset.js" />

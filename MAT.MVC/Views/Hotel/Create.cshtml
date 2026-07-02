@@ -38,7 +38,12 @@
                         <i class="bi bi-geo-alt"></i>
                         @Html.LabelFor(model => model.LocalidadId, "Localidad")
                     </label>
-                    <input type="text" id="txt-busqueda-localidad" class="modern-form-input" placeholder="Buscar localidad..." />
+                    <div class="d-flex gap-2 align-items-stretch">
+                        <input type="text" id="txt-busqueda-localidad" class="modern-form-input flex-grow-1" placeholder="Buscar localidad..." />
+                        <button type="button" id="lnk-Agregar-Localidad-Hotel" class="btn-modern-icon" title="Agregar localidad">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
                     <input type="hidden" id="LocalidadId" name="LocalidadId" />
                     @Html.ValidationMessageFor(model => model.LocalidadId, "", new { @class = "text-danger" })
                 </div>
@@ -150,4 +155,29 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.matGeo) {
+                matGeo.initAutocomplete('#txt-busqueda-localidad', '#LocalidadId', {
+                    context: 'Localidad (hotel)',
+                    minLength: 3
+                });
+                $('#txt-busqueda-localidad').off('keyup.autocomplete');
+
+                $('#lnk-Agregar-Localidad-Hotel').on('click', function () {
+                    matGeo.openCreateDialog();
+                    return false;
+                });
+
+                $(document).on('mat:localidad-created.hotelLocalidad', function (e, data) {
+                    if (data && data.localidadId) {
+                        $('#LocalidadId').val(data.localidadId);
+                        if (data.nombre) {
+                            $('#txt-busqueda-localidad').val(data.nombre);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 }

@@ -489,6 +489,7 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_Localidad_GetById.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Localidad_GetAll.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Localidad_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Localidad_Search.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_VLocalidad_Search.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedureProveedor_Update.sql">
       <AnsiNulls>Off</AnsiNulls>

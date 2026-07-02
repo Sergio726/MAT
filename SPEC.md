@@ -113,6 +113,59 @@
   Archivos: `Views/Admin/Index.cshtml` (y, si aplica, enlaces ya cubiertos por el task "Exponer ErrorLog y Logs en el panel Index").
   Criterio de éxito: El Index refleja las secciones acordadas sin las planillas retiradas; sin duplicar lógica contradictoria con el sidebar tras el cleanup.
 
+#### Normalización Localidad (post NetTiers F2)
+
+**Documento de referencia:** `DOCUMENTACION/LOCALIDAD_NORMALIZACION_PLAN.md`  
+**Contexto:** Un solo catálogo `dbo.Localidad` para destino de paquete (`DestinoID`), domicilio de persona (`LocalidadID`), hotel y proveedor. Unificar API (`LocalidadController`), datos (`GeoDataAccess`), JS (`mat.geo.localidad.js`) y errores (`ErrorUtil` + handlers AJAX). Ejecutar tasks **L1 → L12 en orden**.
+
+- [x] **Localidad [P2] L1:** GeoDataAccess extendido + SP `usp_MAT_Localidad_Search`
+  Métodos: `GetProvinciasByPaisId`, `GetLocalidadesByDepartamentoId`, `GetLocalidadGeoInfo`, `SearchLocalidades`. SP nuevo en `MAT.DB` + script `database/2026-07-01_Localidad_Normalizacion_SPs.sql`.
+  Criterio: MSBuild OK; métodos listos para controller; SP publicable en BD.
+
+- [x] **Localidad [P2] L2:** `LocalidadController` API completa (`Search`, refactor cascada, `AddLocalidad` devuelve ID)
+  `LocalidadLookupDto`; cero `DBHelper` inline en controller; shim `LProvincia` en `GetProvincia`; validación entrada + `ErrorUtil` en todos los `catch`.
+  Criterio: `Search` y `AddLocalidad` responden JSON documentado; grep `DBHelper` en `LocalidadController` = 0.
+
+- [x] **Localidad [P2] L3:** Módulo `mat.geo.localidad.js` + include en `_Layout.cshtml`
+  API: `loadProvincias`, `loadDepartamentos`, `loadLocalidades`, `initAutocomplete`, `openCreateDialog`, `onLocalidadCreated`, `handleAjaxError`.
+  Criterio: script carga sin error; helper de errores AJAX disponible globalmente.
+
+- [x] **Localidad [P2] L4:** Popup alta unificada (`Localidad/Create` + evento `mat:localidad-created`)
+  `AddLocalidad` dispara evento con `localidadId`; handlers `error` en AJAX del popup; integración con `matGeo.openCreateDialog`.
+  Criterio: alta devuelve ID visible en JSON; evento se dispara al guardar OK.
+
+- [x] **Localidad [P2] L5:** PersonaCliente Create/Edit — cascada + alta con refresh
+  Reemplazar JS inline por `matGeo`; botón `+` refresca `#ddLocalidad`; `LoadInfoLocalidad` con manejo de error.
+  Criterio: smoke UC-02 — crear/editar cliente con localidad nueva seleccionable.
+
+- [x] **Localidad [P2] L6:** Paquete Edit — modal destino con botón `+` y refresh
+  Misma popup de alta; `DestinoID` asignable tras crear localidad; cascada del modal vía `matGeo`.
+  Criterio: smoke UC-01 — paquete nuevo/edit con destino recién creado.
+
+- [x] **Localidad [P2] L7:** PersonaPasajero Create/Edit — autocomplete `/Localidad/Search`
+  Reemplazar endpoint roto `/Localidad/Search` inline; `matGeo.initAutocomplete`; handlers `error`.
+  Criterio: smoke UC-03 — autocomplete ≥3 chars y persistencia `LocalidadId`.
+
+- [x] **Localidad [P2] L8:** PersonaProveedor Create/Edit — dos autocompletes
+  Campos personal y empresa; mismo patrón L7.
+  Criterio: smoke UC-04 — ambos campos guardan ID.
+
+- [x] **Localidad [P2] L9:** Hotel Create/Edit — autocomplete unificado
+  `matGeo.initAutocomplete` en `@section Scripts`; opcional botón `+`.
+  Criterio: smoke UC-05 — `LocalidadId` en formulario hotel.
+
+- [ ] **Localidad [P2] L10:** Consolidar `mat.jquery.binding.js` + deprecar `QuickLocalidadSearch`
+  Migrar handlers `#txt-busqueda-localidad*` a `/Localidad/Search`; wrapper obsoleto o eliminación en `HomeController`.
+  Criterio: un solo endpoint de búsqueda activo en código; sin duplicar autocomplete.
+
+- [ ] **Localidad [P2] L11:** Helper — deprecar `ToSelectEntities("Localidad")` masivo
+  No cargar tabla entera; `GetLocalidadName` / `ToSelectItem` sin regresión.
+  Criterio: lecturas display (Details, Voucher) OK; sin `GetAllLocalidades` injustificado en dropdowns.
+
+- [ ] **Localidad [P2] L12:** Cierre — docs, grep, smoke global
+  Marcar L1–L11 `[x]`; `PROGRESS.md`; checklist smoke del plan; republicar SPs en BD.
+  Criterio: MSBuild limpio; grep cierre (`DBHelper` controller, `response.data`, `/Localidad/Search` roto); smoke manual 8 casos del plan.
+
 #### Reportes administrativos (misma BD que MAT Web; patrones MAT.MVC)
 
 **Principios:** Implementar en el sistema actual usando `DBHelper`/SqlClient, `ErrorUtil`, `RequireAdministrador()`, vistas Admin Bootstrap 5 y **EPPlus** para Excel. Reutilizar **sin modificar** los SP existentes `usp_MAT_Reportes_Ventas`, `usp_MAT_Reportes_Pagos`, `usp_MAT_Reportes_RankingCompras`. Si el contrato columnas/parámetros no alcanza, crear **nuevos** SP en `MAT.DB` (nombre distinto, p. ej. sufijo `_Admin` o `_V2`) y dejar los originales intactos. Referencia funcional: `DOCUMENTACION\REPORTES_MAT_WEB.md` (paridad filtros/DTO/Excel con MAT Web; rutas pueden diferir).

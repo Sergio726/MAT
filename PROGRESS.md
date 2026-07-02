@@ -2,35 +2,136 @@
 
 ---
 
-## Handoff — próxima sesión (2026-07-01)
+## Handoff — próxima sesión (2026-07-01) — PAUSA: deploy BD
 
 **Rama:** `MAT2026` (cambios locales sin commit; revisar `git status` antes de commitear).
 
-### Hecho hoy (código compila OK)
+### Código — Normalización Localidad L1–L9 ✅
 
 | Bloque | Estado |
 |--------|--------|
-| NetTiers F0 + F1 + F2 + F3 | F2 geo `[x]` en SPEC |
-| Catálogo geográfico | `GeoDataAccess` + 7 SPs `usp_MAT_*` |
-| ErrorUtil | `PaqueteController.Edit`, `HomeController.QuickLocalidadSearch`, validación `AddLocalidad` |
+| L1–L2 | Backend `GeoDataAccess` + `LocalidadController` + `usp_MAT_Localidad_Search` |
+| L3–L4 | `mat.geo.localidad.js` + popup Create + evento `mat:localidad-created` |
+| L5–L9 | PersonaCliente, Paquete, Pasajero, Proveedor, Hotel migrados a `matGeo` |
 
-### Pendiente operativo (BD + smoke)
+MSBuild `MAT.MVC` Debug: OK.
 
-1. **Publicar SPs F2** en SQL Server: `database/2026-07-01_NetTiers_F2_Geo_SPs.sql` (7 SPs nuevos)
-2. **Publicar SPs F3/F3 transporte** si aún no están: `database/2026-06-30_NetTiers_F3_Maestros_SPs.sql`, `database/2026-06-30_Transporte_Tipo_UI.sql`
-3. **Smoke manual F2:**
-   - `/Localidad/Create` — cascada + alta localidad
-   - `/Paquete` create/edit — dropdown países
-   - Home autocomplete (`QuickLocalidadSearch`)
-   - Voucher/paquete con destino y localidad pasajero
+### Bloqueante humano: publicar BD antes de smoke / L10
 
-### Siguiente task SPEC
+Ejecutar en SQL Server (entorno donde corre IIS Express / MAT.MVC), en este orden:
+
+1. `database/2026-07-01_NetTiers_F2_Geo_SPs.sql` — 7 SPs geo F2
+2. `database/2026-07-01_Localidad_Normalizacion_SPs.sql` — `usp_MAT_Localidad_Search` (L1)
+3. (Opcional si no están) `database/2026-06-30_NetTiers_F3_Maestros_SPs.sql`, `database/2026-06-30_Transporte_Tipo_UI.sql`
+
+**Verificación rápida post-deploy:**
+
+```sql
+SELECT name FROM sys.procedures
+WHERE name IN (
+  'usp_MAT_Pais_GetAll',
+  'usp_MAT_Provincia_GetById',
+  'usp_MAT_Departamento_GetByProvinciaId',
+  'usp_MAT_Localidad_GetById',
+  'usp_MAT_Localidad_GetAll',
+  'usp_MAT_Localidad_Insert',
+  'usp_MAT_VLocalidad_Search',
+  'usp_MAT_Localidad_Search'
+)
+ORDER BY name;
+-- Debe devolver 8 filas
+```
+
+### Smoke sugerido tras deploy (antes de L10)
+
+- PersonaCliente: cascada + botón `+` alta localidad
+- Paquete Edit: modal destino + `+`
+- Pasajero / Proveedor / Hotel: autocomplete ≥3 chars en `/Localidad/Search`
+- `AddLocalidad` devuelve `{ Id, Result: "Done." }`
+
+### Siguiente task SPEC (retomar después del deploy)
+
+- **Localidad L10** — Consolidar `mat.jquery.binding.js` + deprecar `QuickLocalidadSearch`
+- Plan detallado: `.cursor/plans/localidad_l10-l12_cierre_36b4b671.plan.md` (L10 → L11 → L12)
+
+### Después de L12
 
 - **NetTiers F4** — Paquete y precios (`DataRepository` en `PaqueteModel.GenerarPasajes`)
 
 ---
 
-## Handoff — sesión anterior (2026-06-30)
+### [2026-07-01] — Pausa: deploy BD antes de L10–L12
+- Acción humana: publicar scripts en `database/` (ver handoff arriba)
+- Código: L1–L9 completo; L10–L12 pendiente
+- Estado: ⏸ pausa — retomar con L10 tras smoke post-deploy
+
+### [2026-07-01] — Localidad L9: Hotel Create/Edit matGeo autocomplete
+- Archivos modificados: `MAT.MVC/Views/Hotel/Create.cshtml`, `MAT.MVC/Views/Hotel/Edit.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: `@section Scripts` con `matGeo.initAutocomplete` (`#txt-busqueda-localidad` → `#LocalidadId`); botón `+` opcional; evento `mat:localidad-created.hotelLocalidad`; `.off('keyup.autocomplete')`; Edit simplificado (un solo bloque localidad).
+- Problemas encontrados: ninguno
+- Estado: ✅ completo — smoke UC-05
+
+### [2026-07-01] — Localidad L8: PersonaProveedor dos autocompletes matGeo
+- Archivos modificados: `MAT.MVC/Views/PersonaProveedor/Create.cshtml`, `MAT.MVC/Views/PersonaProveedor/Edit.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: `matGeo.initAutocomplete` en `#txt-busqueda-localidad` + hidden (`#LocalidadId` Create / `#Localidad` Edit) y `#txt-busqueda-localidad-empresa` + `#LocalidadEmpresa`; `minLength: 3`; `.off('keyup.autocomplete')` en ambos campos.
+- Problemas encontrados: ninguno
+- Estado: ✅ completo — smoke UC-04
+
+### [2026-07-01] — Localidad L7: PersonaPasajero autocomplete matGeo
+- Archivos modificados: `MAT.MVC/Views/PersonaPasajero/Create.cshtml`, `MAT.MVC/Views/PersonaPasajero/Edit.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: `matGeo.initAutocomplete` en `#txt-busqueda-localidad` + `#Localidad`; `minLength: 3`; handlers error vía matGeo; `off('keyup.autocomplete')` evita conflicto con binding global; botón `+` opcional con popup y evento `mat:localidad-created.pasajeroLocalidad`.
+- Problemas encontrados: binding global en `mat.jquery.binding.js` compite por mismo id — mitigado con `.off` hasta L10
+- Estado: ✅ completo — smoke UC-03
+
+### [2026-07-01] — Localidad L6: Paquete Edit destino con matGeo
+- Archivos modificados: `MAT.MVC/Views/Paquete/Edit.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Botón `+` en modal destino (`#lnk-Agregar-Localidad-Destino`); cascada `LoadProvincia`/`LoadDepartamento`/`LoadLocalidad` vía `matGeo`; carga inicial con `_paquetePaisId`/`_paqueteProvinciaId`/etc. (sin GUID hardcodeado); `openCreateDialog` refresca `#ddLocalidad`; `setDestino` actualiza `#DestinoID` y `#txtDestino` al aceptar.
+- Problemas encontrados: ninguno
+- Estado: ✅ completo — smoke UC-01
+
+### [2026-07-01] — Localidad L5: PersonaCliente Create/Edit con matGeo
+- Archivos modificados: `MAT.MVC/Views/PersonaCliente/Create.cshtml`, `MAT.MVC/Views/PersonaCliente/Edit.cshtml`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Cascada provincia/depto/localidad vía `matGeo.loadDepartamentos` / `loadLocalidades`; eliminado hardcode 445/5445 en Create; `LoadInfoLocalidad` en Edit con handlers `error`; botón `+` sigue vía `AgregarLocalidad` → `openCreateDialog` (L4).
+- Problemas encontrados: ninguno
+- Estado: ✅ completo — smoke UC-02
+
+### [2026-07-01] — Localidad L4: popup Create + evento mat:localidad-created
+- Archivos modificados: `MAT.MVC/Views/Localidad/Create.cshtml`, `MAT.MVC/Scripts/global.js`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: `fn_Unsubscribe` vía `matGeo.loadDepartamentos`; `AddLocalidad` dispara `matGeo.triggerLocalidadCreated({ localidadId, nombre, idDepartamento })` al OK; handlers `error` en AJAX; fallback sin matGeo. `AgregarLocalidad()` delega en `matGeo.openCreateDialog` con refresh de `#ddDepartamento` / `#ddLocalidad`.
+- Problemas encontrados: ninguno
+- Estado: ✅ completo — smoke: alta desde Cliente → localidad nueva en dropdown
+
+### [2026-07-01] — Localidad L3: mat.geo.localidad.js
+- Archivos modificados: `MAT.MVC/Scripts/mat.geo.localidad.js`, `Views/Shared/_Layout.cshtml`, `Views/Shared/_LayoutAdmin.cshtml`, `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Módulo global `window.matGeo` con `loadProvincias`, `loadDepartamentos`, `loadLocalidades`, `initAutocomplete`, `openCreateDialog`, `onLocalidadCreated`/`offLocalidadCreated`, `triggerLocalidadCreated`, `handleJsonError`, `handleAjaxError`. Parse JSON con `JSON.parse` (sin `eval`). Script incluido tras `mat.jquery.functions.js` en layouts principal y admin.
+- Problemas encontrados: ninguno
+- Estado: ✅ completo — smoke: consola sin errores en Home; `typeof matGeo === 'object'`
+
+### [2026-07-01] — Localidad L1–L2: pasada de optimización (pre-L3)
+- Archivos modificados: `MAT.Utilities/GeoDataAccess.cs`, `MAT.MVC/Controllers/Localidad/LocalidadController.cs`, `MAT.MVC/Models/LocalidadLookupDto.cs`, `PROGRESS.md`
+- Qué se implementó: `GeoDataAccess` — `ReadList`/`MapVLocalidad` genéricos, `MinSearchTermLength`, `SearchVLocalidad` delega en `SearchLocalidades` (un solo SP). `LocalidadController` — helpers `TryParsePositiveInt`, `SerializeJson`, `ToJson`, respuestas JSON tipadas (`JsonCascade`, `JsonGeoInfo`, etc.); `GetDepartamento` sin re-ordenar (SP ya ordena). `LocalidadLookupDto.From(VLocalidad)`.
+- Problemas encontrados: helpers estáticos no pueden llamar `Controller.Json` — resuelto con `new JsonResult`.
+- Estado: ✅ completo — MSBuild OK; contratos JSON legacy intactos
+
+### [2026-07-01] — Localidad L2: LocalidadController API completa
+- Archivos modificados: `MAT.MVC/Controllers/Localidad/LocalidadController.cs`, `MAT.MVC/Models/LocalidadLookupDto.cs`, `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Refactor `GetProvincia`, `GetLocalidad`, `GetInfoByLocalidadId` → `GeoDataAccess` (cero `DBHelper` en controller). Nueva acción `Search(term, idProvincia?, idDepartamento?)` → `List<LocalidadLookupDto>`. `AddLocalidad` devuelve `Id` del insert. Shim `LProvincia` en `GetProvincia`. Validación numérica en cascada y mensajes user-safe.
+- Problemas encontrados: ninguno
+- Estado: ✅ completo — smoke con SP L1 publicado + sesión autenticada en Pasajero/Proveedor autocomplete
+
+### [2026-07-01] — Localidad L1: GeoDataAccess + SP búsqueda
+- Archivos modificados: `MAT.Utilities/GeoDataAccess.cs`, `MAT.DB/dbo/Stored Procedures/usp_MAT_Localidad_Search.sql`, `MAT.DB/MAT.DB.sqlproj`, `database/2026-07-01_Localidad_Normalizacion_SPs.sql`, `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Clase `LocalidadGeoInfo`; métodos `GetProvinciasByPaisId`, `GetLocalidadesByDepartamentoId`, `GetLocalidadGeoInfo`, `SearchLocalidades` (wrappers legacy + SP nuevo con filtros opcionales provincia/departamento, mín. 3 chars). SP `usp_MAT_Localidad_Search` registrado en sqlproj.
+- Problemas encontrados: ninguno
+- Estado: ✅ completo — **publicar** `database/2026-07-01_Localidad_Normalizacion_SPs.sql` en BD local antes de L2 smoke
+
+### [2026-07-01] — SPEC: tasks Localidad L1–L12 (normalización post F2)
+- Archivos modificados: `SPEC.md`, `PROGRESS.md`
+- Qué se implementó: Sección **Normalización Localidad (post NetTiers F2)** en SPEC § P2 con 12 tasks secuenciales (L1–L12), referencia a `DOCUMENTACION/LOCALIDAD_NORMALIZACION_PLAN.md`. Actualizado handoff en PROGRESS: siguiente task = L1.
+- Problemas encontrados: ninguno
+- Estado: ✅ completo
+
+---
 
 **Rama:** `MAT2026` (cambios locales sin commit; revisar `git status` antes de commitear).
 

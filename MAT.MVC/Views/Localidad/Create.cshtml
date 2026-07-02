@@ -59,62 +59,102 @@
 
 <script type="text/javascript">
     function fn_Unsubscribe() {
-        if (parseInt($("#ddProvincia").val()) > 0) {
-            var IdProvincia = $("#ddProvincia").val();
-
-            $.ajax({
-                type: "POST",
-                url: "/Localidad/GetDepartamento",
-                data: { "sIdProvincia": IdProvincia },
-                dataType: "json",
-                success: function (response) {
-                    if (response.Result == "Done.") {
-                        var list = eval(response.LDepartamento);
-                        $('#popin_ddDepartamento option').remove();
-                        document.getElementById("popin_ddDepartamento").options[0] = new Option("SELECCIONE UN DEPARTAMENTO", "0");
-                        for (var i = 0; i < list.length; i++) {
-                            var sValue = list[i].IdDepartamento;
-                            var sName = list[i].Nombre;
-                            document.getElementById("popin_ddDepartamento").options[document.getElementById("popin_ddDepartamento").options.length] = new Option(sName, sValue);
-                        }
-                    }
-                    else {
-                        (window.alertError || window.alert)(response.Result, "Error");
-                    }
-                }
-            });
+        var idProvincia = $("#ddProvincia").val();
+        if (!(parseInt(idProvincia, 10) > 0)) {
+            return;
         }
+
+        if (window.matGeo && typeof window.matGeo.loadDepartamentos === 'function') {
+            window.matGeo.loadDepartamentos(idProvincia, {
+                departamentoSelect: '#popin_ddDepartamento',
+                context: 'Departamentos (alta localidad)'
+            });
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/Localidad/GetDepartamento',
+            data: { sIdProvincia: idProvincia },
+            dataType: 'json',
+            success: function (response) {
+                if (response.Result === 'Done.') {
+                    var list;
+                    try {
+                        list = JSON.parse(response.LDepartamento);
+                    } catch (e) {
+                        list = [];
+                    }
+                    $('#popin_ddDepartamento').empty().append(
+                        $('<option>', { value: '0', text: 'SELECCIONE UN DEPARTAMENTO' })
+                    );
+                    for (var i = 0; i < list.length; i++) {
+                        $('#popin_ddDepartamento').append(
+                            $('<option>', { value: list[i].IdDepartamento, text: list[i].Nombre })
+                        );
+                    }
+                } else if (window.matGeo) {
+                    window.matGeo.handleJsonError(response, 'Departamentos (alta localidad)');
+                } else {
+                    (window.alertError || window.alert)(response.Result, 'Error');
+                }
+            },
+            error: function (xhr) {
+                if (window.matGeo) {
+                    window.matGeo.handleAjaxError(xhr, 'Departamentos (alta localidad)');
+                } else {
+                    (window.alertError || window.alert)('Error de comunicación con el servidor.', 'Error');
+                }
+            }
+        });
     }
 
     function AddLocalidad() {
-        if ($("#ddProvincia").val() == "0") {
-            return (window.alertInfo || window.alert)("Por favor seleccione una provincia.", "Validación");
+        if ($('#ddProvincia').val() === '0') {
+            return (window.alertInfo || window.alert)('Por favor seleccione una provincia.', 'Validación');
         }
-        if ($("#popin_ddDepartamento").val() == "0") {
-            return (window.alertInfo || window.alert)("Por favor seleccione un Departamento.", "Validación");
-        }
-        if ($("#txtLocalidad").val().trim() == "") {
-            return (window.alertInfo || window.alert)("Por favor ingrese una localidad.", "Validación");
+        if ($('#popin_ddDepartamento').val() === '0') {
+            return (window.alertInfo || window.alert)('Por favor seleccione un Departamento.', 'Validación');
         }
 
-        var IdDepartamento = $("#popin_ddDepartamento").val();
-        var Localidad = $("#txtLocalidad").val().trim();
+        var nombreLocalidad = $('#txtLocalidad').val().trim();
+        if (nombreLocalidad === '') {
+            return (window.alertInfo || window.alert)('Por favor ingrese una localidad.', 'Validación');
+        }
+
+        var idDepartamento = $('#popin_ddDepartamento').val();
 
         $.ajax({
-            type: "POST",
-            url: "/Localidad/AddLocalidad",
+            type: 'POST',
+            url: '/Localidad/AddLocalidad',
             data: {
-                "sIdDepartamento": IdDepartamento,
-                "sLocalidad": Localidad
+                sIdDepartamento: idDepartamento,
+                sLocalidad: nombreLocalidad
             },
-            dataType: "json",
+            dataType: 'json',
             success: function (response) {
-                if (response.Result == "Done.") {
-                    (window.alertSuccess || window.alert)("Se agregó una localidad.", "Operación Exitosa");
-                    $("#AgregarLocalidad").dialog("close");
+                if (response.Result === 'Done.') {
+                    var localidadId = parseInt(response.Id, 10);
+                    if (localidadId > 0 && window.matGeo && typeof window.matGeo.triggerLocalidadCreated === 'function') {
+                        window.matGeo.triggerLocalidadCreated({
+                            localidadId: localidadId,
+                            nombre: nombreLocalidad.toUpperCase(),
+                            idDepartamento: parseInt(idDepartamento, 10)
+                        });
+                    }
+                    (window.alertSuccess || window.alert)('Se agregó una localidad.', 'Operación Exitosa');
+                    $('#AgregarLocalidad').dialog('close');
+                } else if (window.matGeo) {
+                    window.matGeo.handleJsonError(response, 'Alta de localidad');
+                } else {
+                    (window.alertError || window.alert)(response.Result, 'Error');
                 }
-                else {
-                    (window.alertError || window.alert)(response.Result, "Error");
+            },
+            error: function (xhr) {
+                if (window.matGeo) {
+                    window.matGeo.handleAjaxError(xhr, 'Alta de localidad');
+                } else {
+                    (window.alertError || window.alert)('Error de comunicación con el servidor.', 'Error');
                 }
             }
         });

@@ -63,7 +63,12 @@
                         <i class="bi bi-geo-alt"></i>
                         @Html.LabelFor(model => model.LocalidadId, "Localidad")
                     </label>
-                    <input type="text" id="txt-busqueda-localidad" class="modern-form-input" placeholder="Buscar localidad..." />
+                    <div class="d-flex gap-2 align-items-stretch">
+                        <input type="text" id="txt-busqueda-localidad" class="modern-form-input flex-grow-1" placeholder="Buscar localidad..." />
+                        <button type="button" id="lnk-Agregar-Localidad-Pasajero" class="btn-modern-icon" title="Agregar localidad">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
                     <input type="hidden" id="Localidad" name="LocalidadId" />
                     @Html.ValidationMessageFor(model => model.LocalidadId, "", new { @class = "text-danger" })
                 </div>
@@ -170,29 +175,27 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
         $(document).ready(function () {
-            // Autocomplete para localidad
-            $("#txt-busqueda-localidad").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/Localidad/Search",
-                        dataType: "json",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return {
-                                    label: item.Nombre,
-                                    value: item.Nombre,
-                                    id: item.LocalidadId
-                                };
-                            }));
+            if (window.matGeo) {
+                matGeo.initAutocomplete('#txt-busqueda-localidad', '#Localidad', {
+                    context: 'Localidad (pasajero)',
+                    minLength: 3
+                });
+                $('#txt-busqueda-localidad').off('keyup.autocomplete');
+
+                $('#lnk-Agregar-Localidad-Pasajero').on('click', function () {
+                    matGeo.openCreateDialog();
+                    return false;
+                });
+
+                $(document).on('mat:localidad-created.pasajeroLocalidad', function (e, data) {
+                    if (data && data.localidadId) {
+                        $('#Localidad').val(data.localidadId);
+                        if (data.nombre) {
+                            $('#txt-busqueda-localidad').val(data.nombre);
                         }
-                    });
-                },
-                minLength: 2,
-                select: function (event, ui) {
-                    $("#Localidad").val(ui.item.id);
-                }
-            });
+                    }
+                });
+            }
         });
     </script>
 }

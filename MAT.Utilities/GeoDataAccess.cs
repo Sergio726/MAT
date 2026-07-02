@@ -7,39 +7,36 @@ using System.Data.SqlClient;
 namespace MAT.Utilities
 {
     /// <summary>
+    /// Jerarquía geo de una localidad (país → provincia → departamento → localidad).
+    /// </summary>
+    public sealed class LocalidadGeoInfo
+    {
+        public int IdLocalidad { get; set; }
+        public int IdDepartamento { get; set; }
+        public int IdProvincia { get; set; }
+        public Guid IdPais { get; set; }
+    }
+
+    /// <summary>
     /// Catálogo geográfico vía SP + DBHelper (NetTiers F2).
     /// Errores SQL se propagan al caller MVC para normalización con ErrorUtil.
     /// </summary>
     public static class GeoDataAccess
     {
+        private const int MinSearchTermLength = 3;
+
         public static List<Pais> GetAllPaises()
         {
-            var list = new List<Pais>();
-            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Pais_GetAll", null))
-            {
-                while (reader.Read())
-                {
-                    list.Add(MapPais(reader));
-                }
-            }
-            return list;
+            return ReadList("dbo.usp_MAT_Pais_GetAll", null, MapPais);
         }
 
         public static List<Provincia> GetAllProvincias()
         {
-            var list = new List<Provincia>();
-            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_GetAllProvincia", null))
+            return ReadList("dbo.usp_GetAllProvincia", null, reader => new Provincia
             {
-                while (reader.Read())
-                {
-                    list.Add(new Provincia
-                    {
-                        Id = reader.GetInt32(reader.GetOrdinal("ID")),
-                        Nombre = GetString(reader, "Nombre")
-                    });
-                }
-            }
-            return list;
+                Id = reader.GetInt32(reader.GetOrdinal("ID")),
+                Nombre = GetString(reader, "Nombre")
+            });
         }
 
         public static Provincia GetProvinciaById(int id)
@@ -66,19 +63,11 @@ namespace MAT.Utilities
                 return new List<Departamento>();
             }
 
-            var list = new List<Departamento>();
             var parameters = new[]
             {
                 DBHelper.MakeParam("@IdProvincia", SqlDbType.Int, 0, idProvincia)
             };
-            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Departamento_GetByProvinciaId", parameters))
-            {
-                while (reader.Read())
-                {
-                    list.Add(MapDepartamento(reader));
-                }
-            }
-            return list;
+            return ReadList("dbo.usp_MAT_Departamento_GetByProvinciaId", parameters, MapDepartamento);
         }
 
         public static Localidad GetLocalidadById(int id)
@@ -100,19 +89,11 @@ namespace MAT.Utilities
 
         public static List<Localidad> GetAllLocalidades()
         {
-            var list = new List<Localidad>();
-            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Localidad_GetAll", null))
+            return ReadList("dbo.usp_MAT_Localidad_GetAll", null, reader => new Localidad
             {
-                while (reader.Read())
-                {
-                    list.Add(new Localidad
-                    {
-                        Id = reader.GetInt32(reader.GetOrdinal("ID")),
-                        Nombre = GetString(reader, "Nombre")
-                    });
-                }
-            }
-            return list;
+                Id = reader.GetInt32(reader.GetOrdinal("ID")),
+                Nombre = GetString(reader, "Nombre")
+            });
         }
 
         public static int InsertLocalidad(int idDepartamento, string nombre)
@@ -135,31 +116,120 @@ namespace MAT.Utilities
             return DBHelper.ExecuteNonQueryOutput("dbo.usp_MAT_Localidad_Insert", parameters, "@Id", SqlDbType.Int, 0);
         }
 
+        /// <summary>
+        /// Búsqueda legacy (sin filtros geo). Delega en <see cref="SearchLocalidades"/>.
+        /// </summary>
         public static List<VLocalidad> SearchVLocalidad(string query)
         {
-            var trimmed = (query ?? string.Empty).Trim();
-            if (trimmed.Length < 3)
+            return SearchLocalidades(query, null, null);
+        }
+
+        public static List<Provincia> GetProvinciasByPaisId(string paisId)
+        {
+            if (string.IsNullOrWhiteSpace(paisId))
+            {
+                return new List<Provincia>();
+            }
+
+            Guid paisGuid;
+            if (!Guid.TryParse(paisId.Trim(), out paisGuid))
+            {
+                return new List<Provincia>();
+            }
+
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@PaisID", SqlDbType.VarChar, 36, paisGuid.ToString())
+            };
+            return ReadList("dbo.usp_Provincia_GetAllByPaisID", parameters, MapProvincia);
+        }
+
+        public static List<VLocalidad> GetLocalidadesByDepartamentoId(int idDepartamento)
+        {
+            if (idDepartamento <= 0)
             {
                 return new List<VLocalidad>();
             }
 
             var parameters = new[]
             {
-                DBHelper.MakeParam("@Query", SqlDbType.NVarChar, 250, trimmed)
+                DBHelper.MakeParam("@IdDepartamento", SqlDbType.Int, 0, idDepartamento)
             };
-            var list = new List<VLocalidad>();
-            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_VLocalidad_Search", parameters))
+            return ReadVLocalidadList("dbo.usp_Localidad_GetByIdDepartamento", parameters);
+        }
+
+        public static LocalidadGeoInfo GetLocalidadGeoInfo(int idLocalidad)
+        {
+            if (idLocalidad <= 0)
+            {
+                return null;
+            }
+
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@idLocalidad", SqlDbType.Int, 0, idLocalidad)
+            };
+            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_GetInfoByLocalidadId", parameters))
+            {
+                if (!reader.Read())
+                {
+                    return null;
+                }
+
+                return new LocalidadGeoInfo
+                {
+                    IdLocalidad = reader.GetInt32(reader.GetOrdinal("IdLocalidad")),
+                    IdDepartamento = reader.GetInt32(reader.GetOrdinal("IdDepartamento")),
+                    IdProvincia = reader.GetInt32(reader.GetOrdinal("IdProvincia")),
+                    IdPais = reader.GetGuid(reader.GetOrdinal("IdPais"))
+                };
+            }
+        }
+
+        public static List<VLocalidad> SearchLocalidades(string term, int? idProvincia, int? idDepartamento)
+        {
+            string trimmed;
+            if (!TryNormalizeSearchTerm(term, out trimmed))
+            {
+                return new List<VLocalidad>();
+            }
+
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@Term", SqlDbType.NVarChar, 250, trimmed),
+                DBHelper.MakeParam("@IdProvincia", SqlDbType.Int, 0, ToOptionalInt(idProvincia)),
+                DBHelper.MakeParam("@IdDepartamento", SqlDbType.Int, 0, ToOptionalInt(idDepartamento))
+            };
+            return ReadVLocalidadList("dbo.usp_MAT_Localidad_Search", parameters);
+        }
+
+        private static List<T> ReadList<T>(string storedProcedure, SqlParameter[] parameters, Func<SqlDataReader, T> map)
+        {
+            var list = new List<T>();
+            using (var reader = DBHelper.ExecuteDataReader(storedProcedure, parameters))
             {
                 while (reader.Read())
                 {
-                    list.Add(new VLocalidad
-                    {
-                        Id = reader.GetInt32(reader.GetOrdinal("ID")),
-                        Nombre = GetString(reader, "Nombre")
-                    });
+                    list.Add(map(reader));
                 }
             }
             return list;
+        }
+
+        private static List<VLocalidad> ReadVLocalidadList(string storedProcedure, SqlParameter[] parameters)
+        {
+            return ReadList(storedProcedure, parameters, MapVLocalidad);
+        }
+
+        private static bool TryNormalizeSearchTerm(string term, out string trimmed)
+        {
+            trimmed = (term ?? string.Empty).Trim();
+            return trimmed.Length >= MinSearchTermLength;
+        }
+
+        private static object ToOptionalInt(int? value)
+        {
+            return value.HasValue && value.Value > 0 ? (object)value.Value : DBNull.Value;
         }
 
         private static Pais MapPais(SqlDataReader reader)
@@ -197,6 +267,15 @@ namespace MAT.Utilities
             {
                 Id = reader.GetInt32(reader.GetOrdinal("ID")),
                 IdDepartamento = reader.GetInt32(reader.GetOrdinal("IdDepartamento")),
+                Nombre = GetString(reader, "Nombre")
+            };
+        }
+
+        private static VLocalidad MapVLocalidad(SqlDataReader reader)
+        {
+            return new VLocalidad
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("ID")),
                 Nombre = GetString(reader, "Nombre")
             };
         }

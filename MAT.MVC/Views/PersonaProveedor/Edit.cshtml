@@ -250,55 +250,18 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
         $(document).ready(function () {
-            // Autocomplete para localidad personal
-            $("#txt-busqueda-localidad").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/Localidad/Search",
-                        dataType: "json",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return {
-                                    label: item.Nombre,
-                                    value: item.Nombre,
-                                    id: item.LocalidadId
-                                };
-                            }));
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function (event, ui) {
-                    $("#Localidad").val(ui.item.id);
-                }
-            });
+            if (window.matGeo) {
+                matGeo.initAutocomplete('#txt-busqueda-localidad', '#Localidad', {
+                    context: 'Localidad personal (proveedor)',
+                    minLength: 3
+                });
+                matGeo.initAutocomplete('#txt-busqueda-localidad-empresa', '#LocalidadEmpresa', {
+                    context: 'Localidad empresa (proveedor)',
+                    minLength: 3
+                });
+                $('#txt-busqueda-localidad, #txt-busqueda-localidad-empresa').off('keyup.autocomplete');
+            }
 
-            // Autocomplete para localidad empresa
-            $("#txt-busqueda-localidad-empresa").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "/Localidad/Search",
-                        dataType: "json",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return {
-                                    label: item.Nombre,
-                                    value: item.Nombre,
-                                    id: item.LocalidadId
-                                };
-                            }));
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function (event, ui) {
-                    $("#LocalidadEmpresa").val(ui.item.id);
-                }
-            });
-
-            // Mascaras
             $("#NroDocumento").mask("99.999.999");
             $("#Cuit").mask("99-99999999-9");
         });
