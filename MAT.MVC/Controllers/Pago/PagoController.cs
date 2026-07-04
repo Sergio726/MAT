@@ -4,8 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
 using MAT.Utilities;
+using MAT.MVC.Infrastructure.Data;
 using MAT.MVC.Models;
 
 namespace MAT.MVC.Controllers
@@ -18,7 +18,7 @@ namespace MAT.MVC.Controllers
       
         public ActionResult Edit(Guid id)
         {
-            Pago p = new PagoService().GetByPagoId(id);
+            Pago p = PagoDataAccess.GetPagoById(id);
             return View(p);
         }
 
@@ -26,10 +26,9 @@ namespace MAT.MVC.Controllers
         [HttpPost]
         public ActionResult Edit(Guid id, FormCollection form)
         {
-            PagoService pSrv = new PagoService();
-            Pago p = pSrv.GetByPagoId(id);
+            Pago p = PagoDataAccess.GetPagoById(id);
             Helper.FillEntity<Pago>(ref p, form);
-            pSrv.Update(p);
+            PagoDataAccess.UpdatePago(p);
             return RedirectToAction("Index");
         }
 

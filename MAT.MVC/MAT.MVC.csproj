@@ -328,7 +328,9 @@
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Filters\GlobalExceptionFilter.cs" />
     <Compile Include="Filters\RequestGuardFilter.cs" />
+    <Compile Include="Infrastructure\Data\FacturaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\MaestrosDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\PagoDataAccess.cs" />
     <Compile Include="Infrastructure\Data\PaqueteDataAccess.cs" />
     <Compile Include="Infrastructure\Data\PasajeDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ReservaHabitacionDataAccess.cs" />

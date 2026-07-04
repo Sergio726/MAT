@@ -1208,3 +1208,20 @@
 - Problemas encontrados: ninguno de compilación. ⚠ Las vistas Razor no compilan con MSBuild — Manifiesto/ListadoSimple/Export requieren smoke manual en runtime.
 - Pendiente de despliegue: publicar SPs de `database/2026-07-03_NetTiers_F5_Viaje_SPs.sql`.
 - Estado: ✅ MSBuild MAT.sln Debug OK
+
+### [2026-07-03] — NetTiers F6: Facturación y pagos operativos migrados (crítico)
+
+- Archivos nuevos:
+  - `MAT.DB/dbo/Stored Procedures/`: `usp_MAT_Factura_GetEntityById/_GetEntitiesByClienteId/_UpdateEntity/_GetSaldoInfo.sql`, `usp_MAT_Pasaje_GetEntityById/_GetByFacturaId/_GetEntitiesByViajeId/_GetByPasajeroId/_UpdateEntity.sql`, `usp_MAT_Pago_GetEntityById/_GetByVendedorId/_GetByFacturaId/_UpdateEntity.sql`, `usp_MAT_MovimientoCuenta_GetByPagoId.sql`
+  - `MAT.MVC/Infrastructure/Data/FacturaDataAccess.cs` (con DTO `FacturaSaldoInfo`), `PagoDataAccess.cs`
+  - `database/2026-07-03_NetTiers_F6_Factura_SPs.sql` (⚠ incluye ALTERs de paridad de esquema)
+- Archivos modificados: `MAT.DB/dbo/Tables/Factura.sql`, `Pago.sql`, `MovimientoCuenta.sql` (columnas de paridad), `PasajeDataAccess.cs` (extendido), `MATContext.cs` (Saldo), `FacturaModel.cs`, `PagosClientesModel.cs`, `RegistroPagoModel.cs`, `PagoController.cs`, `PersonaVendedorController.cs`, `PersonaClienteController.cs` (ElegirNuevaButaca), `PasajeModel.cs`, `PasajeroHistorialModel.cs`, `ListaFacturasModel.cs`, `PagosPorFechaModel.cs`, `InfopathModel.cs`, `VoucherModel.cs`, `ReservaModel.cs` (campos muertos), `MAT.MVC.csproj`, `MAT.DB.sqlproj`, `SPEC.md`
+- Qué se implementó:
+  - **HALLAZGO — MAT.DB desincronizado con la BD real:** las entidades NetTiers (generadas desde la BD) referencian columnas que no estaban en SSDT: `Factura.DescuentoAplicado`, `Pago.ClienteID`, `Pago.EstadoRendicion`, `Pago.CuentaCorrienteID`, `MovimientoCuenta.DebitoID`. Con `useStoredProcedure="false"` el provider arma SQL dinámico con esas columnas y los flujos corren en producción (p. ej. `Pago.ClienteId.Value` en `PagosPorFechaModel`, `.Where(p => p.DebitoId.HasValue)` en `CalcularSaldo`) ⇒ existen en la BD operativa. Se agregaron a las tablas SSDT y la migración usa guardas `IF COL_LENGTH(...) IS NULL` (no-op donde ya existan). **Omitirlas habría roto el cálculo de saldo con débitos.**
+  - **Saldos**: `usp_MAT_Factura_GetSaldoInfo` devuelve `Monto`, `TotalPagos`, `TotalDebitos` set-based; reemplaza dos N+1. La resta queda en C# por call-site porque las semánticas difieren: `MATContext.Saldo` = Monto − Pagos (SIN débitos, como siempre); `FacturaModel/FacturaPagosModel.CalcularSaldo` = Monto − Pagos − Débitos. `FacturaPagosModel` además necesita la lista de pagos ⇒ `usp_MAT_Pago_GetByFacturaId` (join MovimientoCuenta→Pago, un roundtrip) y el total de pagos se sigue sumando en C# (misma aritmética double).
+  - **RegistroPagoModel.ActualizarEstados**: `facturaService.Save(Factura)` sobre factura existente ⇒ `FacturaDataAccess.Update` (documentado). La orquestación pago total → vouchers → estados de pasajes se migró 1:1 **sin transacción** (comportamiento idéntico al actual); SP transaccional queda como deuda futura.
+  - Updates de entidad limitados a columnas conocidas por la entidad: `Factura_UpdateEntity` no toca `MonedaTipo`.
+  - Campos de servicio muertos eliminados en ReservaModel/VoucherModel/PasajeroHistorialModel (solo se instanciaban).
+- Problemas encontrados: ninguno de compilación.
+- Pendiente de despliegue: correr `database/2026-07-03_NetTiers_F6_Factura_SPs.sql` (los ALTERs son idempotentes) + SPs. **Smoke prioritario**: seña → pago total → vouchers/estados; saldo idéntico pre/post con la misma factura.
+- Estado: ✅ MSBuild MAT.sln Debug OK

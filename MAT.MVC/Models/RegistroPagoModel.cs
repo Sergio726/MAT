@@ -29,8 +29,7 @@ namespace MAT.MVC.Models
         public void ActualizarEstados(string nrofactura)
         {
             double _saldo = MATContext.Saldo(Factura.FacturaId);
-            PasajeService pasajeService = new PasajeService();
-            List<Pasaje> _pasajes = pasajeService.GetByFacturaId(Factura.FacturaId).ToList();
+            List<Pasaje> _pasajes = PasajeDataAccess.GetByFacturaId(Factura.FacturaId);
             if (_saldo <= 0)
             {
                 Factura.Estado = (int)eEstadoFactura.Pagado;
@@ -62,8 +61,8 @@ namespace MAT.MVC.Models
                             pasaje.EstadoPasaje = (int)eEstadoPasaje.Pagado;
                             break;
                     }
-                    
-                    pasajeService.Update(pasaje);
+
+                    PasajeDataAccess.Update(pasaje);
                 }
 
             }
@@ -74,11 +73,11 @@ namespace MAT.MVC.Models
                 foreach (Pasaje pasaje in _pasajes)
                 {
                     pasaje.EstadoPasaje = (int)eEstadoPasaje.Señado;
-                    pasajeService.Update(pasaje);
+                    PasajeDataAccess.Update(pasaje);
                 }
             }
-            FacturaService facturaService = new FacturaService();
-            facturaService.Save(Factura);
+            // NetTiers F6: Save() sobre una factura existente equivale a Update.
+            FacturaDataAccess.Update(Factura);
         }
 
         private bool EsPagoTotal()

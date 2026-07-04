@@ -13,50 +13,25 @@ namespace MAT.MVC.Models
     public class FacturaModel
     {
 
-        private FacturaService facturaService;
-        private PasajeService pasajeService;
-        private ClienteService clienteService;
-        
-        private PasajeroService pasajeroService;
-
         public Factura Factura { get; set; }
         public Pasajero Pasajero { get; set; }
         public Paquete Paquete { get; set; }
         public Viaje Viaje { get; set; }
         public MAT.Entities.PersonaCliente Cliente { get; set; }
         public List<PasajeModel> Pasajes { get; set; }
-        public double Saldo { get; set; }        
+        public double Saldo { get; set; }
         public FacturaModel()
         {
-            facturaService = new FacturaService();
-            pasajeService = new PasajeService();
-            clienteService = new ClienteService();
-            pasajeroService = new PasajeroService();
         }
 
 
         private double CalcularSaldo()
         {
+            // NetTiers F6: un solo SP set-based en lugar del N+1 por pago/débito.
+            // Este saldo SÍ descuenta débitos (a diferencia de MATContext.Saldo).
+            var info = Infrastructure.Data.FacturaDataAccess.GetSaldoInfo(Factura.FacturaId);
             double montofactura = Factura.Monto.Value;
-            var _pagos = new MovimientoCuentaService().GetByFacturaId(Factura.FacturaId).Where(p => p.PagoId.HasValue).ToList();
-            double totalpagos = 0;
-            foreach (var item in _pagos)
-            {
-                Pago pago = new PagoService().GetByPagoId(item.PagoId.Value);
-                totalpagos += pago.Monto.Value;
-            }
-
-            #region Debitos
-            var _debitos = new MovimientoCuentaService().GetByFacturaId(Factura.FacturaId).Where(p => p.DebitoId.HasValue).ToList();
-            double totaldebitos = 0;
-            foreach (var item in _debitos)
-            {
-                Debito debito = new DebitoService().GetByDebitoId(item.DebitoId.Value);
-                totaldebitos += debito.MontoDebito.Value;
-            }
-            #endregion
-
-            return montofactura - totalpagos - totaldebitos;
+            return montofactura - info.TotalPagos - info.TotalDebitos;
         }
     }
 

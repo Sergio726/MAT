@@ -27,10 +27,6 @@ namespace MAT.MVC.Models
     {
         private ClienteService clienteService;
         //private CuentaService cuentaService;
-        private PagoService pagoService;
-        private FacturaService facturaService;
-        private PasajeService pasajeService;
-        private MovimientoCuentaService movimientoService;
         private PasajeroService pasajeroService;
 
 
@@ -80,10 +76,6 @@ namespace MAT.MVC.Models
         {
             clienteService = new ClienteService();
             //ccService = new CuentaCorrienteService();
-            pagoService = new PagoService();
-            facturaService = new FacturaService();
-            pasajeService = new PasajeService();
-            movimientoService = new MovimientoCuentaService();
             pasajeroService = new PasajeroService();
         }
 

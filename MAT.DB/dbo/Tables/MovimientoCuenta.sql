@@ -6,6 +6,7 @@
     [CuentaID]          UNIQUEIDENTIFIER NOT NULL,
     [NotaID]            UNIQUEIDENTIFIER NULL,
     [CuentaCorrienteID] UNIQUEIDENTIFIER NULL,
+    [DebitoID]          UNIQUEIDENTIFIER NULL,
     CONSTRAINT [PK_MovimientoCuenta] PRIMARY KEY CLUSTERED ([MovimientoID] ASC),
     CONSTRAINT [FK_MovimientoCuenta_Cuenta] FOREIGN KEY ([CuentaID]) REFERENCES [dbo].[Cuenta] ([CuentaID]),
     CONSTRAINT [FK_MovimientoCuenta_CuentaCorriente] FOREIGN KEY ([CuentaCorrienteID]) REFERENCES [dbo].[CuentaCorriente] ([CuentaCorrienteID]),

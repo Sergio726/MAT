@@ -100,16 +100,11 @@ namespace MAT.MVC.Common
 
         public static double Saldo(Guid facturaid)
         {
-            Factura _factura = new FacturaService().GetByFacturaId(facturaid);
-            double montofactura = _factura.Monto.Value;
-            var _pagos = new MovimientoCuentaService().GetByFacturaId(_factura.FacturaId).Where(p => p.PagoId.HasValue).ToList();
-            double totalpagos = 0;
-            foreach (var item in _pagos)
-            {
-                Pago pago = new PagoService().GetByPagoId(item.PagoId.Value);
-                totalpagos += pago.Monto.Value;
-            }
-            return montofactura - totalpagos;
+            // NetTiers F6: un solo SP set-based en lugar del N+1 por pago.
+            // Este saldo NO descuenta débitos (semántica original de MATContext.Saldo).
+            var info = Infrastructure.Data.FacturaDataAccess.GetSaldoInfo(facturaid);
+            double montofactura = info.Monto.Value;
+            return montofactura - info.TotalPagos;
         }
         
        

@@ -10,8 +10,6 @@ namespace MAT.MVC.Models
     public class FacturaPagosModel
     {
 
-        private FacturaService facturaService;
-        private PasajeService pasajeService;
         private ClienteService clienteService;
         private PersonaClienteService personaclienteService;
         private PasajeroService pasajeroService;
@@ -26,23 +24,19 @@ namespace MAT.MVC.Models
         public List<Entities.Pago> Pagos { get; set; }
         public FacturaPagosModel()
         {
-            facturaService = new FacturaService();
-            pasajeService = new PasajeService();
             clienteService = new ClienteService();
             pasajeroService = new PasajeroService();
         }
 
         public FacturaPagosModel(Guid facturaid)
         {
-            facturaService = new FacturaService();
-            pasajeService = new PasajeService();
             clienteService = new ClienteService();
             pasajeroService = new PasajeroService();
             personaclienteService = new PersonaClienteService();
-            Factura = facturaService.GetByFacturaId(facturaid);
+            Factura = Infrastructure.Data.FacturaDataAccess.GetById(facturaid);
             Cliente = personaclienteService.GetAll().Where(pc => pc.ClienteId == Factura.ClienteId).FirstOrDefault();
             Saldo = CalcularSaldo();
-            List<Pasaje> _pasajes = pasajeService.GetByFacturaId(facturaid).ToList();
+            List<Pasaje> _pasajes = Infrastructure.Data.PasajeDataAccess.GetByFacturaId(facturaid);
             Viaje = Infrastructure.Data.ViajeDataAccess.GetById(_pasajes.FirstOrDefault().ViajeId.Value);
             Paquete = Infrastructure.Data.PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
             List<PasajeModel> _pasajesmodel = new List<PasajeModel>();
@@ -55,26 +49,19 @@ namespace MAT.MVC.Models
 
         private double CalcularSaldo()
         {
+            // NetTiers F6: los pagos llegan en una sola consulta (sin N+1) y los
+            // débitos se totalizan en el SP de saldo.
             double montofactura = Factura.Monto.Value;
-            var _pagos = new MovimientoCuentaService().GetByFacturaId(Factura.FacturaId).Where(p => p.PagoId.HasValue).ToList();
-            List<Entities.Pago> _pagosEntities = new List<Pago>();
+            List<Entities.Pago> _pagosEntities = Infrastructure.Data.PagoDataAccess.GetPagosByFacturaId(Factura.FacturaId);
             double totalpagos = 0;
-            foreach (var item in _pagos)
+            foreach (var pago in _pagosEntities)
             {
-                Pago pago = new PagoService().GetByPagoId(item.PagoId.Value);
-                _pagosEntities.Add(pago);
                 totalpagos += pago.Monto.Value;
             }
             Pagos = _pagosEntities;
-            #region Debitos
-            var _debitos = new MovimientoCuentaService().GetByFacturaId(Factura.FacturaId).Where(p => p.DebitoId.HasValue).ToList();
-            double totaldebitos = 0;
-            foreach (var item in _debitos)
-            {
-                Debito debito = new DebitoService().GetByDebitoId(item.DebitoId.Value);
-                totaldebitos += debito.MontoDebito.Value;
-            }
-            #endregion
+
+            var info = Infrastructure.Data.FacturaDataAccess.GetSaldoInfo(Factura.FacturaId);
+            double totaldebitos = info.TotalDebitos;
 
             return montofactura - totalpagos - totaldebitos;
         }

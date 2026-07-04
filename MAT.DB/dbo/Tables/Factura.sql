@@ -8,6 +8,7 @@
     [ClienteID]      UNIQUEIDENTIFIER NOT NULL,
     [VendedorID]     UNIQUEIDENTIFIER NOT NULL,
     [Observaciones]  VARCHAR (MAX)    NULL,
+    [DescuentoAplicado] FLOAT (53)    CONSTRAINT [DF_Factura_DescuentoAplicado] DEFAULT ((0)) NOT NULL,
     [DiasPreReserva] INT              DEFAULT ((0)) NULL,
     [MonedaTipo]     INT              CONSTRAINT [DF_Factura_MonedaTipo] DEFAULT ((1)) NOT NULL,
     CONSTRAINT [PK_Factura] PRIMARY KEY CLUSTERED ([FacturaID] ASC),

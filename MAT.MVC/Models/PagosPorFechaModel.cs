@@ -13,10 +13,9 @@ namespace MAT.MVC.Models
 
         public PagosPorFechaModel(Guid pagoid)
         {
-            Services.PagoService pagoService = new Services.PagoService();
             Services.PersonaClienteService personaService = new Services.PersonaClienteService();
             Services.PersonaVendedorService vendedorService = new Services.PersonaVendedorService();
-            Pago = pagoService.GetByPagoId(pagoid);
+            Pago = Infrastructure.Data.PagoDataAccess.GetPagoById(pagoid);
             Cliente = personaService.GetAll().Where(p => p.PersonaId == Pago.ClienteId.Value).FirstOrDefault();
             Vendedor = vendedorService.GetAll().Where(v => v.PersonaId == Pago.VendedorId.Value).FirstOrDefault();
         }

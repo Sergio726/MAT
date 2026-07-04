@@ -859,9 +859,10 @@
 
   ##### Fase 6 — Reserva, pasaje y factura operativa *(crítico)*
   `Factura`, `Pasaje`, `PasajeAdicional`, `Pago`, `Debito`, `MovimientoCuenta`, `Nota`, `AuditFactura`.
-  - [ ] **NetTiers F6:** Facturación y pagos operativos migrados
+  - [x] **NetTiers F6:** Facturación y pagos operativos migrados
     Archivos probables: `FacturaModel`, `ReservaModel`, `PersonaClienteController`, `PagoController`, `PagosClientesModel`, `CuentaModel`.
     Criterio: flujo reserva → factura → pago manual probado; sin `FacturaService`/`PasajeService`/`PagoService` desde MVC.
+    **Implementación 2026-07-03:** 14 SPs nuevos (Factura entidad + `GetSaldoInfo` set-based, Pasaje entidad, Pago entidad + `GetByFacturaId`, MovimientoCuenta); `FacturaDataAccess`/`PagoDataAccess` + `PasajeDataAccess` extendido; **paridad de esquema en MAT.DB**: columnas `Factura.DescuentoAplicado`, `Pago.ClienteID/EstadoRendicion/CuentaCorrienteID`, `MovimientoCuenta.DebitoID` existían en la BD real (entidades NetTiers generadas desde BD + SQL dinámico del provider) pero faltaban en SSDT — agregadas con migración idempotente en `database/2026-07-03_NetTiers_F6_Factura_SPs.sql`. `MATContext.Saldo` (sin débitos) y `CalcularSaldo` (con débitos) preservan sus semánticas distintas.
 
   ##### Fase 7 — Personas, clientes y cuenta corriente
   `Persona`, `Cliente`, `Vendedor`, `TipoCliente`, `Cuenta`, `CuentaCorriente`; vistas `PersonaCliente`, `PersonaPasajero`, `PersonaProveedor`, `PersonaVendedor`.

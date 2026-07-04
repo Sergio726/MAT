@@ -1295,8 +1295,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             ViewData["anteriorid"] = anteriorid;
             ViewData["pasajeid"] = pasajeid;
             List<PasajeModel> pasajes = new List<PasajeModel>();
-            PasajeService pServ = new PasajeService();
-            Guid viajeid = pServ.GetByPasajeId(pasajeid).ViajeId.Value;
+            Guid viajeid = Infrastructure.Data.PasajeDataAccess.GetById(pasajeid).ViajeId.Value;
             
             List<ReservaStandard> Model = new List<ReservaStandard>();
 

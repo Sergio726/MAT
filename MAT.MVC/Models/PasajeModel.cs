@@ -11,7 +11,6 @@ namespace MAT.MVC.Models
 {
     public class PasajeModel
     {
-        PasajeService pServ;
         PasajeroService pjServ;
         PersonaPasajeroService personapasajeroService;
 
@@ -29,16 +28,14 @@ namespace MAT.MVC.Models
         public double Adicionales { get; set; }
         public string AdicionalesID { get; set; }
         public PasajeModel() {
-            pServ = new PasajeService();
             pjServ = new PasajeroService();
         }
 
         public PasajeModel(Guid pasajeid)
         {
-            pServ = new PasajeService();
             pjServ = new PasajeroService();
             personapasajeroService = new PersonaPasajeroService();
-            Pasaje = pServ.GetByPasajeId(pasajeid);
+            Pasaje = PasajeDataAccess.GetById(pasajeid);
             Estado = (eEstadoPasaje)Pasaje.EstadoPasaje;
             List<Entities.ReservaHabitacion> reservasPasaje = ReservaHabitacionDataAccess.GetByPasajeId(pasajeid);
             if (reservasPasaje.Count > 0)
@@ -60,9 +57,9 @@ namespace MAT.MVC.Models
 
         public void ReservarPasaje(Guid pasajeroid)
         {
-            Pasaje pasaje = pServ.GetByPasajeId(Pasaje.PasajeId);
+            Pasaje pasaje = PasajeDataAccess.GetById(Pasaje.PasajeId);
             pasaje.PasajeroId = pasajeroid;
-            pServ.Update(pasaje);
+            PasajeDataAccess.Update(pasaje);
             Estado = eEstadoPasaje.Reservado;
         }
 

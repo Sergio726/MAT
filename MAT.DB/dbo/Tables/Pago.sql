@@ -6,6 +6,9 @@
     [VendedorId]    UNIQUEIDENTIFIER NOT NULL,
     [NroRecibo]     VARCHAR (50)     NOT NULL,
     [TransaccionID] VARCHAR (50)     NULL,
+    [ClienteID]     UNIQUEIDENTIFIER NULL,
+    [EstadoRendicion] INT            NULL,
+    [CuentaCorrienteID] UNIQUEIDENTIFIER NULL,
     CONSTRAINT [PK_Pago] PRIMARY KEY CLUSTERED ([PagoID] ASC),
     CONSTRAINT [FK_Pago_TipoPago] FOREIGN KEY ([TipoPago]) REFERENCES [dbo].[PagoTipo] ([Id]),
     CONSTRAINT [FK_Pago_Vendedor] FOREIGN KEY ([VendedorId]) REFERENCES [dbo].[Vendedor] ([VendedorID])
