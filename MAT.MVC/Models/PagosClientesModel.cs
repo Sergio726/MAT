@@ -15,7 +15,6 @@ namespace MAT.MVC.Models
         private ClienteService clienteService;
         private PersonaClienteService personaclienteService;
         private PasajeroService pasajeroService;
-        private ViajeService viajeService;
 
         public Factura Factura { get; set; }
         public Pasajero Pasajero { get; set; }
@@ -31,7 +30,6 @@ namespace MAT.MVC.Models
             pasajeService = new PasajeService();
             clienteService = new ClienteService();
             pasajeroService = new PasajeroService();
-            viajeService = new ViajeService();
         }
 
         public FacturaPagosModel(Guid facturaid)
@@ -40,13 +38,12 @@ namespace MAT.MVC.Models
             pasajeService = new PasajeService();
             clienteService = new ClienteService();
             pasajeroService = new PasajeroService();
-            viajeService = new ViajeService();
             personaclienteService = new PersonaClienteService();
             Factura = facturaService.GetByFacturaId(facturaid);
             Cliente = personaclienteService.GetAll().Where(pc => pc.ClienteId == Factura.ClienteId).FirstOrDefault();
             Saldo = CalcularSaldo();
             List<Pasaje> _pasajes = pasajeService.GetByFacturaId(facturaid).ToList();
-            Viaje = viajeService.GetByViajeId(_pasajes.FirstOrDefault().ViajeId.Value);
+            Viaje = Infrastructure.Data.ViajeDataAccess.GetById(_pasajes.FirstOrDefault().ViajeId.Value);
             Paquete = Infrastructure.Data.PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
             List<PasajeModel> _pasajesmodel = new List<PasajeModel>();
             foreach (var item in _pasajes)

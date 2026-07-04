@@ -852,9 +852,10 @@
 
   ##### Fase 5 — Viaje y operación de salida
   `Viaje`, `ViajeHotel`, `ReservaHabitacion`, `PasajeroMenor`, `ObservacionViaje` (si aplica), vistas/consultas asociadas.
-  - [ ] **NetTiers F5:** Viaje y salida migrados
+  - [x] **NetTiers F5:** Viaje y salida migrados
     Archivos probables: `ViajeController`, `ViajeModel`, `ReservaHabitacionController`, `HotelHabitacionViajeModel`, `ObservacionViaje`.
     Criterio: alta/edición viaje, hoteles del viaje, reserva habitación; MSBuild + smoke en `/Viaje` y `/Reserva`.
+    **Implementación 2026-07-03:** 11 SPs nuevos (`usp_MAT_Viaje_GetAllEntities/_GetEntityById/_InsertEntity/_UpdateEntity`, `usp_MAT_ReservaHabitacion_GetById/_GetByPasajeId/_GetByHabitacionId/_UpdateEntity`, `usp_MAT_VConsultaReservaHabitacion_GetByHabitacionId`, `usp_MAT_Habitacion_GetEntitiesByHotelId/_UpdateEntity`); `ViajeDataAccess` y `ReservaHabitacionDataAccess`; las 3 vistas Razor de PasajeroViaje ya no instancian `ViajeService` (viaje por `ViewBag.Viaje` desde el controller); script `database/2026-07-03_NetTiers_F5_Viaje_SPs.sql`.
 
   ##### Fase 6 — Reserva, pasaje y factura operativa *(crítico)*
   `Factura`, `Pasaje`, `PasajeAdicional`, `Pago`, `Debito`, `MovimientoCuenta`, `Nota`, `AuditFactura`.

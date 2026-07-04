@@ -38,8 +38,7 @@ namespace MAT.MVC.Models
                     _grid.DataSource = pasajeros;
                     break;
                 case "Viaje":
-                    MAT.Services.ViajeService viajeService = new ViajeService();
-                    List<Entities.Viaje> viajes = viajeService.GetAll().ToList();
+                    List<Entities.Viaje> viajes = Infrastructure.Data.ViajeDataAccess.GetAll();
                     _grid.DataSource = viajes;
                     break;
                 default:

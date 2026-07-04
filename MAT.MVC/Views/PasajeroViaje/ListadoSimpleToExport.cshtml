@@ -2,7 +2,6 @@
 
 @using MAT.Enums
 @using MAT.Entities
-@using MAT.Services
 @using MAT.Utilities
 @using System.Linq
 @functions {
@@ -29,9 +28,9 @@
     }
     @if (Model != null && Model.Any())
     {
-        var viajeService = new ViajeService();
+        // NetTiers F5: el viaje lo carga PasajeroViajeController.ListadoSimpleToExport (ViewBag.Viaje)
         var viajeId = new Guid(Model.First().ViajeID);
-        var viaje = viajeService.GetByViajeId(viajeId);
+        var viaje = ViewBag.Viaje as MAT.Entities.Viaje;
 
         <div id="divEncabezadoViaje" class="listado-simple-header EncabezadoViaje headMAT">
             <div class="viaje-info">

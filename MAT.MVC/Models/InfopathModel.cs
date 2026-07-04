@@ -16,7 +16,6 @@ namespace MAT.MVC.Models
     [DataContractAttribute]
     public class InfopathModel
     {
-        ViajeService viajeServ;
         PasajeService pasajeServ;
         PasajeroService pasajeroServ;
 
@@ -37,7 +36,6 @@ namespace MAT.MVC.Models
 
         public InfopathModel(Guid viajeid)
         {
-            viajeServ = new ViajeService();
             pasajeServ = new PasajeService();
             pasajeroServ = new PasajeroService();
 
@@ -46,10 +44,9 @@ namespace MAT.MVC.Models
             List<Servicio> _servicios = new List<Servicio>();
             try
             {
-                viajeServ = new ViajeService();
                 pasajeServ = new PasajeService();
                 pasajeroServ = new PasajeroService();
-                Viaje = viajeServ.GetByViajeId(viajeid);
+                Viaje = ViajeDataAccess.GetById(viajeid);
                 Paquete = PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
                 listpaqueteservicio = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(Paquete.PaqueteId);
                 Servicios = new List<Servicio>();

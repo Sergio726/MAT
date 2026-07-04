@@ -513,6 +513,17 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_Voucher_Insert.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_PrecioHabitacion_GetAll.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Pasaje_GenerarByViaje.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_GetAllEntities.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_GetEntityById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_InsertEntity.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Viaje_UpdateEntity.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ReservaHabitacion_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ReservaHabitacion_GetByPasajeId.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ReservaHabitacion_GetByHabitacionId.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ReservaHabitacion_UpdateEntity.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_VConsultaReservaHabitacion_GetByHabitacionId.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_GetEntitiesByHotelId.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Habitacion_UpdateEntity.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Pais_GetAll.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Provincia_GetById.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Departamento_GetByProvinciaId.sql" />

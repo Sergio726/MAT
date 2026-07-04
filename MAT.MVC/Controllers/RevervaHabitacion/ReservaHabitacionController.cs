@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
+using MAT.MVC.Infrastructure.Data;
 using PagedList;
 using MAT.Utilities;
 using System.Text;
@@ -92,14 +92,12 @@ namespace MAT.MVC.Controllers.RevervaHabitacion
 
         public void Actualizar(Guid HotelId)
         {
-            MAT.Services.HabitacionService SHabitacion = new Services.HabitacionService();
-            IList<MAT.Entities.Habitacion> EHabitacion = SHabitacion.GetByHotelId(HotelId);
+            IList<MAT.Entities.Habitacion> EHabitacion = ReservaHabitacionDataAccess.GetHabitacionesByHotelId(HotelId);
 
             //Actualizo estado de habitacion
             foreach (var item in EHabitacion)
             {
-                MAT.Services.VConsultaReservaHabitacionService SConsulta = new VConsultaReservaHabitacionService();
-                IList<MAT.Entities.VConsultaReservaHabitacion> EConsulta = SConsulta.GetAll().Where(h => h.HabitacionId == item.HabitacionId && h.Expiro == false).ToList();
+                IList<MAT.Entities.VConsultaReservaHabitacion> EConsulta = ReservaHabitacionDataAccess.GetConsultaByHabitacionId(item.HabitacionId, expiro: false);
 
                 //Recorro las habitaciones del hotel seleccionado
                 foreach (var item1 in EConsulta)
@@ -110,20 +108,19 @@ namespace MAT.MVC.Controllers.RevervaHabitacion
                     if (FechaHoy > FechaHasta)
                     {
                         //Actualizar Estado de Habitacion
-                        MAT.Entities.Habitacion EHabitacionA = SHabitacion.GetByHabitacionId(item1.HabitacionId.Value);
+                        MAT.Entities.Habitacion EHabitacionA = MaestrosDataAccess.GetHabitacionById(item1.HabitacionId.Value);
                         EHabitacionA.Ocupacion = EHabitacionA.Ocupacion - 1;
-                        SHabitacion.Update(EHabitacionA);
+                        ReservaHabitacionDataAccess.UpdateHabitacion(EHabitacionA);
 
                         if (EHabitacionA.Capacidad > EHabitacionA.Ocupacion)
                         {
                             EHabitacionA.Estado = 0;//habitacion sin completar
-                            SHabitacion.Update(EHabitacionA);
+                            ReservaHabitacionDataAccess.UpdateHabitacion(EHabitacionA);
                         }
 
-                        MAT.Services.ReservaHabitacionService SReserva = new ReservaHabitacionService();
-                        MAT.Entities.ReservaHabitacion EReserva = SReserva.GetByReservaHabitacionId(item1.ReservaHabitacionId);
-                        EReserva.Expiro = true;//cambia el estado de la reserva 
-                        SReserva.Update(EReserva);
+                        MAT.Entities.ReservaHabitacion EReserva = ReservaHabitacionDataAccess.GetById(item1.ReservaHabitacionId);
+                        EReserva.Expiro = true;//cambia el estado de la reserva
+                        ReservaHabitacionDataAccess.Update(EReserva);
                     }
                 }
             }
@@ -193,8 +190,7 @@ namespace MAT.MVC.Controllers.RevervaHabitacion
         }
         public string GetFechasReservadas(Guid id)
         {
-            ReservaHabitacionService reservaService = new ReservaHabitacionService();
-            List<Entities.ReservaHabitacion> reservas = reservaService.GetByHabitacionId(id).ToList();
+            List<Entities.ReservaHabitacion> reservas = ReservaHabitacionDataAccess.GetByHabitacionId(id);
             StringBuilder arrayfechas = new StringBuilder();
             foreach (var item in reservas)
             {

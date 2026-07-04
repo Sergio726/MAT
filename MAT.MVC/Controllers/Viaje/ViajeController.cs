@@ -4,9 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
 using MAT.Enums;
 using MAT.Utilities;
+using MAT.MVC.Infrastructure.Data;
 using MAT.MVC.Models;
 using System.Data.SqlClient;
 using System.Data;
@@ -27,7 +27,6 @@ namespace MAT.MVC.Controllers.Viaje
     {
         //
         // GET: /Viaje/
-        ViajeService viajeService;
 
         [Authorize]
         public ActionResult Index()
@@ -45,16 +44,13 @@ namespace MAT.MVC.Controllers.Viaje
 
         public ActionResult PopPupViajes()
         {
-
-            viajeService = new ViajeService();
-            List<Entities.Viaje> viajes = viajeService.GetAll().ToList();
+            List<Entities.Viaje> viajes = ViajeDataAccess.GetAll();
             return PartialView(viajes);
         }
 
         public ActionResult Details(Guid id)
         {
-            viajeService = new ViajeService();
-            return View(viajeService.GetByViajeId(id));
+            return View(ViajeDataAccess.GetById(id));
         }
 
         public ActionResult Create()
@@ -69,9 +65,8 @@ namespace MAT.MVC.Controllers.Viaje
             {
                 Guid paqueteid = new Guid(collection.Get("PaqueteId").ToString());
                 #region Entidades y Servicios
-                MAT.Services.ViajeService SViaje = new ViajeService();
                 MAT.Entities.Viaje EViaje = new MAT.Entities.Viaje();
-                List<Entities.PaqueteServicio> servicios = new Services.PaqueteServicioService().GetByPaqueteId(paqueteid).ToList();
+                List<Entities.PaqueteServicio> servicios = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(paqueteid);
                 #endregion
                 if (ExisteServicioBus(servicios))
                 {
@@ -101,7 +96,7 @@ namespace MAT.MVC.Controllers.Viaje
                     EViaje.Paso = collection.Get("Paso").ToString();
                     EViaje.Medio = collection.Get("Medio").ToString();
 
-                    SViaje.Insert(EViaje);
+                    ViajeDataAccess.Insert(EViaje);
 
                     #endregion
 
@@ -179,8 +174,7 @@ namespace MAT.MVC.Controllers.Viaje
         {
            
             #region Entidades y Servicios
-            MAT.Services.ViajeService SViaje = new ViajeService();
-            MAT.Entities.Viaje EViaje = SViaje.GetByViajeId(id);
+            MAT.Entities.Viaje EViaje = ViajeDataAccess.GetById(id);
             #endregion
 
             #region datos de Viaje
@@ -208,7 +202,7 @@ namespace MAT.MVC.Controllers.Viaje
             EViaje.Paso = collection.Get("Paso").ToString();
             EViaje.Medio = collection.Get("Medio").ToString();
 
-            SViaje.Update(EViaje);
+            ViajeDataAccess.Update(EViaje);
 
             #endregion
 

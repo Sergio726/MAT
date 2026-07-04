@@ -1191,3 +1191,20 @@
 - Problemas encontrados: la entidad `PaqueteExcursion` no tiene `IsOpcional` (columna posterior a la generación NetTiers) — el mapper no la mapea, paridad con el service. Corregido y recompilado.
 - Pendiente de despliegue: publicar SPs de `database/2026-07-03_NetTiers_F4_Paquete_SPs.sql` en la BD de cada entorno antes del smoke.
 - Estado: ✅ MSBuild MAT.sln Debug OK (MAT.MVC + MAT.DB dacpac)
+
+### [2026-07-03] — NetTiers F5: Viaje y ReservaHabitacion migrados
+
+- Archivos nuevos:
+  - `MAT.DB/dbo/Stored Procedures/`: `usp_MAT_Viaje_GetAllEntities/_GetEntityById/_InsertEntity/_UpdateEntity.sql`, `usp_MAT_ReservaHabitacion_GetById/_GetByPasajeId/_GetByHabitacionId/_UpdateEntity.sql`, `usp_MAT_VConsultaReservaHabitacion_GetByHabitacionId.sql`, `usp_MAT_Habitacion_GetEntitiesByHotelId.sql`, `usp_MAT_Habitacion_UpdateEntity.sql`
+  - `MAT.MVC/Infrastructure/Data/ViajeDataAccess.cs`, `ReservaHabitacionDataAccess.cs`
+  - `database/2026-07-03_NetTiers_F5_Viaje_SPs.sql`
+- Archivos modificados: `ViajeController.cs`, `ReservaHabitacionController.cs`, `PersonaClienteController.cs` (ConfirmarCambioHabitacion), `HomeController.cs` (2 dashboards), `PasajeroViajeController.cs` (ViewBag.Viaje), `Views/PasajeroViaje/Manifiesto.cshtml`, `ListadoSimple.cshtml`, `ListadoSimpleToExport.cshtml`, `Views/Hotel/Create.cshtml` (@using muerto), `PasajeModel.cs`, `VoucherModel.cs`, `InfopathModel.cs`, `FacturaModel.cs`, `PagosClientesModel.cs`, `PaqueteModel.cs`, `PlanillaHotelModel.cs`, `SearchModel.cs`, `MAT.MVC.csproj`, `MAT.DB.sqlproj`, `SPEC.md`
+- Qué se implementó:
+  - **Entidad Viaje**: SPs `*Entity*` cubren solo las 19 columnas conocidas por la entidad NetTiers (no tocan `TiempoConsentracion`, `Observaciones`, `MonedaTipo`, `IsPublicWeb` — igual que el service). `ViajeDataAccess.Insert` genera `Guid.NewGuid()` si la entidad llega con `Guid.Empty` (el flujo legacy `Create(FormCollection)` no tiene POST activo desde ninguna vista — creación real vía `InsertViaje`/`ViajeMethod`; se documenta la mejora defensiva).
+  - **Vista NetTiers `VConsultaReservaHabitacion`** → SP dedicado sobre `dbo.vConsultaReservaHabitacion` con `@HabitacionID` obligatorio y `@Expiro` opcional. El call-site (`ReservaHabitacionController.Actualizar`) hacía `GetAll()` de la vista completa + LINQ dentro de un loop por habitación (N+1 sobre tabla entera) — filtro trivialmente traducible, se empujó a SQL (decisión documentada).
+  - **Habitacion**: `GetEntitiesByHotelId` nuevo (el `usp_MAT_Habitacion_GetByHotelId` legacy devuelve DTO display con tipo/estado como texto — incompatible con la entidad; se conserva). `UpdateEntity` solo columnas de la entidad (no toca `Precio`/`Descripcion` agregadas en 2024).
+  - **3 vistas Razor de PasajeroViaje**: eliminado `@using MAT.Services` + instanciación inline de `ViajeService`; el controller carga `ViewBag.Viaje` con `ViajeDataAccess.GetById(Id)`. En `ListadoSimple`, si el modelo llega vacío la vista ya no lanza `InvalidOperationException` por `Model.First()` (mejora colateral mínima).
+  - También migró `PaqueteServicioService` residual en `ViajeController.Create` (instancia calificada `new Services.X()` que el grep de cierre de F4 no capturaba — patrón de grep corregido para las fases siguientes).
+- Problemas encontrados: ninguno de compilación. ⚠ Las vistas Razor no compilan con MSBuild — Manifiesto/ListadoSimple/Export requieren smoke manual en runtime.
+- Pendiente de despliegue: publicar SPs de `database/2026-07-03_NetTiers_F5_Viaje_SPs.sql`.
+- Estado: ✅ MSBuild MAT.sln Debug OK

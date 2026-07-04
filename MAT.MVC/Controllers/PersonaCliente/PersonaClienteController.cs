@@ -1388,14 +1388,13 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 Guid _viajeid = new Guid(viajeid);
                 Guid _nuevahabitacion = new Guid(nuevahabitacion);
 
-                var reservaService = new ReservaHabitacionService();
-                var reserva = reservaService.GetByPasajeId(_pasajeid)
+                var reserva = Infrastructure.Data.ReservaHabitacionDataAccess.GetByPasajeId(_pasajeid)
                     .Where(re => re.ViajeId.HasValue && re.ViajeId.Value == _viajeid)
                     .FirstOrDefault();
                 if (reserva != null)
                 {
                     reserva.HabitacionId = _nuevahabitacion;
-                    reservaService.Update(reserva);
+                    Infrastructure.Data.ReservaHabitacionDataAccess.Update(reserva);
                     result = true;
                 }
             }

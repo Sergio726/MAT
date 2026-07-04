@@ -38,12 +38,12 @@ namespace MAT.MVC.Models
             pServ = new PasajeService();
             pjServ = new PasajeroService();
             personapasajeroService = new PersonaPasajeroService();
-            ReservaHabitacionService reservaService = new ReservaHabitacionService();
             Pasaje = pServ.GetByPasajeId(pasajeid);
-            Estado = (eEstadoPasaje)Pasaje.EstadoPasaje;            
-            if (reservaService.GetByPasajeId(pasajeid).Count>0)
+            Estado = (eEstadoPasaje)Pasaje.EstadoPasaje;
+            List<Entities.ReservaHabitacion> reservasPasaje = ReservaHabitacionDataAccess.GetByPasajeId(pasajeid);
+            if (reservasPasaje.Count > 0)
             {
-                List<Entities.ReservaHabitacion> reservas = reservaService.GetByPasajeId(pasajeid).Where(re => re.ViajeId.Value == Pasaje.ViajeId.Value).ToList();
+                List<Entities.ReservaHabitacion> reservas = reservasPasaje.Where(re => re.ViajeId.Value == Pasaje.ViajeId.Value).ToList();
                 Habitacion = MaestrosDataAccess.GetHabitacionById(reservas.FirstOrDefault().HabitacionId.Value);
             }
             if (Pasaje.PasajeroId.HasValue)

@@ -2,7 +2,6 @@
 
 @using MAT.Enums
 @using MAT.Entities
-@using MAT.Services
 @using System.Linq
 @{
     ViewBag.Title = "Lista de pasajeros";
@@ -27,9 +26,8 @@
     }
     <div id="divEncabezadoViaje" class="listado-simple-header EncabezadoViaje headMAT">
         @{
-            var viajeService = new ViajeService();
-            var viajeId = new Guid(Model.First().ViajeID);
-            var viaje = viajeService.GetByViajeId(viajeId);
+            // NetTiers F5: el viaje lo carga PasajeroViajeController.ListadoSimple (ViewBag.Viaje)
+            var viaje = ViewBag.Viaje as MAT.Entities.Viaje;
         }
         <div class="viaje-info">
             <div class="viaje-titulo">@viaje.Descripcion</div>

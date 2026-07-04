@@ -32,7 +32,6 @@ namespace MAT.MVC.Models
     }
     public class PaqueteModel
     {
-        ViajeService vServ;
         public Viaje Viaje { get; set; }
         public Paquete Paquete { get; set; }
         public List<Servicio> Servicios { get; set; }
@@ -42,7 +41,6 @@ namespace MAT.MVC.Models
         #region Constructores
         public PaqueteModel()
         {
-            vServ = new ViajeService();
         }
         public PaqueteModel(Guid viajeID)
         {
@@ -52,8 +50,7 @@ namespace MAT.MVC.Models
             List<Excursion> _excursiones = new List<Excursion>();
             try
             {
-                vServ = new ViajeService();
-                Viaje = vServ.GetByViajeId(viajeID);
+                Viaje = ViajeDataAccess.GetById(viajeID);
                 Paquete = PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
                 listpaqueteservicio = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(Paquete.PaqueteId);
                 listpaqueteexcursion = PaqueteDataAccess.GetPaqueteExcursionesByPaqueteId(Paquete.PaqueteId);

@@ -17,7 +17,6 @@ namespace MAT.MVC.Models
         private PasajeService pasajeService;
         private PersonaPasajeroService pasajeroService;
         private FacturaService facturaService;
-        private ViajeService viajeService;
 
         public String Servicios { get; set; }
         public String Excursiones { get; set; }
@@ -36,12 +35,11 @@ namespace MAT.MVC.Models
             pasajeService = new PasajeService();
             pasajeroService = new PersonaPasajeroService();
             facturaService = new FacturaService();
-            viajeService = new ViajeService();
 
             Pasaje = pasajeService.GetByPasajeId(pasajeid);
             Butaca = MaestrosDataAccess.GetButacaById(Pasaje.ButacaId.Value);
             Pasajero = pasajeroService.GetAll().Where(psj => psj.PasajeroId == Pasaje.PasajeroId.Value).FirstOrDefault();
-            Viaje = viajeService.GetByViajeId(Pasaje.ViajeId.Value);
+            Viaje = ViajeDataAccess.GetById(Pasaje.ViajeId.Value);
             Paquete = PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
             Destino = GeoDataAccess.GetLocalidadById(Paquete.DestinoId);
             List<Entities.PaqueteServicio> _serviciospaquete = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(Paquete.PaqueteId);
@@ -77,8 +75,7 @@ namespace MAT.MVC.Models
 
             Services.PasajeService pasajeService = new PasajeService();
             Entities.Pasaje pasaje = pasajeService.GetByPasajeId(pasajeid);
-            Services.ReservaHabitacionService reservaService = new ReservaHabitacionService();
-            List<Entities.ReservaHabitacion> reserva = reservaService.GetByPasajeId(pasajeid).OrderBy(L =>L.Desde).ToList();
+            List<Entities.ReservaHabitacion> reserva = ReservaHabitacionDataAccess.GetByPasajeId(pasajeid).OrderBy(L =>L.Desde).ToList();
 
             foreach (var item in reserva)
             {
@@ -126,9 +123,8 @@ namespace MAT.MVC.Models
         
         public string GetFechasReservadas(Guid habitacionid, Guid viajeid)
         {
-            ReservaHabitacionService reservaService = new ReservaHabitacionService();
-            List<Entities.ReservaHabitacion> reservas = reservaService.GetByHabitacionId(habitacionid).Where(rs => rs.ViajeId==viajeid).ToList();
-            Entities.ReservaHabitacion reserva = reservaService.GetByHabitacionId(habitacionid).Where(rs => rs.ViajeId == viajeid).FirstOrDefault();
+            List<Entities.ReservaHabitacion> reservas = ReservaHabitacionDataAccess.GetByHabitacionId(habitacionid).Where(rs => rs.ViajeId==viajeid).ToList();
+            Entities.ReservaHabitacion reserva = ReservaHabitacionDataAccess.GetByHabitacionId(habitacionid).Where(rs => rs.ViajeId == viajeid).FirstOrDefault();
             StringBuilder arrayfechas = new StringBuilder();
             string mes = "";
             mes = string.Format("{0: 'de' MMMM}", reserva.Desde.Value);

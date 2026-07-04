@@ -10,6 +10,7 @@ using MAT.Enums;
 using MAT.Utilities;
 using MAT.MVC.Models;
 using MAT.MVC.Infrastructure;
+using MAT.MVC.Infrastructure.Data;
 using System.Data.SqlClient;
 using System.Data;
 using OfficeOpenXml;
@@ -38,6 +39,9 @@ namespace MAT.MVC.Controllers.PasajeroViaje
             //MAT.Services.PasajeroViajeService Servicio = new PasajeroViajeService();
             //IList<MAT.Entities.PasajeroViaje> EPasajeroViaje = Servicio.GetAll().Where(p => p.ViajeId == Id).OrderBy(ps => ps.Apellido).ToList();
             List<MAT.Entities.PasajeroViaje> EPasajeroViaje = GetListPasajeroViaje(Id);
+
+            // NetTiers F5: la vista ya no instancia ViajeService; el viaje viaja por ViewBag
+            ViewBag.Viaje = (EPasajeroViaje != null && EPasajeroViaje.Count > 0) ? ViajeDataAccess.GetById(Id) : null;
 
             return View(EPasajeroViaje);
         }
@@ -73,6 +77,7 @@ namespace MAT.MVC.Controllers.PasajeroViaje
                 LPasajeroViaje = MAT.MVC.Models.PasajeroViajeMethod.GetPasajeroViajeByViajeID(Id.ToString());
 
                 ViewBag.Paquete = MAT.MVC.Models.PaqueteVinculos.GetPaqueteByID(Id.ToString());
+                ViewBag.Viaje = ViajeDataAccess.GetById(Id);
 
                 return View(LPasajeroViaje);
             }
@@ -91,6 +96,7 @@ namespace MAT.MVC.Controllers.PasajeroViaje
             try
             {
                 LPasajeroViaje = PasajeroViajeMethod.GetPasajeroViajeByViajeID(Id.ToString());
+                ViewBag.Viaje = ViajeDataAccess.GetById(Id);
                 return View(LPasajeroViaje);
             }
             catch (Exception ex)

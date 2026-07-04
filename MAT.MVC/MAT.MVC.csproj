@@ -331,6 +331,8 @@
     <Compile Include="Infrastructure\Data\MaestrosDataAccess.cs" />
     <Compile Include="Infrastructure\Data\PaqueteDataAccess.cs" />
     <Compile Include="Infrastructure\Data\PasajeDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\ReservaHabitacionDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\ViajeDataAccess.cs" />
     <Compile Include="Infrastructure\Data\VoucherDataAccess.cs" />
     <Compile Include="Infrastructure\DbErrorLogger.cs" />
     <Compile Include="Infrastructure\AdminAuthorizationHelper.cs" />

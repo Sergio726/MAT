@@ -1,0 +1,11 @@
+-- NetTiers F5 — SPs de Viaje, ReservaHabitacion, Habitacion y vista vConsultaReservaHabitacion
+-- Publicar en SQL Server antes de usar MVC migrado en cada entorno.
+-- Fuente de verdad: MAT.DB (archivos individuales en dbo/Stored Procedures/)
+
+-- Ver archivos:
+-- usp_MAT_Viaje_GetAllEntities.sql, _GetEntityById.sql, _InsertEntity.sql, _UpdateEntity.sql
+-- usp_MAT_ReservaHabitacion_GetById.sql, _GetByPasajeId.sql, _GetByHabitacionId.sql, _UpdateEntity.sql
+-- usp_MAT_VConsultaReservaHabitacion_GetByHabitacionId.sql (filtro opcional @Expiro)
+-- usp_MAT_Habitacion_GetEntitiesByHotelId.sql (filas de entidad; el _GetByHotelId legacy devuelve DTO display y se conserva)
+-- usp_MAT_Habitacion_UpdateEntity.sql (solo columnas de la entidad; no toca Precio/Descripcion)
+-- (usp_MAT_Viaje_CountByPaqueteId se publico con F4)

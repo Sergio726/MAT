@@ -3,23 +3,13 @@
 @using System.Linq
 @using MAT.Enums
 @using MAT.Entities
-@using MAT.Services
 
 @{
     ViewBag.Title = "Manifiesto";
     int numeracion = 1;
 
-    Viaje viaje = null;
-    if (Model != null && Model.Count > 0)
-    {
-        ViajeService vs = new ViajeService();
-        // ViajeId es Guid? en MAT.Entities.PasajeroViaje (view)
-        System.Guid? viajeId = Model.First().ViajeId;
-        if (viajeId != null && viajeId.HasValue)
-        {
-            viaje = vs.GetByViajeId(viajeId.Value);
-        }
-    }
+    // NetTiers F5: el viaje lo carga PasajeroViajeController y llega por ViewBag.Viaje
+    Viaje viaje = ViewBag.Viaje as MAT.Entities.Viaje;
 }
 
 @section Styles {

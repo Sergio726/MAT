@@ -20,9 +20,9 @@ namespace MAT.MVC.Models
             double _subtotal = 0;
             int _menores = 0;
             Hotel = hotel;
-            Habitacion = new Services.HabitacionService().GetByHabitacionId(id);
+            Habitacion = MaestrosDataAccess.GetHabitacionById(id);
             PrecioHabitacion = PaqueteDataAccess.GetAllPrecioHabitaciones().Where(ph => ph.HotelId == Habitacion.HotelId.Value && ph.TipoHabitacion == Habitacion.Tipo && ph.Activo).FirstOrDefault();
-            List<Entities.ReservaHabitacion> _reservas = new Services.ReservaHabitacionService().GetByHabitacionId(id).Where(re => re.ViajeId==viajeid).ToList();
+            List<Entities.ReservaHabitacion> _reservas = ReservaHabitacionDataAccess.GetByHabitacionId(id).Where(re => re.ViajeId==viajeid).ToList();
             List<Entities.Persona> _pasajeros = new List<Entities.Persona>();
             foreach (var item in _reservas)
             {

@@ -311,8 +311,7 @@ namespace MAT.MVC.Controllers.Home
         {
             try
             {
-                ViajeService vServ = new ViajeService();
-                List<Entities.Viaje> viajesdefecha = vServ.GetAll()
+                List<Entities.Viaje> viajesdefecha = Infrastructure.Data.ViajeDataAccess.GetAll()
                     .OrderByDescending(v => v.FechaSalida)
                     .ToList();
 
@@ -348,8 +347,7 @@ namespace MAT.MVC.Controllers.Home
         {
             try
             {
-                ViajeService vServ = new ViajeService();
-                var todos = vServ.GetAll()
+                var todos = Infrastructure.Data.ViajeDataAccess.GetAll()
                     .Where(v => v.FechaSalida.HasValue)
                     .OrderBy(v => v.FechaSalida)
                     .ToList();
