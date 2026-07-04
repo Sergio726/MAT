@@ -5,7 +5,6 @@ using System.Web;
 using System.Web.Mvc;
 using MAT.Utilities;
 using MAT.Entities;
-using MAT.Services;
 using MAT.MVC.Models;
 using System.IO;
 using System.Data;
@@ -17,7 +16,6 @@ namespace MAT.MVC.Controllers.Paquete
 {
     public class PaqueteController : Controller
     {
-        PaqueteService paqueteService;
         //
         // GET: /Paquete/
 
@@ -77,10 +75,9 @@ namespace MAT.MVC.Controllers.Paquete
         [HttpPost]
         public ActionResult Edit(Guid id, FormCollection form)
         {
-            paqueteService = new PaqueteService();
-            Entities.Paquete paqueteEdit = paqueteService.GetByPaqueteId(id);
+            Entities.Paquete paqueteEdit = PaqueteDataAccess.GetPaqueteById(id);
             Helper.FillEntity<Entities.Paquete>(ref paqueteEdit, form);
-            paqueteService.Update(paqueteEdit);
+            PaqueteDataAccess.UpdatePaquete(paqueteEdit);
             return RedirectToAction("Details", "Paquete", new { id = id });
         }
 
@@ -95,10 +92,9 @@ namespace MAT.MVC.Controllers.Paquete
                     string relativepath = string.Format("{0}/{1}.{2}", serverpath, Session["destinoid"], file.FileName.Split('.')[1]);
                     string path = Path.Combine(Server.MapPath(serverpath), Session["destinoid"] + "." + file.FileName.Split('.')[1]);
                     file.SaveAs(path);
-                    PaqueteService paqServ = new PaqueteService();
-                    Entities.Paquete paquete = paqServ.GetByPaqueteId(paqueteid);
+                    Entities.Paquete paquete = PaqueteDataAccess.GetPaqueteById(paqueteid);
                     paquete.Foto = relativepath;
-                    paqServ.Update(paquete);
+                    PaqueteDataAccess.UpdatePaquete(paquete);
                     ViewBag.Message = "Archivo cargado correctamente";
                 }
                 catch (Exception ex)
@@ -159,39 +155,9 @@ namespace MAT.MVC.Controllers.Paquete
         {
             try
             {
-                if (new Services.ViajeService().GetByPaqueteId(id).Count < 1)
+                if (PaqueteDataAccess.CountViajesByPaqueteId(id) < 1)
                 {
-                    PaqueteService spaquete = new PaqueteService();
-                    MAT.Entities.Paquete EPaquete = spaquete.GetByPaqueteId(id);
-                    Services.PaqueteServicioService paqueteservicioService = new PaqueteServicioService();
-                    List<Entities.PaqueteServicio> servicios = paqueteservicioService.GetByPaqueteId(id).ToList();
-                    for (int i = servicios.Count - 1; i > -1; i--)
-                    {
-                        var item = servicios[i];
-                        paqueteservicioService.Delete(item.PaqueteServicioId);
-                    }
-                    Services.PaqueteExcursionService paqueteexcursionService = new PaqueteExcursionService();
-                    List<Entities.PaqueteExcursion> excursiones = paqueteexcursionService.GetByPaqueteId(id).ToList();
-                    for (int i = excursiones.Count - 1; i > -1; i--)
-                    {
-                        var item = excursiones[i];
-                        paqueteexcursionService.Delete(item.PaqueteExcursionId);
-                    }
-                    Services.PaquetePrecioService paqueteprecioService = new PaquetePrecioService();
-                    List<Entities.PaquetePrecio> precios = paqueteprecioService.GetByPaqueteId(id).ToList();
-                    for (int i = precios.Count - 1; i > -1; i--)
-                    {
-                        var item = precios[i];
-                        paqueteprecioService.Delete(item.PaquetePrecioId);
-                    }
-                    Services.PaqueteAdicionalService paqueteadicionalService = new PaqueteAdicionalService();
-                    List<Entities.PaqueteAdicional> adicionales = paqueteadicionalService.GetByPaqueteId(id).ToList();
-                    for (int i = adicionales.Count - 1; i > -1; i--)
-                    {
-                        var item = adicionales[i];
-                        paqueteadicionalService.Delete(item.PaqueteAdicionalId);
-                    }
-                    spaquete.Delete(EPaquete);
+                    PaqueteDataAccess.DeletePaqueteCascade(id);
                     return RedirectToAction("Index", "Paquete");
                 }
                 else
@@ -200,14 +166,12 @@ namespace MAT.MVC.Controllers.Paquete
                     return RedirectToAction("Index", "Paquete", new { msgerror = msj });
                 }
             }
-            catch
+            catch (Exception e)
             {
+                ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.Delete");
                 string msj = "Error al eliminar paquete. Contacte con el Administrador de Sistema.";
                 return RedirectToAction("Index", "Paquete", new { msgerror = msj });
             }
-#pragma warning disable CS0162 // Unreachable code detected
-            return RedirectToAction("Index", "Paquete");
-#pragma warning restore CS0162 // Unreachable code detected
         }
 
         public ActionResult Vinculos(Guid id)
@@ -243,7 +207,7 @@ namespace MAT.MVC.Controllers.Paquete
             List<MAT.Entities.Servicio> list = ServicioMethod.GetAllEntities();
             #region Except
             List<MAT.Entities.Servicio> vinculados = new List<Entities.Servicio>();
-            List<Entities.PaqueteServicio> vinculos = new PaqueteServicioService().GetByPaqueteId(id).ToList();
+            List<Entities.PaqueteServicio> vinculos = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(id);
             foreach (var item in vinculos)
             {
                 vinculados.Add(MaestrosDataAccess.GetServicioById(item.ServicioId.Value));
@@ -260,12 +224,11 @@ namespace MAT.MVC.Controllers.Paquete
         {
             try
             {
-                PaqueteServicioService psService = new PaqueteServicioService();
                 Entities.PaqueteServicio paqueteservicio = new PaqueteServicio();
                 paqueteservicio.PaqueteServicioId = Guid.NewGuid();
                 paqueteservicio.PaqueteId = paqueteid;
                 paqueteservicio.ServicioId = servicioid;
-                psService.Insert(paqueteservicio);
+                PaqueteDataAccess.InsertPaqueteServicio(paqueteservicio);
                 return "True";
             }
 #pragma warning disable CS0168 // Variable is declared but never used
@@ -280,9 +243,7 @@ namespace MAT.MVC.Controllers.Paquete
         {
             try
             {
-                PaqueteServicioService psService = new PaqueteServicioService();
-                Entities.PaqueteServicio paqueteservicio = psService.GetAll().Where(ps => ps.ServicioId.Value == servicioid && ps.PaqueteId.Value == paqueteid).FirstOrDefault();
-                bool result = psService.Delete(paqueteservicio.PaqueteServicioId);
+                bool result = PaqueteDataAccess.DeletePaqueteServicio(servicioid, paqueteid);
                 if (result) return "True";
                 else return "False";
             }
@@ -366,14 +327,13 @@ namespace MAT.MVC.Controllers.Paquete
         }
         public ActionResult RenderGridPrecios(string filter, Guid id)
         {
-            PrecioService service = new PrecioService();
-            List<MAT.Entities.Precio> list = service.GetAll().ToList();
+            List<MAT.Entities.Precio> list = PaqueteDataAccess.GetAllPrecios();
             #region Except
             List<MAT.Entities.Precio> vinculados = new List<Entities.Precio>();
-            List<Entities.PaquetePrecio> vinculos = new PaquetePrecioService().GetByPaqueteId(id).ToList();
+            List<Entities.PaquetePrecio> vinculos = PaqueteDataAccess.GetPaquetePreciosByPaqueteId(id);
             foreach (var item in vinculos)
             {
-                vinculados.Add(service.GetByPrecioId(item.PrecioId.Value));
+                vinculados.Add(PaqueteDataAccess.GetPrecioById(item.PrecioId.Value));
             }
             list = list.Except(vinculados).ToList();
             #endregion
@@ -388,12 +348,11 @@ namespace MAT.MVC.Controllers.Paquete
         {
             try
             {
-                PaquetePrecioService psService = new PaquetePrecioService();
                 Entities.PaquetePrecio paqueteprecio = new Entities.PaquetePrecio();
                 paqueteprecio.PaquetePrecioId = Guid.NewGuid();
                 paqueteprecio.PaqueteId = paqueteid;
                 paqueteprecio.PrecioId = precioid;
-                psService.Insert(paqueteprecio);
+                PaqueteDataAccess.InsertPaquetePrecio(paqueteprecio);
                 return "True";
             }
 #pragma warning disable CS0168 // Variable is declared but never used
@@ -408,9 +367,7 @@ namespace MAT.MVC.Controllers.Paquete
         {
             try
             {
-                PaquetePrecioService psService = new PaquetePrecioService();
-                Entities.PaquetePrecio paqueteprecio = psService.GetAll().Where(ps => ps.PrecioId.Value == precioid && ps.PaqueteId.Value == paqueteid).FirstOrDefault();
-                bool result = psService.Delete(paqueteprecio.PaquetePrecioId);
+                bool result = PaqueteDataAccess.DeletePaquetePrecio(precioid, paqueteid);
                 if (result) return "True";
                 else return "False";
             }
@@ -431,14 +388,13 @@ namespace MAT.MVC.Controllers.Paquete
         }
         public ActionResult RenderGridAdicionales(string filter, Guid id)
         {
-            AdicionalService service = new AdicionalService();
-            List<MAT.Entities.Adicional> list = service.GetAll().ToList();
+            List<MAT.Entities.Adicional> list = MaestrosDataAccess.GetAllAdicionales();
             #region Except
             List<MAT.Entities.Adicional> vinculados = new List<Entities.Adicional>();
-            List<Entities.PaqueteAdicional> vinculos = new PaqueteAdicionalService().GetByPaqueteId(id).ToList();
+            List<Entities.PaqueteAdicional> vinculos = PaqueteDataAccess.GetPaqueteAdicionalesByPaqueteId(id);
             foreach (var item in vinculos)
             {
-                vinculados.Add(service.GetByAdicionalId(item.AdicionalId.Value));
+                vinculados.Add(MaestrosDataAccess.GetAdicionalById(item.AdicionalId.Value));
             }
             list = list.Except(vinculados).ToList();
             #endregion
@@ -453,12 +409,11 @@ namespace MAT.MVC.Controllers.Paquete
         {
             try
             {
-                PaqueteAdicionalService psService = new PaqueteAdicionalService();
                 Entities.PaqueteAdicional paqueteadicional = new PaqueteAdicional();
                 paqueteadicional.PaqueteAdicionalId = Guid.NewGuid();
                 paqueteadicional.PaqueteId = paqueteid;
                 paqueteadicional.AdicionalId = adicionalid;
-                psService.Insert(paqueteadicional);
+                PaqueteDataAccess.InsertPaqueteAdicional(paqueteadicional);
                 return "True";
             }
 #pragma warning disable CS0168 // Variable is declared but never used
@@ -473,9 +428,7 @@ namespace MAT.MVC.Controllers.Paquete
         {
             try
             {
-                PaqueteAdicionalService psService = new PaqueteAdicionalService();
-                Entities.PaqueteAdicional paqueteprecio = psService.GetAll().Where(ps => ps.AdicionalId.Value == adicionalid && ps.PaqueteId.Value == paqueteid).FirstOrDefault();
-                bool result = psService.Delete(paqueteprecio.PaqueteAdicionalId);
+                bool result = PaqueteDataAccess.DeletePaqueteAdicional(adicionalid, paqueteid);
                 if (result) return "True";
                 else return "False";
             }

@@ -1,4 +1,5 @@
-﻿using MAT.Utilities;
+﻿using MAT.MVC.Infrastructure.Data;
+using MAT.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -42,12 +43,11 @@ namespace MAT.MVC.Controllers.Precio
         [HttpPost]
         public ActionResult Create(FormCollection form)
         {
-            Services.PrecioService precioService = new Services.PrecioService();
             Entities.Precio precio = new Entities.Precio();
             precio.PrecioId = Guid.NewGuid();
             MAT.Utilities.Helper.FillEntity<Entities.Precio>(ref precio, form);
             precio.Monto = Convert.ToDouble(form["Monto"]);
-            precioService.Insert(precio);
+            PaqueteDataAccess.InsertPrecio(precio);
             return RedirectToAction("Index");
         }
         public bool Delete(Guid id)
@@ -55,27 +55,12 @@ namespace MAT.MVC.Controllers.Precio
             bool result = false;
             try
             {
-                Services.PaquetePrecioService paqservicioService = new Services.PaquetePrecioService();
-                List<Entities.PaquetePrecio> vinculados = paqservicioService.GetByPrecioId(id).ToList();
-                for (int i = vinculados.Count; i > 0; i--)
-                {
-                    var item = vinculados[i - 1];
-                    paqservicioService.Delete(item.PaquetePrecioId);
-                }
-                Services.PasajeService pasajeService = new Services.PasajeService();
-                List<Entities.Pasaje> pasajes = pasajeService.GetByPrecioId(id).ToList();
-                foreach (var psj in pasajes)
-                {
-                    psj.PrecioId = null;
-                    pasajeService.Update(psj);
-                }
-                Services.PrecioService precioService = new Services.PrecioService();
-                precioService.Delete(id);
+                // NetTiers F4: la cascada (vinculos PaquetePrecio, Pasaje.PrecioID = NULL,
+                // borrado del precio) corre en la transaccion del SP.
+                PaqueteDataAccess.DeletePrecioCascade(id);
                 result = true;
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception)
             {
                 result = false;
             }

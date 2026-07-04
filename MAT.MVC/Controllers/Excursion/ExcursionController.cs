@@ -1,4 +1,5 @@
-﻿using MAT.Utilities;
+﻿using MAT.MVC.Infrastructure.Data;
+using MAT.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,7 @@ namespace MAT.MVC.Controllers.Excursion
 
         public ActionResult Index()
         {
-            Services.ExcursionService excService = new Services.ExcursionService();
-            IList<Entities.Excursion> excursiones = excService.GetAll().OrderBy(ex => ex.Descripcion).ToList();
+            IList<Entities.Excursion> excursiones = MaestrosDataAccess.GetAllExcursiones().OrderBy(ex => ex.Descripcion).ToList();
             return View(excursiones);
         }
 
@@ -27,11 +27,10 @@ namespace MAT.MVC.Controllers.Excursion
         [HttpPost]
         public ActionResult Create(FormCollection form)
         {
-            Services.ExcursionService excService = new Services.ExcursionService();
             Entities.Excursion excursion = new Entities.Excursion();
             excursion.ExcursionId = Guid.NewGuid();
             Helper.FillEntity<Entities.Excursion>(ref excursion, form);
-            excService.Insert(excursion);
+            MaestrosDataAccess.InsertExcursion(excursion);
             return RedirectToAction("Index");
         }
 
@@ -40,20 +39,12 @@ namespace MAT.MVC.Controllers.Excursion
             bool result = false;
             try
             {
-                Services.PaqueteExcursionService paqexcService = new Services.PaqueteExcursionService();
-                List<Entities.PaqueteExcursion> excursionesVinculadas = paqexcService.GetByExcursionId(id).ToList();
-                for (int i = excursionesVinculadas.Count; i > 0; i--)
-                {
-                    var item = excursionesVinculadas[i - 1];
-                    paqexcService.Delete(item.PaqueteExcursionId);
-                }
-                Services.ExcursionService excService = new Services.ExcursionService();
-                excService.Delete(id);
+                // NetTiers F4: la cascada (vinculos PaqueteExcursion + Excursion)
+                // corre en la transaccion del SP.
+                MaestrosDataAccess.DeleteExcursion(id);
                 result = true;
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception)
             {
                 result = false;
             }
@@ -62,16 +53,15 @@ namespace MAT.MVC.Controllers.Excursion
 
         public ActionResult Edit(Guid id)
         {
-            return View(new Services.ExcursionService().GetByExcursionId(id));
+            return View(MaestrosDataAccess.GetExcursionById(id));
         }
 
         [HttpPost]
         public ActionResult Edit(Guid id, FormCollection form)
         {
-            Services.ExcursionService excursionService = new Services.ExcursionService();
-            Entities.Excursion excursion = excursionService.GetByExcursionId(id);
+            Entities.Excursion excursion = MaestrosDataAccess.GetExcursionById(id);
             Helper.FillEntity<Entities.Excursion>(ref excursion, form);
-            excursionService.Update(excursion);
+            MaestrosDataAccess.UpdateExcursion(excursion);
             return RedirectToAction("Index");
         }
     }

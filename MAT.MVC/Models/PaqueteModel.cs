@@ -6,7 +6,6 @@ using MAT.Entities;
 using MAT.Services;
 using System.Text;
 using MAT.Enums;
-using MAT.Data;
 using System.Data.SqlClient;
 using System.Data;
 using MAT.Utilities;
@@ -34,10 +33,6 @@ namespace MAT.MVC.Models
     public class PaqueteModel
     {
         ViajeService vServ;
-        PaqueteService pServ;
-        PaqueteServicioService psServ;
-        PasajeService pasajeServ;
-        PaqueteExcursionService paqueteExcursionServ;
         public Viaje Viaje { get; set; }
         public Paquete Paquete { get; set; }
         public List<Servicio> Servicios { get; set; }
@@ -48,10 +43,6 @@ namespace MAT.MVC.Models
         public PaqueteModel()
         {
             vServ = new ViajeService();
-            pServ = new PaqueteService();
-            paqueteExcursionServ = new PaqueteExcursionService();
-            psServ = new PaqueteServicioService();
-            pasajeServ = new PasajeService();
         }
         public PaqueteModel(Guid viajeID)
         {
@@ -62,14 +53,10 @@ namespace MAT.MVC.Models
             try
             {
                 vServ = new ViajeService();
-                pServ = new PaqueteService();
-                psServ = new PaqueteServicioService();
-                pasajeServ = new PasajeService();
-                paqueteExcursionServ = new PaqueteExcursionService();
                 Viaje = vServ.GetByViajeId(viajeID);
-                Paquete = pServ.GetByPaqueteId(Viaje.PaqueteId.Value);
-                listpaqueteservicio = psServ.GetByPaqueteId(Paquete.PaqueteId).ToList();
-                listpaqueteexcursion = paqueteExcursionServ.GetByPaqueteId(Paquete.PaqueteId).ToList();
+                Paquete = PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
+                listpaqueteservicio = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(Paquete.PaqueteId);
+                listpaqueteexcursion = PaqueteDataAccess.GetPaqueteExcursionesByPaqueteId(Paquete.PaqueteId);
                 Servicios = new List<Servicio>();
                 Destino = GeoDataAccess.GetLocalidadById(Paquete.DestinoId);
                 foreach (PaqueteServicio ps in listpaqueteservicio)
@@ -102,43 +89,17 @@ namespace MAT.MVC.Models
         #region Metodos Publicos
         public bool GenerarPasajes()
         {
-            TransactionManager transaction = DataRepository.Provider.CreateTransaction();
-            transaction.BeginTransaction();
-            bool success = false;
+            // NetTiers F4: la transacción vive en el SP (set-based); reemplaza al
+            // loop PasajeService.Insert + TransactionManager de DataRepository.
             try
             {
-                List<Butaca> butacas = MaestrosDataAccess.GetButacasByTransporteId(Bus.TransporteId);
-                foreach (Butaca butaca in butacas)
-                {
-                    Pasaje pasaje = new Pasaje()
-                    {
-                        PasajeId = Guid.NewGuid(),
-                        ButacaId = butaca.ButacaId,
-                        ViajeId = Viaje.ViajeId,
-                        EstadoPasaje = (int)eEstadoPasaje.Disponible
-                    };
-                    pasajeServ.Insert(pasaje);
-                    success = true;
-                }
+                int generados = PasajeDataAccess.GenerarPasajesByViaje(Viaje.ViajeId, Bus.TransporteId, (int)eEstadoPasaje.Disponible);
+                return generados > 0;
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception)
             {
-                success = false;
+                return false;
             }
-            finally
-            {
-                if (success)
-                {
-                    transaction.Commit();
-                }
-                else
-                {
-                    transaction.Rollback();
-                }
-            }
-            return success;
         }
         #endregion
 

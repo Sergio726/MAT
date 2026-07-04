@@ -7,6 +7,7 @@ using MAT.Services;
 using MAT.Utilities;
 using MAT.Enums;
 using MAT.MVC.Common;
+using MAT.MVC.Infrastructure.Data;
 
 namespace MAT.MVC.Models
 {
@@ -37,13 +38,12 @@ namespace MAT.MVC.Models
                 foreach (Pasaje pasaje in _pasajes)
                 {
                     //- Generación de Vouchers
-                    VoucherService voucherService = new VoucherService();
                     Voucher voucher = new Voucher()
                     {
                         VoucherId = Guid.NewGuid(),
                         FechaEmision = DateTime.Now
                     };
-                    voucherService.Insert(voucher);
+                    VoucherDataAccess.InsertVoucher(voucher);
                     //-
 
                     pasaje.VoucherId = voucher.VoucherId;

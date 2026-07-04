@@ -1,0 +1,17 @@
+-- NetTiers F4 — SPs de Paquete, vinculos, Precio, Adicional, Excursion, Voucher, PrecioHabitacion y generacion de pasajes
+-- Publicar en SQL Server antes de usar MVC migrado en cada entorno.
+-- Fuente de verdad: MAT.DB (archivos individuales en dbo/Stored Procedures/)
+
+-- Ver archivos:
+-- usp_MAT_Paquete_GetById.sql, _UpdateEntity.sql, _DeleteCascade.sql (transaccional)
+-- usp_MAT_Viaje_CountByPaqueteId.sql
+-- usp_MAT_PaqueteServicio_GetByPaqueteId.sql, _Insert.sql, _DeleteByServicioAndPaquete.sql
+-- usp_MAT_PaqueteExcursion_GetByPaqueteId.sql
+-- usp_MAT_PaquetePrecio_GetByPaqueteId.sql, _Insert.sql, _DeleteByPrecioAndPaquete.sql
+-- usp_MAT_PaqueteAdicional_GetByPaqueteId.sql, _Insert.sql, _DeleteByAdicionalAndPaquete.sql
+-- usp_MAT_Precio_GetById.sql, _GetAllEntities.sql, _DeleteCascade.sql (transaccional)
+-- usp_MAT_Adicional_GetAll.sql, _GetById.sql, _Insert.sql, _Update.sql, _Delete.sql (transaccional, cascada PaqueteAdicional)
+-- usp_MAT_Excursion_GetAll.sql, _Insert.sql, _Update.sql, _Delete.sql (transaccional, cascada PaqueteExcursion)
+-- usp_MAT_Voucher_GetById.sql, _Insert.sql
+-- usp_MAT_PrecioHabitacion_GetAll.sql
+-- usp_MAT_Pasaje_GenerarByViaje.sql (transaccional, set-based; reemplaza TransactionManager de PaqueteModel.GenerarPasajes)

@@ -18,7 +18,6 @@ namespace MAT.MVC.Models
         private ClienteService clienteService;
         
         private PasajeroService pasajeroService;
-        private PaqueteService paqueteService;
         private ViajeService viajeService;
 
         public Factura Factura { get; set; }
@@ -34,7 +33,6 @@ namespace MAT.MVC.Models
             pasajeService = new PasajeService();
             clienteService = new ClienteService();
             pasajeroService = new PasajeroService();
-            paqueteService = new PaqueteService();
             viajeService = new ViajeService();
         }
 

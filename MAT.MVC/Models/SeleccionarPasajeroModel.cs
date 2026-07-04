@@ -1,5 +1,5 @@
-﻿using MAT.Entities;
-using MAT.Services;
+using MAT.Entities;
+using MAT.MVC.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +9,6 @@ namespace MAT.MVC.Models
 {
     public class SeleccionarPasajeroModel
     {
-        private PrecioService precioService;
-        private AdicionalService adicionalService;
-
         public List<Entities.Precio> Precios { get; set; }
         public List<Entities.Adicional> Adicionales { get; set; }
         public int? MonedaTipo { get; set; } // 1 = Pesos, 3 = Dólar
@@ -26,14 +23,10 @@ namespace MAT.MVC.Models
 
             try
             {
-                precioService = new PrecioService();
-                adicionalService = new AdicionalService();
-
                 // Obtener información del Paquete para la moneda
                 try
                 {
-                    PaqueteService paqueteService = new PaqueteService();
-                    Entities.Paquete paquete = paqueteService.GetByPaqueteId(paqueteid);
+                    Entities.Paquete paquete = PaqueteDataAccess.GetPaqueteById(paqueteid);
                     if (paquete != null && paquete.Moneda.HasValue)
                     {
                         MonedaTipo = paquete.Moneda.Value;
@@ -45,14 +38,14 @@ namespace MAT.MVC.Models
                     MonedaTipo = 1;
                 }
 
-                List<Entities.PaquetePrecio> _paqueteprecios = new PaquetePrecioService().GetByPaqueteId(paqueteid).ToList();
-                List<Entities.PaqueteAdicional> _paqueteadicionales = new PaqueteAdicionalService().GetByPaqueteId(paqueteid).ToList();
+                List<Entities.PaquetePrecio> _paqueteprecios = PaqueteDataAccess.GetPaquetePreciosByPaqueteId(paqueteid);
+                List<Entities.PaqueteAdicional> _paqueteadicionales = PaqueteDataAccess.GetPaqueteAdicionalesByPaqueteId(paqueteid);
                 List<Entities.Precio> _precios = new List<Precio>();
                 foreach (var item in _paqueteprecios)
                 {
                     if (item.PrecioId.HasValue)
                     {
-                        var precio = precioService.GetByPrecioId(item.PrecioId.Value);
+                        var precio = PaqueteDataAccess.GetPrecioById(item.PrecioId.Value);
                         if (precio != null)
                         {
                             _precios.Add(precio);
@@ -65,7 +58,7 @@ namespace MAT.MVC.Models
                 {
                     if (item.AdicionalId.HasValue)
                     {
-                        var adicional = adicionalService.GetByAdicionalId(item.AdicionalId.Value);
+                        var adicional = MaestrosDataAccess.GetAdicionalById(item.AdicionalId.Value);
                         if (adicional != null)
                         {
                             _adicionales.Add(adicional);

@@ -844,10 +844,11 @@
 
   ##### Fase 4 — Paquete y precios
   `Paquete`, `PaqueteServicio`, `PaqueteExcursion`, `PaqueteAdicional`, `PaquetePrecio`, `Precio`, `PrecioServicio`, `PrecioHabitacion`, `Voucher`.
-  - [ ] **NetTiers F4:** Paquete y precios migrados
+  - [x] **NetTiers F4:** Paquete y precios migrados
     Nota: `PaqueteModel` usa `DataRepository.Provider.CreateTransaction()` — reemplazar por transacción SqlClient explícita o SP transaccional.
     Archivos probables: `PaqueteController`, `PaqueteModel`, `PrecioModel`, `VoucherModel`.
     Criterio: armado de paquete y vouchers operativos; sin `DataRepository` en `MAT.MVC`.
+    **Implementación 2026-07-03:** 26 SPs nuevos (`usp_MAT_Paquete_*`, `usp_MAT_Paquete{Servicio,Excursion,Precio,Adicional}_*`, `usp_MAT_Precio_*`, `usp_MAT_Adicional_*`, `usp_MAT_Excursion_*`, `usp_MAT_Voucher_*`, `usp_MAT_PrecioHabitacion_GetAll`, `usp_MAT_Pasaje_GenerarByViaje`); `PaqueteDataAccess`/`VoucherDataAccess`/`PasajeDataAccess` + CRUD Adicional/Excursion en `MaestrosDataAccess`; `GenerarPasajes` set-based transaccional en SP (cero `DataRepository` en MAT.MVC); script `database/2026-07-03_NetTiers_F4_Paquete_SPs.sql`.
 
   ##### Fase 5 — Viaje y operación de salida
   `Viaje`, `ViajeHotel`, `ReservaHabitacion`, `PasajeroMenor`, `ObservacionViaje` (si aplica), vistas/consultas asociadas.

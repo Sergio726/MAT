@@ -329,6 +329,9 @@
     <Compile Include="Filters\GlobalExceptionFilter.cs" />
     <Compile Include="Filters\RequestGuardFilter.cs" />
     <Compile Include="Infrastructure\Data\MaestrosDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\PaqueteDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\PasajeDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\VoucherDataAccess.cs" />
     <Compile Include="Infrastructure\DbErrorLogger.cs" />
     <Compile Include="Infrastructure\AdminAuthorizationHelper.cs" />
     <Compile Include="Infrastructure\AdminContextualTourCatalog.cs" />

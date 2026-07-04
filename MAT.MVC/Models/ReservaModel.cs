@@ -54,14 +54,14 @@ namespace MAT.MVC.Models
                     newpasaje.PrecioID = item.precioid;
                     newpasaje.AdicionalesID = item.adicionalesid;
                     newpasaje.Pasajero = pasajeroService.GetByPasajeroId(new Guid(item.pasajeroid));
-                    newpasaje.Precio = new PrecioService().GetByPrecioId(new Guid(item.precioid)).Monto;
+                    newpasaje.Precio = Infrastructure.Data.PaqueteDataAccess.GetPrecioById(new Guid(item.precioid)).Monto;
                     double totaladicional = 0;
                     if (!string.IsNullOrEmpty(item.adicionalesid))
                     {
                         String[] _adicionalesid = item.adicionalesid.Split(';');
                         foreach (var _ad in _adicionalesid)
                         {
-                            totaladicional += new AdicionalService().GetByAdicionalId(new Guid(_ad)).Monto;
+                            totaladicional += Infrastructure.Data.MaestrosDataAccess.GetAdicionalById(new Guid(_ad)).Monto;
                         }
                     }
                     newpasaje.Adicionales = totaladicional;

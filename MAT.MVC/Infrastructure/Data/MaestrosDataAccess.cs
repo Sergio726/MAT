@@ -124,6 +124,116 @@ namespace MAT.MVC.Infrastructure.Data
             }
         }
 
+        public static List<Excursion> GetAllExcursiones()
+        {
+            var list = new List<Excursion>();
+            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Excursion_GetAll", null))
+            {
+                while (reader.Read())
+                {
+                    list.Add(MapExcursion(reader));
+                }
+            }
+            return list;
+        }
+
+        public static void InsertExcursion(Excursion excursion)
+        {
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@ExcursionID", SqlDbType.UniqueIdentifier, 0, excursion.ExcursionId),
+                DBHelper.MakeParam("@Descripcion", SqlDbType.VarChar, 200, (object)excursion.Descripcion ?? DBNull.Value),
+                DBHelper.MakeParam("@Costo", SqlDbType.Float, 0, (object)excursion.Costo ?? DBNull.Value),
+                DBHelper.MakeParam("@Observaciones", SqlDbType.VarChar, 0, (object)excursion.Observaciones ?? DBNull.Value),
+                DBHelper.MakeParam("@ProveedorID", SqlDbType.UniqueIdentifier, 0, (object)excursion.ProveedorId ?? DBNull.Value)
+            };
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Excursion_Insert", parameters);
+        }
+
+        public static void UpdateExcursion(Excursion excursion)
+        {
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@ExcursionID", SqlDbType.UniqueIdentifier, 0, excursion.ExcursionId),
+                DBHelper.MakeParam("@Descripcion", SqlDbType.VarChar, 200, (object)excursion.Descripcion ?? DBNull.Value),
+                DBHelper.MakeParam("@Costo", SqlDbType.Float, 0, (object)excursion.Costo ?? DBNull.Value),
+                DBHelper.MakeParam("@Observaciones", SqlDbType.VarChar, 0, (object)excursion.Observaciones ?? DBNull.Value),
+                DBHelper.MakeParam("@ProveedorID", SqlDbType.UniqueIdentifier, 0, (object)excursion.ProveedorId ?? DBNull.Value)
+            };
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Excursion_Update", parameters);
+        }
+
+        /// <summary>
+        /// Borra la excursión y sus vínculos PaqueteExcursion en una transacción del SP.
+        /// </summary>
+        public static void DeleteExcursion(Guid excursionId)
+        {
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@ExcursionID", SqlDbType.UniqueIdentifier, 0, excursionId)
+            };
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Excursion_Delete", parameters);
+        }
+
+        public static Adicional GetAdicionalById(Guid adicionalId)
+        {
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@AdicionalID", SqlDbType.UniqueIdentifier, 0, adicionalId)
+            };
+            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Adicional_GetById", parameters))
+            {
+                return reader.Read() ? MapAdicional(reader) : null;
+            }
+        }
+
+        public static List<Adicional> GetAllAdicionales()
+        {
+            var list = new List<Adicional>();
+            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Adicional_GetAll", null))
+            {
+                while (reader.Read())
+                {
+                    list.Add(MapAdicional(reader));
+                }
+            }
+            return list;
+        }
+
+        public static void InsertAdicional(Adicional adicional)
+        {
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@AdicionalID", SqlDbType.UniqueIdentifier, 0, adicional.AdicionalId),
+                DBHelper.MakeParam("@Monto", SqlDbType.Float, 0, adicional.Monto),
+                DBHelper.MakeParam("@Descripcion", SqlDbType.VarChar, 0, (object)adicional.Descripcion ?? DBNull.Value)
+            };
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Adicional_Insert", parameters);
+        }
+
+        public static void UpdateAdicional(Adicional adicional)
+        {
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@AdicionalID", SqlDbType.UniqueIdentifier, 0, adicional.AdicionalId),
+                DBHelper.MakeParam("@Monto", SqlDbType.Float, 0, adicional.Monto),
+                DBHelper.MakeParam("@Descripcion", SqlDbType.VarChar, 0, (object)adicional.Descripcion ?? DBNull.Value)
+            };
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Adicional_Update", parameters);
+        }
+
+        /// <summary>
+        /// Borra el adicional y sus vínculos PaqueteAdicional en una transacción del SP.
+        /// </summary>
+        public static void DeleteAdicional(Guid adicionalId)
+        {
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@AdicionalID", SqlDbType.UniqueIdentifier, 0, adicionalId)
+            };
+            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Adicional_Delete", parameters);
+        }
+
         private static Butaca MapButaca(SqlDataReader reader)
         {
             var entity = new Butaca
@@ -217,6 +327,16 @@ namespace MAT.MVC.Infrastructure.Data
                 Costo = GetNullableDouble(reader, "Costo"),
                 Observaciones = GetString(reader, "Observaciones"),
                 ProveedorId = GetNullableGuid(reader, "ProveedorID")
+            };
+        }
+
+        private static Adicional MapAdicional(SqlDataReader reader)
+        {
+            return new Adicional
+            {
+                AdicionalId = reader.GetGuid(reader.GetOrdinal("AdicionalID")),
+                Monto = reader.GetDouble(reader.GetOrdinal("Monto")),
+                Descripcion = GetString(reader, "Descripcion")
             };
         }
 

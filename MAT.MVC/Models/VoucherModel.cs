@@ -17,11 +17,7 @@ namespace MAT.MVC.Models
         private PasajeService pasajeService;
         private PersonaPasajeroService pasajeroService;
         private FacturaService facturaService;
-        private PaqueteServicioService paqueteservicioService;
-        private PaqueteExcursionService paqueteexcursionService;
-        private PaqueteService paqueteService;
         private ViajeService viajeService;
-        private VoucherService voucherService;
 
         public String Servicios { get; set; }
         public String Excursiones { get; set; }
@@ -40,19 +36,15 @@ namespace MAT.MVC.Models
             pasajeService = new PasajeService();
             pasajeroService = new PersonaPasajeroService();
             facturaService = new FacturaService();
-            paqueteservicioService = new PaqueteServicioService();
-            paqueteexcursionService = new PaqueteExcursionService();
-            paqueteService = new PaqueteService();
             viajeService = new ViajeService();
-            voucherService = new VoucherService();
 
             Pasaje = pasajeService.GetByPasajeId(pasajeid);
             Butaca = MaestrosDataAccess.GetButacaById(Pasaje.ButacaId.Value);
             Pasajero = pasajeroService.GetAll().Where(psj => psj.PasajeroId == Pasaje.PasajeroId.Value).FirstOrDefault();
             Viaje = viajeService.GetByViajeId(Pasaje.ViajeId.Value);
-            Paquete = paqueteService.GetByPaqueteId(Viaje.PaqueteId.Value);
+            Paquete = PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
             Destino = GeoDataAccess.GetLocalidadById(Paquete.DestinoId);
-            List<Entities.PaqueteServicio> _serviciospaquete = paqueteservicioService.GetByPaqueteId(Paquete.PaqueteId).ToList();
+            List<Entities.PaqueteServicio> _serviciospaquete = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(Paquete.PaqueteId);
             StringBuilder _servicios = new StringBuilder();
             foreach (var item in _serviciospaquete)
             {
@@ -60,7 +52,7 @@ namespace MAT.MVC.Models
             }
             Servicios = _servicios.ToString();
 
-            List<Entities.PaqueteExcursion> _excursionesPaquete = paqueteexcursionService.GetByPaqueteId(Paquete.PaqueteId).ToList();
+            List<Entities.PaqueteExcursion> _excursionesPaquete = PaqueteDataAccess.GetPaqueteExcursionesByPaqueteId(Paquete.PaqueteId);
             StringBuilder _excursiones = new StringBuilder();
             foreach (var item in _excursionesPaquete)
             {
@@ -72,7 +64,7 @@ namespace MAT.MVC.Models
             Reserva = GetReservas.GetListReservaHabitacion(pasajeid);
 
 
-            Voucher = voucherService.GetByVoucherId(Pasaje.VoucherId.Value);
+            Voucher = VoucherDataAccess.GetVoucherById(Pasaje.VoucherId.Value);
             if (Pasajero != null && Pasajero.LocalidadId.HasValue) Localidad = GeoDataAccess.GetLocalidadById(Pasajero.LocalidadId.Value);
         }
     }

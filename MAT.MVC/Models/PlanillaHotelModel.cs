@@ -1,10 +1,11 @@
-﻿using System;
+﻿using MAT.MVC.Infrastructure.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace MAT.MVC.Models
-{    
+{
     public class PlanillaHotelModel
     {
         public Entities.Habitacion Habitacion { get; set; }
@@ -20,7 +21,7 @@ namespace MAT.MVC.Models
             int _menores = 0;
             Hotel = hotel;
             Habitacion = new Services.HabitacionService().GetByHabitacionId(id);
-            PrecioHabitacion = new Services.PrecioHabitacionService().GetAll().Where(ph => ph.HotelId == Habitacion.HotelId.Value && ph.TipoHabitacion == Habitacion.Tipo && ph.Activo).FirstOrDefault();
+            PrecioHabitacion = PaqueteDataAccess.GetAllPrecioHabitaciones().Where(ph => ph.HotelId == Habitacion.HotelId.Value && ph.TipoHabitacion == Habitacion.Tipo && ph.Activo).FirstOrDefault();
             List<Entities.ReservaHabitacion> _reservas = new Services.ReservaHabitacionService().GetByHabitacionId(id).Where(re => re.ViajeId==viajeid).ToList();
             List<Entities.Persona> _pasajeros = new List<Entities.Persona>();
             foreach (var item in _reservas)
@@ -28,7 +29,7 @@ namespace MAT.MVC.Models
                 Entities.Persona pasajero = new Services.PersonaService().GetByPersonaId(item.PasajeroId.Value);
                 if (EsMenor(pasajero))
                 {
-                    double _preciomenor = new Services.PrecioHabitacionService().GetAll().Where(ph => ph.HotelId == Habitacion.HotelId.Value && ph.TipoHabitacion == 0 && ph.Activo).FirstOrDefault().Precio;
+                    double _preciomenor = PaqueteDataAccess.GetAllPrecioHabitaciones().Where(ph => ph.HotelId == Habitacion.HotelId.Value && ph.TipoHabitacion == 0 && ph.Activo).FirstOrDefault().Precio;
                     _subtotal += _preciomenor;
                     PrecioHabitacionMenor = _preciomenor;
                     _menores += 1;

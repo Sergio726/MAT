@@ -8,7 +8,6 @@ using MAT.Utilities;
 using MAT.MVC.Infrastructure.Data;
 using System.Text;
 using MAT.Enums;
-using MAT.Data;
 using System.ServiceModel;
 using System.Runtime.Serialization;
 
@@ -18,8 +17,6 @@ namespace MAT.MVC.Models
     public class InfopathModel
     {
         ViajeService viajeServ;
-        PaqueteService paqueteServ;
-        PaqueteServicioService paqueteservicioServ;
         PasajeService pasajeServ;
         PasajeroService pasajeroServ;
 
@@ -41,8 +38,6 @@ namespace MAT.MVC.Models
         public InfopathModel(Guid viajeid)
         {
             viajeServ = new ViajeService();
-            paqueteServ = new PaqueteService();
-            paqueteservicioServ = new PaqueteServicioService();
             pasajeServ = new PasajeService();
             pasajeroServ = new PasajeroService();
 
@@ -52,14 +47,11 @@ namespace MAT.MVC.Models
             try
             {
                 viajeServ = new ViajeService();
-                paqueteServ = new PaqueteService();
-                paqueteservicioServ = new PaqueteServicioService();
                 pasajeServ = new PasajeService();
                 pasajeroServ = new PasajeroService();
-                pasajeServ = new PasajeService();
                 Viaje = viajeServ.GetByViajeId(viajeid);
-                Paquete = paqueteServ.GetByPaqueteId(Viaje.PaqueteId.Value);
-                listpaqueteservicio = paqueteservicioServ.GetByPaqueteId(Paquete.PaqueteId).ToList();
+                Paquete = PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
+                listpaqueteservicio = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(Paquete.PaqueteId);
                 Servicios = new List<Servicio>();
                 Destino = GeoDataAccess.GetLocalidadById(Paquete.DestinoId);
                 foreach (PaqueteServicio ps in listpaqueteservicio)
