@@ -9,11 +9,6 @@ namespace MAT.MVC.Models
 {
     public class FacturaPagosModel
     {
-
-        private ClienteService clienteService;
-        private PersonaClienteService personaclienteService;
-        private PasajeroService pasajeroService;
-
         public Factura Factura { get; set; }
         public Pasajero Pasajero { get; set; }
         public Paquete Paquete { get; set; }
@@ -24,17 +19,12 @@ namespace MAT.MVC.Models
         public List<Entities.Pago> Pagos { get; set; }
         public FacturaPagosModel()
         {
-            clienteService = new ClienteService();
-            pasajeroService = new PasajeroService();
         }
 
         public FacturaPagosModel(Guid facturaid)
         {
-            clienteService = new ClienteService();
-            pasajeroService = new PasajeroService();
-            personaclienteService = new PersonaClienteService();
             Factura = Infrastructure.Data.FacturaDataAccess.GetById(facturaid);
-            Cliente = personaclienteService.GetAll().Where(pc => pc.ClienteId == Factura.ClienteId).FirstOrDefault();
+            Cliente = Infrastructure.Data.PersonaClienteDataAccess.GetByPersonaId(Factura.ClienteId);
             Saldo = CalcularSaldo();
             List<Pasaje> _pasajes = Infrastructure.Data.PasajeDataAccess.GetByFacturaId(facturaid);
             Viaje = Infrastructure.Data.ViajeDataAccess.GetById(_pasajes.FirstOrDefault().ViajeId.Value);

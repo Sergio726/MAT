@@ -11,9 +11,6 @@ namespace MAT.MVC.Models
 {
     public class PasajeModel
     {
-        PasajeroService pjServ;
-        PersonaPasajeroService personapasajeroService;
-
         public Pasaje Pasaje { get; set; }
         public Pasajero Pasajero { get; set; }
         public PersonaPasajero PersonaPasajero { get; set; }
@@ -28,13 +25,10 @@ namespace MAT.MVC.Models
         public double Adicionales { get; set; }
         public string AdicionalesID { get; set; }
         public PasajeModel() {
-            pjServ = new PasajeroService();
         }
 
         public PasajeModel(Guid pasajeid)
         {
-            pjServ = new PasajeroService();
-            personapasajeroService = new PersonaPasajeroService();
             Pasaje = PasajeDataAccess.GetById(pasajeid);
             Estado = (eEstadoPasaje)Pasaje.EstadoPasaje;
             List<Entities.ReservaHabitacion> reservasPasaje = ReservaHabitacionDataAccess.GetByPasajeId(pasajeid);
@@ -45,8 +39,8 @@ namespace MAT.MVC.Models
             }
             if (Pasaje.PasajeroId.HasValue)
             {
-                Pasajero = pjServ.GetByPasajeroId(Pasaje.PasajeroId.Value);
-                PersonaPasajero = personapasajeroService.GetAll().Where(pp => pp.PersonaId == Pasaje.PasajeroId.Value).FirstOrDefault();
+                Pasajero = PasajeroDataAccess.GetById(Pasaje.PasajeroId.Value);
+                PersonaPasajero = PersonaPasajeroDataAccess.GetByPersonaId(Pasaje.PasajeroId.Value);
             }
             if (Pasaje.ButacaId.HasValue) Butaca = MaestrosDataAccess.GetButacaById(Pasaje.ButacaId.Value);            
             if (Butaca != null && Butaca.TransporteId.HasValue) Bus = MaestrosDataAccess.GetTransporteById(Butaca.TransporteId.Value);            

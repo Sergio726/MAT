@@ -257,6 +257,53 @@ namespace MAT.MVC.Infrastructure.Data
 
         #endregion
 
+        #region Disponibles para vincular
+
+        /// <summary>
+        /// Servicios que aun no estan vinculados al paquete (filtro opcional por descripcion).
+        /// Reemplaza el patron N+1 GetAllEntities + Except en memoria.
+        /// </summary>
+        public static List<Servicio> GetAvailableServicios(Guid paqueteId, string filter)
+        {
+            return ReadList("dbo.usp_MAT_Servicio_GetAvailableForPaquete", AvailableParams(paqueteId, filter), r => new Servicio
+            {
+                ServicioId = r.GetGuid(r.GetOrdinal("ServicioID")),
+                Descripcion = GetString(r, "Descripcion")
+            });
+        }
+
+        /// <summary>
+        /// Precios que aun no estan vinculados al paquete (filtro opcional por descripcion).
+        /// </summary>
+        public static List<Precio> GetAvailablePrecios(Guid paqueteId, string filter)
+        {
+            return ReadList("dbo.usp_MAT_Precio_GetAvailableForPaquete", AvailableParams(paqueteId, filter), MapPrecio);
+        }
+
+        /// <summary>
+        /// Adicionales que aun no estan vinculados al paquete (filtro opcional por descripcion).
+        /// </summary>
+        public static List<Adicional> GetAvailableAdicionales(Guid paqueteId, string filter)
+        {
+            return ReadList("dbo.usp_MAT_Adicional_GetAvailableForPaquete", AvailableParams(paqueteId, filter), r => new Adicional
+            {
+                AdicionalId = r.GetGuid(r.GetOrdinal("AdicionalID")),
+                Monto = r.GetDouble(r.GetOrdinal("Monto")),
+                Descripcion = GetString(r, "Descripcion")
+            });
+        }
+
+        private static SqlParameter[] AvailableParams(Guid paqueteId, string filter)
+        {
+            return new[]
+            {
+                DBHelper.MakeParam("@PaqueteID", SqlDbType.UniqueIdentifier, 0, paqueteId),
+                DBHelper.MakeParam("@Filter", SqlDbType.NVarChar, 100, string.IsNullOrWhiteSpace(filter) ? (object)DBNull.Value : filter)
+            };
+        }
+
+        #endregion
+
         #region Mapeos y helpers
 
         private static Paquete MapPaquete(SqlDataReader reader)

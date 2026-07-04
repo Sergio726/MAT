@@ -17,8 +17,7 @@ namespace MAT.MVC.Controllers.Cliente
 
         public ActionResult Index()
         {
-            PersonaClienteService pcSrv = new PersonaClienteService();
-            IList<Entities.PersonaCliente> clientes = pcSrv.GetAll();
+            IList<Entities.PersonaCliente> clientes = Infrastructure.Data.PersonaClienteDataAccess.GetAll();
             return View(clientes);
         }
 

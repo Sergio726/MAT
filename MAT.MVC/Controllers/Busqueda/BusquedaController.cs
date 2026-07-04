@@ -25,17 +25,15 @@ namespace MAT.MVC.Controllers.Busqueda
 
         public JsonResult PersonaAutocomplete(string query)
         {
-            VPersonaService personaService = new VPersonaService();
-            IList<MAT.Entities.VPersona> personas = personaService.GetAll().Where(p => p.NroDocumento.Replace(".","").Contains(query.Replace(".","")) || p.NroDocumento.Contains(query) || p.Nombre.ToUpper().Contains(query.ToUpper()) || p.Apellido.ToUpper().Contains(query.ToUpper())).ToList(); //
+            IList<MAT.Entities.VPersona> personas = Infrastructure.Data.VPersonaDataAccess.Search(query);
             return Json(personas, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Card(Guid personaid)
         {
             PerfilModel perfil = new PerfilModel(personaid);
-            
-            PersonaClienteService PCService = new PersonaClienteService();
-            ViewBag.PersonaClienteCUIL = PCService.GetAll().Where(l => l.ClienteId == personaid).First().Cuit;
+
+            ViewBag.PersonaClienteCUIL = Infrastructure.Data.PersonaClienteDataAccess.GetByPersonaId(personaid).Cuit;
             return PartialView(perfil);
         }
     }

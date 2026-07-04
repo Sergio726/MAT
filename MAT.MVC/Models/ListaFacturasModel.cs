@@ -13,7 +13,7 @@ namespace MAT.MVC.Models
 
         public ListaFacturasModel(Guid id)
         {
-            Persona = new Services.PersonaService().GetByPersonaId(id);
+            Persona = Infrastructure.Data.PersonaDataAccess.GetById(id);
             ListaFacturas = Infrastructure.Data.FacturaDataAccess.GetByClienteId(id).OrderByDescending(fac => fac.Fecha.Value).ToList();
         }
     }

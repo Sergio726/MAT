@@ -91,6 +91,7 @@ namespace MAT.MVC.Models
                         PaqueteViculosModel item = new PaqueteViculosModel();
                         item.PaqueteID = _reader["PaqueteID"].ToString();
                         item.ID = _reader["ID"].ToString();
+                        item.VinculoRowId = _reader["VinculoRowId"].ToString();
                         if (_reader["IsOpcional"].ToString() == "")
                         {
                             item.IsOpcional = null;

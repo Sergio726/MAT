@@ -209,8 +209,7 @@ namespace MAT.MVC.Controllers.Reserva
 
         public JsonResult QuickPasajeroSearch(string query)
         {
-            PersonaPasajeroService pasajeroService = new PersonaPasajeroService();
-            List<Entities.PersonaPasajero> pasajeros = pasajeroService.GetAll().Where(p => p.NroDocumento.Contains(query) || p.Nombre.ToUpper().Contains(query.ToUpper()) || p.Apellido.ToUpper().Contains(query.ToUpper())).ToList();
+            List<Entities.PersonaPasajero> pasajeros = Infrastructure.Data.PersonaPasajeroDataAccess.Search(query);
             return Json(pasajeros, JsonRequestBehavior.AllowGet);
         }
 

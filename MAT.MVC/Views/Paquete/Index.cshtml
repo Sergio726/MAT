@@ -2,34 +2,20 @@
 @using MAT.Enums
 @using MAT.Utilities
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Paquetes";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string selectedYear = (ViewBag.SelectedYear ?? "").ToString();
+    var years = ViewBag.Years as List<int> ?? new List<int>();
+    var monedas = ViewBag.Monedas as List<MAT.MVC.Models.MonedaTipo> ?? new List<MAT.MVC.Models.MonedaTipo>();
+    int? selTemporada = ViewBag.SelectedTemporada as int?;
+    int? selMoneda = ViewBag.SelectedMoneda as int?;
+    string search = (ViewBag.Search ?? "").ToString();
 }
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#tblPaquetes").DataTable({
-            columnDefs: [
-                { targets: 4, orderable: false } // Evita que se ordene la columna de acciones
-            ],
-            pageLength: 25,
-            order: [[1, "desc"]], // Ordenar por fecha de creación descendente
-            language: {
-                search: "Buscar:",
-                lengthMenu: "Mostrar _MENU_ registros",
-                info: "Mostrando _START_ a _END_ de _TOTAL_ paquetes",
-                infoEmpty: "No hay paquetes disponibles",
-                infoFiltered: "(filtrado de _MAX_ paquetes totales)",
-                paginate: {
-                    first: "Primero",
-                    last: "Último",
-                    next: "Siguiente",
-                    previous: "Anterior"
-                }
-            }
-        });
-    });
-</script>
+@section Styles {
+    <link href="~/Content/mat.paquete.css" rel="stylesheet" />
+}
 
 <div class="modern-page-container">
     <div class="modern-page-header">
@@ -45,19 +31,72 @@
         </div>
     </div>
 
-    @if (ViewData["error"] != null)
+    @if (ViewBag.Error != null)
     {
         <div class="modern-alert-error">
             <i class="bi bi-exclamation-circle"></i>
-            <span>@ViewData["error"].ToString()</span>
+            <span>@ViewBag.Error.ToString()</span>
         </div>
     }
+
+    <form id="pqFiltrosForm" class="pq-filtros" method="get" action="/Paquete/Index">
+        <div class="pq-filtro-group">
+            <label class="pq-filtro-label" for="year">Año</label>
+            <select id="year" name="year" class="pq-filtro-select">
+                <option value="0" @(selectedYear == "0" ? "selected" : "")>Todos</option>
+                @foreach (var y in years)
+                {
+                    <option value="@y" @(selectedYear == y.ToString() ? "selected" : "")>@y</option>
+                }
+            </select>
+        </div>
+        <div class="pq-filtro-group">
+            <label class="pq-filtro-label" for="temporada">Temporada</label>
+            <select id="temporada" name="temporada" class="pq-filtro-select">
+                <option value="">Todas</option>
+                <option value="1" @(selTemporada == 1 ? "selected" : "")>Temporada Alta</option>
+                <option value="2" @(selTemporada == 2 ? "selected" : "")>Temporada Baja</option>
+            </select>
+        </div>
+        <div class="pq-filtro-group">
+            <label class="pq-filtro-label" for="moneda">Moneda</label>
+            <select id="moneda" name="moneda" class="pq-filtro-select">
+                <option value="">Todas</option>
+                @foreach (var m in monedas)
+                {
+                    <option value="@m.Id" @(selMoneda == m.Id ? "selected" : "")>@m.Codigo</option>
+                }
+            </select>
+        </div>
+        <div class="pq-filtro-group pq-filtro-search">
+            <label class="pq-filtro-label" for="pqSearch">Buscar</label>
+            <div class="pq-search-wrap">
+                <i class="bi bi-search pq-search-icon"></i>
+                <input type="text" id="pqSearch" name="search" class="pq-filtro-input pq-search-input" value="@search" placeholder="Nombre, código o destino..." autocomplete="off" />
+                <button type="button" id="pqSearchClear" class="pq-search-clear" title="Limpiar búsqueda" style="display:none;" aria-label="Limpiar búsqueda">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+        <div class="pq-filtro-actions">
+            <button type="submit" class="btn-modern btn-modern-primary">
+                <i class="bi bi-funnel"></i>
+                <span>Filtrar</span>
+            </button>
+            <a href="#" id="pqLimpiarFiltros" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-x-circle"></i>
+                <span>Limpiar</span>
+            </a>
+        </div>
+    </form>
 
     <div class="modern-table-container">
         <table class="modern-table" id="tblPaquetes">
             <thead>
                 <tr>
                     <th>Paquete</th>
+                    <th>Código</th>
+                    <th>Destino</th>
                     <th>Fecha de Creación</th>
                     <th>Moneda</th>
                     <th>Temporada</th>
@@ -65,11 +104,13 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (MAT.MVC.Models.PaqueteStandard item in Model)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td><strong>@item.Descripcion</strong></td>
-                        <td>
+                        <td>@(string.IsNullOrEmpty(item.Codigo) ? "-" : item.Codigo)</td>
+                        <td>@(string.IsNullOrEmpty(item.Destino) ? "-" : item.Destino)</td>
+                        <td data-order="@(item.FechaCreacion.Year != 1 ? item.FechaCreacion.ToString("yyyyMMdd") : "0")">
                             @if (item.FechaCreacion.Year != 1)
                             {
                                 <span>@item.FechaCreacion.ToShortDateString()</span>
@@ -84,19 +125,32 @@
                                 @item.MonedaCodigo
                             </span>
                         </td>
-                        <td>@item.Temporada</td>
+                        <td>
+                            @if (item.Temporada == "1")
+                            {
+                                <span class="badge-temporada"><i class="bi bi-sun"></i> Alta</span>
+                            }
+                            else if (item.Temporada == "2")
+                            {
+                                <span class="badge-temporada"><i class="bi bi-snow"></i> Baja</span>
+                            }
+                            else
+                            {
+                                <span class="table-text-muted">-</span>
+                            }
+                        </td>
                         <td>
                             <div class="table-actions">
-                                <a href="/Paquete/Vinculos/@item.PaqueteID" class="btn-action btn-action-info" title="Vínculos">
+                                <a href="/Paquete/Vinculos/@item.PaqueteID" class="btn-action btn-action-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Vínculos">
                                     <i class="bi bi-link-45deg"></i>
                                 </a>
-                                <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" class="btn-action btn-action-edit" title="Editar">
+                                <a href="/Paquete/Edit/?sAction=edit&sPaqueteID=@item.PaqueteID" class="btn-action btn-action-edit" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" class="btn-action btn-action-view" title="Detalle">
+                                <a href="/Paquete/Edit/?sAction=detail&sPaqueteID=@item.PaqueteID" class="btn-action btn-action-view" data-bs-toggle="tooltip" data-bs-placement="top" title="Detalle">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="/Paquete/Delete/@item.PaqueteID" class="btn-action btn-action-delete" title="Eliminar" onclick="return confirm('¿Está seguro que desea eliminar este paquete?');">
+                                <a href="#" class="btn-action btn-action-delete pq-btn-eliminar" data-id="@item.PaqueteID" data-nombre="@item.Descripcion" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>
@@ -107,3 +161,63 @@
         </table>
     </div>
 </div>
+
+@Html.Partial("_AdminConfirmModal")
+
+@section Scripts {
+    <script src="~/Scripts/mat.admin-utils.js"></script>
+    <script src="~/Scripts/mat.paquete.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // dom sin 'f': ocultamos el buscador propio de DataTables; usamos el de la barra de filtros.
+            var table = $("#tblPaquetes").DataTable({
+                dom: "lrtip",
+                columnDefs: [{ targets: 6, orderable: false }],
+                pageLength: 25,
+                order: [],
+                language: {
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ paquetes",
+                    infoEmpty: "No hay paquetes para el filtro seleccionado",
+                    infoFiltered: "(filtrado de _MAX_ paquetes totales)",
+                    zeroRecords: "No se encontraron paquetes",
+                    paginate: { first: "Primero", last: "Último", next: "Siguiente", previous: "Anterior" }
+                }
+            });
+
+            // Buscador instantaneo (sin recargar): filtra la tabla mientras se escribe.
+            var $search = $("#pqSearch");
+            var $clear = $("#pqSearchClear");
+
+            function applySearch() {
+                table.search($search.val()).draw();
+                $clear.toggle(!!$search.val());
+            }
+
+            $search.on("input", applySearch);
+            $clear.on("click", function (e) {
+                e.preventDefault();
+                $search.val("");
+                applySearch();
+                $search.focus();
+            });
+
+            // Estado inicial: si venia con texto (deep-link o cambio de filtro), aplicarlo y enfocar al final.
+            if ($search.val()) {
+                applySearch();
+                var el = $search.get(0);
+                el.focus();
+                var v = el.value; el.value = ""; el.value = v;
+            }
+
+            // Tooltips Bootstrap en botones de accion.
+            $('#tblPaquetes [data-bs-toggle="tooltip"]').each(function () {
+                if (window.bootstrap && !bootstrap.Tooltip.getInstance(this)) {
+                    new bootstrap.Tooltip(this);
+                }
+            });
+
+            MatPaquete.initIndex();
+        });
+    </script>
+}

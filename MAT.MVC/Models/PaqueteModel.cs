@@ -23,6 +23,9 @@ namespace MAT.MVC.Models
     {
         public string PaqueteID { get; set; }
         public string ID { get; set; }
+        // PK de la tabla de vinculo (PaqueteServicioID/PaqueteExcursionID/etc.).
+        // Necesario para desvincular excursiones sin una segunda consulta.
+        public string VinculoRowId { get; set; }
         public bool? IsOpcional { get; set; }
         public string Tipo { get; set; }
         public string Precio { get; set; }
@@ -30,6 +33,13 @@ namespace MAT.MVC.Models
 
 
     }
+    // Fila para los grids de vinculacion (modales BS5): item disponible para vincular.
+    public class PaqueteVincularItem
+    {
+        public string Id { get; set; }
+        public string Descripcion { get; set; }
+    }
+
     public class PaqueteModel
     {
         public Viaje Viaje { get; set; }
@@ -118,7 +128,8 @@ namespace MAT.MVC.Models
         public DateTime LastUpdate { get; set; }
         public string MonedaDescripcion { get; set; }
         public string MonedaCodigo { get; set; }
-        
+        public string Destino { get; set; }
+
     }
 
     public class PaqueteDestino
@@ -133,13 +144,16 @@ namespace MAT.MVC.Models
 
     public class PaqueteVinculos
     {
-        public static List<PaqueteStandard> ListPaqueteByYear(string sDateYear = "")
+        public static List<PaqueteStandard> ListPaqueteByYear(string sDateYear = "", string search = null, int? temporada = null, int? moneda = null)
         {
             List<PaqueteStandard> LResult = new List<PaqueteStandard>();
 
             SqlParameter[] dbParams = new SqlParameter[]
                 {                    
-                    DBHelper.MakeParam("@DateYear", SqlDbType.VarChar, 0, sDateYear)
+                    DBHelper.MakeParam("@DateYear", SqlDbType.VarChar, 4, sDateYear ?? ""),
+                    DBHelper.MakeParam("@Search", SqlDbType.NVarChar, 100, (object)search ?? DBNull.Value),
+                    DBHelper.MakeParam("@Temporada", SqlDbType.Int, 0, (object)temporada ?? DBNull.Value),
+                    DBHelper.MakeParam("@Moneda", SqlDbType.Int, 0, (object)moneda ?? DBNull.Value)
                 };
             using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Paquete_GetPaquetes", dbParams))
             {
@@ -183,6 +197,7 @@ namespace MAT.MVC.Models
                     }
                     
                     Item.MonedaCodigo = _reader["MonedaCodigo"].ToString();
+                    Item.Destino = _reader["Destino"].ToString();
                     LResult.Add(Item);
                 }
             }

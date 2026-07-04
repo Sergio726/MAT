@@ -25,11 +25,6 @@ namespace MAT.MVC.Models
     //}
     public class ReservaModel
     {
-        private ClienteService clienteService;
-        //private CuentaService cuentaService;
-        private PasajeroService pasajeroService;
-
-
         //public MAT.Entities.Cliente Cliente { get; set; }
         public IList<PasajeModel> Pasajes { get; set; }
         public Cuenta Cuenta { get; set; }
@@ -41,15 +36,13 @@ namespace MAT.MVC.Models
         {
             try
             {
-                pasajeroService = new PasajeroService();
-
                 List<PasajeModel> _pasajes = new List<PasajeModel>();
                 foreach (var item in pasajes)
                 {
                     PasajeModel newpasaje = new PasajeModel(new Guid(item.pasajeid));
                     newpasaje.PrecioID = item.precioid;
                     newpasaje.AdicionalesID = item.adicionalesid;
-                    newpasaje.Pasajero = pasajeroService.GetByPasajeroId(new Guid(item.pasajeroid));
+                    newpasaje.Pasajero = Infrastructure.Data.PasajeroDataAccess.GetById(new Guid(item.pasajeroid));
                     newpasaje.Precio = Infrastructure.Data.PaqueteDataAccess.GetPrecioById(new Guid(item.precioid)).Monto;
                     double totaladicional = 0;
                     if (!string.IsNullOrEmpty(item.adicionalesid))
@@ -74,9 +67,6 @@ namespace MAT.MVC.Models
         }
         public ReservaModel()
         {
-            clienteService = new ClienteService();
-            //ccService = new CuentaCorrienteService();
-            pasajeroService = new PasajeroService();
         }
 
         #region Metodos Publicos

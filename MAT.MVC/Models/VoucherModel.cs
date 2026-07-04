@@ -14,8 +14,6 @@ namespace MAT.MVC.Models
 {
     public class VoucherModel
     {
-        private PersonaPasajeroService pasajeroService;
-
         public String Servicios { get; set; }
         public String Excursiones { get; set; }
         public Entities.PersonaPasajero Pasajero { get; set; }
@@ -30,11 +28,9 @@ namespace MAT.MVC.Models
         public List<ReservaVoucherModel>  Reserva { get; set; }
         public VoucherModel(Guid pasajeid)
         {
-            pasajeroService = new PersonaPasajeroService();
-
             Pasaje = PasajeDataAccess.GetById(pasajeid);
             Butaca = MaestrosDataAccess.GetButacaById(Pasaje.ButacaId.Value);
-            Pasajero = pasajeroService.GetAll().Where(psj => psj.PasajeroId == Pasaje.PasajeroId.Value).FirstOrDefault();
+            Pasajero = PersonaPasajeroDataAccess.GetByPersonaId(Pasaje.PasajeroId.Value);
             Viaje = ViajeDataAccess.GetById(Pasaje.ViajeId.Value);
             Paquete = PaqueteDataAccess.GetPaqueteById(Viaje.PaqueteId.Value);
             Destino = GeoDataAccess.GetLocalidadById(Paquete.DestinoId);

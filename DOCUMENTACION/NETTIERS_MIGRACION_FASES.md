@@ -120,7 +120,9 @@ Para cada `FooService` migrado:
 | Butaca | Completo F3 | `ButacaController`, `ButacaMethod` + SPs CRUD |
 | Lookups | MaestrosDataAccess | `PasajeModel`, `VoucherModel`, `PaqueteModel`, `InfopathModel`, `ViajeController`, `PaqueteController.RenderGridServicios` |
 
-**Pendiente NetTiers (siguientes fases):** Paquete F4, Viaje F5, Factura/Pago F6, Personas F7, ~40 servicios restantes — ver grep `new \w+Service(` en `MAT.MVC`.
+**F4 (Paquete/Precio/Voucher), F5 (Viaje/ReservaHabitacion), F6 (Factura/Pago) y F7 (Personas/Cliente/Vendedor/Proveedor/Pasajero/Cuenta + vistas Persona*/VPersona) migradas** a SPs + `*DataAccess` (2026-07-03).
+
+**Pendiente NetTiers (siguientes fases):** Planilla/Historial F8, retiro de `MAT.Services`/`MAT.Data` (F9–F10), POCOs manuales (F11), barrido final (F12) — ver grep `new \w+Service(` en `MAT.MVC` para servicios residuales (p. ej. `HistorialService`).
 
 ### Inventario borrador (F0 — sustituido por tabla arriba)
 
@@ -170,6 +172,8 @@ Para cada `FooService` migrado:
 
 ## 8. Próximo paso concreto
 
-**Task SPEC:** `NetTiers F4` — Paquete y precios (`PaqueteModel.GenerarPasajes`, transacciones).
+**Estado 2026-07-03:** F0–F7 completadas en código (MSBuild `MAT.sln` Debug OK). F7 migró Persona, Cliente, Vendedor, Proveedor, Pasajero, Cuenta y las vistas Persona*/VPersona a 28 SPs + clases `*DataAccess` en `MAT.MVC/Infrastructure/Data`.
 
-**Despliegue BD F2:** publicar SPs desde `MAT.DB` o `database/2026-07-01_NetTiers_F2_Geo_SPs.sql` en cada entorno antes de smoke geo.
+**Task SPEC:** `NetTiers F8` — Planilla e historial (`HistorialModel` aún usa `HistorialService`, `HomeController`, planillas en sesión `MATContext`).
+
+**Deuda de despliegue (humano):** publicar los SPs de F4–F7 desde `MAT.DB` (y scripts `database/2026-07-03_*`) en cada entorno + smoke crítico (flujo de pago F6; ABM personas y cuenta corriente F7) antes de commitear por fase.

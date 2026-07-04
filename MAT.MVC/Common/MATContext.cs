@@ -112,8 +112,6 @@ namespace MAT.MVC.Common
         {
             get
             {
-                PersonaService personaService = new PersonaService();
-                VendedorService vendedorService = new VendedorService();
                 Persona currentpersona;
                 int userId = 0; 
               
@@ -126,11 +124,11 @@ namespace MAT.MVC.Common
                 {
                     userId = MATContext.CurrentUserId;
                 }
-                currentpersona = personaService.GetAll().Where(p => p.UserId == userId).FirstOrDefault();
+                currentpersona = Infrastructure.Data.PersonaDataAccess.GetByUserId(userId);
                 if (currentpersona == null)
                     return null;
 
-                return vendedorService.GetByVendedorId(currentpersona.PersonaId);
+                return Infrastructure.Data.VendedorDataAccess.GetById(currentpersona.PersonaId);
             }
         }
 

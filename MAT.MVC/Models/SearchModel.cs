@@ -32,9 +32,7 @@ namespace MAT.MVC.Models
             switch (entity)
             {
                 case "PersonaPasajero":
-                    PersonaPasajeroService pasajeroService = new PersonaPasajeroService();
-                    List<MAT.Entities.PersonaPasajero> pasajeros = new List<Entities.PersonaPasajero>();
-                    pasajeros = pasajeroService.GetAll().ToList();
+                    List<MAT.Entities.PersonaPasajero> pasajeros = Infrastructure.Data.PersonaPasajeroDataAccess.GetTop(200);
                     _grid.DataSource = pasajeros;
                     break;
                 case "Viaje":

@@ -1,0 +1,179 @@
+@model List<MAT.MVC.Models.PaqueteViculosModel>
+@{
+    var servicios = Model.Where(m => m.Tipo == "Servicio").ToList();
+    var excursiones = Model.Where(m => m.Tipo == "Excursion").ToList();
+    var precios = Model.Where(m => m.Tipo == "Precio").ToList();
+    var adicionales = Model.Where(m => m.Tipo == "Adicional").ToList();
+}
+
+@helper Header(string icono, string titulo, int count, string tipo)
+{
+    <div class="section-header">
+        <h3 class="section-title">
+            <i class="bi @icono"></i>
+            @titulo
+            <span class="vinculo-count-inline">@count</span>
+        </h3>
+        <a href="#" class="btn-vincular pq-btn-abrir-vincular" data-tipo="@tipo">
+            <i class="bi bi-plus-lg"></i>
+            Vincular
+        </a>
+    </div>
+}
+
+@helper EmptyState(string icono, string texto)
+{
+    <div class="empty-state">
+        <i class="bi @icono"></i>
+        <p>@texto</p>
+    </div>
+}
+
+<div class="vinculos-summary">
+    <span class="vinculo-count"><i class="bi bi-gear"></i> Servicios <span class="badge">@servicios.Count</span></span>
+    <span class="vinculo-count"><i class="bi bi-compass"></i> Excursiones <span class="badge">@excursiones.Count</span></span>
+    <span class="vinculo-count"><i class="bi bi-currency-dollar"></i> Precios <span class="badge">@precios.Count</span></span>
+    <span class="vinculo-count"><i class="bi bi-plus-circle"></i> Adicionales <span class="badge">@adicionales.Count</span></span>
+</div>
+
+<!-- Servicios -->
+<div class="vinculo-section">
+    @Header("bi-gear", "Servicios", servicios.Count, "servicio")
+    @if (servicios.Any())
+    {
+        <table class="vinculo-table">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th style="width: 60px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in servicios)
+                {
+                    <tr>
+                        <td>@item.Descripcion</td>
+                        <td>
+                            <a href="#" class="btn-desvincular" data-tipo="servicio" data-id="@item.ID" title="Desvincular servicio">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        @EmptyState("bi-gear", "No hay servicios vinculados")
+    }
+</div>
+
+<!-- Excursiones -->
+<div class="vinculo-section">
+    @Header("bi-compass", "Excursiones", excursiones.Count, "excursion")
+    @if (excursiones.Any())
+    {
+        <table class="vinculo-table">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th style="width: 60px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in excursiones)
+                {
+                    <tr>
+                        <td>
+                            @item.Descripcion
+                            @if (item.IsOpcional == true)
+                            {
+                                <span class="optional-badge"><i class="bi bi-star-fill"></i> Opcional</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="#" class="btn-desvincular" data-tipo="excursion" data-rowid="@item.VinculoRowId" title="Desvincular excursión">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        @EmptyState("bi-compass", "No hay excursiones vinculadas")
+    }
+</div>
+
+<!-- Precios -->
+<div class="vinculo-section">
+    @Header("bi-currency-dollar", "Precios", precios.Count, "precio")
+    @if (precios.Any())
+    {
+        <table class="vinculo-table">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                    <th style="width: 60px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in precios)
+                {
+                    <tr>
+                        <td>@item.Descripcion</td>
+                        <td class="monto-cell">$@item.Precio</td>
+                        <td>
+                            <a href="#" class="btn-desvincular" data-tipo="precio" data-id="@item.ID" title="Desvincular precio">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        @EmptyState("bi-currency-dollar", "No hay precios vinculados")
+    }
+</div>
+
+<!-- Adicionales -->
+<div class="vinculo-section">
+    @Header("bi-plus-circle", "Adicionales", adicionales.Count, "adicional")
+    @if (adicionales.Any())
+    {
+        <table class="vinculo-table">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                    <th style="width: 60px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in adicionales)
+                {
+                    <tr>
+                        <td>@item.Descripcion</td>
+                        <td class="monto-cell">$@item.Precio</td>
+                        <td>
+                            <a href="#" class="btn-desvincular" data-tipo="adicional" data-id="@item.ID" title="Desvincular adicional">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        @EmptyState("bi-plus-circle", "No hay adicionales vinculados")
+    }
+</div>

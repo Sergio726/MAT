@@ -26,7 +26,7 @@ namespace MAT.MVC.Models
             List<Entities.Persona> _pasajeros = new List<Entities.Persona>();
             foreach (var item in _reservas)
             {
-                Entities.Persona pasajero = new Services.PersonaService().GetByPersonaId(item.PasajeroId.Value);
+                Entities.Persona pasajero = PersonaDataAccess.GetById(item.PasajeroId.Value);
                 if (EsMenor(pasajero))
                 {
                     double _preciomenor = PaqueteDataAccess.GetAllPrecioHabitaciones().Where(ph => ph.HotelId == Habitacion.HotelId.Value && ph.TipoHabitacion == 0 && ph.Activo).FirstOrDefault().Precio;

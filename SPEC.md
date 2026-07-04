@@ -866,9 +866,10 @@
 
   ##### Fase 7 — Personas, clientes y cuenta corriente
   `Persona`, `Cliente`, `Vendedor`, `TipoCliente`, `Cuenta`, `CuentaCorriente`; vistas `PersonaCliente`, `PersonaPasajero`, `PersonaProveedor`, `PersonaVendedor`.
-  - [ ] **NetTiers F7:** Personas y CC migrados
+  - [x] **NetTiers F7:** Personas y CC migrados
     Nota: `PersonaClienteService` es **vista** NetTiers (`MAT.Services/Views/`) — candidato a SP dedicado.
     Criterio: ABM cliente/pasajero/proveedor/vendedor y CC operativos.
+    **Implementación 2026-07-03:** 28 SPs nuevos (`Persona` CRUD + `GetByUserId`, `Cliente` CRUD, `Vendedor` Get/Insert, `Pasajero` CRUD, `Proveedor` CRUD, `Cuenta` GetByClienteId/Insert/Update, y vistas `PersonaCliente`/`PersonaPasajero`/`PersonaProveedor`/`PersonaVendedor`/`VPersona`); nuevas clases en `Infrastructure/Data`: `PersonaDataAccess`, `ClienteDataAccess`, `VendedorDataAccess`, `PasajeroDataAccess`, `ProveedorDataAccess`, `CuentaDataAccess`, `PersonaVistasDataAccess` (5 vistas) y helper `SqlReaderHelper`; rewire de controllers (`Persona`, `PersonaCliente`, `PersonaPasajero`, `PersonaProveedor`, `Cliente`, `Busqueda`, `Reserva`) y models (`PerfilModel`, `AccountModels`, `PagosClientesModel`, `PasajeModel`, `PasajeroHistorialModel`, `ReservaModel`, `InfopathModel`, `VoucherModel`, `SearchModel`, `HistorialModel`, `PagosPorFechaModel`, `ListaFacturasModel`, `PlanillaHotelModel`) + `MATContext.CurrentVendedor`. Sin `*Service` de personas/CC activos desde MVC; MSBuild `MAT.sln` Debug OK. Deploy BD + smoke pendiente humano.
 
   ##### Fase 8 — Legacy y baja prioridad
   `Planilla`, `PlanillaServicioItem`, `PlanillaHabitacionItem`, `PlanillaServicio`, `Historial`, `Nota` (si queda), `MATContext` planillas en sesión.

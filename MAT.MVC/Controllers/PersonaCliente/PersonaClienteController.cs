@@ -341,20 +341,16 @@ namespace MAT.MVC.Controllers.PersonaCliente
         {
             try
             {
-                PersonaClienteService SPersonaCliente = new PersonaClienteService();
-                PersonaService SPersona = new PersonaService();
-                ClienteService SCliente = new ClienteService();
-
                 MAT.Entities.PersonaCliente PersonaCliente = new MAT.Entities.PersonaCliente();
 
                 // Intentamos obtener los datos de Persona y Cliente
-                MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
+                MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
                 if (Persona == null)
                 {
                     throw new Exception($"No se encontró la persona con ID: {Id}");
                 }
 
-                MAT.Entities.Cliente Cliente = SCliente.Get(new ClienteKey(Id));
+                MAT.Entities.Cliente Cliente = Infrastructure.Data.ClienteDataAccess.GetById(Id);
                 if (Cliente == null)
                 {
                     throw new Exception($"No se encontró el cliente con ID: {Id}");
@@ -417,13 +413,9 @@ namespace MAT.MVC.Controllers.PersonaCliente
         [Authorize]
         public ActionResult Edit(Guid Id, FormCollection collection)
         {
-            PersonaClienteService SPersonaCliente = new PersonaClienteService();
-            PersonaService SPersona = new PersonaService();
-            ClienteService SCliente = new ClienteService();
-
             MAT.Entities.PersonaCliente PersonaCliente = new MAT.Entities.PersonaCliente();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Cliente Cliente = SCliente.Get(new ClienteKey(Id));
+            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
+            MAT.Entities.Cliente Cliente = Infrastructure.Data.ClienteDataAccess.GetById(Id);
 
             try
             {
@@ -442,7 +434,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("Sexo"))) Persona.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
                 if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) Persona.Nacionalidad = collection.Get("Nacionalidad").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) Persona.PaisResidencia = collection.Get("PaisResidencia").ToString();
-                SPersona.Update(Persona);
+                Infrastructure.Data.PersonaDataAccess.Update(Persona);
 
                 if (!string.IsNullOrEmpty(collection.Get("RazonSocial"))) Cliente.RazonSocial = collection.Get("RazonSocial").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Cuit"))) Cliente.Cuit = collection.Get("Cuit").ToString();
@@ -455,7 +447,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("Idioma"))) Cliente.Idioma = collection.Get("Idioma").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Promotor"))) Cliente.Promotor = collection.Get("Promotor").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Observacion"))) Cliente.Observacion = collection.Get("Observacion").ToString();
-                SCliente.Update(Cliente);
+                Infrastructure.Data.ClienteDataAccess.Update(Cliente);
             }
             catch (Exception e)
             {
@@ -468,13 +460,9 @@ namespace MAT.MVC.Controllers.PersonaCliente
         [Authorize]
         public ActionResult Details(Guid Id)
         {
-            PersonaClienteService SPersonaCliente = new PersonaClienteService();
-            PersonaService SPersona = new PersonaService();
-            ClienteService SCliente = new ClienteService();
-
             MAT.Entities.PersonaCliente PersonaCliente = new MAT.Entities.PersonaCliente();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Cliente Cliente = SCliente.Get(new ClienteKey(Id));
+            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
+            MAT.Entities.Cliente Cliente = Infrastructure.Data.ClienteDataAccess.GetById(Id);
 
             #region Actualizar PersonaCliente
             PersonaCliente.PersonaId = Persona.PersonaId;
@@ -514,11 +502,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
         [Authorize]
         public ActionResult Delete(Guid Id)
         {
-            PersonaService SPersona = new PersonaService();
-            ClienteService SCliente = new ClienteService();
-
-            SCliente.Delete(Id);
-            SPersona.Delete(Id);
+            Infrastructure.Data.ClienteDataAccess.Delete(Id);
+            Infrastructure.Data.PersonaDataAccess.Delete(Id);
 
             return RedirectToAction("Index", "PersonaCliente");
         }
@@ -973,50 +958,69 @@ namespace MAT.MVC.Controllers.PersonaCliente
         {
             //string msj = "";
             bool estado = false;
-            Guid Id = new Guid(ClienteId);
-
-            switch (Estado)
+            try
             {
+                Guid Id = new Guid(ClienteId);
 
-                case "Activar":
-                    CuentaService SCuenta = new CuentaService();
-                    MAT.Entities.Cuenta ECuenta = SCuenta.GetByClienteId(Id).FirstOrDefault();
-                    ECuenta.Estado = true;
-                    SCuenta.Update(ECuenta);
-                    //msj = "Se activo la Cuenta Corriente para el cliente seleccionado";
-                    estado = true;
-                    break;
-                case "Desactivar":
+                switch (Estado)
+                {
 
-                    CuentaService SCuentaC = new CuentaService();
-                    MAT.Entities.Cuenta ECuentaC = SCuentaC.GetByClienteId(Id).FirstOrDefault();
-                    ECuentaC.Estado = false;
-                    SCuentaC.Update(ECuentaC);
-                    //msj = "Se descactivo la Cuenta Corriente para el cliente selccionado";
-                    estado = false;
-                    break;
-                case "Verificar":
-
-                    CuentaService SCuentaCTA = new CuentaService();
-                    MAT.Entities.Cuenta ECuentaV = SCuentaCTA.GetByClienteId(Id).FirstOrDefault();
-
-                    if (ECuentaV == null)
-                    {
-                        ECuentaV = new MAT.Entities.Cuenta();
-                        ECuentaV.ClienteId = Id;
-                        ECuentaV.Estado = false;
-                        SCuentaCTA.Insert(ECuentaV);
+                    case "Activar":
+                        SetEstadoCuenta(Id, true);
+                        //msj = "Se activo la Cuenta Corriente para el cliente seleccionado";
+                        estado = true;
+                        break;
+                    case "Desactivar":
+                        SetEstadoCuenta(Id, false);
+                        //msj = "Se descactivo la Cuenta Corriente para el cliente selccionado";
                         estado = false;
-                    }
-                    else
-                    {
-                        estado = ECuentaV.Estado;
-                    }
+                        break;
+                    case "Verificar":
 
-                    break;
+                        MAT.Entities.Cuenta ECuentaV = Infrastructure.Data.CuentaDataAccess.GetByClienteId(Id).FirstOrDefault();
+
+                        if (ECuentaV == null)
+                        {
+                            ECuentaV = new MAT.Entities.Cuenta();
+                            ECuentaV.ClienteId = Id;
+                            ECuentaV.Estado = false;
+                            Infrastructure.Data.CuentaDataAccess.Insert(ECuentaV);
+                            estado = false;
+                        }
+                        else
+                        {
+                            estado = ECuentaV.Estado;
+                        }
+
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.validarCTA");
+                estado = false;
             }
             return estado;
 
+        }
+
+        /// <summary>
+        /// Activa/desactiva la cuenta corriente del cliente; si no existe la crea con el estado indicado
+        /// (evita NullReferenceException cuando el cliente aún no tiene Cuenta).
+        /// </summary>
+        private static void SetEstadoCuenta(Guid clienteId, bool estado)
+        {
+            MAT.Entities.Cuenta cuenta = Infrastructure.Data.CuentaDataAccess.GetByClienteId(clienteId).FirstOrDefault();
+            if (cuenta == null)
+            {
+                cuenta = new MAT.Entities.Cuenta { ClienteId = clienteId, Estado = estado };
+                Infrastructure.Data.CuentaDataAccess.Insert(cuenta);
+            }
+            else
+            {
+                cuenta.Estado = estado;
+                Infrastructure.Data.CuentaDataAccess.Update(cuenta);
+            }
         }
 
         public JsonResult ExistDni(string dni = "")

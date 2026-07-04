@@ -100,18 +100,16 @@ namespace MAT.MVC.Models
 
         public static void InsertVendedor(System.Web.Mvc.FormCollection form)
         {
-            PersonaService personaService = new PersonaService();
-            VendedorService vendedorService = new VendedorService();
             Persona persona = new Entities.Persona();
             Helper.FillEntity<Persona>(ref persona, form);
             persona.PersonaId = Guid.NewGuid();
             persona.UserId = WebSecurity.GetUserId(form["UserName"]);
-            personaService.Insert(persona);
+            MAT.MVC.Infrastructure.Data.PersonaDataAccess.Insert(persona);
 
             Vendedor vendedor = new Entities.Vendedor();
             Helper.FillEntity<Vendedor>(ref vendedor, form);
             vendedor.VendedorId = persona.PersonaId;
-            vendedorService.Insert(vendedor);
+            MAT.MVC.Infrastructure.Data.VendedorDataAccess.Insert(vendedor);
         }
     }
 

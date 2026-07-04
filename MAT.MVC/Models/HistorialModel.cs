@@ -14,11 +14,9 @@ namespace MAT.MVC.Models
         public HistorialModel(Guid id)
         {
             Services.HistorialService registroServices = new Services.HistorialService();
-            Services.PersonaClienteService clienteService = new Services.PersonaClienteService();
-            Services.PersonaVendedorService vendedorService = new Services.PersonaVendedorService();
             Registro = registroServices.GetByHistorialId(id);
-            Cliente = clienteService.GetAll().Where(per => per.PersonaId == Registro.Cliente).FirstOrDefault();
-            Vendedor = vendedorService.GetAll().Where(ven => ven.PersonaId == Registro.Vendedor).FirstOrDefault();
+            Cliente = Infrastructure.Data.PersonaClienteDataAccess.GetByPersonaId(Registro.Cliente);
+            Vendedor = Infrastructure.Data.PersonaVendedorDataAccess.GetByPersonaId(Registro.Vendedor);
         }
     }
 }

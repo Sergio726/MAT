@@ -2,20 +2,33 @@
 
 ---
 
-## Handoff — próxima sesión (2026-07-01)
+### [2026-07-04] — Reescritura módulo Paquete (UX/UI + rendimiento)
+- **Qué se implementó:**
+  - **SQL (MAT.DB):** `usp_MAT_Paquete_GetPaquetes` con filtros (año, `@Search`, `@Temporada`, `@Moneda`), destino (Localidad) y `MonedaCodigo` limpio; `@DateYear=''` sigue devolviendo todos los años (compat selector de Viaje). Nuevos SPs set-based que eliminan el N+1 de los modales: `usp_MAT_Servicio_GetAvailableForPaquete`, `usp_MAT_Precio_GetAvailableForPaquete`, `usp_MAT_Adicional_GetAvailableForPaquete`. `usp_MAT_Paquetes_VinculosByPaqueteID` extendido con `VinculoRowId` (PK de cada tabla de vínculo) para desvincular excursiones sin 2ª consulta.
+  - **Data:** `PaqueteDataAccess.GetAvailableServicios/Precios/Adicionales`; `ListPaqueteByYear` con parámetros de filtro + `Destino`; `PaqueteViculosModel.VinculoRowId` mapeado; `PaqueteStandard.Destino`.
+  - **Controller:** `Index` con filtros y `ErrorUtil`; `Delete` ahora `[HttpPost]` + `JsonResult`; `Vinculos` con una sola fuente de datos (se eliminó la consulta duplicada de excursiones) + `VinculosContent` para refresh parcial; `Vincular*/Desvincular*` devuelven `{ success, message }`; `RenderGrid*` usan los SPs GetAvailable y el partial unificado `_GridVincular`; se eliminó el POST legacy roto (`RedirectToAction("Details")`).
+  - **Assets:** nuevos `Content/mat.paquete.css` y `Scripts/mat.paquete.js` (namespace `MatPaquete`, toasts/confirm/loading vía `MatAdmin`, debounce). Handlers de Paquete extraídos de `mat.jquery.binding.js`.
+  - **Vistas:** `Index` (barra de filtros + DataTable + eliminar por AJAX), `Edit` (markup limpio, modal destino migrado a Bootstrap 5, guardado con toasts), `Vinculos` (header contextual + contadores + 4 secciones desde 1 SP) y modales de vinculación unificados en Bootstrap 5. Se eliminaron 8 parciales viejos (Servicios/Excursiones/Precios/Adicionales + RenderGrid*), reemplazados por `_PaqueteVinculosSections.cshtml` y `_GridVincular.cshtml`.
+- **Archivos:** `MAT.DB/dbo/Stored Procedures/` (5 SPs), `MAT.DB.sqlproj`, `database/2026-07-04_Paquete_Index_Filters.sql`, `PaqueteDataAccess.cs`, `PaqueteModel.cs`, `PaqueteVinculos.cs`, `PaqueteController.cs`, `Content/mat.paquete.css`, `Scripts/mat.paquete.js`, `mat.jquery.binding.js`, `MAT.MVC.csproj`, vistas de `Views/Paquete/`.
+- **Desvíos del plan:** `GetVinculos` e `Insert/Update` de paquete se mantuvieron en la capa `Models` (`ClassPaqueteVinculos` / `PaqueteVinculos`), ya F4 con `DBHelper`, para no romper el layering ni el contrato usado por Reserva/Viaje; solo se estandarizó el JSON en el controller. El accordion de Vínculos se resolvió como cards con contador (más robusto).
+- **Verificación:** MSBuild `MAT.MVC` y `MAT.DB` en Debug OK, sin errores de linter.
+- **Acción humana pendiente:** publicar `database/2026-07-04_Paquete_Index_Filters.sql` en cada entorno; smoke de: Index con filtros, alta/edición + subir imagen + modal destino, vincular/desvincular los 4 tipos (excursión opcional), eliminar paquete con/sin viajes, detalle solo lectura.
+- **Estado:** ✅ completo (pendiente deploy SQL + smoke)
+
+---
+
+## Handoff — próxima sesión (2026-07-03)
 
 **Rama:** `MAT2026` (cambios locales sin commit; revisar `git status` antes de commitear).
 
-### Normalización Localidad L1–L12 — épica completada
+### NetTiers F0–F7 — completadas en código
 
-- Endpoint único de búsqueda: `GET/POST /Localidad/Search`
-- JS unificado: `mat.geo.localidad.js`
-- `QuickLocalidadSearch` eliminado (L12)
-- `ToSelectEntities("Localidad")` deprecado — lista vacía (L11)
+- F4 (Paquete), F5 (Viaje), F6 (Factura/Pago) y **F7 (Personas y CC)** migradas a SPs + `*DataAccess`. MSBuild `MAT.sln` Debug OK.
+- **Deuda operativa (humano):** publicar los scripts/SPs de F4–F7 en el entorno + smoke crítico (flujo de pago F6; ABM personas y CC F7) y luego commitear por fase.
 
 ### Siguiente task SPEC
 
-- **NetTiers F4** — Paquete y precios (`DataRepository` en `PaqueteModel.GenerarPasajes`)
+- **NetTiers F8** — Planilla e historial (`HistorialModel` aún usa `HistorialService`, `HomeController`, planillas en sesión `MATContext`).
 
 ---
 
@@ -1224,4 +1237,43 @@
   - Campos de servicio muertos eliminados en ReservaModel/VoucherModel/PasajeroHistorialModel (solo se instanciaban).
 - Problemas encontrados: ninguno de compilación.
 - Pendiente de despliegue: correr `database/2026-07-03_NetTiers_F6_Factura_SPs.sql` (los ALTERs son idempotentes) + SPs. **Smoke prioritario**: seña → pago total → vouchers/estados; saldo idéntico pre/post con la misma factura.
+- Estado: ✅ MSBuild MAT.sln Debug OK
+
+### [2026-07-03] — NetTiers F7: Personas, clientes y cuenta corriente migrados
+
+- Archivos nuevos:
+  - `MAT.DB/dbo/Stored Procedures/` (28 SPs): `usp_MAT_Persona_GetEntityById/_GetAllEntities/_GetEntityByUserId/_InsertEntity/_UpdateEntity/_DeleteEntity.sql`, `usp_MAT_Cliente_GetEntityById/_InsertEntity/_UpdateEntity/_DeleteEntity.sql`, `usp_MAT_Vendedor_GetEntityById/_InsertEntity.sql`, `usp_MAT_Pasajero_GetEntityById/_InsertEntity/_UpdateEntity/_DeleteEntity.sql`, `usp_MAT_Proveedor_GetEntityById/_InsertEntity/_UpdateEntity/_DeleteEntity.sql`, `usp_MAT_Cuenta_GetByClienteId/_InsertEntity/_UpdateEntity.sql`, `usp_MAT_PersonaCliente_GetEntities/_PersonaPasajero_GetEntities/_PersonaProveedor_GetEntities/_PersonaVendedor_GetEntities/_VPersona_GetEntities.sql`
+  - `MAT.MVC/Infrastructure/Data/`: `PersonaDataAccess.cs`, `ClienteDataAccess.cs`, `VendedorDataAccess.cs`, `PasajeroDataAccess.cs`, `ProveedorDataAccess.cs`, `CuentaDataAccess.cs`, `PersonaVistasDataAccess.cs` (5 vistas), `SqlReaderHelper.cs`
+- Archivos modificados: controllers `PersonaController.cs`, `PersonaClienteController.cs`, `PersonaPasajeroController.cs`, `PersonaProveedorController.cs`, `ClienteController.cs`, `BusquedaController.cs`, `ReservaController.cs`; models `PerfilModel.cs`, `AccountModels.cs`, `PagosClientesModel.cs`, `PasajeModel.cs`, `PasajeroHistorialModel.cs`, `ReservaModel.cs`, `InfopathModel.cs`, `VoucherModel.cs`, `SearchModel.cs`, `HistorialModel.cs`, `PagosPorFechaModel.cs`, `ListaFacturasModel.cs`, `PlanillaHotelModel.cs`; `Common/MATContext.cs` (`CurrentVendedor`); `MAT.MVC.csproj`, `MAT.DB.sqlproj`, `SPEC.md`
+- Qué se implementó:
+  - Reemplazo completo de `PersonaService`, `ClienteService`, `VendedorService`, `ProveedorService`, `PasajeroService`, `CuentaService` y las vistas NetTiers (`PersonaClienteService`, `PersonaPasajeroService`, `PersonaProveedorService`, `PersonaVendedorService`, `VPersonaService`) por SPs + `*DataAccess` siguiendo el patrón F6.
+  - `SqlReaderHelper`: extensiones tipadas/nullable sobre `SqlDataReader` (`GetString`, `GetGuid`, `GetNullableInt`, etc.) compartidas por los DataAccess nuevos.
+  - Búsquedas de autocompletar (`BusquedaController.PersonaAutocomplete` → `VPersonaDataAccess.Search`, `ReservaController.QuickPasajeroSearch` → `PersonaPasajeroDataAccess.Search`) resueltas con SP `@Term` en vez de `GetAll().Where(...)` en memoria.
+  - `MATContext.CurrentVendedor`: `PersonaDataAccess.GetByUserId` + `VendedorDataAccess.GetById` reemplazan el `GetAll().Where(UserId)` NetTiers.
+  - `HistorialModel` conserva `HistorialService` (alcance F8) — solo se migraron sus lookups de `PersonaCliente`/`PersonaVendedor`.
+- Problemas encontrados: ninguno de compilación.
+- Pendiente de despliegue: publicar los 28 SPs de `MAT.DB` en el entorno + smoke de ABM cliente/pasajero/proveedor/vendedor, perfil, búsqueda rápida y cuenta corriente. Deploy BD + smoke + commit delegados a humano.
+- Estado: ✅ MSBuild MAT.sln Debug OK
+
+### [2026-07-03] — NetTiers F7.1: limpieza y optimización (conservador)
+
+- Archivos nuevos:
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Perfil_GetByPersonaId.sql` (perfil en 1 roundtrip: vPersona + flags EXISTS EsCliente/EsPasajero/EsVendedor/EsProveedor)
+  - `MAT.MVC/Infrastructure/Data/PerfilDataAccess.cs` (con DTO `PerfilData`)
+  - `database/2026-07-03_NetTiers_F7.1_Cleanup_SPs.sql` (SP nuevo + versiones modificadas de los SP de vistas)
+- Archivos modificados:
+  - `MAT.MVC/Models/PerfilModel.cs`: 5 roundtrips → 1 (usa `PerfilDataAccess`); props públicas sin cambios.
+  - `MAT.MVC/Controllers/PersonaCliente/PersonaClienteController.cs`: `validarCTA` con guarda de null (crea Cuenta si no existe en Activar/Desactivar, helper `SetEstadoCuenta`) + `try/catch` con `ErrorUtil`.
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_PersonaCliente_GetEntities.sql`, `_PersonaProveedor_GetEntities.sql`, `_VPersona_GetEntities.sql`: `SELECT *` → columnas explícitas.
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_PersonaPasajero_GetEntities.sql`: columnas explícitas + parámetro `@Top` (NULL = todas) + `ORDER BY`.
+  - `MAT.MVC/Infrastructure/Data/PersonaVistasDataAccess.cs`: nuevo `PersonaPasajeroDataAccess.GetTop(int)` (Query acepta `@Top`); `GetAll()` sin cambios de contrato.
+  - `MAT.MVC/Models/SearchModel.cs`: la búsqueda rápida (Reserva/QuickSearch por GridView) usa `GetTop(200)` en vez de `GetAll()` (evita materializar toda la vista).
+  - `MAT.MVC/MAT.MVC.csproj`, `MAT.DB/MAT.DB.sqlproj`: alta de los archivos nuevos.
+- Alcance conservador (por decisión del usuario): NO se borró `PersonaController` ni se fusionaron las dos capas de PersonaCliente; la lógica de Cuenta en `PersonaPasajeroController.Create` no se tocó.
+- Pendiente de verificación humana:
+  - **FK Cuenta**: `PersonaPasajeroController.Create` inserta `Cuenta` fuera del `if (escliente)` (posible violación de `FK_Cuenta_Cliente` para pasajero no-cliente) — confirmar contra BD real antes de fix.
+  - **Dead code**: `PersonaController` genérico (+ `usp_MAT_Persona_GetAllEntities`) no está enlazado en el menú — confirmar antes de borrar.
+  - **PersonaAutocomplete/VPersona.Search**: `#txt-filter-persona` usa `/Factura/PersonaAutocomplete`; `/Busqueda/PersonaAutocomplete` quedó comentado — verificar si `BusquedaController.PersonaAutocomplete` y el path `@Term` de vPersona siguen vivos.
+  - **Redundancia**: coexisten `PersonaClienteDataAccess` (F7) y `PersonaClienteMethod` (`PersonaClienteModel.cs`, SPs preexistentes) — deuda de consolidación pospuesta.
+- Pendiente de despliegue: correr `database/2026-07-03_NetTiers_F7.1_Cleanup_SPs.sql` en el entorno + smoke (perfil, búsqueda rápida de pasajeros, activar/desactivar CC). Deploy BD + smoke + commit delegados a humano.
 - Estado: ✅ MSBuild MAT.sln Debug OK

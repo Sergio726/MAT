@@ -8,7 +8,6 @@ using MAT.Entities;
 using MAT.MVC.Models;
 using System.IO;
 using System.Data;
-using Newtonsoft.Json;
 using MAT.MVC.Infrastructure;
 using MAT.MVC.Infrastructure.Data;
 
@@ -19,47 +18,63 @@ namespace MAT.MVC.Controllers.Paquete
         //
         // GET: /Paquete/
 
-        public ActionResult Index(string msgerror)
+        public ActionResult Index(string year, string search, int? temporada, int? moneda, string msgerror)
         {
+            // Por defecto se muestran los paquetes del anio actual; "0" = Todos.
+            string selectedYear = string.IsNullOrWhiteSpace(year) ? DateTime.Now.Year.ToString() : year;
+            string yearParam = selectedYear == "0" ? "" : selectedYear;
+
             List<PaqueteStandard> LResult = new List<PaqueteStandard>();
             try
             {
-                LResult = PaqueteVinculos.ListPaqueteByYear();
+                LResult = PaqueteVinculos.ListPaqueteByYear(yearParam, search, temporada, moneda);
             }
             catch (Exception e)
             {
-                ViewData["error"] = e.Message.ToString();
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.Index");
             }
+
+            if (!string.IsNullOrEmpty(msgerror))
+            {
+                ViewBag.Error = msgerror;
+            }
+
+            var currentYear = DateTime.Now.Year;
+            ViewBag.Years = Enumerable.Range(0, 7).Select(i => currentYear - i).ToList();
+            ViewBag.SelectedYear = selectedYear;
+            ViewBag.Search = search;
+            ViewBag.SelectedTemporada = temporada;
+            ViewBag.SelectedMoneda = moneda;
+            ViewBag.Monedas = MonedaMethod.GetMonedaTipoAll();
+
             return View(LResult);
         }
 
         [Authorize]
         public ActionResult Edit(string sAction, string sPaqueteID)
         {
-            
             Session["paqueteid"] = sPaqueteID;
-            
+
             try
             {
                 ViewBag.Action = sAction;
-                
                 ViewBag.ListPais = GeoDataAccess.GetAllPaises();
-
 
                 PaqueteStandard Paquete = new PaqueteStandard();
                 switch (sAction)
                 {
-                    case "detail": Paquete = PaqueteVinculos.GetPaqueteByID(sPaqueteID);
+                    case "detail":
+                        Paquete = PaqueteVinculos.GetPaqueteByID(sPaqueteID);
                         ViewBag.InfoDestino = PaqueteVinculos.GetPaqueteDestino(sPaqueteID);
                         break;
-                    case "edit": Paquete = PaqueteVinculos.GetPaqueteByID(sPaqueteID);
+                    case "edit":
+                        Paquete = PaqueteVinculos.GetPaqueteByID(sPaqueteID);
                         ViewBag.InfoDestino = PaqueteVinculos.GetPaqueteDestino(sPaqueteID);
                         break;
-                    case "new": 
+                    case "new":
                         Paquete = new PaqueteStandard();
                         Paquete.Moneda = 1;
                         Paquete.Temporada = "1";
-                        
                         break;
                 }
                 return View(Paquete);
@@ -69,16 +84,6 @@ namespace MAT.MVC.Controllers.Paquete
                 var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.Edit");
                 return RedirectToAction("Index", "Paquete", new { msgerror = msg });
             }
-            
-        }
-
-        [HttpPost]
-        public ActionResult Edit(Guid id, FormCollection form)
-        {
-            Entities.Paquete paqueteEdit = PaqueteDataAccess.GetPaqueteById(id);
-            Helper.FillEntity<Entities.Paquete>(ref paqueteEdit, form);
-            PaqueteDataAccess.UpdatePaquete(paqueteEdit);
-            return RedirectToAction("Details", "Paquete", new { id = id });
         }
 
         [HttpPost]
@@ -87,6 +92,7 @@ namespace MAT.MVC.Controllers.Paquete
             string serverpath = "/Images/Paquetes";
             Guid paqueteid = new Guid(Session["paqueteid"].ToString());
             if (file != null && file.ContentLength > 0)
+            {
                 try
                 {
                     string relativepath = string.Format("{0}/{1}.{2}", serverpath, Session["destinoid"], file.FileName.Split('.')[1]);
@@ -95,353 +101,346 @@ namespace MAT.MVC.Controllers.Paquete
                     Entities.Paquete paquete = PaqueteDataAccess.GetPaqueteById(paqueteid);
                     paquete.Foto = relativepath;
                     PaqueteDataAccess.UpdatePaquete(paquete);
-                    ViewBag.Message = "Archivo cargado correctamente";
+                    TempData["Success"] = "Imagen cargada correctamente.";
                 }
                 catch (Exception ex)
                 {
-                    ViewBag.Message = "ERROR:" + ex.Message.ToString();
+                    TempData["Error"] = ErrorUtil.LogAndGetPublicMessage(ex, "PaqueteController.UploadFile");
                 }
+            }
             else
             {
-                ViewBag.Message = "Archivo no especificado.";
+                TempData["Error"] = "Archivo no especificado.";
             }
-            //return RedirectToAction("Edit", "Paquete", new { id = paqueteid });
             return RedirectToAction("Edit", "Paquete", new { sAction = "edit", sPaqueteID = paqueteid });
         }
 
         public JsonResult InsertPaquete(PaqueteStandard Paquete)
         {
-            string[] sResult = new string[2];
             try
             {
-                sResult = PaqueteVinculos.PaqueteInsert(Paquete);
+                string[] r = PaqueteVinculos.PaqueteInsert(Paquete);
+                bool ok = r[1] == "Done.";
+                return Json(new
+                {
+                    success = ok,
+                    id = r[0],
+                    message = ok ? "Paquete creado correctamente." : "No se pudo guardar el paquete."
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
-                sResult[0] = "";
-                // Legacy: devuelve Mensaje, mantenemos formato sin StackTrace
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.InsertPaquete");
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.InsertPaquete");
+                return Json(new { success = false, id = "", message = msg }, JsonRequestBehavior.AllowGet);
             }
-
-            return Json(new
-            {
-                ID = sResult[0],
-                Mensaje = sResult[1]
-            }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult UpdatePaquete(PaqueteStandard Paquete)
         {
-            string[] sResult = new string[2];
             try
             {
-                sResult = PaqueteVinculos.PaqueteUpdate(Paquete);
+                string[] r = PaqueteVinculos.PaqueteUpdate(Paquete);
+                bool ok = r[1] == "Done.";
+                return Json(new
+                {
+                    success = ok,
+                    id = r[0],
+                    message = ok ? "Paquete actualizado correctamente." : "No se pudo guardar el paquete."
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
-                sResult[0] = "";
-                // Legacy: devuelve Mensaje, mantenemos formato sin StackTrace
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.UpdatePaquete");
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.UpdatePaquete");
+                return Json(new { success = false, id = "", message = msg }, JsonRequestBehavior.AllowGet);
             }
-
-            return Json(new
-            {
-                ID = sResult[0],
-                Mensaje = sResult[1]
-            }, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Delete(Guid id)
+        [HttpPost]
+        public JsonResult Delete(Guid id)
         {
             try
             {
-                if (PaqueteDataAccess.CountViajesByPaqueteId(id) < 1)
+                if (PaqueteDataAccess.CountViajesByPaqueteId(id) >= 1)
                 {
-                    PaqueteDataAccess.DeletePaqueteCascade(id);
-                    return RedirectToAction("Index", "Paquete");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "El paquete posee viajes vinculados. Elimine primero los viajes en Gestion de Viajes."
+                    });
                 }
-                else
-                {
-                    string msj = "El paquete que desea eliminar posee viajes vinculados. Elimine primero los viajes en el apartado Gestión de Viajes.";
-                    return RedirectToAction("Index", "Paquete", new { msgerror = msj });
-                }
+
+                PaqueteDataAccess.DeletePaqueteCascade(id);
+                return Json(new { success = true, message = "Paquete eliminado correctamente." });
             }
             catch (Exception e)
             {
-                ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.Delete");
-                string msj = "Error al eliminar paquete. Contacte con el Administrador de Sistema.";
-                return RedirectToAction("Index", "Paquete", new { msgerror = msj });
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.Delete");
+                return Json(new { success = false, message = msg });
             }
         }
 
         public ActionResult Vinculos(Guid id)
         {
-            ViewBag.PaqueteID = id;
-            #region excursiones
-            List<MAT.MVC.Models.PaqueteExcursionCustomModel> lPaqueteExcursion = new List<PaqueteExcursionCustomModel>();
-            DataSet ds = PaqueteExcursionMethod.GetByPaqueteID(id);
-            foreach (DataRow item in ds.Tables[0].Rows)
+            try
             {
-                MAT.MVC.Models.PaqueteExcursionCustomModel o = new PaqueteExcursionCustomModel();
-                o.PaqueteExcursionID = new Guid(item["PaqueteExcursionID"].ToString());
-                o.IsOpcional = Convert.ToBoolean(item["IsOpcional"]);
-                o.Descripcion = item["Descripcion"].ToString();
-
-                lPaqueteExcursion.Add(o);
+                var paquete = PaqueteVinculos.GetPaqueteByID(id.ToString());
+                ViewBag.PaqueteID = id;
+                ViewBag.PaqueteDescripcion = paquete != null ? paquete.Descripcion : "";
+                List<PaqueteViculosModel> vinculosModel = ClassPaqueteVinculos.GetVinculosByPaqueteID(id);
+                return View(vinculosModel);
             }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.Vinculos");
+                return RedirectToAction("Index", "Paquete", new { msgerror = msg });
+            }
+        }
 
-            ViewBag.Excursiones = lPaqueteExcursion;
-            #endregion
-
+        // Contenido de las secciones de vinculos para refresco parcial (AJAX) sin recargar la pagina.
+        public ActionResult VinculosContent(Guid id)
+        {
+            ViewBag.PaqueteID = id;
             List<PaqueteViculosModel> vinculosModel = ClassPaqueteVinculos.GetVinculosByPaqueteID(id);
-            return View(vinculosModel);
+            return PartialView("_PaqueteVinculosSections", vinculosModel);
         }
 
         #region Servicios
-        public ActionResult Servicios(Guid id)
-        {
-            return PartialView(id);
-        }
         public ActionResult RenderGridServicios(string filter, Guid id)
-        {
-            List<MAT.Entities.Servicio> list = ServicioMethod.GetAllEntities();
-            #region Except
-            List<MAT.Entities.Servicio> vinculados = new List<Entities.Servicio>();
-            List<Entities.PaqueteServicio> vinculos = PaqueteDataAccess.GetPaqueteServiciosByPaqueteId(id);
-            foreach (var item in vinculos)
-            {
-                vinculados.Add(MaestrosDataAccess.GetServicioById(item.ServicioId.Value));
-            }
-            list = list.Except(vinculados).ToList();
-            #endregion
-            if (!string.IsNullOrEmpty(filter))
-            {
-                list = list.Where(p => p.Descripcion.ToUpper().Contains(filter.ToUpper())).ToList();
-            }
-            return PartialView(list);
-        }
-        public string VincularServicio(Guid servicioid, Guid paqueteid)
         {
             try
             {
-                Entities.PaqueteServicio paqueteservicio = new PaqueteServicio();
-                paqueteservicio.PaqueteServicioId = Guid.NewGuid();
-                paqueteservicio.PaqueteId = paqueteid;
-                paqueteservicio.ServicioId = servicioid;
-                PaqueteDataAccess.InsertPaqueteServicio(paqueteservicio);
-                return "True";
+                var list = PaqueteDataAccess.GetAvailableServicios(id, filter)
+                    .Select(s => new PaqueteVincularItem { Id = s.ServicioId.ToString(), Descripcion = s.Descripcion })
+                    .ToList();
+                ViewBag.Tipo = "servicio";
+                return PartialView("_GridVincular", list);
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e)
             {
-
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.RenderGridServicios");
+                ViewBag.Tipo = "servicio";
+                return PartialView("_GridVincular", new List<PaqueteVincularItem>());
             }
-            return "False";
         }
-        public string DesvincularServicio(Guid servicioid, Guid paqueteid)
+
+        [HttpPost]
+        public JsonResult VincularServicio(Guid servicioid, Guid paqueteid)
+        {
+            try
+            {
+                Entities.PaqueteServicio paqueteservicio = new PaqueteServicio
+                {
+                    PaqueteServicioId = Guid.NewGuid(),
+                    PaqueteId = paqueteid,
+                    ServicioId = servicioid
+                };
+                PaqueteDataAccess.InsertPaqueteServicio(paqueteservicio);
+                return Json(new { success = true, message = "Servicio vinculado." });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.VincularServicio");
+                return Json(new { success = false, message = msg });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DesvincularServicio(Guid servicioid, Guid paqueteid)
         {
             try
             {
                 bool result = PaqueteDataAccess.DeletePaqueteServicio(servicioid, paqueteid);
-                if (result) return "True";
-                else return "False";
+                return Json(new { success = result, message = result ? "Servicio desvinculado." : "No se pudo desvincular el servicio." });
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e)
             {
-
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.DesvincularServicio");
+                return Json(new { success = false, message = msg });
             }
-            return "False";
         }
         #endregion
 
         #region Excursiones
-        public ActionResult Excursiones(Guid id)
+        public ActionResult RenderGridExcursiones(string filter, Guid id)
         {
-            return PartialView(id);
-        }
-        public ActionResult RenderGridExcursiones(Guid id)
-        {
-            DataSet ds = new DataSet();
-            string json = "";
-            try 
+            try
             {
-                ds = MAT.MVC.Models.ExcursionMethod.GetToAdd(id);
-                json = JsonConvert.SerializeObject(ds, Formatting.Indented);
-                ViewBag.jResult = json;
-                ViewBag.PaqueteID = id;
+                DataSet ds = MAT.MVC.Models.ExcursionMethod.GetToAdd(id);
+                var list = new List<PaqueteVincularItem>();
+                if (ds.Tables.Count > 0)
+                {
+                    foreach (DataRow row in ds.Tables[0].Rows)
+                    {
+                        var descripcion = row["Descripcion"].ToString();
+                        if (!string.IsNullOrEmpty(filter) && descripcion.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0)
+                        {
+                            continue;
+                        }
+                        list.Add(new PaqueteVincularItem
+                        {
+                            Id = row["ExcursionID"].ToString(),
+                            Descripcion = descripcion
+                        });
+                    }
+                }
+                ViewBag.Tipo = "excursion";
+                return PartialView("_GridVincular", list);
             }
             catch (Exception e)
             {
                 ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.RenderGridExcursiones");
+                ViewBag.Tipo = "excursion";
+                return PartialView("_GridVincular", new List<PaqueteVincularItem>());
             }
-            return PartialView();
         }
-        public string VincularExcursion(Guid excursionid, Guid paqueteid, bool IsOpcional)
+
+        [HttpPost]
+        public JsonResult VincularExcursion(Guid excursionid, Guid paqueteid, bool IsOpcional)
         {
             try
             {
-                Entities.PaqueteExcursion paqueteexcursion = new PaqueteExcursion();
-                paqueteexcursion.PaqueteId = paqueteid;
-                MAT.MVC.Models.PaqueteExcursionCustomModel o = new MAT.MVC.Models.PaqueteExcursionCustomModel();
-                o.ExcursionID = excursionid;
-                o.PaqueteID = paqueteid;
-                o.IsOpcional = IsOpcional;
-
+                var o = new MAT.MVC.Models.PaqueteExcursionCustomModel
+                {
+                    ExcursionID = excursionid,
+                    PaqueteID = paqueteid,
+                    IsOpcional = IsOpcional
+                };
                 MAT.MVC.Models.PaqueteExcursionMethod.InsertNew(o);
-
-                return "True";
+                return Json(new { success = true, message = "Excursion vinculada." });
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e)
             {
-
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.VincularExcursion");
+                return Json(new { success = false, message = msg });
             }
-            return "False";
         }
-        public string DesvincularExcursion(Guid PaqueteExcursionID)
+
+        [HttpPost]
+        public JsonResult DesvincularExcursion(Guid PaqueteExcursionID)
         {
             try
             {
                 MAT.MVC.Models.PaqueteExcursionMethod.Delete(PaqueteExcursionID);
-                
-               return "True";
+                return Json(new { success = true, message = "Excursion desvinculada." });
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e)
             {
-
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.DesvincularExcursion");
+                return Json(new { success = false, message = msg });
             }
-            return "False";
         }
         #endregion
 
         #region Precios
-        public ActionResult Precios(Guid id)
-        {
-            return PartialView(id);
-        }
         public ActionResult RenderGridPrecios(string filter, Guid id)
-        {
-            List<MAT.Entities.Precio> list = PaqueteDataAccess.GetAllPrecios();
-            #region Except
-            List<MAT.Entities.Precio> vinculados = new List<Entities.Precio>();
-            List<Entities.PaquetePrecio> vinculos = PaqueteDataAccess.GetPaquetePreciosByPaqueteId(id);
-            foreach (var item in vinculos)
-            {
-                vinculados.Add(PaqueteDataAccess.GetPrecioById(item.PrecioId.Value));
-            }
-            list = list.Except(vinculados).ToList();
-            #endregion
-            if (!string.IsNullOrEmpty(filter))
-            {
-                list = list.Where(p => p.Descripcion.ToUpper().Contains(filter.ToUpper())).ToList();
-            }
-            return PartialView(list);
-        }
-
-        public string VincularPrecio(Guid precioid, Guid paqueteid)
         {
             try
             {
-                Entities.PaquetePrecio paqueteprecio = new Entities.PaquetePrecio();
-                paqueteprecio.PaquetePrecioId = Guid.NewGuid();
-                paqueteprecio.PaqueteId = paqueteid;
-                paqueteprecio.PrecioId = precioid;
-                PaqueteDataAccess.InsertPaquetePrecio(paqueteprecio);
-                return "True";
+                var list = PaqueteDataAccess.GetAvailablePrecios(id, filter)
+                    .Select(p => new PaqueteVincularItem { Id = p.PrecioId.ToString(), Descripcion = p.Descripcion })
+                    .ToList();
+                ViewBag.Tipo = "precio";
+                return PartialView("_GridVincular", list);
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e)
             {
-
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.RenderGridPrecios");
+                ViewBag.Tipo = "precio";
+                return PartialView("_GridVincular", new List<PaqueteVincularItem>());
             }
-            return "False";
         }
-        public string DesvincularPrecio(Guid precioid, Guid paqueteid)
+
+        [HttpPost]
+        public JsonResult VincularPrecio(Guid precioid, Guid paqueteid)
+        {
+            try
+            {
+                Entities.PaquetePrecio paqueteprecio = new Entities.PaquetePrecio
+                {
+                    PaquetePrecioId = Guid.NewGuid(),
+                    PaqueteId = paqueteid,
+                    PrecioId = precioid
+                };
+                PaqueteDataAccess.InsertPaquetePrecio(paqueteprecio);
+                return Json(new { success = true, message = "Precio vinculado." });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.VincularPrecio");
+                return Json(new { success = false, message = msg });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DesvincularPrecio(Guid precioid, Guid paqueteid)
         {
             try
             {
                 bool result = PaqueteDataAccess.DeletePaquetePrecio(precioid, paqueteid);
-                if (result) return "True";
-                else return "False";
+                return Json(new { success = result, message = result ? "Precio desvinculado." : "No se pudo desvincular el precio." });
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e)
             {
-
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.DesvincularPrecio");
+                return Json(new { success = false, message = msg });
             }
-            return "False";
         }
         #endregion
 
         #region Adicionales
-        public ActionResult Adicionales(Guid id)
-        {
-            return PartialView(id);
-        }
         public ActionResult RenderGridAdicionales(string filter, Guid id)
-        {
-            List<MAT.Entities.Adicional> list = MaestrosDataAccess.GetAllAdicionales();
-            #region Except
-            List<MAT.Entities.Adicional> vinculados = new List<Entities.Adicional>();
-            List<Entities.PaqueteAdicional> vinculos = PaqueteDataAccess.GetPaqueteAdicionalesByPaqueteId(id);
-            foreach (var item in vinculos)
-            {
-                vinculados.Add(MaestrosDataAccess.GetAdicionalById(item.AdicionalId.Value));
-            }
-            list = list.Except(vinculados).ToList();
-            #endregion
-            if (!string.IsNullOrEmpty(filter))
-            {
-                list = list.Where(p => p.Descripcion.ToUpper().Contains(filter.ToUpper())).ToList();
-            }
-            return PartialView(list);
-        }
-
-        public string VincularAdicional(Guid adicionalid, Guid paqueteid)
         {
             try
             {
-                Entities.PaqueteAdicional paqueteadicional = new PaqueteAdicional();
-                paqueteadicional.PaqueteAdicionalId = Guid.NewGuid();
-                paqueteadicional.PaqueteId = paqueteid;
-                paqueteadicional.AdicionalId = adicionalid;
-                PaqueteDataAccess.InsertPaqueteAdicional(paqueteadicional);
-                return "True";
+                var list = PaqueteDataAccess.GetAvailableAdicionales(id, filter)
+                    .Select(a => new PaqueteVincularItem { Id = a.AdicionalId.ToString(), Descripcion = a.Descripcion })
+                    .ToList();
+                ViewBag.Tipo = "adicional";
+                return PartialView("_GridVincular", list);
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e)
             {
-
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.RenderGridAdicionales");
+                ViewBag.Tipo = "adicional";
+                return PartialView("_GridVincular", new List<PaqueteVincularItem>());
             }
-            return "False";
         }
-        public string DesvincularAdicional(Guid adicionalid, Guid paqueteid)
+
+        [HttpPost]
+        public JsonResult VincularAdicional(Guid adicionalid, Guid paqueteid)
+        {
+            try
+            {
+                Entities.PaqueteAdicional paqueteadicional = new PaqueteAdicional
+                {
+                    PaqueteAdicionalId = Guid.NewGuid(),
+                    PaqueteId = paqueteid,
+                    AdicionalId = adicionalid
+                };
+                PaqueteDataAccess.InsertPaqueteAdicional(paqueteadicional);
+                return Json(new { success = true, message = "Adicional vinculado." });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.VincularAdicional");
+                return Json(new { success = false, message = msg });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DesvincularAdicional(Guid adicionalid, Guid paqueteid)
         {
             try
             {
                 bool result = PaqueteDataAccess.DeletePaqueteAdicional(adicionalid, paqueteid);
-                if (result) return "True";
-                else return "False";
+                return Json(new { success = result, message = result ? "Adicional desvinculado." : "No se pudo desvincular el adicional." });
             }
-#pragma warning disable CS0168 // Variable is declared but never used
-            catch (Exception ex)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch (Exception e)
             {
-
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteController.DesvincularAdicional");
+                return Json(new { success = false, message = msg });
             }
-            return "False";
         }
         #endregion
-
-
     }
 }

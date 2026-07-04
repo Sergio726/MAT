@@ -71,9 +71,9 @@ No lo encarés todavía, seguí con el orden actual del SPEC.
 - Si un task quedó bloqueado: estado ⚠️ bloqueado + motivo en PROGRESS.md
 - El siguiente agente arranca siempre desde el primer [ ] en SPEC.md
 
-### Épica reciente completada (2026-07-01)
+### Épica reciente completada (2026-07-03)
 
-**Normalización Localidad L1–L12:** ver `DOCUMENTACION/LOCALIDAD_NORMALIZACION_PLAN.md`. Siguiente épica sugerida: NetTiers F4 (Paquete).
+**Migración NetTiers F0–F7:** entidades de personas, clientes, vendedores, proveedores, pasajeros y cuenta corriente migradas a SPs + `*DataAccess` (ver `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md` y PROGRESS.md). Siguiente épica sugerida: **NetTiers F8** (Planilla e historial). Deuda operativa: publicar SPs de F4–F7 en el entorno + smoke crítico y commit por fase (delegado a humano).
 
 ---
 

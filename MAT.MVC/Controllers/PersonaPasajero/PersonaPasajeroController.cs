@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
 using MAT.Enums;
 using MAT.MVC.Models;
 
@@ -17,8 +16,7 @@ namespace MAT.MVC.Controllers.PersonaPasajero
 
         public ActionResult Index()
         {
-            PersonaPasajeroService srv = new PersonaPasajeroService();
-            IList<MAT.Entities.PersonaPasajero> LPersonaPasajero = srv.GetAll();
+            IList<MAT.Entities.PersonaPasajero> LPersonaPasajero = Infrastructure.Data.PersonaPasajeroDataAccess.GetAll();
             return View(LPersonaPasajero);
             
         }
@@ -31,13 +29,7 @@ namespace MAT.MVC.Controllers.PersonaPasajero
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
-            #region Servicios y Entidades
-            PersonaPasajeroService SPersonaPasajero = new PersonaPasajeroService();
-            PersonaService SPersona = new PersonaService();
-            PasajeroService SPasajero = new PasajeroService();
-            ClienteService SCliente = new ClienteService();
-
-            MAT.Entities.PersonaPasajero PersonaPasajero =new MAT.Entities.PersonaPasajero();
+            #region Entidades
             MAT.Entities.Persona Persona = new MAT.Entities.Persona();
             MAT.Entities.Pasajero Pasajero = new MAT.Entities.Pasajero();
             MAT.Entities.Cliente Cliente = new Entities.Cliente();
@@ -59,7 +51,7 @@ namespace MAT.MVC.Controllers.PersonaPasajero
 
             Persona.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
 
-            SPersona.Insert(Persona);
+            Infrastructure.Data.PersonaDataAccess.Insert(Persona);
             #endregion
 
             #region Agregar Pasajero
@@ -69,7 +61,7 @@ namespace MAT.MVC.Controllers.PersonaPasajero
             if (!String.IsNullOrEmpty(collection.Get("EmisionPasaporte"))) Pasajero.EmisionPasaporte = Convert.ToDateTime( collection.Get("EmisionPasaporte").ToString());
             if(!String.IsNullOrEmpty(collection.Get("PaisOrigen"))) Pasajero.PaisOrigen = collection.Get("PaisOrigen").ToString();
 
-            SPasajero.Save(Pasajero);
+            Infrastructure.Data.PasajeroDataAccess.Insert(Pasajero);
             #endregion
 
             #region Agregar Cliente
@@ -81,16 +73,15 @@ namespace MAT.MVC.Controllers.PersonaPasajero
                 Cliente.FormaPago = (int)eFormaPago.Contado;
                 Cliente.TipoId = (int)eTipoCliente.Minorista;
                 Cliente.CondicionIva = (int)eCondicionIVA.Consumidor_Final;
-                SCliente.Insert(Cliente);
+                Infrastructure.Data.ClienteDataAccess.Insert(Cliente);
             }
             #endregion
 
             #region CuentaCorriente
-            CuentaService SCuenta = new CuentaService();
             MAT.Entities.Cuenta ECuenta = new MAT.Entities.Cuenta();
             ECuenta.ClienteId = Persona.PersonaId;
            // ECuenta.Estado = true;
-            SCuenta.Insert(ECuenta);
+            Infrastructure.Data.CuentaDataAccess.Insert(ECuenta);
             #endregion
 
             return RedirectToAction("Index", "PersonaPasajero");
@@ -99,14 +90,10 @@ namespace MAT.MVC.Controllers.PersonaPasajero
 
         public ActionResult Edit(Guid Id)
         {
-            #region Servicios y Entidades
-            PersonaPasajeroService SPersonaPasajero = new PersonaPasajeroService();
-            PersonaService SPersona = new PersonaService();
-            PasajeroService SPasajero = new PasajeroService();
-
+            #region Entidades
             MAT.Entities.PersonaPasajero PersonaPasajero = new MAT.Entities.PersonaPasajero();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Pasajero Pasajero = SPasajero.Get(new PasajeroKey(Id));
+            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
+            MAT.Entities.Pasajero Pasajero = Infrastructure.Data.PasajeroDataAccess.GetById(Id);
             #endregion
 
             #region Actualizar PersonaPasajero
@@ -132,14 +119,10 @@ namespace MAT.MVC.Controllers.PersonaPasajero
         [HttpPost]
         public ActionResult Edit(Guid Id, FormCollection collection)
         {
-            #region Servicios y Entidades
-            PersonaPasajeroService SPersonaPasajero = new PersonaPasajeroService();
-            PersonaService SPersona = new PersonaService();
-            PasajeroService SPasajero = new PasajeroService();
-
+            #region Entidades
             MAT.Entities.PersonaPasajero PersonaPasajero = new MAT.Entities.PersonaPasajero();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Pasajero Pasajero = SPasajero.Get(new PasajeroKey(Id));
+            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
+            MAT.Entities.Pasajero Pasajero = Infrastructure.Data.PasajeroDataAccess.GetById(Id);
             #endregion
 
             try
@@ -160,7 +143,7 @@ namespace MAT.MVC.Controllers.PersonaPasajero
                 }
 
                 Persona.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
-                SPersona.Update(Persona);
+                Infrastructure.Data.PersonaDataAccess.Update(Persona);
                 #endregion
 
                 #region Agregar Pasajero
@@ -183,7 +166,7 @@ namespace MAT.MVC.Controllers.PersonaPasajero
                 
                 Pasajero.PaisOrigen = collection.Get("PaisOrigen").ToString();
 
-                SPasajero.Update(Pasajero);
+                Infrastructure.Data.PasajeroDataAccess.Update(Pasajero);
                 #endregion
 
                 #region Actualizar PersonaPasajero
@@ -214,14 +197,10 @@ namespace MAT.MVC.Controllers.PersonaPasajero
 
         public ActionResult Details(Guid Id)
         {
-            #region Servicios y Entidades
-            PersonaPasajeroService SPersonaPasajero = new PersonaPasajeroService();
-            PersonaService SPersona = new PersonaService();
-            PasajeroService SPasajero = new PasajeroService();
-
+            #region Entidades
             MAT.Entities.PersonaPasajero PersonaPasajero = new MAT.Entities.PersonaPasajero();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Pasajero Pasajero = SPasajero.Get(new PasajeroKey(Id));
+            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
+            MAT.Entities.Pasajero Pasajero = Infrastructure.Data.PasajeroDataAccess.GetById(Id);
             #endregion
 
             #region Actualizar PersonaPasajero
@@ -248,16 +227,8 @@ namespace MAT.MVC.Controllers.PersonaPasajero
 
         public ActionResult Delete(Guid Id)
         {
-            #region Servicios y Entidades
-            
-            PersonaService SPersona = new PersonaService();
-            PasajeroService SPasajero = new PasajeroService();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Pasajero Pasajero = SPasajero.Get(new PasajeroKey(Id));
-            #endregion
-
-            SPasajero.Delete(Pasajero);
-            SPersona.Delete(Persona);
+            Infrastructure.Data.PasajeroDataAccess.Delete(Id);
+            Infrastructure.Data.PersonaDataAccess.Delete(Id);
             
             return RedirectToAction("Index", "PersonaPasajero");
         }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
 using MAT.Utilities;
 
 namespace MAT.MVC.Controllers.PersonaProveedor
@@ -16,8 +15,7 @@ namespace MAT.MVC.Controllers.PersonaProveedor
 
         public ActionResult Index()
         {
-            PersonaProveedorService SPersonaProv = new PersonaProveedorService();
-            IList<MAT.Entities.PersonaProveedor> PersonaProv = SPersonaProv.GetAll();
+            IList<MAT.Entities.PersonaProveedor> PersonaProv = Infrastructure.Data.PersonaProveedorDataAccess.GetAll();
             return View(PersonaProv);
             
         }
@@ -31,12 +29,7 @@ namespace MAT.MVC.Controllers.PersonaProveedor
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
-            #region Entidades y Servicios
-            PersonaProveedorService SPersonaProv = new PersonaProveedorService();
-            PersonaService SPersona = new PersonaService();
-            ProveedorService SProv = new ProveedorService();
-
-            MAT.Entities.PersonaProveedor PersonaProv = new MAT.Entities.PersonaProveedor();
+            #region Entidades
             MAT.Entities.Persona Persona = new MAT.Entities.Persona();
             MAT.Entities.Proveedor Prov = new MAT.Entities.Proveedor();
 
@@ -58,7 +51,7 @@ namespace MAT.MVC.Controllers.PersonaProveedor
 
             Persona.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
 
-            SPersona.Insert(Persona);
+            Infrastructure.Data.PersonaDataAccess.Insert(Persona);
             #endregion
 
             #region Agregar Proveedor
@@ -73,7 +66,7 @@ namespace MAT.MVC.Controllers.PersonaProveedor
             if (!string.IsNullOrEmpty(collection.Get("CondicionIva"))) Prov.CondicionIva = Convert.ToInt16(collection.Get("CondicionIva"));
             if (!string.IsNullOrEmpty(collection.Get("Cuit"))) Prov.Cuit = collection.Get("Cuit").ToString();
             if (!string.IsNullOrEmpty(collection.Get("FormaPago"))) Prov.FormaPago = Convert.ToInt16(collection.Get("FormaPago").ToString());
-            SProv.Save(Prov);
+            Infrastructure.Data.ProveedorDataAccess.Insert(Prov);
             #endregion
 
             return RedirectToAction("Index", "PersonaProveedor");
@@ -81,14 +74,10 @@ namespace MAT.MVC.Controllers.PersonaProveedor
 
         public ActionResult Edit(Guid Id)
         {
-            #region Entidades y Servicios
-            PersonaProveedorService SPersonaProv = new PersonaProveedorService();
-            PersonaService SPersona = new PersonaService();
-            ProveedorService SProv = new ProveedorService();
-
+            #region Entidades
             MAT.Entities.PersonaProveedor PersonaProv = new MAT.Entities.PersonaProveedor();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Proveedor Prov = SProv.Get(new ProveedorKey(Id));
+            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
+            MAT.Entities.Proveedor Prov = Infrastructure.Data.ProveedorDataAccess.GetById(Id);
 
             #endregion
             /* Debo actualizar la entidad PersonaProveedor ya que esta no pertenece a la 
@@ -123,14 +112,9 @@ namespace MAT.MVC.Controllers.PersonaProveedor
         [HttpPost]
         public ActionResult Edit(Guid Id, FormCollection collection)
         {
-            #region Entidades y Servicios
-            PersonaProveedorService SPersonaProv = new PersonaProveedorService();
-            PersonaService SPersona = new PersonaService();
-            ProveedorService SProv = new ProveedorService();
-
-            MAT.Entities.PersonaProveedor PersonaProv = new MAT.Entities.PersonaProveedor();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Proveedor Prov = SProv.Get(new ProveedorKey(Id));
+            #region Entidades
+            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
+            MAT.Entities.Proveedor Prov = Infrastructure.Data.ProveedorDataAccess.GetById(Id);
 
             #endregion
             /* Debo actualizar la entidad PersonaProveedor ya que esta no pertenece a la 
@@ -138,7 +122,7 @@ namespace MAT.MVC.Controllers.PersonaProveedor
 
             #region Actualizar Persona
             Helper.FillEntity<MAT.Entities.Persona>(ref Persona, collection);
-            SPersona.Update(Persona);
+            Infrastructure.Data.PersonaDataAccess.Update(Persona);
             #endregion
 
             #region Actualizar Proveedor
@@ -153,7 +137,7 @@ namespace MAT.MVC.Controllers.PersonaProveedor
             if (!string.IsNullOrEmpty(collection.Get("Cuit"))) Prov.Cuit = collection.Get("Cuit").ToString();
             if (!string.IsNullOrEmpty(collection.Get("FormaPago"))) Prov.FormaPago = Convert.ToInt16(collection.Get("FormaPago"));
 
-            SProv.Update(Prov);
+            Infrastructure.Data.ProveedorDataAccess.Update(Prov);
 
             #endregion
 
@@ -163,14 +147,10 @@ namespace MAT.MVC.Controllers.PersonaProveedor
         
         public ActionResult Details(Guid Id)
         {
-            #region Entidades y Servicios
-            PersonaProveedorService SPersonaProv = new PersonaProveedorService();
-            PersonaService SPersona = new PersonaService();
-            ProveedorService SProv = new ProveedorService();
-
+            #region Entidades
             MAT.Entities.PersonaProveedor PersonaProv = new MAT.Entities.PersonaProveedor();
-            MAT.Entities.Persona Persona = SPersona.Get(new PersonaKey(Id));
-            MAT.Entities.Proveedor Prov = SProv.Get(new ProveedorKey(Id));
+            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
+            MAT.Entities.Proveedor Prov = Infrastructure.Data.ProveedorDataAccess.GetById(Id);
 
             #endregion
             
@@ -203,17 +183,9 @@ namespace MAT.MVC.Controllers.PersonaProveedor
         }
 
         public ActionResult Delete(Guid Id)
-        { 
-            #region Servicios
-            PersonaProveedorService SPersonaProv = new PersonaProveedorService();
-            PersonaService SPersona = new PersonaService();
-            ProveedorService SProv = new ProveedorService();
-                        
-
-            #endregion
-
-            SProv.Delete(Id);
-            SPersona.Delete(Id);
+        {
+            Infrastructure.Data.ProveedorDataAccess.Delete(Id);
+            Infrastructure.Data.PersonaDataAccess.Delete(Id);
 
             return RedirectToAction("Index", "PersonaProveedor");
         }

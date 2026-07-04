@@ -9,15 +9,12 @@ namespace MAT.MVC.Models
 {
     public class PasajeroHistorialModel
     {
-        private PasajeroService pasajeroService;
-
         public Pasajero Pasajero { get; set; }
         public List<PasajeModel> HistorialPasajes { get; set; }
 
         public PasajeroHistorialModel(Guid pasajeroid)
         {
-            pasajeroService = new PasajeroService();
-            Pasajero = pasajeroService.GetByPasajeroId(pasajeroid);
+            Pasajero = MVC.Infrastructure.Data.PasajeroDataAccess.GetById(pasajeroid);
             List<Pasaje> _pasajes = MVC.Infrastructure.Data.PasajeDataAccess.GetByPasajeroId(pasajeroid);
             List<PasajeModel> _pmodel = new List<PasajeModel>();
             foreach (Pasaje pasaje in _pasajes)

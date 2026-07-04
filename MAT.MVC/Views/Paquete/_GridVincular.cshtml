@@ -1,0 +1,54 @@
+@model IEnumerable<MAT.MVC.Models.PaqueteVincularItem>
+@{
+    string tipo = ViewBag.Tipo as string ?? "";
+    bool esExcursion = tipo == "excursion";
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="modern-alert-error">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>@ViewBag.Error</span>
+    </div>
+}
+
+@if (Model != null && Model.Any())
+{
+    <table class="grid-modal-table">
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th style="width: @(esExcursion ? "170px" : "60px");"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Descripcion</td>
+                    <td>
+                        <div class="pq-grid-actions">
+                            @if (esExcursion)
+                            {
+                                <label class="optional-check" title="Marcar como opcional">
+                                    <input type="checkbox" name="IsOpcional" />
+                                    Opcional
+                                </label>
+                            }
+                            <a href="#" class="btn-vincular-item btn-link-modern" data-id="@item.Id" title="Vincular">
+                                <i class="bi bi-plus-lg"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <p>No hay elementos disponibles para vincular.</p>
+    </div>
+}

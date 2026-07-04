@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
 
 namespace MAT.MVC.Controllers.Persona
 {
@@ -15,31 +14,27 @@ namespace MAT.MVC.Controllers.Persona
 
         public ActionResult Index()
         {
-            PersonaService srv = new PersonaService();
-            IList<MAT.Entities.Persona> personas = srv.GetAll();
+            IList<MAT.Entities.Persona> personas = Infrastructure.Data.PersonaDataAccess.GetAll();
             return View(personas);
         }
 
         public ActionResult Details(Guid id)
         {
-            PersonaService srv = new PersonaService();
-            MAT.Entities.Persona persona = srv.Get(new PersonaKey(id));
+            MAT.Entities.Persona persona = Infrastructure.Data.PersonaDataAccess.GetById(id);
             return View(persona);
         }
 
         //GET Method
         public ActionResult Edit(Guid id)
         {
-            PersonaService srv = new PersonaService();
-            MAT.Entities.Persona persona = srv.Get(new PersonaKey(id));
+            MAT.Entities.Persona persona = Infrastructure.Data.PersonaDataAccess.GetById(id);
             return View(persona);
         }
 
         [HttpPost]
         public ActionResult Edit(MAT.Entities.Persona persona)
         {
-            PersonaService srv = new PersonaService();
-            srv.Update(persona);
+            Infrastructure.Data.PersonaDataAccess.Update(persona);
             return View(persona);
         }
 
@@ -52,15 +47,13 @@ namespace MAT.MVC.Controllers.Persona
         [HttpPost]
         public ActionResult Create(MAT.Entities.Persona persona)
         {
-            PersonaService srv = new PersonaService();
-            srv.Insert(persona);
+            Infrastructure.Data.PersonaDataAccess.Insert(persona);
             return RedirectToAction("Index", "Persona");
         }
 
         public ActionResult Delete(Guid id)
         {
-            PersonaService srv = new PersonaService();
-            srv.Delete(id);
+            Infrastructure.Data.PersonaDataAccess.Delete(id);
             return RedirectToAction("Index", "Persona");
         }
     }
