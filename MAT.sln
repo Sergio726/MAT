@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Enums", "MAT.Enums\MAT.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Utilities", "MAT.Utilities\MAT.Utilities.csproj", "{C1509FB9-12AE-4060-AE47-3E3216012ECB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAT.Integration.Tests", "MAT.Integration.Tests\MAT.Integration.Tests.csproj", "{A8B3C4D5-E6F7-4890-A1B2-C3D4E5F60718}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{628C1765-FCAA-43EC-8C77-CA97FAB4C3F8}"
 	ProjectSection(SolutionItems) = preProject
 		References\Antlr3.Runtime.dll = References\Antlr3.Runtime.dll
@@ -97,6 +99,12 @@ Global
 		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.GenerateDebug|Any CPU.Build.0 = GenerateDebug|Any CPU
 		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1509FB9-12AE-4060-AE47-3E3216012ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8B3C4D5-E6F7-4890-A1B2-C3D4E5F60718}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8B3C4D5-E6F7-4890-A1B2-C3D4E5F60718}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8B3C4D5-E6F7-4890-A1B2-C3D4E5F60718}.GenerateDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8B3C4D5-E6F7-4890-A1B2-C3D4E5F60718}.GenerateDebug|Any CPU.Build.0 = Debug|Any CPU
+		{A8B3C4D5-E6F7-4890-A1B2-C3D4E5F60718}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8B3C4D5-E6F7-4890-A1B2-C3D4E5F60718}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C69A8453-365A-4564-9C32-3C24C2C9AC3B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU

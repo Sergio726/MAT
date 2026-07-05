@@ -45,6 +45,13 @@ MAT.sln
 # Compilar solo MAT.MVC
 "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" MAT.MVC\MAT.MVC.csproj /t:Build /p:Configuration=Debug
 
+# Tests unitarios + verificación post-NetTiers (sin BD)
+.\tools\Run-Tests.ps1
+
+# Tests con integración SQL (definir MAT_TEST_CONNECTION_STRING antes)
+$env:MAT_TEST_CONNECTION_STRING = "Data Source=...;Initial Catalog=MAT.Intranet;Integrated Security=True;"
+.\tools\Run-Tests.ps1 -Integration
+
 # Levantar localmente
 # Abrir MAT.sln en Visual Studio 2022, proyecto de inicio MAT.MVC, correr con IIS Express
 ```

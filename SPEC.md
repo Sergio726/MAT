@@ -901,6 +901,11 @@
     Criterio: épica cerrada; `PROGRESS.md` con resumen por fase.
     **Implementación 2026-07-05:** Hotfix B1–B3 (`ErrorUtil` en catch, `AlertMessage` XSS, `Guid.TryParse`); perf B4–B5 (`usp_MAT_Viaje_GetSelectList`, `usp_MAT_ReservaHabitacion_CountByHabitacionAndViaje`); barrido sin `nettiers.com` en proyectos activos; carpetas legado ya ausentes de solución; docs actualizadas.
 
+  - [x] **Testing post-NetTiers (opción B): unit + integración SQL + script local**
+    Ampliar `MAT.MVC.Tests` (`HelperTests`, `MigrationContractTests`); crear `MAT.Integration.Tests` con gate `MAT_TEST_CONNECTION_STRING`; `tools/Run-Tests.ps1` + `DOCUMENTACION/TESTING.md`.
+    Criterio: `.\tools\Run-Tests.ps1` verde sin BD; integración opcional con connection string y SPs F9/F12 desplegados.
+    **Implementación 2026-07-05:** Proyecto `MAT.Integration.Tests`; script unificado; verify script trata `usp_MAT_Viaje_CancelViaje` como deuda (WARN).
+
   **Orden recomendado:** F0 → F1 → F2 → F3 → F4 → F5 → F6 → F7 → F8 → F9 → F10 → F11 → F12. **F6 y F7** son las de mayor riesgo; no saltar fases de catálogo sin smoke test.
 
 - [x] **Arquitectura [P3 — Baja]: Retirar proyecto `MAT.Web` (legado Web Forms / NetTiers)** *(NetTiers F1b — carpeta conservada; fuera de solución y Web.config)*

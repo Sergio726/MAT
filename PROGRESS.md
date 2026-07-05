@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-07-05] — Testing post-NetTiers (opción B)
+- **Archivos modificados/creados:** `MAT.MVC.Tests/Utilities/HelperTests.cs`, `MAT.MVC.Tests/Contract/MigrationContractTests.cs`, `MAT.Integration.Tests/*`, `tools/Run-Tests.ps1`, `tools/Verify-NetTiersMigration.ps1` (deuda `CancelViaje` → WARN), `DOCUMENTACION/TESTING.md`, `MAT.sln`, `CLAUDE.md`, `SPEC.md`.
+- **Qué se implementó:** Tests unitarios ampliados (`Helper`, contrato migración); proyecto integración SQL con gate `MAT_TEST_CONNECTION_STRING`; script unificado build + verify + vstest; documentación de ejecución local/CI.
+- **Problemas encontrados:** `usp_MAT_Viaje_CancelViaje` sigue ausente en MAT.DB (deuda previa, documentada como WARN).
+- **Estado:** ✅ completo
+- **Verificación:** `.\tools\Run-Tests.ps1` (unit + verify); integración con `-Integration` requiere BD + SPs F9/F12 desplegados.
+
+---
+
 ### [2026-07-05] — NetTiers F11 + F12: POCOs + cierre épica
 - **F11:** 59 entidades convertidas de `*Base.generated.cs` a POCOs manuales; eliminada infra NetTiers en `MAT.Entities` (`TList`, `EntityFactory`, `EntityBaseCore`, `Validation/`, interfaces `I*`, `EntityManager`, `EntityHelper`); scripts `tools/F11-EntityInventory.ps1`, `F11-ConvertToPoco.ps1`, `F11-CleanEntitiesProject.ps1`, `F11-RewriteEntitiesCsproj.ps1`; inventario `DOCUMENTACION/F11_ENTITY_INVENTORY.csv`.
 - **F12:** Hotfix B1–B3 (`ErrorUtil` en 13 archivos, `AlertMessage` XSS, `Guid.TryParse` en `ToSelectItem`); perf B4–B5 (`usp_MAT_Viaje_GetSelectList`, `usp_MAT_ReservaHabitacion_CountByHabitacionAndViaje` + `LookupDataAccess`); docs `SPEC.md`, `NETTIERS_MIGRACION_FASES.md`; épica NetTiers marcada completa.
