@@ -1058,6 +1058,35 @@
 
 ---
 
+#### Datos / deuda técnica — tabla `Cuenta`
+
+**Contexto:** Existe la tabla `dbo.Cuenta` en `MAT.DB` (relacionada con `MovimientoCuenta`, FK desde cliente). Hay filas en BD pero sospecha de que el flujo activo ya no la usa o la usa de forma residual. **No confundir** con `CuentaCorriente` / módulo `CuentaCorrienteController` ni con `Admin/MiCuenta` (contraseña del usuario logueado).
+
+- [ ] **Investigación [P2]: Uso real de la tabla `Cuenta`**
+  **Objetivo:** Confirmar si `Cuenta` sigue siendo parte del modelo operativo o es legado con datos huérfanos.
+  **Alcance de la investigación:**
+  1. Inventario en código activo (`MAT.MVC`, `MAT.Utilities`, `MAT.DB`): referencias a entidad `Cuenta`, `CuentaDataAccess`, SPs `usp_MAT_Cuenta_*`, inserts/updates desde controllers (p. ej. alta de pasajero).
+  2. Comparar con tablas relacionadas (`MovimientoCuenta`, `CuentaCorriente`) y documentar qué módulo de negocio cubre hoy la cuenta corriente del cliente.
+  3. Consultas en BD de dev: conteo de filas, última fecha de movimiento asociado, clientes con `Cuenta` sin uso en pantallas actuales.
+  4. Conclusión documentada en `PROGRESS.md` / nota en `DOCUMENTACION`: **mantener**, **migrar datos**, **deprecar** (solo lectura) o **eliminar** (con plan de schema).
+  **Criterio de éxito:** Informe breve con mapa código ↔ BD ↔ UI; recomendación explícita acordada con negocio antes de cualquier cambio de schema; sin modificar tablas en esta fase salvo que el humano apruebe el plan posterior.
+
+#### Admin — Actualización UX/UI del panel administrador
+
+**Contexto:** Varios tasks de modernización Admin están marcados `[x]` (tokens CSS, cards, tablas, reportes). Quedan vistas o flujos con look legacy, inconsistencias visuales o deuda post-dashboard principal (`modern-*` en Home vs panel Admin).
+
+- [ ] **Admin UI [P2]: Actualizar interfaz UX/UI del panel administrador**
+  **Objetivo:** Segunda pasada de modernización del panel Admin para alinear todas las pantallas administrativas con el sistema visual actual (`admin.modern.css`, `_LayoutAdmin`, `_AdminTopbar`, `_AdminNav`, componentes `modern-*`).
+  **Alcance sugerido (priorizar según impacto):**
+  1. Auditoría de vistas bajo `Views/Admin/` y módulos enlazados desde el sidebar (Usuarios, SistemaParametros, ErrorLog, Logs, Reportes, MiCuenta, onboarding) — listar las que aún mezclan estilos legacy, jQuery UI o variables CSS antiguas.
+  2. Unificar tipografía, espaciado, cards, botones y tablas en las vistas pendientes; eliminar CSS inline duplicado donde exista token equivalente.
+  3. Coherencia mobile/offcanvas y feedback (spinners, toasts, estados vacíos) en pantallas no tocadas en la primera ola.
+  4. Smoke visual de las pantallas Admin principales tras los cambios.
+  **Archivos probables:** `Content/admin.modern.css`, `Views/Admin/*.cshtml`, `Views/Shared/_LayoutAdmin.cshtml`, `_AdminTopbar.cshtml`, `_AdminNav.cshtml`, vistas Reportes Admin si aplica.
+  **Criterio de éxito:** Panel Admin visualmente coherente entre todas las entradas del menú; sin regresiones en reportes ni auth; MSBuild limpio; capturas o checklist en `PROGRESS.md`.
+
+---
+
 - MSBuild sobre `MAT.MVC` debe pasar limpio al finalizar cada task
 - Todo cambio de schema SQL debe reflejarse en `MAT.DB` (SSDT)
 - No agregar paquetes NuGet sin consultar al humano
