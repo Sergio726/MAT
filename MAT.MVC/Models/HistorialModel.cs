@@ -13,8 +13,7 @@ namespace MAT.MVC.Models
 
         public HistorialModel(Guid id)
         {
-            Services.HistorialService registroServices = new Services.HistorialService();
-            Registro = registroServices.GetByHistorialId(id);
+            Registro = Infrastructure.Data.HistorialDataAccess.GetByHistorialId(id);
             Cliente = Infrastructure.Data.PersonaClienteDataAccess.GetByPersonaId(Registro.Cliente);
             Vendedor = Infrastructure.Data.PersonaVendedorDataAccess.GetByPersonaId(Registro.Vendedor);
         }

@@ -33,7 +33,7 @@ El lado **ingreso** ya permite agregar por viaje. No hay un único “total ingr
 | Fuente | Tabla / módulo | `ViajeID` | Observaciones |
 |--------|----------------|-----------|---------------|
 | Factura fiscal **compra** | `FacturaFiscal` (Tipo=1) | **No** | Registro contable/fiscal de proveedor; ideal candidato para imputar costo, pero hoy es global. |
-| Planilla de costos | `Planilla` → `PlanillaServicioItem`, `PlanillaHabitacionItem` | **Sí** (`Planilla.ViajeID`) | Sumaba servicios (catálogo) + habitaciones con subtotales. UI de menú Admin **eliminada** (2026-04/06); persisten tablas, `MATContext` en sesión, acciones `EditarPlanilla` / `ImprimirPlanilla*` en `AdminController`. |
+| Planilla de costos | `Planilla` → `PlanillaServicioItem`, `PlanillaHabitacionItem` | **Sí** (`Planilla.ViajeID`) | Sumaba servicios (catálogo) + habitaciones con subtotales. **Retiro total confirmado (NetTiers F8, 2026-07-05):** menú Admin eliminado 2026-04/06; acciones `EditarPlanilla`/`ImprimirPlanilla*` en `AdminController` eliminadas 2026-06-17 (commit `f3c75f9`); campos huérfanos en `MATContext` eliminados en F8. Solo persisten las **tablas** en BD, sin ningún acceso desde `MAT.MVC`. |
 | Catálogo excursión | `Excursion.Costo` | No | Costo de referencia del proveedor, no imputación por viaje. |
 | Catálogo servicio | `Servicio.Precio` | No | Tarifa de venta/referencia; puede no coincidir con costo real negociado por salida. |
 | Paquete / precio venta | `Precio`, `Paquete` | Indirecto | Precio al cliente, no costo operativo. |
@@ -50,10 +50,11 @@ Viaje (1) ──< Planilla (N) ──< PlanillaServicioItem (ServicioID, Cantida
 ```
 
 - `Planilla.Total` almacena total de la planilla.
-- El flujo de **wizard en sesión** (`MATContext.Planilla`, `ServiciosSeleccionados`) estaba acoplado al menú retirado.
-- Las acciones de **impresión/edición** siguen protegidas con `[Authorize]` + admin; no hay entrada de menú para crear planillas nuevas desde cero en el producto actual.
+- **Actualización (NetTiers F8, 2026-07-05):** el retiro es total, no solo del menú. Las acciones `EditarPlanilla`/`ImprimirPlanilla*`/`GridPlanillaServiciosItem*`/`GridPlanillaHotel*` **ya no existen** en `AdminController` (eliminadas 2026-06-17, commit `f3c75f9`, antes de que se ejecutara F8). Los campos estáticos `MATContext.Planilla`/`ColeccionPlanillas`/`ServiciosSeleccionados`/`HabitacionesPlanilla` (no eran de `HttpContext.Session`, sino estáticos de clase — estado compartido a nivel de proceso) estaban huérfanos y se eliminaron en F8. Los servicios NetTiers `PlanillaService`/`PlanillaServicioItemService`/`PlanillaHabitacionItemService` tenían cero callers y no requirieron migración a DBHelper/SP.
+- Nota: la entidad NetTiers `PlanillaServicio` (distinta de `PlanillaServicioItem`) es un artefacto huérfano — no existe tabla `PlanillaServicio` separada; apunta a la misma tabla física `Planilla` (su `PRIMARY KEY` se llama `PK_PlanillaServicio`, rastro de un rename histórico).
+- Solo las **tablas** (`Planilla`, `PlanillaServicioItem`, `PlanillaHabitacionItem`) permanecen en la base de datos, intactas y sin ningún acceso desde el código fuente actual.
 
-**Riesgo:** reactivar planilla “como estaba” reintroduce complejidad de sesión y UI abandonada. **Oportunidad:** reutilizar tablas si el negocio ya tiene datos históricos por viaje.
+**Riesgo:** reactivar planilla “como estaba” reintroduce complejidad de UI abandonada (no de sesión — ese problema ya no aplica tras F8). **Oportunidad:** reutilizar tablas si el negocio ya tiene datos históricos por viaje.
 
 ---
 

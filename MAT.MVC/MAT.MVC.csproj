@@ -331,6 +331,9 @@
     <Compile Include="Infrastructure\Data\ClienteDataAccess.cs" />
     <Compile Include="Infrastructure\Data\CuentaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\FacturaDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\HistorialDataAccess.cs" />
+    <Compile Include="Infrastructure\HistorialPagosLoader.cs" />
+    <Compile Include="Infrastructure\JsonCamelCaseHelper.cs" />
     <Compile Include="Infrastructure\Data\MaestrosDataAccess.cs" />
     <Compile Include="Infrastructure\Data\PagoDataAccess.cs" />
     <Compile Include="Infrastructure\Data\PaqueteDataAccess.cs" />
@@ -851,7 +854,6 @@
     <Content Include="Views\PersonaCliente\EliminarVenta.cshtml" />
     <Content Include="Views\PasajeroViaje\CNRTHojaUno.cshtml" />
     <Content Include="Views\Home\HistorialPagos.cshtml" />
-    <Content Include="Views\Home\RenderGridHistorialPagos.cshtml" />
     <Content Include="Views\Viaje\Hoteles.cshtml" />
     <Content Include="Views\Viaje\HotelesDisponibles.cshtml" />
     <Content Include="Views\Hotel\EsquemaDistribucion.cshtml" />

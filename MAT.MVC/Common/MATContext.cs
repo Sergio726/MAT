@@ -15,10 +15,6 @@ namespace MAT.MVC.Common
     [InitializeSimpleMembership]
     public class MATContext
     {
-        private static Entities.Planilla _planilla;
-        private static List<Entities.Planilla> _coleccionplanillas;
-        private static List<Entities.PlanillaServicioItem> _serviciosseleccionados;
-        private static List<Entities.PlanillaHabitacionItem> _habitacionesplanilla;
         private static ReservaModel _reserva;
         private static RegistroPagoModel _registropago;
         private static RegistroPagoModel _registropagototal;
@@ -57,46 +53,6 @@ namespace MAT.MVC.Common
                 _registropagototal = value;
             }
         }
-
-        public static List<Entities.PlanillaServicioItem>  ServiciosSeleccionados
-        {
-            get
-            {
-                return _serviciosseleccionados;
-            }
-            set
-            {
-                _serviciosseleccionados = value;
-            }
-        }
-
-        public static List<Entities.PlanillaHabitacionItem> HabitacionesPlanilla
-        {
-            get
-            {
-                return _habitacionesplanilla;
-            }
-            set
-            {
-                _habitacionesplanilla = value;
-            }
-        }
-
-
-
-        public static List<Entities.Planilla> ColeccionPlanillas
-        {
-            get { return _coleccionplanillas; }
-            set { _coleccionplanillas = value; }
-        }
-
-
-        public static Entities.Planilla Planilla
-        {
-            get { return _planilla; }
-            set { _planilla = value; }
-        }
-        
 
         public static double Saldo(Guid facturaid)
         {

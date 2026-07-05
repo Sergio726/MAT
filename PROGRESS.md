@@ -1277,3 +1277,25 @@
   - **Redundancia**: coexisten `PersonaClienteDataAccess` (F7) y `PersonaClienteMethod` (`PersonaClienteModel.cs`, SPs preexistentes) — deuda de consolidación pospuesta.
 - Pendiente de despliegue: correr `database/2026-07-03_NetTiers_F7.1_Cleanup_SPs.sql` en el entorno + smoke (perfil, búsqueda rápida de pasajeros, activar/desactivar CC). Deploy BD + smoke + commit delegados a humano.
 - Estado: ✅ MSBuild MAT.sln Debug OK
+
+### [2026-07-05] — NetTiers F8: Planilla e Historial (migrado / retiro declarado)
+
+- Archivos nuevos:
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Historial_GetAll.sql`, `usp_MAT_Historial_GetByHistorialId.sql`
+  - `MAT.MVC/Infrastructure/Data/HistorialDataAccess.cs`
+  - `database/2026-07-05_NetTiers_F8_Historial_SPs.sql`
+- Archivos modificados:
+  - `MAT.MVC/Models/HistorialModel.cs`: `HistorialService.GetByHistorialId` → `HistorialDataAccess.GetByHistorialId`
+  - `MAT.MVC/Controllers/Home/HomeController.cs` (`RenderGridHistorialPagos`): `new Services.HistorialService().GetAll()` → `HistorialDataAccess.GetAll()`
+  - `MAT.MVC/Common/MATContext.cs`: eliminados 4 campos/propiedades estáticas huérfanas (`Planilla`, `ColeccionPlanillas`, `ServiciosSeleccionados`, `HabitacionesPlanilla`) — cero lectores/escritores en todo el repo
+  - `MAT.MVC/MAT.MVC.csproj`, `MAT.DB/MAT.DB.sqlproj`: alta de los archivos nuevos
+  - `SPEC.md` (F8 → `[x]`), `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md`, `DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`
+- Qué se implementó:
+  - **Historial migrado a DBHelper/SP** (único uso real de NetTiers en el dominio F8; solo lectura, sin cambio de comportamiento).
+  - **Planilla: retiro total declarado, sin migración.** Investigación previa confirmó que el submódulo de impresión/edición (`EditarPlanilla`, `ImprimirPlanilla*`, `GridPlanillaServiciosItem*`, `GridPlanillaHotel*`) ya había sido eliminado por completo en un commit anterior (`f3c75f9`, 2026-06-17) — no solo el menú (retirado 2026-04-07). Los servicios NetTiers `PlanillaService`/`PlanillaServicioItemService`/`PlanillaHabitacionItemService`/`PlanillaServicioService` tenían cero callers en `MAT.MVC`; el único resto vivo eran los 4 campos de `MATContext` (estáticos de clase, **no** `HttpContext.Session` pese a como se los describía originalmente), eliminados en esta fase.
+  - Tablas `Planilla`, `PlanillaServicioItem`, `PlanillaHabitacionItem` quedan intactas en BD, sin acceso desde la app — disponibles si negocio confirma la Opción C de Viaje-Rentabilidad más adelante.
+  - Aclarado en docs: la entidad NetTiers `PlanillaServicio` es un artefacto huérfano que apunta a la misma tabla física `Planilla` (no hay tabla `PlanillaServicio` separada).
+- Fuera de alcance (detectado, no tocado): `Models/PlanillaHotelModel.cs` y `Models/ResumenPlanillaModel.cs` quedaron sin callers activos pero no pertenecen al dominio NetTiers Planilla (usan DataAccess ya migrados) — candidatos a limpieza en tarea aparte. Código muerto comentado de `NotaService` en `CuentaModel.cs` tampoco se tocó (Nota ya migrada en fase previa; el comentario es cosmético y ese archivo tiene mucho más código comentado no relacionado a F8).
+- Problemas encontrados: ninguno de compilación.
+- Pendiente de despliegue: publicar los 2 SPs de `MAT.DB` en el entorno + smoke de `/Home/HistorialPagos`. Deploy BD + smoke + commit delegados a humano.
+- Estado: ✅ MSBuild MAT.MVC Debug OK

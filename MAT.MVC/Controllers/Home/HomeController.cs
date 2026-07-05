@@ -15,6 +15,7 @@ using System.Data.SqlClient;
 using System.Data;
 using MAT.Utilities;
 using MAT.MVC.Infrastructure;
+using MAT.MVC.Models.Reportes;
 using System.Configuration;
 
 namespace MAT.MVC.Controllers.Home
@@ -459,30 +460,60 @@ namespace MAT.MVC.Controllers.Home
            
         }
 
+        [Authorize]
         public ActionResult HistorialPagos()
         {
+            ViewBag.IsAdmin = AdminAuthorizationHelper.CanViewAllHistorialPagos(HttpContext);
             return View();
         }
 
-        public ActionResult RenderGridHistorialPagos(int? page, string filter)
+        /// <summary>
+        /// JSON para la grilla de historial de pagos (rango de fechas + tipo venta).
+        /// Vendedores no admin solo ven sus propios cobros (administrador o admindev ven todos).
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public ActionResult HistorialPagosConsultar(string from, string to, string tipoVentaId = null)
         {
-            List<Entities.Historial> historial = new Services.HistorialService().GetAll().ToList();
-            IList<HistorialModel> historialModel = new List<HistorialModel>();
-            foreach (var item in historial)
+            try
             {
-                historialModel.Add(new HistorialModel(item.HistorialId));
+                var canViewAll = AdminAuthorizationHelper.CanViewAllHistorialPagos(HttpContext);
+
+                var q = ReportesQueryHelper.Parse(from, to, viajeId: null, vendedorId: null, clienteId: null, tipoVentaId);
+                if (!q.IsValid)
+                    return JsonCamelCaseHelper.Serialize(new { success = false, message = q.ValidationMessage });
+
+                if (!q.ShouldExecute)
+                    return JsonCamelCaseHelper.Serialize(new { success = true, data = new List<ReportePagoRowDto>(), total = 0, scopedToVendedor = !canViewAll });
+
+                if (!canViewAll)
+                {
+                    var vendedorId = GetCurrentVendedorId();
+                    if (!vendedorId.HasValue)
+                        return JsonCamelCaseHelper.Serialize(new { success = false, message = "No se pudo identificar el vendedor asociado a su usuario." });
+
+                    q = ReportesQueryParseResult.ForDateRange(
+                        q.FromDate.Value,
+                        q.ToDate.Value,
+                        vendedorId,
+                        q.ClienteId,
+                        q.TipoVentaId);
+                }
+
+                var list = HistorialPagosLoader.Load(q);
+                return JsonCamelCaseHelper.Serialize(new
+                {
+                    success = true,
+                    data = list,
+                    total = list.Count,
+                    scopedToVendedor = !canViewAll
+                });
             }
-            if (Request.HttpMethod != "GET")
+            catch (Exception e)
             {
-                page = 1;
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "HomeController.HistorialPagosConsultar");
+                return JsonCamelCaseHelper.Serialize(new { success = false, message = msg });
             }
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-            if (!string.IsNullOrEmpty(filter))
-            {
-                historialModel = historialModel.Where(hi => hi.Cliente.Nombre.ToUpper().Contains(filter.ToUpper()) || hi.Cliente.Apellido.ToUpper().Contains(filter.ToUpper()) || hi.Vendedor.Nombre.Contains(filter) || hi.Vendedor.Apellido.Contains(filter)).ToList();
-            }
-            return PartialView(historialModel.ToPagedList(pageNumber,pageSize));
         }
 
        

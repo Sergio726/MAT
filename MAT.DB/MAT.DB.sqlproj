@@ -1352,6 +1352,9 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_Delete.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_GetByViajeID.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ItinerarioViaje_UpdateOrden.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Historial_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Historial_GetByHistorialId.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_HistorialPagos_GetByRango.sql" />
     <None Include="Scripts\Cliente_AddFechaAlta.sql" />
     <None Include="Scripts\Presupuesto_AddContactoColumns.sql" />
   </ItemGroup>

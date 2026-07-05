@@ -873,8 +873,9 @@
 
   ##### Fase 8 — Legacy y baja prioridad
   `Planilla`, `PlanillaServicioItem`, `PlanillaHabitacionItem`, `PlanillaServicio`, `Historial`, `Nota` (si queda), `MATContext` planillas en sesión.
-  - [ ] **NetTiers F8:** Planilla e historial migrados o declarados obsoletos
+  - [x] **NetTiers F8:** Planilla e historial migrados o declarados obsoletos
     Criterio: sin dependencia de sesión `MATContext` para planilla **o** documentar retiro total; impresión legacy evaluada.
+    **Implementación 2026-07-05:** **Historial migrado** — único uso real de NetTiers en el dominio (`HistorialService.GetAll`/`GetByHistorialId`, ambos solo lectura); reemplazado por `HistorialDataAccess` + SPs `usp_MAT_Historial_GetAll`/`usp_MAT_Historial_GetByHistorialId`. **Planilla: retiro total declarado** (no migrado) — la impresión/edición legacy (`EditarPlanilla`, `ImprimirPlanilla*`, grids) ya había sido eliminada por completo en un commit previo (2026-06-17); los servicios NetTiers `PlanillaService`/`PlanillaServicioItemService`/`PlanillaHabitacionItemService` tenían cero callers; se eliminaron 4 campos/propiedades estáticas huérfanas de `MATContext` (`Planilla`, `ColeccionPlanillas`, `ServiciosSeleccionados`, `HabitacionesPlanilla` — eran estáticas de clase, no de `HttpContext.Session`). Tablas `Planilla*` intactas en BD sin acceso desde la app, disponibles para una eventual Opción C de Viaje-Rentabilidad. Documentación actualizada: `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md`, `DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`. MSBuild `MAT.MVC` Debug OK.
 
   ##### Fase 9 — Retirar capa Services generada
   - [ ] **NetTiers F9:** Eliminar `MAT.Services` como capa NetTiers

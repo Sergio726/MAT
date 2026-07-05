@@ -88,7 +88,7 @@ Para cada `FooService` migrado:
 | **F5** | Viaje, ViajeHotel, ReservaHabitacion | Alto | F3, F4 |
 | **F6** | Factura, Pasaje, Pago, MovimientoCuenta | **Crítico** | F5 |
 | **F7** | Persona, Cliente, CC, vistas Persona* | Alto | F6 parcial |
-| **F8** | Planilla, Historial | Bajo | F5 |
+| **F8** | Planilla (retiro declarado), Historial (migrado) | Bajo | F5 — ✅ completada 2026-07-05 |
 | **F9** | Retirar MAT.Services generated | Medio | F2–F8 |
 | **F10** | Retirar MAT.Data + SqlClient | Medio | F9 |
 | **F11** | POCOs manuales en MAT.Entities | Medio | F10 |
@@ -122,7 +122,15 @@ Para cada `FooService` migrado:
 
 **F4 (Paquete/Precio/Voucher), F5 (Viaje/ReservaHabitacion), F6 (Factura/Pago) y F7 (Personas/Cliente/Vendedor/Proveedor/Pasajero/Cuenta + vistas Persona*/VPersona) migradas** a SPs + `*DataAccess` (2026-07-03).
 
-**Pendiente NetTiers (siguientes fases):** Planilla/Historial F8, retiro de `MAT.Services`/`MAT.Data` (F9–F10), POCOs manuales (F11), barrido final (F12) — ver grep `new \w+Service(` en `MAT.MVC` para servicios residuales (p. ej. `HistorialService`).
+**F8 completada (2026-07-05) — Planilla e Historial:**
+
+- **Historial → migrado.** Único uso real de NetTiers en el dominio: `HistorialService.GetAll()` (en `HomeController.RenderGridHistorialPagos`) y `HistorialService.GetByHistorialId` (en `HistorialModel`), ambos de solo lectura. Reemplazados por `HistorialDataAccess` (`Infrastructure/Data/HistorialDataAccess.cs`) + SPs `usp_MAT_Historial_GetAll` / `usp_MAT_Historial_GetByHistorialId`. Sin cambios de comportamiento (mismo filtro en cliente, misma paginación).
+- **Planilla → retiro total declarado, no migrado.** El submódulo de impresión/edición de planillas en `AdminController` (`EditarPlanilla`, `ImprimirPlanilla*`, `GridPlanillaServiciosItem*`, `GridPlanillaHotel*`) ya había sido **eliminado por completo** en el commit `f3c75f9` (2026-06-17), antes de llegar a F8 — no solo el menú (retirado en 2026-04-07), sino también las acciones y vistas. A la fecha de F8, las entidades/servicios NetTiers `PlanillaService`, `PlanillaServicioItemService`, `PlanillaHabitacionItemService` y `PlanillaServicioService` ya tenían **cero callers** en `MAT.MVC`. El único resto vivo eran 4 campos/propiedades **estáticas** (no de `HttpContext.Session`, pese a como las describía el enunciado original) en `MATContext.cs` (`Planilla`, `ColeccionPlanillas`, `ServiciosSeleccionados`, `HabitacionesPlanilla`) — huérfanas, sin lectores ni escritores en todo el repo. Se eliminaron directamente. **No se migró nada a DBHelper/SP porque no había nada activo que migrar.**
+  - Las tablas `Planilla`, `PlanillaServicioItem`, `PlanillaHabitacionItem` **permanecen intactas en la base de datos**, sin ningún acceso desde `MAT.MVC`. Quedan disponibles para una eventual reactivación futura si negocio confirma la **Opción C** de `SPEC.md` § Viaje-Rentabilidad (revivir Planilla como modelo de costeo por viaje) — ver `DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`.
+  - Nota sobre `PlanillaServicio`: es un artefacto NetTiers huérfano (entidad/provider generado con `DestinationTableName = "PlanillaServicio"`) que en realidad apunta a la misma tabla física `Planilla` — el `PRIMARY KEY` de `Planilla.sql` se llama `PK_PlanillaServicio`, rastro de un rename histórico. No existe una tabla `PlanillaServicio` separada.
+- Fuera de alcance de F8 (detectado durante la investigación, no tocado): `Models/PlanillaHotelModel.cs` y `Models/ResumenPlanillaModel.cs` quedaron sin callers activos, pero **no pertenecen al dominio NetTiers Planilla** (usan `MaestrosDataAccess`/`PaqueteDataAccess`/etc., ya migrados) — candidatos a limpieza en una tarea aparte, no en esta fase.
+
+**Pendiente NetTiers (siguientes fases):** retiro de `MAT.Services`/`MAT.Data` (F9–F10), POCOs manuales (F11), barrido final (F12).
 
 ### Inventario borrador (F0 — sustituido por tabla arriba)
 
@@ -172,8 +180,8 @@ Para cada `FooService` migrado:
 
 ## 8. Próximo paso concreto
 
-**Estado 2026-07-03:** F0–F7 completadas en código (MSBuild `MAT.sln` Debug OK). F7 migró Persona, Cliente, Vendedor, Proveedor, Pasajero, Cuenta y las vistas Persona*/VPersona a 28 SPs + clases `*DataAccess` en `MAT.MVC/Infrastructure/Data`.
+**Estado 2026-07-05:** F0–F8 completadas en código (MSBuild `MAT.sln` Debug OK). F7 migró Persona, Cliente, Vendedor, Proveedor, Pasajero, Cuenta y las vistas Persona*/VPersona a 28 SPs + clases `*DataAccess`. F8 migró Historial (2 SPs + `HistorialDataAccess`) y declaró retiro total del dominio NetTiers Planilla (ver detalle arriba).
 
-**Task SPEC:** `NetTiers F8` — Planilla e historial (`HistorialModel` aún usa `HistorialService`, `HomeController`, planillas en sesión `MATContext`).
+**Próxima fase:** `NetTiers F9` — retirar `MAT.Services` como capa NetTiers (cuando ningún proyecto referencie `*ServiceBase.generated.cs`).
 
-**Deuda de despliegue (humano):** publicar los SPs de F4–F7 desde `MAT.DB` (y scripts `database/2026-07-03_*`) en cada entorno + smoke crítico (flujo de pago F6; ABM personas y cuenta corriente F7) antes de commitear por fase.
+**Deuda de despliegue (humano):** publicar los SPs de F4–F8 desde `MAT.DB` (y scripts `database/2026-07-03_*` a `database/2026-07-05_*`) en cada entorno + smoke crítico (flujo de pago F6; ABM personas y cuenta corriente F7; pantalla Historial de Pagos F8) antes de commitear por fase.

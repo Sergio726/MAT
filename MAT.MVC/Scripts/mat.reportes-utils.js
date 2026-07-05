@@ -18,6 +18,8 @@
             .replace(/"/g, '&quot;');
     }
 
+    window.MatReportes.escapeHtml = escapeHtml;
+
     window.MatReportes.moneyFmt = new Intl.NumberFormat('es-AR', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2

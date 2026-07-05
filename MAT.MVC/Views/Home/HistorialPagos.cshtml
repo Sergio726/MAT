@@ -1,163 +1,493 @@
 @{
-    ViewBag.Title = "HistorialPagos";
+    ViewBag.Title = "Historial de pagos";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
 }
 
 @section Styles {
 <style>
-    .search-form-container {
-        background: white;
+    .hp-page { max-width: 1400px; margin: 0 auto; }
+    .hp-intro { font-size: 0.875rem; color: var(--text-secondary, #6b7280); margin-top: 0.35rem; max-width: 52rem; }
+    .hp-card {
+        background: #fff;
         border-radius: 0.75rem;
-        padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
     }
-    .search-form-title {
-        font-size: 1rem;
+    .hp-card-title {
+        font-size: 0.9375rem;
         font-weight: 600;
         color: var(--text-primary, #1f2937);
-        margin-bottom: 1rem;
+        margin: 0 0 1rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
-    .search-form-title i {
-        color: var(--primary-color, #e91e63);
-    }
-    .search-form-grid {
-        display: flex;
-        gap: 1rem;
-        align-items: flex-end;
-    }
-    .search-form-grid .modern-form-group:first-child {
-        width: 250px;
-    }
-    @@media (max-width: 768px) {
-        .search-form-grid {
-            flex-direction: column;
-        }
-        .search-form-grid .modern-form-group:first-child {
-            width: 100%;
-        }
-    }
-    .search-results-container {
-        background: white;
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        min-height: 200px;
-    }
-    .search-results-empty {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem;
-        color: var(--text-secondary, #6b7280);
-    }
-    .search-results-empty i {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        opacity: 0.5;
-    }
-    /* Custom datepicker input styling */
-    #filtro-fecha {
-        width: 100%;
-        padding: 0.625rem 0.875rem;
+    .hp-card-title i { color: var(--primary-color, #e91e63); }
+    .hp-presets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    .hp-preset {
         border: 1px solid var(--border-color, #e5e7eb);
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        background: #fff;
+        color: var(--text-secondary, #4b5563);
+        border-radius: 999px;
+        padding: 0.35rem 0.85rem;
+        font-size: 0.8125rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
     }
-    #filtro-fecha:focus {
-        outline: none;
+    .hp-preset:hover { border-color: var(--primary-color, #e91e63); color: var(--primary-color, #e91e63); }
+    .hp-preset.active {
+        background: var(--primary-color, #e91e63);
         border-color: var(--primary-color, #e91e63);
-        box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        color: #fff;
     }
+    .hp-filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+    .hp-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .hp-kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .hp-kpi {
+        background: #fff;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 0.75rem;
+        padding: 0.875rem 1rem;
+    }
+    .hp-kpi-label { font-size: 0.75rem; color: var(--text-secondary, #6b7280); margin-bottom: 0.25rem; }
+    .hp-kpi-value { font-size: 1.25rem; font-weight: 700; color: var(--text-primary, #111827); }
+    .hp-kpi-value.text-success { color: #059669; }
+    .hp-front-filters {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+        align-items: end;
+    }
+    .hp-empty {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-secondary, #9ca3af);
+    }
+    .hp-empty i { font-size: 2.5rem; opacity: 0.45; display: block; margin-bottom: 0.75rem; }
+    .hp-table-wrap { overflow-x: auto; }
+    #tblHistorialPagos { width: 100% !important; }
+    #tblHistorialPagos thead th {
+        background: var(--bg-secondary, #f9fafb);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-secondary, #6b7280);
+        white-space: nowrap;
+    }
+    .hp-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.15rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    .hp-badge-oficina { background: #dbeafe; color: #1d4ed8; }
+    .hp-badge-online { background: #ede9fe; color: #6d28d9; }
 </style>
 }
 
-<div class="modern-page-container">
+<div class="modern-page-container hp-page">
     <div class="modern-page-header">
-        <h2 class="modern-page-title">
-            <i class="bi bi-clock-history"></i>
-            <span>Historial de Pagos</span>
-        </h2>
+        <div>
+            <h2 class="modern-page-title mb-0">
+                <i class="bi bi-clock-history"></i>
+                <span>Historial de pagos</span>
+            </h2>
+            <p class="hp-intro mb-0">
+                Consultá los cobros registrados por rango de fechas.
+                @if (!isAdmin)
+                {
+                    <span> Solo verás los pagos asociados a tu usuario vendedor.</span>
+                }
+                else
+                {
+                    <span> Como administrador ves todos los cobros del período.</span>
+                }
+                Después de cargar los resultados, podés refinar la tabla buscando por cliente, vendedor o medio de pago.
+            </p>
+        </div>
     </div>
 
-    <!-- Formulario de Busqueda -->
-    <div class="search-form-container">
-        <div class="search-form-title">
-            <i class="bi bi-calendar-event"></i>
-            <span>Seleccionar fecha para ver pagos</span>
+    <div class="hp-card">
+        <h3 class="hp-card-title"><i class="bi bi-funnel"></i> Período de consulta</h3>
+        <div class="hp-presets" role="group" aria-label="Atajos de fecha">
+            <button type="button" class="hp-preset" data-preset="hoy">Hoy</button>
+            <button type="button" class="hp-preset" data-preset="ayer">Ayer</button>
+            <button type="button" class="hp-preset" data-preset="7d">Últimos 7 días</button>
+            <button type="button" class="hp-preset active" data-preset="mes">Este mes</button>
         </div>
-
-        <div class="search-form-grid">
-            <div class="modern-form-group">
-                <label class="modern-form-label">
-                    <i class="bi bi-calendar3"></i>
-                    <span>Fecha</span>
-                </label>
-                <input id="filtro-fecha" type="text" placeholder="Seleccionar Fecha" class="modern-form-input" readonly />
+        <div class="hp-filters-grid">
+            <div class="modern-form-group mb-0">
+                <label class="modern-form-label" for="hp-from"><i class="bi bi-calendar3"></i> Desde</label>
+                <input type="text" id="hp-from" class="modern-form-input mat-datepicker" placeholder="dd/mm/aaaa" autocomplete="off" />
             </div>
-
-            <div class="modern-form-group">
-                <button type="button" id="btn-buscar-pagos" class="btn-modern btn-modern-primary" style="height: 42px;" disabled>
+            <div class="modern-form-group mb-0">
+                <label class="modern-form-label" for="hp-to"><i class="bi bi-calendar3"></i> Hasta</label>
+                <input type="text" id="hp-to" class="modern-form-input mat-datepicker" placeholder="dd/mm/aaaa" autocomplete="off" />
+            </div>
+            <div class="modern-form-group mb-0">
+                <label class="modern-form-label" for="hp-tipo-venta"><i class="bi bi-shop"></i> Tipo de venta</label>
+                <select id="hp-tipo-venta" class="modern-form-select">
+                    <option value="">Todos</option>
+                    <option value="1">Oficina</option>
+                    <option value="2">Online</option>
+                </select>
+            </div>
+            <div class="hp-actions">
+                <button type="button" id="hp-btn-buscar" class="btn-modern btn-modern-primary">
                     <i class="bi bi-search"></i>
-                    <span>Buscar</span>
+                    <span>Consultar</span>
+                </button>
+                <button type="button" id="hp-btn-limpiar" class="btn-modern btn-modern-secondary">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    <span>Reiniciar</span>
+                </button>
+            </div>
+        </div>
+        <div id="hp-alert" class="alert alert-danger d-none mt-3 mb-0 py-2 small" role="alert"></div>
+    </div>
+
+    <div id="hp-kpis" class="hp-kpis d-none" aria-live="polite">
+        <div class="hp-kpi">
+            <div class="hp-kpi-label">Registros encontrados</div>
+            <div class="hp-kpi-value" id="hp-kpi-count">0</div>
+        </div>
+        <div class="hp-kpi">
+            <div class="hp-kpi-label">Total cobrado (consulta)</div>
+            <div class="hp-kpi-value text-success" id="hp-kpi-total">—</div>
+        </div>
+        <div class="hp-kpi">
+            <div class="hp-kpi-label">Período consultado</div>
+            <div class="hp-kpi-value" id="hp-kpi-rango" style="font-size:0.95rem;">—</div>
+        </div>
+        <div class="hp-kpi d-none" id="hp-kpi-scope-wrap">
+            <div class="hp-kpi-label">Alcance</div>
+            <div class="hp-kpi-value" id="hp-kpi-scope" style="font-size:0.85rem;">—</div>
+        </div>
+    </div>
+
+    <div id="hp-front-wrap" class="hp-card d-none">
+        <h3 class="hp-card-title"><i class="bi bi-search"></i> Refinar resultados</h3>
+        <div class="hp-front-filters">
+            <div class="modern-form-group mb-0">
+                <label class="modern-form-label" for="hp-filt-cliente">Cliente</label>
+                <input type="text" id="hp-filt-cliente" class="modern-form-input" placeholder="Nombre o apellido…" autocomplete="off" />
+            </div>
+            <div class="modern-form-group mb-0">
+                <label class="modern-form-label" for="hp-filt-vendedor">Vendedor</label>
+                <input type="text" id="hp-filt-vendedor" class="modern-form-input" placeholder="Nombre del vendedor…" autocomplete="off" />
+            </div>
+            <div class="modern-form-group mb-0">
+                <label class="modern-form-label" for="hp-filt-medio">Medio de pago</label>
+                <input type="text" id="hp-filt-medio" class="modern-form-input" placeholder="Efectivo, tarjeta…" autocomplete="off" />
+            </div>
+            <div class="hp-actions">
+                <button type="button" id="hp-btn-limpiar-filtros" class="btn-modern btn-modern-secondary btn-sm">
+                    <i class="bi bi-x-circle"></i>
+                    <span>Limpiar filtros</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Resultados -->
-    <div class="search-results-container">
-        <div id="grid_pagos">
-            <div class="search-results-empty">
+    <div class="hp-card">
+        <div id="hp-results">
+            <div class="hp-empty" id="hp-placeholder">
                 <i class="bi bi-credit-card"></i>
-                <span>Seleccione una fecha para ver el historial de pagos</span>
+                <div>Elegí un período y presioná <strong>Consultar</strong> para ver los pagos.</div>
+            </div>
+            <div class="hp-table-wrap d-none" id="hp-table-wrap">
+                <table id="tblHistorialPagos" class="table table-sm table-hover table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Monto</th>
+                            <th>Moneda</th>
+                            <th>Medio</th>
+                            <th>Tipo venta</th>
+                            <th>Vendedor</th>
+                            <th>Cliente</th>
+                            <th>Viaje</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
+@section Scripts {
+<script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
 <script type="text/javascript">
-    $.customDate = function (dateObject) {
-        var arraydate = dateObject.split('/');
-        var day = parseInt(arraydate[0]);
-        var month = parseInt(arraydate[1]);
-        var year = parseInt(arraydate[2]);
-        if (day < 10) {
-            day = "0" + day;
+(function () {
+    var urlJson = "@Url.Action("HistorialPagosConsultar", "Home")";
+    var isAdmin = @(isAdmin ? "true" : "false");
+    var dt = null;
+    var lastRows = [];
+    var isLoading = false;
+    var MR = window.MatReportes || {};
+    var escHtml = MR.escapeHtml || function (s) {
+        return String(s == null ? "" : s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    };
+
+    var COL_MEDIO = 3;
+    var COL_VENDEDOR = 5;
+    var COL_CLIENTE = 6;
+
+    function pad(n) { return n < 10 ? "0" + n : "" + n; }
+    function fmtIso(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+    function fmtDisplay(d) { return pad(d.getDate()) + "/" + pad(d.getMonth() + 1) + "/" + d.getFullYear(); }
+    function parseInputDate(val) {
+        if (!val) return null;
+        var p = val.split("/");
+        if (p.length !== 3) return null;
+        var d = new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10));
+        return isNaN(d.getTime()) ? null : d;
+    }
+    function toQueryDate(val) {
+        var d = parseInputDate(val);
+        return d ? fmtIso(d) : "";
+    }
+
+    function showErr(msg) {
+        var $a = $("#hp-alert");
+        if (!msg) { $a.addClass("d-none").text(""); return; }
+        $a.removeClass("d-none").text(msg);
+    }
+
+    function setPresetActive(preset) {
+        $(".hp-preset").removeClass("active");
+        $('.hp-preset[data-preset="' + preset + '"]').addClass("active");
+    }
+
+    function applyPreset(preset) {
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var from = new Date(today);
+        var to = new Date(today);
+        if (preset === "ayer") {
+            from.setDate(from.getDate() - 1);
+            to.setDate(to.getDate() - 1);
+        } else if (preset === "7d") {
+            from.setDate(from.getDate() - 6);
+        } else if (preset === "mes") {
+            from = new Date(today.getFullYear(), today.getMonth(), 1);
         }
-        if (month < 10) {
-            month = "0" + month;
+        $("#hp-from").val(fmtDisplay(from));
+        $("#hp-to").val(fmtDisplay(to));
+        setPresetActive(preset);
+    }
+
+    function renderTipoVenta(val) {
+        if (!val) return '<span class="text-muted">—</span>';
+        var esc = escHtml(val);
+        var lower = String(val).toLowerCase();
+        if (lower.indexOf("online") !== -1) return '<span class="hp-badge hp-badge-online">' + esc + '</span>';
+        return '<span class="hp-badge hp-badge-oficina">' + esc + '</span>';
+    }
+
+    function formatTotal(rows) {
+        if (!rows || !rows.length) return "—";
+        var byMoneda = {};
+        rows.forEach(function (r) {
+            var m = r.monedaTipo || "1";
+            byMoneda[m] = (byMoneda[m] || 0) + (parseFloat(r.monto) || 0);
+        });
+        var keys = Object.keys(byMoneda);
+        if (!keys.length) return "—";
+        return keys.map(function (k) {
+            return MR.renderMontoCurrency ? MR.renderMontoCurrency(byMoneda[k], k, "display") : byMoneda[k].toFixed(2);
+        }).join(" · ");
+    }
+
+    function updateKpis(rows, meta) {
+        var total = meta && typeof meta.total === "number" ? meta.total : rows.length;
+        $("#hp-kpi-count").text(total);
+        $("#hp-kpi-total").html(formatTotal(rows));
+        $("#hp-kpi-rango").text($("#hp-from").val() + " — " + $("#hp-to").val());
+        var scoped = meta && meta.scopedToVendedor;
+        if (scoped) {
+            $("#hp-kpi-scope").text("Solo tus cobros (vendedor)");
+            $("#hp-kpi-scope-wrap").removeClass("d-none");
+        } else if (isAdmin) {
+            $("#hp-kpi-scope").text("Todos los vendedores");
+            $("#hp-kpi-scope-wrap").removeClass("d-none");
+        } else {
+            $("#hp-kpi-scope-wrap").addClass("d-none");
         }
-        var date = year + "-" + month + "-" + day;
-        return date;
+        $("#hp-kpis").toggleClass("d-none", !rows.length && total === 0);
+    }
+
+    function limpiarFiltrosTabla() {
+        $("#hp-filt-cliente,#hp-filt-vendedor,#hp-filt-medio").val("");
+        if (dt) {
+            dt.columns(COL_CLIENTE).search("")
+              .columns(COL_VENDEDOR).search("")
+              .columns(COL_MEDIO).search("").draw();
+        }
+    }
+
+    function renderTable(rows, meta) {
+        lastRows = rows || [];
+        updateKpis(lastRows, meta);
+        $("#hp-placeholder").addClass("d-none");
+        var $wrap = $("#hp-table-wrap");
+        if (!lastRows.length) {
+            if (dt) { dt.destroy(); dt = null; }
+            $wrap.addClass("d-none");
+            $("#hp-placeholder").removeClass("d-none").find("div").html("No hay pagos para el período seleccionado.");
+            $("#hp-front-wrap").addClass("d-none");
+            return;
+        }
+        $wrap.removeClass("d-none");
+        $("#hp-front-wrap").removeClass("d-none");
+        limpiarFiltrosTabla();
+
+        var $tbl = $("#tblHistorialPagos");
+        if (dt) { dt.destroy(); $tbl.find("tbody").empty(); }
+
+        dt = $tbl.DataTable({
+            data: lastRows,
+            columns: [
+                { data: "fechaPago", render: function (d) { return MR.formatFechaES ? MR.formatFechaES(d) : (d || "—"); } },
+                { data: "monto", className: "text-end", render: function (d, t, r) {
+                    return MR.renderMontoCurrency ? MR.renderMontoCurrency(d, r.monedaTipo, t) : d;
+                }},
+                { data: "monedaTipo", render: function (d, t) {
+                    return t !== "display" ? (d || "") : (MR.renderMonedaBadge ? MR.renderMonedaBadge(d) : d);
+                }},
+                { data: "pagoDescripcion", render: function (d, t) {
+                    return t !== "display" ? (d || "") : (d ? escHtml(d) : "—");
+                }},
+                { data: "tipoVentaDescripcion", render: function (d, t) {
+                    return t !== "display" ? (d || "") : renderTipoVenta(d);
+                }},
+                { data: "vendedorFullName", render: function (d, t) {
+                    return t !== "display" ? (d || "") : (d ? escHtml(d) : "—");
+                }},
+                { data: "clienteFullName", render: function (d, t) {
+                    return t !== "display" ? (d || "") : (d ? escHtml(d) : "—");
+                }},
+                { data: "viaje", render: function (d, t) {
+                    if (t !== "display") return d || "";
+                    if (!d) return "—";
+                    var esc = escHtml(d);
+                    return '<span title="' + esc + '">' + esc + '</span>';
+                }}
+            ],
+            pageLength: 25,
+            order: [[0, "desc"]],
+            autoWidth: false,
+            language: $.extend(
+                { url: "/Scripts/dataTable/i18n/Spanish.json" },
+                MR.dataTableEmptyLanguage ? MR.dataTableEmptyLanguage(
+                    "Sin coincidencias en la tabla",
+                    "Probá otro texto en los filtros de cliente, vendedor o medio de pago"
+                ) : {}
+            )
+        });
+    }
+
+    function consultar() {
+        if (isLoading) return;
+        showErr("");
+        var from = toQueryDate($("#hp-from").val());
+        var to = toQueryDate($("#hp-to").val());
+        if (!from || !to) {
+            showErr("Indicá fecha desde y hasta en formato dd/mm/aaaa.");
+            return;
+        }
+        var params = { from: from, to: to };
+        var tv = $("#hp-tipo-venta").val();
+        if (tv) params.tipoVentaId = tv;
+
+        isLoading = true;
+        var $btn = $("#hp-btn-buscar");
+        $btn.prop("disabled", true);
+        $("#hp-loading").remove();
+        $("#hp-results").prepend('<div id="hp-loading" class="modern-loading-container"><div class="modern-loading-spinner"></div><span class="modern-loading-text">Consultando pagos…</span></div>');
+
+        $.getJSON(urlJson, params)
+            .done(function (res) {
+                if (!res || !res.success) {
+                    showErr((res && res.message) || "No se pudo completar la consulta.");
+                    return;
+                }
+                renderTable(res.data || [], res);
+            })
+            .fail(function (xhr) {
+                var msg = MR.parseHttpErrorBody ? MR.parseHttpErrorBody(xhr) : "Error de conexión.";
+                showErr(msg);
+            })
+            .always(function () {
+                $("#hp-loading").remove();
+                $btn.prop("disabled", false);
+                isLoading = false;
+            });
     }
 
     $(function () {
-        $("#filtro-fecha").datepicker({
+        $(".mat-datepicker").datepicker($.extend({}, $.datepicker.regional["es"], {
+            dateFormat: "dd/mm/yy",
             changeMonth: true,
             changeYear: true,
-            yearRange: '-100:+2',
-            onSelect: function () {
-                $("#btn-buscar-pagos").prop('disabled', false);
-            }
+            yearRange: "-10:+1"
+        }));
+
+        applyPreset("mes");
+
+        $(".hp-preset").on("click", function () {
+            applyPreset($(this).data("preset"));
         });
 
-        $("#btn-buscar-pagos").on('click', function() {
-            var fechaseleccionada = escape($("#filtro-fecha").datepicker().val());
-            var fechaconvertida = $.customDate(fechaseleccionada);
-            var url = "/Admin/GridResumenPagosFecha?fecha=" + fechaconvertida;
+        $("#hp-from,#hp-to").on("change", function () {
+            $(".hp-preset").removeClass("active");
+        });
 
-            var divLoading = '<div class="modern-loading-container"><div class="modern-loading-spinner"></div><span class="modern-loading-text">Cargando pagos...</span></div>';
-            $("#grid_pagos").html(divLoading);
+        $("#hp-btn-buscar").on("click", consultar);
+        $("#hp-btn-limpiar").on("click", function () {
+            $("#hp-tipo-venta").val("");
+            applyPreset("mes");
+            showErr("");
+            if (dt) { dt.destroy(); dt = null; }
+            lastRows = [];
+            $("#hp-kpis,#hp-front-wrap,#hp-table-wrap").addClass("d-none");
+            $("#hp-placeholder").removeClass("d-none").find("div").html("Elegí un período y presioná <strong>Consultar</strong> para ver los pagos.");
+        });
 
-            $("#grid_pagos").load(url, function () {
-                $(".divDelete").remove();
+        $("#hp-filt-cliente").on("input", function () {
+            if (dt) dt.columns(COL_CLIENTE).search(this.value).draw();
+        });
+        if (isAdmin) {
+            $("#hp-filt-vendedor").on("input", function () {
+                if (dt) dt.columns(COL_VENDEDOR).search(this.value).draw();
             });
+        } else {
+            $("#hp-filt-vendedor").closest(".modern-form-group").addClass("d-none");
+        }
+        $("#hp-filt-medio").on("input", function () {
+            if (dt) dt.columns(COL_MEDIO).search(this.value).draw();
         });
+        $("#hp-btn-limpiar-filtros").on("click", limpiarFiltrosTabla);
     });
+})();
 </script>
+}
