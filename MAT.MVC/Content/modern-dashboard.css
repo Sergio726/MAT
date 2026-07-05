@@ -8823,3 +8823,214 @@ ul.viajes-lista li .viaje-container h4 {
         justify-content: center;
     }
 }
+
+/* ===== Home hero band (continuidad visual con login) ===== */
+.modern-dashboard--home {
+    padding-top: 0;
+}
+
+.dashboard-hero {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    min-height: 150px;
+    margin-bottom: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    background-color: var(--menu-bg);
+    background-image: linear-gradient(135deg, #1e293b 0%, #2b2d42 45%, rgba(230, 51, 117, 0.35) 100%);
+}
+
+.dashboard-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/Images/login-hero-bariloche.png");
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+}
+
+.dashboard-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+        135deg,
+        rgba(30, 41, 59, 0.88) 0%,
+        rgba(30, 41, 59, 0.55) 50%,
+        rgba(230, 51, 117, 0.25) 100%
+    );
+}
+
+.dashboard-hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-hero__layout {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(0, 2fr);
+    gap: 1.25rem 1.5rem;
+    align-items: center;
+    width: 100%;
+}
+
+.dashboard-hero__welcome {
+    min-width: 0;
+}
+
+.dashboard-hero__title {
+    margin: 0 0 0.25rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.dashboard-hero__subtitle {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.4;
+}
+
+.dashboard-hero__kpis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(140px, 1fr));
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.dashboard-hero-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem 0.875rem;
+    text-align: left;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-hero-kpi:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.dashboard-hero-kpi:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.45), 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-hero-kpi__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.72);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+}
+
+.dashboard-hero-kpi__value {
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-hero-kpi__meta {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+}
+
+.dashboard-hero-kpi__meta--brand {
+    color: #ffb8d4;
+    font-weight: 600;
+}
+
+.dashboard-hero-kpi__meta--danger {
+    color: #fca5a5;
+    font-weight: 600;
+}
+
+@media (max-width: 991.98px) {
+    .dashboard-hero {
+        min-height: auto;
+        margin-bottom: 1.25rem;
+        border-radius: 12px;
+    }
+
+    .dashboard-hero__content {
+        padding: 1.25rem 1.25rem;
+    }
+
+    .dashboard-hero__layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .dashboard-hero__title {
+        font-size: 1.25rem;
+    }
+
+    .dashboard-hero__subtitle {
+        font-size: 0.8125rem;
+    }
+
+    .dashboard-hero__kpis {
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-hero__content {
+        padding: 1rem;
+    }
+
+    .dashboard-hero__title {
+        font-size: 1.125rem;
+    }
+
+    .dashboard-hero__kpis {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 0.625rem;
+        padding-bottom: 0.25rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .dashboard-hero-kpi {
+        flex: 0 0 auto;
+        min-width: 132px;
+        max-width: 160px;
+    }
+
+    .dashboard-hero-kpi__value {
+        font-size: 1.375rem;
+    }
+}

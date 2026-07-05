@@ -1,0 +1,504 @@
+/* Login split screen — Marco Antonio Tours */
+
+html.login-split-page,
+body.login-split-page {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    color: var(--text-primary);
+}
+
+.login-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+/* Hero panel (left) */
+.login-split__hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: var(--menu-bg);
+    background-image: linear-gradient(135deg, #1e293b 0%, #2b2d42 45%, rgba(230, 51, 117, 0.35) 100%);
+    background-size: cover;
+    background-position: center left;
+    overflow: hidden;
+}
+
+.login-split__hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/Images/login-hero-bariloche.png");
+    background-size: cover;
+    background-position: center left;
+    z-index: 0;
+}
+
+.login-split__hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+        135deg,
+        rgba(30, 41, 59, 0.88) 0%,
+        rgba(30, 41, 59, 0.55) 50%,
+        rgba(230, 51, 117, 0.25) 100%
+    );
+}
+
+.login-split__hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 3rem;
+    max-width: 28rem;
+}
+
+.login-split__brand {
+    margin: 0 0 0.75rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.login-split__tagline {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.5;
+}
+
+/* Form panel (right) */
+.login-split__panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-main);
+    padding: 2rem 1.5rem;
+    overflow-y: auto;
+}
+
+.login-split__panel-inner {
+    width: 100%;
+    max-width: 420px;
+}
+
+.login-split__panel-inner--scroll {
+    max-width: 440px;
+}
+
+.login-split__header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-split__logo {
+    max-width: 180px;
+    height: auto;
+    margin-bottom: 1.25rem;
+}
+
+.login-split__title {
+    margin: 0 0 0.35rem;
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.login-split__subtitle {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+}
+
+/* DEV pill */
+.login-split__dev-pill {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+    padding: 0.4rem 0.875rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #92400e;
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Form */
+.login-split-form {
+    width: 100%;
+}
+
+.login-split-float-group {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin-bottom: 1.125rem;
+}
+
+.login-split-field-shell,
+.login-split-password-shell {
+    position: relative;
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-split-password-shell {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+.login-split-field-shell:focus-within,
+.login-split-password-shell:focus-within {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.12);
+}
+
+.login-split-field-shell:has(.input-validation-error),
+.login-split-password-shell:has(.input-validation-error) {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.login-split-float-input {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 1.35rem 1rem 0.55rem;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    border-radius: inherit;
+    box-sizing: border-box;
+    font-family: inherit;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.login-split-password-shell .login-split-float-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-right: 0.35rem;
+    border-radius: 8px 0 0 8px;
+}
+
+.login-split-float-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.login-split-float-input.input-validation-error {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.login-split-float-input::placeholder {
+    color: transparent;
+}
+
+.login-split-float-label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: top 0.2s ease, transform 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+    line-height: 1.2;
+    max-width: calc(100% - 3.25rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.login-split-float-input:focus + .login-split-float-label,
+.login-split-float-input:not(:placeholder-shown) + .login-split-float-label {
+    top: 0.55rem;
+    transform: translateY(0);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.login-split-float-input:focus + .login-split-float-label {
+    color: var(--brand-primary);
+}
+
+.login-split-password-toggle {
+    flex: 0 0 auto;
+    align-self: center;
+    border: none;
+    background: transparent;
+    padding: 0.45rem;
+    margin: 0 0.35rem 0 0;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 6px;
+    line-height: 0;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.login-split-password-toggle:hover {
+    color: var(--brand-primary);
+    background: rgba(230, 51, 117, 0.08);
+}
+
+.login-split-password-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(230, 51, 117, 0.35);
+}
+
+.login-split-password-toggle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-split-password-toggle-icon--hide {
+    display: none;
+}
+
+.login-split-password-toggle[aria-pressed="true"] .login-split-password-toggle-icon--show {
+    display: none;
+}
+
+.login-split-password-toggle[aria-pressed="true"] .login-split-password-toggle-icon--hide {
+    display: inline-flex;
+}
+
+.login-split-float-group .field-validation-error {
+    display: block;
+    margin-top: 0.5rem;
+    color: #ef4444;
+    font-size: 0.875rem;
+}
+
+/* Standard labeled fields (register) */
+.login-split-form-group {
+    margin-bottom: 1rem;
+}
+
+.login-split-form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.login-split-form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.login-split-form-input:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.12);
+}
+
+.login-split-form-input::placeholder {
+    color: var(--text-muted);
+}
+
+.login-split-form-group .field-validation-error {
+    display: block;
+    margin-top: 0.5rem;
+    color: #ef4444;
+    font-size: 0.875rem;
+}
+
+/* Button */
+.login-split-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--brand-primary);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    margin-top: 0.25rem;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(230, 51, 117, 0.3);
+}
+
+.login-split-btn:hover:not(:disabled) {
+    background: #d12a5c;
+    box-shadow: 0 6px 20px rgba(230, 51, 117, 0.4);
+    transform: translateY(-1px);
+}
+
+.login-split-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(230, 51, 117, 0.3);
+}
+
+.login-split-btn:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.login-split-btn__spinner {
+    display: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: loginSplitSpin 0.7s linear infinite;
+}
+
+.login-split-btn.is-loading .login-split-btn__spinner {
+    display: inline-block;
+}
+
+.login-split-btn.is-loading .login-split-btn__text {
+    opacity: 0.9;
+}
+
+@keyframes loginSplitSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Footer link */
+.login-split-message {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.login-split-message a {
+    color: var(--brand-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.login-split-message a:hover {
+    color: #d12a5c;
+    text-decoration: underline;
+}
+
+/* Validation summary */
+.login-split-form .validation-summary-errors {
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.login-split-form .validation-summary-errors ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.login-split-form .validation-summary-errors ul li {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.login-split-form .validation-summary-errors ul li:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .login-split {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+
+    .login-split__hero {
+        min-height: 200px;
+        align-items: center;
+    }
+
+    .login-split__hero-content {
+        padding: 1.5rem;
+    }
+
+    .login-split__brand {
+        font-size: 1.25rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .login-split__tagline {
+        font-size: 0.875rem;
+    }
+
+    .login-split__panel {
+        padding: 1.5rem 1.25rem 2rem;
+        justify-content: flex-start;
+    }
+
+    .login-split__header {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-split__logo {
+        max-width: 150px;
+    }
+
+    .login-split__title {
+        font-size: 1.375rem;
+    }
+
+    .login-split-float-input,
+    .login-split-form-input {
+        font-size: 16px;
+    }
+
+    .login-split__dev-pill {
+        top: 0.75rem;
+        right: 0.75rem;
+        font-size: 0.6875rem;
+    }
+}

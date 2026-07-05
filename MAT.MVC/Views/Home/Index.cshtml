@@ -4,20 +4,16 @@
     ViewBag.Title = "Panel Principal";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var estadisticas = ViewBag.Estadisticas as Dictionary<string, object> ?? new Dictionary<string, object>();
-    var cantidadPresupuestos = estadisticas.ContainsKey("CantidadPresupuestos") ? Convert.ToInt32(estadisticas["CantidadPresupuestos"]) : 0;
-    var totalPresupuestos = estadisticas.ContainsKey("TotalPresupuestos") ? Convert.ToDouble(estadisticas["TotalPresupuestos"]) : 0.0;
-    var clientesNuevos = estadisticas.ContainsKey("ClientesNuevos") ? Convert.ToInt32(estadisticas["ClientesNuevos"]) : 0;
-    var totalFacturado = estadisticas.ContainsKey("TotalFacturado") ? Convert.ToDouble(estadisticas["TotalFacturado"]) : 0.0;
-    var totalPendiente = estadisticas.ContainsKey("TotalPendiente") ? Convert.ToDouble(estadisticas["TotalPendiente"]) : 0.0;
-    var cantidadVentas = estadisticas.ContainsKey("CantidadVentas") ? Convert.ToInt32(estadisticas["CantidadVentas"]) : 0;
     var isAdmin = ViewBag.IsAdmin ?? false;
 
     var mesActual = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(DateTime.Now.Month);
     var anioActual = DateTime.Now.Year;
+    ViewBag.MesActual = mesActual;
+    ViewBag.AnioActual = anioActual;
 }
 
-<div class="modern-dashboard">
+<div class="modern-dashboard modern-dashboard--home">
+    @Html.Partial("_DashboardHero")
     <div class="container-fluid">
         <!-- Indicador de contexto -->
         @if ((bool)isAdmin)
@@ -26,61 +22,6 @@
                 <i class="bi bi-shield-check me-1"></i> Vista Administrador - Mostrando datos de todos los vendedores
             </div>
         }
-
-        <!-- Estadisticas del Mes -->
-        <div class="row g-4 mb-4">
-            <!-- PRESUPUESTOS -->
-            <div class="col-lg-4 col-md-6">
-                <div class="modern-card modern-card-success dashboard-stat-card" onclick="openDetalleModal('presupuestos')" title="Ver detalle de presupuestos del mes">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">Presupuestos</div>
-                        <i class="bi bi-file-earmark-text modern-card-icon-small"></i>
-                    </div>
-                    <div class="modern-card-content">
-                        <div class="modern-stat-number">@cantidadPresupuestos</div>
-                        <p class="modern-stat-label">Realizados en @mesActual</p>
-                        <p class="modern-stat-label mt-1">
-                            <span style="color: var(--brand-primary); font-weight: 600;">Total: $@totalPresupuestos.ToString("N2")</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CLIENTES NUEVOS -->
-            <div class="col-lg-4 col-md-6">
-                <div class="modern-card modern-card-warning dashboard-stat-card" onclick="openDetalleModal('clientes')" title="Ver detalle de clientes nuevos del mes">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">Clientes Nuevos</div>
-                        <i class="bi bi-people modern-card-icon-small"></i>
-                    </div>
-                    <div class="modern-card-content">
-                        <div class="modern-stat-number">@clientesNuevos</div>
-                        <p class="modern-stat-label">Dados de alta en @mesActual</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VENTAS REALIZADAS -->
-            <div class="col-lg-4 col-md-12">
-                <div class="modern-card modern-card-info dashboard-stat-card" onclick="openDetalleModal('ventas')" title="Ver detalle de ventas del mes">
-                    <div class="modern-card-header">
-                        <div class="modern-card-title">Ventas Realizadas</div>
-                        <i class="bi bi-cart-check modern-card-icon-small"></i>
-                    </div>
-                    <div class="modern-card-content">
-                        <div class="modern-stat-number">@cantidadVentas</div>
-                        <div class="d-flex justify-content-between mt-1" style="gap: 1rem;">
-                            <p class="modern-stat-label mb-0">
-                                <span style="color: var(--brand-primary); font-weight: 600;">Total: $@totalFacturado.ToString("N2")</span>
-                            </p>
-                            <p class="modern-stat-label mb-0">
-                                <span style="color: #dc3545; font-weight: 600;">Pend: $@totalPendiente.ToString("N2")</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Modal de Detalle -->
         <div class="modal fade" id="dashboardDetalleModal" tabindex="-1" aria-labelledby="dashboardDetalleModalLabel" aria-hidden="true">
@@ -272,20 +213,6 @@
 </div>
 
 <style>
-    .modern-stat-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--brand-primary);
-        line-height: 1.2;
-        margin-bottom: 0.5rem;
-    }
-
-    .modern-stat-label {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        margin: 0;
-    }
-
     .modern-card-icon-large {
         font-size: 3rem;
         opacity: 0.1;
@@ -293,15 +220,6 @@
         right: 1.5rem;
         top: 50%;
         transform: translateY(-50%);
-    }
-
-    .dashboard-stat-card {
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    .dashboard-stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
 
     .modern-card[onclick]:hover {

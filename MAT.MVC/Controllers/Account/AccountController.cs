@@ -27,7 +27,7 @@ namespace MAT.MVC.Controllers.Account
                 ViewBag.IsDev = "true";    
             }
             
-            return PartialView();
+            return View();
         }
 
         [HttpPost]
@@ -61,8 +61,13 @@ namespace MAT.MVC.Controllers.Account
         [AllowAnonymous]
         public ActionResult RegistrarVendedor()
         {
-            ViewBag.IsDev = "true";
-            return PartialView();
+            string sDEV = System.Configuration.ConfigurationManager.AppSettings["SystemDEV"].ToString();
+            if (sDEV == "true")
+            {
+                ViewBag.IsDev = "true";
+            }
+
+            return View();
         }
 
         [HttpPost]
@@ -85,7 +90,7 @@ namespace MAT.MVC.Controllers.Account
                     ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
                 }
             }
-            return PartialView();
+            return View();
         }
 
         [AllowAnonymous]

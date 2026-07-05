@@ -1,0 +1,68 @@
+@using MAT.MVC.Infrastructure.Data
+@using WebMatrix.WebData
+
+@{
+    string displayName = User.Identity.Name;
+    try
+    {
+        if (WebSecurity.HasUserId)
+        {
+            var persona = PersonaDataAccess.GetByUserId(WebSecurity.CurrentUserId);
+            if (persona != null)
+            {
+                var fullName = ((persona.Nombre ?? "") + " " + (persona.Apellido ?? "")).Trim();
+                if (!string.IsNullOrEmpty(fullName))
+                {
+                    displayName = fullName;
+                }
+            }
+        }
+    }
+    catch
+    {
+        // Mantener User.Identity.Name si no se puede resolver la persona
+    }
+
+    var mesActual = ViewBag.MesActual as string ?? "";
+    var anioActual = ViewBag.AnioActual != null ? ViewBag.AnioActual.ToString() : DateTime.Now.Year.ToString();
+
+    var estadisticas = ViewBag.Estadisticas as Dictionary<string, object> ?? new Dictionary<string, object>();
+    var cantidadPresupuestos = estadisticas.ContainsKey("CantidadPresupuestos") ? Convert.ToInt32(estadisticas["CantidadPresupuestos"]) : 0;
+    var totalPresupuestos = estadisticas.ContainsKey("TotalPresupuestos") ? Convert.ToDouble(estadisticas["TotalPresupuestos"]) : 0.0;
+    var clientesNuevos = estadisticas.ContainsKey("ClientesNuevos") ? Convert.ToInt32(estadisticas["ClientesNuevos"]) : 0;
+    var totalFacturado = estadisticas.ContainsKey("TotalFacturado") ? Convert.ToDouble(estadisticas["TotalFacturado"]) : 0.0;
+    var totalPendiente = estadisticas.ContainsKey("TotalPendiente") ? Convert.ToDouble(estadisticas["TotalPendiente"]) : 0.0;
+    var cantidadVentas = estadisticas.ContainsKey("CantidadVentas") ? Convert.ToInt32(estadisticas["CantidadVentas"]) : 0;
+}
+
+<section class="dashboard-hero" aria-label="Bienvenida y resumen del mes">
+    <div class="dashboard-hero__overlay"></div>
+    <div class="dashboard-hero__content">
+        <div class="dashboard-hero__layout">
+            <div class="dashboard-hero__welcome">
+                <h1 class="dashboard-hero__title">Bienvenido, @displayName</h1>
+                <p class="dashboard-hero__subtitle">Resumen de @mesActual @anioActual</p>
+            </div>
+            <div class="dashboard-hero__kpis">
+                <button type="button" class="dashboard-hero-kpi" onclick="openDetalleModal('presupuestos')" title="Ver detalle de presupuestos del mes">
+                    <span class="dashboard-hero-kpi__label">Presupuestos</span>
+                    <span class="dashboard-hero-kpi__value">@cantidadPresupuestos</span>
+                    <span class="dashboard-hero-kpi__meta dashboard-hero-kpi__meta--brand">Total: $@totalPresupuestos.ToString("N2")</span>
+                </button>
+                <button type="button" class="dashboard-hero-kpi" onclick="openDetalleModal('clientes')" title="Ver detalle de clientes nuevos del mes">
+                    <span class="dashboard-hero-kpi__label">Clientes nuevos</span>
+                    <span class="dashboard-hero-kpi__value">@clientesNuevos</span>
+                    <span class="dashboard-hero-kpi__meta">En @mesActual</span>
+                </button>
+                <button type="button" class="dashboard-hero-kpi" onclick="openDetalleModal('ventas')" title="Ver detalle de ventas del mes">
+                    <span class="dashboard-hero-kpi__label">Ventas</span>
+                    <span class="dashboard-hero-kpi__value">@cantidadVentas</span>
+                    <span class="dashboard-hero-kpi__meta">
+                        <span class="dashboard-hero-kpi__meta--brand">Tot: $@totalFacturado.ToString("N2")</span>
+                        <span class="dashboard-hero-kpi__meta--danger">Pend: $@totalPendiente.ToString("N2")</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

@@ -2,6 +2,35 @@
 
 ---
 
+### [2026-07-05] — Home hero band (continuidad con login)
+- **Qué se implementó:**
+  - Partial `_DashboardHero.cshtml`: franja con imagen Bariloche, overlay slate/fucsia, saludo personalizado y **3 KPIs glass integrados** (presupuestos, clientes, ventas) con click a `openDetalleModal`.
+  - Eliminada la fila duplicada de stat cards en `Index.cshtml`; accesos rápidos quedan más arriba.
+  - Estilos `.dashboard-hero__layout`, `.dashboard-hero-kpi*` en `modern-dashboard.css`; responsive tablet/mobile (scroll horizontal en KPIs).
+  - Limpieza de estilos inline huérfanos (`.modern-stat-*`, `.dashboard-stat-card`) en Index.
+  - Cache bust `modern-dashboard.css?v=20260705b`.
+- **Archivos:** `Views/Home/_DashboardHero.cshtml`, `Views/Home/Index.cshtml`, `Content/modern-dashboard.css`, `Views/Shared/_Layout.cshtml`.
+- **Verificación:** MSBuild `MAT.MVC` Debug OK.
+- **Acción humana pendiente:** smoke clicks KPIs + modal; Ctrl+F5.
+- **Estado:** ✅ completo
+
+---
+
+### [2026-07-05] — Login split screen (Opción A — Bariloche)
+- **Qué se implementó:**
+  - **Layout reutilizable:** `_LayoutLogin.cshtml` con split 50/50 (hero izquierda + formulario derecha), tagline de marca, pill DEV fija (`SystemDEV` / `ViewBag.IsDev`), sin cargar el `_Layout` principal (menú, DataTables, etc.).
+  - **Estilos:** `login-split.css` — overlay slate + fucsia, float labels y toggle contraseña (Login), formulario scrollable (Registro), responsive (hero franja ~200px en mobile), botón con loading state al submit.
+  - **Vistas:** `Login.cshtml` y `RegistrarVendedor.cshtml` migradas al nuevo layout; eliminados hacks inline `!important` y dependencia del gradiente violeta / `loginFondo.jpg`.
+  - **Limpieza:** reglas obsoletas de login compact removidas de `modern-account.css` (Manage/Register embebidos siguen usando ese CSS).
+  - **Controller:** `AccountController` — `PartialView()` → `View()` en GET Login y GET/POST error RegistrarVendedor para que aplique el layout split (PartialView no renderizaba el shell).
+- **Archivos:** `Views/Shared/_LayoutLogin.cshtml`, `Content/login-split.css`, `Views/Account/Login.cshtml`, `Views/Account/RegistrarVendedor.cshtml`, `Content/modern-account.css`, `Controllers/Account/AccountController.cs`, `MAT.MVC.csproj`.
+- **Problemas encontrados:** GET devolvía `PartialView()` → login sin panel hero; corregido con `View()`.
+- **Verificación:** MSBuild `MAT.MVC` Debug OK.
+- **Acción humana pendiente:** smoke manual Login GET/POST (éxito y error) + RegistrarVendedor + banner DEV. Asset hero: `MAT.MVC/Images/login-hero-bariloche.png`.
+- **Estado:** ✅ completo (pendiente asset hero + smoke)
+
+---
+
 ### [2026-07-04] — Reescritura módulo Paquete (UX/UI + rendimiento)
 - **Qué se implementó:**
   - **SQL (MAT.DB):** `usp_MAT_Paquete_GetPaquetes` con filtros (año, `@Search`, `@Temporada`, `@Moneda`), destino (Localidad) y `MonedaCodigo` limpio; `@DateYear=''` sigue devolviendo todos los años (compat selector de Viaje). Nuevos SPs set-based que eliminan el N+1 de los modales: `usp_MAT_Servicio_GetAvailableForPaquete`, `usp_MAT_Precio_GetAvailableForPaquete`, `usp_MAT_Adicional_GetAvailableForPaquete`. `usp_MAT_Paquetes_VinculosByPaqueteID` extendido con `VinculoRowId` (PK de cada tabla de vínculo) para desvincular excursiones sin 2ª consulta.

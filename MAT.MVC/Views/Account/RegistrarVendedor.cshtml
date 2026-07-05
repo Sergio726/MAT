@@ -2,108 +2,93 @@
 
 @{
     ViewBag.Title = "Registrar Vendedor";
-    Layout = null;
+    ViewBag.LoginPanelScroll = true;
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="es" class="account-page-body">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Marco Antonio Tours</title>
-    <link href="~/Content/modern-account.css" rel="stylesheet" />
-    <link href="~/Content/saas-variables.css" rel="stylesheet" />
-    <style>
-        html.account-page-body,
-        body.account-page-body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow-x: hidden;
-        }
-    </style>
-</head>
-<body class="account-page-body">
-    <div class="account-page">
-        <div class="account-card register">
-            @if (ViewBag.IsDev == "true")
-            {
-                <div class="dev-banner">
-                    Entorno de Prueba
-                </div>
-            }
+<div class="login-split__header">
+    <img src="~/Images/mat header.png" alt="Marco Antonio Tours" class="login-split__logo" />
+    <h1 class="login-split__title">Crear cuenta</h1>
+    <p class="login-split__subtitle">Completá el formulario para registrarte como vendedor</p>
+</div>
 
-            <div class="account-card-header">
-                <div class="logo">
-                    <img src="~/Images/mat header.png" alt="Marco Antonio Tours" />
-                </div>
-                <h1>Crear Cuenta</h1>
-                <h2>Completa el formulario para registrarte</h2>
-            </div>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "login-split-form", id = "registerForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
 
-            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "account-form" }))
-            {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors" })
-
-                <div class="account-form-group">
-                    <label class="account-form-label" for="UserName">Nombre de usuario</label>
-                    <input type="text" id="UserName" name="UserName" class="account-form-input" placeholder="Usuario" autocomplete="username" />
-                    @Html.ValidationMessage("UserName", "", new { @class = "field-validation-error" })
-                </div>
-
-                <div class="account-form-group">
-                    <label class="account-form-label" for="Password">Contraseña</label>
-                    <input type="password" id="Password" name="Password" class="account-form-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password" data-val="true" data-val-length="El número de caracteres de Contraseña debe ser al menos 6." data-val-length-max="100" data-val-length-min="6" data-val-required="El campo Contraseña es obligatorio." />
-                    @Html.ValidationMessage("Password", "", new { @class = "field-validation-error" })
-                </div>
-
-                <div class="account-form-group">
-                    <label class="account-form-label" for="ConfirmPassword">Confirmar contraseña</label>
-                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="account-form-input" placeholder="Repite la contraseña" autocomplete="new-password" data-val="true" data-val-equalto="La contraseña y la contraseña de confirmación no coinciden." data-val-equalto-other="*.Password" />
-                    @Html.ValidationMessage("ConfirmPassword", "", new { @class = "field-validation-error" })
-                </div>
-
-                <div class="account-form-group">
-                    <label class="account-form-label" for="Nombre">Nombre</label>
-                    <input type="text" id="Nombre" name="Nombre" class="account-form-input" placeholder="Nombre" autocomplete="given-name" />
-                    @Html.ValidationMessage("Nombre", "", new { @class = "field-validation-error" })
-                </div>
-
-                <div class="account-form-group">
-                    <label class="account-form-label" for="Apellido">Apellido</label>
-                    <input type="text" id="Apellido" name="Apellido" class="account-form-input" placeholder="Apellido" autocomplete="family-name" />
-                    @Html.ValidationMessage("Apellido", "", new { @class = "field-validation-error" })
-                </div>
-
-                <div class="account-form-group">
-                    <label class="account-form-label" for="NroDocumento">DNI</label>
-                    <input type="text" id="NroDocumento" name="NroDocumento" class="account-form-input" placeholder="Número de documento" autocomplete="off" />
-                    @Html.ValidationMessage("NroDocumento", "", new { @class = "field-validation-error" })
-                </div>
-
-                <div class="account-form-group">
-                    <label class="account-form-label" for="Telefono">Teléfono</label>
-                    <input type="tel" id="Telefono" name="Telefono" class="account-form-input" placeholder="Teléfono" autocomplete="tel" />
-                    @Html.ValidationMessage("Telefono", "", new { @class = "field-validation-error" })
-                </div>
-
-                <div class="account-form-group">
-                    <label class="account-form-label" for="Email">Email</label>
-                    <input type="email" id="Email" name="Email" class="account-form-input" placeholder="correo@ejemplo.com" autocomplete="email" />
-                    @Html.ValidationMessage("Email", "", new { @class = "field-validation-error" })
-                </div>
-
-                <button type="submit" class="account-btn">Registrarse</button>
-
-                <p class="account-message">
-                    ¿Ya tienes una cuenta? <a href="@Url.Action("Login", "Account")">Inicia sesión</a>
-                </p>
-            }
-        </div>
+    <div class="login-split-form-group">
+        <label class="login-split-form-label" for="UserName">Nombre de usuario</label>
+        <input type="text" id="UserName" name="UserName" class="login-split-form-input" placeholder="Usuario" autocomplete="username" />
+        @Html.ValidationMessage("UserName", "", new { @class = "field-validation-error" })
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/jqueryval")
-</body>
-</html>
+    <div class="login-split-form-group">
+        <label class="login-split-form-label" for="Password">Contraseña</label>
+        <input type="password" id="Password" name="Password" class="login-split-form-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password" data-val="true" data-val-length="El número de caracteres de Contraseña debe ser al menos 6." data-val-length-max="100" data-val-length-min="6" data-val-required="El campo Contraseña es obligatorio." />
+        @Html.ValidationMessage("Password", "", new { @class = "field-validation-error" })
+    </div>
+
+    <div class="login-split-form-group">
+        <label class="login-split-form-label" for="ConfirmPassword">Confirmar contraseña</label>
+        <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="login-split-form-input" placeholder="Repite la contraseña" autocomplete="new-password" data-val="true" data-val-equalto="La contraseña y la contraseña de confirmación no coinciden." data-val-equalto-other="*.Password" />
+        @Html.ValidationMessage("ConfirmPassword", "", new { @class = "field-validation-error" })
+    </div>
+
+    <div class="login-split-form-group">
+        <label class="login-split-form-label" for="Nombre">Nombre</label>
+        <input type="text" id="Nombre" name="Nombre" class="login-split-form-input" placeholder="Nombre" autocomplete="given-name" />
+        @Html.ValidationMessage("Nombre", "", new { @class = "field-validation-error" })
+    </div>
+
+    <div class="login-split-form-group">
+        <label class="login-split-form-label" for="Apellido">Apellido</label>
+        <input type="text" id="Apellido" name="Apellido" class="login-split-form-input" placeholder="Apellido" autocomplete="family-name" />
+        @Html.ValidationMessage("Apellido", "", new { @class = "field-validation-error" })
+    </div>
+
+    <div class="login-split-form-group">
+        <label class="login-split-form-label" for="NroDocumento">DNI</label>
+        <input type="text" id="NroDocumento" name="NroDocumento" class="login-split-form-input" placeholder="Número de documento" autocomplete="off" />
+        @Html.ValidationMessage("NroDocumento", "", new { @class = "field-validation-error" })
+    </div>
+
+    <div class="login-split-form-group">
+        <label class="login-split-form-label" for="Telefono">Teléfono</label>
+        <input type="tel" id="Telefono" name="Telefono" class="login-split-form-input" placeholder="Teléfono" autocomplete="tel" />
+        @Html.ValidationMessage("Telefono", "", new { @class = "field-validation-error" })
+    </div>
+
+    <div class="login-split-form-group">
+        <label class="login-split-form-label" for="Email">Email</label>
+        <input type="email" id="Email" name="Email" class="login-split-form-input" placeholder="correo@ejemplo.com" autocomplete="email" />
+        @Html.ValidationMessage("Email", "", new { @class = "field-validation-error" })
+    </div>
+
+    <button type="submit" class="login-split-btn" id="registerSubmitBtn">
+        <span class="login-split-btn__spinner" aria-hidden="true"></span>
+        <span class="login-split-btn__text">Registrarse</span>
+    </button>
+
+    <p class="login-split-message">
+        ¿Ya tienes una cuenta? <a href="@Url.Action("Login", "Account")">Inicia sesión</a>
+    </p>
+}
+
+@section scripts {
+    <script>
+        (function () {
+            var form = document.getElementById('registerForm');
+            var submitBtn = document.getElementById('registerSubmitBtn');
+            if (!form || !submitBtn) return;
+
+            form.addEventListener('submit', function () {
+                if (submitBtn.disabled) return;
+                submitBtn.disabled = true;
+                submitBtn.classList.add('is-loading');
+                var text = submitBtn.querySelector('.login-split-btn__text');
+                if (text) text.textContent = 'Registrando…';
+            });
+        })();
+    </script>
+}

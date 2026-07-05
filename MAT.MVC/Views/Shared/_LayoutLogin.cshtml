@@ -1,0 +1,45 @@
+@{
+    var pageTitle = ViewBag.Title ?? "Acceso";
+    var isDev = ViewBag.IsDev == "true"
+        || string.Equals(System.Configuration.ConfigurationManager.AppSettings["SystemDEV"], "true", StringComparison.OrdinalIgnoreCase);
+}
+<!DOCTYPE html>
+<html lang="es" class="login-split-page">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@pageTitle - Marco Antonio Tours</title>
+    <link rel="icon" href="~/Images/favicon.ico" type="image/x-icon">
+    <link href="~/Content/saas-variables.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/Content/login-split.css?v=20260705" rel="stylesheet" />
+    @RenderSection("head", required: false)
+</head>
+<body class="login-split-page">
+    @if (isDev)
+    {
+        <div class="login-split__dev-pill" role="status">Entorno de Prueba</div>
+    }
+
+    <div class="login-split">
+        <aside class="login-split__hero" aria-hidden="true">
+            <div class="login-split__hero-overlay"></div>
+            <div class="login-split__hero-content">
+                <p class="login-split__brand">Marco Antonio Tours</p>
+                <p class="login-split__tagline">Gestión operativa de viajes</p>
+            </div>
+        </aside>
+
+        <main class="login-split__panel">
+            <div class="login-split__panel-inner@(ViewBag.LoginPanelScroll == true ? " login-split__panel-inner--scroll" : "")">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

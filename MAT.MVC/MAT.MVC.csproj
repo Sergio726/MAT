@@ -476,6 +476,7 @@
     <Content Include="Content\mat.splash.css" />
     <Content Include="Content\mat.styles.css" />
     <Content Include="Content\mat.styles.custom.css" />
+    <Content Include="Content\login-split.css" />
     <Content Include="Content\modern-account.css" />
     <Content Include="Content\modern-dashboard.css" />
     <Content Include="Content\modern-datatable.css" />
@@ -608,6 +609,7 @@
     <Content Include="Images\Icons\icon_printer_hover.png" />
     <Content Include="Images\Icons\icon_printer_hover_white.png" />
     <Content Include="Images\Icons\ok.png" />
+    <Content Include="Images\login-hero-bariloche.png" />
     <Content Include="Images\loginFondo.jpg" />
     <Content Include="Images\marco_antonio_back2.jpg" />
     <Content Include="Images\habitacion.png" />
@@ -742,8 +744,10 @@
     <Content Include="Views\Shared\_AdminNav.cshtml" />
     <Content Include="Views\Shared\_AdminTopbar.cshtml" />
     <Content Include="Views\Shared\_Breadcrumb.cshtml" />
+    <Content Include="Views\Shared\_LayoutLogin.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_ModalClientesNuevosPorPeriodo.cshtml" />
+    <Content Include="Views\Home\_DashboardHero.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Persona\Index.cshtml" />
     <Content Include="Views\Persona\Details.cshtml" />

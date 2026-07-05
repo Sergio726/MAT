@@ -1,23 +1,10 @@
 /* Estilos modernos para páginas de Account - Marco Antonio Tours */
 
-/* Variables específicas para Account */
+/* Variables específicas para Account (Manage, Register embebidos en layout) */
 :root {
-    --account-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --account-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     --account-input-border: #e5e7eb;
     --account-input-focus: var(--brand-primary);
-}
-
-/* Reset para body y html en páginas de account */
-body.account-page-body,
-html.account-page-body {
-    margin: 0;
-    padding: 0;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
-}
-
-body.account-page-body {
-    overflow-x: hidden;
 }
 
 /* Animación para aparición gradual del formulario */
@@ -32,39 +19,6 @@ body.account-page-body {
     }
 }
 
-/* Contenedor principal de Account */
-.account-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 1rem;
-    background: var(--account-bg);
-    position: relative;
-    overflow: hidden;
-    margin: 0;
-}
-
-.account-page::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('/Images/loginFondo.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.15;
-    z-index: 0;
-}
-
-.account-page > * {
-    position: relative;
-    z-index: 1;
-}
-
 /* Card de formulario */
 .account-card {
     background: var(--white);
@@ -76,222 +30,6 @@ body.account-page-body {
     margin: 0 auto;
     animation: fadeInUp 0.6s ease-out;
     opacity: 1;
-}
-
-/* Login: tarjeta más baja sin títulos visibles */
-.account-card.account-card--compact-login {
-    max-width: 400px;
-    padding: 1.75rem 2rem 2rem;
-}
-
-.account-card.account-card--compact-login .account-card-header {
-    margin-bottom: 1.25rem;
-}
-
-.account-card.account-card--compact-login .account-card-header .logo {
-    margin-bottom: 0;
-}
-
-.account-card.account-card--compact-login .dev-banner {
-    margin-bottom: 1rem;
-    padding: 0.5rem 1rem;
-}
-
-.account-card.account-card--compact-login .account-form-group {
-    margin-bottom: 1rem;
-}
-
-.account-card.account-card--compact-login .account-btn {
-    margin-top: 0.25rem;
-    padding: 0.75rem 1.25rem;
-}
-
-.account-card.account-card--compact-login .account-message {
-    margin-top: 1rem;
-}
-
-.account-sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* Etiquetas flotantes + toggle contraseña (login): borde en contenedor “shell” */
-.account-form--float-labels {
-    margin-top: 0;
-}
-
-.account-float-group {
-    position: relative;
-    display: block;
-    width: 100%;
-    margin-bottom: 1.25rem;
-}
-
-.account-float-group:last-of-type {
-    margin-bottom: 1rem;
-}
-
-.account-field-shell,
-.account-password-shell {
-    position: relative;
-    background: var(--white);
-    border: 2px solid var(--account-input-border);
-    border-radius: 10px;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.account-password-shell {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-}
-
-.account-field-shell:focus-within,
-.account-password-shell:focus-within {
-    outline: none;
-    border-color: var(--account-input-focus);
-    box-shadow: 0 0 0 3px rgba(230, 51, 117, 0.12);
-}
-
-.account-field-shell:has(.input-validation-error),
-.account-password-shell:has(.input-validation-error) {
-    border-color: #ef4444;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
-}
-
-.account-float-input--shell {
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 1.35rem 1rem 0.55rem;
-    font-size: 1rem;
-    color: var(--text-primary);
-    background: transparent;
-    border: none;
-    border-radius: inherit;
-    box-sizing: border-box;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
-    box-shadow: none;
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-.account-password-shell .account-float-input--shell {
-    flex: 1 1 auto;
-    min-width: 0;
-    padding-right: 0.35rem;
-    border-radius: 8px 0 0 8px;
-}
-
-.account-float-input--shell:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-.account-float-input--shell.input-validation-error {
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-}
-
-.account-float-input--shell::placeholder {
-    color: transparent;
-}
-
-.account-float-label {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--text-muted);
-    pointer-events: none;
-    transition: top 0.2s ease, transform 0.2s ease, font-size 0.2s ease, color 0.2s ease;
-    line-height: 1.2;
-    max-width: calc(100% - 3.25rem);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.account-float-input--shell:focus + .account-float-label,
-.account-float-input--shell:not(:placeholder-shown) + .account-float-label {
-    top: 0.55rem;
-    transform: translateY(0);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.account-float-input--shell:focus + .account-float-label {
-    color: var(--brand-primary);
-}
-
-.account-password-shell .account-password-toggle {
-    flex: 0 0 auto;
-    align-self: center;
-    position: static;
-    transform: none;
-    margin: 0 0.35rem 0 0;
-    border: none;
-    background: transparent;
-    padding: 0.45rem;
-    cursor: pointer;
-    color: var(--text-secondary);
-    border-radius: 6px;
-    line-height: 0;
-    transition: color 0.2s ease, background 0.2s ease;
-}
-
-.account-float-group--password .account-password-toggle:hover,
-.account-password-shell .account-password-toggle:hover {
-    color: var(--brand-primary);
-    background: rgba(230, 51, 117, 0.08);
-}
-
-.account-float-group--password .account-password-toggle:focus,
-.account-password-shell .account-password-toggle:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(230, 51, 117, 0.35);
-}
-
-.account-password-toggle-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.account-password-toggle-icon--hide {
-    display: none;
-}
-
-.account-password-toggle[aria-pressed="true"] .account-password-toggle-icon--show {
-    display: none;
-}
-
-.account-password-toggle[aria-pressed="true"] .account-password-toggle-icon--hide {
-    display: inline-flex;
-}
-
-.account-float-group .field-validation-error {
-    margin-top: 0.5rem;
-}
-
-.account-card--compact-login .account-float-group {
-    margin-bottom: 1rem;
-}
-
-.account-card--compact-login .account-float-group:last-of-type {
-    margin-bottom: 0.875rem;
 }
 
 /* Header del card */
@@ -543,19 +281,9 @@ body.account-page-body {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .account-page {
-        padding: 1rem;
-        align-items: flex-start;
-        padding-top: 2rem;
-    }
-
     .account-card {
         padding: 2rem 1.5rem;
         border-radius: 12px;
-    }
-
-    .account-card.account-card--compact-login {
-        padding: 1.5rem 1.25rem 1.75rem;
     }
 
     .account-card-header h1 {
@@ -577,16 +305,8 @@ body.account-page-body {
         padding: 1.5rem 1rem;
     }
 
-    .account-card.account-card--compact-login {
-        padding: 1.25rem 1rem 1.5rem;
-    }
-
     .account-card-header {
         margin-bottom: 2rem;
-    }
-
-    .account-card.account-card--compact-login .account-card-header {
-        margin-bottom: 1rem;
     }
 
     .account-card-header h1 {
@@ -602,18 +322,14 @@ body.account-page-body {
         font-size: 16px; /* Previene zoom en iOS */
     }
 
-    .account-float-input--shell {
-        font-size: 16px; /* Previene zoom en iOS */
-    }
-
     .account-btn {
         padding: 0.875rem 1.25rem;
         font-size: 0.9375rem;
     }
 }
 
-/* Override para páginas que no usan account-page */
-body:not(.account-page-body) .account-card {
+/* Card embebida en layout principal */
+body .account-card {
     margin: 2rem auto;
 }
 
