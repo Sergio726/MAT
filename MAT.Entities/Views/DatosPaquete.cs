@@ -1,28 +1,33 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'DatosPaquete' view. [No description found in the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class DatosPaquete : DatosPaqueteBase
-	{
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="DatosPaquete"/> instance.
-		///</summary>
-		public DatosPaquete():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: DatosPaquete</summary>
+    [Serializable]
+    public class DatosPaquete
+    {
+		public Guid ViajeId { get; set; }
+		public string ViajeOrigen { get; set; }
+		public DateTime? ViajeFechaSalida { get; set; }
+		public string ViajeHoraSalida { get; set; }
+		public string ViajePaisOrigen { get; set; }
+		public string ViajePaisDestino { get; set; }
+		public string ViajePaso { get; set; }
+		public string ViajeMedio { get; set; }
+		public Guid PaqueteId { get; set; }
+		public string Descripcion { get; set; }
+		public double? Precio { get; set; }
+		public int? Moneda { get; set; }
+		public string Iva { get; set; }
+		public string Alicuota { get; set; }
+		public int? Temporada { get; set; }
+		public double? Cotizacion { get; set; }
+		public string Codigo { get; set; }
+		public int? DestinoId { get; set; }
+		public string Nombre { get; set; }
+		public string DescripcionServicio { get; set; }
+		public double? PrecioServicio { get; set; }
+		public string MonedaServicio { get; set; }
+    }
 }
+

@@ -1,28 +1,22 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Proveedor' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Proveedor : ProveedorBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Proveedor"/> instance.
-		///</summary>
-		public Proveedor():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Proveedor</summary>
+    [Serializable]
+    public class Proveedor
+    {
+		public Guid ProveedorId { get; set; }
+		public string RazonSocial { get; set; }
+		public string Telefono { get; set; }
+		public string Fax { get; set; }
+		public string Web { get; set; }
+		public string Email { get; set; }
+		public string Idioma { get; set; }
+		public int? CondicionIva { get; set; }
+		public string Cuit { get; set; }
+		public int? FormaPago { get; set; }
+		public int? LocalidadId { get; set; }
+    }
 }
+

@@ -1,28 +1,20 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Nota' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Nota : NotaBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Nota"/> instance.
-		///</summary>
-		public Nota():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Nota</summary>
+    [Serializable]
+    public class Nota
+    {
+		public Guid NotaId { get; set; }
+		public double? PorcentajeRetencion { get; set; }
+		public double? MontoRetencion { get; set; }
+		public DateTime? Fecha { get; set; }
+		public int? Dias { get; set; }
+		public Guid? ClienteId { get; set; }
+		public Guid? VendedorId { get; set; }
+		public string NroNota { get; set; }
+		public double? MontoNota { get; set; }
+    }
 }
+

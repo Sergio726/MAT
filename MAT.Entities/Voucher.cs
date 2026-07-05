@@ -1,28 +1,15 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Voucher' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Voucher : VoucherBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Voucher"/> instance.
-		///</summary>
-		public Voucher():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Voucher</summary>
+    [Serializable]
+    public class Voucher
+    {
+		public Guid VoucherId { get; set; }
+		public long NroVoucher { get; set; }
+		public DateTime? FechaEmision { get; set; }
+		public Guid? VendedorId { get; set; }
+    }
 }
+

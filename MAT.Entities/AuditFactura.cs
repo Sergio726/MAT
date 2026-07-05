@@ -1,28 +1,18 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'AuditFactura' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class AuditFactura : AuditFacturaBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="AuditFactura"/> instance.
-		///</summary>
-		public AuditFactura():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: AuditFactura</summary>
+    [Serializable]
+    public class AuditFactura
+    {
+		public int Id { get; set; }
+		public Guid? FacturaId { get; set; }
+		public Guid? PersonaId { get; set; }
+		public Guid VendedorId { get; set; }
+		public string Accion { get; set; }
+		public string Descripcion { get; set; }
+		public DateTime Fecha { get; set; }
+    }
 }
+

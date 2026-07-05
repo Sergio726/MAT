@@ -71,6 +71,7 @@
     <Compile Include="DBHelper.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="GeoDataAccess.cs" />
+    <Compile Include="LookupDataAccess.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="HelperBinding.cs" />
     <Compile Include="MATLogger.cs" />
@@ -78,14 +79,6 @@
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MAT.Data.SqlClient\MAT.Data.SqlClient.csproj">
-      <Project>{8996a7b4-57d3-440b-a545-a701844b8c4a}</Project>
-      <Name>MAT.Data.SqlClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MAT.Data\MAT.Data.csproj">
-      <Project>{041c1bbe-0bfb-4d45-8125-9ab0bbc09a92}</Project>
-      <Name>MAT.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MAT.Entities\MAT.Entities.csproj">
       <Project>{20e43088-4618-4f4a-b8ad-fc31b50d94cd}</Project>
       <Name>MAT.Entities</Name>
@@ -93,10 +86,6 @@
     <ProjectReference Include="..\MAT.Enums\MAT.Enums.csproj">
       <Project>{6560d8b9-7562-45c9-b40b-bea63ec6cb30}</Project>
       <Name>MAT.Enums</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MAT.Services\MAT.Services.csproj">
-      <Project>{794327ce-dc0a-4381-89ee-4c00afb08d5a}</Project>
-      <Name>MAT.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

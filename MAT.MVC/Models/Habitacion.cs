@@ -1,5 +1,6 @@
 ﻿using MAT.Utilities;
 using System;
+using MAT.MVC.Infrastructure;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -232,7 +233,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "";
-                sResult[1] = "Error: " + e.Message + "StackTrace: " + e.StackTrace;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "Habitacion");
                 sResult[2] = "Error.";
 
                 return sResult;

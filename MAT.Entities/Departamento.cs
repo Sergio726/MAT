@@ -1,28 +1,14 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Departamento' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Departamento : DepartamentoBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Departamento"/> instance.
-		///</summary>
-		public Departamento():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Departamento</summary>
+    [Serializable]
+    public class Departamento
+    {
+		public int Id { get; set; }
+		public int IdProvincia { get; set; }
+		public string Nombre { get; set; }
+    }
 }
+

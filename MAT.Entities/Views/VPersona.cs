@@ -1,28 +1,26 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'vPersona' view. [No description found in the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class VPersona : VPersonaBase
-	{
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="VPersona"/> instance.
-		///</summary>
-		public VPersona():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: VPersona</summary>
+    [Serializable]
+    public class VPersona
+    {
+		public Guid PersonaId { get; set; }
+		public string Apellido { get; set; }
+		public string Nombre { get; set; }
+		public int? TipoDocumento { get; set; }
+		public string NroDocumento { get; set; }
+		public string Telefono { get; set; }
+		public string Email { get; set; }
+		public DateTime? FechaNacimiento { get; set; }
+		public int? LocalidadId { get; set; }
+		public int? UserId { get; set; }
+		public string Domicilio { get; set; }
+		public string Ocupacion { get; set; }
+		public string Nacionalidad { get; set; }
+		public string PaisResidencia { get; set; }
+		public int? Sexo { get; set; }
+    }
 }
+

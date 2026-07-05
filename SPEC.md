@@ -809,7 +809,7 @@
   Archivos: `Controllers/Admin/AdminController.cs`, `Views/Admin/GridResumenPagos.cshtml`, `Infrastructure/AdminResumenPagosExcelExport.cs`
   Criterio de éxito: El botón descarga un .xlsx con los datos del viaje seleccionado. La acción tiene `[Authorize]` y `RequireAdministrador()`.
 
-- [ ] **Arquitectura [P3]: Eliminar NetTiers y capa generada** *(épica — avanzar por fases)*
+- [x] **Arquitectura [P3]: Eliminar NetTiers y capa generada** *(épica — completada 2026-07-05)*
   **Contexto:** Gran parte del acceso a datos usa plantillas NetTiers (`*generated*.cs`, `SqlNetTiersProvider`, `DataRepository`, proyectos `MAT.Data`, `MAT.Data.SqlClient`, `MAT.Services/*ServiceBase.generated.cs`, `MAT.Entities/*Base.generated.cs`). Objetivo final: **ninguna dependencia activa a NetTiers** en la cadena `MAT.MVC`.
   **Patrón objetivo (sin NuGet nuevo):** `DBHelper` + SPs en `MAT.DB` para lecturas/agregados; clases `*DataAccess` o métodos en `Models/*` para CRUD que hoy pasan por `*Service`; POCOs en `MAT.Entities` reescritos a mano al final.
   **Estado dual hoy:** `MAT.MVC` ya usa mucho `DBHelper` (reportes, reserva, factura fiscal); los `*Service` NetTiers quedan sobre todo en CRUD de catálogo y entidades core (~50 servicios, la mayoría wrappers vacíos de 40 líneas).
@@ -878,24 +878,28 @@
     **Implementación 2026-07-05:** **Historial migrado** — único uso real de NetTiers en el dominio (`HistorialService.GetAll`/`GetByHistorialId`, ambos solo lectura); reemplazado por `HistorialDataAccess` + SPs `usp_MAT_Historial_GetAll`/`usp_MAT_Historial_GetByHistorialId`. **Planilla: retiro total declarado** (no migrado) — la impresión/edición legacy (`EditarPlanilla`, `ImprimirPlanilla*`, grids) ya había sido eliminada por completo en un commit previo (2026-06-17); los servicios NetTiers `PlanillaService`/`PlanillaServicioItemService`/`PlanillaHabitacionItemService` tenían cero callers; se eliminaron 4 campos/propiedades estáticas huérfanas de `MATContext` (`Planilla`, `ColeccionPlanillas`, `ServiciosSeleccionados`, `HabitacionesPlanilla` — eran estáticas de clase, no de `HttpContext.Session`). Tablas `Planilla*` intactas en BD sin acceso desde la app, disponibles para una eventual Opción C de Viaje-Rentabilidad. Documentación actualizada: `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md`, `DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`. MSBuild `MAT.MVC` Debug OK.
 
   ##### Fase 9 — Retirar capa Services generada
-  - [ ] **NetTiers F9:** Eliminar `MAT.Services` como capa NetTiers
+  - [x] **NetTiers F9:** Eliminar `MAT.Services` como capa NetTiers
     Cuando ningún proyecto referencie `*ServiceBase.generated.cs`: mover lógica restante a `MAT.Utilities` / `Infrastructure/Data`; eliminar `ServiceBaseCore.generated.cs`, `ConnectionScope` NetTiers.
     Criterio: `MAT.MVC` sin `ProjectReference` a `MAT.Services` **o** `MAT.Services` reducido a helpers sin generated.
+    **Implementación 2026-07-05:** `LookupDataAccess.cs` + refactor `Helper.cs` (último uso activo de `*Service`); eliminadas carpetas `MAT.Services/`, `MAT.Web/`, `MAT.WCF/`; huérfanos `InfopathModel.cs`, `VoucherModel-05122016.cs`; SPs `usp_MAT_Proveedor_GetSelectList`, `usp_MAT_PrecioServicio_GetActiveByServicioId`. MSBuild `MAT.sln` Debug OK.
 
   ##### Fase 10 — Retirar MAT.Data y SqlClient
-  - [ ] **NetTiers F10:** Eliminar proyectos `MAT.Data` y `MAT.Data.SqlClient`
+  - [x] **NetTiers F10:** Eliminar proyectos `MAT.Data` y `MAT.Data.SqlClient`
     Quitar `SqlNetTiersProvider` de `Web.config`; eliminar referencias en `.csproj`.
     Criterio: MSBuild sin esos proyectos; app arranca.
+    **Implementación 2026-07-05:** Referencias quitadas de `MAT.MVC`/`MAT.Utilities`; sección `<MAT.Data>` y `configSections` NetTiers removidas de `Web.config` (se conserva `connectionStrings` `MAT.Data.ConnectionString` para `DBHelper`); proyectos fuera de `MAT.sln`; carpetas `MAT.Data/`, `MAT.Data.SqlClient/`, `MAT.Data.WebServiceClient/` eliminadas del repo.
 
   ##### Fase 11 — Entidades sin generated
-  - [ ] **NetTiers F11:** Reemplazar `MAT.Entities/*Base.generated.cs` por POCOs manuales
+  - [x] **NetTiers F11:** Reemplazar `MAT.Entities/*Base.generated.cs` por POCOs manuales
     Mantener claves `*Key` y contratos usados por la app; una entidad por PR o por lote pequeño.
     Criterio: carpeta `MAT.Entities` sin `*.generated.cs`; tipos públicos estables.
+    **Implementación 2026-07-05:** 59 entidades + 10 vistas convertidas a POCOs (`[Serializable]` + propiedades `{ get; set; }`); eliminados `EntityBaseCore`, `TList`, `EntityFactory`, `EntityManager`, `Validation/`, interfaces `I*`; scripts `tools/F11-*.ps1`; inventario `DOCUMENTACION/F11_ENTITY_INVENTORY.csv`; `MAT.Entities` pasa de ~200 archivos NetTiers a 60 POCOs.
 
   ##### Fase 12 — Limpieza final
-  - [ ] **NetTiers F12:** Documentación y barrido
+  - [x] **NetTiers F12:** Documentación y barrido
     Actualizar `CLAUDE.md`, `GUIA_SISTEMA_MAT.md`; grep sin `nettiers`, `DataRepository`, `VList`, `TList` legacy; retirar Enterprise Library Logging si quedó huérfano.
     Criterio: épica cerrada; `PROGRESS.md` con resumen por fase.
+    **Implementación 2026-07-05:** Hotfix B1–B3 (`ErrorUtil` en catch, `AlertMessage` XSS, `Guid.TryParse`); perf B4–B5 (`usp_MAT_Viaje_GetSelectList`, `usp_MAT_ReservaHabitacion_CountByHabitacionAndViaje`); barrido sin `nettiers.com` en proyectos activos; carpetas legado ya ausentes de solución; docs actualizadas.
 
   **Orden recomendado:** F0 → F1 → F2 → F3 → F4 → F5 → F6 → F7 → F8 → F9 → F10 → F11 → F12. **F6 y F7** son las de mayor riesgo; no saltar fases de catálogo sin smoke test.
 

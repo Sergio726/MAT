@@ -1,28 +1,21 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Pago' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Pago : PagoBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Pago"/> instance.
-		///</summary>
-		public Pago():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Pago</summary>
+    [Serializable]
+    public class Pago
+    {
+		public Guid PagoId { get; set; }
+		public DateTime? FechaPago { get; set; }
+		public double? Monto { get; set; }
+		public int? TipoPago { get; set; }
+		public string TransaccionId { get; set; }
+		public Guid? ClienteId { get; set; }
+		public Guid? VendedorId { get; set; }
+		public string NroRecibo { get; set; }
+		public int? EstadoRendicion { get; set; }
+		public Guid? CuentaCorrienteId { get; set; }
+    }
 }
+

@@ -1,28 +1,16 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Precio' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Precio : PrecioBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Precio"/> instance.
-		///</summary>
-		public Precio():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Precio</summary>
+    [Serializable]
+    public class Precio
+    {
+		public Guid PrecioId { get; set; }
+		public double Monto { get; set; }
+		public DateTime? Vigencia { get; set; }
+		public string Descripcion { get; set; }
+		public string Mes { get; set; }
+    }
 }
+

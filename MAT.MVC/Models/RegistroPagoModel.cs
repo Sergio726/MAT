@@ -1,9 +1,8 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MAT.Entities;
-using MAT.Services;
 using MAT.Utilities;
 using MAT.Enums;
 using MAT.MVC.Common;
@@ -36,7 +35,7 @@ namespace MAT.MVC.Models
                 if (!String.IsNullOrEmpty(nrofactura)) Factura.NroFactura = nrofactura;
                 foreach (Pasaje pasaje in _pasajes)
                 {
-                    //- GeneraciÃ³n de Vouchers
+                    //- Generación de Vouchers
                     Voucher voucher = new Voucher()
                     {
                         VoucherId = Guid.NewGuid(),
@@ -48,7 +47,7 @@ namespace MAT.MVC.Models
                     pasaje.VoucherId = voucher.VoucherId;
                     switch (pasaje.EstadoPasaje)
                     {
-                        case (int)eEstadoPasaje.SeÃ±ado:
+                        case (int)eEstadoPasaje.Señado:
                             pasaje.EstadoPasaje = (int)eEstadoPasaje.Pagado;
                             break;
                         case (int)eEstadoPasaje.PasajeHotelPrereserva:
@@ -68,11 +67,11 @@ namespace MAT.MVC.Models
             }
             else if (Factura.Estado == (int)eEstadoFactura.Prereserva)
             {
-                Factura.Estado = (int)eEstadoFactura.SeÃ±ado;
+                Factura.Estado = (int)eEstadoFactura.Señado;
 
                 foreach (Pasaje pasaje in _pasajes)
                 {
-                    pasaje.EstadoPasaje = (int)eEstadoPasaje.SeÃ±ado;
+                    pasaje.EstadoPasaje = (int)eEstadoPasaje.Señado;
                     PasajeDataAccess.Update(pasaje);
                 }
             }

@@ -1,4 +1,4 @@
-using MAT.MVC.Models;
+﻿using MAT.MVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +25,7 @@ namespace MAT.MVC.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "NotaCreditoController");
             }
             return PartialView(_model);
         }
@@ -42,7 +42,7 @@ namespace MAT.MVC.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "NotaCreditoController");
             }
             return PartialView(_model);
         }
@@ -59,7 +59,7 @@ namespace MAT.MVC.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "NotaCreditoController");
             }
             return View(_model ?? new NotaCreditoModel());
         }

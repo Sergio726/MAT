@@ -1,28 +1,15 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'PlanillaServicio' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class PlanillaServicio : PlanillaServicioBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="PlanillaServicio"/> instance.
-		///</summary>
-		public PlanillaServicio():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: PlanillaServicio</summary>
+    [Serializable]
+    public class PlanillaServicio
+    {
+		public Guid PlanillaServicioId { get; set; }
+		public Guid ViajeId { get; set; }
+		public DateTime FechaRegistro { get; set; }
+		public double Total { get; set; }
+    }
 }
+

@@ -1,9 +1,8 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MAT.Entities;
-using MAT.Services;
 
 namespace MAT.MVC.Models
 {
@@ -116,7 +115,7 @@ namespace MAT.MVC.Models
         //            {
         //                compensacion.Haber = notamodel.Factura.Monto.Value - notamodel.PagoTotal;
         //                compensacion.Debe = 0;
-        //                compensacion.Descripcion = "CompensaciÃ³n Nota";
+        //                compensacion.Descripcion = "Compensación Nota";
         //                compensacion.Vendedor = string.Format("{0} {1}", _vendedor.Nombre, _vendedor.Apellido);
         //                _totalhaber += compensacion.Haber;
         //                //_resumencuenta.Add(compensacion);
@@ -125,7 +124,7 @@ namespace MAT.MVC.Models
         //            resumen.Vendedor = string.Format("{0} {1}", _vendedor.Nombre, _vendedor.Apellido);
         //            _totalhaber += resumen.Haber;
         //            resumen.Debe = 0;
-        //            resumen.Descripcion = "Nota de CrÃ©dito";
+        //            resumen.Descripcion = "Nota de Crédito";
         //            unificado = unificado + resumen.Haber + compensacion.Haber;
         //        }
         //        else if (item.DebitoId.HasValue)
@@ -139,7 +138,7 @@ namespace MAT.MVC.Models
         //            } 
         //            _totaldebe += resumen.Debe;
         //            resumen.Haber = 0;
-        //            resumen.Descripcion = "UtilizaciÃ³n de CrÃ©dito";
+        //            resumen.Descripcion = "Utilización de Crédito";
         //            unificado = unificado + resumen.Debe;
         //        }
         //        resumen.Unificado = unificado;
@@ -197,7 +196,7 @@ namespace MAT.MVC.Models
         //        Nota = new NotaService().GetByNotaId(Movimiento.NotaId.Value);
         //        _vendedor = personaService.GetByPersonaId(Nota.VendedorId.Value);
         //        Vendedor = string.Format("{0} {1}", _vendedor.Nombre, _vendedor.Apellido);
-        //        TipoComprobante = "Nota de CrÃ©dito";
+        //        TipoComprobante = "Nota de Crédito";
         //    }
             
             

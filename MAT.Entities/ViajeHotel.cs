@@ -1,28 +1,18 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'ViajeHotel' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class ViajeHotel : ViajeHotelBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="ViajeHotel"/> instance.
-		///</summary>
-		public ViajeHotel():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: ViajeHotel</summary>
+    [Serializable]
+    public class ViajeHotel
+    {
+		public Guid ViajeHotelId { get; set; }
+		public Guid ViajeId { get; set; }
+		public Guid HotelId { get; set; }
+		public string Desde { get; set; }
+		public string Hasta { get; set; }
+		public string HoraIngreso { get; set; }
+		public string HoraSalida { get; set; }
+    }
 }
+

@@ -1,5 +1,6 @@
 ﻿using MAT.Utilities;
 using System;
+using MAT.MVC.Infrastructure;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -74,7 +75,7 @@ namespace MAT.MVC.Models
                 {
 
                     sResult[0] = "0";
-                    sResult[1] = e.Message;
+                    sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ListaEsperaModel");
                 }
                
                 return sResult;
@@ -111,7 +112,7 @@ namespace MAT.MVC.Models
                 {
 
                     sResult[0] = "";
-                    sResult[1] = e.Message;
+                    sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ListaEsperaModel");
                 }
 
                 return sResult;

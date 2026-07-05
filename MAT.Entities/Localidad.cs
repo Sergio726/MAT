@@ -1,28 +1,14 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Localidad' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Localidad : LocalidadBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Localidad"/> instance.
-		///</summary>
-		public Localidad():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Localidad</summary>
+    [Serializable]
+    public class Localidad
+    {
+		public int Id { get; set; }
+		public int IdDepartamento { get; set; }
+		public string Nombre { get; set; }
+    }
 }
+

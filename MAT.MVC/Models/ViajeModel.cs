@@ -1,4 +1,5 @@
-using MAT.MVC.Common;
+﻿using MAT.MVC.Common;
+using MAT.MVC.Infrastructure;
 using MAT.Utilities;
 using Newtonsoft.Json;
 using System;
@@ -155,7 +156,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ViajeModel");
 
             }
             return sResult;
@@ -231,7 +232,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ViajeModel");
 
             }
             return sResult;

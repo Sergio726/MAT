@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
 using PagedList;
 using Model = MAT.MVC.Models;
 using MAT.MVC.Models;
@@ -31,7 +30,7 @@ namespace MAT.MVC.Controllers.Habitacion
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController");
                 return View();
             }
         }
@@ -50,7 +49,7 @@ namespace MAT.MVC.Controllers.Habitacion
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController");
                 return PartialView();
             }
         }
@@ -83,7 +82,7 @@ namespace MAT.MVC.Controllers.Habitacion
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController");
                 ViewBag.HabitacionTipo = "";
                 return PartialView(Hab);
             }
@@ -125,7 +124,7 @@ namespace MAT.MVC.Controllers.Habitacion
         //    }
         //    catch (Exception e)
         //    {
-        //        ViewBag.Error = e.Message;
+        //        ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController");
         //        ViewBag.HabitacionTipo = MAT.MVC.Models.HabitacionTipoMethod.GetAllHabitacionTipo();
         //        return RedirectToAction("Create", "Habitacion", new { SearchString = Hab.HotelID });
         //    }
@@ -143,7 +142,7 @@ namespace MAT.MVC.Controllers.Habitacion
         //    }
         //    catch (Exception e)
         //    {
-        //        ViewBag.Error = e.Message;
+        //        ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController");
         //        return View(Hab);
         //    }
            
@@ -159,7 +158,7 @@ namespace MAT.MVC.Controllers.Habitacion
         //    }
         //    catch (Exception e)
         //    {
-        //        ViewBag.Error = e.Message;
+        //        ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController");
         //        return View(Hab);
         //    }
             
@@ -175,7 +174,7 @@ namespace MAT.MVC.Controllers.Habitacion
         //    }
         //    catch (Exception e)
         //    {
-        //        ViewBag.Error = e.Message;
+        //        ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController");
         //        return View(Hab);
         //    }
             
@@ -190,7 +189,7 @@ namespace MAT.MVC.Controllers.Habitacion
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HabitacionController");
                 return RedirectToAction("Index", "Habitacion", new { SearchString = HotelID, MsgError = e.Message });
             }
         }

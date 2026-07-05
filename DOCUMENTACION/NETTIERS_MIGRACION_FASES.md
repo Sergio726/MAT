@@ -89,10 +89,10 @@ Para cada `FooService` migrado:
 | **F6** | Factura, Pasaje, Pago, MovimientoCuenta | **Crítico** | F5 |
 | **F7** | Persona, Cliente, CC, vistas Persona* | Alto | F6 parcial |
 | **F8** | Planilla (retiro declarado), Historial (migrado) | Bajo | F5 — ✅ completada 2026-07-05 |
-| **F9** | Retirar MAT.Services generated | Medio | F2–F8 |
-| **F10** | Retirar MAT.Data + SqlClient | Medio | F9 |
-| **F11** | POCOs manuales en MAT.Entities | Medio | F10 |
-| **F12** | Docs + barrido final | Bajo | F11 |
+| **F9** | Retirar MAT.Services + legado Web/WCF | Medio | F2–F8 — ✅ 2026-07-05 |
+| **F10** | Retirar MAT.Data + SqlClient + Web.config NetTiers | Medio | F9 — ✅ 2026-07-05 |
+| **F11** | POCOs manuales en MAT.Entities | Medio | F10 — ✅ 2026-07-05 |
+| **F12** | Docs + barrido final | Bajo | F11 — ✅ 2026-07-05 |
 
 ---
 
@@ -180,8 +180,6 @@ Para cada `FooService` migrado:
 
 ## 8. Próximo paso concreto
 
-**Estado 2026-07-05:** F0–F8 completadas en código (MSBuild `MAT.sln` Debug OK). F7 migró Persona, Cliente, Vendedor, Proveedor, Pasajero, Cuenta y las vistas Persona*/VPersona a 28 SPs + clases `*DataAccess`. F8 migró Historial (2 SPs + `HistorialDataAccess`) y declaró retiro total del dominio NetTiers Planilla (ver detalle arriba).
+**Estado 2026-07-05:** **Épica NetTiers F0–F12 completada.** F11 convirtió 59 entidades/vistas a POCOs manuales; F12 cerró documentación, hotfix seguridad (ErrorUtil), perf LookupDataAccess y barrido final. Cadena activa: `MAT.MVC` → `MAT.Utilities` (DBHelper) + `MAT.Entities` (POCOs).
 
-**Próxima fase:** `NetTiers F9` — retirar `MAT.Services` como capa NetTiers (cuando ningún proyecto referencie `*ServiceBase.generated.cs`).
-
-**Deuda de despliegue (humano):** publicar los SPs de F4–F8 desde `MAT.DB` (y scripts `database/2026-07-03_*` a `database/2026-07-05_*`) en cada entorno + smoke crítico (flujo de pago F6; ABM personas y cuenta corriente F7; pantalla Historial de Pagos F8) antes de commitear por fase.
+**Deuda de despliegue (humano):** publicar `database/2026-07-05_NetTiers_F9_Lookup_SPs.sql` + `database/2026-07-05_NetTiers_F12_Lookup_Perf_SPs.sql`; smoke dropdowns + reserva→pago.

@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +7,6 @@ using System.Linq;
 using System.Web;
 using MAT.Entities;
 
-using MAT.Services;
 using MAT.Utilities;
 using WebMatrix.WebData;
 
@@ -45,18 +44,18 @@ namespace MAT.MVC.Models
     {
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "ContraseÃ±a actual")]
+        [Display(Name = "Contraseña actual")]
         public string OldPassword { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "El nÃºmero de caracteres de {0} debe ser al menos {2}.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "El número de caracteres de {0} debe ser al menos {2}.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Nueva contraseÃ±a")]
+        [Display(Name = "Nueva contraseña")]
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirmar la nueva contraseÃ±a")]
-        [Compare("NewPassword", ErrorMessage = "La nueva contraseÃ±a y la contraseÃ±a de confirmaciÃ³n no coinciden.")]
+        [Display(Name = "Confirmar la nueva contraseña")]
+        [Compare("NewPassword", ErrorMessage = "La nueva contraseña y la contraseña de confirmación no coinciden.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -68,10 +67,10 @@ namespace MAT.MVC.Models
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "ContraseÃ±a")]
+        [Display(Name = "Contraseña")]
         public string Password { get; set; }
 
-        [Display(Name = "Â¿Recordar cuenta?")]
+        [Display(Name = "¿Recordar cuenta?")]
         public bool RememberMe { get; set; }
     }
 
@@ -82,14 +81,14 @@ namespace MAT.MVC.Models
         public string UserName { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "El nÃºmero de caracteres de {0} debe ser al menos {2}.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "El número de caracteres de {0} debe ser al menos {2}.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "ContraseÃ±a")]
+        [Display(Name = "Contraseña")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirmar contraseÃ±a")]
-        [Compare("Password", ErrorMessage = "La contraseÃ±a y la contraseÃ±a de confirmaciÃ³n no coinciden.")]
+        [Display(Name = "Confirmar contraseña")]
+        [Compare("Password", ErrorMessage = "La contraseña y la contraseña de confirmación no coinciden.")]
         public string ConfirmPassword { get; set; }
     }
 

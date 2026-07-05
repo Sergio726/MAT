@@ -11,7 +11,7 @@
 | Framework | ASP.NET MVC 4 / .NET 4.8 |
 | UI | Razor 2, Bootstrap 5, jQuery 3 |
 | Lenguaje | C# / T-SQL |
-| ORM | NetTiers + ADO.NET/SqlClient (EF instalado pero **deshabilitado**) |
+| ORM | **DBHelper + SP**; entidades **POCOs manuales** en `MAT.Entities` (F11, 2026-07-05); EF deshabilitado |
 | Base de datos | SQL Server |
 | Librerías | AutoMapper 6.0.2, EPPlus 4.5.3.3, Enterprise Library 5 |
 
@@ -24,18 +24,15 @@ MAT.sln
 ├── MAT.MVC/              # Host principal — controladores, vistas Razor, Web API, bundles, auth
 │   ├── Controllers/<Dominio>/<Dominio>Controller.cs
 │   ├── Views/<Dominio>/
-│   ├── Infrastructure/   # ErrorUtil y helpers transversales
+│   ├── Infrastructure/Data/  # *DataAccess (DBHelper + SP)
 │   └── Web.config        # Connection strings, appSettings (¡no commitear passwords!)
-├── MAT.Services/         # Servicios de dominio — NombreEntidadService : NombreEntidadServiceBase
-├── MAT.Entities/         # POCOs del modelo + claves (*Key)
+├── MAT.Entities/         # POCOs del modelo (F11 — sin *.generated.cs)
 ├── MAT.Enums/            # Enumeraciones compartidas
-├── MAT.Data/             # Capa NetTiers: DataRepository, NetTiersProvider
-├── MAT.Data.SqlClient/   # Implementación SQL Server del provider (SqlNetTiersProvider)
-├── MAT.Utilities/        # Utilidades transversales (logging, helpers)
-├── MAT.DB/               # Proyecto SSDT — FUENTE DE VERDAD del esquema SQL Server
-├── MAT.Web/              # Biblioteca legacy WebForms/NetTiers (no referenciada por MAT.MVC)
-└── MAT.WCF/              # Servicio WCF legacy InfoPath
+├── MAT.Utilities/        # DBHelper, GeoDataAccess, LookupDataAccess, Helper
+└── MAT.DB/               # Proyecto SSDT — FUENTE DE VERDAD del esquema SQL Server
 ```
+
+**Eliminados del repo (2026-07-05, F9–F10):** `MAT.Services`, `MAT.Data`, `MAT.Data.SqlClient`, `MAT.Web`, `MAT.WCF`, `MAT.Data.WebServiceClient`. Recuperables desde git si hiciera falta legado.
 
 ---
 

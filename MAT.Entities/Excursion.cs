@@ -1,28 +1,16 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Excursion' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Excursion : ExcursionBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Excursion"/> instance.
-		///</summary>
-		public Excursion():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Excursion</summary>
+    [Serializable]
+    public class Excursion
+    {
+		public Guid ExcursionId { get; set; }
+		public string Descripcion { get; set; }
+		public double? Costo { get; set; }
+		public string Observaciones { get; set; }
+		public Guid? ProveedorId { get; set; }
+    }
 }
+

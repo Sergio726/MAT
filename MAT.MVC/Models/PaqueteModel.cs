@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MAT.Entities;
-using MAT.Services;
 using System.Text;
 using MAT.Enums;
 using System.Data.SqlClient;
 using System.Data;
 using MAT.Utilities;
+using MAT.MVC.Infrastructure;
 using MAT.MVC.Infrastructure.Data;
 
 namespace MAT.MVC.Models
@@ -96,7 +96,7 @@ namespace MAT.MVC.Models
         #region Metodos Publicos
         public bool GenerarPasajes()
         {
-            // NetTiers F4: la transacción vive en el SP (set-based); reemplaza al
+            // NetTiers F4: la transacci�n vive en el SP (set-based); reemplaza al
             // loop PasajeService.Insert + TransactionManager de DataRepository.
             try
             {
@@ -290,7 +290,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteModel");
 
             }
             return sResult;
@@ -329,7 +329,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PaqueteModel");
 
             }
             return sResult;

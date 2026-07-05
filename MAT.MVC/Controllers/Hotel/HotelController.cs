@@ -1,10 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
 using MAT.Utilities;
 using MAT.MVC.Models;
 using WebMatrix.WebData;
@@ -177,7 +176,7 @@ namespace MAT.MVC.Controllers.Hotel
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HotelController");
             }
             
             return View();

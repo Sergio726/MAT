@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using MAT.Entities;
-using MAT.Services;
 using MAT.Enums;
 using System.Web.Mvc;
 using System.Collections.Specialized;
@@ -213,7 +212,7 @@ namespace MAT.MVC.Models
         //                    _impactocc.FacturaId = _factura.FacturaId;
         //                    _impactocc.FechaRegistro = DateTime.Now;
         //                    movimientoService.Insert(_impactocc);
-        //                    Factura.Estado = (int)eEstadoFactura.Señado;
+        //                    Factura.Estado = (int)eEstadoFactura.Se�ado;
         //                }
         //                else if (debito.MontoDebito == Factura.Monto)
         //                {
@@ -265,7 +264,7 @@ namespace MAT.MVC.Models
         //                    _impactocc.FacturaId = _factura.FacturaId;
         //                    _impactocc.FechaRegistro = DateTime.Now;
         //                    movimientoService.Insert(_impactocc);
-        //                    Factura.Estado = (int)eEstadoFactura.Señado;
+        //                    Factura.Estado = (int)eEstadoFactura.Se�ado;
         //                }
         //                else if (Pago.Monto == Factura.Monto)
         //                {
@@ -332,7 +331,7 @@ namespace MAT.MVC.Models
         //            }
         //            if (Factura.Estado== (int)eEstadoFactura.Pagado)
         //            {
-        //                //- Generación de Vouchers
+        //                //- Generaci�n de Vouchers
         //                VoucherService voucherService = new VoucherService();
         //                Voucher voucher = new Voucher();
         //                voucher.VoucherId = Guid.NewGuid();
@@ -425,7 +424,7 @@ namespace MAT.MVC.Models
 
     public class ReservaMethod {
         /// <summary>
-        /// Clase CSS de estado de butaca (misma lógica que Reserva/Index).
+        /// Clase CSS de estado de butaca (misma l�gica que Reserva/Index).
         /// </summary>
         public static string GetCssClassEstadoButaca(int estado)
         {
@@ -433,7 +432,7 @@ namespace MAT.MVC.Models
             {
                 case 1: return "disponible";
                 case 2:
-                case 3: return "señado";
+                case 3: return "se�ado";
                 case 4: return "reservado";
                 case 5: return "prereserva";
                 case 6: return "reservahotel";

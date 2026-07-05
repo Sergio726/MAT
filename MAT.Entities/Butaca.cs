@@ -1,28 +1,20 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Butaca' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Butaca : ButacaBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Butaca"/> instance.
-		///</summary>
-		public Butaca():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Butaca</summary>
+    [Serializable]
+    public class Butaca
+    {
+		public Guid ButacaId { get; set; }
+		public int? NroButaca { get; set; }
+		public int? Piso { get; set; }
+		public int? Ubicacion { get; set; }
+		public int? Tipo { get; set; }
+		public Guid? TransporteId { get; set; }
+		public string Fila { get; set; }
+		public string Posicion { get; set; }
+		public string CodigoButaca { get; set; }
+    }
 }
+

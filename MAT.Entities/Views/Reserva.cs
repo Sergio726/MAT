@@ -1,28 +1,21 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Reserva' view. [No description found in the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Reserva : ReservaBase
-	{
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Reserva"/> instance.
-		///</summary>
-		public Reserva():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Reserva</summary>
+    [Serializable]
+    public class Reserva
+    {
+		public Guid PasajeId { get; set; }
+		public DateTime? FechaReserva { get; set; }
+		public string Apellido { get; set; }
+		public string Nombre { get; set; }
+		public string NroDocumento { get; set; }
+		public Guid? ViajeId { get; set; }
+		public string Paquete { get; set; }
+		public Guid? FacturaId { get; set; }
+		public Guid? ClienteId { get; set; }
+		public int? TipoCliente { get; set; }
+    }
 }
+

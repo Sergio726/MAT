@@ -32,7 +32,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HotelHabitacionViajeController");
             }
 
             ViewBag.dtDistribucionHab = json;
@@ -175,7 +175,7 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "HotelHabitacionViajeController");
             }
 
             ViewBag.dtPlantilla = json;

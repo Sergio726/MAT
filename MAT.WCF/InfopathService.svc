@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="MAT.WCF.InfopathService" CodeBehind="InfopathService.svc.cs" %>

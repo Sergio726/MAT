@@ -2,6 +2,28 @@
 
 ---
 
+### [2026-07-05] — NetTiers F11 + F12: POCOs + cierre épica
+- **F11:** 59 entidades convertidas de `*Base.generated.cs` a POCOs manuales; eliminada infra NetTiers en `MAT.Entities` (`TList`, `EntityFactory`, `EntityBaseCore`, `Validation/`, interfaces `I*`, `EntityManager`, `EntityHelper`); scripts `tools/F11-EntityInventory.ps1`, `F11-ConvertToPoco.ps1`, `F11-CleanEntitiesProject.ps1`, `F11-RewriteEntitiesCsproj.ps1`; inventario `DOCUMENTACION/F11_ENTITY_INVENTORY.csv`.
+- **F12:** Hotfix B1–B3 (`ErrorUtil` en 13 archivos, `AlertMessage` XSS, `Guid.TryParse` en `ToSelectItem`); perf B4–B5 (`usp_MAT_Viaje_GetSelectList`, `usp_MAT_ReservaHabitacion_CountByHabitacionAndViaje` + `LookupDataAccess`); docs `SPEC.md`, `NETTIERS_MIGRACION_FASES.md`; épica NetTiers marcada completa.
+- **Verificación:** MSBuild `MAT.sln` Rebuild Debug OK; cero `*.generated.cs` en `MAT.Entities`.
+- **Acción humana pendiente:** publicar `database/2026-07-05_NetTiers_F9_Lookup_SPs.sql` y `database/2026-07-05_NetTiers_F12_Lookup_Perf_SPs.sql`; smoke P0/P1.
+- **Estado:** ✅ completo
+- **Siguiente task SPEC:** *(épica NetTiers cerrada — ver backlog general en SPEC.md)*
+
+---
+
+### [2026-07-05] — NetTiers F9 + F10: eliminación legado Services/Data
+- **Qué se implementó:**
+  - **F9:** `MAT.Utilities/LookupDataAccess.cs`; `Helper.cs` migrado de `*Service` a SP + `DBHelper`; SPs `usp_MAT_Proveedor_GetSelectList`, `usp_MAT_PrecioServicio_GetActiveByServicioId`; eliminadas carpetas `MAT.Services/`, `MAT.Web/`, `MAT.WCF/`; borrados `InfopathModel.cs`, `VoucherModel-05122016.cs`; ~30 `using MAT.Services` removidos en MVC.
+  - **F10:** `ProjectReference` a `MAT.Data`/`MAT.Data.SqlClient` quitadas de MVC/Utilities; `<MAT.Data>` NetTiers removido de `Web.config` (connection string `MAT.Data.ConnectionString` intacta); proyectos fuera de `MAT.sln`; carpetas `MAT.Data/`, `MAT.Data.SqlClient/`, `MAT.Data.WebServiceClient/` eliminadas.
+- **Archivos clave:** `LookupDataAccess.cs`, `Helper.cs`, `MAT.sln`, `MAT.MVC.csproj`, `MAT.Utilities.csproj`, `Web.config`, `MAT.DB` (2 SPs), `database/2026-07-05_NetTiers_F9_Lookup_SPs.sql`, `SPEC.md`, `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md`, `CLAUDE.md`.
+- **Verificación:** MSBuild `MAT.sln` Rebuild Debug OK.
+- **Acción humana pendiente:** publicar `database/2026-07-05_NetTiers_F9_Lookup_SPs.sql`; smoke P0: login/home, Butaca/Servicio/Excursion dropdowns, Viaje/Create, PersonaCliente/Details (`GetVendedorName`); smoke P1: reserva→pago; arranque IIS Express tras limpieza Web.config.
+- **Estado:** ✅ completo
+- **Siguiente task SPEC:** NetTiers F11 (POCOs manuales en `MAT.Entities`)
+
+---
+
 ### [2026-07-05] — Correcciones post-auditoría Dashboard UX
 - **Qué se implementó:**
   - **P1:** Tile Historial de pagos usa `AdminAuthorizationHelper.CanViewAllHistorialPagos` (rol Administrador o admindev).
@@ -71,18 +93,19 @@
 
 ---
 
-## Handoff — próxima sesión (2026-07-03)
+## Handoff — próxima sesión (2026-07-05)
 
 **Rama:** `MAT2026` (cambios locales sin commit; revisar `git status` antes de commitear).
 
-### NetTiers F0–F7 — completadas en código
+### NetTiers F9 + F10 — completadas
 
-- F4 (Paquete), F5 (Viaje), F6 (Factura/Pago) y **F7 (Personas y CC)** migradas a SPs + `*DataAccess`. MSBuild `MAT.sln` Debug OK.
-- **Deuda operativa (humano):** publicar los scripts/SPs de F4–F7 en el entorno + smoke crítico (flujo de pago F6; ABM personas y CC F7) y luego commitear por fase.
+- Cadena MVC sin `MAT.Services`, `MAT.Data`, `MAT.Data.SqlClient` (proyectos eliminados del repo).
+- `Helper.cs` → `LookupDataAccess` + SPs; legado `MAT.Web`/`MAT.WCF`/`MAT.Data.WebServiceClient` eliminados.
+- **Deuda operativa (humano):** publicar `database/2026-07-05_NetTiers_F9_Lookup_SPs.sql` + smoke dropdowns/reserva/pago.
 
 ### Siguiente task SPEC
 
-- **NetTiers F8** — Planilla e historial (`HistorialModel` aún usa `HistorialService`, `HomeController`, planillas en sesión `MATContext`).
+- **NetTiers F11** — Reemplazar `MAT.Entities/*Base.generated.cs` por POCOs manuales (lote pequeño).
 
 ---
 

@@ -1,28 +1,19 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Historial' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Historial : HistorialBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Historial"/> instance.
-		///</summary>
-		public Historial():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Historial</summary>
+    [Serializable]
+    public class Historial
+    {
+		public Guid HistorialId { get; set; }
+		public int Tabla { get; set; }
+		public int Operacion { get; set; }
+		public DateTime FechaHoraRegistro { get; set; }
+		public Guid Cliente { get; set; }
+		public Guid Vendedor { get; set; }
+		public string Observaciones { get; set; }
+		public double Monto { get; set; }
+    }
 }
+

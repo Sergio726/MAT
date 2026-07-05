@@ -1,28 +1,22 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'ReservaHabitacion' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class ReservaHabitacion : ReservaHabitacionBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="ReservaHabitacion"/> instance.
-		///</summary>
-		public ReservaHabitacion():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: ReservaHabitacion</summary>
+    [Serializable]
+    public class ReservaHabitacion
+    {
+		public Guid ReservaHabitacionId { get; set; }
+		public Guid? HabitacionId { get; set; }
+		public Guid? PasajeId { get; set; }
+		public DateTime? FechaReserva { get; set; }
+		public DateTime? Desde { get; set; }
+		public DateTime? Hasta { get; set; }
+		public bool? Expiro { get; set; }
+		public string HoraIngreso { get; set; }
+		public string HoraSalida { get; set; }
+		public Guid? PasajeroId { get; set; }
+		public Guid? ViajeId { get; set; }
+    }
 }
+

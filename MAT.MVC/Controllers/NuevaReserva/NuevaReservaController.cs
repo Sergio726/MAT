@@ -1,10 +1,10 @@
-using AutoMapper;
+﻿using AutoMapper;
 using MAT.Entities;
 using MAT.MVC.Common;
+using MAT.MVC.Infrastructure;
 using MAT.MVC.Integration;
 using MAT.MVC.Integration.BackendApi.Models;
 using MAT.MVC.Models;
-using MAT.Services;
 using MAT.Utilities;
 using System;
 using System.Collections.Generic;
@@ -66,7 +66,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "NuevaReservaController");
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -80,7 +80,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "NuevaReservaController");
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -94,7 +94,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "NuevaReservaController");
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -108,7 +108,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "NuevaReservaController");
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -132,7 +132,7 @@ namespace MAT.MVC.Controllers.NuevaReserva
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(ex, "NuevaReservaController");
                 return PartialView("FormReserva");
             }
         }

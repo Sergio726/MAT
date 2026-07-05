@@ -1,5 +1,6 @@
-using MAT.Utilities;
+﻿using MAT.Utilities;
 using System;
+using MAT.MVC.Infrastructure;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -53,7 +54,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ItinerarioModel");
             }
             return sResult;
         }
@@ -82,7 +83,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ItinerarioModel");
             }
             return sResult;
         }
@@ -109,7 +110,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ItinerarioModel");
             }
             return sResult;
         }
@@ -203,7 +204,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ItinerarioModel");
             }
             return sResult;
         }
@@ -235,7 +236,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ItinerarioModel");
             }
             return sResult;
         }
@@ -262,7 +263,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ItinerarioModel");
             }
             return sResult;
         }
@@ -332,7 +333,7 @@ namespace MAT.MVC.Models
             catch (Exception e)
             {
                 sResult[0] = "-1";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "ItinerarioModel");
             }
             return sResult;
         }

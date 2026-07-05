@@ -1,5 +1,4 @@
-﻿using MAT.Entities;
-using MAT.Services;
+using MAT.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +39,7 @@ namespace MAT.MVC.Models
         private double CalcularSaldo()
         {
             // NetTiers F6: los pagos llegan en una sola consulta (sin N+1) y los
-            // débitos se totalizan en el SP de saldo.
+            // d�bitos se totalizan en el SP de saldo.
             double montofactura = Factura.Monto.Value;
             List<Entities.Pago> _pagosEntities = Infrastructure.Data.PagoDataAccess.GetPagosByFacturaId(Factura.FacturaId);
             double totalpagos = 0;

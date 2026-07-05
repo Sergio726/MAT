@@ -1,28 +1,14 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'PaqueteServicio' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class PaqueteServicio : PaqueteServicioBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="PaqueteServicio"/> instance.
-		///</summary>
-		public PaqueteServicio():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: PaqueteServicio</summary>
+    [Serializable]
+    public class PaqueteServicio
+    {
+		public Guid PaqueteServicioId { get; set; }
+		public Guid? ServicioId { get; set; }
+		public Guid? PaqueteId { get; set; }
+    }
 }
+

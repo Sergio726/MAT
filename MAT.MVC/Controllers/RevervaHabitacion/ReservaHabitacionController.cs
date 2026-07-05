@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
+using MAT.MVC.Infrastructure;
 using MAT.MVC.Infrastructure.Data;
 using PagedList;
 using MAT.Utilities;
@@ -74,7 +75,7 @@ namespace MAT.MVC.Controllers.RevervaHabitacion
                 return PartialView(model);
             }
             catch (Exception e){
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "ReservaHabitacionController");
                 return PartialView(model);
             }
             

@@ -1,10 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MAT.Entities;
-using MAT.Services;
 using MAT.Utilities;
 using System.Web.Services;
 using MAT.MVC.Models;
@@ -451,7 +450,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
             }
 
             return RedirectToAction("Details", "PersonaCliente", new { Id = Persona.PersonaId });
@@ -519,7 +518,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error ="Error: " + e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
             }
             return View();
         }
@@ -554,7 +553,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = "Error: " + e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
                 return PartialView();
 
             }
@@ -580,7 +579,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 return View(facturasModel);
             }
             catch (Exception e) {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
                 return View(facturasModel);
             }
 
@@ -598,7 +597,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
                 return PartialView(facturasModel);
             }
         }
@@ -627,7 +626,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             catch (Exception e)
             {
 
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
                 return View("Error", e);
             }
             
@@ -661,7 +660,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
                 return View("Error", e);
             }
         }
@@ -926,7 +925,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
                 return PartialView("RegistrarNotaCredito", new NotaCreditoModel());
             }
         }
@@ -948,7 +947,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
         }
@@ -1154,7 +1153,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
         }
@@ -1247,7 +1246,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = "Error al eliminar el pasajero: " + e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.EliminarPasajeroDePasaje");
             }
             
             return Json(sResult, JsonRequestBehavior.AllowGet);
@@ -1288,7 +1287,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = "Error al cambiar el pasajero: " + e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.CambiarPasajeroDePasaje");
             }
             
             return Json(sResult, JsonRequestBehavior.AllowGet);
@@ -1370,7 +1369,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
                 return PartialView(model);
             }
         }
@@ -1539,7 +1538,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
             }
             
             return View();
@@ -1556,7 +1555,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
             }
 
             return PartialView(lPaquetePrecio);
@@ -1575,7 +1574,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
         }

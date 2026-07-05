@@ -1,28 +1,13 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'HabitacionTipo' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class HabitacionTipo : HabitacionTipoBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="HabitacionTipo"/> instance.
-		///</summary>
-		public HabitacionTipo():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: HabitacionTipo</summary>
+    [Serializable]
+    public class HabitacionTipo
+    {
+		public int Id { get; set; }
+		public string Descripcion { get; set; }
+    }
 }
+

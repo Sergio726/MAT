@@ -1,28 +1,15 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'PasajeroMenor' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class PasajeroMenor : PasajeroMenorBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="PasajeroMenor"/> instance.
-		///</summary>
-		public PasajeroMenor():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: PasajeroMenor</summary>
+    [Serializable]
+    public class PasajeroMenor
+    {
+		public int Id { get; set; }
+		public Guid Pasajeid { get; set; }
+		public Guid Pasajeroid { get; set; }
+		public Guid Menorid { get; set; }
+    }
 }
+

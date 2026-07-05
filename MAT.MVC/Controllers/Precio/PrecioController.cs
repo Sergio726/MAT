@@ -1,4 +1,5 @@
-﻿using MAT.MVC.Infrastructure.Data;
+﻿using MAT.MVC.Infrastructure;
+using MAT.MVC.Infrastructure.Data;
 using MAT.Utilities;
 using Newtonsoft.Json;
 using System;
@@ -29,7 +30,7 @@ namespace MAT.MVC.Controllers.Precio
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PrecioController");
                 return PartialView();
             }
 
@@ -119,7 +120,7 @@ namespace MAT.MVC.Controllers.Precio
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PrecioController");
                 return PartialView();
             }
         }
@@ -138,7 +139,7 @@ namespace MAT.MVC.Controllers.Precio
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PrecioController");
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
         }
@@ -157,7 +158,7 @@ namespace MAT.MVC.Controllers.Precio
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PrecioController");
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
         }
@@ -176,7 +177,7 @@ namespace MAT.MVC.Controllers.Precio
             catch (Exception e)
             {
                 sResult[0] = "Error.";
-                sResult[1] = e.Message;
+                sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PrecioController");
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
         }

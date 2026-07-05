@@ -1,28 +1,17 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Transporte' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Transporte : TransporteBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Transporte"/> instance.
-		///</summary>
-		public Transporte():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Transporte</summary>
+    [Serializable]
+    public class Transporte
+    {
+		public Guid TransporteId { get; set; }
+		public string NroCoche { get; set; }
+		public int? MaxPasajeros { get; set; }
+		public int? KmRecorridos { get; set; }
+		public DateTime? UltimoService { get; set; }
+		public string Matricula { get; set; }
+    }
 }
+

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MAT.Entities;
-using MAT.Services;
 using System.Data;
 using MAT.Utilities;
 using System.Data.SqlClient;
@@ -19,11 +18,6 @@ namespace MAT.MVC.Models
         public List<Entities.Excursion> Excursiones { get; set; }
         public List<Entities.Precio> Precios { get; set; }
         public List<Entities.Adicional> Adicionales { get; set; }
-
-        private PaqueteService paqueteService;
-        // Campos legacy comentados — ver PaqueteModel / MaestrosDataAccess (NetTiers F3)
-        private PrecioService precioService;
-        private AdicionalService adicionalService;
 
         //public PaqueteVinculos(Guid id)
         //{

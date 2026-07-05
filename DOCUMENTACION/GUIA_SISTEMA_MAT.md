@@ -14,27 +14,29 @@ En la línea de producto reciente aparece un **módulo de presupuestos con segui
 
 ## 2. Arquitectura por proyecto
 
+> **Actualización 2026-07-05 (NetTiers F0–F12):** Épica NetTiers cerrada. Eliminados `MAT.Services`, `MAT.Data`, `MAT.Web`, `MAT.WCF`; `MAT.Entities` son POCOs manuales (sin `*.generated.cs`). Acceso a datos: **`DBHelper` + SP** + `*DataAccess`.
+
 | Proyecto | En `MAT.sln` | Responsabilidad |
 |----------|----------------|-----------------|
-| **MAT.MVC** | Sí | **Host principal**: ASP.NET MVC 4 sobre .NET 4.8, vistas Razor, Web API, bundles, autenticación (`WebMatrix.WebData` / roles), integración con API externa (`BackendAPI_URL` en `Web.config`), AutoMapper en `Global.asax.cs`, infraestructura en carpetas como `MAT.MVC\Infrastructure\`, `Integration\`. |
-| **MAT.Web** | Sí | Biblioteca **NetTiers / Web Forms**: controles `EntityGridView`, `EntityDropDownList`, `DataSourceControls\*DataSource`, repeaters. **No hay `ProjectReference` desde `MAT.MVC` ni `MAT.Services`** en los `.csproj` actuales: queda como **legado / reutilizable** si algún front antiguo la usara, pero el MVC no la enlaza. |
-| **MAT.Data** | Sí | Capa de **acceso a datos estilo NetTiers**: `DataRepository`, `NetTiersProvider`, configuración `<MAT.Data>` en `Web.config`, contratos de providers. |
-| **MAT.Data.SqlClient** | Sí | **Implementación SQL Server** del provider (`SqlNetTiersProvider` referenciado en `MAT.MVC\Web.config`). |
-| **MAT.Services** | Sí | **Servicios de dominio** generados + parciales: `*Service` / `*ServiceBase` heredan de `ServiceBase<TEntity, TKey>` (`MAT.Services\ServiceBase.cs`), encapsulan operaciones sobre entidades vía `MAT.Data`. |
-| **MAT.Entities** | Sí | **Entidades** del modelo (POCO + keys, factory `EntityFactory` citada en config). |
+| **MAT.MVC** | Sí | **Host principal**: ASP.NET MVC 4 sobre .NET 4.8, vistas Razor, Web API, bundles, autenticación (`WebMatrix.WebData` / roles), integración con API externa (`BackendAPI_URL` en `Web.config`), AutoMapper en `Global.asax.cs`, infraestructura en `MAT.MVC\Infrastructure\`, `Integration\`. |
+| ~~**MAT.Web**~~ | ~~Eliminado F9~~ | ~~Biblioteca NetTiers / Web Forms legacy~~ |
+| ~~**MAT.Data**~~ | ~~Eliminado F10~~ | ~~Capa NetTiers: DataRepository, NetTiersProvider~~ |
+| ~~**MAT.Data.SqlClient**~~ | ~~Eliminado F10~~ | ~~SqlNetTiersProvider~~ |
+| ~~**MAT.Services**~~ | ~~Eliminado F9~~ | ~~Servicios *Service / *ServiceBase~~ |
+| **MAT.Entities** | Sí | **POCOs manuales** (F11, 2026-07-05) — sin `*.generated.cs`. |
 | **MAT.Enums** | Sí | **Enumeraciones** compartidas del dominio. |
-| **MAT.Utilities** | Sí | Utilidades transversales (p. ej. logging usado desde MVC según reglas en `.cursor\rules`). |
+| **MAT.Utilities** | Sí | **DBHelper**, `GeoDataAccess`, `LookupDataAccess`, `Helper.cs` (dropdowns), logging. |
 | **MAT.DB** | Sí | Proyecto **SSDT** (`MAT.DB\MAT.DB.sqlproj`): **fuente de verdad del esquema** SQL Server (tablas, SPs, vistas, etc.). |
-| **MAT.WCF** | **No** está en `MAT.sln` | Servicio WCF **InfoPath**: `IInfopathService`, `InfopathService.svc` — expone `GetViaje` / `GetAllViajes` usando `MAT.Entities` y `MAT.MVC.Models` (según `MAT.WCF\IInfopathService.cs`). Proyecto aparte para integración legacy. |
-| **MAT.Data.WebServiceClient** | **No** está en `MAT.sln` | Clientes **Ws*Provider** generados (`WsNetTiersProvider`, `WsFacturaProvider`, …) para consumir datos vía **servicios web** en lugar de SQL directo; patrón alternativo al `SqlNetTiersProvider`. |
+| ~~**MAT.WCF**~~ | ~~Eliminado F9~~ | ~~Servicio WCF InfoPath legacy~~ |
+| ~~**MAT.Data.WebServiceClient**~~ | ~~Eliminado F10~~ | ~~Clientes Ws*Provider~~ |
 
 ---
 
 ## 3. Stack tecnológico
 
-- **.NET**: **4.8** (`TargetFrameworkVersion` en `MAT.MVC\MAT.MVC.csproj`, `MAT.Data`, `MAT.Services`, etc.).
+- **.NET**: **4.8** (`TargetFrameworkVersion` en `MAT.MVC\MAT.MVC.csproj`, etc.).
 - **Web**: **ASP.NET MVC 4**, **Web API 4**, **Razor 2**, **Web Optimization** (`MAT.MVC\packages.config`).
-- **ORM**: **Entity Framework 5** está referenciado y hay sección `entityFramework` en `Web.config`, pero **`appSettings` fuerza `UseEntityFramework` = `NO`** — el camino activo es **NetTiers + ADO.NET/SqlClient** vía `MAT.Data` / `MAT.Data.SqlClient`.
+- **ORM / datos**: **DBHelper + stored procedures** (`MAT.Utilities\DBHelper`, clases `*DataAccess` en MVC). EF 5 referenciado pero **`UseEntityFramework` = `NO`**. NetTiers retirado (F9–F10, 2026-07-05).
 - **Mapeo**: **AutoMapper 6.0.2**.
 - **Excel**: **EPPlus 4.5.3.3**.
 - **HTTP / DI moderno (parcial)**: **Microsoft.Extensions.Http / DependencyInjection / Logging 6.0.0** (conviven con el stack clásico).
@@ -48,8 +50,8 @@ En la línea de producto reciente aparece un **módulo de presupuestos con segui
 ## 4. Convenciones de código
 
 - **Namespaces y carpetas MVC**: controladores agrupados por dominio bajo `MAT.MVC\Controllers\<Dominio>\<Dominio>Controller.cs` (ej. `Controllers\Reserva\ReservaController.cs`).
-- **Patrón de datos**: **NetTiers** — `DataRepository` + **providers** (`MAT.Data\DataRepository.cs`), no un “Repository” manual único al estilo DDD moderno.
-- **Capa de negocio**: servicios **`NombreEntidadService`** que extienden bases generadas **`NombreEntidadServiceBase`** (`MAT.Services\FacturaService.cs`, etc.).
+- **Patrón de datos**: **`DBHelper` + SP** (`usp_MAT_*` en `MAT.DB`), clases `*DataAccess` en `MAT.MVC\Infrastructure\Data\`.
+- **Lookups / dropdowns**: `MAT.Utilities\Helper.cs` delega en `LookupDataAccess` (SPs de catálogo).
 - **Entidades**: `MAT.Entities` con **`*Key`** para claves.
 - **Errores en controladores**: la regla del repo (`.cursor\rules\error-handling.mdc`) exige **`ErrorUtil.LogAndGetPublicMessage`** (`MAT.MVC\Infrastructure`) con contexto `"Controller.Action"`, integración con `MATLogger` y `ErrorLog` en BD.
 - **No hay proyecto de tests** `*Test*.csproj` en el repositorio buscado.
@@ -62,7 +64,7 @@ En la línea de producto reciente aparece un **módulo de presupuestos con segui
 - **Conexión**: en **`MAT.MVC\Web.config`** → `<connectionStrings>`:
   - **`MAT.Data.ConnectionString`**: base principal de negocio (catálogo de intranet, p. ej. entornos `MAT_DEV` o `MAT` según configuración).
   - **`MAT.Session.ConnectionString`**: base de sesión / membership.
-- **Provider de datos**: sección **`<MAT.Data defaultProvider="SqlNetTiersProvider">`** con `connectionStringName="MAT.Data.ConnectionString"`, `useStoredProcedure="false"` (SQL dinámico/parametrizado según generación, no obligatorio SP para todo).
+- **Provider de datos**: connection string **`MAT.Data.ConnectionString`** (nombre histórico; ya no hay sección `<MAT.Data>` / `SqlNetTiersProvider` en `Web.config`).
 - **Cambios de esquema**: **`MAT.DB`** (SSDT) es la **única fuente de verdad**; flujo documentado en `DOCUMENTACION\MAT_DB.md` (compilar, publicar, Schema Compare). Scripts sueltos en **`database\`** pueden ser migraciones puntuales pero deben **replicarse en MAT.DB**.
 - **SPs**: el proyecto `MAT.DB` incluye **`dbo\Stored Procedures`** (convención `usp_MAT_*` mencionada en la doc).
 
@@ -78,7 +80,6 @@ En la línea de producto reciente aparece un **módulo de presupuestos con segui
 
 - **`SystemDEV`** en `appSettings` (`Web.config`) como bandera de entorno de desarrollo.
 - Nombres de base **`MAT_DEV.*`** vs comentarios con **`MAT.Intranet` / `MAT.Session`** sugieren **DEV vs otros** por catálogo/servidor.
-- **MAT.WCF** tiene `Properties\PublishProfiles\MAT.WCF.pubxml` (publicación manual típica de Visual Studio).
 
 ---
 
@@ -86,21 +87,19 @@ En la línea de producto reciente aparece un **módulo de presupuestos con segui
 
 - **`MAT.MVC\Web.config`**: connection strings, `BackendAPI_URL`, timeouts, claves de negocio (`PersonaClienteCode`, presupuesto, WhatsApp).
 - **`MAT.DB`**: cualquier cambio afecta **toda** la aplicación y despliegues; publicar contra la BD equivocada es destructivo.
-- **`MAT.Data` / `MAT.Data.SqlClient` / archivos `*.generated.cs`**: regenerarlos o romper el contrato del provider **impacta todos los servicios**.
-- **`MAT.Services\ServiceBase*` y servicios generados**: capa central de persistencia/consistencia.
+- **`MAT.Entities`**: POCOs manuales (F11); sin NetTiers.
 - **Autenticación y roles**: `AccountController`, `WebSecurity`, tablas de membership asociadas a `MAT.Session`.
-- **Facturación / fiscal**: `FacturaController`, `FacturaFiscalController`, `NotaCreditoController`, auditoría (`AuditFactura*` en `MAT.Web` y entidades relacionadas).
+- **Facturación / fiscal**: `FacturaController`, `FacturaFiscalController`, `NotaCreditoController`, auditoría (`AuditFactura*` en entidades relacionadas).
 - **Presupuestos**: jobs en `Application_Start` / `Application_BeginRequest` en `Global.asax.cs` (efectos en cada arranque o tráfico).
 
 ---
 
 ## 8. Estado actual del proyecto y deuda técnica
 
-- **Línea activa de evolución**: documentación ene-2026 describe rama **`MAT2026`** con **modernización UI**, **módulo presupuesto/seguimiento**, limpieza/refactor y mención de **eliminación de capa NetTiers** en algún commit (verificar en el historial: en el código pueden seguir existiendo `DataRepository` / `SqlNetTiersProvider`).
+- **Línea activa de evolución**: rama **`MAT2026`** — modernización UI, presupuesto/seguimiento, **migración NetTiers F0–F12 completada** (2026-07-05).
 - **Deuda / riesgos explícitos en repo**:
   - Librerías JS/CSS obsoletas documentadas en `DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md`.
   - **EF instalado pero deshabilitado** por configuración (`UseEntityFramework` = `NO`).
-  - **MAT.Web** y **MAT.Data.WebServiceClient** / **MAT.WCF** como **código legacy** o paralelo, no integrados en la solución principal en el caso de WCF/WebServiceClient.
   - **Sin tests automatizados** de proyecto visibles en la búsqueda habitual.
 - **Vistas pendientes**: `DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md`.
 

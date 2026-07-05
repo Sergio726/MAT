@@ -1,28 +1,26 @@
-﻿#region Using directives
-
-using System;
-
-#endregion
+﻿using System;
 
 namespace MAT.Entities
-{	
-	///<summary>
-	/// An object representation of the 'Cliente' table. [No description found the database]	
-	///</summary>
-	/// <remarks>
-	/// This file is generated once and will never be overwritten.
-	/// </remarks>	
-	[Serializable]
-	[CLSCompliant(true)]
-	public partial class Cliente : ClienteBase
-	{		
-		#region Constructors
-
-		///<summary>
-		/// Creates a new <see cref="Cliente"/> instance.
-		///</summary>
-		public Cliente():base(){}	
-		
-		#endregion
-	}
+{
+	/// <summary>POCO manual (NetTiers F11). Tabla/vista: Cliente</summary>
+    [Serializable]
+    public class Cliente
+    {
+		public Guid ClienteId { get; set; }
+		public string RazonSocial { get; set; }
+		public string Cuit { get; set; }
+		public string Moneda { get; set; }
+		public string Empresa { get; set; }
+		public string Ocupacion { get; set; }
+		public int? FormaPago { get; set; }
+		public int? CondicionIva { get; set; }
+		public Guid? VendedorId { get; set; }
+		public string Fax { get; set; }
+		public string Web { get; set; }
+		public string Idioma { get; set; }
+		public string Promotor { get; set; }
+		public string Observacion { get; set; }
+		public int TipoId { get; set; }
+    }
 }
+
