@@ -1,0 +1,63 @@
+@using MAT.MVC.Infrastructure
+@{
+    var canViewHistorialPagos = AdminAuthorizationHelper.CanViewAllHistorialPagos(Context);
+    var frequentActions = QuickAccessCatalog.GetFrequentActions();
+    var allModules = QuickAccessCatalog.GetAllModules(canViewHistorialPagos);
+}
+
+<section class="quick-access-section" aria-label="Accesos frecuentes">
+    <h2 class="section-title">
+        <i class="bi bi-lightning-charge" aria-hidden="true"></i>
+        Accesos frecuentes
+    </h2>
+
+    <div class="quick-access-frequent-grid">
+        @foreach (var action in frequentActions)
+        {
+            <a href="@action.Url" class="quick-access-tile quick-access-tile--@action.Variant" title="@action.Description">
+                <span class="quick-access-tile__icon" aria-hidden="true">
+                    <i class="bi @action.Icon"></i>
+                </span>
+                <span class="quick-access-tile__label">@action.Title</span>
+                @if (!string.IsNullOrWhiteSpace(action.Description))
+                {
+                    <span class="quick-access-tile__desc">@action.Description</span>
+                }
+            </a>
+        }
+    </div>
+
+    <div class="quick-access-all">
+        <button type="button"
+                class="quick-access-all-toggle collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#quickAccessAllModules"
+                aria-expanded="false"
+                aria-controls="quickAccessAllModules">
+            <span class="quick-access-all-toggle__label">
+                <i class="bi bi-grid-3x3-gap" aria-hidden="true"></i>
+                Todos los módulos
+            </span>
+            <span class="quick-access-all-toggle__count">@allModules.Count</span>
+            <i class="bi bi-chevron-down quick-access-all-toggle__chevron" aria-hidden="true"></i>
+        </button>
+
+        <div class="collapse" id="quickAccessAllModules">
+            <div class="quick-access-frequent-grid quick-access-frequent-grid--all">
+                @foreach (var module in allModules)
+                {
+                    <a href="@module.Url" class="quick-access-tile quick-access-tile--@module.Variant quick-access-tile--compact" title="@module.Description">
+                        <span class="quick-access-tile__icon" aria-hidden="true">
+                            <i class="bi @module.Icon"></i>
+                        </span>
+                        <span class="quick-access-tile__label">@module.Title</span>
+                        @if (!string.IsNullOrWhiteSpace(module.Description))
+                        {
+                            <span class="quick-access-tile__desc">@module.Description</span>
+                        }
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</section>

@@ -2,7 +2,7 @@
 
 /* Variables de layout */
 :root {
-    --navbar-height: 70px;
+    --navbar-height: 56px;
     --sidebar-width: 260px;
 }
 
@@ -23,7 +23,7 @@
     left: 0 !important;
     right: 0 !important;
     height: var(--navbar-height) !important;
-    padding: 0.875rem 2rem !important;
+    padding: 0.5rem 1.5rem !important;
     width: 100% !important;
     z-index: 1030 !important;
     background: var(--white, #ffffff) !important;

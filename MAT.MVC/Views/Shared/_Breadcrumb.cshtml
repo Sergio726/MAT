@@ -59,25 +59,26 @@
 
 <div class="content-header">
     <div class="content-header-left">
-        @if (!isHomePage)
+        @if (isHomePage)
+        {
+            <p class="navbar-page-title" role="doc-subtitle">Panel Principal</p>
+        }
+        else
         {
             <button type="button" class="btn-back" onclick="window.history.back()" title="Volver atras">
                 <i class="bi bi-arrow-left"></i>
                 <span>Volver</span>
             </button>
-        }
 
-        <nav aria-label="breadcrumb" class="breadcrumb-nav">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="/Home/Index">
-                        <i class="bi bi-house-door"></i>
-                        <span>Inicio</span>
-                    </a>
-                </li>
-                @if (!isHomePage)
-                {
-                    if (!string.IsNullOrEmpty(controller) && !controller.Equals("Home", StringComparison.OrdinalIgnoreCase))
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/Home/Index">
+                            <i class="bi bi-house-door"></i>
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+                    @if (!string.IsNullOrEmpty(controller) && !controller.Equals("Home", StringComparison.OrdinalIgnoreCase))
                     {
                         var parentHref = !string.IsNullOrWhiteSpace(breadcrumbParentUrl)
                             ? breadcrumbParentUrl
@@ -86,7 +87,7 @@
                             <a href="@parentHref">@controllerDisplayName</a>
                         </li>
                     }
-                    if (!string.IsNullOrEmpty(action) && !action.Equals("Index", StringComparison.OrdinalIgnoreCase))
+                    @if (!string.IsNullOrEmpty(action) && !action.Equals("Index", StringComparison.OrdinalIgnoreCase))
                     {
                         <li class="breadcrumb-item active" aria-current="page">
                             @actionDisplayName
@@ -104,8 +105,8 @@
                     {
                         <li class="breadcrumb-item active" aria-current="page">@actionDisplayName</li>
                     }
-                }
-            </ol>
-        </nav>
+                </ol>
+            </nav>
+        }
     </div>
 </div>

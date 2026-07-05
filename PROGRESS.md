@@ -2,6 +2,31 @@
 
 ---
 
+### [2026-07-05] — Correcciones post-auditoría Dashboard UX
+- **Qué se implementó:**
+  - **P1:** Tile Historial de pagos usa `AdminAuthorizationHelper.CanViewAllHistorialPagos` (rol Administrador o admindev).
+  - **P2:** Header home con `<p role="doc-subtitle">` (un solo H1 en hero); sidebar sin `active` hardcodeado; script de menú unificado con `isMenuHrefActive`.
+  - **P3:** Eliminado CSS huérfano `.quick-access-modern*`; mobile sidebar usa `var(--navbar-height)`; cache bust `?v=20260705e`.
+- **Archivos:** `_QuickAccess.cshtml`, `QuickAccessCatalog.cs`, `_Breadcrumb.cshtml`, `_MainNav.cshtml`, `_Layout.cshtml`, `modern-dashboard.css`, `modern-menu.css`, `DASHBOARD_UX_COMMAND_CENTER.md`.
+- **Verificación:** MSBuild `MAT.MVC` Debug OK.
+- **Estado:** ✅ completo
+
+---
+
+### [2026-07-05] — Dashboard UX Command Center (Opción A)
+- **Qué se implementó:**
+  - **Accesos frecuentes:** `QuickAccessCatalog` + partial `_QuickAccess.cshtml` — 6 tiles de acción, panel colapsable "Todos los módulos", estilos en `modern-dashboard.css`.
+  - **Header:** navbar 56px; título "Panel Principal" en home (`_Breadcrumb.cshtml`).
+  - **Sidebar:** partial `_MainNav.cshtml` con secciones Comercial / Operaciones / Finanzas / Catálogo / Herramientas.
+  - Documentación de fases pendientes en `DOCUMENTACION/DASHBOARD_UX_COMMAND_CENTER.md`.
+  - Cache bust `modern-dashboard.css?v=20260705d`.
+- **Archivos:** `Infrastructure/QuickAccessCatalog.cs`, `Views/Home/_QuickAccess.cshtml`, `Views/Home/Index.cshtml`, `Views/Shared/_MainNav.cshtml`, `Views/Shared/_Layout.cshtml`, `Views/Shared/_Breadcrumb.cshtml`, `Content/modern-dashboard.css`, `Content/modern-topbar.css`, `Content/modern-layout.css`, `Content/modern-menu.css`, `MAT.MVC.csproj`, `DOCUMENTACION/DASHBOARD_UX_COMMAND_CENTER.md`.
+- **Verificación:** MSBuild `MAT.MVC` Debug.
+- **Acción humana pendiente:** smoke manual home + navegación sidebar (ver doc).
+- **Estado:** ✅ completo
+
+---
+
 ### [2026-07-05] — Home hero band (continuidad con login)
 - **Qué se implementó:**
   - Partial `_DashboardHero.cshtml`: franja con imagen Bariloche, overlay slate/fucsia, saludo personalizado y **3 KPIs glass integrados** (presupuestos, clientes, ventas) con click a `openDetalleModal`.

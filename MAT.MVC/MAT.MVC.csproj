@@ -352,6 +352,7 @@
     <Compile Include="Infrastructure\AdminAuthorizationHelper.cs" />
     <Compile Include="Infrastructure\AdminContextualTourCatalog.cs" />
     <Compile Include="Infrastructure\AdminHelpCatalog.cs" />
+    <Compile Include="Infrastructure\QuickAccessCatalog.cs" />
     <Compile Include="Infrastructure\AdminNavModels.cs" />
     <Compile Include="Infrastructure\ErrorUtil.cs" />
     <Compile Include="Infrastructure\ReportesDataReaderMapper.cs" />
@@ -748,6 +749,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Shared\_ModalClientesNuevosPorPeriodo.cshtml" />
     <Content Include="Views\Home\_DashboardHero.cshtml" />
+    <Content Include="Views\Home\_QuickAccess.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Persona\Index.cshtml" />
     <Content Include="Views\Persona\Details.cshtml" />
@@ -762,6 +764,7 @@
     <Content Include="Views\PersonaCliente\Details.cshtml" />
     <Content Include="Views\Cliente\Index.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Shared\_MainNav.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\Manage.cshtml" />

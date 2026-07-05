@@ -1,0 +1,220 @@
+<ul class="menu-0">
+    <li>
+        <a href="/Home/Index" data-bs-toggle="tooltip" data-bs-placement="right" title="Panel Principal">
+            <i class="bi bi-house-door"></i>
+            <span>Inicio</span>
+        </a>
+    </li>
+
+    <li class="menu-section-label" aria-hidden="true">Comercial</li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_presupuestos" role="button" aria-expanded="false" aria-controls="menu_presupuestos">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Presupuestos</span>
+        </a>
+        <ul class="collapse" id="menu_presupuestos">
+            <li>
+                <a href="/Presupuesto/Index">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Listado</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Presupuesto/Seguimiento">
+                    <i class="bi bi-clipboard-data"></i>
+                    <span>Seguimiento</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Presupuesto/Metricas">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Métricas</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_clientes" role="button" aria-expanded="false" aria-controls="menu_clientes">
+            <i class="bi bi-people"></i>
+            <span>Clientes</span>
+        </a>
+        <ul class="collapse" id="menu_clientes">
+            <li>
+                <a href="/PersonaCliente/Create">
+                    <i class="bi bi-person-plus"></i>
+                    <span>Nuevo</span>
+                </a>
+            </li>
+            <li>
+                <a href="/PersonaCliente/Index">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Listado</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="menu-section-label" aria-hidden="true">Operaciones</li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_hoteles" role="button" aria-expanded="false" aria-controls="menu_hoteles">
+            <i class="bi bi-building"></i>
+            <span>Hoteles</span>
+        </a>
+        <ul class="collapse" id="menu_hoteles">
+            <li>
+                <a href="/Hotel/ABM">
+                    <i class="bi bi-plus-square"></i>
+                    <span>Nuevo</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Hotel/Index">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Listado</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_transportes" role="button" aria-expanded="false" aria-controls="menu_transportes">
+            <i class="bi bi-bus-front"></i>
+            <span>Transportes</span>
+        </a>
+        <ul class="collapse" id="menu_transportes">
+            <li>
+                <a href="/Transporte/Index">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Listado</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_excursiones" role="button" aria-expanded="false" aria-controls="menu_excursiones">
+            <i class="bi bi-compass"></i>
+            <span>Excursiones</span>
+        </a>
+        <ul class="collapse" id="menu_excursiones">
+            <li>
+                <a href="/Excursion/Create">
+                    <i class="bi bi-plus-square"></i>
+                    <span>Nuevo</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Excursion/Index">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Listado</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_precios" role="button" aria-expanded="false" aria-controls="menu_precios">
+            <i class="bi bi-currency-dollar"></i>
+            <span>Butacas</span>
+        </a>
+        <ul class="collapse" id="menu_precios">
+            <li>
+                <a href="/Precio/Index">
+                    <i class="bi bi-eye"></i>
+                    <span>Ver o Agregar</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="menu-section-label" aria-hidden="true">Finanzas</li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_facturacion" role="button" aria-expanded="false" aria-controls="menu_facturacion">
+            <i class="bi bi-receipt-cutoff"></i>
+            <span>Facturacion</span>
+        </a>
+        <ul class="collapse" id="menu_facturacion">
+            <li>
+                <a href="/FacturaFiscal/Index">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Listado</span>
+                </a>
+            </li>
+            <li>
+                <a href="/FacturaFiscal/Create?tipo=1">
+                    <i class="bi bi-cart-plus"></i>
+                    <span>Nueva Compra</span>
+                </a>
+            </li>
+            <li>
+                <a href="/FacturaFiscal/Create?tipo=2">
+                    <i class="bi bi-shop"></i>
+                    <span>Nueva Venta</span>
+                </a>
+            </li>
+            <li>
+                <a href="/FacturaFiscal/Proveedores">
+                    <i class="bi bi-building"></i>
+                    <span>Proveedores</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="menu-section-label" aria-hidden="true">Catálogo</li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_servicios" role="button" aria-expanded="false" aria-controls="menu_servicios">
+            <i class="bi bi-tools"></i>
+            <span>Servicios</span>
+        </a>
+        <ul class="collapse" id="menu_servicios">
+            <li>
+                <a href="/Servicio/Create">
+                    <i class="bi bi-plus-square"></i>
+                    <span>Nuevo</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Servicio/Index">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Listado</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="hasSubmenu">
+        <a data-bs-toggle="collapse" href="#menu_adicionales" role="button" aria-expanded="false" aria-controls="menu_adicionales">
+            <i class="bi bi-plus-circle"></i>
+            <span>Adicionales</span>
+        </a>
+        <ul class="collapse" id="menu_adicionales">
+            <li>
+                <a href="/Adicional/Create">
+                    <i class="bi bi-plus-square"></i>
+                    <span>Nuevo</span>
+                </a>
+            </li>
+            <li>
+                <a href="/Adicional/Index">
+                    <i class="bi bi-list-ul"></i>
+                    <span>Listado</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="menu-section-label menu-section-label--footer" aria-hidden="true">Herramientas</li>
+
+    <li>
+        <a href="#" onclick="javascript: showCotizador(); return false;">
+            <i class="bi bi-calculator"></i>
+            <span>Cotizador</span>
+        </a>
+    </li>
+</ul>
