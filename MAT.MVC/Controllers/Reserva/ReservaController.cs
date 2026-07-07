@@ -132,43 +132,71 @@ namespace MAT.MVC.Controllers.Reserva
                 var spHasEstadoPasaje = false;
                 var spHasPasajeID = false;
                 var spHasFacturaID = false;
+                var spHasEsMenor = false;
+                var spHasCapacidadTotal = false;
+                var capacidadTotal = 0;
                 using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_DistribucionCoche_GetByViajeID", dbParams))
                 {
                     spHasEstadoPasaje = HasColumn(_reader, "EstadoPasaje");
                     spHasPasajeID = HasColumn(_reader, "PasajeID");
                     spHasFacturaID = HasColumn(_reader, "FacturaID");
+                    spHasEsMenor = HasColumn(_reader, "EsMenor");
 
                     while (_reader.Read())
                     {
                         if (_reader["ButacaNro"].ToString() != "")
                         {
-                            var pasajeroId = _reader["PasajeroID"].ToString();
+                            var pasajeroId = _reader["PasajeroID"] != DBNull.Value
+                                ? _reader["PasajeroID"].ToString()
+                                : "";
                             var estadoPasaje = spHasEstadoPasaje
-                                ? ReadIntOrDefault(_reader, "EstadoPasaje", string.IsNullOrWhiteSpace(pasajeroId) ? 1 : (int)eEstadoPasaje.Pagado)
-                                : (string.IsNullOrWhiteSpace(pasajeroId) ? 1 : (int)eEstadoPasaje.Pagado);
+                                ? ReadIntOrDefault(_reader, "EstadoPasaje", string.IsNullOrWhiteSpace(pasajeroId) ? (int)eEstadoPasaje.Disponible : (int)eEstadoPasaje.Pagado)
+                                : (string.IsNullOrWhiteSpace(pasajeroId) ? (int)eEstadoPasaje.Disponible : (int)eEstadoPasaje.Pagado);
 
-                            distCoche.Add(new Models.DistribucionCoche
+                            if (string.IsNullOrWhiteSpace(pasajeroId))
+                            {
+                                estadoPasaje = (int)eEstadoPasaje.Disponible;
+                            }
+
+                            var item = new Models.DistribucionCoche
                             {
                                 ButacaNro = Convert.ToInt32(_reader["ButacaNro"].ToString()),
-                                ButacaPosicion = _reader["ButacaPosicion"].ToString(),
-                                ButacaCodigo = _reader["ButacaCodigo"].ToString(),
-                                PasajeID = spHasPasajeID ? _reader["PasajeID"].ToString() : "",
+                                ButacaPosicion = _reader["ButacaPosicion"] != DBNull.Value ? _reader["ButacaPosicion"].ToString() : "",
+                                ButacaCodigo = _reader["ButacaCodigo"] != DBNull.Value ? _reader["ButacaCodigo"].ToString() : "",
+                                PasajeID = spHasPasajeID && _reader["PasajeID"] != DBNull.Value ? _reader["PasajeID"].ToString() : "",
                                 FacturaID = spHasFacturaID && _reader["FacturaID"] != DBNull.Value
                                     ? _reader["FacturaID"].ToString()
                                     : "",
                                 EstadoPasaje = estadoPasaje,
                                 PasajeroID = pasajeroId,
-                                PasajeroApellido = _reader["PasajeroApellido"].ToString(),
-                                PasajeroNombre = _reader["PasajeroNombre"].ToString()
-                            });
+                                PasajeroApellido = _reader["PasajeroApellido"] != DBNull.Value ? _reader["PasajeroApellido"].ToString() : "",
+                                PasajeroNombre = _reader["PasajeroNombre"] != DBNull.Value ? _reader["PasajeroNombre"].ToString() : ""
+                            };
+
+                            if (spHasEsMenor)
+                            {
+                                item.EsMenor = ReadBoolOrDefault(_reader, "EsMenor", false);
+                                item.EsTutor = ReadBoolOrDefault(_reader, "EsTutor", false);
+                                item.TutorPasajeID = ReadStringOrEmpty(_reader, "TutorPasajeID");
+                                item.TutorPasajeroID = ReadStringOrEmpty(_reader, "TutorPasajeroID");
+                                item.TutorNombre = ReadStringOrEmpty(_reader, "TutorNombre");
+                                item.TutorButacaNro = ReadNullableInt(_reader, "TutorButacaNro");
+                            }
+
+                            distCoche.Add(item);
                         }
                     }
 
                     _reader.NextResult();
+                    spHasCapacidadTotal = HasColumn(_reader, "CapacidadTotal");
                     while (_reader.Read())
                     {
                         ViewBag.NroCoche = _reader["NroCoche"].ToString();
                         ViewBag.TransporteTipo = _reader["TransporteTipo"].ToString();
+                        if (spHasCapacidadTotal)
+                        {
+                            capacidadTotal = ReadIntOrDefault(_reader, "CapacidadTotal", 0);
+                        }
                     }
                 }
 
@@ -176,10 +204,14 @@ namespace MAT.MVC.Controllers.Reserva
                 {
                     ViewBag.SpMigrationWarning = "El servidor aún no tiene el SP actualizado de distribución de coche. Los colores por estado pueden no ser exactos hasta publicar usp_MAT_Reserva_DistribucionCoche_GetByViajeID (ver database/2026-06-16_usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql).";
                 }
+                else if (!spHasEsMenor)
+                {
+                    ViewBag.SpMigrationWarning = "Publicar database/2026-07-07_DistribucionCoche_AllSeats.sql para butacas libres, lista completa y menores en el mapa.";
+                }
 
-                ViewBag.TotalButacas = distCoche.Count;
-                ViewBag.ButacasOcupadas = distCoche.Count(x => !string.IsNullOrWhiteSpace(x.PasajeroID));
-                ViewBag.ButacasDisponibles = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Disponible);
+                ViewBag.TotalButacas = capacidadTotal > 0 ? capacidadTotal : distCoche.Count;
+                ViewBag.ButacasOcupadas = distCoche.Count(x => x.EstaOcupada);
+                ViewBag.ButacasDisponibles = distCoche.Count(x => !x.EstaOcupada);
                 ViewBag.ConteoPagados = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Pagado);
                 ViewBag.ConteoSenados = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Señado || x.EstadoPasaje == (int)eEstadoPasaje.Reservado);
                 ViewBag.ConteoPrereserva = distCoche.Count(x => x.EstadoPasaje == (int)eEstadoPasaje.Prereserva);
@@ -1289,6 +1321,55 @@ namespace MAT.MVC.Controllers.Reserva
             catch
             {
                 return defaultValue;
+            }
+        }
+
+        private static bool ReadBoolOrDefault(SqlDataReader reader, string columnName, bool defaultValue)
+        {
+            try
+            {
+                var ordinal = reader.GetOrdinal(columnName);
+                if (reader.IsDBNull(ordinal))
+                {
+                    return defaultValue;
+                }
+
+                return Convert.ToBoolean(reader.GetValue(ordinal));
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        private static string ReadStringOrEmpty(SqlDataReader reader, string columnName)
+        {
+            try
+            {
+                var ordinal = reader.GetOrdinal(columnName);
+                return reader.IsDBNull(ordinal) ? "" : reader.GetValue(ordinal).ToString();
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        private static int? ReadNullableInt(SqlDataReader reader, string columnName)
+        {
+            try
+            {
+                var ordinal = reader.GetOrdinal(columnName);
+                if (reader.IsDBNull(ordinal))
+                {
+                    return null;
+                }
+
+                return Convert.ToInt32(reader.GetValue(ordinal));
+            }
+            catch
+            {
+                return null;
             }
         }
 

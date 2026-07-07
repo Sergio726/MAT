@@ -1042,20 +1042,23 @@
   Criterio de éxito: Clic en butaca con pasajero abre acciones útiles; errores con `ErrorUtil`.
   **Implementación 2026-07-07:** Menú contextual en butacas ocupadas; `FacturaID` en SP/modelo; modal BS5 detalle factura; cambio butaca vía `window.opener.abrirCambioButaca` o `ElegirNuevaButaca?shell=1`; script `database/2026-07-07_DistribucionCoche_FacturaID.sql`.
 
-- [ ] **DistribucionCoche — Vista lista alternativa (mobile)**
+- [x] **DistribucionCoche — Vista lista alternativa (mobile)**
   Toggle "Mapa / Lista" para pantallas angostas: tabla ordenada por butaca con nombre, estado y código; complementa el scroll horizontal del mapa.
   Archivos: `DistribucionCoche.cshtml`, `mat.distribucioncoche.css`.
   Criterio de éxito: En viewport angosto la lista es usable; impresión sigue usando mapa o lista acordada.
+  **Implementación 2026-07-07:** Toggle Mapa/Lista con `sessionStorage`; partial `_DistribucionCocheLista.cshtml`; búsqueda unificada mapa+lista; print solo mapa; JS en `mat.distribucioncoche.js`.
 
-- [ ] **DistribucionCoche — Refactor layout por tipo de transporte**
+- [x] **DistribucionCoche — Refactor layout por tipo de transporte**
   Unificar lógica duplicada (MINIBUS, CAMION 4X4, PISOELEVADO, semicama `NroCoche` 81/101) en partials o metadata de butaca; alinear fuente de datos con `ReservaStandard` / `usp_MAT_Reserva_GetPasajeByViajeID` para **butacas vacías visibles en el mapa** (el SP actual solo devuelve filas con `Pasaje`; las libres no aparecen y las métricas de total/disponibles son aproximadas).
   Archivos: `DistribucionCoche.cshtml`, posibles partials por plantilla de coche.
   Criterio de éxito: Un solo lugar define posición de butacas por tipo; menos de 400 líneas en la vista principal.
+  **Implementación 2026-07-07:** SP v3 `database/2026-07-07_DistribucionCoche_AllSeats.sql` (LEFT JOIN Butaca); partials `_DistribucionCocheLayout_*`; vista principal 219 líneas; CSS centralizado.
 
-- [ ] **DistribucionCoche — Menores vinculados en mapa**
+- [x] **DistribucionCoche — Menores vinculados en mapa**
   Marcar menores (no solo tutores) con icono/color distinto y opcional línea visual tutor ↔ menor, como en `ListadoSimple`.
   Archivos: SP o reutilizar `usp_MAT_Reserva_GetPasajeroMenor`, partial, CSS.
   Criterio de éxito: Menores identificables en el mapa sin confundirse con estado de butaca.
+  **Implementación 2026-07-07:** `EsMenor`/`EsTutor`/`TutorNombre`/`TutorButacaNro` en SP y modelo; clase `.Menor` en partial; leyenda; toggle SVG vínculos tutor↔menor; fallback AJAX tutores si SP viejo.
 
 ---
 

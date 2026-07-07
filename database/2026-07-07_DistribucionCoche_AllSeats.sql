@@ -1,5 +1,11 @@
-﻿
-CREATE PROCEDURE [dbo].[usp_MAT_Reserva_DistribucionCoche_GetByViajeID](@ViajeID varchar(36))
+-- DistribucionCoche Fase 5a: todas las butacas del transporte (LEFT JOIN Pasaje)
+-- + EsMenor, EsTutor, TutorPasajeID, TutorNombre, TutorButacaNro, CapacidadTotal
+
+IF OBJECT_ID(N'dbo.usp_MAT_Reserva_DistribucionCoche_GetByViajeID', N'P') IS NULL
+    EXEC(N'CREATE PROCEDURE dbo.usp_MAT_Reserva_DistribucionCoche_GetByViajeID AS BEGIN SET NOCOUNT ON; END');
+GO
+
+ALTER PROCEDURE [dbo].[usp_MAT_Reserva_DistribucionCoche_GetByViajeID](@ViajeID varchar(36))
 AS
 /*-- =============================================
   -- Author:    Sebastian Garcia
@@ -75,5 +81,5 @@ BEGIN
     INNER JOIN dbo.Transporte t
         ON v.BusID = t.TransporteID
     WHERE v.ViajeID = @ViajeID;
-
 END
+GO

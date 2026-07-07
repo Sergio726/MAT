@@ -7,7 +7,9 @@
 }
 @{
     var item = Model.Item;
-    var estadoCss = ReservaMethod.GetCssClassEstadoButaca(item.EstadoPasaje);
+    var estadoCss = item.EstaOcupada
+        ? ReservaMethod.GetCssClassEstadoButaca(item.EstadoPasaje)
+        : "disponible";
     var pasajeroId = !string.IsNullOrWhiteSpace(item.PasajeroID) ? item.PasajeroID : "";
     var nombreCompleto = string.Format("{0} {1}",
         (item.PasajeroNombre ?? "").ToUpper(),
@@ -16,6 +18,14 @@
     var tooltip = !string.IsNullOrWhiteSpace(nombreCompleto)
         ? string.Format("{0} — {1}", nombreCompleto, estadoLabel)
         : string.Format("Butaca {0} — {1}", item.ButacaCodigo, estadoLabel);
+    if (item.EsMenor && !string.IsNullOrWhiteSpace(item.TutorNombre))
+    {
+        tooltip = string.Format("Menor — {0} — Tutor: {1}", nombreCompleto, item.TutorNombre);
+    }
+    else if (item.EsTutor)
+    {
+        tooltip = string.Format("Tutor de menor — {0}", nombreCompleto);
+    }
     var searchKey = string.Format("{0} {1} {2}",
         item.ButacaCodigo ?? "",
         item.PasajeroNombre ?? "",
@@ -26,18 +36,27 @@
     {
         posClass = "posicion_" + item.ButacaPosicion;
     }
+    var roleClass = "";
+    if (item.EsMenor) { roleClass = " Menor"; }
+    else if (item.EsTutor) { roleClass = " Tutor"; }
+    var tutorButacaAttr = item.TutorButacaNro.HasValue ? item.TutorButacaNro.Value.ToString() : "";
 }
-<div class="@Model.SeatClass @posClass @estadoCss bus-seat@(string.IsNullOrWhiteSpace(pasajeroId) ? "" : " bus-seat--occupied")"
+<div class="@Model.SeatClass @posClass @estadoCss@roleClass bus-seat@(item.EstaOcupada ? " bus-seat--occupied" : "")"
      id="@pasajeroId"
+     data-butaca-nro="@item.ButacaNro"
      data-pasaje-id="@(item.PasajeID ?? "")"
      data-factura-id="@(item.FacturaID ?? "")"
      data-estado="@item.EstadoPasaje"
      data-codigo="@HttpUtility.HtmlAttributeEncode(item.ButacaCodigo)"
      data-search="@HttpUtility.HtmlAttributeEncode(searchKey)"
+     data-es-menor="@(item.EsMenor ? "1" : "0")"
+     data-es-tutor="@(item.EsTutor ? "1" : "0")"
+     data-tutor-pasaje-id="@(item.TutorPasajeID ?? "")"
+     data-tutor-butaca-nro="@tutorButacaAttr"
      data-bs-toggle="tooltip"
      data-bs-title="@HttpUtility.HtmlAttributeEncode(tooltip)">
     <span class="spnCodB">@item.ButacaCodigo</span>
-    @if (!string.IsNullOrWhiteSpace(pasajeroId))
+    @if (item.EstaOcupada)
     {
         <span class="spnB">@nombreCompleto</span>
     }

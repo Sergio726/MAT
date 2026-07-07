@@ -1468,3 +1468,56 @@
 - Problemas encontrados: ninguno de compilación.
 - Pendiente de despliegue: publicar los 2 SPs de `MAT.DB` en el entorno + smoke de `/Home/HistorialPagos`. Deploy BD + smoke + commit delegados a humano.
 - Estado: ✅ MSBuild MAT.MVC Debug OK
+
+### [2026-07-07] — DistribucionCoche Fases 4–6 (lista mobile, refactor, menores)
+
+- Archivos nuevos:
+  - `database/2026-07-07_DistribucionCoche_AllSeats.sql`
+  - `MAT.MVC/Scripts/mat.distribucioncoche.js`
+  - `MAT.MVC/Views/Reserva/_DistribucionCocheLista.cshtml`
+  - `MAT.MVC/Views/Reserva/_DistribucionCocheLayout_Minibus.cshtml`
+  - `MAT.MVC/Views/Reserva/_DistribucionCocheLayout_Camion4x4.cshtml`
+  - `MAT.MVC/Views/Reserva/_DistribucionCocheLayout_PisoElevado.cshtml`
+  - `MAT.MVC/Views/Reserva/_DistribucionCocheLayout_Semicama.cshtml`
+- Archivos modificados:
+  - `MAT.DB/dbo/Stored Procedures/usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql` — LEFT JOIN Butaca (todas las butacas); EsMenor/EsTutor/TutorNombre/TutorButacaNro; CapacidadTotal
+  - `MAT.MVC/Models/ReservaModel.cs` — campos menores/tutores; `DistribucionCochePageViewModel`; `EstaOcupada`
+  - `MAT.MVC/Controllers/Reserva/ReservaController.cs` — lectura SP v3; métricas corregidas
+  - `MAT.MVC/Views/Reserva/DistribucionCoche.cshtml` — 219 líneas; toggle Mapa/Lista; partials layout
+  - `MAT.MVC/Views/Reserva/_DistribucionCocheAsiento.cshtml` — `.Menor`/`.Tutor` server-side; data attrs vínculos
+  - `MAT.MVC/Content/mat.distribucioncoche.css` — layout, lista, menores, print, SVG
+  - `MAT.MVC/MAT.MVC.csproj`, `SPEC.md`
+- Qué se implementó:
+  - **Fase 5a:** SP devuelve todas las butacas del transporte; métricas Ocupadas/Disponibles/Total correctas.
+  - **Fase 4:** Vista lista alternativa con toggle; búsqueda unificada; impresión solo mapa.
+  - **Fase 5b:** Partials por tipo de transporte; CSS inline movido a archivo externo.
+  - **Fase 6:** Menores con clase `.Menor`, tooltip tutor, leyenda; toggle SVG vínculos tutor↔menor.
+- Pendiente de despliegue humano: `database/2026-07-07_DistribucionCoche_AllSeats.sql` (+ `FacturaID` si aún no aplicado) antes de smoke en BD real.
+- Smoke manual pendiente: MINIBUS, CAMION 4X4, PISOELEVADO, semicama 81/101; toggle lista; vínculos menores.
+- Estado: ✅ MSBuild MAT.MVC Debug OK
+
+### [2026-07-07] — Fix circuito Login / LogOff (P0–P4)
+
+- Archivos modificados:
+  - `MAT.MVC/Views/Account/Login.cshtml` — eliminado `@if` inválido dentro de `@using` (HttpParseException)
+  - `MAT.MVC/Infrastructure/AuthCookieHelper.cs` — limpieza acotada: cookies del request + legacy fijo + chunks auth 1–8 (sin bucle 1–64)
+  - `MAT.MVC/Common/MATContext.cs` — `ResetCurrentUser()`
+  - `MAT.MVC/Controllers/Account/AccountController.cs` — `ResetCurrentUser()` en LogOff
+  - `MAT.MVC/Views/Shared/_LayoutLogin.cshtml` — hint DEV cookies
+  - `MAT.MVC/Content/login-split.css` — `.login-split__dev-hint`
+- Qué se implementó:
+  - **P0:** Login compila y renderiza con `ReturnUrl`
+  - **P1:** Menos `Set-Cookie` en respuesta (evita headers gigantes)
+  - **P3:** Estado estático de usuario reseteado al cerrar sesión
+  - **P4:** Aviso de recuperación en layout login (solo DEV)
+- **P2 (humano, una vez):** F12 → Application → Cookies → borrar todas de `localhost:64315` → F5 → probar login + logout
+- Smoke manual pendiente: login → navegar → cerrar sesión → volver a login
+- Estado: ✅ MSBuild MAT.MVC Debug OK
+
+### [2026-07-07] — Fix machineKey Web.config (ConfigurationErrorsException Login)
+
+- Archivos modificados: `MAT.MVC/Web.config`
+- Qué se implementó: `validationKey` tenía 129 caracteres hex (debe ser 128 para SHA1); `decryptionKey` tenía 48 chars (AES requiere 64). Reemplazadas por claves generadas con RNG válidas.
+- Error resuelto: `ConfigurationErrorsException` al renderizar `@Html.AntiForgeryToken()` en Login.
+- **P2 (humano, una vez):** borrar cookies de localhost (cambió machineKey → cookies auth previas inválidas) → F5 → smoke login/logoff.
+- Estado: ✅ MSBuild MAT.MVC Debug OK

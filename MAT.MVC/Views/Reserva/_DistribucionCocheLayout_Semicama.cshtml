@@ -1,0 +1,145 @@
+@model MAT.MVC.Models.DistribucionCochePageViewModel
+@using MAT.MVC.Models
+@{
+    var seats = Model != null && Model.Seats != null ? Model.Seats : new List<DistribucionCoche>();
+    var nroCoche = Model != null ? Model.NroCoche : "";
+    Func<int, DistribucionCoche> butacaByNro = n => Model != null ? Model.ButacaByNro(n) : null;
+}
+<div class="piso-section">
+    <div class="encabezado_superior">PISO SUPERIOR SEMICAMA</div>
+    <div>
+        <div class="grupo1">
+            @if (nroCoche == "101")
+            {
+                foreach (var item in seats.Where(bt => bt.ButacaNro < 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
+                }
+            }
+            else
+            {
+                foreach (var item in seats.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
+                }
+            }
+        </div>
+        <div class="pasillo">
+            <div class="tv tv1">TV</div>
+            <div class="tv tv2">TV</div>
+            <div class="tv tv3">TV</div>
+            <div class="tv tv4">TV</div>
+        </div>
+        <div class="grupo2">
+            @{
+                var itemPasajero3 = butacaByNro(3);
+                var itemPasajero4 = butacaByNro(4);
+            }
+            @if (itemPasajero3 != null)
+            {
+                @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = itemPasajero3, SeatClass = "asiento_parabrisa" })
+            }
+            else
+            {
+                <div class="asiento_parabrisa vacio"></div>
+            }
+            @if (itemPasajero4 != null)
+            {
+                @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = itemPasajero4, SeatClass = "asiento_parabrisa" })
+            }
+            else
+            {
+                <div class="asiento_parabrisa vacio"></div>
+            }
+
+            @if (nroCoche == "81")
+            {
+                var itemPasajero59 = butacaByNro(59);
+                var itemPasajero60 = butacaByNro(60);
+                if (itemPasajero59 != null)
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = itemPasajero59, SeatClass = "asiento_invertido" })
+                }
+                if (itemPasajero60 != null)
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = itemPasajero60, SeatClass = "asiento_invertido" })
+                }
+            }
+
+            @if (nroCoche == "101")
+            {
+                var itemPasajero7 = butacaByNro(7);
+                var itemPasajero8 = butacaByNro(8);
+                if (itemPasajero7 != null)
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = itemPasajero7, SeatClass = "asiento_invertido" })
+                }
+                if (itemPasajero8 != null)
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = itemPasajero8, SeatClass = "asiento_invertido" })
+                }
+                <div class="asiento_largo vacio dc-facility-pad"><span>ESCALERA</span></div>
+                <div class="asiento_largo vacio"><span>BAR</span></div>
+                foreach (var item in seats.Where(bt => bt.ButacaNro > 8 && bt.ButacaNro < 49 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
+                }
+            }
+            else
+            {
+                foreach (var item in seats.Where(bt => bt.ButacaNro > 4 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
+                }
+                <div class="asiento_largo vacio dc-facility-pad"><span>ESCALERA</span></div>
+                <div class="asiento_largo vacio"><span>BAR</span></div>
+            }
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="piso-section">
+    <div class="encabezado_inferior">PISO INFERIOR CAMA</div>
+    <div>
+        <div class="grupo1">
+            <div class="asiento vacio"><span>BA&Ntilde;O</span></div>
+            <div class="asiento vacio"><span>BAR</span></div>
+            @if (nroCoche == "101")
+            {
+                foreach (var item in seats.Where(bt => bt.ButacaNro >= 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
+                }
+            }
+            else
+            {
+                foreach (var item in seats.Where(bt => bt.ButacaNro >= 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
+                }
+            }
+        </div>
+        <div class="pasillo">
+            <div class="tv tv5">TV</div>
+            <div class="tv tv6">TV</div>
+        </div>
+        <div class="grupo2">
+            <div class="asiento_largo vacio dc-stair-margin"><span>ESCALERA</span></div>
+            @if (nroCoche == "101")
+            {
+                foreach (var item in seats.Where(bt => bt.ButacaNro > 48 && bt.ButacaNro < 61 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_largo" })
+                }
+            }
+            else
+            {
+                foreach (var item in seats.Where(bt => bt.ButacaNro > 46 && bt.ButacaNro < 59 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+                {
+                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_largo" })
+                }
+            }
+        </div>
+    </div>
+</div>

@@ -399,6 +399,34 @@ namespace MAT.MVC.Models
         public string PasajeroID { get; set; }
         public string PasajeroApellido { get; set; }
         public string PasajeroNombre { get; set; }
+        public bool EsMenor { get; set; }
+        public bool EsTutor { get; set; }
+        public string TutorPasajeID { get; set; }
+        public string TutorPasajeroID { get; set; }
+        public string TutorNombre { get; set; }
+        public int? TutorButacaNro { get; set; }
+
+        public bool EstaOcupada
+        {
+            get { return !string.IsNullOrWhiteSpace(PasajeroID); }
+        }
+    }
+
+    public class DistribucionCochePageViewModel
+    {
+        public List<DistribucionCoche> Seats { get; set; }
+        public string TransporteTipo { get; set; }
+        public string NroCoche { get; set; }
+
+        public DistribucionCoche ButacaByNro(int nro)
+        {
+            if (Seats == null)
+            {
+                return null;
+            }
+
+            return Seats.FirstOrDefault(bt => bt.ButacaNro == nro);
+        }
     }
 
     public class DistribucionCocheSeatViewModel

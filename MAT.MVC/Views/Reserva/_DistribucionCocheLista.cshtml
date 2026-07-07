@@ -1,0 +1,71 @@
+@model List<MAT.MVC.Models.DistribucionCoche>
+@using MAT.MVC.Models
+@using MAT.Enums
+@{
+    var ordered = Model != null
+        ? Model.OrderBy(x => x.ButacaNro).ToList()
+        : new List<DistribucionCoche>();
+}
+<div class="dc-list-view" id="dc-list-view" hidden>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover dc-list-table" aria-label="Lista de butacas">
+            <thead>
+                <tr>
+                    <th scope="col">Butaca</th>
+                    <th scope="col">Pasajero</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Tutor / Menor</th>
+                    <th scope="col" class="dc-list-actions-col HideToPrint">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ordered)
+                {
+                    var nombreCompleto = string.Format("{0} {1}",
+                        (item.PasajeroNombre ?? "").ToUpper(),
+                        (item.PasajeroApellido ?? "").ToUpper()).Trim();
+                    var estadoLabel = ReservaMethod.GetDescripcionEstadoButaca(item.EstadoPasaje);
+                    var searchKey = string.Format("{0} {1} {2}",
+                        item.ButacaCodigo ?? "",
+                        item.PasajeroNombre ?? "",
+                        item.PasajeroApellido ?? "").ToLowerInvariant();
+                    var vinculoLabel = "";
+                    if (item.EsMenor && !string.IsNullOrWhiteSpace(item.TutorNombre))
+                    {
+                        vinculoLabel = "Menor — Tutor: " + item.TutorNombre;
+                    }
+                    else if (item.EsTutor)
+                    {
+                        vinculoLabel = "Tutor de menor";
+                    }
+                    var rowClass = "dc-list-row";
+                    if (item.EsMenor) { rowClass += " dc-list-row--menor"; }
+                    else if (item.EsTutor) { rowClass += " dc-list-row--tutor"; }
+                    if (!item.EstaOcupada) { rowClass += " dc-list-row--libre"; }
+                    <tr class="@rowClass bus-seat-list-row"
+                        data-butaca-nro="@item.ButacaNro"
+                        data-pasaje-id="@(item.PasajeID ?? "")"
+                        data-factura-id="@(item.FacturaID ?? "")"
+                        data-pasajero-id="@(item.PasajeroID ?? "")"
+                        data-estado="@item.EstadoPasaje"
+                        data-codigo="@item.ButacaCodigo"
+                        data-search="@searchKey"
+                        data-tutor-butaca-nro="@(item.TutorButacaNro.HasValue ? item.TutorButacaNro.Value.ToString() : "")">
+                        <td><strong>@item.ButacaCodigo</strong> <span class="text-muted dc-list-nro">#@item.ButacaNro</span></td>
+                        <td>@(item.EstaOcupada ? nombreCompleto : "—")</td>
+                        <td>@estadoLabel</td>
+                        <td>@(string.IsNullOrWhiteSpace(vinculoLabel) ? "—" : vinculoLabel)</td>
+                        <td class="dc-list-actions-col HideToPrint">
+                            @if (item.EstaOcupada)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-secondary dc-list-action-btn" data-action="menu" aria-label="Acciones butaca @item.ButacaCodigo">
+                                    <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

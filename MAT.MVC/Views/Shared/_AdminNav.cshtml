@@ -51,13 +51,9 @@
             </a>
             @if (Request.IsAuthenticated)
             {
-                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "adminLogoutFormOffcanvas", @class = "w-100" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn admin-offcanvas-action-btn admin-offcanvas-action-btn--danger w-100">
-                        <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
-                    </button>
-                }
+                <a href="@Url.Action("LogOff", "Account")" class="btn admin-offcanvas-action-btn admin-offcanvas-action-btn--danger w-100" id="adminLogoutFormOffcanvas">
+                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                </a>
             }
         </div>
     }

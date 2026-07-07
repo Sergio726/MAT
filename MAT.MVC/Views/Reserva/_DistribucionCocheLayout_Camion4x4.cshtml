@@ -1,0 +1,26 @@
+@model MAT.MVC.Models.DistribucionCochePageViewModel
+@using MAT.MVC.Models
+@{
+    var seats = Model != null && Model.Seats != null ? Model.Seats : new List<DistribucionCoche>();
+}
+<div class="encabezado_superior">CAMION 4X4</div>
+<div>
+    <div class="grupo1">
+        @foreach (var item in seats.Where(bt => bt.ButacaNro < 23 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+        {
+            @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
+        }
+    </div>
+    <div class="pasillo">
+        <div class="tv tv1">TV</div>
+    </div>
+    <div class="grupo2">
+        <div class="asiento vacio custom_margin_top_47"></div>
+        <div class="asiento vacio custom_margin_top_47"></div>
+        @foreach (var item in seats.Where(bt => bt.ButacaNro > 2 && bt.ButacaNro < 23 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
+        {
+            @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
+        }
+    </div>
+</div>
+<div class="clear"></div>

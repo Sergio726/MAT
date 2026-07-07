@@ -138,6 +138,23 @@ body.login-split-page {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.login-split__dev-hint {
+    position: fixed;
+    top: 3.25rem;
+    right: 1rem;
+    z-index: 100;
+    max-width: 280px;
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: #64748b;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
 /* Form */
 .login-split-form {
     width: 100%;

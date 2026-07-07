@@ -23,14 +23,10 @@
                 </div>
             </div>
             <div class="dropdown-divider"></div>
-            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "d-contents" }))
-            {
-                @Html.AntiForgeryToken()
-                <button type="submit" class="dropdown-item dropdown-logout">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Cerrar sesion</span>
-                </button>
-            }
+            <a href="@Url.Action("LogOff", "Account")" class="dropdown-item dropdown-logout" id="logoutForm">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Cerrar sesion</span>
+            </a>
         </div>
     </div>
 }

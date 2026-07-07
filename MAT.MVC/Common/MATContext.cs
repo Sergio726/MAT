@@ -98,5 +98,10 @@ namespace MAT.MVC.Common
                 _currentuserid = value;
             }
         }
+
+        public static void ResetCurrentUser()
+        {
+            _currentuserid = 0;
+        }
     }
 }

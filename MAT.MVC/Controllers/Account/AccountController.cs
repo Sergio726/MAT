@@ -10,6 +10,7 @@ using System.Web.Security;
 using System.Transactions;
 using MAT.MVC.Filters;
 using MAT.MVC.Common;
+using MAT.MVC.Infrastructure;
 
 namespace MAT.MVC.Controllers.Account
 {
@@ -20,13 +21,15 @@ namespace MAT.MVC.Controllers.Account
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            AuthCookieHelper.ClearAuthenticationCookies(HttpContext);
+
             ViewBag.ReturnUrl = returnUrl;
             string sDEV = System.Configuration.ConfigurationManager.AppSettings["SystemDEV"].ToString();
             if (sDEV == "true")
             {
-                ViewBag.IsDev = "true";    
+                ViewBag.IsDev = "true";
             }
-            
+
             return View();
         }
 
@@ -35,11 +38,17 @@ namespace MAT.MVC.Controllers.Account
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model, string returnUrl)
         {
-            if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: false))
+            if (ModelState.IsValid)
             {
-                MATContext.CurrentUserId = WebSecurity.CurrentUserId;
-                if (Roles.IsUserInRole(model.UserName, "Administrador")) return RedirectToAction("Index", "Admin");
-                return RedirectToLocal(returnUrl);
+                AuthCookieHelper.ClearAuthenticationCookies(HttpContext);
+                AuthCookieHelper.AbandonSession(HttpContext);
+
+                if (WebSecurity.Login(model.UserName, model.Password, persistCookie: false))
+                {
+                    MATContext.CurrentUserId = WebSecurity.CurrentUserId;
+                    if (Roles.IsUserInRole(model.UserName, "Administrador")) return RedirectToAction("Index", "Admin");
+                    return RedirectToLocal(returnUrl);
+                }
             }
 
             // Si llegamos a este punto, es que se ha producido un error y volvemos a mostrar el formulario
@@ -47,15 +56,34 @@ namespace MAT.MVC.Controllers.Account
             return View(model);
         }
 
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         [AllowAnonymous]
         public ActionResult LogOff()
         {
-            if (WebSecurity.IsAuthenticated)
+            return PerformLogOffAndRedirect();
+        }
+
+        private ActionResult PerformLogOffAndRedirect()
+        {
+            try
             {
-                WebSecurity.Logout();
+                if (WebSecurity.IsAuthenticated)
+                {
+                    WebSecurity.Logout();
+                }
+
+                FormsAuthentication.SignOut();
+            }
+            catch (Exception)
+            {
+                // Continuar con limpieza de cookies
             }
 
-            return RedirectToAction("Index", "Home");
+            AuthCookieHelper.AbandonSession(HttpContext);
+            AuthCookieHelper.ClearAuthenticationCookies(HttpContext);
+            MATContext.ResetCurrentUser();
+
+            return Redirect(Url.Action("Login", "Account"));
         }
 
         [AllowAnonymous]

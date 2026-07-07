@@ -1,6 +1,5 @@
 @model List<MAT.MVC.Models.DistribucionCoche>
 @using MAT.MVC.Models
-@using MAT.Enums
 @{
     Layout = null;
     var fechaSalida = ViewBag.ViajeFechaSalida as string ?? "";
@@ -8,7 +7,14 @@
     DateTime dtTmp;
     if (DateTime.TryParse(fechaSalida, out dtTmp)) { fechaSalida = dtTmp.ToString("dd/MM/yyyy"); }
     if (DateTime.TryParse(fechaRegreso, out dtTmp)) { fechaRegreso = dtTmp.ToString("dd/MM/yyyy"); }
-    Func<int, DistribucionCoche> butacaByNro = n => Model != null ? Model.FirstOrDefault(bt => bt.ButacaNro == n) : null;
+    var transporteTipo = (string)ViewBag.TransporteTipo ?? "";
+    var nroCoche = (string)ViewBag.NroCoche ?? "";
+    var layoutModel = new DistribucionCochePageViewModel
+    {
+        Seats = Model ?? new List<DistribucionCoche>(),
+        TransporteTipo = transporteTipo,
+        NroCoche = nroCoche
+    };
 }
 <!DOCTYPE html>
 <html>
@@ -21,339 +27,10 @@
     <link href="~/Content/saas-variables.css" rel="stylesheet" />
     <link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
     <link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
-    <link href="~/Content/mat.distribucioncoche.css" rel="stylesheet" />
+    <link href="~/Content/mat.distribucioncoche.css?v=20260707e" rel="stylesheet" />
     <link href="~/Content/modern-dashboard.css" rel="stylesheet" />
-    <style>
-        /* ===== MODERN BUS DISTRIBUTION STYLES ===== */
-        body {
-            -webkit-print-color-adjust: exact;
-        }
-
-        /* Page container */
-        .bus-distribution-page {
-            padding: 1.5rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        /* Card wrapper */
-        .bus-card {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Legend */
-        .bus-legend {
-            display: flex;
-            gap: 1.5rem;
-            padding: 1rem 1.5rem;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-            flex-wrap: wrap;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.813rem;
-            color: #64748b;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .legend-color.empty {
-            background: #f1f5f9;
-            border: 2px dashed #cbd5e1;
-        }
-
-        /* legend-color estados: mat.distribucioncoche.css */
-
-        /* Bus layout container */
-        #cole1 {
-            width: 700px;
-            margin: auto;
-            padding: 1.5rem;
-            box-sizing: content-box;
-        }
-
-        .grupo1, .grupo2 {
-            width: 44%;
-        }
-
-        .grupo1 {
-            float: left;
-        }
-
-        .grupo2 {
-            float: right;
-        }
-
-        .pasillo {
-            width: 10%;
-            display: inline-block;
-            position: relative;
-        }
-
-        /* Base seat styling */
-        .asiento, .asiento_parabrisa, .asiento_invertido, .asiento_largo {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            margin-bottom: 3px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            font-size: 9pt;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-            box-sizing: border-box;
-            padding: 4px 6px;
-        }
-
-        .asiento {
-            width: 149px;
-            display: inline-block;
-            height: 50px;
-            vertical-align: top;
-        }
-
-        .asiento_parabrisa {
-            width: 144px;
-            display: inline-block;
-            height: 50px;
-            float: right;
-            margin-left: 7px;
-            vertical-align: top;
-        }
-
-        .asiento_invertido {
-            display: inline-block;
-            float: right;
-            height: 50px;
-            margin-bottom: 3px;
-            margin-left: 7px;
-            width: 144px;
-            vertical-align: top;
-        }
-
-        .asiento_largo {
-            width: 97%;
-            display: inline-block;
-            height: 50px;
-            margin-bottom: 3px;
-            float: right;
-            vertical-align: top;
-        }
-
-        /* Tutor styling — ver mat.distribucioncoche.css */
-
-        /* Facility styling (vacio) */
-        .vacio {
-            background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important;
-            border: none !important;
-            box-shadow: 0 2px 4px rgba(71, 85, 105, 0.3);
-        }
-
-        .vacio span {
-            color: white !important;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Section headers */
-        .encabezado_superior, .encabezado_inferior {
-            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-            color: white;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin: 0 0 1rem;
-            padding: 0.75rem 1rem;
-            text-align: center;
-            width: 100%;
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: 0 2px 4px rgba(233, 30, 99, 0.3);
-        }
-
-        .encabezado_inferior {
-            margin-top: 1.5rem;
-        }
-
-        .clear {
-            clear: both;
-        }
-
-        /* TV indicators */
-        .tv {
-            width: 50%;
-            height: 20px;
-            margin: auto;
-            border: none;
-            text-align: center;
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            border-radius: 4px;
-            font-size: 0.625rem;
-            font-weight: 700;
-            color: #78350f;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
-        }
-
-        .tv1 {
-            position: absolute;
-            top: 0;
-            left: 20px;
-        }
-
-        .tv2 {
-            position: absolute;
-            top: 172px;
-            left: 20px;
-        }
-
-        .tv3 {
-            position: absolute;
-            top: 300px;
-            left: 20px;
-        }
-
-        .tv4 {
-            position: absolute;
-            top: 430px;
-            left: 20px;
-        }
-
-        .tv5 {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-
-        .tv6 {
-            position: absolute;
-            top: 130px;
-            left: 20px;
-        }
-
-        /* Seat code and name */
-        .spnCodB {
-            font-weight: 700;
-            font-size: 9pt;
-            color: #1e293b;
-            display: block;
-            margin-bottom: 1px;
-        }
-
-        .spnB {
-            font-size: 8pt;
-            color: #475569;
-            line-height: 1.3;
-            display: block;
-            word-break: break-word;
-        }
-
-        /* Position classes */
-        .asiento_parabrisa.posicion_A, .asiento_invertido.posicion_A {
-            float: right;
-        }
-
-        .asiento_parabrisa.posicion_B, .asiento_invertido.posicion_B {
-            float: left;
-        }
-
-        /* Custom margins */
-        .custom_margin_top_47 {
-            margin-top: 47px;
-        }
-
-        .custom_margin_top_20 {
-            margin-top: 20px;
-        }
-
-        /* Print styles */
-        @@page {
-            margin: 10mm;
-            size: A4 portrait;
-        }
-
-        @@media print {
-            body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .bus-distribution-page {
-                padding: 0;
-                max-width: none;
-            }
-
-            .bus-card {
-                box-shadow: none;
-                border: 1px solid #e2e8f0;
-                overflow: visible;
-            }
-
-            .bus-legend {
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-            }
-
-            /* Escalar el mapa completo para que entre en A4 sin tocar el layout de butacas */
-            #cole1 {
-                transform: scale(0.9);
-                transform-origin: top center;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .piso-section {
-                break-after: page;
-                page-break-after: always;
-            }
-
-            .piso-section:last-child {
-                break-after: auto;
-                page-break-after: auto;
-            }
-
-            .HideToPrint {
-                display: none !important;
-            }
-        }
-
-        /* Responsive */
-        @@media (max-width: 768px) {
-            .bus-distribution-page {
-                padding: 0.5rem;
-                overflow-x: auto;
-            }
-
-            #cole1 {
-                padding: 1rem;
-                min-width: 700px;
-            }
-
-            .bus-legend {
-                gap: 1rem;
-                padding: 0.75rem 1rem;
-            }
-        }
-    </style>
 </head>
-<body>
+<body class="dc-page">
 
 <div class="bus-distribution-page listado-simple">
     @if (ViewBag.Error != null && !string.IsNullOrEmpty(ViewBag.Error.ToString()))
@@ -404,31 +81,51 @@
         <span class="bus-search-hint"><kbd>Enter</kbd> o <kbd>F3</kbd> para ir a la siguiente</span>
     </div>
 
-    <div class="toolbar HideToPrint">
-        <span>Ocupadas: <strong>@(ViewBag.ButacasOcupadas ?? 0) / @(ViewBag.TotalButacas ?? 0)</strong></span>
-        <span class="ms-3">Disponibles: <strong>@(ViewBag.ButacasDisponibles ?? 0)</strong></span>
-        <span class="ms-3">Pagados: <strong>@(ViewBag.ConteoPagados ?? 0)</strong></span>
-        <span class="ms-3">Se&ntilde;ados: <strong>@(ViewBag.ConteoSenados ?? 0)</strong></span>
-        <span class="ms-3">Pre-reserva: <strong>@(ViewBag.ConteoPrereserva ?? 0)</strong></span>
-        @if (!string.IsNullOrWhiteSpace((string)ViewBag.TransporteTipo))
-        {
-            <span class="ms-3">Transporte: <strong>@ViewBag.TransporteTipo</strong></span>
-        }
-        @if (!string.IsNullOrWhiteSpace((string)ViewBag.NroCoche))
-        {
-            <span class="ms-3">Coche N&deg; <strong>@ViewBag.NroCoche</strong></span>
-        }
-        <span id="tutores-loading" class="ms-3 text-muted" style="font-size:0.875rem;">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Cargando tutores...
-        </span>
-        <button type="button" class="btn-print" onclick="window.print();">
-            <i class="bi bi-printer-fill"></i>
-            Imprimir
-        </button>
+    <div class="dc-toolbar HideToPrint">
+        <div class="dc-toolbar__controls">
+            <div class="dc-view-toggle btn-group" role="group" aria-label="Vista mapa o lista">
+                <button type="button" class="btn btn-outline-secondary active" id="dc-btn-mapa" aria-pressed="true">
+                    <i class="bi bi-grid-3x3-gap" aria-hidden="true"></i> Mapa
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="dc-btn-lista" aria-pressed="false">
+                    <i class="bi bi-list-ul" aria-hidden="true"></i> Lista
+                </button>
+            </div>
+            <label class="dc-vinculos-toggle">
+                <input type="checkbox" id="dc-toggle-vinculos" />
+                Mostrar vínculos tutor↔menor
+            </label>
+        </div>
+        <div class="dc-toolbar__stats" aria-label="Resumen de butacas">
+            <span>Ocupadas: <strong>@(ViewBag.ButacasOcupadas ?? 0) / @(ViewBag.TotalButacas ?? 0)</strong></span>
+            <span>Disponibles: <strong>@(ViewBag.ButacasDisponibles ?? 0)</strong></span>
+            <span>Pagados: <strong>@(ViewBag.ConteoPagados ?? 0)</strong></span>
+            <span>Se&ntilde;ados: <strong>@(ViewBag.ConteoSenados ?? 0)</strong></span>
+            <span>Pre-reserva: <strong>@(ViewBag.ConteoPrereserva ?? 0)</strong></span>
+            @if (!string.IsNullOrWhiteSpace(transporteTipo))
+            {
+                <span>Transporte: <strong>@transporteTipo</strong></span>
+            }
+            @if (!string.IsNullOrWhiteSpace(nroCoche))
+            {
+                <span>Coche N&deg; <strong>@nroCoche</strong></span>
+            }
+            <span id="tutores-loading" class="dc-toolbar__loading text-muted">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Cargando tutores...
+            </span>
+        </div>
+        <div class="dc-toolbar__actions">
+            <button type="button" class="btn-print" onclick="window.print();">
+                <i class="bi bi-printer-fill"></i>
+                Imprimir
+            </button>
+        </div>
     </div>
 
-    <div class="bus-card">
+    @Html.Partial("_DistribucionCocheLista", Model)
+
+    <div class="bus-card" id="dc-map-view">
         <div class="bus-legend">
             <div class="bus-legend-estados">
                 <div class="legend-item">
@@ -464,6 +161,10 @@
                     <span>Tutor de Menor</span>
                 </div>
                 <div class="legend-item">
+                    <div class="legend-color menor"></div>
+                    <span>Menor vinculado</span>
+                </div>
+                <div class="legend-item">
                     <div class="legend-color facility"></div>
                     <span>Servicio (Bar/Ba&ntilde;o)</span>
                 </div>
@@ -473,262 +174,26 @@
                 <span class="text-muted">Cargando tutores...</span>
             </div>
         </div>
-        <div id="cole1">
-    @*ES MINIBUS?*@
-    @if (ViewBag.TransporteTipo == "MINIBUS")
-    {
-        <div class="encabezado_superior">MINI BUS</div>
-        <div>
-            <div class="grupo1">
-                @foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+        <div class="dc-map-wrap">
+            <svg class="dc-vinculos-svg" id="dc-vinculos-svg" aria-hidden="true"></svg>
+            <div id="cole1">
+                @if (transporteTipo == "MINIBUS")
                 {
-                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
-                }                        
-            </div>
-            <div class="pasillo">
-                <div class="tv tv1">TV</div>
-            </div>
-            <div class="grupo2">
-                @foreach (var item in Model.Where(bt => bt.ButacaNro > 2 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
-                {
-                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
+                    @Html.Partial("_DistribucionCocheLayout_Minibus", layoutModel)
                 }
-            
-            </div>
-        </div>
-        <div class="clear"></div>
-
-    }
-    else if (ViewBag.TransporteTipo == "CAMION 4X4")
-    {
-    <div class="encabezado_superior">CAMION 4X4</div>
-    <div>
-    <div class="grupo1">
-        @foreach (var item in Model.Where(bt => bt.ButacaNro < 23 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
-        {
-            @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
-        }
-        </div>
-        <div class="pasillo">
-            <div class="tv tv1">TV</div>
-        </div>
-        <div class="grupo2">
-            <div class="asiento vacio custom_margin_top_47"></div>
-            <div class="asiento vacio custom_margin_top_47"></div>
-
-
-            @foreach (var item in Model.Where(bt => bt.ButacaNro > 2 && bt.ButacaNro < 23 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
-            {
-                @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
-            }
-
-        </div>
-        </div>
-        <div class="clear"></div>                           
-        }
-        else if (ViewBag.TransporteTipo == "PISOELEVADO")
-        {
-        <div class="encabezado_superior">PISO ELEVADO</div>
-        <div>
-            <div class="grupo1">
-                @foreach (var item in Model.Where(bt => (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
+                else if (transporteTipo == "CAMION 4X4")
                 {
-                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
-                }                        
-            </div>
-            <div class="pasillo">
-                <div class="tv tv1">TV</div>
-                <div class="tv tv2">TV</div>
-                <div class="tv tv3">TV</div>
-                <div class="tv tv4">TV</div>
-            </div>
-            <div class="grupo2">
-                @foreach (var item in Model.Where(bt => (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
-                {
-                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
+                    @Html.Partial("_DistribucionCocheLayout_Camion4x4", layoutModel)
                 }
-                <div class="asiento vacio custom_margin_top_20">
-                    <span>BAR</span>
-                </div>
-                <div class="asiento vacio custom_margin_top_20">
-                    <span>BAÑO</span>
-                </div>
-            </div>
-        </div>
-        <div class="clear"></div>
-      
-    }
-    else
-    {
-        <div class="piso-section">
-        <div class="encabezado_superior">
-        PISO SUPERIOR SEMICAMA
-        </div>
-        <div>
-            <div class="grupo1">
-
-                @if (ViewBag.NroCoche == "101")
+                else if (transporteTipo == "PISOELEVADO")
                 {
-                    foreach (var item in Model.Where(bt => bt.ButacaNro < 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
-                    {
-                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
-                    }
+                    @Html.Partial("_DistribucionCocheLayout_PisoElevado", layoutModel)
                 }
                 else
                 {
-                    foreach (var item in Model.Where(bt => bt.ButacaNro < 45 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
-                    {
-                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
-                    }
+                    @Html.Partial("_DistribucionCocheLayout_Semicama", layoutModel)
                 }
-
-
             </div>
-            <div class="pasillo">
-                <div class="tv tv1">TV</div>
-                <div class="tv tv2">TV</div>
-                <div class="tv tv3">TV</div>
-                <div class="tv tv4">TV</div>
-            </div>
-            <div class="grupo2">
-                @{
-                    var ItemPasajero3 = butacaByNro(3);
-                    var ItemPasajero4 = butacaByNro(4);
-                }
-                @if (ItemPasajero3 != null)
-                {
-                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero3, SeatClass = "asiento_parabrisa" })
-                }
-                else
-                {
-                    <div class="asiento_parabrisa vacio"></div>
-                }
-                @if (ItemPasajero4 != null)
-                {
-                    @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero4, SeatClass = "asiento_parabrisa" })
-                }
-                else
-                {
-                    <div class="asiento_parabrisa vacio"></div>
-                }
-
-                @if (ViewBag.NroCoche == "81")
-                {
-                    var ItemPasajero59 = butacaByNro(59);
-                    var ItemPasajero60 = butacaByNro(60);
-
-                    if (ItemPasajero59 != null)
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero59, SeatClass = "asiento_invertido" })
-                    }
-                    if (ItemPasajero60 != null)
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero60, SeatClass = "asiento_invertido" })
-                    }
-                }
-
-                @if (ViewBag.NroCoche == "101")
-                {
-                    var ItemPasajero7 = butacaByNro(7);
-                    var ItemPasajero8 = butacaByNro(8);
-
-                    if (ItemPasajero7 != null)
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero7, SeatClass = "asiento_invertido" })
-                    }
-                    if (ItemPasajero8 != null)
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = ItemPasajero8, SeatClass = "asiento_invertido" })
-                    }
-
-
-                    <div class="asiento_largo vacio" style="padding-top:5px">
-                        <span>ESCALERA</span>
-                    </div>
-                    <div class="asiento_largo vacio"><span>BAR</span></div>
-
-                    foreach (var item in Model.Where(bt => bt.ButacaNro > 8 && bt.ButacaNro < 49 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
-                    }
-                }
-                else
-                {
-                    foreach (var item in Model.Where(bt => bt.ButacaNro > 4 && bt.ButacaNro < 47 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_invertido" })
-                    }
-
-                    <div class="asiento_largo vacio" style="padding-top:5px">
-                        <span>ESCALERA</span>
-                    </div>
-                    <div class="asiento_largo vacio"><span>BAR</span></div>
-                }
-
-
-
-
-            </div>
-        </div>
-        <div class="clear"></div>
-        </div><!-- /piso-section superior -->
-
-        <div class="piso-section">
-        <div class="encabezado_inferior">
-            PISO INFERIOR CAMA
-        </div>
-        <div>
-            <div class="grupo1">
-                <div class="asiento vacio">
-                    <span>BAÑO</span>
-                </div>
-                <div class="asiento vacio">
-                    <span>BAR</span>
-                </div>
-                @if (ViewBag.NroCoche == "101")
-                {
-                    foreach (var item in Model.Where(bt => bt.ButacaNro >= 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
-                    }
-                }
-                else
-                {
-                    foreach (var item in Model.Where(bt => bt.ButacaNro >= 49 && (bt.ButacaPosicion == "C" || bt.ButacaPosicion == "D")))
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento" })
-                    }
-                }
-
-            </div>
-            <div class="pasillo">
-                <div class="tv tv5">TV</div>
-                <div class="tv tv6">TV</div>
-            </div>
-            <div class="grupo2">
-                <div class="asiento_largo vacio" style="margin-bottom:12px;">
-                    <span>ESCALERA</span>
-                </div>
-                @if (ViewBag.NroCoche == "101")
-                {
-                    foreach (var item in Model.Where(bt => bt.ButacaNro > 48 && bt.ButacaNro < 61 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_largo" })
-                    }
-                }
-                else
-                {
-                    foreach (var item in Model.Where(bt => bt.ButacaNro > 46 && bt.ButacaNro < 59 && (bt.ButacaPosicion == "A" || bt.ButacaPosicion == "B")))
-                    {
-                        @Html.Partial("_DistribucionCocheAsiento", new DistribucionCocheSeatViewModel { Item = item, SeatClass = "asiento_largo" })
-                    }
-                }
-
-            </div>
-        </div>
-        </div><!-- /piso-section inferior -->
-    }
-
         </div>
     </div>
 </div>
@@ -749,244 +214,10 @@
 
 <script src="~/Scripts/jquery-3.7.1.min.js"></script>
 <script src="~/Scripts/bootstrap-5.3.2.bundle.min.js"></script>
+<script src="~/Scripts/mat.distribucioncoche.js?v=20260707d"></script>
 <script type="text/javascript">
-    function mostrarErrorDistribucion(msg) {
-        $(".distribucion-error-banner").remove();
-        var $banner = $('<div class="distribucion-error-banner" style="background:#ffebee;color:#c62828;padding:10px 15px;border-left:4px solid #c62828;margin:8px 0;border-radius:4px;font-size:13px;display:flex;align-items:center;gap:8px;">' +
-            '<i class="bi bi-exclamation-triangle-fill" style="font-size:16px;flex-shrink:0;"></i>' +
-            '<span style="flex:1;"></span>' +
-            '<button type="button" style="background:none;border:none;color:#c62828;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;" title="Cerrar">&times;</button>' +
-            '</div>');
-        $banner.find("span").first().text(msg);
-        $banner.find("button").on("click", function () { $banner.fadeOut(200, function () { $banner.remove(); }); });
-        $(".bus-distribution-page").prepend($banner);
-        setTimeout(function () { $banner.fadeOut(300, function () { $banner.remove(); }); }, 15000);
-    }
-
-    function parseTutoresList(tutores) {
-        if (Array.isArray(tutores)) {
-            return tutores;
-        }
-        if (typeof tutores === "string" && tutores.length > 0) {
-            try {
-                return JSON.parse(tutores);
-            } catch (e) {
-                return [];
-            }
-        }
-        return [];
-    }
-
-    function markTutors(list) {
-        $(".bus-seat").each(function () {
-            var id = $(this).attr("id");
-            if (id && list.indexOf(id) >= 0) {
-                $(this).addClass("Tutor");
-            }
-        });
-    }
-
-    function hideTutoresLoading() {
-        $("#tutores-loading, #legend-tutores-loading").hide();
-    }
-
-    function normalizeSearchText(text) {
-        return (text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    }
-
-    var searchMatches = [];
-    var searchIndex = -1;
-    var searchTimer = null;
-
-    function applyBusSearch(query) {
-        var q = normalizeSearchText(query);
-        $(".bus-seat").removeClass("bus-seat-match bus-seat-dimmed bus-seat-current");
-        searchMatches = [];
-        searchIndex = -1;
-        $("#buscar-resultado").text("");
-
-        if (!q) {
-            return;
-        }
-
-        $(".bus-seat").each(function () {
-            var key = normalizeSearchText($(this).attr("data-search") || "");
-            if (key.indexOf(q) >= 0) {
-                searchMatches.push(this);
-                $(this).addClass("bus-seat-match");
-            } else {
-                $(this).addClass("bus-seat-dimmed");
-            }
-        });
-
-        if (searchMatches.length > 0) {
-            searchIndex = 0;
-            focusSearchMatch(0);
-            $("#buscar-resultado").text(searchMatches.length + (searchMatches.length === 1 ? " coincidencia" : " coincidencias"));
-        } else {
-            $("#buscar-resultado").text("Sin coincidencias");
-        }
-    }
-
-    function focusSearchMatch(idx) {
-        $(".bus-seat").removeClass("bus-seat-current");
-        if (searchMatches.length === 0) {
-            return;
-        }
-        var el = searchMatches[idx];
-        $(el).addClass("bus-seat-current");
-        if (el.scrollIntoView) {
-            el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
-        }
-    }
-
-    function initBusSeatTooltips() {
-        if (typeof bootstrap === "undefined" || !bootstrap.Tooltip) {
-            return;
-        }
-        [].slice.call(document.querySelectorAll(".bus-seat[data-bs-toggle='tooltip']")).forEach(function (el) {
-            new bootstrap.Tooltip(el);
-        });
-    }
-
-    var $activeSeatMenu = null;
-
-    function closeSeatActionsMenu() {
-        if ($activeSeatMenu) {
-            $activeSeatMenu.remove();
-            $activeSeatMenu = null;
-        }
-        $(document).off("click.distribSeatMenu keydown.distribSeatMenu");
-    }
-
-    function openDetalleFacturaModal(facturaId) {
-        if (!facturaId) {
-            mostrarErrorDistribucion("Esta butaca no tiene factura asociada.");
-            return;
-        }
-        var $body = $("#modalDetalleFacturaDistribucionBody");
-        $body.html('<div class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm" role="status"></span> Cargando…</div>');
-        var modalEl = document.getElementById("modalDetalleFacturaDistribucion");
-        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        modal.show();
-        $.get("/PersonaCliente/DetalleFacturaFast", { facturaid: facturaId })
-            .done(function (html) { $body.html(html); })
-            .fail(function () {
-                $.get("/PersonaCliente/DetalleFactura", { facturaid: facturaId })
-                    .done(function (html) { $body.html(html); })
-                    .fail(function () {
-                        $body.html('<div class="alert alert-danger mb-0">No se pudo cargar el detalle de la factura.</div>');
-                    });
-            });
-    }
-
-    function abrirCambioButacaDesdeDistribucion(pasajeroId, pasajeId) {
-        if (window.opener && !window.opener.closed && typeof window.opener.abrirCambioButaca === "function") {
-            window.opener.abrirCambioButaca(pasajeroId, pasajeId);
-            window.opener.focus();
-            return;
-        }
-        var url = "/PersonaCliente/ElegirNuevaButaca?shell=1&anteriorid=" + encodeURIComponent(pasajeroId) + "&pasajeid=" + encodeURIComponent(pasajeId);
-        window.open(url, "CambioButaca", "width=960,height=720,resizable=yes,scrollbars=yes");
-    }
-
-    function showSeatActionsMenu($seat, evt) {
-        closeSeatActionsMenu();
-        var pasajeId = ($seat.attr("data-pasaje-id") || "").trim();
-        var pasajeroId = ($seat.attr("id") || "").trim();
-        var facturaId = ($seat.attr("data-factura-id") || "").trim();
-        if (!pasajeId || !pasajeroId) {
-            return;
-        }
-
-        var nombre = ($seat.find(".spnB").text() || $seat.attr("data-bs-title") || "").trim();
-        var codigo = ($seat.attr("data-codigo") || "").trim();
-        var titulo = nombre || ("Butaca " + codigo);
-
-        var $menu = $('<div class="bus-seat-actions-menu" role="menu"></div>');
-        $menu.append('<div class="bus-seat-actions-menu__title"></div>');
-        $menu.find(".bus-seat-actions-menu__title").text(titulo);
-
-        if (facturaId) {
-            $menu.append('<button type="button" class="bus-seat-actions-menu__btn" data-action="factura"><i class="bi bi-receipt"></i> Ver detalle de factura</button>');
-        }
-        $menu.append('<button type="button" class="bus-seat-actions-menu__btn" data-action="cambio"><i class="bi bi-arrow-left-right"></i> Cambiar butaca</button>');
-        $menu.append('<button type="button" class="bus-seat-actions-menu__btn bus-seat-actions-menu__btn--muted" data-action="cerrar">Cerrar</button>');
-
-        $("body").append($menu);
-        $activeSeatMenu = $menu;
-
-        var left = (evt && evt.pageX ? evt.pageX : $seat.offset().left) + 8;
-        var top = (evt && evt.pageY ? evt.pageY : $seat.offset().top) + 8;
-        $menu.css({ left: left + "px", top: top + "px" });
-
-        $menu.on("click", ".bus-seat-actions-menu__btn", function (e) {
-            e.stopPropagation();
-            var action = $(this).data("action");
-            closeSeatActionsMenu();
-            if (action === "factura") {
-                openDetalleFacturaModal(facturaId);
-            } else if (action === "cambio") {
-                abrirCambioButacaDesdeDistribucion(pasajeroId, pasajeId);
-            }
-        });
-
-        setTimeout(function () {
-            $(document).on("click.distribSeatMenu", function () { closeSeatActionsMenu(); });
-            $(document).on("keydown.distribSeatMenu", function (e) {
-                if (e.key === "Escape") { closeSeatActionsMenu(); }
-            });
-        }, 0);
-    }
-
     $(document).ready(function () {
-        initBusSeatTooltips();
-
-        $(document).on("click", ".bus-seat--occupied", function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            showSeatActionsMenu($(this), e);
-        });
-
-        $("#buscar-pasajero").on("input", function () {
-            var val = $(this).val();
-            clearTimeout(searchTimer);
-            searchTimer = setTimeout(function () {
-                applyBusSearch(val);
-            }, 200);
-        });
-
-        $("#buscar-pasajero").on("keydown", function (e) {
-            if (e.key === "Enter" || e.key === "F3") {
-                e.preventDefault();
-                if (searchMatches.length === 0) {
-                    return;
-                }
-                searchIndex = (searchIndex + 1) % searchMatches.length;
-                focusSearchMatch(searchIndex);
-            }
-        });
-
-        var sViajeId = "@ViewBag.ViajeID";
-        $.ajax({
-            url: "/Reserva/GetListTutoresByViajeID",
-            data: { sViajeId: sViajeId },
-            dataType: "json",
-            success: function (data) {
-                if (data.error) {
-                    mostrarErrorDistribucion(data.error);
-                    return;
-                }
-                var list = parseTutoresList(data.Tutores);
-                markTutors(list);
-            },
-            error: function () {
-                mostrarErrorDistribucion("No se pudieron cargar los tutores de menores. El mapa se muestra sin esa información.");
-            },
-            complete: function () {
-                hideTutoresLoading();
-            }
-        });
+        MatDistribucionCoche.init({ viajeId: "@ViewBag.ViajeID" });
     });
 </script>
 
