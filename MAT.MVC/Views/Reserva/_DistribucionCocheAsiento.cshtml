@@ -27,9 +27,10 @@
         posClass = "posicion_" + item.ButacaPosicion;
     }
 }
-<div class="@Model.SeatClass @posClass @estadoCss bus-seat"
+<div class="@Model.SeatClass @posClass @estadoCss bus-seat@(string.IsNullOrWhiteSpace(pasajeroId) ? "" : " bus-seat--occupied")"
      id="@pasajeroId"
      data-pasaje-id="@(item.PasajeID ?? "")"
+     data-factura-id="@(item.FacturaID ?? "")"
      data-estado="@item.EstadoPasaje"
      data-codigo="@HttpUtility.HtmlAttributeEncode(item.ButacaCodigo)"
      data-search="@HttpUtility.HtmlAttributeEncode(searchKey)"

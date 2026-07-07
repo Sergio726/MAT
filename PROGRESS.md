@@ -2,6 +2,14 @@
 
 ---
 
+### [2026-07-07] — DistribucionCoche Fase 3: acciones al clic en butaca
+- **Archivos:** `usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql`, `database/2026-07-07_DistribucionCoche_FacturaID.sql`, `ReservaModel.cs`, `ReservaController.cs`, `_DistribucionCocheAsiento.cshtml`, `DistribucionCoche.cshtml`, `mat.distribucioncoche.css`, `PersonaClienteController.cs`, `ElegirNuevaButaca.cshtml`, `mat.jquery.binding.js`, `SPEC.md`.
+- **Qué se implementó:** Menú contextual en butacas ocupadas (ver factura en modal BS5, cambiar butaca); `data-factura-id` + `FacturaID` en SP; `abrirCambioButaca` global reutilizable; fallback `ElegirNuevaButaca?shell=1` en ventana nueva si no hay `opener`.
+- **Acción humana:** publicar `database/2026-07-07_DistribucionCoche_FacturaID.sql`.
+- **Estado:** ✅ completo
+
+---
+
 ### [2026-07-07] — Deuda funcional: CancelViaje SP + investigación tabla `Cuenta`
 
 #### A) Eliminación de viaje (SP unificado)

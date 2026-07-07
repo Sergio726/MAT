@@ -131,10 +131,12 @@ namespace MAT.MVC.Controllers.Reserva
                 };
                 var spHasEstadoPasaje = false;
                 var spHasPasajeID = false;
+                var spHasFacturaID = false;
                 using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_DistribucionCoche_GetByViajeID", dbParams))
                 {
                     spHasEstadoPasaje = HasColumn(_reader, "EstadoPasaje");
                     spHasPasajeID = HasColumn(_reader, "PasajeID");
+                    spHasFacturaID = HasColumn(_reader, "FacturaID");
 
                     while (_reader.Read())
                     {
@@ -151,6 +153,9 @@ namespace MAT.MVC.Controllers.Reserva
                                 ButacaPosicion = _reader["ButacaPosicion"].ToString(),
                                 ButacaCodigo = _reader["ButacaCodigo"].ToString(),
                                 PasajeID = spHasPasajeID ? _reader["PasajeID"].ToString() : "",
+                                FacturaID = spHasFacturaID && _reader["FacturaID"] != DBNull.Value
+                                    ? _reader["FacturaID"].ToString()
+                                    : "",
                                 EstadoPasaje = estadoPasaje,
                                 PasajeroID = pasajeroId,
                                 PasajeroApellido = _reader["PasajeroApellido"].ToString(),

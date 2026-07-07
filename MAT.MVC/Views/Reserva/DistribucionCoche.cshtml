@@ -22,6 +22,7 @@
     <link href="~/Content/mat.listadosimple.css" rel="stylesheet" />
     <link href="~/Content/mat.listadosimple.print.css" rel="stylesheet" media="print" />
     <link href="~/Content/mat.distribucioncoche.css" rel="stylesheet" />
+    <link href="~/Content/modern-dashboard.css" rel="stylesheet" />
     <style>
         /* ===== MODERN BUS DISTRIBUTION STYLES ===== */
         body {
@@ -732,6 +733,20 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalDetalleFacturaDistribucion" tabindex="-1" aria-labelledby="modalDetalleFacturaDistribucionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalleFacturaDistribucionLabel">Detalle de factura</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modalDetalleFacturaDistribucionBody">
+                <div class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm" role="status"></span> Cargando…</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="~/Scripts/jquery-3.7.1.min.js"></script>
 <script src="~/Scripts/bootstrap-5.3.2.bundle.min.js"></script>
 <script type="text/javascript">
@@ -834,8 +849,104 @@
         });
     }
 
+    var $activeSeatMenu = null;
+
+    function closeSeatActionsMenu() {
+        if ($activeSeatMenu) {
+            $activeSeatMenu.remove();
+            $activeSeatMenu = null;
+        }
+        $(document).off("click.distribSeatMenu keydown.distribSeatMenu");
+    }
+
+    function openDetalleFacturaModal(facturaId) {
+        if (!facturaId) {
+            mostrarErrorDistribucion("Esta butaca no tiene factura asociada.");
+            return;
+        }
+        var $body = $("#modalDetalleFacturaDistribucionBody");
+        $body.html('<div class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm" role="status"></span> Cargando…</div>');
+        var modalEl = document.getElementById("modalDetalleFacturaDistribucion");
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+        $.get("/PersonaCliente/DetalleFacturaFast", { facturaid: facturaId })
+            .done(function (html) { $body.html(html); })
+            .fail(function () {
+                $.get("/PersonaCliente/DetalleFactura", { facturaid: facturaId })
+                    .done(function (html) { $body.html(html); })
+                    .fail(function () {
+                        $body.html('<div class="alert alert-danger mb-0">No se pudo cargar el detalle de la factura.</div>');
+                    });
+            });
+    }
+
+    function abrirCambioButacaDesdeDistribucion(pasajeroId, pasajeId) {
+        if (window.opener && !window.opener.closed && typeof window.opener.abrirCambioButaca === "function") {
+            window.opener.abrirCambioButaca(pasajeroId, pasajeId);
+            window.opener.focus();
+            return;
+        }
+        var url = "/PersonaCliente/ElegirNuevaButaca?shell=1&anteriorid=" + encodeURIComponent(pasajeroId) + "&pasajeid=" + encodeURIComponent(pasajeId);
+        window.open(url, "CambioButaca", "width=960,height=720,resizable=yes,scrollbars=yes");
+    }
+
+    function showSeatActionsMenu($seat, evt) {
+        closeSeatActionsMenu();
+        var pasajeId = ($seat.attr("data-pasaje-id") || "").trim();
+        var pasajeroId = ($seat.attr("id") || "").trim();
+        var facturaId = ($seat.attr("data-factura-id") || "").trim();
+        if (!pasajeId || !pasajeroId) {
+            return;
+        }
+
+        var nombre = ($seat.find(".spnB").text() || $seat.attr("data-bs-title") || "").trim();
+        var codigo = ($seat.attr("data-codigo") || "").trim();
+        var titulo = nombre || ("Butaca " + codigo);
+
+        var $menu = $('<div class="bus-seat-actions-menu" role="menu"></div>');
+        $menu.append('<div class="bus-seat-actions-menu__title"></div>');
+        $menu.find(".bus-seat-actions-menu__title").text(titulo);
+
+        if (facturaId) {
+            $menu.append('<button type="button" class="bus-seat-actions-menu__btn" data-action="factura"><i class="bi bi-receipt"></i> Ver detalle de factura</button>');
+        }
+        $menu.append('<button type="button" class="bus-seat-actions-menu__btn" data-action="cambio"><i class="bi bi-arrow-left-right"></i> Cambiar butaca</button>');
+        $menu.append('<button type="button" class="bus-seat-actions-menu__btn bus-seat-actions-menu__btn--muted" data-action="cerrar">Cerrar</button>');
+
+        $("body").append($menu);
+        $activeSeatMenu = $menu;
+
+        var left = (evt && evt.pageX ? evt.pageX : $seat.offset().left) + 8;
+        var top = (evt && evt.pageY ? evt.pageY : $seat.offset().top) + 8;
+        $menu.css({ left: left + "px", top: top + "px" });
+
+        $menu.on("click", ".bus-seat-actions-menu__btn", function (e) {
+            e.stopPropagation();
+            var action = $(this).data("action");
+            closeSeatActionsMenu();
+            if (action === "factura") {
+                openDetalleFacturaModal(facturaId);
+            } else if (action === "cambio") {
+                abrirCambioButacaDesdeDistribucion(pasajeroId, pasajeId);
+            }
+        });
+
+        setTimeout(function () {
+            $(document).on("click.distribSeatMenu", function () { closeSeatActionsMenu(); });
+            $(document).on("keydown.distribSeatMenu", function (e) {
+                if (e.key === "Escape") { closeSeatActionsMenu(); }
+            });
+        }, 0);
+    }
+
     $(document).ready(function () {
         initBusSeatTooltips();
+
+        $(document).on("click", ".bus-seat--occupied", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            showSeatActionsMenu($(this), e);
+        });
 
         $("#buscar-pasajero").on("input", function () {
             var val = $(this).val();

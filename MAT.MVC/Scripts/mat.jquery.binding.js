@@ -1760,13 +1760,16 @@ $(document).on("click", ".aReserva", function () {
 });
 
 $(document).on("click", "#btn-editar-butaca", function () {
-    var idanterior = $(this).data("anterior");
-    var pasajeid = $(this).data("pasaje");
+    abrirCambioButaca($(this).data("anterior"), $(this).data("pasaje"));
+});
+
+/** Abre el flujo de cambio de butaca (reutilizable desde DistribucionCoche vía window.opener). */
+window.abrirCambioButaca = function (anteriorid, pasajeid) {
     var title = "Elegir Nueva Butaca";
     var id = "ElegirNuevaButaca";
-    var url = "/PersonaCliente/ElegirNuevaButaca?anteriorid=" + idanterior + "&pasajeid=" + pasajeid;
+    var url = "/PersonaCliente/ElegirNuevaButaca?anteriorid=" + encodeURIComponent(anteriorid) + "&pasajeid=" + encodeURIComponent(pasajeid);
     ShowFormDialog(url, id, title, "default");
-});
+};
 
 $(document).on("click", "#btn-aceptar-cambio-butaca", function () {
         var pasajeid = $("#input-pasaje").val();

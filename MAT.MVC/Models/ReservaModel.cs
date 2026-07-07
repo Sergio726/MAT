@@ -394,6 +394,7 @@ namespace MAT.MVC.Models
         public string ButacaPosicion { get; set; }
         public string ButacaCodigo { get; set; }
         public string PasajeID { get; set; }
+        public string FacturaID { get; set; }
         public int EstadoPasaje { get; set; }
         public string PasajeroID { get; set; }
         public string PasajeroApellido { get; set; }

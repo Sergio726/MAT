@@ -1,12 +1,17 @@
-﻿
-CREATE PROCEDURE [dbo].[usp_MAT_Reserva_DistribucionCoche_GetByViajeID](@ViajeID varchar(36))
+-- DistribucionCoche: FacturaID en SP para acciones al clic en butaca ocupada.
+
+IF OBJECT_ID(N'dbo.usp_MAT_Reserva_DistribucionCoche_GetByViajeID', N'P') IS NULL
+    EXEC(N'CREATE PROCEDURE dbo.usp_MAT_Reserva_DistribucionCoche_GetByViajeID AS BEGIN SET NOCOUNT ON; END');
+GO
+
+ALTER PROCEDURE [dbo].[usp_MAT_Reserva_DistribucionCoche_GetByViajeID](@ViajeID varchar(36))
 AS
 /*-- =============================================
   -- Author:    Sebastian Garcia
   -- Create date: 2026-06-16
+  -- Updated:   2026-07-07 — FacturaID para acciones en mapa
   -- Description: Distribución de coche por viaje: butacas, pasajeros,
-  --              PasajeID y EstadoPasaje para colores alineados con Reserva/Index.
-  --              Segundo resultset: NroCoche y TransporteTipo.
+  --              PasajeID, FacturaID y EstadoPasaje.
   ============================================= */
 BEGIN 
     SET nocount, xact_abort ON; 
@@ -37,3 +42,4 @@ BEGIN
 	where v.ViajeID = @ViajeID
 
 END
+GO

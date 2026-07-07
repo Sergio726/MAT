@@ -1036,10 +1036,11 @@
   **Se conserva opcionalmente:** estilos de layout en `mat.distribucioncoche.css` si el revert no los elimina.
   Criterio de cierre: botón **Distribución de Butacas** vuelve a `window.open`; sin modal en `Reserva/Index`.
 
-- [ ] **DistribucionCoche Fase 3 — Acciones al clic en butaca**
+- [x] **DistribucionCoche Fase 3 — Acciones al clic en butaca**
   En butaca ocupada: menú o popover con enlaces a detalle de factura/pasajero y flujo de cambio de butaca (`ConfirmarCambioButaca` / `usp_MAT_Reserva_CambioButacas`). Requiere `data-pasaje-id` en el partial (sin reemplazar `id`=`PasajeroID` usado por tutores).
   Archivos: `_DistribucionCocheAsiento.cshtml`, `DistribucionCoche.cshtml` (JS), posible endpoint ligero.
   Criterio de éxito: Clic en butaca con pasajero abre acciones útiles; errores con `ErrorUtil`.
+  **Implementación 2026-07-07:** Menú contextual en butacas ocupadas; `FacturaID` en SP/modelo; modal BS5 detalle factura; cambio butaca vía `window.opener.abrirCambioButaca` o `ElegirNuevaButaca?shell=1`; script `database/2026-07-07_DistribucionCoche_FacturaID.sql`.
 
 - [ ] **DistribucionCoche — Vista lista alternativa (mobile)**
   Toggle "Mapa / Lista" para pantallas angostas: tabla ordenada por butaca con nombre, estado y código; complementa el scroll horizontal del mapa.

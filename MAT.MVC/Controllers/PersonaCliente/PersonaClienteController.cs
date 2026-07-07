@@ -1293,10 +1293,11 @@ namespace MAT.MVC.Controllers.PersonaCliente
             return Json(sResult, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ElegirNuevaButaca(Guid anteriorid, Guid pasajeid)
+        public ActionResult ElegirNuevaButaca(Guid anteriorid, Guid pasajeid, bool shell = false)
         {
             ViewData["anteriorid"] = anteriorid;
             ViewData["pasajeid"] = pasajeid;
+            ViewBag.Shell = shell;
             List<PasajeModel> pasajes = new List<PasajeModel>();
             Guid viajeid = Infrastructure.Data.PasajeDataAccess.GetById(pasajeid).ViajeId.Value;
             
@@ -1312,7 +1313,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 ViewBag.MsgError = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ElegirNuevaButaca");
             }
 
-            return PartialView(Model);
+            return shell ? (ActionResult)View(Model) : PartialView(Model);
         }
 
         public ActionResult SeleccionarImportes(Guid paqueteid, string piso, Guid pasajeid, Guid anteriorid, Guid nuevopasaje)

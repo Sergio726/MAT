@@ -3,7 +3,15 @@
 @using MAT.MVC.Models
 @using MAT.Enums
 @{
-    ViewBag.Title = "Elegir Nueva Butaca";
+    if (ViewBag.Shell == true)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+        ViewBag.Title = "Cambiar butaca";
+    }
+    else
+    {
+        ViewBag.Title = "Elegir Nueva Butaca";
+    }
 }
 
 <input type="hidden" id="hdnCambiarButaca" value="true" />
