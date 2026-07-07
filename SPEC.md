@@ -1105,6 +1105,119 @@
 
 ---
 
+#### Plataforma comercial (backlog — documentación futura)
+
+**Contexto (brainstorm 2026-07-07):** Épicas independientes a definir en `DOCUMENTACION/ROADMAP_COMERCIAL_2026.md` — CRM, notificaciones in-app, recordatorios a leads/presupuestos, liquidador de comisiones (solo Administrador). Orden sugerido: notificaciones → recordatorios → CRM → liquidador.
+
+**Decisiones pendientes (resolver antes de implementar — 2026-07-07):**
+1. ¿Lead y Presupuesto son entidades distintas o el presupuesto *es* el lead?
+2. ¿Canales externos: WhatsApp manual alcanza o se requiere API?
+3. ¿Reglas de comisión existen hoy en Excel/planilla a replicar en el liquidador?
+4. ¿Quién usa CRM: solo vendedores internos o también counter/agencias?
+5. ¿Notificaciones solo in-app o también email al celular del vendedor?
+
+---
+
+#### MAT Integration API — Hiperdocumentación + API Keys + Webhooks (épica independiente)
+
+**Contexto:** Exponer MAT de forma **segura y machine-readable** para orquestadores (n8n, Zapier), agentes LLM (Claude, etc.) y futuros MCP tools. Hoy: Web API registrada en `WebApiConfig` pero **sin controllers dedicados**; la integración saliente usa `BackendAPI_URL` (servicio externo Node); la mayoría de endpoints son `JsonResult` en MVC controllers acoplados a sesión Forms Auth — **no aptos para consumo externo directo**.
+
+**Principio rector:** Capa de integración **separada** de MVC UI. Documentación (OpenAPI) como fuente de verdad; autenticación por API Key con scopes; webhooks salientes firmados; escrituras sensibles con confirmación humana o idempotencia.
+
+**Documento de referencia (a crear):** `DOCUMENTACION/MAT_INTEGRATION_API_PLAN.md`
+
+- [ ] **Integration API F0 — Inventario y contrato**
+  Catálogo de operaciones de negocio (leer presupuesto, buscar cliente, cupos por viaje, estado factura, etc.) mapeadas a SPs/`DBHelper` existentes; clasificar **read-only** vs **write** vs **prohibido** (pagos, anulaciones, alta reserva). Entregable: matriz endpoint × rol × riesgo PII.
+  Criterio: inventario aprobado; sin código de API pública aún.
+
+- [ ] **Integration API F1 — Hiperdocumentación (machine-readable)**
+  OpenAPI 3.0 (`/api/v1/integration/...`) + glosario de dominio (Lead, Presupuesto, Pasaje, Factura, Vendedor); ejemplos request/response; códigos de error estándar (`{ success, error: { code, message, correlationId } }` alineado con `ErrorUtil`). Opcional: manifest MCP tools para agentes.
+  Criterio: spec versionada en repo; generable a HTML (Swagger UI estático o Redoc).
+
+- [ ] **Integration API F2 — Autenticación API Key**
+  Tabla `ApiKey` (hash, nombre, scopes, expiración, revocación, último uso); header `Authorization: Bearer mat_...` o `X-MAT-Api-Key`; middleware/filtro Web API; **nunca** reutilizar cookie `.MATAuth` para integraciones. Admin UI: crear/revocar keys (solo Administrador). Rate limit por key.
+  Criterio: key de prueba puede llamar endpoints read-only; key revocada → 401; secrets no en logs.
+
+- [ ] **Integration API F3 — REST read-only (MVP integración)**
+  Controllers bajo `Controllers/Api/Integration/` o proyecto separado: presupuestos, clientes, viajes, cupos, pasajeros por viaje. Paginación cursor-based; filtros explícitos; campos PII según scope.
+  Criterio: workflow n8n de prueba consulta presupuesto pendiente y cupos sin sesión web.
+
+- [ ] **Integration API F4 — Webhooks salientes**
+  Catálogo de eventos (`presupuesto.creado`, `presupuesto.expirado`, `reserva.confirmada`, `pago.registrado`, …); tabla `WebhookSubscription` (URL, secret HMAC, eventos); reintentos con backoff; firma `X-MAT-Signature`. Panel Admin para suscripciones de prueba.
+  Criterio: evento de prueba llega a endpoint n8n con firma verificable.
+
+- [ ] **Integration API F5 — Escrituras controladas (agent-safe)**
+  Solo operaciones acotadas: extender expiración presupuesto, registrar nota/actividad CRM, crear lead. Idempotency-Key obligatorio en POST; validación de negocio en SP; **sin** alta de reserva/factura/pago vía API en V1 salvo aprobación explícita.
+  Criterio: agente LLM puede ejecutar tool acotado; operación duplicada no duplica efecto.
+
+- [ ] **Integration API F6 — Observabilidad y hardening**
+  Log por `correlationId` (ya en `Global.asax`); auditoría de llamadas API; alertas Admin por abuso de rate limit; documentación de threat model (PII, SSRF en webhooks URL).
+  Criterio: trazabilidad request → key → endpoint en Admin.
+
+**Dependencias:** decisión si gateway vive en `MAT.MVC` (`/api/v1/`) o en `BackendAPI` existente; no exponer connection strings ni `e.Message` en respuestas API.
+
+**Integración sugerida con roadmap comercial:** notificaciones y recordatorios pueden **emitir webhooks**; CRM puede **recibir** leads vía API inbound.
+
+**Decisiones pendientes (resolver antes de F1/F2 — 2026-07-07):**
+1. ¿Gateway en `MAT.MVC` (`/api/v1/`) o en `BackendAPI` Node existente?
+2. ¿Quién crea API Keys: solo Administrador o también vendedores con scope limitado?
+3. ¿Webhooks en dev (ngrok) además de prod?
+4. ¿Primer caso de uso real? (ej. alertar presupuestos por vencer vía n8n)
+
+---
+
+#### Excursiones — Investigación UX `/Excursion/Index` (backlog próximo)
+
+**Contexto (reporte operación 2026-07-07):** El listado de excursiones se usa mucho pero **no es claro para usuarios nuevos**; solo lo entienden quienes ya conocen el sistema. Pantalla modernizada (BS5 + DataTables) pero con deuda semántica y de información.
+
+**Investigación técnica (estado actual):**
+
+| Aspecto | Hallazgo |
+|---------|----------|
+| **Ruta** | `GET /Excursion/Index` → `ExcursionController.Index` → `MaestrosDataAccess.GetAllExcursiones()` → `usp_MAT_Excursion_GetAll` |
+| **Columnas visibles** | Descripción, Costo, Observaciones (truncadas 50 chars + `title`), Acciones |
+| **Campos en BD/entidad no mostrados en Index** | `ProveedorID` (sí en Create/Edit como dropdown) |
+| **Modelo** | `Excursion`: `Descripcion`, `Costo` (float?), `Observaciones` (varchar max), `ProveedorId` |
+| **Uso downstream** | Vinculación en `Paquete` (`PaqueteExcursion`, flag opcional); listados en voucher/detalle viaje; `Excursion.Costo` = costo de referencia proveedor (ver `VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`), no precio de venta al pasajero |
+| **Volumen** | DataTables carga **todas** las excursiones (pageLength 25, sin filtros por proveedor/uso) |
+| **Observaciones** | Campo libre `VARCHAR(MAX)` — suele acumular jerga interna porque no hay campos estructurados (duración, incluye, restricción edad, etc.) |
+| **Eliminar** | Botón en Index con `confirm()` pero **JS stub** — no llama a `ExcursionController.Delete` |
+| **Controller** | Sin `ErrorUtil` en catch; `Delete` retorna `bool` sin action JSON para AJAX |
+
+**Hipótesis de por qué “no es claro” (validar con operación en F0):**
+1. `Costo` sin etiqueta → confundido con precio de venta o tarifa del paquete.
+2. `Proveedor` ausente en el listado → no se sabe quién opera la excursión.
+3. `Descripcion` como único identificador → abreviaturas internas (ej. códigos de destino/proveedor).
+4. `Observaciones` truncadas → información crítica oculta o solo en hover.
+5. Sin indicador de **uso** (en cuántos paquetes está vinculada, opcional vs incluida).
+6. Lista larga sin agrupar/filtrar por proveedor o destino.
+
+**Documento de referencia (a crear):** `DOCUMENTACION/EXCURSION_INDEX_UX_INVESTIGACION.md`
+
+- [ ] **Excursion UX F0 — Investigación con usuarios y glosario**
+  Entrevista/shadowing con 2–3 usuarios que cargan paquetes y excursiones. Documentar: qué miran primero, qué significan sus textos en Observaciones, si Costo es costo proveedor, ejemplos de descripciones crípticas. Entregable: glosario de campos + mapa “dato → dónde se usa después” (Paquete, voucher, rentabilidad).
+  Criterio: informe en `DOCUMENTACION/EXCURSION_INDEX_UX_INVESTIGACION.md`; sin cambios de UI aún.
+
+- [ ] **Excursion UX F1 — Propuesta de información (wireframe/copy)**
+  Definir columnas y etiquetas propuestas (ej. “Costo proveedor”, “Proveedor”, “Usada en N paquetes”, badge Opcional solo en vista Paquete). Decidir si conviene campos estructurados nuevos vs. solo mejorar listado. Incluir filtros: proveedor, con/sin paquete, búsqueda full-text en observaciones.
+  Criterio: propuesta aprobada por negocio antes de codificar.
+
+- [ ] **Excursion UX F2 — Implementación listado + SP enriquecido**
+  Extender `usp_MAT_Excursion_GetAll` (o vista/SP listado) con nombre proveedor y conteo de paquetes vinculados; actualizar `Index.cshtml` (columnas, tooltips, leyenda bajo el título); filtros DataTables o server-side si el volumen lo requiere; arreglar eliminar (AJAX → `Delete` + `ErrorUtil` + feedback toast).
+  Archivos probables: `ExcursionController.cs`, `MaestrosDataAccess.cs`, `Views/Excursion/Index.cshtml`, `MAT.DB` SP, `Excursion.cs` si hace falta DTO de listado.
+  Criterio: usuario nuevo identifica proveedor y uso sin abrir Edit; MSBuild limpio.
+
+- [ ] **Excursion UX F3 — Alineación Create/Edit (opcional)**
+  Mismas etiquetas y ayudas contextuales que el Index; validar `ModelState`; hints en Costo (“costo de referencia del proveedor, no precio al pasajero”).
+  Criterio: copy consistente entre Index, Create y Edit.
+
+**Decisiones pendientes (resolver en F0/F1):**
+1. ¿Se agregan campos estructurados a `Excursion` (duración, tipo, destino) o solo se reorganiza lo existente?
+2. ¿El listado debe mostrar excursiones “huérfanas” (sin paquete) destacadas para limpieza de catálogo?
+3. ¿Quién puede eliminar excursiones vinculadas a paquetes — bloqueo vs. cascada (ya existe en `usp_MAT_Excursion_Delete`)?
+
+---
+
 - MSBuild sobre `MAT.MVC` debe pasar limpio al finalizar cada task
 - Todo cambio de schema SQL debe reflejarse en `MAT.DB` (SSDT)
 - No agregar paquetes NuGet sin consultar al humano
