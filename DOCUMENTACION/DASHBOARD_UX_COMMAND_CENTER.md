@@ -75,6 +75,18 @@
 
 ---
 
+## Tres identidades visuales (2026-07-07)
+
+| Zona | CSS | Paleta |
+|------|-----|--------|
+| **Login** | `login-split.css` | Hero slate + wash fucsia, formulario blanco |
+| **Vendedor** | `saas-variables.css`, `modern-menu.css`, `modern-dashboard.css` | Fondo claro, menú slate, fucsia en CTAs |
+| **Admin** | `admin.modern.css` | Shell oscuro slate, acento fucsia contenido, isla clara |
+
+El panel Admin no reutiliza `--brand-primary` del vendedor; usa `--admin-accent*` propios. Ver `SPEC.md` task Admin UI segunda pasada.
+
+---
+
 ## Smoke test manual
 
 1. Home: 6 tiles navegan correctamente.

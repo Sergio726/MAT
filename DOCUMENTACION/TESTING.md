@@ -77,7 +77,7 @@ $vstest = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\C
 
 ## Deuda conocida
 
-- `usp_MAT_Viaje_CancelViaje` referenciado en `ViajeModel.cs` pero ausente en `MAT.DB`. El script de verificación lo reporta como **advertencia**, no como fallo bloqueante.
+- *(publicar `database/2026-07-07_Viaje_DeleteViaje_Unified.sql` en BD si aún no se aplicó).*
 
 ## CI futuro
 

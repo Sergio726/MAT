@@ -162,26 +162,15 @@ namespace MAT.MVC.Models
             return sResult;
         }
 
-        public static void DeleteViaje(Guid ViajeID)
+        public static void DeleteViaje(Guid viajeId, Guid vendedorId, string deleteDetalle)
         {
             SqlParameter[] dbParams = new SqlParameter[]
             {
-                DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, ViajeID)
-
+                DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, viajeId),
+                DBHelper.MakeParam("@VendedorId", SqlDbType.UniqueIdentifier, 0, vendedorId),
+                DBHelper.MakeParam("@DeleteDetalle", SqlDbType.VarChar, 500, deleteDetalle)
             };
             DBHelper.ExecuteNonQuery("dbo.usp_MAT_Viaje_DeleteViaje", dbParams);
-        }
-
-        public static void CancelViaje(Guid ViajeID, Guid VendedorId, string DeleteDetalle)
-        {
-            SqlParameter[] dbParams = new SqlParameter[]
-            {
-                DBHelper.MakeParam("@ViajeID", SqlDbType.UniqueIdentifier, 0, ViajeID),
-                DBHelper.MakeParam("@VendedorId", SqlDbType.UniqueIdentifier, 0, VendedorId),
-                DBHelper.MakeParam("@DeleteDetalle", SqlDbType.VarChar, 500, DeleteDetalle)
-
-            };
-            DBHelper.ExecuteNonQuery("dbo.usp_MAT_Viaje_CancelViaje", dbParams);
         }
 
         public static string[] UpdateViaje(ViajeModel Viaje)

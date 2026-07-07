@@ -1578,36 +1578,63 @@ $(document).on("click", "#btn-eliminar-precio", function () {
     })
 });
 
-$(document).on("click", "#btn-eliminar-viaje", function () {
-    var ViajeId = $(this).data("id");
-    confirm("¿Está seguro que desea eliminar este viaje?, se perderan los datos permanentemente.", "Confirmación Eliminar Viaje",
-    function () {
-        var $dlg = $(this);
-        $.ajax({
-            url: "/Viaje/DeleteViaje",
-            data: { ViajeId: ViajeId },
-            success: function (data) {
-                console.log(data);
-                if (data.Mensaje == "Done") {
-                    (window.alertSuccess || window.alert)("Viaje eliminado correctamente.", "Éxito");
-                    setTimeout(5000);
-                    window.location.reload();
-                } else {
-                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
+function fneliminarviaje(viajeId) {
+    var $div = $("<div />");
+    $div.attr("title", "Eliminar viaje");
+    var $p = $("<p />").text("Indique el motivo de la eliminación (quedará registrado en auditoría):");
+    var $textarea = $("<textarea />").attr({ rows: 4, maxlength: 500 }).css({ width: "100%", boxSizing: "border-box" });
+    $div.append($p).append($textarea);
+    $(document.body).append($div);
+    $div.dialog({
+        modal: true,
+        closeOnEscape: true,
+        resizable: false,
+        draggable: false,
+        dialogClass: "modern-confirm-dialog",
+        width: 420,
+        close: function () {
+            var $dlg = $(this);
+            try { $dlg.dialog("destroy"); } catch (e) { }
+            try { $dlg.remove(); } catch (e) { }
+        },
+        buttons: [
+            {
+                text: "Volver",
+                click: function () {
+                    $(this).dialog("close");
+                }
+            },
+            {
+                text: "Confirmar eliminación",
+                "class": "btn btn-primary",
+                click: function () {
+                    var $dlg = $(this);
+                    var detalle = ($textarea.val() || "").trim();
+                    if (!detalle) {
+                        (window.alertWarning || window.alert)("Debe indicar un motivo de eliminación.", "Atención");
+                        return;
+                    }
+                    $.ajax({
+                        url: "/Viaje/DeleteViaje",
+                        data: { ViajeId: viajeId, DeleteDetalle: detalle },
+                        success: function (data) {
+                            if (data.Mensaje === "Done") {
+                                (window.alertSuccess || window.alert)("Viaje eliminado correctamente.", "Éxito");
+                                window.location.reload();
+                            } else {
+                                (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
+                            }
+                        },
+                        error: function () {
+                            (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
+                        }
+                    });
+                    $dlg.dialog("close");
                 }
             }
-        });
-        $dlg.dialog("close");
-        $dlg.remove();
-
-    },
-    function () {
-        var $dlg = $(this);
-        $dlg.dialog("close");
-        $dlg.remove();
-    })
-});
-
+        ]
+    });
+}
 
 
 // IMPORTANT:

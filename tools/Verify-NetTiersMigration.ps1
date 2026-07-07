@@ -55,16 +55,10 @@ $spRefs = Select-String -Path @(
 $dbSps = Get-ChildItem "$root\MAT.DB\dbo\Stored Procedures" -Filter 'usp_MAT_*.sql' |
     ForEach-Object { $_.BaseName }
 
-$knownMissingSps = @('usp_MAT_Viaje_CancelViaje')
 $missingSps = @()
 foreach ($sp in $spRefs) {
     if ($dbSps -notcontains $sp) {
-        if ($knownMissingSps -contains $sp) {
-            Add-Warn "SP referenciado en codigo pero ausente en MAT.DB (deuda conocida): $sp"
-        }
-        else {
-            $missingSps += $sp
-        }
+        $missingSps += $sp
     }
 }
 if ($missingSps.Count -gt 0) {

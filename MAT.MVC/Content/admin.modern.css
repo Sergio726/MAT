@@ -1,19 +1,23 @@
-/* Admin Modern UI (Dark Blue) - Bootstrap 5 base */
+/* Admin Modern UI (Slate + fucsia marca — familia login, distinto del vendedor claro) */
 :root {
-  --admin-bg: #071a2b;
-  --admin-surface: #0b243a;
-  --admin-surface-2: #0f2f4c;
+  --admin-bg: #0f172a;
+  --admin-surface: #1e293b;
+  --admin-surface-2: #2b2d42;
   --admin-border: rgba(255, 255, 255, 0.10);
-  --admin-text: #e7effa;
-  --admin-text-muted: rgba(231, 239, 250, 0.72);
-  --admin-primary: #0b2a4a;
-  --admin-primary-2: #0a3a66;
-  --admin-primary-rgb: 11, 42, 74;
+  --admin-text: #f1f5f9;
+  --admin-text-muted: rgba(241, 245, 249, 0.72);
+  --admin-accent: #e63375;
+  --admin-accent-2: #d12a5c;
+  --admin-accent-rgb: 230, 51, 117;
+  --admin-accent-soft: rgba(230, 51, 117, 0.15);
+  --admin-primary: #1e293b;
+  --admin-primary-2: #2b2d42;
+  --admin-primary-rgb: 30, 41, 59;
   --admin-content-text: #0f172a;
   --admin-content-text-muted: #64748b;
   --admin-content-border: #e2e8f0;
   --admin-content-surface: #ffffff;
-  --admin-content-surface-2: #f1f5f9;
+  --admin-content-surface-2: #f8fafc;
 }
 
 /* page shell */
@@ -21,10 +25,10 @@ body.admin-modern {
   --text-primary: var(--admin-content-text);
   --text-secondary: var(--admin-content-text-muted);
   --border-color: var(--admin-content-border);
-  --primary-color: var(--admin-primary);
-  --primary-rgb: var(--admin-primary-rgb);
+  --primary-color: var(--admin-accent);
+  --primary-rgb: var(--admin-accent-rgb);
   --bg-secondary: var(--admin-content-surface-2);
-  background: radial-gradient(1200px 600px at 20% 0%, #0b2a4a 0%, var(--admin-bg) 60%);
+  background: radial-gradient(1200px 600px at 15% 0%, rgba(230, 51, 117, 0.12) 0%, var(--admin-bg) 55%);
   color: var(--admin-text);
 }
 
@@ -39,7 +43,7 @@ body.admin-modern {
   position: sticky;
   top: 0;
   z-index: 1030;
-  background: linear-gradient(90deg, var(--admin-primary) 0%, var(--admin-primary-2) 100%);
+  background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-2) 52%, rgba(230, 51, 117, 0.38) 100%);
   border-bottom: 1px solid var(--admin-border);
   transition: padding 0.2s ease, box-shadow 0.2s ease;
 }
@@ -71,6 +75,21 @@ body.admin-modern {
   font-weight: 800;
   letter-spacing: 0.02em;
   margin-right: 0;
+}
+
+.admin-topbar-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  margin-left: 0.15rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--admin-accent);
+  background: var(--admin-accent-soft);
+  border: 1px solid rgba(var(--admin-accent-rgb), 0.35);
 }
 
 .admin-topbar-divider {
@@ -118,7 +137,7 @@ body.admin-modern {
 }
 
 .admin-topbar-btn-primary {
-  color: var(--admin-primary);
+  color: var(--admin-accent);
   background: #ffffff;
   border: 2px solid rgba(255, 255, 255, 0.95);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
@@ -127,8 +146,8 @@ body.admin-modern {
 
 .admin-topbar-btn-primary:hover,
 .admin-topbar-btn-primary:focus {
-  color: var(--admin-primary);
-  background: #f8fbff;
+  color: var(--admin-accent-2);
+  background: #fff;
   border-color: #ffffff;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
   transform: translateY(-1px);
@@ -138,9 +157,9 @@ body.admin-modern {
   font-size: 0.68rem;
   padding: 0.12rem 0.4rem;
   border-radius: 5px;
-  background: rgba(var(--admin-primary-rgb), 0.08);
-  border: 1px solid rgba(var(--admin-primary-rgb), 0.18);
-  color: var(--admin-primary);
+  background: var(--admin-accent-soft);
+  border: 1px solid rgba(var(--admin-accent-rgb), 0.25);
+  color: var(--admin-accent);
   font-weight: 600;
 }
 
@@ -183,8 +202,8 @@ body.admin-modern {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 50%;
-  background: rgba(var(--admin-primary-rgb), 0.1);
-  color: var(--admin-primary);
+  background: var(--admin-accent-soft);
+  color: var(--admin-accent);
   font-weight: 800;
   font-size: 0.8rem;
 }
@@ -202,7 +221,7 @@ body.admin-modern {
 
 .admin-sidebar {
   width: 280px;
-  background: linear-gradient(180deg, var(--admin-surface) 0%, #081b2c 100%);
+  background: linear-gradient(180deg, var(--admin-surface) 0%, var(--admin-bg) 100%);
   border-right: 1px solid var(--admin-border);
   transition: width 0.2s ease;
   flex-shrink: 0;
@@ -294,17 +313,17 @@ body.admin-sidebar-collapsed .admin-sidebar-collapse-btn .bi-layout-sidebar-inse
 .admin-sidebar .nav-link:focus,
 .admin-offcanvas .nav-link:hover,
 .admin-offcanvas .nav-link:focus {
-  background: rgba(var(--admin-primary-rgb), 0.22);
+  background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+  box-shadow: none;
 }
 
 .admin-sidebar .nav-link.active,
 .admin-offcanvas .nav-link.active {
-  background: rgba(var(--admin-primary-rgb), 0.32);
+  background: var(--admin-accent-soft);
   color: #ffffff;
-  border-left-color: rgba(255, 255, 255, 0.85);
+  border-left-color: var(--admin-accent);
   font-weight: 600;
 }
 
@@ -336,7 +355,7 @@ body.admin-sidebar-collapsed .admin-sidebar-collapse-btn .bi-layout-sidebar-inse
 .admin-sidebar-collapse-btn:hover,
 .admin-sidebar-collapse-btn:focus {
   color: #ffffff;
-  background: rgba(var(--admin-primary-rgb), 0.25);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .admin-offcanvas-actions {
@@ -359,7 +378,7 @@ body.admin-sidebar-collapsed .admin-sidebar-collapse-btn .bi-layout-sidebar-inse
 .admin-offcanvas-action-btn:hover,
 .admin-offcanvas-action-btn:focus {
   color: #ffffff;
-  background: rgba(var(--admin-primary-rgb), 0.28);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .admin-offcanvas-action-btn--danger {
@@ -384,7 +403,7 @@ body.admin-sidebar-collapsed .admin-sidebar-collapse-btn .bi-layout-sidebar-inse
 .admin-content {
   flex: 1;
   min-width: 0;
-  background: #f3f6fb;
+  background: var(--admin-content-surface-2);
   color: #111827;
 }
 
@@ -401,7 +420,7 @@ body.admin-sidebar-collapsed .admin-sidebar-collapse-btn .bi-layout-sidebar-inse
 
 /* offcanvas */
 .admin-offcanvas {
-  background: linear-gradient(180deg, var(--admin-surface) 0%, #081b2c 100%);
+  background: linear-gradient(180deg, var(--admin-surface) 0%, var(--admin-bg) 100%);
   color: var(--admin-text);
 }
 
@@ -410,7 +429,7 @@ body.admin-sidebar-collapsed .admin-sidebar-collapse-btn .bi-layout-sidebar-inse
 }
 
 .admin-offcanvas .nav-link:hover {
-  background: rgba(var(--admin-primary-rgb), 0.22);
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 
@@ -438,7 +457,7 @@ body.admin-modern .modern-page-title {
 }
 
 body.admin-modern .modern-page-title i {
-  color: var(--admin-primary);
+  color: var(--admin-accent);
   font-size: 1.35rem;
 }
 
@@ -477,7 +496,7 @@ body.admin-modern .modern-form-label {
 }
 
 body.admin-modern .modern-form-label i {
-  color: var(--admin-primary);
+  color: var(--admin-accent);
   font-size: 1rem;
   opacity: 0.95;
 }
@@ -503,8 +522,8 @@ body.admin-modern .modern-form-input:hover {
 
 body.admin-modern .modern-form-input:focus {
   outline: none;
-  border-color: var(--admin-primary);
-  box-shadow: 0 0 0 3px rgba(var(--admin-primary-rgb), 0.18);
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px rgba(var(--admin-accent-rgb), 0.18);
 }
 
 body.admin-modern .modern-form-input::placeholder {
@@ -535,14 +554,14 @@ body.admin-modern .btn-modern {
 }
 
 body.admin-modern .btn-modern-primary {
-  background: linear-gradient(180deg, var(--admin-primary-2) 0%, var(--admin-primary) 100%);
+  background: linear-gradient(180deg, var(--admin-accent) 0%, var(--admin-accent-2) 100%);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(11, 42, 74, 0.28);
+  box-shadow: 0 2px 8px rgba(var(--admin-accent-rgb), 0.28);
 }
 
 body.admin-modern .btn-modern-primary:hover {
   filter: brightness(1.07);
-  box-shadow: 0 4px 14px rgba(11, 42, 74, 0.35);
+  box-shadow: 0 4px 14px rgba(var(--admin-accent-rgb), 0.35);
 }
 
 body.admin-modern .btn-modern-primary:active {
@@ -551,7 +570,7 @@ body.admin-modern .btn-modern-primary:active {
 
 body.admin-modern .btn-modern:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--admin-primary-rgb), 0.35);
+  box-shadow: 0 0 0 3px rgba(var(--admin-accent-rgb), 0.35);
 }
 
 body.admin-modern .modern-table-container {
@@ -633,7 +652,7 @@ body.admin-modern .modern-loading-spinner {
   width: 44px;
   height: 44px;
   border: 3px solid #e2e8f0;
-  border-top-color: var(--admin-primary);
+  border-top-color: var(--admin-accent);
   border-radius: 50%;
   animation: admin-modern-spin 0.75s linear infinite;
   margin-bottom: 1rem;
@@ -686,7 +705,7 @@ body.admin-modern .ui-autocomplete {
   max-height: 280px;
   overflow-y: auto;
   border-radius: 8px;
-  box-shadow: 0 12px 32px rgba(11, 42, 74, 0.18);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
 }
 
 /* jQuery UI Datepicker: tema acorde al Admin (sin naranja/amarillo por defecto) */
@@ -696,7 +715,7 @@ body.admin-modern .ui-datepicker {
   padding: 0;
   border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(11, 42, 74, 0.2);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.2);
   font-family: system-ui, "Segoe UI", Roboto, sans-serif;
   font-size: 0.875rem;
   z-index: 1055 !important;
@@ -710,7 +729,7 @@ body.admin-modern .ui-datepicker .ui-datepicker-header {
   padding: 0.65rem 2.5rem;
   border: none;
   border-radius: 11px 11px 0 0;
-  background: linear-gradient(180deg, var(--admin-primary-2) 0%, var(--admin-primary) 100%);
+  background: linear-gradient(135deg, var(--admin-primary-2) 0%, var(--admin-primary) 55%, rgba(230, 51, 117, 0.45) 100%);
   color: #fff;
   /* El desplegable nativo del mes/año queda fuera del header; no recortar */
   overflow: visible;
@@ -832,26 +851,26 @@ body.admin-modern .ui-datepicker td a {
 }
 
 body.admin-modern .ui-datepicker td a.ui-state-default {
-  color: #1e40af !important;
+  color: var(--admin-accent-2) !important;
   font-weight: 500;
 }
 
 body.admin-modern .ui-datepicker td .ui-state-hover {
-  background: rgba(11, 42, 74, 0.08) !important;
-  color: var(--admin-primary) !important;
+  background: var(--admin-accent-soft) !important;
+  color: var(--admin-accent-2) !important;
 }
 
 body.admin-modern .ui-datepicker td .ui-state-active,
 body.admin-modern .ui-datepicker td .ui-state-active.ui-state-hover {
-  background: var(--admin-primary) !important;
+  background: var(--admin-accent) !important;
   color: #fff !important;
   font-weight: 600;
 }
 
 body.admin-modern .ui-datepicker td .ui-state-highlight {
-  background: rgba(11, 42, 74, 0.14) !important;
-  color: var(--admin-primary) !important;
-  border: 1px solid rgba(11, 42, 74, 0.25) !important;
+  background: rgba(var(--admin-accent-rgb), 0.14) !important;
+  color: var(--admin-accent-2) !important;
+  border: 1px solid rgba(var(--admin-accent-rgb), 0.25) !important;
 }
 
 body.admin-modern .ui-datepicker .ui-datepicker-buttonpane {
@@ -946,7 +965,7 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-buttonpane .ui-dialo
 
 body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane .btn-primary,
 body.admin-modern .ui-dialog.modern-confirm-dialog .ui-dialog-buttonpane button:last-child {
-  background: linear-gradient(90deg, var(--admin-primary) 0%, var(--admin-primary-2) 100%) !important;
+  background: linear-gradient(90deg, var(--admin-accent) 0%, var(--admin-accent-2) 100%) !important;
   color: #fff !important;
   border: none !important;
 }
@@ -1048,8 +1067,8 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 }
 
 .admin-hub .admin-card-icon.icon-primary {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  color: #0a3a66;
+  background: linear-gradient(135deg, rgba(230, 51, 117, 0.12) 0%, rgba(230, 51, 117, 0.22) 100%);
+  color: var(--admin-accent-2);
 }
 
 .admin-hub .admin-card-icon.icon-info {
@@ -1102,7 +1121,7 @@ body.admin-modern .ui-dialog.modern-alert-dialog .ui-dialog-titlebar-close {
 }
 
 .admin-hub .badge-primary {
-  background: linear-gradient(135deg, #0b2a4a 0%, #0a3a66 100%);
+  background: linear-gradient(135deg, var(--admin-accent) 0%, var(--admin-accent-2) 100%);
 }
 
 .admin-hub .badge-info {
@@ -1172,15 +1191,15 @@ body.admin-modern .admin-card-link::before {
   left: 0;
   width: 3px;
   height: 100%;
-  background: var(--admin-primary);
+  background: var(--admin-accent);
   opacity: 0;
   transition: opacity 0.18s ease;
 }
 
 body.admin-modern .admin-card-link:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(var(--admin-primary-rgb), 0.15);
-  border-color: var(--admin-primary) !important;
+  box-shadow: 0 10px 25px rgba(var(--admin-accent-rgb), 0.15);
+  border-color: var(--admin-accent) !important;
   text-decoration: none;
 }
 
@@ -1228,7 +1247,7 @@ body.admin-modern .admin-breadcrumb .breadcrumb {
 }
 
 body.admin-modern .admin-breadcrumb .breadcrumb-item a {
-  color: var(--admin-primary);
+  color: var(--admin-accent);
   text-decoration: none;
 }
 
@@ -1444,8 +1463,8 @@ body.admin-modern .admin-logs-output pre {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(var(--admin-primary-rgb), 0.08);
-  color: var(--admin-primary);
+  background: var(--admin-accent-soft);
+  color: var(--admin-accent);
   flex-shrink: 0;
 }
 
@@ -1456,8 +1475,8 @@ body.admin-modern .admin-logs-output pre {
 .admin-help-search-item--active,
 .admin-help-search-item--active:hover,
 .admin-help-search-item--active:focus {
-  background: rgba(var(--admin-primary-rgb), 0.1) !important;
-  border-left: 3px solid var(--admin-primary) !important;
+  background: rgba(var(--admin-accent-rgb), 0.1) !important;
+  border-left: 3px solid var(--admin-accent) !important;
 }
 
 .admin-help-search-item--intranet {
@@ -1557,7 +1576,7 @@ body.admin-tour-active {
 .admin-tour-spotlight {
   position: fixed;
   border-radius: 12px;
-  box-shadow: 0 0 0 9999px rgba(7, 26, 43, 0.62);
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.62);
   border: 2px solid rgba(255, 255, 255, 0.85);
   transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease;
   pointer-events: none;
@@ -1570,7 +1589,7 @@ body.admin-tour-active {
   left: auto;
   top: auto;
   width: min(420px, calc(100vw - 2rem));
-  background: linear-gradient(145deg, var(--admin-primary) 0%, var(--admin-primary-2) 100%);
+  background: linear-gradient(145deg, var(--admin-primary) 0%, var(--admin-primary-2) 50%, rgba(230, 51, 117, 0.55) 100%);
   color: #fff;
   border-radius: 14px;
   padding: 1.1rem 1.25rem 1.15rem;
@@ -1679,4 +1698,43 @@ body.admin-tour-help-open .admin-topbar {
     top: 1rem;
     bottom: auto;
   }
+}
+
+/* Bootstrap utility overrides — acento admin (no azul BS5 por defecto en contenido) */
+body.admin-modern .text-primary {
+  color: var(--admin-accent) !important;
+}
+
+body.admin-modern .bg-primary {
+  background-color: var(--admin-accent) !important;
+}
+
+body.admin-modern .bg-primary.bg-opacity-10 {
+  background-color: var(--admin-accent-soft) !important;
+}
+
+body.admin-modern .border-primary {
+  border-color: var(--admin-accent) !important;
+}
+
+body.admin-modern .btn-primary {
+  background-color: var(--admin-accent);
+  border-color: var(--admin-accent);
+}
+
+body.admin-modern .btn-primary:hover,
+body.admin-modern .btn-primary:focus {
+  background-color: var(--admin-accent-2);
+  border-color: var(--admin-accent-2);
+}
+
+body.admin-modern .btn-outline-primary {
+  color: var(--admin-accent);
+  border-color: var(--admin-accent);
+}
+
+body.admin-modern .btn-outline-primary:hover,
+body.admin-modern .btn-outline-primary:focus {
+  background-color: var(--admin-accent);
+  border-color: var(--admin-accent);
 }

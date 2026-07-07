@@ -1,4 +1,15 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Viaje_DeleteViaje]
+-- Unifica eliminar/cancelar viaje en un solo SP con auditoría obligatoria.
+-- Reemplaza usp_MAT_Viaje_CancelViaje (si se publicó) y amplía usp_MAT_Viaje_DeleteViaje.
+
+IF OBJECT_ID(N'dbo.usp_MAT_Viaje_CancelViaje', N'P') IS NOT NULL
+    DROP PROCEDURE dbo.usp_MAT_Viaje_CancelViaje;
+GO
+
+IF OBJECT_ID(N'dbo.usp_MAT_Viaje_DeleteViaje', N'P') IS NULL
+    EXEC(N'CREATE PROCEDURE dbo.usp_MAT_Viaje_DeleteViaje AS BEGIN SET NOCOUNT ON; END');
+GO
+
+ALTER PROCEDURE [dbo].[usp_MAT_Viaje_DeleteViaje]
     @ViajeID       UNIQUEIDENTIFIER,
     @VendedorId    UNIQUEIDENTIFIER,
     @DeleteDetalle VARCHAR(500)
@@ -88,3 +99,4 @@ BEGIN
         RAISERROR(N'Error al eliminar el viaje: %s', 16, 1, @errmsg);
     END CATCH;
 END;
+GO

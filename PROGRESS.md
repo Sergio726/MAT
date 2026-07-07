@@ -2,6 +2,41 @@
 
 ---
 
+### [2026-07-07] — Deuda funcional: CancelViaje SP + investigación tabla `Cuenta`
+
+#### A) Eliminación de viaje (SP unificado)
+- **2026-07-07 (refactor):** Un solo SP `usp_MAT_Viaje_DeleteViaje` con auditoría obligatoria (`@VendedorId`, `@DeleteDetalle`). Eliminado `usp_MAT_Viaje_CancelViaje`. UI: un botón eliminar con diálogo de motivo. Script: `database/2026-07-07_Viaje_DeleteViaje_Unified.sql` (DROP CancelViaje si existía).
+
+#### B) Investigación `dbo.Cuenta`
+- **Conclusión: MANTENER** — no es legado huérfano.
+- **Rol:** cabecera de cuenta corriente por cliente (`CuentaID`, `ClienteID`, `Estado` bit activo/inactivo). Toda trazabilidad de pagos pasa por `MovimientoCuenta.CuentaID` → FK a `Cuenta`.
+- **Código activo:** `CuentaDataAccess` + SPs `usp_MAT_Cuenta_*`; `PersonaClienteController` (activar/desactivar/verificar); `PersonaPasajeroController` insert al alta; `usp_MAT_PersonaCliente_Create`, `usp_MAT_RegistroPago_NuevoPago`, `usp_MAT_Reserva_RegistrarPago`, `usp_MAT_Nota_IsertNewNota` leen/insertan `Cuenta`.
+- **No confundir con:**
+  - `dbo.CuentaCorriente` — tabla legacy de montos/fecha; modelo MVC comentado; UI “Cuenta Corriente” del cliente usa `CreditoCliente`/notas y `PersonaCliente/CuentaCorriente`.
+  - `Admin/MiCuenta` — contraseña del usuario.
+- **Deuda menor detectada:** `PersonaPasajeroController` inserta `Cuenta` para todo pasajero nuevo aunque no sea cliente (posible fila con `ClienteID` sin fila en `Cliente` — validar con negocio; fuera de alcance schema).
+- **Comentario engañoso:** `HistorialPagosLoader` dice “sin depender de Cuenta legacy” — significa que el reporte consulta `Pago` directo, no que la tabla esté obsoleta.
+- **Consultas BD dev sugeridas (ejecutar humano):**
+  ```sql
+  SELECT COUNT(*) AS FilasCuenta FROM dbo.Cuenta;
+  SELECT COUNT(*) AS Movimientos FROM dbo.MovimientoCuenta;
+  SELECT MAX(mc.FechaRegistro) AS UltimoMovimiento FROM dbo.MovimientoCuenta mc;
+  SELECT COUNT(*) AS CuentasSinCliente
+  FROM dbo.Cuenta c LEFT JOIN dbo.Cliente cl ON cl.ClienteID = c.ClienteID WHERE cl.ClienteID IS NULL;
+  ```
+- **Estado:** ✅ completo (informe); métricas BD pendientes humano
+
+---
+
+### [2026-07-07] — Admin UI segunda pasada: paleta slate + fucsia (Admin Command)
+- **Archivos modificados:** `Content/admin.modern.css`, `Views/Shared/_LayoutAdmin.cshtml`, `_AdminTopbar.cshtml`, `Views/Admin/ResumenPagos.cshtml`, `ResumenPagosPorFecha.cshtml`, `GridResumenPagosFecha.cshtml`, `SPEC.md`.
+- **Qué se implementó:** Reemplazo tema azul marino por tokens slate (`#1e293b`/`#0f172a`) + acento fucsia (`#e63375`); topbar con gradiente tipo login; sidebar con accent rail en ítem activo; datepicker, botones, cards hub, overrides Bootstrap; badge “Admin” en topbar; limpieza de `#0b2a4a` en resúmenes de pagos.
+- **Diferenciación:** Admin = shell oscuro + acento contenido; vendedor = fondo claro + fucsia en CTAs; login = split hero fotográfico.
+- **Verificación:** MSBuild `MAT.MVC` Debug OK. Smoke visual pendiente humano: Index, Usuarios, SistemaParametros, ReporteVentas, ErrorLog.
+- **Estado:** ✅ completo
+
+---
+
 ### [2026-07-05] — Testing post-NetTiers (opción B)
 - **Archivos modificados/creados:** `MAT.MVC.Tests/Utilities/HelperTests.cs`, `MAT.MVC.Tests/Contract/MigrationContractTests.cs`, `MAT.Integration.Tests/*`, `tools/Run-Tests.ps1`, `tools/Verify-NetTiersMigration.ps1` (deuda `CancelViaje` → WARN), `DOCUMENTACION/TESTING.md`, `MAT.sln`, `CLAUDE.md`, `SPEC.md`.
 - **Qué se implementó:** Tests unitarios ampliados (`Helper`, contrato migración); proyecto integración SQL con gate `MAT_TEST_CONNECTION_STRING`; script unificado build + verify + vstest; documentación de ejecución local/CI.

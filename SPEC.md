@@ -1062,7 +1062,7 @@
 
 **Contexto:** Existe la tabla `dbo.Cuenta` en `MAT.DB` (relacionada con `MovimientoCuenta`, FK desde cliente). Hay filas en BD pero sospecha de que el flujo activo ya no la usa o la usa de forma residual. **No confundir** con `CuentaCorriente` / módulo `CuentaCorrienteController` ni con `Admin/MiCuenta` (contraseña del usuario logueado).
 
-- [ ] **Investigación [P2]: Uso real de la tabla `Cuenta`**
+- [x] **Investigación [P2]: Uso real de la tabla `Cuenta`**
   **Objetivo:** Confirmar si `Cuenta` sigue siendo parte del modelo operativo o es legado con datos huérfanos.
   **Alcance de la investigación:**
   1. Inventario en código activo (`MAT.MVC`, `MAT.Utilities`, `MAT.DB`): referencias a entidad `Cuenta`, `CuentaDataAccess`, SPs `usp_MAT_Cuenta_*`, inserts/updates desde controllers (p. ej. alta de pasajero).
@@ -1070,13 +1070,15 @@
   3. Consultas en BD de dev: conteo de filas, última fecha de movimiento asociado, clientes con `Cuenta` sin uso en pantallas actuales.
   4. Conclusión documentada en `PROGRESS.md` / nota en `DOCUMENTACION`: **mantener**, **migrar datos**, **deprecar** (solo lectura) o **eliminar** (con plan de schema).
   **Criterio de éxito:** Informe breve con mapa código ↔ BD ↔ UI; recomendación explícita acordada con negocio antes de cualquier cambio de schema; sin modificar tablas en esta fase salvo que el humano apruebe el plan posterior.
+  **Implementación 2026-07-07:** Informe en `PROGRESS.md` — conclusión **mantener**; `Cuenta` es cabecera operativa (Estado on/off por cliente); no confundir con `CuentaCorriente` (tabla legacy de montos) ni `CreditoCliente`/notas. Consultas SQL de conteo pendientes humano en BD dev.
 
 #### Admin — Actualización UX/UI del panel administrador
 
 **Contexto:** Varios tasks de modernización Admin están marcados `[x]` (tokens CSS, cards, tablas, reportes). Quedan vistas o flujos con look legacy, inconsistencias visuales o deuda post-dashboard principal (`modern-*` en Home vs panel Admin).
 
-- [ ] **Admin UI [P2]: Actualizar interfaz UX/UI del panel administrador**
+- [x] **Admin UI [P2]: Actualizar interfaz UX/UI del panel administrador**
   **Objetivo:** Segunda pasada de modernización del panel Admin para alinear todas las pantallas administrativas con el sistema visual actual (`admin.modern.css`, `_LayoutAdmin`, `_AdminTopbar`, `_AdminNav`, componentes `modern-*`).
+  **Dirección visual:** tema “Admin Command” — shell oscuro slate (`#1e293b` / `#0f172a`) + acento fucsia marca (`#e63375`), coherente con login pero distinto del workspace claro del vendedor (fucsia dominante en CTAs).
   **Alcance sugerido (priorizar según impacto):**
   1. Auditoría de vistas bajo `Views/Admin/` y módulos enlazados desde el sidebar (Usuarios, SistemaParametros, ErrorLog, Logs, Reportes, MiCuenta, onboarding) — listar las que aún mezclan estilos legacy, jQuery UI o variables CSS antiguas.
   2. Unificar tipografía, espaciado, cards, botones y tablas en las vistas pendientes; eliminar CSS inline duplicado donde exista token equivalente.
@@ -1084,6 +1086,7 @@
   4. Smoke visual de las pantallas Admin principales tras los cambios.
   **Archivos probables:** `Content/admin.modern.css`, `Views/Admin/*.cshtml`, `Views/Shared/_LayoutAdmin.cshtml`, `_AdminTopbar.cshtml`, `_AdminNav.cshtml`, vistas Reportes Admin si aplica.
   **Criterio de éxito:** Panel Admin visualmente coherente entre todas las entradas del menú; sin regresiones en reportes ni auth; MSBuild limpio; capturas o checklist en `PROGRESS.md`.
+  **Implementación 2026-07-07:** Tokens `--admin-accent*` (slate+fucsia); topbar con gradiente login; nav activo con accent rail; datepicker/botones/cards; overrides Bootstrap `.btn-primary`; badge “Admin” en topbar; limpieza azul marino en `ResumenPagos*`; cache bust `admin.modern.css?v=20260707a`.
 
 ---
 

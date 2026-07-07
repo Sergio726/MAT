@@ -463,12 +463,12 @@ namespace MAT.MVC.Controllers.Viaje
             }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult DeleteViaje(Guid ViajeId)
+        public JsonResult DeleteViaje(Guid ViajeId, string DeleteDetalle)
         {
             string[] sResult = new string[2];
             try
             {
-                ViajeMethod.DeleteViaje(ViajeId);
+                ViajeMethod.DeleteViaje(ViajeId, MATContext.CurrentVendedor.VendedorId, DeleteDetalle);
                 sResult[0] = "ViajeId";
                 sResult[1] = "Done";
             }
@@ -476,28 +476,6 @@ namespace MAT.MVC.Controllers.Viaje
             {
                 sResult[0] = "";
                 sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.DeleteViaje");
-            }
-
-            return Json(new
-            {
-                ID = sResult[0],
-                Mensaje = sResult[1]
-            }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult CancelViaje(Guid ViajeId, string DeleteDetalle)
-        {
-            string[] sResult = new string[2];
-            try
-            {
-                ViajeMethod.CancelViaje(ViajeId, MATContext.CurrentVendedor.VendedorId, DeleteDetalle);
-                sResult[0] = "ViajeId";
-                sResult[1] = "Done";
-            }
-            catch (Exception e)
-            {
-                sResult[0] = "";
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "ViajeController.CancelViaje");
             }
 
             return Json(new
