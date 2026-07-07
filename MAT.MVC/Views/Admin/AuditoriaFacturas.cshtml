@@ -40,7 +40,7 @@
     </div>
 
     <div id="divResult" class="modern-table-container">
-    <table id="tblAudit" class="modern-table" style="display:none;">
+        <table id="tblAudit" class="modern-table d-none">
         @*<thead>
             <tr>
                 <th>
@@ -63,7 +63,8 @@
                 </th>
             </tr>
         </thead>*@
-    </table>
+        </table>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -134,6 +135,14 @@
         return bResult;
     }
 
+    function showAuditToast(message, type) {
+        if (window.MatAdmin && window.MatAdmin.toast) {
+            window.MatAdmin.toast(message, type || 'danger');
+            return;
+        }
+        (window.alertInfo || window.alert)(message, type === 'success' ? 'Éxito' : 'Error');
+    }
+
     function searchFactura() {
         if (!valForm()) return;
 
@@ -152,9 +161,8 @@
             success: function (data) {
                 $wrap.empty().append($tbl);
                 if (data && data.ok === false) {
-                    $tbl.hide();
-                    var errMsg = (data.message || "Error al buscar registros.").replace(/</g, "&lt;");
-                    $wrap.prepend('<div class="modern-alert-error" style="margin-bottom:1rem"><i class="bi bi-exclamation-circle"></i><span>' + errMsg + '</span></div>');
+                    $tbl.addClass('d-none');
+                    showAuditToast(data.message || "Error al buscar registros.", 'danger');
                     return;
                 }
                 var rows = (data && data.data != null) ? data.data : data;
@@ -162,8 +170,8 @@
             },
             error: function () {
                 $wrap.empty().append($tbl);
-                $tbl.hide();
-                $wrap.prepend('<div class="modern-alert-error" style="margin-bottom:1rem"><i class="bi bi-exclamation-circle"></i><span>Error al buscar registros. Por favor, intente nuevamente.</span></div>');
+                $tbl.addClass('d-none');
+                showAuditToast("Error al buscar registros. Por favor, intente nuevamente.", 'danger');
             }
         });
     }
@@ -205,8 +213,7 @@
             language: { url: "/Scripts/dataTable/i18n/Spanish.json" }
         });
 
-        $tbl.show();
+        $tbl.removeClass('d-none');
     }
 
 </script>
-</div>

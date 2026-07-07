@@ -11,7 +11,7 @@
     {
         var viajeIdResumen = (Guid)ViewBag.ViajeIdResumen;
         <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-            <a class="btn btn-outline-primary btn-sm"
+            <a class="btn-modern btn-modern-primary btn-sm"
                href="@Url.Action("ResumenPagosExcel", "Admin", new { ViajeID = viajeIdResumen })"
                target="_blank" rel="noopener">
                 <i class="bi bi-file-earmark-excel"></i> Exportar a Excel

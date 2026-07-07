@@ -1089,6 +1089,17 @@
   **Criterio de éxito:** Panel Admin visualmente coherente entre todas las entradas del menú; sin regresiones en reportes ni auth; MSBuild limpio; capturas o checklist en `PROGRESS.md`.
   **Implementación 2026-07-07:** Tokens `--admin-accent*` (slate+fucsia); topbar con gradiente login; nav activo con accent rail; datepicker/botones/cards; overrides Bootstrap `.btn-primary`; badge “Admin” en topbar; limpieza azul marino en `ResumenPagos*`; cache bust `admin.modern.css?v=20260707a`.
 
+- [x] **Admin UI tercera pasada: subvistas y limpieza CSS**
+  **Objetivo:** Consolidar CSS inline de subvistas Admin/Reportes en `admin.modern.css`; alinear formularios cuenta al patrón admin; toasts en auditoría.
+  **Subtasks:**
+  1. Auditoría 21 vistas Admin+Reportes → tabla en `PROGRESS.md`
+  2. Secciones 4–7 en `admin.modern.css` (resumen pagos, reportes, admin-form, alertas)
+  3. Quitar `<style>` de ResumenPagos suite + ReporteVentas/Ranking
+  4. MiCuenta/RegistrarVendedor sin `modern-account.css`
+  5. AuditoriaFacturas → `MatAdmin.toast` + `.d-none`
+  6. Quitar `mat.styles.custom.css` del layout admin; cache bust `?v=20260707b`
+  **Implementación 2026-07-07:** CSS centralizado (~700 líneas nuevas); markup `modern-page-header` en resúmenes; `.admin-modal-table-wrap` en modales reportes; MSBuild OK.
+
 ---
 
 - MSBuild sobre `MAT.MVC` debe pasar limpio al finalizar cada task

@@ -8,25 +8,6 @@
     <li class="breadcrumb-item active" aria-current="page">Ranking</li>
 }
 
-<style>
-    .ranking-card-kpi {
-        cursor: pointer;
-        transition: box-shadow .18s ease, transform .18s ease;
-        border: 1px solid rgba(15,23,42,.08) !important;
-    }
-    .ranking-card-kpi:hover, .ranking-card-kpi:focus-visible {
-        box-shadow: 0 6px 24px rgba(15,23,42,.13) !important;
-        transform: translateY(-2px);
-    }
-    .ranking-card-kpi.card-sin-datos { opacity: .55; pointer-events: none; }
-    .ranking-modal-table th { cursor: pointer; user-select: none; white-space: nowrap; }
-    .ranking-modal-table th .sort-arrow { font-size: .7em; margin-left: 4px; }
-    @@media (prefers-reduced-motion: reduce) {
-        .ranking-card-kpi { transition: none; }
-        .ranking-card-kpi:hover { transform: none; }
-    }
-</style>
-
 <div class="modern-page-container">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
         <div>
@@ -46,7 +27,7 @@
     <div class="card shadow-sm border-0 mb-3">
         <div class="card-body">
             <div class="mb-3">
-                <div class="btn-group" role="group">
+                <div class="btn-group" role="group" aria-label="Modo filtro">
                     <input type="radio" class="btn-check" name="modoFiltro" id="modoFechas" value="fechas" checked autocomplete="off" />
                     <label class="btn btn-outline-primary btn-sm" for="modoFechas">Por fechas</label>
                     <input type="radio" class="btn-check" name="modoFiltro" id="modoViaje" value="viaje" autocomplete="off" />
@@ -74,7 +55,7 @@
                 </div>
             </div>
             <div class="d-flex flex-wrap gap-2 mt-3">
-                <button type="button" class="btn btn-primary btn-sm" id="btnBuscar"><i class="bi bi-search"></i> Consultar</button>
+                <button type="button" class="btn-modern btn-modern-primary btn-sm" id="btnBuscar"><i class="bi bi-search"></i> Consultar</button>
                 <button type="button" class="btn btn-outline-danger btn-sm d-none" id="btnDescargarPdf">
                     <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
                 </button>
@@ -128,7 +109,7 @@
                     <div class="card-body py-3">
                         <div class="d-flex justify-content-between align-items-start mb-1">
                             <span class="small fw-semibold text-body-secondary">Pasajeros</span>
-                            <span class="rounded-circle bg-info bg-opacity-10 text-info p-2"><i class="bi bi-person-badge"></i></span>
+                            <span class="rounded-circle bg-primary bg-opacity-10 text-primary p-2"><i class="bi bi-person-badge"></i></span>
                         </div>
                         <p class="fs-4 fw-bold mb-0" id="kpiPasajeros">0</p>
                         <p class="small text-secondary mb-0">pasajes vendidos</p>
@@ -181,7 +162,7 @@
                         <div class="col-md-6"><input type="text" class="form-control form-control-sm ranking-modal-search" placeholder="Buscar cliente o viaje…" autocomplete="off" /></div>
                         <div class="col-md-auto"><span class="badge bg-secondary ranking-modal-count">0 de 0</span></div>
                     </div>
-                    <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
+                    <div class="table-responsive admin-modal-table-wrap">
                         <table class="table table-sm table-striped ranking-modal-table w-100"><thead></thead><tbody></tbody></table>
                     </div>
                 </div>
@@ -203,7 +184,7 @@
                         <div class="col-md-6"><input type="text" class="form-control form-control-sm ranking-modal-search" placeholder="Buscar cliente…" autocomplete="off" /></div>
                         <div class="col-md-auto"><span class="badge bg-secondary ranking-modal-count">0 de 0</span></div>
                     </div>
-                    <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
+                    <div class="table-responsive admin-modal-table-wrap">
                         <table class="table table-sm table-striped ranking-modal-table w-100"><thead></thead><tbody></tbody></table>
                     </div>
                 </div>
@@ -225,7 +206,7 @@
                         <div class="col-md-6"><input type="text" class="form-control form-control-sm ranking-modal-search" placeholder="Buscar viaje…" autocomplete="off" /></div>
                         <div class="col-md-auto"><span class="badge bg-secondary ranking-modal-count">0 de 0</span></div>
                     </div>
-                    <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
+                    <div class="table-responsive admin-modal-table-wrap">
                         <table class="table table-sm table-striped ranking-modal-table w-100"><thead></thead><tbody></tbody></table>
                     </div>
                 </div>
@@ -247,7 +228,7 @@
                         <div class="col-md-6"><input type="text" class="form-control form-control-sm ranking-modal-search" placeholder="Buscar cliente o viaje…" autocomplete="off" /></div>
                         <div class="col-md-auto"><span class="badge bg-secondary ranking-modal-count">0 de 0</span></div>
                     </div>
-                    <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
+                    <div class="table-responsive admin-modal-table-wrap">
                         <table class="table table-sm table-striped ranking-modal-table w-100"><thead></thead><tbody></tbody></table>
                     </div>
                 </div>
@@ -269,7 +250,7 @@
                         <div class="col-md-6"><input type="text" class="form-control form-control-sm ranking-modal-search" placeholder="Buscar viaje…" autocomplete="off" /></div>
                         <div class="col-md-auto"><span class="badge bg-secondary ranking-modal-count">0 de 0</span></div>
                     </div>
-                    <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
+                    <div class="table-responsive admin-modal-table-wrap">
                         <table class="table table-sm table-striped ranking-modal-table w-100"><thead></thead><tbody></tbody></table>
                     </div>
                 </div>
@@ -356,6 +337,10 @@ $(function () {
     /* ── Buscar ──────────────────────────────────────────────── */
     function buscar() {
         showErr("");
+        if (modo() === "viaje" && !$("#viajeId").val().trim()) {
+            showErr("Seleccioná un viaje de la lista.");
+            return;
+        }
         $("#dashboardCards, #dashboardEmpty, #btnDescargarPdf").addClass("d-none");
         $(".ranking-card-kpi").addClass("card-sin-datos");
         var $btn = $("#btnBuscar");
@@ -367,8 +352,10 @@ $(function () {
                 lastRows = res.data || [];
 
                 if (lastRows.length === 0) {
+                    if (window.MatReportes && window.MatReportes.RankingDashboard) {
+                        window.MatReportes.RankingDashboard.render([]);
+                    }
                     $("#dashboardEmpty").removeClass("d-none");
-                    $("#dashboardCards").removeClass("d-none");
                     return;
                 }
 

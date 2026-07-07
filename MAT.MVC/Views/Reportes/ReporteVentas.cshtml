@@ -8,99 +8,6 @@
     <li class="breadcrumb-item active" aria-current="page">Ventas</li>
 }
 
-<style>
-.card-facturado-interactiva {
-    cursor: pointer;
-    transition: box-shadow .15s, border-color .15s;
-}
-.card-facturado-interactiva:hover {
-    box-shadow: 0 .25rem .75rem rgba(0,0,0,.13) !important;
-    border: 1px solid rgba(25,135,84,.35) !important;
-}
-.card-facturado-sin-datos {
-    cursor: default;
-    opacity: .75;
-}
-.card-facturado-sin-datos:hover {
-    box-shadow: none !important;
-    border-color: transparent !important;
-}
-@@media (prefers-reduced-motion: reduce) {
-    .card-facturado-interactiva { transition: none; }
-}
-/* Contenedor rankings: más contraste que #f3f6fb del admin para que resalten las cards blancas */
-.reporte-rankings-strip {
-    padding: 1.25rem 1.35rem 1.45rem;
-    background: linear-gradient(168deg, #d8e4f4 0%, #e4ecf6 42%, #e8f0f9 100%);
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-}
-.card.card-top-ranking {
-    background-color: #fff !important;
-    border: 1px solid rgba(15, 23, 42, 0.12) !important;
-    box-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.06),
-        0 8px 22px rgba(15, 23, 42, 0.1);
-    transition: box-shadow .18s ease, border-color .18s ease;
-}
-.card.card-top-ranking:hover {
-    border-color: rgba(15, 23, 42, 0.16) !important;
-    box-shadow:
-        0 2px 6px rgba(15, 23, 42, 0.08),
-        0 14px 32px rgba(15, 23, 42, 0.14) !important;
-}
-.card.card-top-ranking.card-top-ranking-first:hover {
-    border-color: rgba(210, 155, 15, 0.85) !important;
-    box-shadow:
-        0 2px 6px rgba(15, 23, 42, 0.08),
-        0 14px 32px rgba(15, 23, 42, 0.14),
-        inset 0 0 0 1px rgba(255, 236, 160, 0.55) !important;
-}
-/* 1er puesto: franja “espejada” amarillo oscuro / oro (sin mezcla negra) */
-.card-top-ranking-first {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(200, 150, 25, 0.7) !important;
-    box-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.06),
-        0 8px 22px rgba(15, 23, 42, 0.1),
-        inset 0 0 0 1px rgba(255, 228, 130, 0.45) !important;
-}
-.card-top-ranking-first::before {
-    content: "";
-    position: absolute;
-    inset: -65% -45%;
-    background: linear-gradient(
-        105deg,
-        transparent 32%,
-        rgba(220, 175, 35, 0.28) 43%,
-        rgba(185, 135, 0, 0.52) 49.5%,
-        rgba(170, 125, 0, 0.58) 50.5%,
-        rgba(220, 175, 35, 0.28) 57%,
-        transparent 68%
-    );
-    transform: translateX(60%);
-    animation: mat-rank-shine-rtl 2.5s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 1;
-}
-.card-top-ranking-first .card-body {
-    position: relative;
-    z-index: 2;
-}
-@@keyframes mat-rank-shine-rtl {
-    0%, 8% { transform: translateX(60%); opacity: 0; }
-    14% { opacity: 1; }
-    52% { transform: translateX(-60%); opacity: 1; }
-    58%, 100% { transform: translateX(-60%); opacity: 0; }
-}
-@@media (prefers-reduced-motion: reduce) {
-    .card.card-top-ranking { transition: none; }
-    .card-top-ranking-first::before { animation: none; opacity: 0; }
-}
-</style>
-
 <div class="modern-page-container">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
         <div>
@@ -274,7 +181,7 @@
 
     <div class="modern-table-container">
         <div class="table-responsive">
-            <table class="modern-table table table-striped table-sm w-100" id="tblReporte" style="min-width: 860px"></table>
+            <table class="modern-table table table-striped table-sm w-100 admin-table-min-wide" id="tblReporte"></table>
         </div>
     </div>
 </div>
@@ -304,7 +211,7 @@
                     </div>
                 </div>
                 <p class="small text-secondary mb-2" id="modalVendedoresContador">Mostrando 0 de 0 vendedores</p>
-                <div class="table-responsive" id="modalVendedoresTablaWrap" style="max-height:450px;overflow-y:auto;"></div>
+                <div class="table-responsive admin-modal-table-wrap--lg" id="modalVendedoresTablaWrap"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
@@ -338,7 +245,7 @@
                     </div>
                 </div>
                 <p class="small text-secondary mb-2" id="modalDestinosContador">Mostrando 0 de 0 destinos</p>
-                <div class="table-responsive" id="modalDestinosTablaWrap" style="max-height:450px;overflow-y:auto;"></div>
+                <div class="table-responsive admin-modal-table-wrap--lg" id="modalDestinosTablaWrap"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
@@ -427,7 +334,7 @@
                     </div>
                 </div>
 
-                <div class="table-responsive" id="modalFacturasTablaWrap" style="max-height:420px;overflow-y:auto;"></div>
+                <div class="table-responsive admin-modal-table-wrap" id="modalFacturasTablaWrap"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>

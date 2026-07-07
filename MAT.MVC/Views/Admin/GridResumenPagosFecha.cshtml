@@ -2,106 +2,19 @@
 
 @if (ViewBag.Error != null)
 {
-    <div class="error-message">
+    <div class="admin-inline-error">
         <i class="bi bi-exclamation-triangle-fill"></i>
         <span>@ViewBag.Error</span>
     </div>
     return;
 }
 
-<style>
-    .grid-pagos-fecha-container {
-        padding: 0.5rem;
-    }
-    .error-message {
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        color: #dc2626;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .table-container {
-        background: white;
-        border-radius: 0.5rem;
-        overflow: hidden;
-    }
-    #tblPagos {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    #tblPagos thead th {
-        background: var(--bg-secondary, #f9fafb);
-        padding: 0.75rem 1rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-secondary, #6b7280);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-        text-align: left;
-    }
-    #tblPagos thead th:first-child {
-        width: 40px;
-        text-align: center;
-    }
-    #tblPagos tbody td {
-        padding: 0.75rem 1rem;
-        font-size: 0.875rem;
-        color: var(--text-primary, #1f2937);
-        border-bottom: 1px solid var(--border-color, #e5e7eb);
-    }
-    #tblPagos tbody td:first-child {
-        text-align: center;
-        font-weight: 500;
-        color: var(--text-secondary, #6b7280);
-    }
-    #tblPagos tbody tr:hover {
-        background: var(--bg-secondary, #f9fafb);
-    }
-    .monto-cell {
-        font-weight: 500;
-        color: #059669;
-    }
-    .btn-cancel {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 28px;
-        height: 28px;
-        background: #fee2e2;
-        color: #dc2626;
-        border: none;
-        border-radius: 0.375rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .btn-cancel:hover {
-        background: #dc2626;
-        color: white;
-    }
-    #tblPagos tfoot th {
-        background: var(--bg-secondary, #f9fafb);
-        padding: 0.875rem 1rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--text-primary, #1f2937);
-        border-top: 2px solid var(--border-color, #e5e7eb);
-        text-align: left;
-    }
-    .total-value {
-        color: var(--primary-color);
-    }
-</style>
-
 @{int iCount = 0;
   decimal dSum = 0;}
 
 <div class="grid-pagos-fecha-container">
     <div class="table-container">
-        <table id="tblPagos">
+        <table id="tblPagos" class="modern-table">
             <thead>
                 <tr>
                     <th>#</th>
@@ -112,7 +25,7 @@
                     <th>Medio de Pago</th>
                     <th>Vendedor</th>
                     <th>Monto</th>
-                    <th style="width: 50px;"></th>
+                    <th class="admin-col-actions"></th>
                 </tr>
             </thead>
             <tbody>
@@ -130,7 +43,7 @@
                         <td>@item.Vendedor</td>
                         <td class="monto-cell">@String.Format("{0:C}", item.Monto)</td>
                         <td>
-                            <button type="button" class="btn-cancel" onclick="cancelarPago('@item.PagoID','@ViewBag.FacturaID');" title="Cancelar Pago">
+                            <button type="button" class="btn-cancel-pago" onclick="cancelarPago('@item.PagoID');" title="Cancelar Pago">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         </td>

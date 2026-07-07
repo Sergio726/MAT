@@ -2,6 +2,46 @@
 
 ---
 
+### [2026-07-07] — ReporteRanking: fixes UX estados vacíos, validación viaje y alineación visual
+- **Archivos:** `Views/Reportes/ReporteRanking.cshtml`
+- **Qué se implementó:** Fix 1 — sin resultados: solo `#dashboardEmpty`, `render([])` resetea KPIs; Fix 2 — validación cliente si modo viaje sin `viajeId`; Fix 3 — `btn-modern` en Consultar, `aria-label` en modo filtro, icono Pasajeros con acento fucsia.
+- **Verificación:** MSBuild `MAT.MVC` Debug OK.
+- **Estado:** ✅ completo
+
+---
+
+### [2026-07-07] — Admin UI tercera pasada: subvistas y limpieza CSS
+- **Archivos:** `Content/admin.modern.css`, `Views/Shared/_LayoutAdmin.cshtml`, `Views/Admin/ResumenPagos.cshtml`, `ResumenPagosPorFecha.cshtml`, `GridResumenPagosFecha.cshtml`, `GridResumenPagos.cshtml`, `MiCuenta.cshtml`, `RegistrarVendedor.cshtml`, `AuditoriaFacturas.cshtml`, `Views/Reportes/Index.cshtml`, `ReporteVentas.cshtml`, `ReporteRanking.cshtml`, `SPEC.md`.
+- **Qué se implementó:** Migración de ~500 líneas CSS inline → secciones 4–7 en `admin.modern.css`; eliminado `mat.styles.custom.css` del layout admin (overrides mínimos de alertas en admin CSS); formularios `.admin-form-*`; ResumenPagos con `modern-page-header`; Auditoría con `MatAdmin.toast` y `.d-none`; modales reportes con `.admin-modal-table-wrap`; cache bust `?v=20260707b`.
+- **Auditoría vistas (21):**
+
+| Vista | `<style>` | CSS extra | Patrón modern-* | Acción |
+|-------|-----------|-----------|-------------------|--------|
+| Admin/Index | No | No | Hub `.admin-hub` | OK — intencional |
+| Admin/Usuarios | No | No | Sí | OK |
+| Admin/UsuarioEditar | No | No | Sí | OK |
+| Admin/UsuarioResetPassword | No | No | Sí | OK |
+| Admin/SistemaParametros | No | No | Sí + MatAdmin.toast | OK |
+| Admin/ErrorLog | No | No | Sí | OK |
+| Admin/Logs | No | No | Sí | OK |
+| Admin/ResumenPagos | ~~Sí~~ | magicsearch | Sí (header) | ✅ migrado |
+| Admin/ResumenPagosPorFecha | ~~Sí~~ | No | Sí | ✅ migrado |
+| Admin/GridResumenPagos | No | No | Sí | ✅ btn-modern Excel |
+| Admin/GridResumenPagosFecha | ~~Sí~~ | No | Sí | ✅ migrado |
+| Admin/AuditoriaFacturas | No | No | Sí | ✅ toast + d-none |
+| Admin/MiCuenta | No | ~~modern-account~~ | Sí | ✅ admin-form CSS |
+| Admin/RegistrarVendedor | No | ~~modern-account~~ | Sí | ✅ admin-form-* |
+| Reportes/Index | No | No | Sí + admin-card-link | ✅ iconos |
+| Reportes/ReporteVentas | ~~Sí~~ | No | Sí | ✅ migrado |
+| Reportes/ReportePagos | No | No | Sí | OK |
+| Reportes/ReporteRanking | ~~Sí~~ | No | Sí | ✅ migrado |
+
+- **Smoke visual (humano):** `/Admin/Index`, ResumenPagos (+ grid), ResumenPagosPorFecha, Reportes (Index + Ventas/Pagos/Ranking), Usuarios, SistemaParametros, ErrorLog/Logs, AuditoriaFacturas, MiCuenta/RegistrarVendedor, viewport 375px.
+- **Verificación:** MSBuild `MAT.MVC` Debug OK.
+- **Estado:** ✅ completo
+
+---
+
 ### [2026-07-07] — DistribucionCoche Fase 3: acciones al clic en butaca
 - **Archivos:** `usp_MAT_Reserva_DistribucionCoche_GetByViajeID.sql`, `database/2026-07-07_DistribucionCoche_FacturaID.sql`, `ReservaModel.cs`, `ReservaController.cs`, `_DistribucionCocheAsiento.cshtml`, `DistribucionCoche.cshtml`, `mat.distribucioncoche.css`, `PersonaClienteController.cs`, `ElegirNuevaButaca.cshtml`, `mat.jquery.binding.js`, `SPEC.md`.
 - **Qué se implementó:** Menú contextual en butacas ocupadas (ver factura en modal BS5, cambiar butaca); `data-factura-id` + `FacturaID` en SP; `abrirCambioButaca` global reutilizable; fallback `ElegirNuevaButaca?shell=1` en ventana nueva si no hay `opener`.
