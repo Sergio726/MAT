@@ -21,7 +21,7 @@ namespace MAT.MVC.Controllers.Account
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            AuthCookieHelper.ClearAuthenticationCookies(HttpContext);
+            AuthCookieHelper.ClearAuthCookiesOnly(HttpContext);
 
             ViewBag.ReturnUrl = returnUrl;
             string sDEV = System.Configuration.ConfigurationManager.AppSettings["SystemDEV"].ToString();
@@ -40,7 +40,7 @@ namespace MAT.MVC.Controllers.Account
         {
             if (ModelState.IsValid)
             {
-                AuthCookieHelper.ClearAuthenticationCookies(HttpContext);
+                AuthCookieHelper.ClearAuthCookiesOnly(HttpContext);
                 AuthCookieHelper.AbandonSession(HttpContext);
 
                 if (WebSecurity.Login(model.UserName, model.Password, persistCookie: false))

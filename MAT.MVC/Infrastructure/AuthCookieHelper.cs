@@ -14,14 +14,72 @@ namespace MAT.MVC.Infrastructure
     {
         private const int MaxAuthChunkSuffix = 8;
 
-        private static readonly string[] LegacyCookieNames =
+        private static readonly string[] LegacyAuthCookieNames =
         {
             FormsAuthentication.FormsCookieName,
             ".ASPXAUTH",
+            ".MATAuth"
+        };
+
+        private static readonly string[] LegacySessionCookieNames =
+        {
             "__RequestVerificationToken",
             "ASP.NET_SessionId"
         };
 
+        /// <summary>
+        /// Limpia solo cookies de autenticación (p. ej. antes de mostrar Login).
+        /// No toca sesión ni anti-forgery: invalidarlos en el GET rompe el segundo login tras LogOff.
+        /// </summary>
+        public static void ClearAuthCookiesOnly(HttpContextBase context)
+        {
+            if (context == null)
+            {
+                return;
+            }
+
+            var expired = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var legacyName in LegacyAuthCookieNames)
+            {
+                ExpireCookie(context, expired, legacyName, "/");
+                ExpireAuthChunks(context, expired, legacyName);
+            }
+
+            if (context.Request.Cookies == null)
+            {
+                return;
+            }
+
+            var names = context.Request.Cookies.AllKeys;
+            if (names == null)
+            {
+                return;
+            }
+
+            foreach (var name in names)
+            {
+                if (!IsAuthCookieName(name))
+                {
+                    continue;
+                }
+
+                var existing = context.Request.Cookies[name];
+                var path = existing != null && !string.IsNullOrEmpty(existing.Path) ? existing.Path : "/";
+                ExpireCookie(context, expired, name, path);
+
+                if (path != "/")
+                {
+                    ExpireCookie(context, expired, name, "/");
+                }
+
+                ExpireAuthChunks(context, expired, GetAuthCookieBaseName(name));
+            }
+        }
+
+        /// <summary>
+        /// Limpieza completa para LogOff: auth + sesión + anti-forgery + resto de cookies del request.
+        /// </summary>
         public static void ClearAuthenticationCookies(HttpContextBase context)
         {
             if (context == null)
@@ -57,7 +115,12 @@ namespace MAT.MVC.Infrastructure
                 }
             }
 
-            foreach (var legacyName in LegacyCookieNames)
+            foreach (var legacyName in LegacyAuthCookieNames)
+            {
+                ExpireCookie(context, expired, legacyName, "/");
+            }
+
+            foreach (var legacyName in LegacySessionCookieNames)
             {
                 ExpireCookie(context, expired, legacyName, "/");
             }
@@ -67,7 +130,7 @@ namespace MAT.MVC.Infrastructure
                 ExpireAuthChunks(context, expired, GetAuthCookieBaseName(name));
             }
 
-            foreach (var legacyName in LegacyCookieNames.Where(IsAuthCookieName))
+            foreach (var legacyName in LegacyAuthCookieNames)
             {
                 ExpireAuthChunks(context, expired, legacyName);
             }
