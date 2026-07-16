@@ -2,6 +2,32 @@
 
 ---
 
+### [2026-07-15] — UX FacturaListByViajeID: Pagado, Saldo y columnas
+- **Archivos:** `MAT.DB/dbo/Stored Procedures/usp_MAT_Factura_Search.sql`, `MAT.MVC/Models/FacturaModel.cs`, `MAT.MVC/Controllers/Factura/FacturaController.cs`, `MAT.MVC/Views/Factura/FacturaResultSearch.cshtml`, `MAT.MVC/Views/Factura/FacturaListByViajeID.cshtml`, `SPEC.md`, `PROGRESS.md`
+- **Qué se implementó:** SP agrega `Saldo` (`fn_MAT_SaldoFactura`) y `MontoPagado` (Monto − Saldo) vía CROSS APPLY. DTO `FacturaStandard.MontoPagado` + mapeo en `FacturaSearch`. Grilla: columnas Pagado/Saldo (saldo > 0 en rojo), Paquete oculto si `sViajeID`, Viaje con más peso, densidad reducida, `table-responsive`. Shell por viaje: cabecera compacta + card de resultados. `HidePaqueteColumn` desde controller.
+- **Verificación:** MSBuild `MAT.MVC` Debug OK.
+- **Acción humana:** publicar `usp_MAT_Factura_Search` en cada entorno (sin el SP la grilla fallará al mapear columnas nuevas).
+- **Estado:** ✅ completo (código); pendiente publicar SP en BD
+
+---
+
+### [2026-07-15] — Fix BUG P1: cambio de butaca preserva badge H / estado hotel
+- **Archivos:** `MAT.DB/dbo/Stored Procedures/usp_MAT_Reserva_CambioButacas.sql`, `database/2026-07-15_CambioButacas_PreserveHotel.sql`, `SPEC.md`, `PROGRESS.md`
+- **Qué se implementó:** El `UPDATE ReservaHabitacion.PasajeID` corre **dentro** de la transacción y **antes** de `usp_MAT_Reserva_ActualizarEstados`, para que el JOIN hotel vea el pasaje nuevo y conserve estados 6/8/9 (badge H).
+- **Acción humana:** publicar `database/2026-07-15_CambioButacas_PreserveHotel.sql` en cada entorno; smoke: pasajero pagado+hotel → cambio butaca → H en butaca nueva en Index/DistribucionCoche.
+- **Estado:** ✅ completo (código); pendiente publicar SP en BD
+
+---
+
+### [2026-07-15] — Registro BUG P1: cambio de butaca pierde badge H / estado hotel
+- **Archivos:** `SPEC.md`, `PROGRESS.md`
+- **Qué se documentó:** Bug en `/Reserva/Index` (y DistribucionCoche): al cambiar butaca de un pasajero con reserva de habitación, desaparece la letra **H** y el `EstadoPasaje` compuesto (6/8/9). Comportamiento esperado: preservar todos los estados; solo cambia el número de butaca.
+- **Causa raíz:** en `usp_MAT_Reserva_CambioButacas`, `usp_MAT_Reserva_ActualizarEstados` se ejecuta antes de `UPDATE ReservaHabitacion.PasajeID` (y ese UPDATE está post-COMMIT). Para factura pagada, el JOIN hotel falla → estado 4 sin H.
+- **Fix previsto (no implementado aún):** mover el UPDATE de `ReservaHabitacion` dentro de la transacción, antes de `ActualizarEstados`; script en `database/` con paridad `MAT.DB`. Sin cambios UI/CSS.
+- **Estado:** ✅ supersedido por fix del mismo día
+
+---
+
 ### [2026-07-07] — ReporteRanking: fixes UX estados vacíos, validación viaje y alineación visual
 - **Archivos:** `Views/Reportes/ReporteRanking.cshtml`
 - **Qué se implementó:** Fix 1 — sin resultados: solo `#dashboardEmpty`, `render([])` resetea KPIs; Fix 2 — validación cliente si modo viaje sin `viajeId`; Fix 3 — `btn-modern` en Consultar, `aria-label` en modo filtro, icono Pasajeros con acento fucsia.

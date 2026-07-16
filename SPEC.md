@@ -3,6 +3,11 @@
 ## Features completadas
 (El agente completa esta sección a medida que avanza)
 
+- [x] **UX FacturaListByViajeID: Pagado, Saldo y columnas**
+  Listado por viaje: columnas Pagado/Saldo vía `fn_MAT_SaldoFactura` en `usp_MAT_Factura_Search`; sin columna Paquete cuando hay filtro por viaje; Viaje enfatizado; cabecera y grilla más compactas. Beneficia también `Factura/Index` (mismas columnas de montos).
+  Archivos: `usp_MAT_Factura_Search.sql`, `FacturaModel.cs`, `FacturaController.cs`, `FacturaResultSearch.cshtml`, `FacturaListByViajeID.cshtml`.
+  Criterio de éxito: grilla muestra Monto/Pagado/Saldo; Paquete oculto en listado por viaje; MSBuild limpio. **Acción humana:** publicar SP en BD.
+
 - [x] Setup inicial del proyecto — estructura de solución, CLAUDE.md, SPEC.md, PROGRESS.md
 - [x] Admin — eliminar usuario (`UsuarioEliminar`, confirmación BS5, restricciones auto-eliminación y último administrador)
 - [x] Admin — exportar resumen de pagos por viaje a Excel (EPPlus, `ResumenPagosExcel`)
@@ -30,6 +35,14 @@
 ## Features pendientes
 
 ### P1 — Crítico / Deuda técnica
+
+- [x] **BUG [P1]: Cambio de butaca pierde badge H / estado hotel**
+  En `/Reserva/Index` (y DistribucionCoche), las butacas con reserva de habitación muestran la letra **H** (`EstadoPasaje` 6/8/9 → clases `reservahotel` / `reservapasajehotel` / `prereservahotel`). Al cambiar de butaca un pasajero, ese estado compuesto con hotel se pierde en la butaca nueva; solo debería cambiar el número de butaca / vínculo a `ButacaID`.
+  **Causa:** en `usp_MAT_Reserva_CambioButacas`, `usp_MAT_Reserva_ActualizarEstados` corre **antes** de repuntar `ReservaHabitacion.PasajeID` al pasaje nuevo (y el UPDATE de habitación está **después del COMMIT**). Para factura pagada, el JOIN hotel falla → estado 4 sin H.
+  **Fix previsto:** mover el `UPDATE ReservaHabitacion` **antes** de `ActualizarEstados`, dentro de la misma transacción; script de despliegue en `database/` con paridad `MAT.DB`. No tocar UI/CSS (el overlay H es correcto).
+  Archivos: `MAT.DB/dbo/Stored Procedures/usp_MAT_Reserva_CambioButacas.sql`, script nuevo en `database/`, flujo UI ya existente (`ConfirmarCambioButaca` → `ReservaMethod.CambioButacas`).
+  Criterio de éxito: pasajero con hotel (6/8/9) que cambia de butaca conserva H y `ReservaHabitacion` en el pasaje nuevo; butaca origen libre sin hotel; Index/DistribucionCoche coherentes; MSBuild limpio; SP publicable en cada entorno.
+  **Implementación 2026-07-15:** `UPDATE ReservaHabitacion` dentro de la transacción y **antes** de `usp_MAT_Reserva_ActualizarEstados`. Script: `database/2026-07-15_CambioButacas_PreserveHotel.sql` (publicar en cada entorno).
 
 - [x] **BUG: Factura de compra no editable tras carga**
   Una vez que el usuario carga una factura de compra, ya no puede editarla. El sistema debe permitir editar facturas de compra que fueron creadas con errores o que necesitan actualización de datos.
@@ -76,6 +89,9 @@
   Criterio de éxito: `Shared/Error.cshtml` sin bloque `<style>`; estilos cargados desde archivo CSS dedicado; apariencia y comportamiento sin regresiones; compilación `MAT.MVC` en Debug sin errores.
 
 ### P2 — Mejoras de producto
+
+- [x] **UX FacturaListByViajeID: Pagado, Saldo y densidad de columnas** *(2026-07-15)*
+  Ver Features completadas. SP `usp_MAT_Factura_Search` + partial `FacturaResultSearch` + shell por viaje.
 
 - [x] **Admin: Migrar ErrorLog.cshtml y Logs.cshtml a Bootstrap 5**
   Ambas vistas usan Bootstrap 2 (`glyphicon`, `btn-default`, `btn-xs`, `form-inline`, `table-condensed`). Son las únicas vistas del panel Admin que quedaron sin migrar. Reemplazar con Bootstrap Icons y clases BS5. No cambiar la lógica JS de carga/filtrado.
@@ -1059,6 +1075,10 @@
   Archivos: SP o reutilizar `usp_MAT_Reserva_GetPasajeroMenor`, partial, CSS.
   Criterio de éxito: Menores identificables en el mapa sin confundirse con estado de butaca.
   **Implementación 2026-07-07:** `EsMenor`/`EsTutor`/`TutorNombre`/`TutorButacaNro` en SP y modelo; clase `.Menor` en partial; leyenda; toggle SVG vínculos tutor↔menor; fallback AJAX tutores si SP viejo.
+
+- [x] **BUG [P1]: Cambio de butaca pierde badge H / estado hotel** *(ver también P1 crítico al inicio de Features pendientes)*
+  Tras `ConfirmarCambioButaca` / `usp_MAT_Reserva_CambioButacas`, el badge **H** y `EstadoPasaje` hotel (6/8/9) no se preservan en la butaca destino. Causa: `ActualizarEstados` antes de mover `ReservaHabitacion.PasajeID`. Fix: reordenar UPDATE habitación dentro de la transacción, antes de recalcular estados.
+  **Implementación 2026-07-15:** SP + `database/2026-07-15_CambioButacas_PreserveHotel.sql`.
 
 ---
 

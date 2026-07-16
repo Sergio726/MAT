@@ -1,28 +1,48 @@
+@{
+    bool hidePaquete = ViewBag.HidePaqueteColumn == true;
+}
 <style>
     /* Modern DataTable Styles for Facturas */
     #tblFacturas.dataTable {
         width: 100% !important;
         border-collapse: collapse;
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
     }
     #tblFacturas thead th {
         background: #f8f9fa !important;
-        padding: 0.75rem 1rem !important;
+        padding: 0.5rem 0.625rem !important;
         text-align: left;
         font-weight: 600;
         color: #374151;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.04em;
         border-bottom: 2px solid #e5e7eb !important;
         border-top: none !important;
+        white-space: nowrap;
+    }
+    #tblFacturas thead th.col-money {
+        text-align: right;
     }
     #tblFacturas tbody td {
-        padding: 0.875rem 1rem !important;
+        padding: 0.5rem 0.625rem !important;
         border-bottom: 1px solid #f3f4f6 !important;
         color: #1f2937;
         background: white !important;
         vertical-align: middle;
+    }
+    #tblFacturas tbody td.col-money {
+        text-align: right;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+    }
+    #tblFacturas tbody td.col-viaje {
+        font-weight: 600;
+        color: #111827;
+    }
+    #tblFacturas tbody td.col-paquete {
+        color: #6b7280;
+        font-size: 0.75rem;
     }
     #tblFacturas tbody tr:hover td {
         background: #f9fafb !important;
@@ -40,26 +60,26 @@
     }
     #tblFacturas tbody tr.shown + tr td {
         background: #fff5f5 !important;
-        padding: 1rem 1.5rem !important;
+        padding: 0.75rem 1rem !important;
     }
     /* Details control (expand button) */
     #tblFacturas td.details-control {
         cursor: pointer;
         text-align: center;
-        width: 40px !important;
+        width: 36px !important;
     }
     #tblFacturas td.details-control::before {
         content: '';
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         background: #dcfce7;
         color: #15803d;
         border-radius: 50%;
         font-family: 'bootstrap-icons';
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
     #tblFacturas td.details-control::before {
         content: '\F64D';
@@ -74,8 +94,8 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
         background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
         color: white !important;
         border-radius: 0.375rem;
@@ -88,16 +108,17 @@
         color: white !important;
     }
     .btn-ver-factura i {
-        font-size: 0.875rem;
+        font-size: 0.8rem;
     }
     /* Status badges */
     .estado-badge {
         display: inline-flex;
         align-items: center;
-        padding: 0.25rem 0.625rem;
+        padding: 0.2rem 0.5rem;
         border-radius: 9999px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 500;
+        white-space: nowrap;
     }
     .estado-prereserva {
         background: #fef3c7;
@@ -111,17 +132,21 @@
         background: #fee2e2;
         color: #dc2626;
     }
+    .saldo-pendiente {
+        color: #dc2626;
+        font-weight: 600;
+    }
     /* DataTable controls */
     .dataTables_wrapper .dataTables_length,
     .dataTables_wrapper .dataTables_filter {
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
     }
     .dataTables_wrapper .dataTables_length select,
     .dataTables_wrapper .dataTables_filter input {
-        padding: 0.5rem 0.75rem;
+        padding: 0.375rem 0.625rem;
         border: 1px solid #d1d5db;
         border-radius: 0.375rem;
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
     }
     .dataTables_wrapper .dataTables_filter input:focus {
         outline: none;
@@ -130,20 +155,20 @@
     }
     .dataTables_wrapper .dataTables_info {
         color: #6b7280;
-        font-size: 0.875rem;
-        padding-top: 1rem;
+        font-size: 0.8125rem;
+        padding-top: 0.75rem;
     }
     .dataTables_wrapper .dataTables_paginate {
-        padding-top: 1rem;
+        padding-top: 0.75rem;
     }
     .dataTables_wrapper .dataTables_paginate .paginate_button {
-        padding: 0.375rem 0.75rem;
-        margin: 0 0.125rem;
+        padding: 0.3rem 0.6rem;
+        margin: 0 0.1rem;
         border-radius: 0.375rem;
         border: 1px solid #e5e7eb !important;
         background: white !important;
         color: #374151 !important;
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
     }
     .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
         background: #f3f4f6 !important;
@@ -214,57 +239,93 @@ else
         var dataSet = @Html.Raw(ViewBag.sbDataSetJson ?? "[]");
         var jTables = eval(dataSet);
         var jt = jTables;
+        var hidePaquete = @(hidePaquete ? "true" : "false");
 
-        var table = $("#tblFacturas").DataTable({
-            "aaData": jt,
-            "columns": [
-        	{ "data": "NroFactura" },
-                {
-                    "data": "Fecha",
-                    "mRender": function (data, type, row) {
-                        const date = new Date(row.Fecha);
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        const hours = String(date.getHours()).padStart(2, '0');
-                        const minutes = String(date.getMinutes()).padStart(2, '0');
-                        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`
-                        return formattedDate;
-                    }
-                },
-            { "data": "ClienteFullName"},
-            { "data": "Monto",
-            "mRender": function (data, type, row) {
-                var numberFormat = formatNumberMoney(row.Monto);
-                    return numberFormat;
+        var columns = [
+            { "data": "NroFactura" },
+            {
+                "data": "Fecha",
+                "mRender": function (data, type, row) {
+                    const date = new Date(row.Fecha);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const hours = String(date.getHours()).padStart(2, '0');
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
                 }
             },
-        	{ "data": "EstadoDescripcion",
-              "mRender": function (data, type, row) {
-                  var estado = row.EstadoDescripcion || '';
-                  var badgeClass = 'estado-pendiente';
-                  if (estado.toLowerCase().includes('pagado')) {
-                      badgeClass = 'estado-pagado';
-                  } else if (estado.toLowerCase().includes('pre') || estado.toLowerCase().includes('reserva')) {
-                      badgeClass = 'estado-prereserva';
-                  }
-                  return '<span class="estado-badge ' + badgeClass + '">' + estado + '</span>';
-              }
+            { "data": "ClienteFullName" },
+            {
+                "data": "Monto",
+                "className": "col-money",
+                "mRender": function (data, type, row) {
+                    return formatNumberMoney(row.Monto);
+                }
             },
-            { "data": "PaqueteDescripcion"},
-            { "data": "ViajeDescripcion" },
-            { "data": "FacturaID",
-        	    "mRender": function (data, type, row) {
-        	        return '<a href="javascript:void(0)" class="btn-ver-factura btn-detallefactura" data-facturaid="' + row.FacturaID + '" title="Ver Factura"><i class="bi bi-eye"></i></a>';
-        	    }
-        	},
+            {
+                "data": "MontoPagado",
+                "className": "col-money",
+                "mRender": function (data, type, row) {
+                    return formatNumberMoney(row.MontoPagado);
+                }
+            },
+            {
+                "data": "Saldo",
+                "className": "col-money",
+                "mRender": function (data, type, row) {
+                    var formatted = formatNumberMoney(row.Saldo);
+                    if (row.Saldo > 0) {
+                        return '<span class="saldo-pendiente">' + formatted + '</span>';
+                    }
+                    return formatted;
+                }
+            },
+            {
+                "data": "EstadoDescripcion",
+                "mRender": function (data, type, row) {
+                    var estado = row.EstadoDescripcion || '';
+                    var badgeClass = 'estado-pendiente';
+                    if (estado.toLowerCase().includes('pagado')) {
+                        badgeClass = 'estado-pagado';
+                    } else if (estado.toLowerCase().includes('pre') || estado.toLowerCase().includes('reserva')) {
+                        badgeClass = 'estado-prereserva';
+                    }
+                    return '<span class="estado-badge ' + badgeClass + '">' + estado + '</span>';
+                }
+            }
+        ];
+
+        if (!hidePaquete) {
+            columns.push({
+                "data": "PaqueteDescripcion",
+                "className": "col-paquete"
+            });
+        }
+
+        columns.push(
+            {
+                "data": "ViajeDescripcion",
+                "className": "col-viaje"
+            },
+            {
+                "data": "FacturaID",
+                "orderable": false,
+                "mRender": function (data, type, row) {
+                    return '<a href="javascript:void(0)" class="btn-ver-factura btn-detallefactura" data-facturaid="' + row.FacturaID + '" title="Ver Factura"><i class="bi bi-eye"></i></a>';
+                }
+            },
             {
                 "class": "details-control",
                 "orderable": false,
                 "data": null,
                 "defaultContent": ""
             }
-            ],
+        );
+
+        var table = $("#tblFacturas").DataTable({
+            "aaData": jt,
+            "columns": columns,
             "bAutoWidth": false,
             "pageLength": 25,
             "language": {
@@ -322,21 +383,28 @@ else
     }
 </script>
 
-<table class="display" id="tblFacturas">
-    <thead>
-        <tr>
-            <th>Nro Factura</th>
-            <th>Fecha</th>
-            <th>Titular</th>
-            <th>Monto</th>
-            <th>Estado</th>
-            <th>Paquete</th>
-            <th>Viaje</th>
-            <th style="width:50px;"></th>
-            <th style="width:40px;"></th>
-        </tr>
-    </thead>
-</table>
+<div class="table-responsive">
+    <table class="display" id="tblFacturas" style="width:100%">
+        <thead>
+            <tr>
+                <th>Nro Factura</th>
+                <th>Fecha</th>
+                <th>Titular</th>
+                <th class="col-money">Monto</th>
+                <th class="col-money">Pagado</th>
+                <th class="col-money">Saldo</th>
+                <th>Estado</th>
+                @if (!hidePaquete)
+                {
+                    <th>Paquete</th>
+                }
+                <th>Viaje</th>
+                <th style="width:40px;"></th>
+                <th style="width:36px;"></th>
+            </tr>
+        </thead>
+    </table>
+</div>
 
 <div id="divMoreDetails" style="display:none;"></div>
 }

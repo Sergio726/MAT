@@ -1,4 +1,7 @@
-﻿CREATE PROCEDURE [dbo].[usp_MAT_Reserva_CambioButacas](@AdicionalesIDs varchar(1000),@OldPasaje uniqueidentifier, @NewPasaje uniqueidentifier)
+-- Fix: preservar ReservaHabitacion / badge H al cambiar butaca.
+-- Publicar en cada entorno antes de validar en Reserva/Index o DistribucionCoche.
+
+CREATE OR ALTER PROCEDURE [dbo].[usp_MAT_Reserva_CambioButacas](@AdicionalesIDs varchar(1000),@OldPasaje uniqueidentifier, @NewPasaje uniqueidentifier)
 AS
 /*-- =============================================
   -- Author:    Sebastian Garcia
@@ -176,3 +179,4 @@ begin
 					RAISERROR (@errmsg,16,@errState); 
 	END CATCH
 end
+GO

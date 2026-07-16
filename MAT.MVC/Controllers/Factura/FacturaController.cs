@@ -56,6 +56,7 @@ namespace MAT.MVC.Controllers.Factura
 
                 var jsonPatientList = JsonConvert.SerializeObject(LFactura);
                 ViewBag.sbDataSetJson = jsonPatientList.ToString();
+                ViewBag.HidePaqueteColumn = !string.IsNullOrEmpty(sViajeID);
 
                 return PartialView();
             }
@@ -63,6 +64,7 @@ namespace MAT.MVC.Controllers.Factura
             {
                 ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "FacturaController.FacturaResultSearch");
                 ViewBag.sbDataSetJson = "[]";
+                ViewBag.HidePaqueteColumn = !string.IsNullOrEmpty(sViajeID);
                 return PartialView();
             }
         }

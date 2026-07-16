@@ -38,6 +38,7 @@ namespace MAT.MVC.Models
         public Guid FacturaID { get; set; }
         public string NroFactura { get; set; }
         public double Monto { get; set; }
+        public double MontoPagado { get; set; }
         public double Saldo { get; set; }
         public int MonedaTipo { get; set; }
         public DateTime Fecha { get; set; }
@@ -663,6 +664,12 @@ namespace MAT.MVC.Models
 
                 var montoVal = dr["Monto"];
                 row.Monto = (montoVal != null && montoVal != DBNull.Value) ? Convert.ToDouble(montoVal) : 0;
+
+                var montoPagadoVal = dr["MontoPagado"];
+                row.MontoPagado = (montoPagadoVal != null && montoPagadoVal != DBNull.Value) ? Convert.ToDouble(montoPagadoVal) : 0;
+
+                var saldoVal = dr["Saldo"];
+                row.Saldo = (saldoVal != null && saldoVal != DBNull.Value) ? Convert.ToDouble(saldoVal) : 0;
 
                 var fechaVal = dr["FechaFactura"];
                 row.Fecha = (fechaVal != null && fechaVal != DBNull.Value) ? Convert.ToDateTime(fechaVal) : DateTime.MinValue;

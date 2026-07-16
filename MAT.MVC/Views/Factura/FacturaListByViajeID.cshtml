@@ -3,7 +3,41 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="modern-page-container">
+<style>
+    .factura-viaje-shell .modern-page-header {
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+    .factura-viaje-shell .modern-page-title {
+        margin-bottom: 0.35rem;
+        font-size: 1.25rem;
+    }
+    .factura-viaje-shell .modern-page-subtitle {
+        font-weight: 400;
+        font-size: 0.95rem;
+        color: #6b7280;
+    }
+    .factura-viaje-shell .modern-page-viaje-info {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1.25rem;
+        margin-top: 0;
+    }
+    .factura-viaje-shell .modern-page-viaje-name {
+        font-weight: 600;
+        color: #111827;
+    }
+    .factura-viaje-results {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 160px;
+    }
+</style>
+
+<div class="modern-page-container factura-viaje-shell">
     <div class="modern-page-header">
         <h2 class="modern-page-title">
             <i class="bi bi-receipt"></i>
@@ -41,10 +75,12 @@
         }
     </div>
 
-    <div id="divResultSearch">
-        <div class="modern-loading-container">
-            <div class="modern-loading-spinner"></div>
-            <span class="modern-loading-text">Cargando facturas...</span>
+    <div class="factura-viaje-results">
+        <div id="divResultSearch">
+            <div class="modern-loading-container">
+                <div class="modern-loading-spinner"></div>
+                <span class="modern-loading-text">Cargando facturas...</span>
+            </div>
         </div>
     </div>
 </div>
