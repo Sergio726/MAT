@@ -1,74 +1,144 @@
 @if (ViewBag.Error != null)
 {
-    <script type="text/javascript">
-        console.log("@ViewBag.Error");
-    </script>
+    <div class="admin-inline-error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>@ViewBag.Error</span>
+    </div>
     return;
 }
 
+@{
+    var cantidadPagos = ViewBag.CantidadPagos != null ? (int)ViewBag.CantidadPagos : 0;
+    var totalPagos = ViewBag.TotalPagos != null ? (decimal)ViewBag.TotalPagos : 0m;
+    var promedioPagos = ViewBag.PromedioPagos != null ? (decimal)ViewBag.PromedioPagos : 0m;
+    var viajeDescripcion = ViewBag.ViajeDescripcion as string ?? string.Empty;
+    var viajeIdResumen = ViewBag.ViajeIdResumen != null ? (Guid)ViewBag.ViajeIdResumen : Guid.Empty;
+}
+
 <div class="grid-resumen-pagos-container">
-    @if (ViewBag.ViajeIdResumen != null)
+    <div class="resumen-pagos-context">
+        <div class="resumen-pagos-context__info">
+            <span class="resumen-pagos-context__icon" aria-hidden="true"><i class="bi bi-bus-front"></i></span>
+            <div>
+                <p class="resumen-pagos-context__label">Viaje seleccionado</p>
+                <p class="resumen-pagos-context__title">@Html.Encode(viajeDescripcion)</p>
+            </div>
+        </div>
+        <div class="resumen-pagos-context__actions">
+            @if (viajeIdResumen != Guid.Empty)
+            {
+                <a class="btn-modern btn-modern-primary btn-sm"
+                   href="@Url.Action("ResumenPagosExcel", "Admin", new { ViajeID = viajeIdResumen })"
+                   target="_blank" rel="noopener">
+                    <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+                </a>
+            }
+            <button type="button" class="btn-modern btn-modern-secondary btn-sm" onclick="window.MatResumenPagos && window.MatResumenPagos.clearViaje();">
+                <i class="bi bi-x-circle"></i> Limpiar viaje
+            </button>
+        </div>
+    </div>
+
+    <div class="resumen-pagos-kpis">
+        <div class="resumen-pagos-kpi">
+            <span class="resumen-pagos-kpi__label">Cantidad de pagos</span>
+            <span class="resumen-pagos-kpi__value">@cantidadPagos</span>
+        </div>
+        <div class="resumen-pagos-kpi resumen-pagos-kpi--highlight">
+            <span class="resumen-pagos-kpi__label">Monto total</span>
+            <span class="resumen-pagos-kpi__value">@string.Format("{0:C}", totalPagos)</span>
+        </div>
+        <div class="resumen-pagos-kpi">
+            <span class="resumen-pagos-kpi__label">Promedio</span>
+            <span class="resumen-pagos-kpi__value">@string.Format("{0:C}", promedioPagos)</span>
+        </div>
+    </div>
+
+    @if (cantidadPagos == 0)
     {
-        var viajeIdResumen = (Guid)ViewBag.ViajeIdResumen;
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-            <a class="btn-modern btn-modern-primary btn-sm"
-               href="@Url.Action("ResumenPagosExcel", "Admin", new { ViajeID = viajeIdResumen })"
-               target="_blank" rel="noopener">
-                <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
-            </a>
+        <div class="resumen-pagos-empty resumen-pagos-empty--compact">
+            <div class="resumen-pagos-empty__figure">
+                <i class="bi bi-inbox" aria-hidden="true"></i>
+            </div>
+            <h2>Sin pagos registrados</h2>
+            <p>Este viaje no tiene pagos registrados.</p>
         </div>
     }
-    <div class="table-container">
-        <table id="tblPagosViaje" class="display modern-table">
-            <thead>
-                <tr>
-                    <th>Cliente</th>
-                    <th>Fecha</th>
-                    <th>Tipo de Pago</th>
-                    <th>Nro Transacción</th>
-                    <th>Monto</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <th style="text-align:left;">Total</th>
-                    <th colspan="3"></th>
-                    <th class="total-value">@string.Format("{0:C}", ViewBag.TotalPagos)</th>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-</div>
+    else
+    {
+        <div class="table-responsive">
+            <div class="table-container">
+                <table id="tblPagosViaje" class="display modern-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Fecha</th>
+                            <th>Tipo de Pago</th>
+                            <th>Nro Transacción</th>
+                            <th>Monto</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th style="text-align:left;">Total</th>
+                            <th colspan="3"></th>
+                            <th class="total-value text-end">@string.Format("{0:C}", totalPagos)</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        var dataSet = @Html.Raw(ViewBag.sbDataSetJson);
-        var jTables = eval(dataSet);
-        var jt = jTables;
-
-        $("#tblPagosViaje").DataTable({
-            "aaData": jt,
-            "columns": [
-                { "data": "Cliente" },
-                { "data": "sFechaPago" },
-                {
-                    "data": "TipoPagoDescripcion",
-                    "className": "dt-center"
-                },
-                { "data": "TransaccionID" },
-                {
-                    "data": "Monto",
-                    "mRender": function (data, type, row) {
-                        return "<span>$ </span>" + data;
-                    },
-                    "className": "dt-left"
+        <script type="text/javascript">
+            (function () {
+                if (typeof registerFormatNumber === "function") {
+                    registerFormatNumber();
                 }
-            ],
-            "bAutoWidth": false,
-            "pageLength": 25,
-            "language": {
-                "url": "/Scripts/dataTable/i18n/Spanish.json"
-            }
-        });
-    });
-</script>
+
+                var rows = @Html.Raw(ViewBag.sbDataSetJson ?? "[]");
+                var $tbl = $("#tblPagosViaje");
+
+                if (!$tbl.length || !$.fn.dataTable) {
+                    return;
+                }
+
+                if ($.fn.dataTable.isDataTable($tbl)) {
+                    $tbl.DataTable().destroy();
+                }
+
+                $tbl.DataTable({
+                    aaData: rows,
+                    columns: [
+                        { data: "Cliente" },
+                        { data: "sFechaPago" },
+                        {
+                            data: "TipoPagoDescripcion",
+                            className: "dt-center"
+                        },
+                        { data: "TransaccionID" },
+                        {
+                            data: "Monto",
+                            className: "text-end",
+                            mRender: function (data, type) {
+                                if (type === "display" || type === "filter") {
+                                    if (typeof formatNumberMoney === "function" && typeof numeral !== "undefined") {
+                                        return formatNumberMoney(data);
+                                    }
+                                    return data;
+                                }
+                                return data;
+                            }
+                        }
+                    ],
+                    bAutoWidth: false,
+                    pageLength: 25,
+                    order: [[1, "desc"]],
+                    dom: '<"row mb-2"<"col-sm-6"l><"col-sm-6"f>>rtip',
+                    language: {
+                        url: "/Scripts/dataTable/i18n/Spanish.json"
+                    }
+                });
+            })();
+        </script>
+    }
+</div>

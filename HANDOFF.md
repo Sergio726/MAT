@@ -1,86 +1,19 @@
-# HANDOFF.md — Protocolo de continuidad entre agentes
+# HANDOFF.md — Continuidad entre agentes
 
-Este archivo explica cómo cualquier agente (Claude Code, Cursor, otro)
-debe retomar el trabajo en este proyecto.
+**Punto de entrada actualizado:** [`docs/HANDOFF.md`](docs/HANDOFF.md)
 
----
+| Documento | Rol |
+|-----------|-----|
+| [`docs/HANDOFF.md`](docs/HANDOFF.md) | Relevo, roles, forma de trabajo |
+| [`docs/PENDIENTES.md`](docs/PENDIENTES.md) | **Fuente de verdad** de tareas abiertas |
+| [`docs/DECISIONES_ABIERTAS.md`](docs/DECISIONES_ABIERTAS.md) | Decisiones de negocio pendientes |
+| [`CLAUDE.md`](CLAUDE.md) | Stack y convenciones |
+| [`PROGRESS.md`](PROGRESS.md) | Bitácora |
+| [`SPEC.md`](SPEC.md) | Histórico de features (no checklist vivo) |
 
-## Archivos que definen el estado del proyecto
+## Prompt corto al arrancar
 
-| Archivo | Propósito |
-|---------|-----------|
-| CLAUDE.md | Stack, arquitectura, convenciones y modo de trabajo autónomo |
-| SPEC.md | Fuente de verdad de qué construir. [x] = hecho, [ ] = pendiente |
-| PROGRESS.md | Bitácora cronológica de lo que se fue haciendo |
-| HANDOFF.md | Este archivo — protocolo de continuidad |
-
----
-
-## Prompt de handoff (pegarlo al arrancar una sesión nueva)
-
-Antes de escribir cualquier código, leé en este orden:
-1. CLAUDE.md → reglas del proyecto, stack, convenciones, modo de trabajo
-2. PROGRESS.md → qué se hizo, qué problemas hubo, estado actual
-3. SPEC.md → buscá el primer task con [ ] — ese es tu objetivo
-
-Tu trabajo es continuar desde donde quedó el agente anterior.
-No rehagas lo que ya está marcado [x] en SPEC.md.
-No cambies arquitectura sin consultarme.
-
-Antes de arrancar, confirmame:
-- Cuál es el task que vas a encarar
-- Qué archivos vas a tocar
-- Si hay algo ambiguo en el SPEC que necesites aclarar
-
-Después arrancá autónomamente siguiendo el flujo de CLAUDE.md.
-
----
-
-## Prompt para agregar un bug urgente
-
-Antes de continuar con el siguiente task del SPEC.md,
-hay una tarea urgente:
-
-BUG: [describí el bug en una línea]
-Dónde: [archivo o pantalla donde aparece]
-Cómo reproducirlo: [pasos o condición]
-Prioridad: urgente — resolver antes de continuar con el SPEC
-
-Al terminar:
-- Documentá el fix en PROGRESS.md
-- Volvé al orden normal del SPEC.md
-
----
-
-## Prompt para agregar una tarea nueva al SPEC
-
-Agregá este task al SPEC.md en la sección P1/P2/P3 según corresponda,
-sin modificar los tasks existentes:
-
-- [ ] [descripción del task nuevo]
-  [criterio de éxito]
-
-No lo encarés todavía, seguí con el orden actual del SPEC.
-
----
-
-## Reglas de handoff
-
-- Antes de cerrar una sesión, dejar PROGRESS.md actualizado
-- Nunca cerrar con un task a medias — o se termina o se documenta dónde quedó
-- Si un task quedó bloqueado: estado ⚠️ bloqueado + motivo en PROGRESS.md
-- El siguiente agente arranca siempre desde el primer [ ] en SPEC.md
-
-### Épica reciente completada (2026-07-03)
-
-**Migración NetTiers F0–F7:** entidades de personas, clientes, vendedores, proveedores, pasajeros y cuenta corriente migradas a SPs + `*DataAccess` (ver `DOCUMENTACION/NETTIERS_MIGRACION_FASES.md` y PROGRESS.md). Siguiente épica sugerida: **NetTiers F8** (Planilla e historial). Deuda operativa: publicar SPs de F4–F7 en el entorno + smoke crítico y commit por fase (delegado a humano).
-
----
-
-## Relación entre herramientas
-
-| Herramienta | Cuándo usarla |
-|-------------|--------------|
-| Claude Code | Tasks complejos, multi-archivo, decisiones de arquitectura |
-| Cursor Agent | Tasks simples/medios cuando Claude Code no está disponible |
-| Ambos | Leen los mismos CLAUDE.md + SPEC.md + PROGRESS.md |
+1. Leé `docs/HANDOFF.md` y `docs/PENDIENTES.md`
+2. Tomá el primer `[ ]` que corresponda al equipo de código (o el que indique el humano)
+3. No rehagas ítems en “Ya hecho”
+4. Al cerrar: tildá `[x]` en `PENDIENTES.md` y registrá en `PROGRESS.md`

@@ -6,10 +6,10 @@ alwaysApply: true
 
 # Reglas de trabajo autónomo
 
-- Antes de escribir código, leer CLAUDE.md, SPEC.md y PROGRESS.md
-- Trabajar un task a la vez según el orden de SPEC.md
-- Al terminar cada task: marcar [x] en SPEC.md y actualizar PROGRESS.md
-- Verificar con npx tsc --noEmit antes de declarar un task terminado
+- Antes de escribir código, leer `docs/HANDOFF.md`, `docs/PENDIENTES.md`, `CLAUDE.md` y `PROGRESS.md`
+- Trabajar un task a la vez según el checklist en `docs/PENDIENTES.md`
+- Al terminar cada task: marcar [x] en `docs/PENDIENTES.md` y actualizar `PROGRESS.md`
+- Compilar con MSBuild (`MAT.MVC`) antes de declarar un task terminado
 - Si hay un error que no se resuelve en 2 intentos, pausar y reportar al humano
 - No agregar dependencias npm sin consultar al humano
 - No modificar tipos o interfaces globales sin consultar al humano

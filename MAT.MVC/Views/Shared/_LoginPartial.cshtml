@@ -1,14 +1,34 @@
+@using System.Web.Security
+@using MAT.MVC.Infrastructure
 @if (Request.IsAuthenticated)
 {
+    var userName = User.Identity.Name ?? "U";
+    var initials = userName.Length >= 2
+        ? userName.Substring(0, 2).ToUpper()
+        : userName.Substring(0, 1).ToUpper();
+    var isAdministrator = AdminAuthorizationHelper.IsAdministrator(ViewContext.HttpContext);
+    string roleLabel;
+    if (isAdministrator)
+    {
+        roleLabel = "Administrador";
+    }
+    else
+    {
+        string[] userRoles = { };
+        try
+        {
+            userRoles = Roles.GetRolesForUser(userName) ?? new string[] { };
+        }
+        catch
+        {
+            userRoles = new string[] { };
+        }
+        roleLabel = userRoles.Length > 0 ? userRoles[0] : "Usuario";
+    }
+
     <div class="user-menu-container">
         <div class="user-menu-trigger" data-bs-toggle="dropdown" aria-expanded="false">
             <div class="user-avatar">
-                @{
-                    var userName = User.Identity.Name ?? "U";
-                    var initials = userName.Length >= 2
-                        ? userName.Substring(0, 2).ToUpper()
-                        : userName.Substring(0, 1).ToUpper();
-                }
                 @initials
             </div>
             <span class="user-name">@User.Identity.Name</span>
@@ -19,10 +39,18 @@
                 <div class="dropdown-user-avatar">@initials</div>
                 <div class="dropdown-user-info">
                     <span class="dropdown-user-name">@User.Identity.Name</span>
-                    <span class="dropdown-user-role">Administrador</span>
+                    <span class="dropdown-user-role">@roleLabel</span>
                 </div>
             </div>
             <div class="dropdown-divider"></div>
+            @if (isAdministrator)
+            {
+                <a href="@Url.Action("Index", "Admin")" class="dropdown-item">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Ir al administrador</span>
+                </a>
+                <div class="dropdown-divider"></div>
+            }
             <a href="@Url.Action("LogOff", "Account")" class="dropdown-item dropdown-logout" id="logoutForm">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Cerrar sesion</span>

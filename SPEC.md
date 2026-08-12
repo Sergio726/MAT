@@ -1,5 +1,9 @@
 # SPEC.md — Proyecto MAT
 
+> **Checklist vivo de tareas abiertas:** [`docs/PENDIENTES.md`](docs/PENDIENTES.md)  
+> **Relevo:** [`docs/HANDOFF.md`](docs/HANDOFF.md)  
+> Este archivo queda como **histórico** de features (casi todo `[x]`). No agregar trabajo nuevo acá; agregarlo en `docs/PENDIENTES.md`.
+
 ## Features completadas
 (El agente completa esta sección a medida que avanza)
 

@@ -463,6 +463,55 @@
     color: #ef4444;
 }
 
+.factura-monto-input-wrap {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background: #fff;
+}
+
+.factura-monto-input-wrap:focus-within {
+    border-color: var(--primary-color, #e91e63);
+    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+.factura-monto-prefix {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    background: var(--bg-secondary, #f3f4f6);
+    color: var(--text-secondary, #6b7280);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-right: 1px solid var(--border-color, #e5e7eb);
+    white-space: nowrap;
+}
+
+.factura-monto-input-wrap input#nMonto {
+    flex: 1;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    min-width: 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.factura-field-hint {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary, #6b7280);
+}
+
+.factura-td-precio .currency-badge,
+.factura-tfoot-total-amount .currency-badge {
+    margin-left: 0.35rem;
+    vertical-align: middle;
+}
+
 .factura-dialog-actions {
     margin-top: 1rem;
     text-align: right;

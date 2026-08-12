@@ -1487,42 +1487,122 @@ namespace MAT.MVC.Controllers.PersonaCliente
 
         public JsonResult AddDescuentoRecargo(string sFacturaID, string sMonto, string sDetalle, string sDescuentoIncremento)
         {
-            string sResult = "";
-
             try
             {
-                if (sFacturaID != "" && sMonto != "" && sDetalle != "" && sDescuentoIncremento != "")
+                if (string.IsNullOrWhiteSpace(sFacturaID)
+                    || string.IsNullOrWhiteSpace(sMonto)
+                    || string.IsNullOrWhiteSpace(sDetalle)
+                    || string.IsNullOrWhiteSpace(sDescuentoIncremento))
                 {
-                    bool bIsDescuento = false;
-                    if (sDescuentoIncremento == "Descuento")
+                    return Json(new
                     {
-                        bIsDescuento = true;
-                    }
-                    SqlParameter[] dbParams = new SqlParameter[]
-                    {                    
-                        DBHelper.MakeParam("@FacturaID", SqlDbType.VarChar, 0, sFacturaID),
-                        DBHelper.MakeParam("@Detalle", SqlDbType.VarChar, 0, sDetalle),
-                        DBHelper.MakeParam("@Monto", SqlDbType.Money, 0, Convert.ToDouble(sMonto)),
-                        DBHelper.MakeParam("@IsDescuento", SqlDbType.Bit, 0, bIsDescuento),
-                    };
+                        success = false,
+                        Estado = "Validation",
+                        message = "Complete monto, detalle y tipo de ajuste."
+                    }, JsonRequestBehavior.AllowGet);
+                }
 
-                    DBHelper.ExecuteNonQuery("usp_MAT_DetalleFactura_AgregarDescuentoRecargo", dbParams);
+                Guid facturaId;
+                if (!Guid.TryParse(sFacturaID.Trim(), out facturaId) || facturaId == Guid.Empty)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        Estado = "Validation",
+                        message = "La factura indicada no es válida."
+                    }, JsonRequestBehavior.AllowGet);
+                }
 
-                    sResult = "Done.";
+                decimal monto;
+                if (!TryParseMoneyInput(sMonto, out monto) || monto <= 0m)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        Estado = "Validation",
+                        message = "El monto debe ser un número mayor a cero."
+                    }, JsonRequestBehavior.AllowGet);
+                }
 
+                var detalle = sDetalle.Trim();
+                if (detalle.Length == 0 || detalle.Length > 200)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        Estado = "Validation",
+                        message = "Ingrese un detalle válido (máximo 200 caracteres)."
+                    }, JsonRequestBehavior.AllowGet);
+                }
 
-                    }
+                bool isDescuento = string.Equals(sDescuentoIncremento.Trim(), "Descuento", StringComparison.OrdinalIgnoreCase);
+                if (!isDescuento && !string.Equals(sDescuentoIncremento.Trim(), "Incremento", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        Estado = "Validation",
+                        message = "El tipo de ajuste no es válido."
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                FacturaMetod.AgregarDescuento_Recargo(facturaId.ToString(), detalle, monto, isDescuento);
+
+                return Json(new
+                {
+                    success = true,
+                    Estado = "Done.",
+                    message = isDescuento ? "Descuento aplicado correctamente." : "Incremento aplicado correctamente."
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
-                sResult = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.EliminarReservaHotel");
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.AddDescuentoRecargo");
+                return Json(new
+                {
+                    success = false,
+                    Estado = "Error",
+                    message = msg
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        /// <summary>
+        /// Normaliza montos con formato AR (1.234,56) o invariante (1234.56).
+        /// </summary>
+        private static bool TryParseMoneyInput(string input, out decimal value)
+        {
+            value = 0m;
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            var s = input.Trim().Replace(" ", "");
+
+            // Prefijos de moneda antes de quitar "$" (U$D contiene el símbolo)
+            if (s.StartsWith("U$D", StringComparison.OrdinalIgnoreCase))
+                s = s.Substring(3);
+            else if (s.StartsWith("USD", StringComparison.OrdinalIgnoreCase))
+                s = s.Substring(3);
+
+            s = s.Replace("$", "").Trim();
+
+            if (s.Contains(",") && s.Contains("."))
+            {
+                if (s.LastIndexOf(',') > s.LastIndexOf('.'))
+                    s = s.Replace(".", "").Replace(",", ".");
+                else
+                    s = s.Replace(",", "");
+            }
+            else if (s.Contains(","))
+            {
+                s = s.Replace(",", ".");
             }
 
-
-            return Json(new
-            {
-                Estado = sResult
-            }, JsonRequestBehavior.AllowGet);
+            return decimal.TryParse(
+                s,
+                System.Globalization.NumberStyles.Number,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out value);
         }
 
         [Authorize]

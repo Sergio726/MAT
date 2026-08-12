@@ -569,6 +569,18 @@ body.admin-modern .btn-modern-primary:active {
   transform: translateY(1px);
 }
 
+body.admin-modern .btn-modern-secondary {
+  background: var(--admin-content-surface);
+  color: var(--admin-content-text);
+  border: 1px solid var(--admin-content-border);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+body.admin-modern .btn-modern-secondary:hover {
+  background: var(--bg-secondary);
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
 body.admin-modern .btn-modern:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(var(--admin-accent-rgb), 0.35);
@@ -1960,6 +1972,121 @@ body.admin-modern .resumen-pagos-loading {
 
 body.admin-modern .resumen-pagos-loading .modern-loading-spinner {
   margin-bottom: 1rem;
+}
+
+body.admin-modern .resumen-pagos-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(180deg, #fafbfd 0%, #fff 100%);
+  border: 1px solid #e8edf3;
+  border-radius: 12px;
+}
+
+body.admin-modern .resumen-pagos-context__info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+  flex: 1 1 16rem;
+}
+
+body.admin-modern .resumen-pagos-context__icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(var(--admin-accent-rgb), 0.08);
+  color: var(--admin-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.admin-modern .resumen-pagos-context__label {
+  margin: 0 0 0.15rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--admin-content-text-muted);
+}
+
+body.admin-modern .resumen-pagos-context__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--admin-content-text);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+body.admin-modern .resumen-pagos-context__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+body.admin-modern .resumen-pagos-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 767.98px) {
+  body.admin-modern .resumen-pagos-kpis {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.admin-modern .resumen-pagos-kpi {
+  background: var(--admin-content-surface);
+  border: 1px solid var(--admin-content-border);
+  border-radius: 12px;
+  padding: 0.875rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+body.admin-modern .resumen-pagos-kpi--highlight {
+  border-color: rgba(var(--admin-accent-rgb), 0.25);
+  background: rgba(var(--admin-accent-rgb), 0.04);
+}
+
+body.admin-modern .resumen-pagos-kpi__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--admin-content-text-muted);
+}
+
+body.admin-modern .resumen-pagos-kpi__value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--admin-content-text);
+  line-height: 1.2;
+}
+
+body.admin-modern .resumen-pagos-kpi--highlight .resumen-pagos-kpi__value {
+  color: var(--admin-accent);
+}
+
+body.admin-modern .resumen-pagos-empty--compact {
+  min-height: 180px;
+  padding: 1.5rem 1rem;
+}
+
+body.admin-modern .grid-resumen-pagos-container .text-end,
+body.admin-modern .grid-resumen-pagos-container #tblPagosViaje tbody td.text-end {
+  text-align: right !important;
 }
 
 /* ========== 4b. Resumen pagos por fecha (.resumen-fecha-*) ========== */

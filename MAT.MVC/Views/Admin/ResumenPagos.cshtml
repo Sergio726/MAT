@@ -53,45 +53,71 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        var dataSource = @Html.Raw(ViewBag.jDDViaje ?? "[]");
-        $('#DDViaje').magicsearch({
-            dataSource: dataSource,
-            fields: ['Descripcion'],
-            id: 'ViajeID',
-            format: '%Descripcion%',
-            dropdownBtn: true,
-            success: function(i, data) {
-                var ViajeID = data.ViajeID;
-                loagGridPagos(ViajeID);
-            }
-        });
-    });
+    (function () {
+        var initialGridHtml = $("#grid_pagos").html();
 
-    function loagGridPagos(ViajeID) {
-        $("#grid_pagos").html(
-            '<div class="resumen-pagos-loading">' +
-            '<div class="modern-loading-spinner" role="status" aria-label="Cargando"></div>' +
-            '<p class="modern-loading-text">Cargando pagos…</p>' +
-            '</div>'
-        );
+        function showLoading() {
+            $("#grid_pagos").html(
+                '<div class="resumen-pagos-loading">' +
+                '<div class="modern-loading-spinner" role="status" aria-label="Cargando"></div>' +
+                '<p class="modern-loading-text">Cargando pagos…</p>' +
+                '</div>'
+            );
+        }
 
-        $.ajax({
-            url: "/Admin/GridResumenPagos",
-            data: { ViajeID: ViajeID },
-            dataType: "html",
-            success: function (data) {
-                $("#grid_pagos").html(data);
+        function showLoadError() {
+            $("#grid_pagos").html(
+                '<div class="resumen-pagos-empty">' +
+                '<div class="resumen-pagos-empty__figure"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></div>' +
+                '<h2>No se pudieron cargar los datos</h2>' +
+                '<p>Intente de nuevo. Si el problema continúa, revise la consola o los registros del servidor.</p>' +
+                '</div>'
+            );
+        }
+
+        function clearViajeInput() {
+            var $input = $("#DDViaje");
+            $input.val("");
+            $input.trigger("input");
+        }
+
+        window.MatResumenPagos = {
+            loadGridPagos: function (viajeId, viajeDescripcion) {
+                showLoading();
+
+                $.ajax({
+                    url: "/Admin/GridResumenPagos",
+                    data: {
+                        ViajeID: viajeId,
+                        viajeDescripcion: viajeDescripcion || ""
+                    },
+                    dataType: "html",
+                    success: function (data) {
+                        $("#grid_pagos").html(data);
+                    },
+                    error: function () {
+                        showLoadError();
+                    }
+                });
             },
-            error: function() {
-                $("#grid_pagos").html(
-                    '<div class="resumen-pagos-empty">' +
-                    '<div class="resumen-pagos-empty__figure"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i></div>' +
-                    '<h2>No se pudieron cargar los datos</h2>' +
-                    '<p>Intente de nuevo. Si el problema continúa, revise la consola o los registros del servidor.</p>' +
-                    '</div>'
-                );
+            clearViaje: function () {
+                clearViajeInput();
+                $("#grid_pagos").html(initialGridHtml);
             }
+        };
+
+        $(document).ready(function () {
+            var dataSource = @Html.Raw(ViewBag.jDDViaje ?? "[]");
+            $("#DDViaje").magicsearch({
+                dataSource: dataSource,
+                fields: ["Descripcion"],
+                id: "ViajeID",
+                format: "%Descripcion%",
+                dropdownBtn: true,
+                success: function (i, data) {
+                    window.MatResumenPagos.loadGridPagos(data.ViajeID, data.Descripcion);
+                }
+            });
         });
-    }
+    })();
 </script>

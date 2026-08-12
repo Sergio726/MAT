@@ -4,6 +4,19 @@
 
 ---
 
+## Por dónde empezar
+
+1. **`docs/HANDOFF.md`** — estado, roles y forma de trabajo
+2. **`docs/PENDIENTES.md`** — checklist vivo (fuente de verdad de tareas abiertas)
+3. **`docs/DECISIONES_ABIERTAS.md`** — antes de schema/rentabilidad o decisiones frágiles
+4. **`DOCUMENTACION/GUIA_SISTEMA_MAT.md`** — guía técnica
+5. **`CLAUDE.md` / `AGENTS.md`** — stack y convenciones
+6. **`PROGRESS.md`** — bitácora; **`SPEC.md`** — histórico de features ya hechas
+
+Docs cerrados: `DOCUMENTACION/Archive/`.
+
+---
+
 ## Stack
 
 | Capa | Tecnología |
@@ -152,11 +165,11 @@ BEGIN
 ## Modo de trabajo autónomo
 
 ### Flujo por feature
-1. Leer el task activo en `SPEC.md` antes de escribir código
+1. Leer el task activo en `docs/PENDIENTES.md` (primer `[ ]` acordado) antes de escribir código
 2. Implementar solo lo que el task describe, sin scope creep
 3. Compilar con MSBuild al terminar cada task; corregir errores antes de continuar
 4. Si un error no se resuelve en 2 intentos, pausar y reportar
-5. Marcar el task como `[x]` en `SPEC.md` al completarlo
+5. Marcar el task como `[x]` en `docs/PENDIENTES.md` al completarlo
 6. Registrar en `PROGRESS.md`: fecha, archivos tocados, qué se hizo, problemas
 7. Pasar al siguiente task
 
@@ -184,8 +197,10 @@ Un task está terminado cuando:
 
 ## Gestión de archivos de trabajo
 
-- **`SPEC.md`** → fuente de verdad de qué construir. Solo modificar para marcar `[x]` en tasks completados o agregar tasks nuevos acordados con el humano.
-- **`PROGRESS.md`** → bitácora de lo que se fue haciendo. Actualizar al terminar cada task con este formato:
+- **`docs/PENDIENTES.md`** → fuente de verdad de tareas abiertas. Tildar `[x]`; no reescribir historial.
+- **`docs/HANDOFF.md`** → relevo y forma de trabajo.
+- **`SPEC.md`** → histórico de features completadas (referencia). No agregar tasks nuevos acá.
+- **`PROGRESS.md`** → bitácora. Actualizar al terminar cada task con este formato:
 
 ```
 ### [YYYY-MM-DD] — nombre del task
@@ -199,8 +214,9 @@ Un task está terminado cuando:
 
 ## Documentación interna
 
+- `docs/HANDOFF.md` — relevo y forma de trabajo
+- `docs/PENDIENTES.md` — checklist vivo de tareas
 - `DOCUMENTACION\GUIA_SISTEMA_MAT.md` — contexto técnico completo
 - `DOCUMENTACION\MAT_DB.md` — proyecto SSDT y flujo de esquema
-- `DOCUMENTACION\RESUMEN_EJECUTIVO_MAT2026.md` — módulo presupuesto y evolución
-- `DOCUMENTACION\VISTAS_PENDIENTES_ACTUALIZACION.md` — vistas pendientes de modernizar
-- `DOCUMENTACION\LIBRERIAS_OBSOLETAS_2026-01-04.md` — deuda JS/CSS
+- `DOCUMENTACION\Archive\` — planes y listados ya cerrados
+- `DOCUMENTACION\VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md` — investigación rentabilidad (abierta)

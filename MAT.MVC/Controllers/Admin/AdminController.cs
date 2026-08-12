@@ -690,14 +690,22 @@ namespace MAT.MVC.Controllers.Admin
             return View();
         }
 
-        public ActionResult GridResumenPagos(Guid ViajeID)
+        public ActionResult GridResumenPagos(Guid ViajeID, string viajeDescripcion)
         {
             List<PagoModel> _model = new List<PagoModel>();
             try
             {
                 _model = PagoMethod.GetPagosByViaje(ViajeID);
-                ViewBag.TotalPagos = _model.Sum(l => l.Monto);
+                var totalPagos = _model.Sum(l => l.Monto);
+                var cantidadPagos = _model.Count;
+
+                ViewBag.TotalPagos = totalPagos;
+                ViewBag.CantidadPagos = cantidadPagos;
+                ViewBag.PromedioPagos = cantidadPagos > 0 ? totalPagos / cantidadPagos : 0m;
                 ViewBag.ViajeIdResumen = ViajeID;
+                ViewBag.ViajeDescripcion = !string.IsNullOrWhiteSpace(viajeDescripcion)
+                    ? viajeDescripcion.Trim()
+                    : ViajeID.ToString();
 
                 var jsonPatientList = JsonConvert.SerializeObject(_model);
                 ViewBag.sbDataSetJson = jsonPatientList.ToString();

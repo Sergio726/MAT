@@ -1,19 +1,35 @@
 # Documentación del Proyecto MAT
 
-Esta carpeta contiene la documentación del proyecto.
+## Por dónde empezar
 
-## Archivos Disponibles
+1. **[`docs/HANDOFF.md`](../docs/HANDOFF.md)** — estado, roles y forma de trabajo
+2. **[`docs/PENDIENTES.md`](../docs/PENDIENTES.md)** — checklist vivo (fuente de verdad de tareas)
+3. **[`docs/DECISIONES_ABIERTAS.md`](../docs/DECISIONES_ABIERTAS.md)** — decisiones de negocio pendientes
+4. **[`GUIA_SISTEMA_MAT.md`](GUIA_SISTEMA_MAT.md)** — contexto técnico completo
+5. **[`CLAUDE.md`](../CLAUDE.md)** / **[`AGENTS.md`](../AGENTS.md)** — stack y convenciones
 
-- **MANUAL_USUARIO_ADMINISTRADOR.md** - Manual del rol Administrador (incluye onboarding y buscador del panel)
-- **MAT_DB.md** - Documentación del proyecto de base de datos MAT.DB (esquema SSDT, publicar, comparar)
-- **LIBRERIAS_OBSOLETAS_*.md** - Análisis de librerías JavaScript y CSS obsoletas
-- **TEST_FASE1_*.md** - Plan de pruebas para la Fase 1 de actualización
-- **RESUMEN_FASE1_*.md** - Resumen de implementación de la Fase 1
-- **RESUMEN_EJECUTIVO_MAT2026.md** - Resumen ejecutivo
-- **VISTAS_PENDIENTES_ACTUALIZACION.md** - Vistas pendientes de actualización
-- **RESERVA_INDEX_UX_MEJORAS.md** - Plan por fases UX/UI del header y contexto operativo en `Reserva/Index` (2026-06-30)
+## Documentos vivos (referencia)
 
-## Fechas en los Nombres
+| Archivo | Uso |
+|---------|-----|
+| `GUIA_SISTEMA_MAT.md` | Guía técnica del sistema |
+| `MAT_DB.md` | SSDT, publicar y comparar esquema |
+| `MANUAL_USUARIO_ADMINISTRADOR.md` | Manual del rol Administrador |
+| `TESTING.md` | Cómo correr tests |
+| `ESTANDAR_CSS_PROYECTO.md` | Estándar CSS |
+| `ESTILO_MODAL_CONFIRMACION.md` | Modales de confirmación |
+| `GUIA_IMPRESION_PDF.md` | Impresión / PDF |
+| `REPORTES_MAT_MVC_OPERACION.md` | Reportes operativos en MVC |
+| `NETTIERS_MIGRACION_FASES.md` | Histórico migración NetTiers (cerrada F12) |
+| `VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md` | Investigación rentabilidad (trabajo abierto) |
+| `RESERVA_INDEX_UX_MEJORAS.md` | UX Reserva/Index |
+| `DASHBOARD_UX_COMMAND_CENTER.md` | Ideas UX dashboard |
 
-Los archivos incluyen la fecha de última modificación en el formato YYYY-MM-DD para facilitar el seguimiento de versiones.
+## Archive
 
+Planes y listados **ya completados o supersedidos:** [`Archive/`](Archive/README.md).
+
+## Bitácora e histórico de features
+
+- [`PROGRESS.md`](../PROGRESS.md) — qué se hizo, día a día
+- [`SPEC.md`](../SPEC.md) — features históricas (casi todo `[x]`); **no** es el checklist vivo
