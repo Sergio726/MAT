@@ -2,6 +2,27 @@
 
 ---
 
+### [2026-09-30] — Auditoría de estado del proyecto (sin cambios de código)
+- **Archivos:** `PROGRESS.md`, `docs/PENDIENTES.md`
+- **Qué se verificó:** MSBuild `MAT.MVC` Debug OK (0 errores, 8 warnings menores); `tools/Run-Tests.ps1` OK (19 tests, verificación NetTiers sin fallos); paridad `database/` ↔ `MAT.DB` de los scripts de julio OK (el único SP "faltante" en SSDT es `usp_MAT_Viaje_CancelViaje`, que el script `2026-07-07_Viaje_DeleteViaje_Unified.sql` elimina a propósito); rama `MAT2026` limpia y sincronizada con `origin`.
+- **Hallazgos no documentados (registrados en `docs/PENDIENTES.md` → "Higiene de código"):** 10 `ex.Message` expuestos al usuario en controladores; `Web.config` trackeado con credenciales reales de `MAT_DEV` (y de producción comentadas); warnings CS0168/CS0105/CS1998 en `ReservaController`, `ViajeController`, `ViajeModel`; bitácora sin entrada para el commit del 2026-08-12.
+- **Estado:** ✅ completo (auditoría)
+
+---
+
+### [2026-08-12] — Admin ResumenPagos UX, Descuento/Recargo ARS/USD, enlace intranet ↔ Admin
+- **Archivos:** `Controllers/Admin/AdminController.cs`, `Controllers/PersonaCliente/PersonaClienteController.cs`, `Views/Admin/ResumenPagos.cshtml`, `Views/Admin/GridResumenPagos.cshtml`, `Views/PersonaCliente/DetalleFactura.cshtml`, `Views/Shared/_LoginPartial.cshtml`, `_Layout.cshtml`, `_LayoutAdmin.cshtml`, `Content/admin.modern.css`, `Content/factura-detalle.css`, `Properties/PublishProfiles/*.pubxml`, docs (`docs/HANDOFF.md`, `docs/PENDIENTES.md`, `docs/DECISIONES_ABIERTAS.md`, `CLAUDE.md`, `AGENTS.md`, `DOCUMENTACION/README.md`, movidos a `DOCUMENTACION/Archive/`).
+- **Qué se implementó:**
+  - **Admin ResumenPagos:** KPIs y contexto del viaje (`GridResumenPagos(Guid ViajeID, string viajeDescripcion)`), DataTable robusta, numeral en layout Admin, estilos en `admin.modern.css`.
+  - **Descuento/Recargo en factura:** `AddDescuentoRecargo` reescrito con validación servidor (Guid de factura, monto vía `TryParseMoneyInput` que acepta prefijos `$`/`USD`/`U$D`, tipo Descuento/Incremento), llamada a `FacturaMetod.AgregarDescuento_Recargo`, mensajes de éxito, `ErrorUtil` en catch. Vista `DetalleFactura` con labels/badge de moneda ARS/USD y validación cliente; sin conversión de moneda.
+  - **Enlace intranet ↔ Admin** en `_LoginPartial`: "Ir a la intranet" / "Ir al administrador" según rol.
+  - **Docs:** reestructuración a `docs/HANDOFF.md` + `docs/PENDIENTES.md` (fuente de verdad de tareas) + `docs/DECISIONES_ABIERTAS.md`; planes cerrados a `DOCUMENTACION/Archive/`.
+  - **Publish profiles** (`MAT.DEV.pubxml`, `FolderProfile.pubxml`) ajustados para deploy IIS.
+- **Verificación:** MSBuild `MAT.MVC` Debug OK. Smokes manuales pendientes (ver `docs/PENDIENTES.md`).
+- **Estado:** ✅ completo (código); entrada de bitácora agregada retroactivamente el 2026-09-30
+
+---
+
 ### [2026-07-15] — UX FacturaListByViajeID: Pagado, Saldo y columnas
 - **Archivos:** `MAT.DB/dbo/Stored Procedures/usp_MAT_Factura_Search.sql`, `MAT.MVC/Models/FacturaModel.cs`, `MAT.MVC/Controllers/Factura/FacturaController.cs`, `MAT.MVC/Views/Factura/FacturaResultSearch.cshtml`, `MAT.MVC/Views/Factura/FacturaListByViajeID.cshtml`, `SPEC.md`, `PROGRESS.md`
 - **Qué se implementó:** SP agrega `Saldo` (`fn_MAT_SaldoFactura`) y `MontoPagado` (Monto − Saldo) vía CROSS APPLY. DTO `FacturaStandard.MontoPagado` + mapeo en `FacturaSearch`. Grilla: columnas Pagado/Saldo (saldo > 0 en rojo), Paquete oculto si `sViajeID`, Viaje con más peso, densidad reducida, `table-responsive`. Shell por viaje: cabecera compacta + card de resultados. `HidePaqueteColumn` desde controller.

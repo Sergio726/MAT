@@ -8,7 +8,7 @@ Roles y forma de trabajo: [`HANDOFF.md`](HANDOFF.md).
 
 Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PROGRESS.md`](../PROGRESS.md).
 
-> **Estado en una línea:** Código reciente de Admin/ResumenPagos y Descuento-Recargo ARS/USD listo; falta publicar SPs en BD; backlog = rentabilidad viaje + resumen de pagos por viaje para vendedores (Factura) + Integration API + Excursion UX.
+> **Estado en una línea (2026-09-30):** Build y tests OK; falta publicar SPs en BD; backlog = rentabilidad viaje + resumen de pagos por viaje para vendedores (Factura) + Integration API + Excursion UX + higiene de código (ex.Message, Web.config, warnings). Bug en investigación: reserva de menores no vincula al viaje.
 
 ---
 
@@ -68,6 +68,12 @@ Detalle de criterios: sección correspondiente en `SPEC.md` (épica Integration 
 - [ ] **F1** — Propuesta de información (wireframe/copy)
 - [ ] **F2** — Implementación listado + SP enriquecido
 - [ ] **F3** — Alineación Create/Edit (opcional)
+
+### Higiene de código (auditoría 2026-09-30)
+
+- [ ] **`ex.Message` expuesto al usuario** (regla de `CLAUDE.md`): reemplazar por `ErrorUtil.LogAndGetPublicMessage` en `ExternalController.cs:28`, `FacturaFiscalController.cs:548/619/655`, `HabitacionController.cs:193`, `HomeController.cs:215/279`, `NuevaReservaController.cs:195`, `PersonaClienteController.cs:1197`, `PresupuestoController.cs:989`. Extender `tools/Verify-NetTiersMigration.ps1` para que detecte `Json(... ex.Message ...)` y `MsgError = e.Message`.
+- [ ] **`Web.config` trackeado con credenciales reales** (`MAT_DEV.*` activas, producción comentadas, mismo servidor). Decidir: mover a transforms `Web.Debug/Release.config` o a archivo excluido del repo + rotar la contraseña. **Área crítica: confirmar antes de tocar.**
+- [ ] **Warnings de build:** `ReservaController.cs:317/433` y `ViajeModel.cs:293` (CS0168 `ex` sin usar), `ViajeController.cs:18-22` (CS0105 usings duplicados), `ReservaController.cs:36` (CS1998 `async` sin `await`).
 
 ### Backlog UX Admin (opcional)
 
