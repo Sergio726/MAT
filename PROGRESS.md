@@ -2,6 +2,23 @@
 
 ---
 
+### [2026-09-30] — Registro BUG P1: reserva con menores bloqueada / vinculación silenciosa (diagnóstico, sin fix)
+- **Archivos:** `docs/PENDIENTES.md`, `PROGRESS.md` (solo documentación; sin cambios de código).
+- **Circuito revisado (flujo clásico `Reserva/Index`):** `SeleccionarPasajero.cshtml` (input `#numMenor` del adicional "SEGURO MENOR" + ícono `(i)` → `validarMenores()` → `FormListaMenor`) → `FormListaMenor.cshtml` (`vincularListMenor` setea `#hdnListMenor`) → `mat.jquery.binding.js` `#btn-reservar` (tutor = primer pasajero, `data-complete=true`, POST `/Reserva/ReservarPasajes`) → `ReservaController.ReservarPasajes` → `Views/Reserva/FormReserva.cshtml` → POST `/Reserva/FormReserva` (`RegistrarFactura` → `UpdatePasajeAdicionalesVoucher` → `AddDetalleFactura` → pago → `VincularMenorByViaje`) → `usp_MAT_Reserva_VincularMenorByViajeID` → tabla `PasajeroMenor` (FK `menorid`/`pasajeroid` → `Cliente`). Flujo manual: `DetalleFactura` → "Vincular Menores" (solo si hay ítem "MENOR") → `VinculacionMenor?desdeFactura=1` → `usp_MAT_Reserva_VincularMenor`. Flujo `NuevaReserva` (Backend API externa + `usp_MAT_Reserva_Reservar`) tiene umbrales de edad inconsistentes (2/3/20) y no está en este repo.
+- **Causas raíz confirmadas:**
+  1. `ReservarPasajes` (`ReservaController.cs:480-482`): `Guid.Parse(p.adicionalesid)` con `"g1;g2"` (el JS une adicionales con `;`, cada seguro de menor se agrega N veces) → `FormatException`. **Evidencia:** 5 registros en `ErrorLog` MAT_DEV (25–26/08/2026) con origen `ReservaController.ReservarPasajes`. La vista `FormReserva` no renderiza `ViewBag.Error`, así que el usuario ve el formulario con monto vacío.
+  2. `usp_MAT_Reserva_UpdatePasajeAdicionalesVoucher` usa `Split(@AdicionalesIDs, ',')` (confirmado en MAT_DEV, modificado 2026-07-02) mientras el JS manda `;` y `usp_MAT_Reserva_DetalleFactura` usa `';'`: con 2+ adicionales el cast a `uniqueidentifier` falla y `FormReserva` responde "Error".
+  3. `FormReserva` (`ReservaController.cs:1207`) descarta el resultado de `VincularMenorByViaje`; si `listmenores` llega vacío (el usuario no abrió la lista con el ícono `(i)`, o `infoReservaModal` se pisó con `nroMenores=0`) o el SP falla, la reserva igual responde "Pagado". **Evidencia:** 103 de 160 facturas con ítem "SEGURO MENOR" en MAT_DEV no tienen fila en `PasajeroMenor`.
+  4. `usp_MAT_Reserva_VincularMenorByViajeID`: `@PasajeID` sin inicializar → si no hay pasaje del tutor queda NULL y el SP no devuelve resultset; el `NOT EXISTS` rechaza el lote entero si un menor ya estaba vinculado.
+  5. `#hdnListMenor` `data-complete/tutor` nunca se resetea → en la segunda reserva sin recargar aparece "EL SEGURO DE MENORES YA FUE SELECCIONADO" y se envía el tutor anterior.
+  6. `Reserva/Index` → "Listado de Menores" no pasa `desdeFactura=1` → sin panel "Nueva vinculación"; solo se vincula desde la factura.
+  7. Riesgo FK: `GetMenoresDisponibles` lista `Persona` sin join a `Cliente` (menor creado por `PersonaPasajero/Create` sin "es cliente" → violación `fk_cliente_menor`). 0 casos hoy en MAT_DEV.
+- **Verificación:** MSBuild y tests OK (sin cambios de código). Consultas de solo lectura contra `MAT_DEV.Intranet` (ref de `Web.config`).
+- **Plan de fix:** ítems Fix 1–7 en `docs/PENDIENTES.md` (sección "Reserva con menores — BUG P1"). Fix 1 y 3 son C#/JS sin dependencia de deploy; Fix 2 y 4 requieren script en `database/` + paridad `MAT.DB`.
+- **Estado:** 🔄 diagnosticado, fix pendiente de confirmación
+
+---
+
 ### [2026-09-30] — Auditoría de estado del proyecto (sin cambios de código)
 - **Archivos:** `PROGRESS.md`, `docs/PENDIENTES.md`
 - **Qué se verificó:** MSBuild `MAT.MVC` Debug OK (0 errores, 8 warnings menores); `tools/Run-Tests.ps1` OK (19 tests, verificación NetTiers sin fallos); paridad `database/` ↔ `MAT.DB` de los scripts de julio OK (el único SP "faltante" en SSDT es `usp_MAT_Viaje_CancelViaje`, que el script `2026-07-07_Viaje_DeleteViaje_Unified.sql` elimina a propósito); rama `MAT2026` limpia y sincronizada con `origin`.

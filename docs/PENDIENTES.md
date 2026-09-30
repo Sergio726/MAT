@@ -8,7 +8,7 @@ Roles y forma de trabajo: [`HANDOFF.md`](HANDOFF.md).
 
 Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PROGRESS.md`](../PROGRESS.md).
 
-> **Estado en una línea (2026-09-30):** Build y tests OK; falta publicar SPs en BD; backlog = rentabilidad viaje + resumen de pagos por viaje para vendedores (Factura) + Integration API + Excursion UX + higiene de código (ex.Message, Web.config, warnings). Bug en investigación: reserva de menores no vincula al viaje.
+> **Estado en una línea (2026-09-30):** Build y tests OK; falta publicar SPs en BD; backlog = rentabilidad viaje + resumen de pagos por viaje para vendedores (Factura) + Integration API + Excursion UX + higiene de código (ex.Message, Web.config, warnings). Bug P1 diagnosticado (fix pendiente): reserva con menores falla / no vincula al viaje.
 
 ---
 
@@ -29,6 +29,19 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
 ---
 
 ## Trabajo del equipo
+
+### Reserva con menores — BUG P1 (diagnóstico 2026-09-30, fix pendiente)
+
+**Síntoma:** en `Reserva/Index` la reserva con seguro de menor falla o termina sin vincular menores al viaje. Circuito completo, causas y evidencia: `PROGRESS.md` (entrada 2026-09-30 "Registro BUG P1").
+
+- [ ] **Fix 1 (bloqueo real, C#):** `ReservaController.ReservarPasajes` hace `Guid.Parse(p.adicionalesid)` sobre `"g1;g2"` (el JS une adicionales con `;`). Con 2+ seguros de menor o seguro + otro adicional → `FormatException` (5 casos en `ErrorLog` MAT_DEV, 25–26/08). Parsear separando por `;`/`,` con `TryParse` y mostrar `ViewBag.Error` en `Views/Reserva/FormReserva.cshtml` (hoy no se renderiza).
+- [ ] **Fix 2 (bloqueo real, separador SP):** `FormReserva` POST pasa `"g1;g2"` a `usp_MAT_Reserva_UpdatePasajeAdicionalesVoucher`, que hace `Split(..., ',')` (publicado así en MAT_DEV), mientras `usp_MAT_Reserva_DetalleFactura` usa `';'`. Normalizar en C# (`Replace(";", ",")`) y/o alinear el SP a `';'` con script en `database/` + paridad `MAT.DB`.
+- [ ] **Fix 3 (vinculación silenciosa):** `FormReserva` descarta el resultado de `VincularMenorByViaje` y responde "Pagado" aunque no vincule. Validar en JS (`btn-reservar`) que `#hdnListMenor` tenga menores cuando `nroMenores > 0`; en el controller devolver/loguear el resultado de la vinculación.
+- [ ] **Fix 4 (SP):** `usp_MAT_Reserva_VincularMenorByViajeID`: inicializar `@PasajeID = ''` (hoy NULL → no devuelve resultset), `NOT EXISTS` por menor en vez de rechazar el lote entero, y `CAST(ERROR_LINE())` en los CATCH (`Error_message() + ERROR_LINE()` también en `UpdatePasajeAdicionalesVoucher` y `DetalleFactura`).
+- [ ] **Fix 5 (UX):** en `SeleccionarPasajero` el único acceso a la lista de menores es el ícono `(i)` (`validarMenores`); hacerlo un botón explícito "Seleccionar menores". Resetear `data-complete/tutor/monto` de `#hdnListMenor` tras reservar/cancelar (hoy queda en `true` y la segunda reserva muestra "EL SEGURO DE MENORES YA FUE SELECCIONADO").
+- [ ] **Fix 6 (opcional):** `Reserva/Index` → "Listado de Menores" abre `VinculacionMenor` sin `desdeFactura=1`, así que no muestra "Nueva vinculación"; hoy solo se puede vincular desde `DetalleFactura` (botón visible solo si la factura tiene ítem con "MENOR"). Decidir si habilitar desde el viaje.
+- [ ] **Fix 7 (defensivo):** `usp_MAT_Reserva_GetMenoresDisponibles` lista `Persona` sin join a `Cliente`, pero `PasajeroMenor.menorid` tiene FK a `Cliente`; un menor creado por `PersonaPasajero/Create` sin "es cliente" rompe la FK (0 casos hoy en MAT_DEV). Agregar el join o crear `Cliente` al vincular.
+- [ ] **Smoke tras fix:** reserva con 1 menor, con 2 menores, con menor + otro adicional; segunda reserva sin recargar; verificar `PasajeroMenor` y badge en `DistribucionCoche`.
 
 ### Factura / vendedores — resumen de pagos por viaje (P2)
 
