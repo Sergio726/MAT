@@ -1,16 +1,20 @@
-﻿CREATE procedure [dbo].[usp_MAT_Reserva_DetalleFactura](@FacturaID varchar(36),
+CREATE procedure [dbo].[usp_MAT_Reserva_DetalleFactura](@FacturaID varchar(36),
 												@AdicionalesIDs varchar(max),
 												@PrecioID varchar(36))
 as
-/*-- ============================================= 
-  -- Author:    Garcia Sergio 
-  -- Create date: 09-04-2017 
-  -- Description:  load DetalleFactura
-  
-  -- */
+/*-- =============================================
+  -- Author:    Garcia Sergio
+  -- Create date: 09-04-2017
+  -- Description: Carga DetalleFactura: renglón del paquete (precio) y un renglón por cada
+  --              adicional de @AdicionalesIDs (lista de Guid separados por ";" o ","; los
+  --              repetidos generan renglones repetidos, p. ej. un seguro de menor por menor).
+  -- Historial:
+  --   2026-09-30  Sebastian Garcia  BUG P1 menores: acepta "," además de ";", descarta tokens no Guid
+  --                                 y corrige el CATCH (Error_message() + ERROR_LINE() fallaba por conversión).
+  ============================================= */
 begin
- SET nocount, xact_abort ON; 
-      SET TRANSACTION isolation level READ uncommitted;		
+ SET nocount, xact_abort ON;
+      SET TRANSACTION isolation level READ uncommitted;
 
 	begin try
 
@@ -20,39 +24,38 @@ begin
 		--inert pasaje
 		select @Precio =  p.Monto,
 			   @Detalle = 'PAQUETE ' + upper(p.Descripcion)
-		from dbo.Precio p 
+		from dbo.Precio p
 		where PrecioID = @PrecioID
 
 		begin tran
 			insert into dbo.DetalleFactura (FacturaID,Detalle,Precio,Cantidad)
 			values (@FacturaID,@Detalle,@Precio,1)
-		
-		--insert adicional
-		if (@AdicionalesIDs != '')
+
+		--insert adicional (separador ";" o ","; se ignoran tokens no Guid)
+		if (ISNULL(@AdicionalesIDs, '') != '')
 		begin
-			
+
 			insert into dbo.DetalleFactura (FacturaID,Detalle,Precio,Cantidad,AdicionalID)
 			select @FacturaID,a.Descripcion, a.Monto,1,a.AdicionalID
-			from dbo.Adicional a
-			inner join dbo.Split(@AdicionalesIDs, ';') sp
-				on a.AdicionalID = sp.Item
-			
+			from dbo.Split(REPLACE(@AdicionalesIDs, ',', ';'), ';') sp
+			inner join dbo.Adicional a
+				on a.AdicionalID = TRY_CONVERT(uniqueidentifier, LTRIM(RTRIM(sp.Item)))
+
 		end
-	
+
 		commit
 	end try
 
 	begin catch
-		IF @@TRANCOUNT > 0 
+		IF @@TRANCOUNT > 0
 			ROLLBACK TRAN
-
 
 			DECLARE @errmsg   AS NVARCHAR (2048),
 					@errState int
-			select  @errmsg = Error_message() + ERROR_LINE(), @errState = ERROR_STATE()
-					RAISERROR (@errmsg,16,@errState);  
+			SELECT  @errmsg = ERROR_MESSAGE() + ' (línea ' + CAST(ERROR_LINE() AS nvarchar(10)) + ')',
+					@errState = ERROR_STATE()
+			RAISERROR (@errmsg, 16, @errState);
 
 	end catch
 
 end
-

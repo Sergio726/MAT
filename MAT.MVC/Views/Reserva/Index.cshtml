@@ -661,18 +661,11 @@
     function showVinculosMenor()
     {
         var viajeId = "@ViajeID";
-        var url = "/Reserva/VinculacionMenor?sViajeId=" + viajeId;
+        // BUG P1 menores: desdeFactura=1 habilita el panel "Nueva vinculación" (antes solo se listaba).
+        var url = "/Reserva/VinculacionMenor?sViajeId=" + viajeId + "&desdeFactura=1";
         var id = "divVinculosMenor";
         var title = "Vinculación de menores";
         ShowFormDialog(url, id, title, "medium");
-    }
-
-    function desvincularManor(MenorID)
-    {
-        MenorId = MenorId || "";
-        if (MenorId != "") {
-
-        }
     }
 
     function showFormListaMayor()

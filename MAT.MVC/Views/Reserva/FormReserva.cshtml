@@ -4,6 +4,15 @@
 @model ReservaModel
 
 <div class="reserva-container">
+    @if (!string.IsNullOrEmpty(ViewBag.Error as string))
+    {
+        <!-- BUG P1 menores: antes el error de ReservarPasajes no se mostraba y el formulario quedaba con monto vacío -->
+        <div class="alert alert-danger" role="alert" style="margin: 0 0 1rem 0;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            No se pudo calcular la reserva: @ViewBag.Error
+            <br /><small>Cierre esta ventana, revise los adicionales y menores seleccionados y vuelva a intentar.</small>
+        </div>
+    }
     <div class="reserva-layout">
         <!-- Formulario Principal -->
         <div class="reserva-form">

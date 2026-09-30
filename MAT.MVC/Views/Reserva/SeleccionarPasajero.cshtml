@@ -2,9 +2,19 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        // BUG P1 menores: si ya hay menores elegidos (misma reserva, otra butaca) se muestra el
+        // estado sin quitar el control, así se puede corregir la cantidad o cambiar los menores.
+        var idsMenores = ($("#hdnListMenor").val() || "").toString().trim();
         var eListMenor = $("#hdnListMenor").data("complete");
-        if (eListMenor) {
-            $("#divSeguroMenor").html("<span>EL SEGURO DE MENORES YA FUE SELECCIONADO</span>");
+        if (idsMenores !== "") {
+            var cant = idsMenores.split(",").filter(function (x) { return x.trim() !== ""; }).length;
+            if ($("#numMenor").length && (parseInt($("#numMenor").val(), 10) || 0) < cant) {
+                $("#numMenor").val(cant);
+            }
+            $("#divMenoresSeleccionados").text(cant + " menor(es) ya seleccionado(s). Use 'Seleccionar menores' para cambiarlos.").show();
+        } else if (eListMenor) {
+            // Estado inconsistente (seguro marcado sin menores): se reinicia para no bloquear la reserva.
+            if (typeof resetSeleccionMenores === "function") { resetSeleccionMenores(); }
         }
     });
 
@@ -101,9 +111,10 @@
                                 </span>
                             </label>
                         </div>
-                        <a href="javascript:validarMenores();" class="btn-link-menor">
-                            <i class="bi bi-info-circle"></i>
-                        </a>
+                        <button type="button" onclick="validarMenores();" class="btn-link-menor" title="Elegir qué menores viajan con este seguro (obligatorio para vincularlos al viaje)">
+                            <i class="bi bi-person-plus"></i> Seleccionar menores
+                        </button>
+                        <div id="divMenoresSeleccionados" class="adicional-menores-estado" style="display:none;"></div>
                 </div>
             }
             else

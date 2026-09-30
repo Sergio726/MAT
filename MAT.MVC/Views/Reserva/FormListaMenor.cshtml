@@ -206,12 +206,23 @@
             return (window.alertInfo || window.alert)("Seleccione al menos un menor.", "Validación");
         }
         var joined = ListMenorID.join(",");
-        $("#hdnListMenor").val(joined);
-        $("#hdnVinculacionMenoresIds").val(joined);
-        if ($("#txtMenor").length) {
-            $("#txtMenor").val(ListMenorID.length ? (ListMenorID.length + " menor(es) seleccionado(s)") : "");
+        if ($("#hdnVinculacionMenoresIds").length) {
+            // Modo vinculación manual (VinculacionMenor abierto): no tocar la selección de la reserva.
+            $("#hdnVinculacionMenoresIds").val(joined);
+            if ($("#txtMenor").length) {
+                $("#txtMenor").val(ListMenorID.length ? (ListMenorID.length + " menor(es) seleccionado(s)") : "");
+            }
+            $("#hdnMenorId").val(ListMenorID.length === 1 ? ListMenorID[0] : "");
+        } else {
+            // Modo reserva (Reserva/Index + SeleccionarPasajero): lista que viaja en FormReserva.
+            $("#hdnListMenor").val(joined);
+            if ($("#divMenoresSeleccionados").length) {
+                $("#divMenoresSeleccionados").text(ListMenorID.length + " menor(es) seleccionado(s).").show();
+            }
+            if ($("#numMenor").length && (parseInt($("#numMenor").val(), 10) || 0) < ListMenorID.length) {
+                $("#numMenor").val(ListMenorID.length).trigger("change");
+            }
         }
-        $("#hdnMenorId").val(ListMenorID.length === 1 ? ListMenorID[0] : "");
         if (window.matCloseShowFormDialog) window.matCloseShowFormDialog("divFormListaMenor");
     }
 </script>

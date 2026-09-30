@@ -139,8 +139,12 @@ $(document).on("click", "#btnReservarPasaje", function () {
     var viajeid = $("#hdnViajeID").val();
     var jsonobject = $("#jsonobject").val();
     if (eListMenor) {
-        listmenores = $("#hdnListMenor").val();
-        tutormenor = $("#hdnListMenor").data("tutor");
+        listmenores = ($("#hdnListMenor").val() || "").toString().trim();
+        tutormenor = ($("#hdnListMenor").data("tutor") || "").toString().trim();
+        // BUG P1 menores: con seguro de menor cargado, no se confirma sin haber elegido los menores.
+        if (listmenores === "") {
+            return (window.alertInfo || window.alert)("Seleccionó seguro de menor pero no eligió los menores asegurados. Cancele y use el botón 'Seleccionar menores' en el paso Adicionales.", "Validación");
+        }
     }
 
     if (montoFactura == monto) {
@@ -225,22 +229,42 @@ $(document).on("click", "#btnReservarPasaje", function () {
             $("#divFullLoading").remove();
             $("#panel-bus").removeClass("butacas-con-latido");
 
-            var result = data == "True" ? true : false;
+            // Respuesta: "<estado>" o "<estado>|MENORES:<aviso>" (ver ReservaController.FormReserva).
+            var partesRespuesta = String(data || "").split("|MENORES:");
+            var estado = partesRespuesta[0];
+            var avisoMenores = partesRespuesta.length > 1 ? partesRespuesta[1] : "";
+            var reservaOk = (estado == "Pagado" || estado == "Señado" || estado == "Pre-reserva");
+
+            if (estado == "MenoresFaltantes") {
+                (window.alertInfo || window.alert)("Seleccionó seguro de menor pero no eligió los menores asegurados. Use el botón 'Seleccionar menores' en el paso Adicionales.", "Validación");
+                return;
+            }
+
             $("#FormReserva").dialog("close");
-            if (data == "Pagado") {
+            if (estado == "Pagado") {
                 (window.alertSuccess || window.alert)("Reserva realizada correctamente. Pago total recibido.", "Éxito");
                 $(document).off("click", "#panel-bus a.selected", null);
                 $("#panel-bus a.selected").addClass("reservado").removeClass("selected");
-            } else if (data == "Señado") {
+            } else if (estado == "Señado") {
                 (window.alertSuccess || window.alert)("Reserva realizada correctamente. Seña parcial recibida.", "Éxito");
                 $(document).off("click", "#panel-bus a.selected", null);
                 $("#panel-bus a.selected").addClass("señado").removeClass("selected");
-            } else if (data == "Pre-reserva") {
+            } else if (estado == "Pre-reserva") {
                 (window.alertSuccess || window.alert)("Pre-reserva realizada correctamente.", "Éxito");
                 $(document).off("click", "#panel-bus a.selected", null);
                 $("#panel-bus a.selected").addClass("prereserva").removeClass("selected");
-            } else if (data == "Error") {
+            } else if (estado == "Error") {
                 (window.alertError || window.alert)("Error de Sistema. Contacte con el Administrador.", "Error");
+            }
+
+            if (reservaOk) {
+                // BUG P1 menores: limpiar la selección de menores para la próxima reserva sin recargar.
+                resetSeleccionMenores();
+                if (avisoMenores) {
+                    setTimeout(function () {
+                        (window.alertError || window.alert)("La reserva se registró, pero los menores NO quedaron vinculados: " + avisoMenores + " Puede vincularlos desde 'Listado de Menores' o desde la factura.", "Menores sin vincular");
+                    }, 400);
+                }
             }
         }
     });
@@ -363,7 +387,14 @@ $(document).on("click", "#btn-reservar", function () {
         if (nroMenores > 0) {
             var eListMenor = $("#hdnListMenor").data("complete");
             var montoSeguroMenor = $("#hdnListMenor").data("monto");
-            
+
+            // BUG P1 menores: con seguro de menor cargado hay que elegir los menores antes de reservar.
+            if (($("#hdnListMenor").val() || "").toString().trim() === "") {
+                (window.alertInfo || window.alert)("Indicó " + nroMenores + " seguro(s) de menor pero todavía no eligió los menores asegurados. Selecciónelos en la lista para continuar.", "Validación");
+                if (typeof showFormListaMenor === "function") { showFormListaMenor(); }
+                return;
+            }
+
             if (!eListMenor && pasajes.length > 0) {
                 // Asignar tutor al primer pasajero
                 var primerPasajeroId = pasajes[0].pasajeroid;
@@ -1642,10 +1673,23 @@ function fneliminarviaje(viajeId) {
 // La mayoría de los flujos (Reserva/Index) actualizan el DOM por JS/AJAX (butacas/estados),
 // y un reload global rompe UX (pierde selección/scroll) y empeora performance.
 
+// BUG P1 menores: reinicia la selección de menores (valor + data tutor/monto/complete).
+// Antes solo se limpiaba .val() y data-complete quedaba en true, por lo que la segunda reserva
+// sin recargar mostraba "EL SEGURO DE MENORES YA FUE SELECCIONADO" y enviaba el tutor anterior.
+function resetSeleccionMenores() {
+    var $h = $("#hdnListMenor");
+    if (!$h.length) return;
+    $h.val("");
+    $h.data("tutor", "");
+    $h.data("monto", "");
+    $h.data("complete", false);
+    if (window.infoReservaModal) { window.infoReservaModal.nroMenores = 0; }
+}
+
 $(document).on("click", "#btn-cancelar-seleccion", function (e) {
     if (e && e.preventDefault) e.preventDefault();
     $("#panel-bus a.selected").removeClass("selected");
-    $("#hdnListMenor").val("");
+    resetSeleccionMenores();
     $("#SeleccionPasajero").dialog("close");
 });
 

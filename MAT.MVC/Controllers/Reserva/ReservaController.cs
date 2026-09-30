@@ -472,13 +472,12 @@ namespace MAT.MVC.Controllers.Reserva
                     .Select(p => Guid.Parse(p.precioid)) // Convierte los valores a Guid
                     .ToList();
 
-                //List<Guid> adicionalesIds = pasajes
-                //    .Where(p => !string.IsNullOrWhiteSpace(p.adicionalesid ?? "") && Guid.TryParse(p.adicionalesid, out _))
-                //    .Select(p => Guid.Parse(p.adicionalesid))
-                //    .ToList();
-
+                // BUG P1 menores (2026-09-30): la UI envía los adicionales de cada butaca unidos con ";"
+                // (el seguro de menor se repite una vez por menor). Guid.Parse sobre "g1;g2" lanzaba
+                // FormatException y bloqueaba la reserva. Se separa por ";" o "," y se conservan repetidos
+                // (GetByIds agrupa por Id y multiplica por cantidad).
                 List<Guid> adicionalesIds = pasajes
-                            .Select(p => string.IsNullOrWhiteSpace(p.adicionalesid) ? Guid.Empty : Guid.Parse(p.adicionalesid))
+                            .SelectMany(p => ParseAdicionalesIds(p.adicionalesid))
                             .ToList();
 
 
@@ -493,6 +492,29 @@ namespace MAT.MVC.Controllers.Reserva
                 ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(ex, "ReservaController.ReservarPasajes");
                 return PartialView("FormReserva");
             }
+        }
+
+        /// <summary>
+        /// Separa la lista de IDs de adicionales que envía la UI ("g1;g2" o "g1,g2") y descarta
+        /// los tokens que no sean Guid. Conserva repetidos (un seguro de menor por cada menor).
+        /// </summary>
+        private static List<Guid> ParseAdicionalesIds(string adicionalesid)
+        {
+            var result = new List<Guid>();
+            if (string.IsNullOrWhiteSpace(adicionalesid))
+            {
+                return result;
+            }
+
+            foreach (var token in adicionalesid.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                Guid id;
+                if (Guid.TryParse(token.Trim(), out id) && id != Guid.Empty)
+                {
+                    result.Add(id);
+                }
+            }
+            return result;
         }
 
         public ActionResult VinculacionMenor(string sViajeId = "", string desdeFactura = "", string sFacturaId = "")
@@ -999,17 +1021,26 @@ namespace MAT.MVC.Controllers.Reserva
                         DBHelper.MakeParam("@PasajeroID", SqlDbType.VarChar, 0, sMayorID),
                         DBHelper.MakeParam("@MenorID", SqlDbType.VarChar, 0, sMenorID)
                     };
-                    SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_VincularMenor", dbParams);
-
-
-                    if (_reader.Read())
+                    using (SqlDataReader _reader = DBHelper.ExecuteDataReader("usp_MAT_Reserva_VincularMenor", dbParams))
                     {
-                        sResult[0] = _reader["Id"].ToString();
-                        sResult[1] = _reader["ErrorMsg"].ToString();
-
+                        if (_reader.Read())
+                        {
+                            sResult[0] = _reader["Id"].ToString();
+                            sResult[1] = _reader["ErrorMsg"].ToString();
+                        }
+                        else
+                        {
+                            sResult[0] = "-1";
+                            sResult[1] = "El procedimiento de vinculación no devolvió resultado.";
+                        }
                     }
                 }
-                
+                else
+                {
+                    sResult[0] = "-1";
+                    sResult[1] = "Faltan datos para vincular el menor (pasaje, responsable o menor).";
+                }
+
             }
             catch (Exception e)
             {
@@ -1062,13 +1093,22 @@ namespace MAT.MVC.Controllers.Reserva
             }
         }
 
-        public string[] VincularMenorByViaje(string sViaje = "", string sMayorID = "", string sMenorID = "")
+        /// <summary>
+        /// Vincula uno o más menores (CSV) a un responsable dentro de un viaje.
+        /// Devuelve [Id, Mensaje]: Id "1" = OK, "0" = ya vinculados, "-1" = error / sin resultado.
+        /// </summary>
+        private string[] VincularMenorByViaje(string sViaje = "", string sMayorID = "", string sMenorID = "")
         {
-            string[] sResult = new string[2];
+            // Valores por defecto: si el SP no devuelve filas (versión anterior con @PasajeID NULL) se informa el fallo.
+            string[] sResult = new string[] { "-1", "El procedimiento de vinculación no devolvió resultado. Verifique que el responsable tenga pasaje en este viaje." };
 
             try
             {
-                if (sViaje != "" && sMayorID != "" && sMenorID != "")
+                if (string.IsNullOrWhiteSpace(sViaje) || string.IsNullOrWhiteSpace(sMayorID) || string.IsNullOrWhiteSpace(sMenorID))
+                {
+                    sResult[1] = "Faltan datos para vincular menores (viaje, responsable o menores).";
+                }
+                else
                 {
                     SqlParameter[] dbParams = new SqlParameter[]
                     {                    
@@ -1131,26 +1171,37 @@ namespace MAT.MVC.Controllers.Reserva
 
                 List<PasajeInputModel> _pasajes = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<PasajeInputModel>>(jsonobject);
 
+                // BUG P1 menores (2026-09-30): si la UI marcó seguro de menor (tutormenor viene cargado)
+                // pero no se seleccionaron los menores, no se registra nada y se avisa al usuario.
+                listmenores = (listmenores ?? "").Trim();
+                tutormenor = (tutormenor ?? "").Trim();
+                if (!string.IsNullOrWhiteSpace(tutormenor) && string.IsNullOrWhiteSpace(listmenores))
+                {
+                    return "MenoresFaltantes";
+                }
+
                 string vendedorId = MATContext.CurrentVendedor.VendedorId.ToString();
                 DataSet dsRegFactura = MVC.Models.ReservaMethod.RegistrarFactura(cliente, vendedorId, observaciones, condicion, Convert.ToInt32(ViajeMonedaTipo));
 
                 string sFacturaID = dsRegFactura.Tables[0].Rows[0]["FacturaID"].ToString();
 
                 if (sFacturaID != "")
-                {                    
+                {
                     foreach (PasajeInputModel pasaje in _pasajes)
                     {
-                        string _adicionalesid = "";
-                        if (!string.IsNullOrEmpty(pasaje.adicionalesid))
-                        {
-                            _adicionalesid = string.Join(",", pasaje.adicionalesid);
-                        }
+                        // BUG P1 menores (2026-09-30): la UI une adicionales con ";" pero
+                        // usp_MAT_Reserva_UpdatePasajeAdicionalesVoucher separa por "," y
+                        // usp_MAT_Reserva_DetalleFactura por ";". Se normaliza a lo que espera cada SP
+                        // (los SPs además aceptan ambos separadores desde 2026-09-30).
+                        List<Guid> adicionalesPasaje = ParseAdicionalesIds(pasaje.adicionalesid);
+                        string adicionalesComa = string.Join(",", adicionalesPasaje);
+                        string adicionalesPuntoComa = string.Join(";", adicionalesPasaje);
+
                         //registrar pasajeros como prereserva
-                        MVC.Models.ReservaMethod.UpdatePasajeAdicionalesVoucher(pasaje.pasajeid, sFacturaID, pasaje.pasajeroid, _adicionalesid,5, vendedorId);
+                        MVC.Models.ReservaMethod.UpdatePasajeAdicionalesVoucher(pasaje.pasajeid, sFacturaID, pasaje.pasajeroid, adicionalesComa, 5, vendedorId);
 
                         //registrar detalles de factura
-
-                        MVC.Models.ReservaMethod.AddDetalleFactura(sFacturaID, _adicionalesid, pasaje.precioid);
+                        MVC.Models.ReservaMethod.AddDetalleFactura(sFacturaID, adicionalesPuntoComa, pasaje.precioid);
 
                     }
                 }
@@ -1204,7 +1255,22 @@ namespace MAT.MVC.Controllers.Reserva
                     sEstadoFactura = "Pre-reserva";
                 }
                 //Vincular Menor
-                VincularMenorByViaje(viajeid, tutormenor, listmenores);
+                // BUG P1 menores (2026-09-30): antes se descartaba el resultado y la reserva respondía
+                // "Pagado" aunque la vinculación fallara. Ahora se informa al usuario y se registra en ErrorLog.
+                string avisoMenores = "";
+                if (!string.IsNullOrWhiteSpace(listmenores))
+                {
+                    string[] vinculacion = VincularMenorByViaje(viajeid, tutormenor, listmenores);
+                    if (vinculacion[0] != "1")
+                    {
+                        avisoMenores = string.IsNullOrWhiteSpace(vinculacion[1])
+                            ? "No se pudieron vincular los menores al viaje."
+                            : vinculacion[1];
+                        ErrorUtil.LogAndGetPublicMessage(
+                            new InvalidOperationException("Vinculación de menores fallida. Factura " + sFacturaID + ", viaje " + viajeid + ", tutor " + tutormenor + ", menores " + listmenores + ". Resultado: " + vinculacion[0] + " - " + vinculacion[1]),
+                            "ReservaController.FormReserva.VincularMenor");
+                    }
+                }
 
                 // Cerrar presupuesto vinculado y distribuir comisiones
                 if (!string.IsNullOrWhiteSpace(presupuestoId) && Guid.TryParse(presupuestoId, out Guid presupuestoGuid))
@@ -1214,7 +1280,8 @@ namespace MAT.MVC.Controllers.Reserva
                     PresupuestoMethod.UpdateEstado(presupuestoGuid, eEstadoPresupuesto.Cerrado, facturaGuid, vendedorCierre);
                 }
 
-                return sEstadoFactura;
+                // Formato de respuesta: "<estado>" o "<estado>|MENORES:<aviso>" (lo interpreta mat.jquery.binding.js).
+                return string.IsNullOrEmpty(avisoMenores) ? sEstadoFactura : sEstadoFactura + "|MENORES:" + avisoMenores;
             }
             catch (Exception ex)
             {

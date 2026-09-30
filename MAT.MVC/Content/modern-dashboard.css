@@ -3066,6 +3066,8 @@ div.bnn_floating-banner.hidden {
 .adicional-item.especial {
     border: 2px dashed var(--border-color);
     background: rgba(230, 51, 117, 0.02);
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .adicional-content {
@@ -3114,6 +3116,33 @@ div.bnn_floating-banner.hidden {
 
 .btn-link-menor:hover {
     color: var(--brand-primary);
+}
+
+/* Botón explícito "Seleccionar menores" (BUG P1 menores 2026-09-30): antes era solo un ícono (i) */
+button.btn-link-menor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background: transparent;
+    border: 1px solid var(--brand-primary);
+    border-radius: 0.375rem;
+    color: var(--brand-primary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+}
+
+button.btn-link-menor:hover {
+    background: var(--brand-primary);
+    color: #fff;
+}
+
+.adicional-menores-estado {
+    flex-basis: 100%;
+    margin-top: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
 }
 
 /* Compatibilidad con estilos antiguos */
