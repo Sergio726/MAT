@@ -24,6 +24,7 @@ namespace MAT.MVC.Infrastructure
             return new List<QuickAccessItem>
             {
                 Item("Seguimiento presupuestos", "Seguimiento y cotizaciones telefónicas", "/Presupuesto/Seguimiento", "bi-clipboard-data", "success"),
+                Item("Seguimiento clientes", "Cumpleaños, categorías y contactos", "/Seguimiento/Index", "bi-person-heart", "accent"),
                 Item("Listado de viajes", "Reservas y disponibilidad", "/Viaje/Index", "bi-airplane", "brand"),
                 Item("Viajes por fecha", "Consultar salidas por día", "/Home/ViajesPorFecha", "bi-calendar-event", "warning"),
                 Item("Nuevo cliente", "Alta de persona cliente", "/PersonaCliente/Create", "bi-person-plus", "info"),

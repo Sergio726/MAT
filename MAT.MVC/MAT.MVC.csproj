@@ -313,6 +313,7 @@
     <Compile Include="Controllers\Paquete\PaqueteController.cs" />
     <Compile Include="Controllers\FacturaFiscal\FacturaFiscalController.cs" />
     <Compile Include="Controllers\Presupuesto\PresupuestoController.cs" />
+    <Compile Include="Controllers\Seguimiento\SeguimientoController.cs" />
     <Compile Include="Controllers\PasajeroViaje\PasajeroViajeController.cs" />
     <Compile Include="Controllers\PersonaCliente\PersonaClienteController.cs" />
     <Compile Include="Controllers\PersonaPasajero\PersonaPasajeroController.cs" />
@@ -344,6 +345,7 @@
     <Compile Include="Infrastructure\Data\PersonaVistasDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ProveedorDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ReservaHabitacionDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\SeguimientoDataAccess.cs" />
     <Compile Include="Infrastructure\Data\SqlReaderHelper.cs" />
     <Compile Include="Infrastructure\Data\VendedorDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ViajeDataAccess.cs" />
@@ -353,6 +355,7 @@
     <Compile Include="Infrastructure\AdminContextualTourCatalog.cs" />
     <Compile Include="Infrastructure\AdminHelpCatalog.cs" />
     <Compile Include="Infrastructure\QuickAccessCatalog.cs" />
+    <Compile Include="Infrastructure\SeguimientoCatalog.cs" />
     <Compile Include="Infrastructure\AdminNavModels.cs" />
     <Compile Include="Infrastructure\AuthCookieHelper.cs" />
     <Compile Include="Infrastructure\ErrorUtil.cs" />
@@ -430,6 +433,7 @@
     <Compile Include="Models\ProveedorFiscalModel.cs" />
     <Compile Include="Models\RegistroPagoModel.cs" />
     <Compile Include="Models\Reportes\ReportePagoRowDto.cs" />
+    <Compile Include="Models\Seguimiento\SeguimientoDtos.cs" />
     <Compile Include="Models\Reportes\ReporteRankingRowDto.cs" />
     <Compile Include="Models\Reportes\ReporteViajeLookupDto.cs" />
     <Compile Include="Models\Reportes\ReporteVentaRowDto.cs" />
@@ -752,6 +756,7 @@
     <Content Include="Views\Shared\_ModalClientesNuevosPorPeriodo.cshtml" />
     <Content Include="Views\Home\_DashboardHero.cshtml" />
     <Content Include="Views\Home\_QuickAccess.cshtml" />
+    <Content Include="Views\Home\_CumpleaniosHoy.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Persona\Index.cshtml" />
     <Content Include="Views\Persona\Details.cshtml" />
@@ -793,6 +798,7 @@
     <Content Include="Scripts\mat.admin-help.js" />
     <Content Include="Scripts\mat.admin-nav.js" />
     <Content Include="Scripts\mat.reportes-utils.js" />
+    <Content Include="Scripts\mat.seguimiento.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
     <Content Include="Scripts\mat.reportes-ventas-facturado-modal.js" />
     <Content Include="Scripts\mat.reportes-ranking-dashboard.js" />
@@ -953,6 +959,7 @@
     <Content Include="Views\Presupuesto\ImprimirPresupuesto.cshtml" />
     <Content Include="Views\Presupuesto\Metricas.cshtml" />
     <Content Include="Views\Presupuesto\Seguimiento.cshtml" />
+    <Content Include="Views\Seguimiento\Index.cshtml" />
     <Content Include="Views\FacturaFiscal\Index.cshtml" />
     <Content Include="Views\FacturaFiscal\Create.cshtml" />
     <Content Include="Views\FacturaFiscal\Proveedores.cshtml" />

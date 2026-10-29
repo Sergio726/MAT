@@ -2,6 +2,19 @@
 
 ---
 
+### [2026-10-29] — Seguimiento de clientes para vendedores
+- **Archivos:** `MAT.DB/dbo/Tables/ClienteContacto.sql`, `MAT.DB/dbo/Functions/fn_MAT_Seguimiento_Clientes.sql`, `MAT.DB/dbo/Stored Procedures/usp_MAT_Seguimiento_{Clientes,ResumenCategorias,Cumpleanios,Ficha}.sql`, `usp_MAT_ClienteContacto_Insert.sql`, `MAT.DB/MAT.DB.sqlproj`, `database/2026-10-29_SeguimientoClientes.sql`, `MAT.Enums/eResultadoContacto.cs`, `MAT.MVC/Controllers/Seguimiento/SeguimientoController.cs`, `MAT.MVC/Infrastructure/Data/SeguimientoDataAccess.cs`, `MAT.MVC/Infrastructure/SeguimientoCatalog.cs`, `MAT.MVC/Models/Seguimiento/SeguimientoDtos.cs`, `MAT.MVC/Views/Seguimiento/Index.cshtml`, `MAT.MVC/Views/Home/_CumpleaniosHoy.cshtml`, `MAT.MVC/Views/Home/Index.cshtml`, `MAT.MVC/Scripts/mat.seguimiento.js`, `MAT.MVC/Views/Shared/_MainNav.cshtml`, `MAT.MVC/Infrastructure/QuickAccessCatalog.cs`, `MAT.MVC.Tests/Infrastructure/SeguimientoCatalogTests.cs`, csproj, `docs/PENDIENTES.md`, `PROGRESS.md`.
+- **Qué se implementó** (decisiones en `docs/DECISIONES_ABIERTAS.md`):
+  - `fn_MAT_Seguimiento_Clientes(@Hoy)`: una fila por cliente con viajes realizados (pasaje 3/4/6/8 con salida ≤ hoy), viajes en 12 meses, primer/último/próximo viaje, gasto ARS/USD (facturas Señado/Pagado), categoría (VIP, EnRiesgo, Frecuente, Nuevo, Ocasional, Dormido, SinViajes), último contacto, "no contactar" y fecha de nacimiento dudosa (repetida en 10+ personas).
+  - `ClienteContacto` (resultado 1–8, `CK`) + `usp_MAT_ClienteContacto_Insert`; el contacto queda a nombre del vendedor (o del usuario si no tiene vendedor).
+  - `/Seguimiento`: pestañas Para hoy (cumpleaños hoy / 7 / 30 días, saludo armado y firmado, estado "saludado por X"), Por categoría (tarjetas con cantidad, descripción y acción sugerida) y Buscar; ficha con métricas, viajes e historial; al abrir WhatsApp se ofrece registrar el contacto; aviso si alguien lo contactó en los últimos 7 días.
+  - Recuadro "Cumpleaños de hoy" en Home (AJAX), menú Clientes → Seguimiento y acceso frecuente.
+  - El nombre del vendedor para la firma sale de `Persona` (`Vendedor.Descripcion` está vacío en Prod).
+- **Verificación:** `tools/Run-Tests.ps1` OK (MSBuild `MAT.sln` incl. `MAT.DB` sin errores, 53 tests). Script aplicado en `MAT_DEV.Intranet`: resumen 195 ms, cumpleaños 7 días 429 ms, VIP 234 ms; circuito registrar saludo → último contacto → "No volver a contactar" saca de las listas → CHECK rechaza resultado inválido (datos de prueba borrados). `aspnet_compiler`: las vistas nuevas y tocadas compilan (6 vistas viejas no compilan, ver Higiene).
+- **Pendiente:** publicar el script en Prod y smoke con un vendedor.
+
+---
+
 ### [2026-10-29] — Alta de cliente: un solo manejador, fecha obligatoria y validación en servidor; limpieza aplicada en Prod
 - **Archivos:** `MAT.MVC/Controllers/PersonaCliente/PersonaClienteController.cs`, `MAT.MVC/Views/PersonaCliente/Create.cshtml`, `MAT.MVC/Scripts/mat.jquery.binding.js`, `docs/PENDIENTES.md`, `docs/DECISIONES_ABIERTAS.md`, `PROGRESS.md`.
 - **Problema encontrado:** `#btnAgregarCliente` tenía dos manejadores. El de `Create.cshtml` guardaba por `CreateAjax` sin validar teléfono ni fecha; el de `mat.jquery.binding.js` validaba y, si todo estaba bien, hacía `submit()` de un form sin `action` (recargaba la página y podía cortar el guardado). El control de DNI repetido no frenaba nada.

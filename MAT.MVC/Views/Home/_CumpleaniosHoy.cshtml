@@ -1,0 +1,32 @@
+@* Recuadro "Cumpleaños de hoy" del inicio: se carga por AJAX para no demorar el panel. *@
+<style>
+    .sg-widget { background: #fff; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+    .sg-widget-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
+    .sg-widget-title { font-size: 1rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+    .sg-widget-title i { color: var(--primary-color, #e91e63); }
+    .sg-widget-list { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.35rem 1rem; }
+    .sg-widget-list li { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.875rem; }
+    .sg-widget .sg-sub { font-size: 0.8125rem; color: var(--text-secondary, #6b7280); }
+    .sg-widget .sg-ok { color: #166534; }
+</style>
+
+<section class="sg-widget" id="sg-widget-cumple" aria-label="Cumpleaños de hoy">
+    <div class="sg-widget-head">
+        <div>
+            <h2 class="sg-widget-title"><i class="bi bi-cake2" aria-hidden="true"></i> Cumpleaños de hoy</h2>
+            <div class="sg-sub" data-rol="contador">Cargando…</div>
+        </div>
+        <a href="@Url.Action("Index", "Seguimiento")" class="btn-modern btn-modern-primary btn-sm">
+            <i class="bi bi-whatsapp"></i>
+            <span>Saludar</span>
+        </a>
+    </div>
+    <div data-rol="lista"></div>
+</section>
+
+<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261029a")"></script>
+<script>
+    $(function () {
+        MatSeguimiento.initWidget({ contenedor: "#sg-widget-cumple", url: "@Url.Action("Cumpleanios", "Seguimiento")" });
+    });
+</script>
