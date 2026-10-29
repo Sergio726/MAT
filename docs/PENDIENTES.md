@@ -18,7 +18,8 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
   - `usp_MAT_Factura_Search` (columnas Pagado/Saldo)
   - `database/2026-07-15_CambioButacas_PreserveHotel.sql`
   - `database/2026-07-07_DistribucionCoche_FacturaID.sql` y SP DistribucionCoche
-  - `database/2026-09-30_ReservaMenores_Fix.sql` (4 SPs del circuito de reserva con menores; sin esto sigue fallando la reserva con 2+ adicionales)
+  - `database/2026-09-30_ReservaMenores_Fix.sql` (4 SPs del circuito de reserva con menores; sin esto sigue fallando la reserva con 2+ adicionales) — **Prod: publicado 13/10/2026; DEV: aplicado 29/10/2026**
+  - `database/2026-10-29_Persona_LimpiezaTelefonosFechas.sql` (limpieza de datos con respaldo; probado en DEV 29/10/2026; en Prod toca ~569 celulares, ~1.772 teléfonos y 75 fechas) — **requiere OK antes de correr en Prod**
   - Otros scripts recientes en `database/` no aplicados
 - [ ] **Viaje — definición de rentabilidad con negocio** — acordar base de ingresos (facturado vs cobrado), qué entra como costo, moneda, prorrateo, permisos. Registrar en [`../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`](../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md) y en [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md). **Bloquea** opciones A–D de schema.
 
