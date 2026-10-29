@@ -2,6 +2,14 @@
 
 ---
 
+### [2026-10-29] — Roadmap comercial y guía para vendedores
+- **Archivos:** `DOCUMENTACION/ROADMAP_COMERCIAL_2026.md` (nuevo), `DOCUMENTACION/GUIA_VENDEDORES_SEGUIMIENTO_CLIENTES.md` (nuevo), `DOCUMENTACION/README.md`, `SPEC.md`, `MAT.MVC/Views/Seguimiento/Index.cshtml`, `MAT.MVC/Scripts/mat.seguimiento.js` (`?v=20261029c`), `MAT.MVC/Views/Home/_CumpleaniosHoy.cshtml`, `MAT.MVC/Controllers/Seguimiento/SeguimientoController.cs`, `MAT.MVC/Infrastructure/Data/SeguimientoDataAccess.cs`, `PROGRESS.md`.
+- **Qué se hizo:** se creó el roadmap comercial que `SPEC.md` mencionaba (Fase 0 datos ✅, Fase 1 seguimiento 🟡, luego recordatorios, notificaciones, CRM y comisiones; decisiones abiertas y cómo medir) y la guía para vendedores (rutina de cumpleaños, categorías, ficha, resultados de contacto, marcas y preguntas frecuentes).
+- **Ajustes surgidos al escribir la guía:** botón **Editar datos** en la ficha (lleva a `PersonaCliente/Edit`) para corregir teléfono o fecha; **Buscar cliente** incluye a los "No volver a contactar" (marcados) para poder reactivarlos — antes no había forma de encontrarlos.
+- **Verificación:** `tools/Run-Tests.ps1` OK (61 tests); `aspnet_compiler`: vistas tocadas compilan.
+
+---
+
 ### [2026-10-29] — Segunda revisión del seguimiento de clientes y del alta/edición de cliente
 - **Archivos:** `MAT.DB/dbo/Functions/fn_MAT_Seguimiento_Clientes.sql`, `usp_MAT_Seguimiento_{Clientes,ResumenCategorias,Cumpleanios,Ficha}.sql`, `usp_MAT_ClienteContacto_Insert.sql`, `usp_MAT_Persona_GetByDNI.sql`, `database/2026-10-29_SeguimientoClientes.sql` (regenerado), `MAT.MVC/Infrastructure/ClienteValidacion.cs` y `FirmaVendedor.cs` (nuevos), `SeguimientoCatalog.cs`, `QuickAccessCatalog.cs`, `Infrastructure/Data/SeguimientoDataAccess.cs`, `Models/Seguimiento/SeguimientoDtos.cs`, `Controllers/Seguimiento/SeguimientoController.cs`, `Controllers/PersonaCliente/PersonaClienteController.cs`, `Controllers/Presupuesto/PresupuestoController.cs`, `Views/Seguimiento/Index.cshtml`, `Views/Home/_CumpleaniosHoy.cshtml`, `Views/PersonaCliente/{Create,Edit}.cshtml`, `Views/Shared/_MainNav.cshtml`, `Scripts/mat.seguimiento.js`, `MAT.MVC.Tests/Infrastructure/ClienteValidacionTests.cs`, docs.
 - **Hallazgos corregidos:**

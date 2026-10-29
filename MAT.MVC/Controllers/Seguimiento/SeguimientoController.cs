@@ -85,7 +85,8 @@ namespace MAT.MVC.Controllers.Seguimiento
                 if (categoria == null && (texto == null || texto.Length < 2))
                     return JsonCamelCaseHelper.Serialize(new { success = false, message = "Elegí una categoría o escribí al menos 2 letras para buscar." });
 
-                var list = SeguimientoDataAccess.GetClientes(categoria, texto);
+                // La búsqueda por texto incluye a los "No volver a contactar" (marcados) para poder reactivarlos.
+                var list = SeguimientoDataAccess.GetClientes(categoria, texto, incluirNoContactar: categoria == null);
                 foreach (var cliente in list)
                 {
                     SeguimientoCatalog.Completar(cliente);

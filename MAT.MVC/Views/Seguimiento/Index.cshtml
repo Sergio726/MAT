@@ -177,6 +177,7 @@
             </div>
             <div class="modal-body" id="sg-ficha-body"></div>
             <div class="modal-footer">
+                <a href="#" class="btn-modern btn-modern-secondary btn-sm me-auto" id="sg-ficha-editar"><i class="bi bi-pencil-square"></i> <span>Editar datos</span></a>
                 <a href="#" target="_blank" rel="noopener" class="btn btn-sm sg-btn-wa d-none" id="sg-ficha-wa" aria-label="Abrir WhatsApp"><i class="bi bi-whatsapp"></i> WhatsApp</a>
                 <button type="button" class="btn-modern btn-modern-primary btn-sm" id="sg-ficha-registrar"><i class="bi bi-journal-plus"></i> <span>Registrar contacto</span></button>
             </div>
@@ -220,7 +221,7 @@
 
 @section Scripts {
 <script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
-<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261029b")"></script>
+<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261029c")"></script>
 <script type="text/javascript">
     MatSeguimiento.initPagina({
         urlCumpleanios: "@Url.Action("Cumpleanios", "Seguimiento")",
@@ -228,7 +229,8 @@
         urlClientes: "@Url.Action("Clientes", "Seguimiento")",
         urlFicha: "@Url.Action("Ficha", "Seguimiento")",
         urlRegistrar: "@Url.Action("RegistrarContacto", "Seguimiento")",
-        fichaInicial: "@(ViewBag.FichaInicial)"
+        fichaInicial: "@(ViewBag.FichaInicial)",
+        urlEditarCliente: "@Url.Action("Edit", "PersonaCliente")"
     });
 </script>
 }

@@ -56,6 +56,7 @@
         if (r.celular || r.telefono) sub.push(escHtml(r.celular || r.telefono));
         if (sub.length) html += '<div class="sg-sub">' + sub.join(' · ') + '</div>';
         if (r.esMenor) html += ' <span class="sg-badge sg-badge--menor">Menor de edad</span>';
+        if (r.noContactar) html += ' <span class="sg-badge">No volver a contactar</span>';
         if (r.fechaNacimientoDudosa) html += '<div class="sg-warn"><i class="bi bi-exclamation-circle"></i> Verificar fecha de nacimiento con el cliente</div>';
         if (r.telefonoCompartido > 0) {
             html += '<div class="sg-sub"><i class="bi bi-people"></i> Teléfono compartido con ' + r.telefonoCompartido +
@@ -219,6 +220,8 @@
             var $body = $('#sg-ficha-body').html('<div class="sg-empty"><div class="spinner-border text-primary"></div></div>');
             $('#sg-ficha-wa').addClass('d-none');
             $('#sg-modal-ficha').data('id', id);
+            // Para corregir teléfono o fecha de nacimiento sin salir a buscar al cliente
+            $('#sg-ficha-editar').attr('href', urls.urlEditarCliente + '/' + encodeURIComponent(id));
             bootstrap.Modal.getOrCreateInstance(document.getElementById('sg-modal-ficha')).show();
             getJson(urls.urlFicha, { id: id }).done(function (res) {
                 if (!res.success) { $body.html('<div class="alert alert-danger">' + escHtml(res.message) + '</div>'); return; }

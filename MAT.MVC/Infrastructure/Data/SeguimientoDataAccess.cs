@@ -26,12 +26,14 @@ namespace MAT.MVC.Infrastructure.Data
             return resumen;
         }
 
-        public static List<SeguimientoClienteDto> GetClientes(string categoria, string texto)
+        /// <param name="incluirNoContactar">true en la búsqueda, para poder encontrar y reactivar a un "No volver a contactar".</param>
+        public static List<SeguimientoClienteDto> GetClientes(string categoria, string texto, bool incluirNoContactar = false)
         {
             var parameters = new[]
             {
                 DBHelper.MakeParam("@Categoria", SqlDbType.VarChar, 20, (object)categoria ?? DBNull.Value),
-                DBHelper.MakeParam("@Texto", SqlDbType.VarChar, 100, (object)texto ?? DBNull.Value)
+                DBHelper.MakeParam("@Texto", SqlDbType.VarChar, 100, (object)texto ?? DBNull.Value),
+                DBHelper.MakeParam("@IncluirNoContactar", SqlDbType.Bit, 0, incluirNoContactar)
             };
             var list = new List<SeguimientoClienteDto>();
             using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Seguimiento_Clientes", parameters))
