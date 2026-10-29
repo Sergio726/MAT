@@ -1,0 +1,236 @@
+@using MAT.MVC.Models.Seguimiento
+@{
+    ViewBag.Title = "Seguimiento de clientes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categorias = ViewBag.Categorias as IList<SeguimientoCategoriaDto> ?? new List<SeguimientoCategoriaDto>();
+    var resultados = ViewBag.Resultados as IList<KeyValuePair<int, string>> ?? new List<KeyValuePair<int, string>>();
+}
+
+@section Styles {
+<style>
+    .sg-page { max-width: 1400px; margin: 0 auto; }
+    .sg-intro { font-size: 0.875rem; color: var(--text-secondary, #6b7280); margin-top: 0.35rem; max-width: 52rem; }
+    .sg-card { background: #fff; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+    .sg-card-title { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary, #1f2937); margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .sg-card-title i { color: var(--primary-color, #e91e63); }
+    .sg-tabs .nav-link { color: var(--text-secondary, #4b5563); font-weight: 500; }
+    .sg-tabs .nav-link.active { background: var(--primary-color, #e91e63); color: #fff; }
+    .sg-toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; }
+    .sg-chip { border: 1px solid var(--border-color, #e5e7eb); background: #fff; color: var(--text-secondary, #4b5563); border-radius: 999px; padding: 0.35rem 0.85rem; font-size: 0.8125rem; cursor: pointer; }
+    .sg-chip:hover { border-color: var(--primary-color, #e91e63); color: var(--primary-color, #e91e63); }
+    .sg-chip.active { background: var(--primary-color, #e91e63); border-color: var(--primary-color, #e91e63); color: #fff; }
+    .sg-cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
+    .sg-cat { text-align: left; border: 1px solid var(--border-color, #e5e7eb); background: #fff; border-radius: 0.75rem; padding: 0.85rem 1rem; cursor: pointer; }
+    .sg-cat:hover, .sg-cat.active { border-color: var(--primary-color, #e91e63); box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.12); }
+    .sg-cat-head { display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--text-primary, #1f2937); }
+    .sg-cat-head i { color: var(--primary-color, #e91e63); margin-right: 0.35rem; }
+    .sg-cat-count { font-size: 1.25rem; font-weight: 700; }
+    .sg-cat-desc { font-size: 0.75rem; color: var(--text-secondary, #6b7280); margin-top: 0.35rem; }
+    .sg-hint { font-size: 0.8125rem; color: var(--text-secondary, #6b7280); margin-bottom: 0.75rem; }
+    .sg-empty { text-align: center; color: var(--text-secondary, #6b7280); padding: 2rem 1rem; }
+    .sg-empty i { font-size: 1.75rem; display: block; margin-bottom: 0.5rem; }
+    .sg-badge { display: inline-block; border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.75rem; font-weight: 600; background: #f3f4f6; color: #374151; white-space: nowrap; }
+    .sg-badge--VIP { background: #fdf2f8; color: #be185d; }
+    .sg-badge--EnRiesgo { background: #fef3c7; color: #92400e; }
+    .sg-badge--Frecuente { background: #dcfce7; color: #166534; }
+    .sg-badge--Nuevo { background: #dbeafe; color: #1e40af; }
+    .sg-badge--Ocasional { background: #ede9fe; color: #5b21b6; }
+    .sg-badge--Dormido, .sg-badge--SinViajes { background: #f3f4f6; color: #4b5563; }
+    .sg-badge--menor { background: #fee2e2; color: #991b1b; }
+    .sg-warn { font-size: 0.75rem; color: #92400e; }
+    .sg-ok { font-size: 0.75rem; color: #166534; }
+    .sg-actions { display: flex; gap: 0.35rem; flex-wrap: nowrap; }
+    .sg-btn-wa { background: #25d366; border-color: #25d366; color: #fff; }
+    .sg-btn-wa:hover { background: #1ebe5b; color: #fff; }
+    .sg-sub { font-size: 0.75rem; color: var(--text-secondary, #6b7280); }
+    .sg-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+    .sg-metric { border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.5rem; padding: 0.6rem 0.75rem; }
+    .sg-metric-label { font-size: 0.75rem; color: var(--text-secondary, #6b7280); }
+    .sg-metric-value { font-weight: 600; }
+</style>
+}
+
+<div class="sg-page">
+    <div class="mb-3">
+        <h1 class="h4 mb-0"><i class="bi bi-person-heart"></i> Seguimiento de clientes</h1>
+        <p class="sg-intro">Cumpleaños para saludar, clientes por categoría y el historial de cada contacto. Registrá cada contacto para que el resto del equipo sepa que ya hablaste con el cliente.</p>
+    </div>
+
+    @Html.AntiForgeryToken()
+
+    <ul class="nav nav-pills sg-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#sg-tab-hoy" type="button" role="tab" aria-controls="sg-tab-hoy" aria-selected="true"><i class="bi bi-cake2"></i> Para hoy</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#sg-tab-cat" type="button" role="tab" id="sg-tab-cat-btn" aria-controls="sg-tab-cat" aria-selected="false"><i class="bi bi-diagram-3"></i> Por categoría</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#sg-tab-buscar" type="button" role="tab" aria-controls="sg-tab-buscar" aria-selected="false"><i class="bi bi-search"></i> Buscar cliente</button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="sg-tab-hoy" role="tabpanel">
+            <div class="sg-card">
+                <h3 class="sg-card-title"><i class="bi bi-cake2"></i> Cumpleaños</h3>
+                <div class="sg-toolbar">
+                    <button type="button" class="sg-chip active" data-dias="0">Hoy</button>
+                    <button type="button" class="sg-chip" data-dias="7">Próximos 7 días</button>
+                    <button type="button" class="sg-chip" data-dias="30">Próximos 30 días</button>
+                </div>
+                <div class="sg-hint">El botón verde abre WhatsApp con el saludo ya escrito. Al volver, confirmá el contacto para registrarlo.</div>
+                <div id="sg-hoy-alert" class="alert alert-danger d-none py-2 small"></div>
+                <div class="sg-empty d-none" id="sg-hoy-empty"><i class="bi bi-balloon"></i><div>No hay cumpleaños en este período.</div></div>
+                <div class="table-responsive" id="sg-hoy-wrap">
+                    <table id="sg-tbl-hoy" class="table table-sm table-hover table-bordered mb-0 w-100">
+                        <thead>
+                            <tr>
+                                <th>Cumple</th>
+                                <th>Cliente</th>
+                                <th>Edad</th>
+                                <th>Categoría</th>
+                                <th title="Viajes propios o pagados para otros">Viajes</th>
+                                <th>Saludo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="sg-tab-cat" role="tabpanel">
+            <div class="sg-cats" id="sg-cats">
+                @foreach (var c in categorias)
+                {
+                    <button type="button" class="sg-cat" data-cat="@c.Codigo" title="@c.Descripcion">
+                        <div class="sg-cat-head">
+                            <span><i class="bi @c.Icono"></i>@c.Nombre</span>
+                            <span class="sg-cat-count" data-count-for="@c.Codigo">…</span>
+                        </div>
+                        <div class="sg-cat-desc">@c.Descripcion</div>
+                        <div class="sg-cat-desc"><strong>Qué hacer:</strong> @c.AccionSugerida</div>
+                    </button>
+                }
+            </div>
+            <div class="sg-card">
+                <h3 class="sg-card-title"><i class="bi bi-people"></i> <span id="sg-cat-title">Elegí una categoría</span></h3>
+                <div id="sg-cat-alert" class="alert alert-danger d-none py-2 small"></div>
+                <div class="sg-empty" id="sg-cat-empty"><i class="bi bi-hand-index"></i><div>Elegí una categoría para ver sus clientes.</div></div>
+                <div class="table-responsive d-none" id="sg-cat-wrap">
+                    <table id="sg-tbl-cat" class="table table-sm table-hover table-bordered mb-0 w-100">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Categoría</th>
+                                <th title="Viajes propios o pagados para otros">Viajes</th>
+                                <th>Último viaje</th>
+                                <th>Próximo viaje</th>
+                                <th>Último contacto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="sg-tab-buscar" role="tabpanel">
+            <div class="sg-card">
+                <h3 class="sg-card-title"><i class="bi bi-search"></i> Buscar cliente</h3>
+                <form id="sg-form-buscar" class="sg-toolbar" autocomplete="off">
+                    <input type="text" id="sg-buscar-texto" class="modern-form-input" style="max-width: 22rem;" placeholder="Apellido, nombre o DNI…" aria-label="Apellido, nombre o DNI" />
+                    <button type="submit" class="btn-modern btn-modern-primary btn-sm"><i class="bi bi-search"></i> <span>Buscar</span></button>
+                </form>
+                <div id="sg-buscar-alert" class="alert alert-danger d-none py-2 small"></div>
+                <div class="sg-empty" id="sg-buscar-empty"><i class="bi bi-person-search"></i><div>Escribí al menos 2 letras del apellido, nombre o DNI.</div></div>
+                <div class="table-responsive d-none" id="sg-buscar-wrap">
+                    <table id="sg-tbl-buscar" class="table table-sm table-hover table-bordered mb-0 w-100">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Categoría</th>
+                                <th title="Viajes propios o pagados para otros">Viajes</th>
+                                <th>Último viaje</th>
+                                <th>Próximo viaje</th>
+                                <th>Último contacto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sg-modal-ficha" tabindex="-1" aria-labelledby="sg-ficha-titulo" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sg-ficha-titulo">Ficha del cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="sg-ficha-body"></div>
+            <div class="modal-footer">
+                <a href="#" class="btn-modern btn-modern-secondary btn-sm me-auto" id="sg-ficha-editar"><i class="bi bi-pencil-square"></i> <span>Editar datos</span></a>
+                <a href="#" target="_blank" rel="noopener" class="btn btn-sm sg-btn-wa d-none" id="sg-ficha-wa" aria-label="Abrir WhatsApp"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+                <button type="button" class="btn-modern btn-modern-primary btn-sm" id="sg-ficha-registrar"><i class="bi bi-journal-plus"></i> <span>Registrar contacto</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sg-modal-contacto" tabindex="-1" aria-labelledby="sg-contacto-titulo" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sg-contacto-titulo">Registrar contacto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2"><strong id="sg-contacto-cliente"></strong></div>
+                <div class="alert alert-warning py-2 small d-none" id="sg-contacto-aviso"></div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label" for="sg-contacto-resultado">Resultado</label>
+                    <select id="sg-contacto-resultado" class="modern-form-input">
+                        <option value="">Elegí…</option>
+                        @foreach (var r in resultados)
+                        {
+                            <option value="@r.Key">@r.Value</option>
+                        }
+                    </select>
+                </div>
+                <div class="modern-form-group mb-0">
+                    <label class="modern-form-label" for="sg-contacto-obs">Observación (opcional)</label>
+                    <textarea id="sg-contacto-obs" class="modern-form-input" rows="3" maxlength="500" placeholder="Ej.: le interesa Cataratas en marzo"></textarea>
+                </div>
+                <div id="sg-contacto-error" class="alert alert-danger d-none py-2 small mt-2 mb-0"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern btn-modern-secondary btn-sm" data-bs-dismiss="modal"><span>Cancelar</span></button>
+                <button type="button" class="btn-modern btn-modern-primary btn-sm" id="sg-contacto-guardar"><i class="bi bi-check-circle"></i> <span>Guardar</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
+<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261029c")"></script>
+<script type="text/javascript">
+    MatSeguimiento.initPagina({
+        urlCumpleanios: "@Url.Action("Cumpleanios", "Seguimiento")",
+        urlResumen: "@Url.Action("Resumen", "Seguimiento")",
+        urlClientes: "@Url.Action("Clientes", "Seguimiento")",
+        urlFicha: "@Url.Action("Ficha", "Seguimiento")",
+        urlRegistrar: "@Url.Action("RegistrarContacto", "Seguimiento")",
+        fichaInicial: "@(ViewBag.FichaInicial)",
+        urlEditarCliente: "@Url.Action("Edit", "PersonaCliente")"
+    });
+</script>
+}
