@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-10-29] — Fix enlace WhatsApp: normalización de teléfonos argentinos
+- **Archivos:** `MAT.MVC/Infrastructure/WhatsAppHelper.cs` (nuevo), `MAT.MVC/Controllers/Presupuesto/PresupuestoController.cs`, `MAT.MVC.Tests/Infrastructure/WhatsAppHelperTests.cs` (nuevo), `MAT.MVC/MAT.MVC.csproj`, `MAT.MVC.Tests/MAT.MVC.Tests.csproj`, `PROGRESS.md`.
+- **Problema:** `PresupuestoController.EnviarWhatsApp` armaba `wa.me/54` + número: faltaba el `9` de celular (`543874…`), `0387…` quedaba `540387…`, `15…` sin área quedaba inválido, y `HttpUtility.UrlEncode` mandaba los espacios como `+`.
+- **Qué se hizo:** `WhatsAppHelper.NormalizarTelefono` devuelve `549` + área + número (quita `0`, `15`, `+54`, `0054`, `9` inicial; sin área asume 387; números de otro país con `+` se respetan); `ElegirTelefono` toma el primero válido (celular, teléfono); `ConstruirEnlace` usa `Uri.EscapeDataString`. Presupuesto usa el helper y loguea cuando el teléfono no es válido. Pensado para reutilizar en el seguimiento de clientes.
+- **Verificación:** `tools/Run-Tests.ps1` OK (MSBuild sin errores nuevos, 46 tests). Contra teléfonos reales de producción (solo lectura): 10.017 de 12.024 clientes quedan con WhatsApp válido (83 %); los que fallan son datos incompletos (1.290 con solo `387`, 662 con solo `0387`, 147 sin número).
+- **Base DEV:** aplicado `database/2026-09-30_ReservaMenores_Fix.sql` en `MAT_DEV.Intranet`; los 4 SPs quedan iguales a producción (`MAT.Intranet`, publicado 13/10/2026) salvo el comentario de cabecera. Comparación de esquema prod vs DEV: sin otras diferencias.
+
+---
+
 ### [2026-09-30] — Fix BUG P1: reserva con menores (Fix 1–7)
 - **Archivos:** `Controllers/Reserva/ReservaController.cs`, `Scripts/mat.jquery.binding.js`, `Views/Reserva/SeleccionarPasajero.cshtml`, `Views/Reserva/FormListaMenor.cshtml`, `Views/Reserva/FormReserva.cshtml`, `Views/Reserva/Index.cshtml`, `Views/Shared/_Layout.cshtml` (cache-bust `?v=20260930a`), `Content/modern-dashboard.css`, `MAT.DB/dbo/Stored Procedures/usp_MAT_Reserva_UpdatePasajeAdicionalesVoucher.sql`, `usp_MAT_Reserva_DetalleFactura.sql`, `usp_MAT_Reserva_VincularMenorByViajeID.sql`, `usp_MAT_Reserva_GetMenoresDisponibles.sql`, `database/2026-09-30_ReservaMenores_Fix.sql`, `docs/PENDIENTES.md`, `PROGRESS.md`.
 - **Qué se implementó:**
