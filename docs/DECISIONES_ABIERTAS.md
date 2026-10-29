@@ -35,6 +35,9 @@ Hasta no registrar respuestas, **no** implementar columnas/tablas nuevas de rent
 | Ubicación | Recuadro "Cumpleaños de hoy" en Home + menú "Seguimiento de clientes" (para hoy, categorías, ficha, historial de contactos). |
 | Fecha de nacimiento en el alta | **Obligatoria** y validada (1910–hoy) en navegador y servidor. Las fechas repetidas existentes se marcan "verificar con el cliente". |
 | Canal | WhatsApp vía `WhatsAppHelper` (email descartado: 3,6 % de cobertura). |
+| Menores de 18 | Se muestran marcados **"Menor de edad"** (en Prod hay 1.719 clientes menores; ~10 % de los cumpleaños de la semana). |
+| Viajes que cuentan | Los del cliente como pasajero **y** los que pagó para otros (factura a su nombre); la ficha distingue "Viajó" / "Pagó para otros". |
+| "Hoy" | Hora argentina (`AT TIME ZONE 'Argentina Standard Time'`): el servidor SQL está en UTC. |
 
 ---
 

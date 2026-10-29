@@ -17,7 +17,12 @@ namespace MAT.MVC.Models.Seguimiento
         public string Email { get; set; }
         public DateTime? FechaNacimiento { get; set; }
         public bool FechaNacimientoDudosa { get; set; }
+        public bool EsMenor { get; set; }
+        /// <summary>Cantidad de otros clientes con el mismo celular (familias que comparten número).</summary>
+        public int TelefonoCompartido { get; set; }
+        /// <summary>Viajes propios o pagados para otros.</summary>
         public int ViajesTotales { get; set; }
+        public int ViajesComoPasajero { get; set; }
         public int Viajes12Meses { get; set; }
         public DateTime? PrimerViaje { get; set; }
         public DateTime? UltimoViaje { get; set; }
@@ -49,6 +54,9 @@ namespace MAT.MVC.Models.Seguimiento
         public DateTime? FechaRegreso { get; set; }
         public string Viaje { get; set; }
         public string EstadoPasaje { get; set; }
+        /// <summary>"Viajó" o "Pagó para otros".</summary>
+        public string Rol { get; set; }
+        public int Pasajes { get; set; }
     }
 
     public sealed class SeguimientoContactoDto

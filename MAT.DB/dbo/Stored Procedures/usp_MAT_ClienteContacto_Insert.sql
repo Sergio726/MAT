@@ -19,9 +19,11 @@ BEGIN
     SET NOCOUNT, XACT_ABORT ON;
 
     DECLARE @ID UNIQUEIDENTIFIER = NEWID();
+    -- Hora argentina: el servidor está en UTC.
+    DECLARE @Fecha DATETIME = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'Argentina Standard Time' AS DATETIME);
 
-    INSERT INTO dbo.ClienteContacto (ClienteContactoID, ClienteID, VendedorID, Usuario, Resultado, Observacion)
-    VALUES (@ID, @ClienteID, @VendedorID, @Usuario, @Resultado, NULLIF(LTRIM(RTRIM(@Observacion)), ''));
+    INSERT INTO dbo.ClienteContacto (ClienteContactoID, ClienteID, VendedorID, Usuario, Fecha, Resultado, Observacion)
+    VALUES (@ID, @ClienteID, @VendedorID, @Usuario, @Fecha, @Resultado, NULLIF(LTRIM(RTRIM(@Observacion)), ''));
 
     SELECT @ID AS ClienteContactoID;
 END

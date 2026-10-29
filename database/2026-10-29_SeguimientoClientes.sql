@@ -2,7 +2,7 @@
 -- 2026-10-29 — Seguimiento de clientes para vendedores
 -- Author: Sebastian Garcia
 -- Tabla ClienteContacto, función fn_MAT_Seguimiento_Clientes y SPs usp_MAT_Seguimiento_* /
--- usp_MAT_ClienteContacto_Insert. Paridad con MAT.DB (generado desde esos archivos).
+-- usp_MAT_ClienteContacto_Insert; usp_MAT_Persona_GetByDNI compara DNI sin puntos. Paridad con MAT.DB (generado desde esos archivos).
 -- Idempotente: la tabla se crea solo si no existe; función y SPs con CREATE OR ALTER.
 -- Requiere SQL Server 2016 SP1+.
 -- =============================================================================
@@ -41,22 +41,35 @@ AS
   -- Create date: 2026-10-29
   -- Description: Una fila por cliente con métricas de viaje, gasto, último contacto y
   --              categoría de seguimiento (docs/DECISIONES_ABIERTAS.md, Seguimiento de clientes).
-  --              Viaje realizado = pasaje Señado/Pagado (3,4,6,8) con salida hasta @Hoy.
+  --              Viaje = pasaje Señado/Pagado (3,4,6,8) donde el cliente es pasajero o quien lo pagó
+  --              (factura a su nombre); realizado si la salida es hasta @Hoy.
   --              Categorías (gana la primera): VIP, EnRiesgo, Frecuente, Nuevo, Ocasional, Dormido, SinViajes.
+  --              @Hoy lo calculan los SPs en hora argentina (el servidor está en UTC).
+  -- 2026-10-29: viajes pagados para otros, EsMenor y TelefonoCompartido.
   ============================================= */
 RETURN
-WITH viajes AS (
-    SELECT p.PasajeroID AS ClienteID,
-           COUNT(DISTINCT CASE WHEN p.EstadoPasaje IN (3, 4, 6, 8) AND v.FechaSalida <= @Hoy THEN p.ViajeID END) AS ViajesTotales,
-           COUNT(DISTINCT CASE WHEN p.EstadoPasaje IN (3, 4, 6, 8) AND v.FechaSalida <= @Hoy
-                                    AND v.FechaSalida > DATEADD(MONTH, -12, @Hoy) THEN p.ViajeID END) AS Viajes12Meses,
-           MIN(CASE WHEN p.EstadoPasaje IN (3, 4, 6, 8) AND v.FechaSalida <= @Hoy THEN v.FechaSalida END) AS PrimerViaje,
-           MAX(CASE WHEN p.EstadoPasaje IN (3, 4, 6, 8) AND v.FechaSalida <= @Hoy THEN v.FechaSalida END) AS UltimoViaje,
-           MIN(CASE WHEN p.EstadoPasaje NOT IN (1, 7) AND v.FechaSalida > @Hoy THEN v.FechaSalida END) AS ProximoViaje
+WITH viajesCliente AS (
+    SELECT p.PasajeroID AS ClienteID, p.ViajeID, p.EstadoPasaje, v.FechaSalida, CAST(1 AS BIT) AS ComoPasajero
     FROM dbo.Pasaje p
     INNER JOIN dbo.Viaje v ON v.ViajeID = p.ViajeID
     WHERE p.PasajeroID IS NOT NULL
-    GROUP BY p.PasajeroID
+    UNION ALL
+    SELECT f.ClienteID, p.ViajeID, p.EstadoPasaje, v.FechaSalida, CAST(0 AS BIT)
+    FROM dbo.Pasaje p
+    INNER JOIN dbo.Factura f ON f.FacturaID = p.FacturaID
+    INNER JOIN dbo.Viaje v ON v.ViajeID = p.ViajeID
+),
+viajes AS (
+    SELECT ClienteID,
+           COUNT(DISTINCT CASE WHEN EstadoPasaje IN (3, 4, 6, 8) AND FechaSalida <= @Hoy THEN ViajeID END) AS ViajesTotales,
+           COUNT(DISTINCT CASE WHEN EstadoPasaje IN (3, 4, 6, 8) AND FechaSalida <= @Hoy AND ComoPasajero = 1 THEN ViajeID END) AS ViajesComoPasajero,
+           COUNT(DISTINCT CASE WHEN EstadoPasaje IN (3, 4, 6, 8) AND FechaSalida <= @Hoy
+                                    AND FechaSalida > DATEADD(MONTH, -12, @Hoy) THEN ViajeID END) AS Viajes12Meses,
+           MIN(CASE WHEN EstadoPasaje IN (3, 4, 6, 8) AND FechaSalida <= @Hoy THEN FechaSalida END) AS PrimerViaje,
+           MAX(CASE WHEN EstadoPasaje IN (3, 4, 6, 8) AND FechaSalida <= @Hoy THEN FechaSalida END) AS UltimoViaje,
+           MIN(CASE WHEN EstadoPasaje NOT IN (1, 7) AND FechaSalida > @Hoy THEN FechaSalida END) AS ProximoViaje
+    FROM viajesCliente
+    GROUP BY ClienteID
 ),
 gasto AS (
     SELECT f.ClienteID,
@@ -71,6 +84,19 @@ fechasRepetidas AS (
     FROM dbo.Persona
     WHERE FechaNacimiento IS NOT NULL
     GROUP BY FechaNacimiento
+),
+celulares AS (
+    SELECT pe.PersonaID,
+           REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(pe.Celular, ' ', ''), '-', ''), '.', ''), '(', ''), ')', ''), '+', '') AS Digitos
+    FROM dbo.Persona pe
+    INNER JOIN dbo.Cliente c ON c.ClienteID = pe.PersonaID
+    WHERE LEN(pe.Celular) >= 7
+),
+celularesCompartidos AS (
+    SELECT Digitos, COUNT(*) AS Cantidad
+    FROM celulares
+    GROUP BY Digitos
+    HAVING COUNT(*) > 1
 )
 SELECT c.ClienteID,
        pe.Apellido,
@@ -81,7 +107,11 @@ SELECT c.ClienteID,
        pe.Email,
        pe.FechaNacimiento,
        CAST(CASE WHEN fr.Cantidad >= 10 THEN 1 ELSE 0 END AS BIT) AS FechaNacimientoDudosa,
+       CAST(CASE WHEN pe.FechaNacimiento IS NOT NULL AND YEAR(pe.FechaNacimiento) >= 1910
+                      AND DATEADD(YEAR, 18, pe.FechaNacimiento) > @Hoy THEN 1 ELSE 0 END AS BIT) AS EsMenor,
+       ISNULL(cc.Cantidad - 1, 0) AS TelefonoCompartido,
        ISNULL(vj.ViajesTotales, 0) AS ViajesTotales,
+       ISNULL(vj.ViajesComoPasajero, 0) AS ViajesComoPasajero,
        ISNULL(vj.Viajes12Meses, 0) AS Viajes12Meses,
        vj.PrimerViaje,
        vj.UltimoViaje,
@@ -107,12 +137,14 @@ INNER JOIN dbo.Persona pe ON pe.PersonaID = c.ClienteID
 LEFT JOIN viajes vj ON vj.ClienteID = c.ClienteID
 LEFT JOIN gasto g ON g.ClienteID = c.ClienteID
 LEFT JOIN fechasRepetidas fr ON fr.FechaNacimiento = pe.FechaNacimiento
+LEFT JOIN celulares cel ON cel.PersonaID = c.ClienteID
+LEFT JOIN celularesCompartidos cc ON cc.Digitos = cel.Digitos
 OUTER APPLY (
-    SELECT TOP (1) cc.Fecha, cc.Resultado, COALESCE(pv.FullName, cc.Usuario) AS Quien
-    FROM dbo.ClienteContacto cc
-    LEFT JOIN dbo.Persona pv ON pv.PersonaID = cc.VendedorID
-    WHERE cc.ClienteID = c.ClienteID
-    ORDER BY cc.Fecha DESC
+    SELECT TOP (1) cc2.Fecha, cc2.Resultado, COALESCE(pv.FullName, cc2.Usuario) AS Quien
+    FROM dbo.ClienteContacto cc2
+    LEFT JOIN dbo.Persona pv ON pv.PersonaID = cc2.VendedorID
+    WHERE cc2.ClienteID = c.ClienteID
+    ORDER BY cc2.Fecha DESC
 ) uc;
 GO
 
@@ -133,7 +165,8 @@ BEGIN
     SET NOCOUNT ON;
     SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-    DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);
+    -- Hora argentina: el servidor está en UTC y desde las 21:00 "hoy" sería mañana.
+    DECLARE @Hoy DATE = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'Argentina Standard Time' AS DATE);
     DECLARE @Busqueda VARCHAR(102) = '%' + NULLIF(LTRIM(RTRIM(@Texto)), '') + '%';
 
     SELECT s.*
@@ -160,7 +193,8 @@ BEGIN
     SET NOCOUNT ON;
     SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-    DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);
+    -- Hora argentina: el servidor está en UTC y desde las 21:00 "hoy" sería mañana.
+    DECLARE @Hoy DATE = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'Argentina Standard Time' AS DATE);
 
     SELECT s.Categoria, COUNT(*) AS Cantidad
     FROM dbo.fn_MAT_Seguimiento_Clientes(@Hoy) s
@@ -186,7 +220,8 @@ BEGIN
     SET NOCOUNT ON;
     SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-    DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);
+    -- Hora argentina: el servidor está en UTC y desde las 21:00 "hoy" sería mañana.
+    DECLARE @Hoy DATE = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'Argentina Standard Time' AS DATE);
     IF (@Dias IS NULL OR @Dias < 0) SET @Dias = 0;
     IF (@Dias > 60) SET @Dias = 60;
 
@@ -232,28 +267,34 @@ AS
   -- Create date: 2026-10-29
   -- Description: Ficha de seguimiento de un cliente.
   --              RS1: datos + métricas (fn_MAT_Seguimiento_Clientes).
-  --              RS2: viajes (sin Disponible ni Anulado), más reciente primero.
+  --              RS2: viajes como pasajero o pagados para otros (sin Disponible ni Anulado), más reciente primero.
   --              RS3: historial de contactos.
   ============================================= */
 BEGIN
     SET NOCOUNT ON;
     SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-    DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);
+    -- Hora argentina: el servidor está en UTC y desde las 21:00 "hoy" sería mañana.
+    DECLARE @Hoy DATE = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'Argentina Standard Time' AS DATE);
 
     SELECT s.*
     FROM dbo.fn_MAT_Seguimiento_Clientes(@Hoy) s
     WHERE s.ClienteID = @ClienteID;
 
+    -- Viajes como pasajero o pagados por el cliente para otros (un renglón por viaje)
     SELECT v.FechaSalida,
            v.FechaRegreso,
            v.Descripcion AS Viaje,
-           e.Descripcion AS EstadoPasaje
+           MAX(CASE WHEN p.PasajeroID = @ClienteID THEN e.Descripcion END) AS EstadoPasaje,
+           CASE WHEN MAX(CASE WHEN p.PasajeroID = @ClienteID THEN 1 ELSE 0 END) = 1 THEN 'Viajó' ELSE 'Pagó para otros' END AS Rol,
+           COUNT(*) AS Pasajes
     FROM dbo.Pasaje p
     INNER JOIN dbo.Viaje v ON v.ViajeID = p.ViajeID
     INNER JOIN dbo.EstadoPasaje e ON e.ID = p.EstadoPasaje
-    WHERE p.PasajeroID = @ClienteID
+    LEFT JOIN dbo.Factura f ON f.FacturaID = p.FacturaID
+    WHERE (p.PasajeroID = @ClienteID OR f.ClienteID = @ClienteID)
       AND p.EstadoPasaje NOT IN (1, 7)
+    GROUP BY v.ViajeID, v.FechaSalida, v.FechaRegreso, v.Descripcion
     ORDER BY v.FechaSalida DESC;
 
     SELECT cc.Fecha,
@@ -288,10 +329,41 @@ BEGIN
     SET NOCOUNT, XACT_ABORT ON;
 
     DECLARE @ID UNIQUEIDENTIFIER = NEWID();
+    -- Hora argentina: el servidor está en UTC.
+    DECLARE @Fecha DATETIME = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'Argentina Standard Time' AS DATETIME);
 
-    INSERT INTO dbo.ClienteContacto (ClienteContactoID, ClienteID, VendedorID, Usuario, Resultado, Observacion)
-    VALUES (@ID, @ClienteID, @VendedorID, @Usuario, @Resultado, NULLIF(LTRIM(RTRIM(@Observacion)), ''));
+    INSERT INTO dbo.ClienteContacto (ClienteContactoID, ClienteID, VendedorID, Usuario, Fecha, Resultado, Observacion)
+    VALUES (@ID, @ClienteID, @VendedorID, @Usuario, @Fecha, @Resultado, NULLIF(LTRIM(RTRIM(@Observacion)), ''));
 
     SELECT @ID AS ClienteContactoID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[usp_MAT_Persona_GetByDNI](@DNI varchar(50))
+AS 
+  -- ============================================= 
+  -- Author:    Garcia Sergio 
+  -- Create date: 2022-10-18
+  -- Description:  get personnel data
+  -- 2026-10-29 (Sebastian Garcia): compara sin puntos (NroDocumentoCalc) para que
+  --             "32877563" y "32.877.563" se detecten como el mismo DNI.
+  -- =============================================
+    SET nocount, xact_abort ON; 
+      SET TRANSACTION isolation level READ uncommitted; 
+  BEGIN 
+	SELECT p.PersonaID,
+			   p.Apellido, 
+			   p.Nombre, 
+			   p.NroDocumento, 
+			   p.Telefono, 
+			   p.Celular,
+			   LocalidadNombre = l.Nombre, 
+			   p.Nacionalidad, 
+			   p.PaisResidencia 
+		FROM   dbo.Persona p 
+			   LEFT JOIN dbo.Localidad l 
+					   ON p.LocalidadID = l.ID 
+		WHERE p.NroDocumentoCalc = REPLACE(LTRIM(RTRIM(@DNI)), '.', '')
+
 END
 GO

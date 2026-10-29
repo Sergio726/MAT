@@ -58,7 +58,9 @@ Decisiones cerradas el 2026-10-29: [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTA
 - [x] Recuadro "Cumpleaños de hoy" en Home + menú Clientes → Seguimiento + acceso frecuente
 - [x] Marcar fechas de nacimiento repetidas como "verificar con el cliente"
 - [ ] **Publicar `database/2026-10-29_SeguimientoClientes.sql` en Prod** antes del deploy de `MAT.MVC` (DEV: aplicado 29/10/2026)
-- [ ] Smoke con vendedor real (saludo por WhatsApp, registrar contacto, ficha, categorías)
+- [x] Segunda revisión (hora argentina, edición de cliente, menores, viajes pagados para otros, DNI sin puntos, firma de Presupuesto, listas grandes, accesibilidad)
+- [ ] Smoke con vendedor real (saludo por WhatsApp, registrar contacto, ficha, categorías, editar un cliente sin teléfono fijo)
+- [ ] Borrar `dbo.Persona_Limpieza_20261029` en Prod cuando ya no haga falta revertir la limpieza
 
 ### Factura / vendedores — resumen de pagos por viaje (P2)
 

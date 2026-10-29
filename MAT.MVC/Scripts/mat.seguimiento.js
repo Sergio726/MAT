@@ -36,7 +36,7 @@
     }
 
     function textoHace(dias) {
-        if (dias === 0) return 'hoy';
+        if (dias === null || dias <= 0) return 'hoy';
         if (dias === 1) return 'ayer';
         return 'hace ' + dias + ' días';
     }
@@ -55,13 +55,20 @@
         if (r.nroDocumento) sub.push('DNI ' + escHtml(r.nroDocumento));
         if (r.celular || r.telefono) sub.push(escHtml(r.celular || r.telefono));
         if (sub.length) html += '<div class="sg-sub">' + sub.join(' · ') + '</div>';
+        if (r.esMenor) html += ' <span class="sg-badge sg-badge--menor">Menor de edad</span>';
         if (r.fechaNacimientoDudosa) html += '<div class="sg-warn"><i class="bi bi-exclamation-circle"></i> Verificar fecha de nacimiento con el cliente</div>';
+        if (r.telefonoCompartido > 0) {
+            html += '<div class="sg-sub"><i class="bi bi-people"></i> Teléfono compartido con ' + r.telefonoCompartido +
+                (r.telefonoCompartido === 1 ? ' cliente más' : ' clientes más') + '</div>';
+        }
         return html;
     }
 
     function renderViajes(r) {
         var html = '<strong>' + (r.viajesTotales || 0) + '</strong>';
         if (r.viajes12Meses) html += '<div class="sg-sub">' + r.viajes12Meses + ' en 12 meses</div>';
+        var pagados = (r.viajesTotales || 0) - (r.viajesComoPasajero || 0);
+        if (pagados > 0) html += '<div class="sg-sub">' + pagados + ' pagado' + (pagados === 1 ? '' : 's') + ' para otros</div>';
         return html;
     }
 
@@ -84,11 +91,11 @@
     function renderAcciones(r) {
         var id = escHtml(r.clienteId);
         var wa = r.tieneWhatsApp
-            ? '<a href="' + escHtml(r.whatsAppUrl) + '" target="_blank" rel="noopener" class="btn btn-sm sg-btn-wa" data-accion="wa" data-id="' + id + '" title="Abrir WhatsApp"><i class="bi bi-whatsapp"></i></a>'
-            : '<button type="button" class="btn btn-sm btn-outline-secondary" disabled title="Sin teléfono válido"><i class="bi bi-whatsapp"></i></button>';
+            ? '<a href="' + escHtml(r.whatsAppUrl) + '" target="_blank" rel="noopener" class="btn btn-sm sg-btn-wa" data-accion="wa" data-id="' + id + '" title="Abrir WhatsApp" aria-label="Abrir WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>'
+            : '<button type="button" class="btn btn-sm btn-outline-secondary" disabled title="Sin teléfono válido" aria-label="Sin teléfono válido para WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></button>';
         return '<div class="sg-actions">' + wa +
-            '<button type="button" class="btn btn-sm btn-outline-secondary" data-accion="ficha" data-id="' + id + '" title="Ver ficha"><i class="bi bi-person-vcard"></i></button>' +
-            '<button type="button" class="btn btn-sm btn-outline-secondary" data-accion="registrar" data-id="' + id + '" title="Registrar contacto"><i class="bi bi-journal-plus"></i></button>' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary" data-accion="ficha" data-id="' + id + '" title="Ver ficha" aria-label="Ver ficha"><i class="bi bi-person-vcard" aria-hidden="true"></i></button>' +
+            '<button type="button" class="btn btn-sm btn-outline-secondary" data-accion="registrar" data-id="' + id + '" title="Registrar contacto" aria-label="Registrar contacto"><i class="bi bi-journal-plus" aria-hidden="true"></i></button>' +
             '</div>';
     }
 
@@ -123,7 +130,8 @@
             var $tbl = $(selector);
             if (tablas[clave]) { tablas[clave].destroy(); $tbl.find('tbody').empty(); }
             tablas[clave] = $tbl.DataTable({
-                data: rows, columns: columns, order: order || [], pageLength: 25, autoWidth: false, language: dtLanguage()
+                data: rows, columns: columns, order: order || [], pageLength: 25, autoWidth: false, language: dtLanguage(),
+                deferRender: true // la categoría Dormido trae más de 6.000 clientes
             });
         }
 
@@ -173,6 +181,7 @@
         function cargarCategoria() {
             if (!categoriaActual) return;
             var $alert = $('#sg-cat-alert').addClass('d-none');
+            $('#sg-cat-wrap').addClass('d-none');
             $('#sg-cat-empty').removeClass('d-none').find('div').text('Cargando…');
             getJson(urls.urlClientes, { categoria: categoriaActual }).done(function (res) {
                 if (!res.success) { mostrarAlerta($alert, res.message); return; }
@@ -180,7 +189,10 @@
                 $('#sg-cat-empty').toggleClass('d-none', res.data.length > 0).find('div').text('No hay clientes en esta categoría.');
                 $('#sg-cat-wrap').toggleClass('d-none', res.data.length === 0);
                 pintarTabla('cat', '#sg-tbl-cat', res.data, columnasLista, [[2, 'desc']]);
-            }).fail(function () { mostrarAlerta($alert, 'No se pudo cargar la categoría.'); });
+            }).fail(function () {
+                $('#sg-cat-empty').find('div').text('');
+                mostrarAlerta($alert, 'No se pudo cargar la categoría.');
+            });
         }
 
         // Buscar
@@ -232,8 +244,9 @@
                     '</div>';
 
                 html += '<h6 class="mt-3">Viajes</h6>';
-                html += f.viajes.length ? tablaSimple(['Salida', 'Viaje', 'Estado'], f.viajes.map(function (v) {
-                    return [fmtFecha(v.fechaSalida), escHtml(v.viaje || ''), escHtml(v.estadoPasaje || '')];
+                html += f.viajes.length ? tablaSimple(['Salida', 'Viaje', 'Participación', 'Estado'], f.viajes.map(function (v) {
+                    var rol = escHtml(v.rol || '') + (v.pasajes > 1 ? ' <span class="sg-sub">(' + v.pasajes + ' pasajes)</span>' : '');
+                    return [fmtFecha(v.fechaSalida), escHtml(v.viaje || ''), rol, escHtml(v.estadoPasaje || '—')];
                 })) : '<div class="sg-sub">Sin viajes registrados.</div>';
 
                 html += '<h6 class="mt-3">Contactos</h6>';
@@ -350,6 +363,7 @@
         });
 
         cargarCumpleanios();
+        if (urls.fichaInicial) abrirFicha(urls.fichaInicial);
     }
 
     // ---------------------------------------------------------------- Recuadro del inicio
@@ -363,8 +377,12 @@
             $box.find('[data-rol="contador"]').text(rows.length ? rows.length + ' cumpleaños · ' + pendientes + ' sin saludar' : 'Nadie cumple años hoy');
             var max = opciones.maximo || 6;
             var html = rows.slice(0, max).map(function (r) {
-                return '<li><span>' + escHtml(nombreCompleto(r)) + (r.edadQueCumple ? ' <span class="sg-sub">(' + r.edadQueCumple + ')</span>' : '') + '</span>' +
-                    (r.ultimoSaludoFecha ? '<span class="sg-ok"><i class="bi bi-check2-circle"></i></span>' : '<span class="sg-sub">pendiente</span>') + '</li>';
+                var estado = r.ultimoSaludoFecha ? '<span class="sg-ok" title="Ya saludado"><i class="bi bi-check2-circle" aria-hidden="true"></i> saludado</span>'
+                    : !r.tieneWhatsApp ? '<span class="sg-sub" title="Sin teléfono válido">sin WhatsApp</span>'
+                    : '<span class="sg-sub">pendiente</span>';
+                return '<li><a href="' + escHtml(opciones.urlSeguimiento + '?ficha=' + encodeURIComponent(r.clienteId)) + '">' + escHtml(nombreCompleto(r)) + '</a>' +
+                    (r.edadQueCumple ? ' <span class="sg-sub">(' + r.edadQueCumple + ')</span>' : '') +
+                    (r.esMenor ? ' <span class="sg-sub">· menor de edad</span>' : '') + ' ' + estado + '</li>';
             }).join('');
             if (rows.length > max) html += '<li class="sg-sub">y ' + (rows.length - max) + ' más…</li>';
             $box.find('[data-rol="lista"]').html(html ? '<ul class="sg-widget-list">' + html + '</ul>' : '');

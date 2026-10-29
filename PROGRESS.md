@@ -2,6 +2,21 @@
 
 ---
 
+### [2026-10-29] — Segunda revisión del seguimiento de clientes y del alta/edición de cliente
+- **Archivos:** `MAT.DB/dbo/Functions/fn_MAT_Seguimiento_Clientes.sql`, `usp_MAT_Seguimiento_{Clientes,ResumenCategorias,Cumpleanios,Ficha}.sql`, `usp_MAT_ClienteContacto_Insert.sql`, `usp_MAT_Persona_GetByDNI.sql`, `database/2026-10-29_SeguimientoClientes.sql` (regenerado), `MAT.MVC/Infrastructure/ClienteValidacion.cs` y `FirmaVendedor.cs` (nuevos), `SeguimientoCatalog.cs`, `QuickAccessCatalog.cs`, `Infrastructure/Data/SeguimientoDataAccess.cs`, `Models/Seguimiento/SeguimientoDtos.cs`, `Controllers/Seguimiento/SeguimientoController.cs`, `Controllers/PersonaCliente/PersonaClienteController.cs`, `Controllers/Presupuesto/PresupuestoController.cs`, `Views/Seguimiento/Index.cshtml`, `Views/Home/_CumpleaniosHoy.cshtml`, `Views/PersonaCliente/{Create,Edit}.cshtml`, `Views/Shared/_MainNav.cshtml`, `Scripts/mat.seguimiento.js`, `MAT.MVC.Tests/Infrastructure/ClienteValidacionTests.cs`, docs.
+- **Hallazgos corregidos:**
+  1. **Hora UTC:** el servidor SQL está en UTC; de 21 a 24 h "hoy" era mañana y los contactos quedaban con fecha del día siguiente. SPs con `AT TIME ZONE 'Argentina Standard Time'`; el contacto guarda la hora argentina; validación C# con `ClienteValidacion.HoyArgentina()`.
+  2. **Edición de cliente exigía el teléfono fijo** (1.772 clientes quedaron sin fijo tras la limpieza): ahora alta y edición usan `ClienteValidacion` (teléfono o celular completo, fecha obligatoria 1910–hoy) en navegador y servidor; los errores de la edición vuelven a la pantalla (antes se perdían en `ViewBag` con el redirect). Aclaración "al menos uno: teléfono o celular" y `*` en la fecha del alta.
+  3. **Menores:** marca "Menor de edad" (`EsMenor`) en listas, ficha y recuadro del inicio.
+  4. **Compradores para otros:** los viajes pagados (factura a su nombre) cuentan para la categoría; la ficha muestra "Viajó" / "Pagó para otros" y la grilla "N pagados para otros".
+  5. **DNI repetido:** `usp_MAT_Persona_GetByDNI` compara sin puntos (`NroDocumentoCalc`).
+  6. **Firma de Presupuesto:** salía una línea en blanco (`Vendedor.Descripcion` vacío); `FirmaVendedor.NombreActual()` toma el nombre de `Persona` (también en Seguimiento).
+  7. **Lista grande (Dormido, ~6.600):** DataTables con `deferRender`; la tabla anterior se oculta mientras carga otra categoría.
+  8. Menú "Seguimiento de clientes" (había dos "Seguimiento"); `aria-label`/`aria-labelledby`/`aria-controls`; "Notas de crédito" pasa a Todos los módulos para no dejar un acceso huérfano; recuadro del inicio con nombres que abren la ficha (`/Seguimiento?ficha=`) y "sin WhatsApp"; marca "Teléfono compartido con N clientes más"; "hace -1 días" imposible.
+- **Verificación:** `tools/Run-Tests.ps1` OK (61 tests). DEV: categorías 375 ms, cumpleaños 7 días 614 ms; cliente que solo pagó para otros pasa de "Sin viajes" a "Ocasional"; DNI con y sin puntos encuentra a la misma persona; contacto guardado 17:01 (AR) con servidor en 20:01 (UTC); datos de prueba borrados. `aspnet_compiler`: vistas tocadas compilan.
+
+---
+
 ### [2026-10-29] — Seguimiento de clientes para vendedores
 - **Archivos:** `MAT.DB/dbo/Tables/ClienteContacto.sql`, `MAT.DB/dbo/Functions/fn_MAT_Seguimiento_Clientes.sql`, `MAT.DB/dbo/Stored Procedures/usp_MAT_Seguimiento_{Clientes,ResumenCategorias,Cumpleanios,Ficha}.sql`, `usp_MAT_ClienteContacto_Insert.sql`, `MAT.DB/MAT.DB.sqlproj`, `database/2026-10-29_SeguimientoClientes.sql`, `MAT.Enums/eResultadoContacto.cs`, `MAT.MVC/Controllers/Seguimiento/SeguimientoController.cs`, `MAT.MVC/Infrastructure/Data/SeguimientoDataAccess.cs`, `MAT.MVC/Infrastructure/SeguimientoCatalog.cs`, `MAT.MVC/Models/Seguimiento/SeguimientoDtos.cs`, `MAT.MVC/Views/Seguimiento/Index.cshtml`, `MAT.MVC/Views/Home/_CumpleaniosHoy.cshtml`, `MAT.MVC/Views/Home/Index.cshtml`, `MAT.MVC/Scripts/mat.seguimiento.js`, `MAT.MVC/Views/Shared/_MainNav.cshtml`, `MAT.MVC/Infrastructure/QuickAccessCatalog.cs`, `MAT.MVC.Tests/Infrastructure/SeguimientoCatalogTests.cs`, csproj, `docs/PENDIENTES.md`, `PROGRESS.md`.
 - **Qué se implementó** (decisiones en `docs/DECISIONES_ABIERTAS.md`):

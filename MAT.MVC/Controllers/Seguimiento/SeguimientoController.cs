@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using System.Web.Mvc;
 using MAT.Enums;
-using MAT.MVC.Common;
 using MAT.MVC.Infrastructure;
 using MAT.MVC.Infrastructure.Data;
 
@@ -17,10 +15,12 @@ namespace MAT.MVC.Controllers.Seguimiento
     {
         private const int DiasCumpleaniosMaximo = 60;
 
-        public ActionResult Index()
+        /// <param name="ficha">Cliente cuya ficha se abre al entrar (enlaces del recuadro del inicio).</param>
+        public ActionResult Index(Guid? ficha = null)
         {
             ViewBag.Categorias = SeguimientoCatalog.GetCategorias();
             ViewBag.Resultados = SeguimientoCatalog.GetResultados();
+            ViewBag.FichaInicial = ficha;
             return View();
         }
 
@@ -33,7 +33,7 @@ namespace MAT.MVC.Controllers.Seguimiento
             try
             {
                 dias = Math.Max(0, Math.Min(dias, DiasCumpleaniosMaximo));
-                var firma = GetFirmaVendedor();
+                var firma = FirmaVendedor.NombreActual();
                 var list = SeguimientoDataAccess.GetCumpleanios(dias);
                 foreach (var cliente in list)
                 {
@@ -134,7 +134,7 @@ namespace MAT.MVC.Controllers.Seguimiento
                 observacion = string.IsNullOrWhiteSpace(observacion) ? null : observacion.Trim();
                 if (observacion != null && observacion.Length > 500) observacion = observacion.Substring(0, 500);
 
-                SeguimientoDataAccess.InsertContacto(clienteId, GetVendedorId(), User.Identity.Name, resultado, observacion);
+                SeguimientoDataAccess.InsertContacto(clienteId, FirmaVendedor.VendedorIdActual(), User.Identity.Name, resultado, observacion);
                 return JsonCamelCaseHelper.Serialize(new
                 {
                     success = true,
@@ -148,28 +148,5 @@ namespace MAT.MVC.Controllers.Seguimiento
             }
         }
 
-        private static Guid? GetVendedorId()
-        {
-            try
-            {
-                return MATContext.CurrentVendedor?.VendedorId;
-            }
-            catch
-            {
-                // Usuario sin vendedor asociado (p. ej. administrador): el contacto queda a nombre del usuario.
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Nombre del vendedor para firmar el saludo; <c>Vendedor.Descripcion</c> está vacío, el nombre vive en Persona.
-        /// </summary>
-        private static string GetFirmaVendedor()
-        {
-            var vendedorId = GetVendedorId();
-            if (!vendedorId.HasValue) return null;
-            var persona = PersonaDataAccess.GetById(vendedorId.Value);
-            return persona == null ? null : SeguimientoCatalog.NombreParaFirma(persona.Nombre, persona.Apellido);
-        }
     }
 }

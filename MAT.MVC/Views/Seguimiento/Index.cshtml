@@ -36,6 +36,7 @@
     .sg-badge--Nuevo { background: #dbeafe; color: #1e40af; }
     .sg-badge--Ocasional { background: #ede9fe; color: #5b21b6; }
     .sg-badge--Dormido, .sg-badge--SinViajes { background: #f3f4f6; color: #4b5563; }
+    .sg-badge--menor { background: #fee2e2; color: #991b1b; }
     .sg-warn { font-size: 0.75rem; color: #92400e; }
     .sg-ok { font-size: 0.75rem; color: #166534; }
     .sg-actions { display: flex; gap: 0.35rem; flex-wrap: nowrap; }
@@ -59,13 +60,13 @@
 
     <ul class="nav nav-pills sg-tabs mb-3" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#sg-tab-hoy" type="button" role="tab"><i class="bi bi-cake2"></i> Para hoy</button>
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#sg-tab-hoy" type="button" role="tab" aria-controls="sg-tab-hoy" aria-selected="true"><i class="bi bi-cake2"></i> Para hoy</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#sg-tab-cat" type="button" role="tab" id="sg-tab-cat-btn"><i class="bi bi-diagram-3"></i> Por categoría</button>
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#sg-tab-cat" type="button" role="tab" id="sg-tab-cat-btn" aria-controls="sg-tab-cat" aria-selected="false"><i class="bi bi-diagram-3"></i> Por categoría</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#sg-tab-buscar" type="button" role="tab"><i class="bi bi-search"></i> Buscar cliente</button>
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#sg-tab-buscar" type="button" role="tab" aria-controls="sg-tab-buscar" aria-selected="false"><i class="bi bi-search"></i> Buscar cliente</button>
         </li>
     </ul>
 
@@ -89,7 +90,7 @@
                                 <th>Cliente</th>
                                 <th>Edad</th>
                                 <th>Categoría</th>
-                                <th>Viajes</th>
+                                <th title="Viajes propios o pagados para otros">Viajes</th>
                                 <th>Saludo</th>
                                 <th>Acciones</th>
                             </tr>
@@ -124,7 +125,7 @@
                             <tr>
                                 <th>Cliente</th>
                                 <th>Categoría</th>
-                                <th>Viajes</th>
+                                <th title="Viajes propios o pagados para otros">Viajes</th>
                                 <th>Último viaje</th>
                                 <th>Próximo viaje</th>
                                 <th>Último contacto</th>
@@ -141,7 +142,7 @@
             <div class="sg-card">
                 <h3 class="sg-card-title"><i class="bi bi-search"></i> Buscar cliente</h3>
                 <form id="sg-form-buscar" class="sg-toolbar" autocomplete="off">
-                    <input type="text" id="sg-buscar-texto" class="modern-form-input" style="max-width: 22rem;" placeholder="Apellido, nombre o DNI…" />
+                    <input type="text" id="sg-buscar-texto" class="modern-form-input" style="max-width: 22rem;" placeholder="Apellido, nombre o DNI…" aria-label="Apellido, nombre o DNI" />
                     <button type="submit" class="btn-modern btn-modern-primary btn-sm"><i class="bi bi-search"></i> <span>Buscar</span></button>
                 </form>
                 <div id="sg-buscar-alert" class="alert alert-danger d-none py-2 small"></div>
@@ -152,7 +153,7 @@
                             <tr>
                                 <th>Cliente</th>
                                 <th>Categoría</th>
-                                <th>Viajes</th>
+                                <th title="Viajes propios o pagados para otros">Viajes</th>
                                 <th>Último viaje</th>
                                 <th>Próximo viaje</th>
                                 <th>Último contacto</th>
@@ -167,7 +168,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="sg-modal-ficha" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="sg-modal-ficha" tabindex="-1" aria-labelledby="sg-ficha-titulo" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -176,18 +177,18 @@
             </div>
             <div class="modal-body" id="sg-ficha-body"></div>
             <div class="modal-footer">
-                <a href="#" target="_blank" rel="noopener" class="btn btn-sm sg-btn-wa d-none" id="sg-ficha-wa"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+                <a href="#" target="_blank" rel="noopener" class="btn btn-sm sg-btn-wa d-none" id="sg-ficha-wa" aria-label="Abrir WhatsApp"><i class="bi bi-whatsapp"></i> WhatsApp</a>
                 <button type="button" class="btn-modern btn-modern-primary btn-sm" id="sg-ficha-registrar"><i class="bi bi-journal-plus"></i> <span>Registrar contacto</span></button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="sg-modal-contacto" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="sg-modal-contacto" tabindex="-1" aria-labelledby="sg-contacto-titulo" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Registrar contacto</h5>
+                <h5 class="modal-title" id="sg-contacto-titulo">Registrar contacto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
@@ -219,14 +220,15 @@
 
 @section Scripts {
 <script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
-<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261029a")"></script>
+<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261029b")"></script>
 <script type="text/javascript">
     MatSeguimiento.initPagina({
         urlCumpleanios: "@Url.Action("Cumpleanios", "Seguimiento")",
         urlResumen: "@Url.Action("Resumen", "Seguimiento")",
         urlClientes: "@Url.Action("Clientes", "Seguimiento")",
         urlFicha: "@Url.Action("Ficha", "Seguimiento")",
-        urlRegistrar: "@Url.Action("RegistrarContacto", "Seguimiento")"
+        urlRegistrar: "@Url.Action("RegistrarContacto", "Seguimiento")",
+        fichaInicial: "@(ViewBag.FichaInicial)"
     });
 </script>
 }

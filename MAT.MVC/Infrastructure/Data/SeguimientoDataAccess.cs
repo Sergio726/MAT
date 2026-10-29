@@ -90,7 +90,9 @@ namespace MAT.MVC.Infrastructure.Data
                         FechaSalida = reader.GetNullableDateTime("FechaSalida"),
                         FechaRegreso = reader.GetNullableDateTime("FechaRegreso"),
                         Viaje = reader.GetString("Viaje"),
-                        EstadoPasaje = reader.GetString("EstadoPasaje")
+                        EstadoPasaje = reader.GetString("EstadoPasaje"),
+                        Rol = reader.GetString("Rol"),
+                        Pasajes = reader.GetInt("Pasajes")
                     });
                 }
 
@@ -135,7 +137,10 @@ namespace MAT.MVC.Infrastructure.Data
                 Email = reader.GetString("Email"),
                 FechaNacimiento = reader.GetNullableDateTime("FechaNacimiento"),
                 FechaNacimientoDudosa = reader.GetBool("FechaNacimientoDudosa"),
+                EsMenor = reader.GetBool("EsMenor"),
+                TelefonoCompartido = reader.GetInt("TelefonoCompartido"),
                 ViajesTotales = reader.GetInt("ViajesTotales"),
+                ViajesComoPasajero = reader.GetInt("ViajesComoPasajero"),
                 Viajes12Meses = reader.GetInt("Viajes12Meses"),
                 PrimerViaje = reader.GetNullableDateTime("PrimerViaje"),
                 UltimoViaje = reader.GetNullableDateTime("UltimoViaje"),

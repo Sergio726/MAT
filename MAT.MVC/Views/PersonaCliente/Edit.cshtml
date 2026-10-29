@@ -110,7 +110,7 @@
                             @Html.ValidationMessageFor(model => model.Domicilio, "", new { @class = "text-danger" })
                         </div>
                         <div class="modern-form-group">
-                            <label class="modern-form-label">@Html.LabelFor(model => model.Telefono)<span class="field-required" aria-hidden="true"> *</span></label>
+                            <label class="modern-form-label">@Html.LabelFor(model => model.Telefono)</label>
                             @Html.TextBoxFor(model => model.Telefono, new { @class = "modern-form-input", placeholder = "Teléfono fijo" })
                             @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
                         </div>
@@ -118,6 +118,7 @@
                             <label class="modern-form-label">@Html.LabelFor(model => model.Celular)</label>
                             @Html.TextBoxFor(model => model.Celular, new { @class = "modern-form-input", placeholder = "Celular" })
                             @Html.ValidationMessageFor(model => model.Celular, "", new { @class = "text-danger" })
+                            <small class="text-secondary">Cargá al menos uno: teléfono o celular (con código de área).</small>
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Email)</label>
@@ -311,11 +312,15 @@
         window._validationBannerEditTimer = setTimeout(function () { $banner.addClass("hidden"); }, 10000);
     };
 
+    // Errores de validación del servidor (TempData["error"], ver PersonaClienteController.Edit POST)
+    var _initialErrorEdit = @Html.Raw(TempData["error"] != null ? Json.Encode(TempData["error"]) : "null");
+
     $(document).ready(function () {
         $("#validation-banner-edit .validation-banner-close").on("click", function () {
             $("#validation-banner-edit").addClass("hidden");
             if (window._validationBannerEditTimer) clearTimeout(window._validationBannerEditTimer);
         });
+        if (_initialErrorEdit) window.showValidationBannerEdit(_initialErrorEdit);
         var ClienteId = $('#PersonaId').val();
         verificarCTA(ClienteId, "Verificar");
 
@@ -455,8 +460,15 @@
         if ($("#Nombre").val().trim() === "") errors.push("Ingrese el nombre de la persona.");
         if ($("#NroDocumento").val().trim() === "") errors.push("Ingrese el número de documento de la persona.");
         if ($("#Domicilio").val().trim() === "") errors.push("Ingrese el domicilio de la persona.");
-        if ($("#Telefono").val().trim() === "") errors.push("Ingrese el teléfono de la persona.");
-        if ($("#FechaNacimiento").val().trim() === "") errors.push("Ingrese la fecha de nacimiento.");
+        // Mismas reglas que el alta (ClienteValidacion): teléfono o celular completo, fecha obligatoria y real
+        var digitosTel = ($("#Telefono").val() || "").replace(/\D/g, "");
+        var digitosCel = ($("#Celular").val() || "").replace(/\D/g, "");
+        if (digitosTel.length < 7 && digitosCel.length < 7) errors.push("Ingrese un teléfono o celular completo (no solo el código de área).");
+        var fnac = $.trim($("#FechaNacimiento").val());
+        var partes = fnac.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        var fecha = partes ? new Date(+partes[3], +partes[2] - 1, +partes[1]) : null;
+        if (!fnac) errors.push("Ingrese la fecha de nacimiento.");
+        else if (!fecha || fecha.getDate() !== +partes[1] || +partes[3] < 1910 || fecha > new Date()) errors.push("La fecha de nacimiento no es válida (dd/mm/aaaa).");
         if ($("#Provincia").val().trim() === "0" || $("#Provincia").val().trim() === "") errors.push("Seleccione una provincia.");
         if ($("#ddDepartamento").val().trim() === "0" || $("#ddDepartamento").val().trim() === "") errors.push("Seleccione un departamento.");
         if ($("#ddLocalidad").val().trim() === "0" || $("#ddLocalidad").val().trim() === "") errors.push("Seleccione una localidad.");

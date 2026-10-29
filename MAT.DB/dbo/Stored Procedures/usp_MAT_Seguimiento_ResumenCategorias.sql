@@ -9,7 +9,8 @@ BEGIN
     SET NOCOUNT ON;
     SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-    DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);
+    -- Hora argentina: el servidor está en UTC y desde las 21:00 "hoy" sería mañana.
+    DECLARE @Hoy DATE = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'Argentina Standard Time' AS DATE);
 
     SELECT s.Categoria, COUNT(*) AS Cantidad
     FROM dbo.fn_MAT_Seguimiento_Clientes(@Hoy) s

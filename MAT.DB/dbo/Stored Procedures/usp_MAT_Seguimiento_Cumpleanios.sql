@@ -15,7 +15,8 @@ BEGIN
     SET NOCOUNT ON;
     SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-    DECLARE @Hoy DATE = CAST(GETDATE() AS DATE);
+    -- Hora argentina: el servidor está en UTC y desde las 21:00 "hoy" sería mañana.
+    DECLARE @Hoy DATE = CAST(SYSDATETIMEOFFSET() AT TIME ZONE 'Argentina Standard Time' AS DATE);
     IF (@Dias IS NULL OR @Dias < 0) SET @Dias = 0;
     IF (@Dias > 60) SET @Dias = 60;
 

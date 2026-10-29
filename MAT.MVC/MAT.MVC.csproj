@@ -356,6 +356,8 @@
     <Compile Include="Infrastructure\AdminHelpCatalog.cs" />
     <Compile Include="Infrastructure\QuickAccessCatalog.cs" />
     <Compile Include="Infrastructure\SeguimientoCatalog.cs" />
+    <Compile Include="Infrastructure\ClienteValidacion.cs" />
+    <Compile Include="Infrastructure\FirmaVendedor.cs" />
     <Compile Include="Infrastructure\AdminNavModels.cs" />
     <Compile Include="Infrastructure\AuthCookieHelper.cs" />
     <Compile Include="Infrastructure\ErrorUtil.cs" />
