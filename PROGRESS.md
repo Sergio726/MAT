@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-10-29] — Alta de cliente: causa de teléfonos y fechas de nacimiento basura
+- **Archivos:** `MAT.MVC/Models/PersonaClienteModel.cs`, `MAT.MVC/Scripts/mat.jquery.binding.js`, `MAT.MVC/Views/Shared/_Layout.cshtml` (cache-bust `?v=20261029a`), `PROGRESS.md`.
+- **Diagnóstico (producción, solo lectura):** de 1.599 altas de 2026, 245 tienen teléfono con solo el código de área (`387`/`0387`), 61 fecha de nacimiento inválida (55 en `0001-01-01`, todas desde abril 2026) y 172 una fecha "de relleno" repetida en tandas (p. ej. 11/11/1987 en 65 altas 2026).
+- **Causas:** (1) `#btnAgregarCliente` exigía el teléfono **fijo** aunque hubiera celular; sin dato se cargaba `387` para poder guardar. (2) `PersonaClienteModel.FechaNacimiento` era `DateTime` no nullable: si `Create`/`CreateAjax` recibían la fecha vacía se guardaba `0001-01-01`.
+- **Qué se hizo:** la validación pide teléfono **o** celular con al menos 7 dígitos; `FechaNacimiento` pasa a `DateTime?` y se envía `DBNull` al SP (`usp_MAT_PersonaCliente_Create` ya acepta NULL). La obligatoriedad de la fecha de nacimiento en el formulario queda como decisión de negocio.
+- **Verificación:** `tools/Run-Tests.ps1` OK (MSBuild sin errores nuevos, 46 tests).
+
+---
+
 ### [2026-10-29] — Fix enlace WhatsApp: normalización de teléfonos argentinos
 - **Archivos:** `MAT.MVC/Infrastructure/WhatsAppHelper.cs` (nuevo), `MAT.MVC/Controllers/Presupuesto/PresupuestoController.cs`, `MAT.MVC.Tests/Infrastructure/WhatsAppHelperTests.cs` (nuevo), `MAT.MVC/MAT.MVC.csproj`, `MAT.MVC.Tests/MAT.MVC.Tests.csproj`, `PROGRESS.md`.
 - **Problema:** `PresupuestoController.EnviarWhatsApp` armaba `wa.me/54` + número: faltaba el `9` de celular (`543874…`), `0387…` quedaba `540387…`, `15…` sin área quedaba inválido, y `HttpUtility.UrlEncode` mandaba los espacios como `+`.

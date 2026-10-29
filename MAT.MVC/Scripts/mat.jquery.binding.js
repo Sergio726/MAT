@@ -1393,7 +1393,10 @@ $(document).on("click", "#btnAgregarCliente", function () {
     if ($("#Nombre").val().trim() === "") errors.push("Ingrese el nombre de la persona.");
     if ($("#NroDocumento").val().trim() === "") errors.push("Ingrese el número de documento de la persona.");
     if ($("#Domicilio").val().trim() === "") errors.push("Ingrese el domicilio de la persona.");
-    if ($("#Telefono").val().trim() === "") errors.push("Ingrese el teléfono de la persona.");
+    // Teléfono o celular con número completo: antes se exigía el fijo y se cargaba "387" para poder seguir.
+    var digitosTel = ($("#Telefono").val() || "").replace(/\D/g, "");
+    var digitosCel = ($("#Celular").val() || "").replace(/\D/g, "");
+    if (digitosTel.length < 7 && digitosCel.length < 7) errors.push("Ingrese un teléfono o celular completo (no solo el código de área).");
     if ($("#FechaNacimiento").val().trim() === "") errors.push("Ingrese la fecha de nacimiento.");
     if ($("#Provincia").val().trim() === "0" || $("#Provincia").val().trim() === "") errors.push("Seleccione una provincia.");
     if ($("#ddDepartamento").val().trim() === "0" || $("#ddDepartamento").val().trim() === "") errors.push("Seleccione un departamento.");
