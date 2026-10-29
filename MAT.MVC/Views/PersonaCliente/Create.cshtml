@@ -279,8 +279,22 @@
 
             var errors = [];
             if (!$.trim($("#Apellido").val())) errors.push("El apellido es obligatorio.");
+            if (!$.trim($("#Nombre").val())) errors.push("El nombre es obligatorio.");
             if (!$.trim($("#NroDocumento").val())) errors.push("El número de documento es obligatorio.");
             if (!$.trim($("#Domicilio").val())) errors.push("El domicilio es obligatorio.");
+
+            // Fecha de nacimiento obligatoria y real (dd/mm/aaaa, desde 1910 hasta hoy)
+            var fnac = $.trim($("#FechaNacimiento").val());
+            var partes = fnac.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            var fecha = partes ? new Date(+partes[3], +partes[2] - 1, +partes[1]) : null;
+            if (!fnac) errors.push("La fecha de nacimiento es obligatoria.");
+            else if (!fecha || fecha.getDate() !== +partes[1] || +partes[3] < 1910 || fecha > new Date()) errors.push("La fecha de nacimiento no es válida (dd/mm/aaaa).");
+
+            // Teléfono o celular completo: antes se cargaba "387" para poder guardar
+            var digitosTel = ($("#Telefono").val() || "").replace(/\D/g, "");
+            var digitosCel = ($("#Celular").val() || "").replace(/\D/g, "");
+            if (digitosTel.length < 7 && digitosCel.length < 7) errors.push("Ingrese un teléfono o celular completo (no solo el código de área).");
+
             if (!$.trim($("#Nacionalidad").val())) errors.push("La nacionalidad es obligatoria.");
             if ($("#ddLocalidad").val() === "0" || !$("#ddLocalidad").val()) errors.push("Debe seleccionar una localidad.");
 

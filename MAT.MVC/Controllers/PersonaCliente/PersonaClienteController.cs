@@ -241,7 +241,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("Email"))) PersonaCliente.Email = collection.Get("Email").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Domicilio"))) PersonaCliente.Domicilio = collection.Get("Domicilio");
                 if (!string.IsNullOrEmpty(collection.Get("Ocupacion"))) PersonaCliente.Ocupacion = collection.Get("Ocupacion").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("FechaNacimiento"))) PersonaCliente.FechaNacimiento = Convert.ToDateTime(collection.Get("FechaNacimiento"));
+                DateTime fechaNacimiento;
+                if (DateTime.TryParse(collection.Get("FechaNacimiento"), out fechaNacimiento)) PersonaCliente.FechaNacimiento = fechaNacimiento;
                 if (!string.IsNullOrEmpty(collection.Get("Sexo"))) PersonaCliente.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
                 if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) PersonaCliente.Nacionalidad = collection.Get("Nacionalidad").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) PersonaCliente.PaisResidencia = collection.Get("PaisResidencia").ToString();
@@ -261,6 +262,10 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("TipoId"))) PersonaCliente.TipoID = Convert.ToInt32(collection.Get("TipoId").ToString());
                 if (MATContext.CurrentVendedor != null) PersonaCliente.VendedorID = MATContext.CurrentVendedor.VendedorId.ToString();
                 #endregion
+
+                var errores = ValidarAltaCliente(PersonaCliente);
+                if (errores.Count > 0)
+                    return RedirectToAction("Create", "PersonaCliente", new { msj = string.Join(" ", errores) });
 
                 #region create
                 PersonaClienteMethod.CreatePersonaCliente(PersonaCliente);
@@ -298,7 +303,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("Email"))) PersonaCliente.Email = collection.Get("Email").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Domicilio"))) PersonaCliente.Domicilio = collection.Get("Domicilio");
                 if (!string.IsNullOrEmpty(collection.Get("Ocupacion"))) PersonaCliente.Ocupacion = collection.Get("Ocupacion").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("FechaNacimiento"))) PersonaCliente.FechaNacimiento = Convert.ToDateTime(collection.Get("FechaNacimiento"));
+                DateTime fechaNacimiento;
+                if (DateTime.TryParse(collection.Get("FechaNacimiento"), out fechaNacimiento)) PersonaCliente.FechaNacimiento = fechaNacimiento;
                 if (!string.IsNullOrEmpty(collection.Get("Sexo"))) PersonaCliente.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
                 if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) PersonaCliente.Nacionalidad = collection.Get("Nacionalidad").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) PersonaCliente.PaisResidencia = collection.Get("PaisResidencia").ToString();
@@ -318,6 +324,10 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("TipoId"))) PersonaCliente.TipoID = Convert.ToInt32(collection.Get("TipoId").ToString());
                 if (MATContext.CurrentVendedor != null) PersonaCliente.VendedorID = MATContext.CurrentVendedor.VendedorId.ToString();
                 #endregion
+
+                var errores = ValidarAltaCliente(PersonaCliente);
+                if (errores.Count > 0)
+                    return Json(new { success = false, message = errores });
 
                 PersonaClienteMethod.CreatePersonaCliente(PersonaCliente);
 
@@ -1020,6 +1030,30 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 cuenta.Estado = estado;
                 Infrastructure.Data.CuentaDataAccess.Update(cuenta);
             }
+        }
+
+        /// <summary>
+        /// Reglas del alta de cliente: fecha de nacimiento obligatoria y real, teléfono o celular completo y DNI no repetido.
+        /// Antes solo se validaba en el navegador y entraban "387" como teléfono y 0001-01-01 como fecha.
+        /// </summary>
+        private static List<string> ValidarAltaCliente(PersonaClienteModel cliente)
+        {
+            var errores = new List<string>();
+
+            if (!cliente.FechaNacimiento.HasValue)
+                errores.Add("Ingrese la fecha de nacimiento (dd/mm/aaaa).");
+            else if (cliente.FechaNacimiento.Value.Year < 1910 || cliente.FechaNacimiento.Value.Date > DateTime.Today)
+                errores.Add("La fecha de nacimiento no es válida.");
+
+            var digitosTel = new string((cliente.Telefono ?? "").Where(char.IsDigit).ToArray());
+            var digitosCel = new string((cliente.Celular ?? "").Where(char.IsDigit).ToArray());
+            if (digitosTel.Length < 7 && digitosCel.Length < 7)
+                errores.Add("Ingrese un teléfono o celular completo (no solo el código de área).");
+
+            if (!string.IsNullOrWhiteSpace(cliente.NroDocumento) && PersonaClienteMethod.IfExistDNI(cliente.NroDocumento) != 0)
+                errores.Add("El DNI ingresado ya existe en el sistema.");
+
+            return errores;
         }
 
         public JsonResult ExistDni(string dni = "")

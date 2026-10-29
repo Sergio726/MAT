@@ -2,6 +2,16 @@
 
 ---
 
+### [2026-10-29] — Alta de cliente: un solo manejador, fecha obligatoria y validación en servidor; limpieza aplicada en Prod
+- **Archivos:** `MAT.MVC/Controllers/PersonaCliente/PersonaClienteController.cs`, `MAT.MVC/Views/PersonaCliente/Create.cshtml`, `MAT.MVC/Scripts/mat.jquery.binding.js`, `docs/PENDIENTES.md`, `docs/DECISIONES_ABIERTAS.md`, `PROGRESS.md`.
+- **Problema encontrado:** `#btnAgregarCliente` tenía dos manejadores. El de `Create.cshtml` guardaba por `CreateAjax` sin validar teléfono ni fecha; el de `mat.jquery.binding.js` validaba y, si todo estaba bien, hacía `submit()` de un form sin `action` (recargaba la página y podía cortar el guardado). El control de DNI repetido no frenaba nada.
+- **Qué se hizo:** se eliminó el manejador de `binding.js`; el de la vista valida nombre, fecha de nacimiento obligatoria (dd/mm/aaaa, 1910–hoy) y teléfono o celular completo. `ValidarAltaCliente` repite las reglas en el servidor (más DNI repetido) para `Create` y `CreateAjax`; la fecha se lee con `TryParse` (cultura es-AR).
+- **Datos:** `database/2026-10-29_Persona_LimpiezaTelefonosFechas.sql` aplicado en `MAT.Intranet` (Prod) el 29/10/2026 con OK del usuario: 569 celulares, 1.772 teléfonos y 75 fechas a NULL, respaldo en `dbo.Persona_Limpieza_20261029`.
+- **Decisiones:** seguimiento de clientes registrado en `docs/DECISIONES_ABIERTAS.md` y tareas en `docs/PENDIENTES.md`.
+- **Verificación:** `tools/Run-Tests.ps1` OK (MSBuild sin errores nuevos, 46 tests). Pendiente smoke manual del alta de cliente.
+
+---
+
 ### [2026-10-29] — Alta de cliente: causa de teléfonos y fechas de nacimiento basura
 - **Archivos:** `MAT.MVC/Models/PersonaClienteModel.cs`, `MAT.MVC/Scripts/mat.jquery.binding.js`, `MAT.MVC/Views/Shared/_Layout.cshtml` (cache-bust `?v=20261029a`), `PROGRESS.md`.
 - **Diagnóstico (producción, solo lectura):** de 1.599 altas de 2026, 245 tienen teléfono con solo el código de área (`387`/`0387`), 61 fecha de nacimiento inválida (55 en `0001-01-01`, todas desde abril 2026) y 172 una fecha "de relleno" repetida en tandas (p. ej. 11/11/1987 en 65 altas 2026).
