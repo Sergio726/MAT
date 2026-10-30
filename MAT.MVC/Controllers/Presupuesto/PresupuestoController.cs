@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using MAT.MVC.Models;
 using MAT.MVC.Common;
+using MAT.MVC.Infrastructure;
 using MAT.Enums;
 using MAT.Utilities;
 using System.Data;
@@ -569,9 +570,6 @@ namespace MAT.MVC.Controllers.Presupuesto
             
             try
             {
-                // Limpiar teléfono (remover caracteres especiales)
-                string telefonoLimpio = telefono.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("+", "");
-                
                 // Verificar si hay una API de WhatsApp configurada
                 string whatsappApiUrl = System.Configuration.ConfigurationManager.AppSettings["WhatsApp_API_URL"]?.ToString();
                 string enableDirectLink = System.Configuration.ConfigurationManager.AppSettings["WhatsApp_EnableDirectLink"]?.ToString() ?? "true";
@@ -605,19 +603,14 @@ namespace MAT.MVC.Controllers.Presupuesto
                 // Si no hay API o está habilitado el enlace directo, generar enlace de WhatsApp
                 if (enableDirectLink.Equals("true", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Formatear teléfono para WhatsApp (debe incluir código de país sin +)
-                    // Si no tiene código de país, asumimos Argentina (54)
-                    if (!telefonoLimpio.StartsWith("54") && telefonoLimpio.Length <= 10)
+                    // 549 + área + número (sin 0 ni 15); null si el teléfono no se puede interpretar
+                    whatsappLink = WhatsAppHelper.ConstruirEnlace(telefono, mensaje);
+                    if (whatsappLink == null)
                     {
-                        telefonoLimpio = "54" + telefonoLimpio;
+                        MATLogger.Log($"Teléfono no válido para WhatsApp: {telefono}", 2);
+                        return false;
                     }
-                    
-                    // Codificar el mensaje para URL
-                    string mensajeCodificado = System.Web.HttpUtility.UrlEncode(mensaje);
-                    
-                    // Generar enlace de WhatsApp
-                    whatsappLink = $"https://wa.me/{telefonoLimpio}?text={mensajeCodificado}";
-                    
+
                     MATLogger.Log($"Enlace de WhatsApp generado: {whatsappLink}", 2);
                     return false; // Retornamos false porque no se envió automáticamente, pero tenemos el enlace
                 }

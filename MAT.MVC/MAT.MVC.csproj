@@ -361,6 +361,7 @@
     <Compile Include="Infrastructure\ReportesExcelExport.cs" />
     <Compile Include="Infrastructure\ReportesQueryHelper.cs" />
     <Compile Include="Infrastructure\ReportesQueryParseResult.cs" />
+    <Compile Include="Infrastructure\WhatsAppHelper.cs" />
     <Compile Include="Infrastructure\RequestContext.cs" />
     <Compile Include="Infrastructure\SistemaParametroHelper.cs" />
     <Compile Include="Global.asax.cs">

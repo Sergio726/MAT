@@ -18,7 +18,7 @@ namespace MAT.MVC.Models
         public int LocalidadID { get; set; }
         public string LocalidadNombre { get; set; }
         public string Email { get; set; }
-        public DateTime FechaNacimiento { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
         public string Domicilio { get; set; }
         public int Sexo { get; set; }
         public string RazonSocial { get; set; }
@@ -63,7 +63,7 @@ namespace MAT.MVC.Models
                         DBHelper.MakeParam("@Celular", SqlDbType.VarChar, 0, model.Celular),
                         DBHelper.MakeParam("@Telefono", SqlDbType.VarChar, 0, model.Telefono),
                         DBHelper.MakeParam("@Email", SqlDbType.VarChar, 0, model.Email),
-                        DBHelper.MakeParam("@FechaNacimiento", SqlDbType.Date, 0, model.FechaNacimiento.ToShortDateString()),
+                        DBHelper.MakeParam("@FechaNacimiento", SqlDbType.Date, 0, (object)model.FechaNacimiento ?? DBNull.Value),
                         DBHelper.MakeParam("@LocalidadID", SqlDbType.Int, 0, model.LocalidadID),
                         DBHelper.MakeParam("@Domicilio", SqlDbType.VarChar, 0, model.Domicilio),
                         DBHelper.MakeParam("@Sexo", SqlDbType.Int, 0, model.Sexo),

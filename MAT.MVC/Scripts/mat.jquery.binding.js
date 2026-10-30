@@ -1386,58 +1386,6 @@ $(document).on("keyup", "#frmEditCliente #NroDocumento", function () {
     }
 });
 
-$(document).on("click", "#btnAgregarCliente", function () {
-    var nrodoc = $("input[name=NroDocumento]").val();
-    var errors = [];
-    if ($("#Apellido").val().trim() === "") errors.push("Ingrese el apellido de la persona.");
-    if ($("#Nombre").val().trim() === "") errors.push("Ingrese el nombre de la persona.");
-    if ($("#NroDocumento").val().trim() === "") errors.push("Ingrese el número de documento de la persona.");
-    if ($("#Domicilio").val().trim() === "") errors.push("Ingrese el domicilio de la persona.");
-    if ($("#Telefono").val().trim() === "") errors.push("Ingrese el teléfono de la persona.");
-    if ($("#FechaNacimiento").val().trim() === "") errors.push("Ingrese la fecha de nacimiento.");
-    if ($("#Provincia").val().trim() === "0" || $("#Provincia").val().trim() === "") errors.push("Seleccione una provincia.");
-    if ($("#ddDepartamento").val().trim() === "0" || $("#ddDepartamento").val().trim() === "") errors.push("Seleccione un departamento.");
-    if ($("#ddLocalidad").val().trim() === "0" || $("#ddLocalidad").val().trim() === "") errors.push("Seleccione una localidad.");
-    if ($("#Nacionalidad").val().trim() === "") errors.push("Ingrese la nacionalidad de la persona.");
-    if ($("#PaisResidencia").val().trim() === "") errors.push("Ingrese el país de residencia.");
-
-    if (errors.length > 0) {
-        if (typeof window.showValidationBannerCreate === "function" && $("#validation-banner-create").length) {
-            window.showValidationBannerCreate(errors);
-        } else {
-            (window.alertInfo || window.alert)(errors.join("\n"), "Validación");
-        }
-        return;
-    }
-
-    $.ajax({
-        type: "POST",
-        url: "/PersonaCliente/ExistDni",
-        data: { "dni": nrodoc },
-        dataType: "json",
-        success: function (response) {
-            if (response.Result === "Done.") {
-                if (response.Data === "True") {
-                    $("#NroDocumento").val("");
-                    var msg = "El DNI ingresado ya existe en el sistema. Ingrese otro DNI o contacte con el administrador.";
-                    if (typeof window.showValidationBannerCreate === "function" && $("#validation-banner-create").length) {
-                        window.showValidationBannerCreate([msg]);
-                    } else {
-                        (window.alertInfo || window.alert)(msg, "Validación");
-                    }
-                } else {
-                    document.getElementById("frmCreateCliente").submit();
-                }
-            } else {
-                if (typeof window.showValidationBannerCreate === "function" && $("#validation-banner-create").length) {
-                    window.showValidationBannerCreate([response.Result]);
-                } else {
-                    (window.alertInfo || window.alert)(response.Result, "Atención");
-                }
-            }
-        }
-    });
-});
 
 $(document).on("click", "#btn-cancelar-pago", function () {
     var comprobanteid = $(this).data("comprobanteid");

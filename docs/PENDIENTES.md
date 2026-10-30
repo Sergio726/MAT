@@ -18,7 +18,8 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
   - `usp_MAT_Factura_Search` (columnas Pagado/Saldo)
   - `database/2026-07-15_CambioButacas_PreserveHotel.sql`
   - `database/2026-07-07_DistribucionCoche_FacturaID.sql` y SP DistribucionCoche
-  - `database/2026-09-30_ReservaMenores_Fix.sql` (4 SPs del circuito de reserva con menores; sin esto sigue fallando la reserva con 2+ adicionales)
+  - `database/2026-09-30_ReservaMenores_Fix.sql` (4 SPs del circuito de reserva con menores; sin esto sigue fallando la reserva con 2+ adicionales) — **Prod: publicado 13/10/2026; DEV: aplicado 29/10/2026**
+  - `database/2026-10-29_Persona_LimpiezaTelefonosFechas.sql` (limpieza de datos con respaldo en `dbo.Persona_Limpieza_20261029`) — **DEV y Prod: aplicado 29/10/2026** (Prod: 569 celulares, 1.772 teléfonos, 75 fechas)
   - Otros scripts recientes en `database/` no aplicados
 - [ ] **Viaje — definición de rentabilidad con negocio** — acordar base de ingresos (facturado vs cobrado), qué entra como costo, moneda, prorrateo, permisos. Registrar en [`../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`](../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md) y en [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md). **Bloquea** opciones A–D de schema.
 
@@ -43,6 +44,19 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
 - [x] **Fix 6 (opcional):** `Reserva/Index` → "Listado de Menores" abre `VinculacionMenor` sin `desdeFactura=1`, así que no muestra "Nueva vinculación"; hoy solo se puede vincular desde `DetalleFactura` (botón visible solo si la factura tiene ítem con "MENOR"). Decidir si habilitar desde el viaje.
 - [x] **Fix 7 (defensivo):** `usp_MAT_Reserva_GetMenoresDisponibles` lista `Persona` sin join a `Cliente`, pero `PasajeroMenor.menorid` tiene FK a `Cliente`; un menor creado por `PersonaPasajero/Create` sin "es cliente" rompe la FK (0 casos hoy en MAT_DEV). Agregar el join o crear `Cliente` al vincular.
 - [ ] **Smoke tras fix:** reserva con 1 menor, con 2 menores, con menor + otro adicional; segunda reserva sin recargar; verificar `PasajeroMenor` y badge en `DistribucionCoche`.
+
+### Seguimiento de clientes para vendedores (P2)
+
+Decisiones cerradas el 2026-10-29: [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md) (sección Seguimiento de clientes). Consultas base ya probadas contra producción (ranking por pasajero, cumpleaños, última interacción).
+
+- [x] Normalizador de teléfonos para WhatsApp (`WhatsAppHelper`) + fix enlace en Presupuesto
+- [x] Alta de cliente: teléfono o celular completo y fecha de nacimiento obligatoria/validada (navegador y servidor); limpieza de datos existentes
+- [ ] Tabla `ClienteContacto` + SPs (registrar contacto, último contacto por cliente) en `MAT.DB` + script `database/`
+- [ ] SP de segmentación (categoría, viajes totales, años como cliente, último viaje, próximo viaje comprado, destinos, gasto) y de cumpleaños (hoy / próximos N días)
+- [ ] Pantalla "Seguimiento de clientes": para hoy (cumpleaños + botón WhatsApp con saludo), listas por categoría, ficha del cliente con historial de contactos, aviso de contacto reciente, "No volver a contactar"
+- [ ] Recuadro "Cumpleaños de hoy" en Home
+- [ ] Marcar fechas de nacimiento repetidas como "verificar con el cliente"
+- [ ] Smoke con vendedor real
 
 ### Factura / vendedores — resumen de pagos por viaje (P2)
 
