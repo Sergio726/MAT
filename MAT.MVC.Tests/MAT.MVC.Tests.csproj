@@ -47,6 +47,8 @@
     <Compile Include="Contract\MigrationContractTests.cs" />
     <Compile Include="Infrastructure\ReportesQueryHelperTests.cs" />
     <Compile Include="Infrastructure\WhatsAppHelperTests.cs" />
+    <Compile Include="Infrastructure\SeguimientoCatalogTests.cs" />
+    <Compile Include="Infrastructure\ClienteValidacionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\HelperTests.cs" />
   </ItemGroup>

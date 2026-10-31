@@ -24,11 +24,11 @@ namespace MAT.MVC.Infrastructure
             return new List<QuickAccessItem>
             {
                 Item("Seguimiento presupuestos", "Seguimiento y cotizaciones telefónicas", "/Presupuesto/Seguimiento", "bi-clipboard-data", "success"),
+                Item("Seguimiento clientes", "Cumpleaños, categorías y contactos", "/Seguimiento/Index", "bi-person-heart", "accent"),
                 Item("Listado de viajes", "Reservas y disponibilidad", "/Viaje/Index", "bi-airplane", "brand"),
                 Item("Viajes por fecha", "Consultar salidas por día", "/Home/ViajesPorFecha", "bi-calendar-event", "warning"),
                 Item("Nuevo cliente", "Alta de persona cliente", "/PersonaCliente/Create", "bi-person-plus", "info"),
-                Item("Buscar facturas", "Consulta y gestión de facturas", "/Factura/Index", "bi-receipt", "accent"),
-                Item("Notas de crédito", "Devoluciones y notas", "/PersonaCliente/NotaCreditoList", "bi-file-earmark-minus", "dark")
+                Item("Buscar facturas", "Consulta y gestión de facturas", "/Factura/Index", "bi-receipt", "accent")
             };
         }
 
@@ -40,6 +40,7 @@ namespace MAT.MVC.Infrastructure
                 Item("Todos los viajes", "Catálogo completo de viajes", "/Home/TodosLosViajesIndex", "bi-suitcase", "brand"),
                 Item("Paquetes", "Configuración de paquetes turísticos", "/Paquete/Index", "bi-box-seam", "info"),
                 Item("Listado clientes", "Personas clientes registradas", "/PersonaCliente/Index", "bi-people", "brand"),
+                Item("Notas de crédito", "Devoluciones y notas", "/PersonaCliente/NotaCreditoList", "bi-file-earmark-minus", "dark"),
                 Item("Métricas presupuestos", "Indicadores del módulo", "/Presupuesto/Metricas", "bi-graph-up", "accent")
             };
 
