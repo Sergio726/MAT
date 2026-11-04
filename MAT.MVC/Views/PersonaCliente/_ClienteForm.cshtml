@@ -1,0 +1,238 @@
+@model MAT.MVC.Models.Clientes.ClienteFormModel
+@using MAT.MVC.Infrastructure
+@using MAT.MVC.Infrastructure.Clientes
+@{
+    // Formulario único de cliente: lo usan Create (alta y alta desde presupuesto) y Edit.
+    // Etiquetas, asteriscos y reglas salen de ClienteFormModel; el navegador valida con las mismas reglas.
+    var opciones = (ClienteFormOpciones)ViewBag.Opciones;
+    var urlCancelar = Model.EsAlta
+        ? (!string.IsNullOrEmpty(Model.ReturnUrl) && Url.IsLocalUrl(Model.ReturnUrl) ? Model.ReturnUrl : Url.Action("Index", "PersonaCliente"))
+        : Url.Action("Details", "PersonaCliente", new { id = Model.PersonaId });
+}
+
+@using (Html.BeginForm(Model.EsAlta ? "Create" : "Edit", "PersonaCliente", Model.EsAlta ? null : new { id = Model.PersonaId },
+    FormMethod.Post, new { id = "frmCliente", @class = "cliente-form", novalidate = "novalidate", autocomplete = "off" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.ReturnUrl)
+    <input type="hidden" name="accion" id="accion" value="guardar" />
+
+    @Html.ValidationSummary(true, "", new { @class = "cliente-form-resumen", role = "alert" })
+
+    <p class="text-secondary small mb-3">Los campos con <span class="field-required">*</span> son obligatorios.</p>
+
+    <div class="d-flex flex-column gap-3">
+        <section class="modern-card" aria-labelledby="sec-personales">
+            <div class="modern-card-header">
+                <h2 id="sec-personales" class="modern-card-title"><i class="bi bi-person me-2" aria-hidden="true"></i><span>Datos personales</span></h2>
+            </div>
+            <div class="modern-card-content">
+                <div class="modern-form-row">
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Apellido)
+                        @Html.TextBoxFor(m => m.Apellido, new { @class = "modern-form-input", autocomplete = "family-name" })
+                        @Html.ValidationMessageFor(m => m.Apellido)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Nombre)
+                        @Html.TextBoxFor(m => m.Nombre, new { @class = "modern-form-input", autocomplete = "given-name" })
+                        @Html.ValidationMessageFor(m => m.Nombre)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Sexo)
+                        @Html.DropDownListFor(m => m.Sexo, opciones.Sexos, new { @class = "modern-form-select" })
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.TipoDocumento)
+                        @Html.DropDownListFor(m => m.TipoDocumento, opciones.TiposDocumento, new { @class = "modern-form-select" })
+                        @Html.ValidationMessageFor(m => m.TipoDocumento)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.NroDocumento)
+                        @Html.TextBoxFor(m => m.NroDocumento, new { @class = "modern-form-input", inputmode = "numeric", aria_describedby = "documento-existente" })
+                        @Html.ValidationMessageFor(m => m.NroDocumento)
+                        <div id="documento-existente" class="cliente-existente d-none" role="status" aria-live="polite"></div>
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.FechaNacimiento)
+                        @Html.TextBoxFor(m => m.FechaNacimiento, new { @class = "modern-form-input datepicker", placeholder = "dd/mm/aaaa", inputmode = "numeric" })
+                        @Html.ValidationMessageFor(m => m.FechaNacimiento)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Nacionalidad)
+                        @Html.TextBoxFor(m => m.Nacionalidad, new { @class = "modern-form-input" })
+                        @Html.ValidationMessageFor(m => m.Nacionalidad)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.PaisResidencia)
+                        @Html.TextBoxFor(m => m.PaisResidencia, new { @class = "modern-form-input" })
+                        @Html.ValidationMessageFor(m => m.PaisResidencia)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modern-card" aria-labelledby="sec-contacto">
+            <div class="modern-card-header">
+                <h2 id="sec-contacto" class="modern-card-title"><i class="bi bi-telephone me-2" aria-hidden="true"></i><span>Contacto</span></h2>
+            </div>
+            <div class="modern-card-content">
+                <p class="text-secondary small mb-2" id="ayuda-telefonos">Cargá al menos uno de los dos teléfonos, con código de área.</p>
+                <div class="modern-form-row">
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Celular)
+                        @Html.TextBoxFor(m => m.Celular, new { @class = "modern-form-input", inputmode = "tel", placeholder = "387 4123456", aria_describedby = "ayuda-telefonos" })
+                        @Html.ValidationMessageFor(m => m.Celular)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Telefono)
+                        @Html.TextBoxFor(m => m.Telefono, new { @class = "modern-form-input", inputmode = "tel", placeholder = "0387 4123456", aria_describedby = "ayuda-telefonos" })
+                        @Html.ValidationMessageFor(m => m.Telefono)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { @class = "modern-form-input", type = "email", autocomplete = "email", placeholder = "correo@ejemplo.com" })
+                        @Html.ValidationMessageFor(m => m.Email)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modern-card" aria-labelledby="sec-domicilio">
+            <div class="modern-card-header">
+                <h2 id="sec-domicilio" class="modern-card-title"><i class="bi bi-geo-alt me-2" aria-hidden="true"></i><span>Domicilio</span></h2>
+            </div>
+            <div class="modern-card-content">
+                <div class="modern-form-row">
+                    <div class="modern-form-group modern-form-group-full">
+                        @Html.EtiquetaPara(m => m.Domicilio)
+                        @Html.TextBoxFor(m => m.Domicilio, new { @class = "modern-form-input", autocomplete = "street-address", placeholder = "Calle, número, barrio" })
+                        @Html.ValidationMessageFor(m => m.Domicilio)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Provincia)
+                        @Html.DropDownListFor(m => m.Provincia, opciones.Provincias, new { @class = "modern-form-select" })
+                        @Html.ValidationMessageFor(m => m.Provincia)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.DepartamentoId, "ddDepartamento")
+                        @Html.DropDownListFor(m => m.DepartamentoId, Enumerable.Empty<SelectListItem>(), "Seleccioná el departamento…",
+                            new { @class = "modern-form-select", id = "ddDepartamento", data_seleccionado = Model.DepartamentoId })
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.LocalidadId, "ddLocalidad")
+                        <div class="d-flex gap-2 align-items-start">
+                            @Html.DropDownListFor(m => m.LocalidadId, Enumerable.Empty<SelectListItem>(), "Seleccioná la localidad…",
+                                new { @class = "modern-form-select flex-grow-1", id = "ddLocalidad", data_seleccionado = Model.LocalidadId })
+                            <button type="button" id="lnk-Agregar-Localidad" class="btn-modern btn-modern-secondary btn-sm text-nowrap">
+                                <i class="bi bi-plus-lg" aria-hidden="true"></i> <span>Nueva</span>
+                            </button>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.LocalidadId)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modern-card" aria-labelledby="sec-comerciales">
+            <div class="modern-card-header">
+                <h2 id="sec-comerciales" class="modern-card-title"><i class="bi bi-receipt me-2" aria-hidden="true"></i><span>Datos comerciales</span></h2>
+            </div>
+            <div class="modern-card-content">
+                <div class="modern-form-row">
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.TipoId)
+                        @Html.DropDownListFor(m => m.TipoId, opciones.TiposCliente, new { @class = "modern-form-select" })
+                        @Html.ValidationMessageFor(m => m.TipoId)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.CondicionIva)
+                        @Html.DropDownListFor(m => m.CondicionIva, opciones.CondicionesIva, new { @class = "modern-form-select" })
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.FormaPago)
+                        @Html.DropDownListFor(m => m.FormaPago, opciones.FormasPago, new { @class = "modern-form-select" })
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.RazonSocial)
+                        @Html.TextBoxFor(m => m.RazonSocial, new { @class = "modern-form-input" })
+                        @Html.ValidationMessageFor(m => m.RazonSocial)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Cuit)
+                        @Html.TextBoxFor(m => m.Cuit, new { @class = "modern-form-input", placeholder = "00-00000000-0", inputmode = "numeric" })
+                        @Html.ValidationMessageFor(m => m.Cuit)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Empresa)
+                        @Html.TextBoxFor(m => m.Empresa, new { @class = "modern-form-input" })
+                        @Html.ValidationMessageFor(m => m.Empresa)
+                    </div>
+                    <div class="modern-form-group">
+                        <span class="modern-form-label">Cuenta corriente</span>
+                        <div class="form-check form-switch mt-1">
+                            @Html.CheckBoxFor(m => m.CuentaCorrienteHabilitada, new { @class = "form-check-input", role = "switch" })
+                            <label class="form-check-label" for="CuentaCorrienteHabilitada">Habilitada</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <details class="modern-card cliente-form-otros" @(string.IsNullOrEmpty(Model.Ocupacion + Model.Idioma + Model.Promotor + Model.Observacion + Model.Fax + Model.Web) ? "" : "open")>
+            <summary class="modern-card-header">
+                <h2 class="modern-card-title"><i class="bi bi-info-circle me-2" aria-hidden="true"></i><span>Otros datos</span></h2>
+            </summary>
+            <div class="modern-card-content">
+                <div class="modern-form-row">
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Ocupacion)
+                        @Html.DropDownListFor(m => m.Ocupacion, opciones.Ocupaciones, new { @class = "modern-form-select" })
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Idioma)
+                        @Html.TextBoxFor(m => m.Idioma, new { @class = "modern-form-input" })
+                        @Html.ValidationMessageFor(m => m.Idioma)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Promotor)
+                        @Html.TextBoxFor(m => m.Promotor, new { @class = "modern-form-input" })
+                        @Html.ValidationMessageFor(m => m.Promotor)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Fax)
+                        @Html.TextBoxFor(m => m.Fax, new { @class = "modern-form-input", inputmode = "tel" })
+                        @Html.ValidationMessageFor(m => m.Fax)
+                    </div>
+                    <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.Web)
+                        @Html.TextBoxFor(m => m.Web, new { @class = "modern-form-input", placeholder = "www.ejemplo.com" })
+                        @Html.ValidationMessageFor(m => m.Web)
+                    </div>
+                </div>
+                <div class="modern-form-row mt-2">
+                    <div class="modern-form-group modern-form-group-full">
+                        @Html.EtiquetaPara(m => m.Observacion)
+                        @Html.TextAreaFor(m => m.Observacion, new { @class = "modern-form-input", rows = 3, maxlength = 250 })
+                        @Html.ValidationMessageFor(m => m.Observacion)
+                    </div>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <div class="cliente-form-acciones" role="group" aria-label="Acciones del formulario">
+        <a href="@urlCancelar" class="btn-modern btn-modern-secondary"><i class="bi bi-x-lg" aria-hidden="true"></i> <span>Cancelar</span></a>
+        <div class="d-flex gap-2 flex-wrap">
+            @if (Model.EsAlta)
+            {
+                <button type="submit" class="btn-modern btn-modern-secondary" data-accion="guardarYOtro">
+                    <i class="bi bi-plus-circle" aria-hidden="true"></i> <span>Guardar y cargar otro</span>
+                </button>
+            }
+            <button type="submit" class="btn-modern btn-modern-primary" data-accion="guardar">
+                <i class="bi bi-check-circle" aria-hidden="true"></i> <span>@(Model.EsAlta ? "Guardar cliente" : "Guardar cambios")</span>
+            </button>
+        </div>
+    </div>
+}

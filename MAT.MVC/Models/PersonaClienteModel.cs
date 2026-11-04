@@ -52,43 +52,6 @@ namespace MAT.MVC.Models
 
     public class PersonaClienteMethod
     {
-        public static void CreatePersonaCliente(PersonaClienteModel model)
-        {
-            SqlParameter[] dbParams = new SqlParameter[]
-                   {
-                        DBHelper.MakeParam("@Apellido", SqlDbType.VarChar, 0, model.Apellido),
-                        DBHelper.MakeParam("@Nombre", SqlDbType.VarChar, 0, model.Nombre),
-                        DBHelper.MakeParam("@NroDocumento", SqlDbType.VarChar, 0, model.NroDocumento),
-                        DBHelper.MakeParam("@TipoDocumento", SqlDbType.Int, 0, model.TipoDocumento),
-                        DBHelper.MakeParam("@Celular", SqlDbType.VarChar, 0, model.Celular),
-                        DBHelper.MakeParam("@Telefono", SqlDbType.VarChar, 0, model.Telefono),
-                        DBHelper.MakeParam("@Email", SqlDbType.VarChar, 0, model.Email),
-                        DBHelper.MakeParam("@FechaNacimiento", SqlDbType.Date, 0, (object)model.FechaNacimiento ?? DBNull.Value),
-                        DBHelper.MakeParam("@LocalidadID", SqlDbType.Int, 0, model.LocalidadID),
-                        DBHelper.MakeParam("@Domicilio", SqlDbType.VarChar, 0, model.Domicilio),
-                        DBHelper.MakeParam("@Sexo", SqlDbType.Int, 0, model.Sexo),
-                        DBHelper.MakeParam("@Nacionalidad", SqlDbType.VarChar, 0, model.Nacionalidad),
-                        DBHelper.MakeParam("@PaisResidencia", SqlDbType.VarChar, 0, model.PaisResidencia),
-                        DBHelper.MakeParam("@Provincia", SqlDbType.Int, 0, model.Provincia),
-                        DBHelper.MakeParam("@RazonSocial", SqlDbType.VarChar, 0, model.RazonSocial),
-                        DBHelper.MakeParam("@Cuit", SqlDbType.VarChar, 0, model.Cuit),
-                        DBHelper.MakeParam("@Empresa", SqlDbType.VarChar, 0, model.Empresa),
-                        DBHelper.MakeParam("@Ocupacion", SqlDbType.VarChar, 0, model.Ocupacion),
-                        DBHelper.MakeParam("@FormaPago", SqlDbType.Int, 0, model.FormaPago),
-                        DBHelper.MakeParam("@CondicionIva", SqlDbType.Int, 0, model.CondicionIva),
-                        DBHelper.MakeParam("@VendedorID", SqlDbType.UniqueIdentifier, 0,new Guid(model.VendedorID)),
-                        DBHelper.MakeParam("@Fax", SqlDbType.VarChar, 0, model.Fax),
-                        DBHelper.MakeParam("@Web", SqlDbType.VarChar, 0, model.Web),
-                        DBHelper.MakeParam("@Idioma", SqlDbType.VarChar, 0, model.Idioma),
-                        DBHelper.MakeParam("@Promotor", SqlDbType.VarChar, 0, model.Promotor),
-                        DBHelper.MakeParam("@Observacion", SqlDbType.VarChar, 0, model.Observacion),
-                        DBHelper.MakeParam("@TipoID", SqlDbType.Int, 0, model.TipoID)
-
-                    };
-            DBHelper.ExecuteNonQuery("dbo.usp_MAT_PersonaCliente_Create", dbParams);
-
-        }
-
         public static List<PersonaClienteModel> PersonaClienteGetAll()
         {
             List<PersonaClienteModel> _List = new List<PersonaClienteModel>();
@@ -211,23 +174,6 @@ namespace MAT.MVC.Models
             }
 
             return _item;
-        }
-
-        public static int IfExistDNI(string DNI)
-        {
-            SqlParameter[] dbParams = new SqlParameter[] {
-                DBHelper.MakeParam("@DNI", SqlDbType.VarChar, 50, DNI)
-            };
-            
-            using (SqlDataReader _reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Persona_GetByDNI", dbParams))
-            {
-                while (_reader.Read())
-                {
-                    return 1;
-                }
-            }
-
-            return 0;
         }
 
         public static List<PersonaClienteModel> PersonaClienteSearchByNombreDNI(string sParam)

@@ -16,6 +16,7 @@
 | `MAT_DB.md` | SSDT, publicar y comparar esquema |
 | `MANUAL_USUARIO_ADMINISTRADOR.md` | Manual del rol Administrador |
 | `GUIA_VENDEDORES_SEGUIMIENTO_CLIENTES.md` | Guía para vendedores: cumpleaños, categorías y registro de contactos |
+| `CHECKLIST_MODULO_CLIENTES.md` | Pruebas manuales por fase del módulo Clientes y métricas base |
 | `PLAN_MODULO_CLIENTES_REDISENO.md` | Plan de mejoras y rediseño del módulo Clientes (fases F0–F6, decisiones, criterios de aceptación) |
 | `ROADMAP_COMERCIAL_2026.md` | Roadmap comercial: seguimiento de clientes → recordatorios → notificaciones → CRM → comisiones |
 | `TESTING.md` | Cómo correr tests |

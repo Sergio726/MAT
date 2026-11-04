@@ -1317,75 +1317,7 @@ $(document).on("click", "#btnCancelarReserva", function () {
     $("a.selected").removeClass("selected").addClass("disponible");
 });
 
-$(document).on("keyup", "#frmCreateCliente #NroDocumento", function () {
-    if ($("#NroDocumento").val().trim().length = 10 && $.isNumeric($("#NroDocumento").val().replace('.', '').replace('.', ''))) {
-        var nrodoc = $("#NroDocumento").val().trim();
-
-        $.ajax({
-            type: "POST",
-            url: "/PersonaCliente/ExistDni",
-            data: { "dni": nrodoc },
-            dataType: "json",
-            success: function (response) {
-               
-                if (response.Result == "Done.") {
-                    
-                    if (response.Data == "True") {
-                        $("#NroDocumento").val("");
-                        (window.alertInfo || window.alert)("El DNI ingresado ya existe en el sistema. Por favor ingrese otro DNI o contacte con el administrador.", "Validación");
-                    }
-                }
-                else {
-                    (window.alertInfo || window.alert)(response.Result, "Atención");
-                }
-
-            }
-        });
-
-        //$.ajax({
-        //    url: "/PersonaCliente/ExistDni",
-        //    type: "POST",
-        //    data: { dni: nrodoc },
-        //    success: function (data) {
-        //        if (data == "True") {
-        //            $("#NroDocumento").val("");
-        //            (mensaje legacy) "El DNI ingresado ya existe en el sistema..."
-        //        }
-        //    }
-        //});
-    }
-});
-
-$(document).on("keyup", "#frmEditCliente #NroDocumento", function () {
-    if ($("#NroDocumento").val().trim().length = 10 && $.isNumeric($("#NroDocumento").val().replace('.', '').replace('.', ''))) {
-        var nrodocOld = $("#hdnNroDocumento").val().trim();
-        var nrodoc = $("#NroDocumento").val().trim();
-
-        $.ajax({
-            type: "POST",
-            url: "/PersonaCliente/ExistDni",
-            data: { "dni": nrodoc },
-            dataType: "json",
-            success: function (response) {
-                
-                if (response.Result == "Done.") {
-
-                    if (response.Data == "True") {
-                        $("#NroDocumento").val("");
-                        (window.alertInfo || window.alert)("El DNI ingresado ya existe en el sistema. Por favor ingrese otro DNI o contacte con el administrador.", "Validación");
-                    }
-                  
-                }
-                else {
-                    (window.alertInfo || window.alert)(response.Result, "Atención");
-                }
-
-            }
-        });
-
-    }
-});
-
+// Chequeo de documento repetido del alta/edición de cliente: ahora en Scripts/mat.clientes.form.js.
 
 $(document).on("click", "#btn-cancelar-pago", function () {
     var comprobanteid = $(this).data("comprobanteid");

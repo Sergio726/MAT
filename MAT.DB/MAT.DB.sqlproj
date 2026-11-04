@@ -1379,4 +1379,9 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_Seguimiento_Ficha.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ClienteContacto_Insert.sql" />
   </ItemGroup>
+  <!-- Módulo Clientes F1: formulario único de alta/edición (2026-11-04). -->
+  <ItemGroup>
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_Guardar.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Persona_BuscarPorDocumento.sql" />
+  </ItemGroup>
 </Project>
