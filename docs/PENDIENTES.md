@@ -62,6 +62,18 @@ Decisiones cerradas el 2026-10-29: [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTA
 - [ ] Smoke con vendedor real (saludo por WhatsApp, registrar contacto, ficha, categorías, editar un cliente sin teléfono fijo)
 - [ ] Borrar `dbo.Persona_Limpieza_20261029` en Prod cuando ya no haga falta revertir la limpieza
 
+### Módulo Clientes — mejoras y rediseño (P1)
+
+Plan completo: [`../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`](../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md) (auditoría QA/UI 2026-11-04 verificada). **Antes de empezar:** resolver las decisiones de [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md) (Módulo Clientes) y conseguir usuario de prueba.
+
+- [ ] **F0 — Preparación:** usuario de prueba, métricas base, checklist manual, borrar `ClienteController` + `Views/Cliente/*` y `Edit - copia.cshtml`, arreglar `Verify-NetTiersMigration.ps1` (subcarpetas)
+- [ ] **F1 — Formulario de cliente:** `ClienteFormModel` + validadores, parcial único para alta/edición/desde presupuesto, `GET Create` con modelo (hoy `View()` sin modelo → 45 excepciones), errores por campo, DNI remoto con enlace al existente, guardado transaccional, cuenta corriente con interruptor
+- [ ] **F2 — Listado y búsqueda:** `usp_MAT_PersonaCliente_Buscar` paginado (sin tocar `GetTop`), columnas de dígitos de teléfono, tabla densa con filtros y URL, Altas por período paginado + Excel
+- [ ] **F3 — Ficha como perfil:** encabezado + pestañas (Datos, Viajes, Pagos, Cuenta corriente, Facturas, Contactos) e integración con Seguimiento
+- [ ] **F4 — Catálogos y datos:** País → Provincia → Departamento → Localidad, combos con búsqueda, nacionalidad/ocupación como select, deduplicación (DEV → Prod con OK)
+- [ ] **F5 — Transversal y Seguimiento:** estados de carga, 404/500 propias, viewport, contraste, Seguimiento paginado en servidor y acciones visibles, canal de contacto
+- [ ] **F6 — Baja y auditoría:** `Cliente.Activo`, `ClienteAudit`
+
 ### Factura / vendedores — resumen de pagos por viaje (P2)
 
 **Pedido de operación:** en el módulo de factura que usan los **vendedores** (intranet, no solo Admin), necesitan un lugar para ver el **resumen de pagos hechos en el viaje** y el **método/medio de pago** de cada registro.
