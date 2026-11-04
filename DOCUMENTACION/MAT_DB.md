@@ -59,6 +59,26 @@ El proyecto se usa como **referencia oficial** del esquema: tablas, vistas, stor
 
 **Recomendación:** Usar el mismo connection string que la aplicación (por ejemplo la llave `MAT.Data.ConnectionString` en `MAT.MVC\Web.config`) para el perfil de publicación, de modo que el esquema se actualice en la misma base que usa la app.
 
+#### Opciones obligatorias al publicar (Publicar → Avanzado)
+
+| Opción | Valor | Por qué |
+|--------|-------|---------|
+| **Implementar propiedades de la base de datos** (`ScriptDatabaseOptions`) | **Desmarcada** | Las opciones guardadas en `MAT.DB.sqlproj` están desactualizadas: publicarlas aplica `PAGE_VERIFY NONE` (apaga la detección de corrupción), `CURSOR_DEFAULT LOCAL`, `ANSI_NULL_DEFAULT ON` y cambios de Query Store, con `ROLLBACK IMMEDIATE` (corta las conexiones). Las bases hoy están en `PAGE_VERIFY CHECKSUM` y cursores globales. Detectado el 2026-11-04. |
+| **Quitar objetos del destino que no están en el origen** (`DropObjectsNotInSource`) | **Desmarcada** | Hay tablas temporales a propósito fuera del proyecto (p. ej. `Persona_Limpieza_20261029`, respaldo de la limpieza de teléfonos). |
+| **Bloquear la implementación incremental si se puede producir pérdida de datos** (`BlockOnPossibleDataLoss`) | **Marcada** | Frena si un cambio de tabla puede perder datos. |
+
+Antes de publicar, **Generar script** y revisar: no tiene que aparecer ningún `ALTER DATABASE` ni `DROP TABLE` inesperado.
+Con la línea de comandos (SqlPackage de Visual Studio, `Common7\IDE\Extensions\Microsoft\SQLDB\DAC\SqlPackage.exe`):
+
+```
+SqlPackage /Action:DeployReport /SourceFile:MAT.DB\bin\Debug\MAT.DB.dacpac /TargetConnectionString:"…" ^
+  /p:ScriptDatabaseOptions=False /p:DropObjectsNotInSource=False /p:BlockOnPossibleDataLoss=True ^
+  /p:ExcludeObjectTypes=Users;Logins;RoleMembership;Permissions /OutputPath:informe.xml
+```
+
+Cambiar `/Action:DeployReport` por `/Action:Script` para ver el SQL y por `/Action:Publish` para aplicar.
+Con la base al día, el informe sale sin operaciones (`<DeploymentReport><Alerts /></DeploymentReport>`).
+
 ### Comparar esquema (Schema Compare)
 
 - **Comparar con la base de datos:** Herramientas → SQL Server → Nueva comparación de esquema. Origen: proyecto MAT.DB; destino: conexión a la base.
