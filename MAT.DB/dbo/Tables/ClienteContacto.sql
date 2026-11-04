@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[ClienteContacto] (
     CONSTRAINT [PK_ClienteContacto] PRIMARY KEY CLUSTERED ([ClienteContactoID] ASC),
     CONSTRAINT [FK_ClienteContacto_Cliente] FOREIGN KEY ([ClienteID]) REFERENCES [dbo].[Cliente] ([ClienteID]),
     CONSTRAINT [FK_ClienteContacto_Vendedor] FOREIGN KEY ([VendedorID]) REFERENCES [dbo].[Vendedor] ([VendedorID]),
-    CONSTRAINT [CK_ClienteContacto_Resultado] CHECK ([Resultado] BETWEEN 1 AND 8)
+    CONSTRAINT [CK_ClienteContacto_Resultado] CHECK ([Resultado] >= 1 AND [Resultado] <= 8)
 );
 
 
