@@ -295,7 +295,6 @@
     <Compile Include="Controllers\Admin\ReportesController.cs" />
     <Compile Include="Controllers\Busqueda\BusquedaController.cs" />
     <Compile Include="Controllers\Butaca\ButacaController.cs" />
-    <Compile Include="Controllers\Cliente\ClienteController.cs" />
     <Compile Include="Controllers\CuentaCorriente\CuentaCorrienteController.cs" />
     <Compile Include="Controllers\Excursion\ExcursionController.cs" />
     <Compile Include="Controllers\External\ExternalController.cs" />
@@ -771,7 +770,6 @@
     <Content Include="Views\PersonaCliente\Create.cshtml" />
     <Content Include="Views\PersonaCliente\Edit.cshtml" />
     <Content Include="Views\PersonaCliente\Details.cshtml" />
-    <Content Include="Views\Cliente\Index.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_MainNav.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
@@ -782,7 +780,6 @@
     <Content Include="Views\PersonaPasajero\Create.cshtml" />
     <Content Include="Views\PersonaPasajero\Details.cshtml" />
     <Content Include="Views\PersonaPasajero\Edit.cshtml" />
-    <Content Include="Views\Cliente\Create.cshtml" />
     <Content Include="Views\Hotel\Index.cshtml" />
     <Content Include="Views\Hotel\Create.cshtml" />
     <Content Include="Views\Hotel\Details.cshtml" />

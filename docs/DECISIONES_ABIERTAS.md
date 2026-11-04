@@ -41,22 +41,22 @@ Hasta no registrar respuestas, **no** implementar columnas/tablas nuevas de rent
 
 ---
 
-## Módulo Clientes — rediseño (abiertas 2026-11-04)
+## Módulo Clientes — rediseño (resueltas 2026-11-04)
 
 **Contexto:** [`../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`](../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md), sección 8.
 
 | Pregunta | Recomendación | Estado |
 |----------|---------------|--------|
-| Nacionalidad / país de residencia: ¿código (`ARG`) o nombre? | Código, mostrando el nombre; normalizar `ARGENTINA`/`ARGENTINO` → `ARG` | Pendiente |
-| Localidades `CAPITAL` (9.292) y `SALTA` (520) en Salta capital: ¿unificar? | Sí, "Salta (Capital)" | Pendiente |
-| Ocupaciones con nombres neutros (`Empleado/a`) | Sí | Pendiente |
-| Color de marca: ¿`#C9245F` en todo el sitio o solo botones/texto sobre rosa? | Solo botones y texto sobre rosa | Pendiente |
-| ¿Quién da de baja clientes? | Solo Administrador | Pendiente |
-| Seguimiento: ¿Dormido primero o orden por prioridad comercial? | Prioridad comercial, con total de Dormido visible | Pendiente |
-| ¿Canal en el registro de contacto? | Sí | Pendiente |
-| Usuario de prueba en DEV | Imprescindible para F0 | Pendiente |
+| Nacionalidad / país de residencia: ¿código (`ARG`) o nombre? | Código, mostrando el nombre; normalizar `ARGENTINA`/`ARGENTINO` → `ARG` | **Aceptada** |
+| Localidades `CAPITAL` (9.292) y `SALTA` (520) en Salta capital: ¿unificar? | Sí, "Salta (Capital)" | **Aceptada** |
+| Ocupaciones con nombres neutros (`Empleado/a`) | Sí | **Aceptada** |
+| Color de marca: ¿`#C9245F` en todo el sitio o solo botones/texto sobre rosa? | Solo botones y texto sobre rosa | **Aceptada** |
+| ¿Quién da de baja clientes? | Solo Administrador | **Aceptada** |
+| Seguimiento: ¿Dormido primero o orden por prioridad comercial? | Prioridad comercial, con total de Dormido visible | **Aceptada** |
+| ¿Canal en el registro de contacto? | Sí | **Aceptada** |
+| Usuario de prueba en DEV | Imprescindible para F0 | **Aceptada — falta crear el usuario** |
 
-Hasta resolverlas: F1–F3 pueden avanzar (no dependen de 8.1–8.3); F4 y la parte de color de F5 esperan.
+El usuario aceptó todas las recomendaciones el 2026-11-04. Solo falta el usuario de prueba para validar en el navegador.
 
 ---
 

@@ -30,11 +30,19 @@ foreach ($d in @('MAT.Data','MAT.Data.SqlClient','MAT.Services','MAT.Web','MAT.W
     else { Add-Ok "Sin carpeta $d" }
 }
 
+# .cs de las carpetas, recursivo (en PowerShell 5.1 "**" dentro de -Path NO es recursivo: solo miraba un nivel)
+function Get-CodeFiles([string[]]$Dirs) {
+    $Dirs | ForEach-Object { Get-ChildItem $_ -Recurse -Filter '*.cs' -File -ErrorAction SilentlyContinue } |
+        Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' } |
+        ForEach-Object { $_.FullName }
+}
+
 # 4. Referencias NetTiers en código activo
 $activeDirs = @("$root\MAT.MVC", "$root\MAT.Utilities", "$root\MAT.Entities")
+$activeFiles = Get-CodeFiles $activeDirs
 $forbidden = @('using MAT\.Services', 'using MAT\.Data[^.]', 'SqlNetTiersProvider', 'DataRepository\.Provider', 'nettiers\.com')
 foreach ($pat in $forbidden) {
-    $hits = Select-String -Path ($activeDirs | ForEach-Object { Join-Path $_ '**\*.cs' }) -Pattern $pat -ErrorAction SilentlyContinue |
+    $hits = Select-String -Path $activeFiles -Pattern $pat -ErrorAction SilentlyContinue |
         Where-Object { $_.Line -notmatch '^\s*//' }
     if ($hits) {
         $sample = ($hits | Select-Object -First 3 | ForEach-Object { "$($_.Filename):$($_.LineNumber)" }) -join ', '
@@ -44,10 +52,7 @@ foreach ($pat in $forbidden) {
 }
 
 # 5. SPs referenciados en codigo vs MAT.DB
-$spRefs = Select-String -Path @(
-    "$root\MAT.MVC\**\*.cs",
-    "$root\MAT.Utilities\**\*.cs"
-) -Pattern 'dbo\.usp_MAT_[A-Za-z0-9_]+' -AllMatches -ErrorAction SilentlyContinue |
+$spRefs = Select-String -Path (Get-CodeFiles @("$root\MAT.MVC", "$root\MAT.Utilities")) -Pattern 'dbo\.usp_MAT_[A-Za-z0-9_]+' -AllMatches -ErrorAction SilentlyContinue |
     ForEach-Object { $_.Matches } |
     ForEach-Object { $_.Value -replace '^dbo\.', '' } |
     Select-Object -Unique | Sort-Object
@@ -107,7 +112,7 @@ foreach ($e in @('Factura','Pago','Pasaje','Persona','Viaje','Proveedor')) {
 }
 
 # 8. e.Message expuesto (regresion hotfix B1)
-$msgHits = Select-String -Path "$root\MAT.MVC\**\*.cs" -Pattern 'ViewBag\.Error\s*=.*\.Message|sResult\[1\]\s*=.*\.Message' -ErrorAction SilentlyContinue |
+$msgHits = Select-String -Path (Get-CodeFiles @("$root\MAT.MVC")) -Pattern 'ViewBag\.Error\s*=.*\.Message|sResult\[1\]\s*=.*\.Message' -ErrorAction SilentlyContinue |
     Where-Object { $_.Line -notmatch 'ErrorUtil' -and $_.Line -notmatch '^\s*//' }
 if ($msgHits) {
     Add-Warn "Posible e.Message expuesto ($($msgHits.Count) lineas). Revisar hotfix B1."
