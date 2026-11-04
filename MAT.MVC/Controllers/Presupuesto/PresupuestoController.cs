@@ -545,8 +545,8 @@ namespace MAT.MVC.Controllers.Presupuesto
         /// </summary>
         private string ConstruirMensajeWhatsApp(string codigoSeguimiento, string nombreCliente, double montoPactado, Guid? viajeId, int horasValidez = 48)
         {
-            var vendedorActual = MATContext.CurrentVendedor;
-            string nombreVendedor = vendedorActual?.Descripcion ?? "Marco Antonio Tours";
+            // Vendedor.Descripcion está vacío: el nombre sale de Persona (antes quedaba una línea en blanco en la firma)
+            string nombreVendedor = FirmaVendedor.NombreActual();
             string saludo = string.IsNullOrWhiteSpace(nombreCliente) ? "¡Hola! 👋" : $"¡Hola {nombreCliente.Trim()}! 👋";
             
             string mensaje = $"{saludo}\n\n";
@@ -556,7 +556,9 @@ namespace MAT.MVC.Controllers.Presupuesto
             mensaje += $"📋 *Instrucciones:*\n";
             mensaje += $"Cuando vengas a la agencia, presenta este código y quien esté en caja te atenderá directamente con tu ficha lista.\n\n";
             mensaje += $"⏰ Este código es válido por {horasValidez} horas.\n\n";
-            mensaje += $"Saludos,\n{nombreVendedor}\nMarco Antonio Tours";
+            mensaje += string.IsNullOrWhiteSpace(nombreVendedor)
+                ? "Saludos,\nMarco Antonio Tours"
+                : $"Saludos,\n{nombreVendedor}\nMarco Antonio Tours";
 
             return mensaje;
         }

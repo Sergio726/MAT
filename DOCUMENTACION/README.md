@@ -15,6 +15,8 @@
 | `GUIA_SISTEMA_MAT.md` | Guía técnica del sistema |
 | `MAT_DB.md` | SSDT, publicar y comparar esquema |
 | `MANUAL_USUARIO_ADMINISTRADOR.md` | Manual del rol Administrador |
+| `GUIA_VENDEDORES_SEGUIMIENTO_CLIENTES.md` | Guía para vendedores: cumpleaños, categorías y registro de contactos |
+| `ROADMAP_COMERCIAL_2026.md` | Roadmap comercial: seguimiento de clientes → recordatorios → notificaciones → CRM → comisiones |
 | `TESTING.md` | Cómo correr tests |
 | `ESTANDAR_CSS_PROYECTO.md` | Estándar CSS |
 | `ESTILO_MODAL_CONFIRMACION.md` | Modales de confirmación |

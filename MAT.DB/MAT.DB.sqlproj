@@ -1369,4 +1369,14 @@
   <ItemGroup>
     <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_RankingCompras_V2.sql" />
   </ItemGroup>
+  <!-- Seguimiento de clientes para vendedores (2026-10-29). -->
+  <ItemGroup>
+    <Build Include="dbo\Tables\ClienteContacto.sql" />
+    <Build Include="dbo\Functions\fn_MAT_Seguimiento_Clientes.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Seguimiento_Clientes.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Seguimiento_ResumenCategorias.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Seguimiento_Cumpleanios.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Seguimiento_Ficha.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_ClienteContacto_Insert.sql" />
+  </ItemGroup>
 </Project>

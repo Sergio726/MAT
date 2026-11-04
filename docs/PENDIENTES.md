@@ -20,6 +20,7 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
   - `database/2026-07-07_DistribucionCoche_FacturaID.sql` y SP DistribucionCoche
   - `database/2026-09-30_ReservaMenores_Fix.sql` (4 SPs del circuito de reserva con menores; sin esto sigue fallando la reserva con 2+ adicionales) — **Prod: publicado 13/10/2026; DEV: aplicado 29/10/2026**
   - `database/2026-10-29_Persona_LimpiezaTelefonosFechas.sql` (limpieza de datos con respaldo en `dbo.Persona_Limpieza_20261029`) — **DEV y Prod: aplicado 29/10/2026** (Prod: 569 celulares, 1.772 teléfonos, 75 fechas)
+  - `database/2026-10-29_SeguimientoClientes.sql` (tabla `ClienteContacto`, `fn_MAT_Seguimiento_Clientes`, SPs `usp_MAT_Seguimiento_*`) — **DEV: aplicado 29/10/2026; Prod: pendiente** (sin esto falla `/Seguimiento` y el recuadro del inicio)
   - Otros scripts recientes en `database/` no aplicados
 - [ ] **Viaje — definición de rentabilidad con negocio** — acordar base de ingresos (facturado vs cobrado), qué entra como costo, moneda, prorrateo, permisos. Registrar en [`../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`](../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md) y en [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md). **Bloquea** opciones A–D de schema.
 
@@ -51,12 +52,15 @@ Decisiones cerradas el 2026-10-29: [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTA
 
 - [x] Normalizador de teléfonos para WhatsApp (`WhatsAppHelper`) + fix enlace en Presupuesto
 - [x] Alta de cliente: teléfono o celular completo y fecha de nacimiento obligatoria/validada (navegador y servidor); limpieza de datos existentes
-- [ ] Tabla `ClienteContacto` + SPs (registrar contacto, último contacto por cliente) en `MAT.DB` + script `database/`
-- [ ] SP de segmentación (categoría, viajes totales, años como cliente, último viaje, próximo viaje comprado, destinos, gasto) y de cumpleaños (hoy / próximos N días)
-- [ ] Pantalla "Seguimiento de clientes": para hoy (cumpleaños + botón WhatsApp con saludo), listas por categoría, ficha del cliente con historial de contactos, aviso de contacto reciente, "No volver a contactar"
-- [ ] Recuadro "Cumpleaños de hoy" en Home
-- [ ] Marcar fechas de nacimiento repetidas como "verificar con el cliente"
-- [ ] Smoke con vendedor real
+- [x] Tabla `ClienteContacto` + SPs (registrar contacto, último contacto por cliente) en `MAT.DB` + script `database/2026-10-29_SeguimientoClientes.sql`
+- [x] Función `fn_MAT_Seguimiento_Clientes` (categoría, viajes, último/próximo viaje, gasto ARS/USD, último contacto) y SPs de categorías, cumpleaños (hoy / próximos N días) y ficha
+- [x] Pantalla `/Seguimiento`: para hoy (cumpleaños + WhatsApp con saludo), listas por categoría, búsqueda, ficha con viajes e historial de contactos, aviso de contacto reciente, "No volver a contactar"
+- [x] Recuadro "Cumpleaños de hoy" en Home + menú Clientes → Seguimiento + acceso frecuente
+- [x] Marcar fechas de nacimiento repetidas como "verificar con el cliente"
+- [ ] **Publicar `database/2026-10-29_SeguimientoClientes.sql` en Prod** antes del deploy de `MAT.MVC` (DEV: aplicado 29/10/2026)
+- [x] Segunda revisión (hora argentina, edición de cliente, menores, viajes pagados para otros, DNI sin puntos, firma de Presupuesto, listas grandes, accesibilidad)
+- [ ] Smoke con vendedor real (saludo por WhatsApp, registrar contacto, ficha, categorías, editar un cliente sin teléfono fijo)
+- [ ] Borrar `dbo.Persona_Limpieza_20261029` en Prod cuando ya no haga falta revertir la limpieza
 
 ### Factura / vendedores — resumen de pagos por viaje (P2)
 
@@ -101,6 +105,8 @@ Detalle de criterios: sección correspondiente en `SPEC.md` (épica Integration 
 
 - [ ] **`ex.Message` expuesto al usuario** (regla de `CLAUDE.md`): reemplazar por `ErrorUtil.LogAndGetPublicMessage` en `ExternalController.cs:28`, `FacturaFiscalController.cs:548/619/655`, `HabitacionController.cs:193`, `HomeController.cs:215/279`, `NuevaReservaController.cs:195`, `PersonaClienteController.cs:1197`, `PresupuestoController.cs:989`. Extender `tools/Verify-NetTiersMigration.ps1` para que detecte `Json(... ex.Message ...)` y `MsgError = e.Message`.
 - [ ] **`Web.config` trackeado con credenciales reales** (`MAT_DEV.*` activas, producción comentadas, mismo servidor). Decidir: mover a transforms `Web.Debug/Release.config` o a archivo excluido del repo + rotar la contraseña. **Área crítica: confirmar antes de tocar.**
+- [ ] **Vistas que no compilan** (detectado con `aspnet_compiler` 2026-10-29; restos de NetTiers, fallan al abrirlas): `Views/Cliente/Create.cshtml`, `Views/CuentaCorriente/DetalleComprobante.cshtml`, `Views/Persona/Details.cshtml`, `Views/Persona/Edit.cshtml`, `Views/Viaje/Details.cshtml`, `Views/PersonaCliente/Edit - copia.cshtml`. Arreglar o borrar si no se usan.
+- [ ] **`Verify-NetTiersMigration.ps1` no revisa subcarpetas:** `Select-String -Path "MAT.MVC\**\*.cs"` en PowerShell 5.1 no es recursivo, así que los SPs de `Infrastructure\Data` no se verifican. Usar `Get-ChildItem -Recurse`.
 - [ ] **Warnings de build:** `ReservaController.cs:317/433` y `ViajeModel.cs:293` (CS0168 `ex` sin usar), `ViajeController.cs:18-22` (CS0105 usings duplicados), `ReservaController.cs:36` (CS1998 `async` sin `await`).
 
 ### Backlog UX Admin (opcional)

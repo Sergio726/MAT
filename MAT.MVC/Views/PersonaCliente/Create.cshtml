@@ -64,7 +64,7 @@
                             @Html.TextBoxFor(model => model.NroDocumento, new { @class = "modern-form-input", placeholder = "00.000.000" })
                         </div>
                         <div class="modern-form-group">
-                            <label class="modern-form-label">@Html.LabelFor(model => model.FechaNacimiento)</label>
+                            <label class="modern-form-label">@Html.LabelFor(model => model.FechaNacimiento)<span class="field-required" aria-hidden="true"> *</span></label>
                             @Html.TextBoxFor(model => model.FechaNacimiento, "{0:dd/MM/yyyy}", new { @class = "modern-form-input datepicker", placeholder = "dd/mm/aaaa" })
                         </div>
                         <div class="modern-form-group">
@@ -100,6 +100,7 @@
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Celular)</label>
                             @Html.TextBoxFor(model => model.Celular, new { @class = "modern-form-input", placeholder = "Celular" })
+                            <small class="text-secondary">Cargá al menos uno: teléfono o celular (con código de área).</small>
                         </div>
                         <div class="modern-form-group">
                             <label class="modern-form-label">@Html.LabelFor(model => model.Email)</label>

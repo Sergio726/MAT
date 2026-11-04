@@ -2,6 +2,42 @@
 
 ---
 
+### [2026-10-29] — Roadmap comercial y guía para vendedores
+- **Archivos:** `DOCUMENTACION/ROADMAP_COMERCIAL_2026.md` (nuevo), `DOCUMENTACION/GUIA_VENDEDORES_SEGUIMIENTO_CLIENTES.md` (nuevo), `DOCUMENTACION/README.md`, `SPEC.md`, `MAT.MVC/Views/Seguimiento/Index.cshtml`, `MAT.MVC/Scripts/mat.seguimiento.js` (`?v=20261029c`), `MAT.MVC/Views/Home/_CumpleaniosHoy.cshtml`, `MAT.MVC/Controllers/Seguimiento/SeguimientoController.cs`, `MAT.MVC/Infrastructure/Data/SeguimientoDataAccess.cs`, `PROGRESS.md`.
+- **Qué se hizo:** se creó el roadmap comercial que `SPEC.md` mencionaba (Fase 0 datos ✅, Fase 1 seguimiento 🟡, luego recordatorios, notificaciones, CRM y comisiones; decisiones abiertas y cómo medir) y la guía para vendedores (rutina de cumpleaños, categorías, ficha, resultados de contacto, marcas y preguntas frecuentes).
+- **Ajustes surgidos al escribir la guía:** botón **Editar datos** en la ficha (lleva a `PersonaCliente/Edit`) para corregir teléfono o fecha; **Buscar cliente** incluye a los "No volver a contactar" (marcados) para poder reactivarlos — antes no había forma de encontrarlos.
+- **Verificación:** `tools/Run-Tests.ps1` OK (61 tests); `aspnet_compiler`: vistas tocadas compilan.
+
+---
+
+### [2026-10-29] — Segunda revisión del seguimiento de clientes y del alta/edición de cliente
+- **Archivos:** `MAT.DB/dbo/Functions/fn_MAT_Seguimiento_Clientes.sql`, `usp_MAT_Seguimiento_{Clientes,ResumenCategorias,Cumpleanios,Ficha}.sql`, `usp_MAT_ClienteContacto_Insert.sql`, `usp_MAT_Persona_GetByDNI.sql`, `database/2026-10-29_SeguimientoClientes.sql` (regenerado), `MAT.MVC/Infrastructure/ClienteValidacion.cs` y `FirmaVendedor.cs` (nuevos), `SeguimientoCatalog.cs`, `QuickAccessCatalog.cs`, `Infrastructure/Data/SeguimientoDataAccess.cs`, `Models/Seguimiento/SeguimientoDtos.cs`, `Controllers/Seguimiento/SeguimientoController.cs`, `Controllers/PersonaCliente/PersonaClienteController.cs`, `Controllers/Presupuesto/PresupuestoController.cs`, `Views/Seguimiento/Index.cshtml`, `Views/Home/_CumpleaniosHoy.cshtml`, `Views/PersonaCliente/{Create,Edit}.cshtml`, `Views/Shared/_MainNav.cshtml`, `Scripts/mat.seguimiento.js`, `MAT.MVC.Tests/Infrastructure/ClienteValidacionTests.cs`, docs.
+- **Hallazgos corregidos:**
+  1. **Hora UTC:** el servidor SQL está en UTC; de 21 a 24 h "hoy" era mañana y los contactos quedaban con fecha del día siguiente. SPs con `AT TIME ZONE 'Argentina Standard Time'`; el contacto guarda la hora argentina; validación C# con `ClienteValidacion.HoyArgentina()`.
+  2. **Edición de cliente exigía el teléfono fijo** (1.772 clientes quedaron sin fijo tras la limpieza): ahora alta y edición usan `ClienteValidacion` (teléfono o celular completo, fecha obligatoria 1910–hoy) en navegador y servidor; los errores de la edición vuelven a la pantalla (antes se perdían en `ViewBag` con el redirect). Aclaración "al menos uno: teléfono o celular" y `*` en la fecha del alta.
+  3. **Menores:** marca "Menor de edad" (`EsMenor`) en listas, ficha y recuadro del inicio.
+  4. **Compradores para otros:** los viajes pagados (factura a su nombre) cuentan para la categoría; la ficha muestra "Viajó" / "Pagó para otros" y la grilla "N pagados para otros".
+  5. **DNI repetido:** `usp_MAT_Persona_GetByDNI` compara sin puntos (`NroDocumentoCalc`).
+  6. **Firma de Presupuesto:** salía una línea en blanco (`Vendedor.Descripcion` vacío); `FirmaVendedor.NombreActual()` toma el nombre de `Persona` (también en Seguimiento).
+  7. **Lista grande (Dormido, ~6.600):** DataTables con `deferRender`; la tabla anterior se oculta mientras carga otra categoría.
+  8. Menú "Seguimiento de clientes" (había dos "Seguimiento"); `aria-label`/`aria-labelledby`/`aria-controls`; "Notas de crédito" pasa a Todos los módulos para no dejar un acceso huérfano; recuadro del inicio con nombres que abren la ficha (`/Seguimiento?ficha=`) y "sin WhatsApp"; marca "Teléfono compartido con N clientes más"; "hace -1 días" imposible.
+- **Verificación:** `tools/Run-Tests.ps1` OK (61 tests). DEV: categorías 375 ms, cumpleaños 7 días 614 ms; cliente que solo pagó para otros pasa de "Sin viajes" a "Ocasional"; DNI con y sin puntos encuentra a la misma persona; contacto guardado 17:01 (AR) con servidor en 20:01 (UTC); datos de prueba borrados. `aspnet_compiler`: vistas tocadas compilan.
+
+---
+
+### [2026-10-29] — Seguimiento de clientes para vendedores
+- **Archivos:** `MAT.DB/dbo/Tables/ClienteContacto.sql`, `MAT.DB/dbo/Functions/fn_MAT_Seguimiento_Clientes.sql`, `MAT.DB/dbo/Stored Procedures/usp_MAT_Seguimiento_{Clientes,ResumenCategorias,Cumpleanios,Ficha}.sql`, `usp_MAT_ClienteContacto_Insert.sql`, `MAT.DB/MAT.DB.sqlproj`, `database/2026-10-29_SeguimientoClientes.sql`, `MAT.Enums/eResultadoContacto.cs`, `MAT.MVC/Controllers/Seguimiento/SeguimientoController.cs`, `MAT.MVC/Infrastructure/Data/SeguimientoDataAccess.cs`, `MAT.MVC/Infrastructure/SeguimientoCatalog.cs`, `MAT.MVC/Models/Seguimiento/SeguimientoDtos.cs`, `MAT.MVC/Views/Seguimiento/Index.cshtml`, `MAT.MVC/Views/Home/_CumpleaniosHoy.cshtml`, `MAT.MVC/Views/Home/Index.cshtml`, `MAT.MVC/Scripts/mat.seguimiento.js`, `MAT.MVC/Views/Shared/_MainNav.cshtml`, `MAT.MVC/Infrastructure/QuickAccessCatalog.cs`, `MAT.MVC.Tests/Infrastructure/SeguimientoCatalogTests.cs`, csproj, `docs/PENDIENTES.md`, `PROGRESS.md`.
+- **Qué se implementó** (decisiones en `docs/DECISIONES_ABIERTAS.md`):
+  - `fn_MAT_Seguimiento_Clientes(@Hoy)`: una fila por cliente con viajes realizados (pasaje 3/4/6/8 con salida ≤ hoy), viajes en 12 meses, primer/último/próximo viaje, gasto ARS/USD (facturas Señado/Pagado), categoría (VIP, EnRiesgo, Frecuente, Nuevo, Ocasional, Dormido, SinViajes), último contacto, "no contactar" y fecha de nacimiento dudosa (repetida en 10+ personas).
+  - `ClienteContacto` (resultado 1–8, `CK`) + `usp_MAT_ClienteContacto_Insert`; el contacto queda a nombre del vendedor (o del usuario si no tiene vendedor).
+  - `/Seguimiento`: pestañas Para hoy (cumpleaños hoy / 7 / 30 días, saludo armado y firmado, estado "saludado por X"), Por categoría (tarjetas con cantidad, descripción y acción sugerida) y Buscar; ficha con métricas, viajes e historial; al abrir WhatsApp se ofrece registrar el contacto; aviso si alguien lo contactó en los últimos 7 días.
+  - Recuadro "Cumpleaños de hoy" en Home (AJAX), menú Clientes → Seguimiento y acceso frecuente.
+  - El nombre del vendedor para la firma sale de `Persona` (`Vendedor.Descripcion` está vacío en Prod).
+- **Verificación:** `tools/Run-Tests.ps1` OK (MSBuild `MAT.sln` incl. `MAT.DB` sin errores, 53 tests). Script aplicado en `MAT_DEV.Intranet`: resumen 195 ms, cumpleaños 7 días 429 ms, VIP 234 ms; circuito registrar saludo → último contacto → "No volver a contactar" saca de las listas → CHECK rechaza resultado inválido (datos de prueba borrados). `aspnet_compiler`: las vistas nuevas y tocadas compilan (6 vistas viejas no compilan, ver Higiene).
+- **Pendiente:** publicar el script en Prod y smoke con un vendedor.
+
+---
+
 ### [2026-10-29] — Alta de cliente: un solo manejador, fecha obligatoria y validación en servidor; limpieza aplicada en Prod
 - **Archivos:** `MAT.MVC/Controllers/PersonaCliente/PersonaClienteController.cs`, `MAT.MVC/Views/PersonaCliente/Create.cshtml`, `MAT.MVC/Scripts/mat.jquery.binding.js`, `docs/PENDIENTES.md`, `docs/DECISIONES_ABIERTAS.md`, `PROGRESS.md`.
 - **Problema encontrado:** `#btnAgregarCliente` tenía dos manejadores. El de `Create.cshtml` guardaba por `CreateAjax` sin validar teléfono ni fecha; el de `mat.jquery.binding.js` validaba y, si todo estaba bien, hacía `submit()` de un form sin `action` (recargaba la página y podía cortar el guardado). El control de DNI repetido no frenaba nada.

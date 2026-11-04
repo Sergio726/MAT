@@ -439,10 +439,22 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 if (!string.IsNullOrEmpty(collection.Get("Celular"))) Persona.Celular = collection.Get("Celular").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Email"))) Persona.Email = collection.Get("Email").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("Ocupacion"))) Persona.Ocupacion = collection.Get("Ocupacion").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("FechaNacimiento"))) Persona.FechaNacimiento = Convert.ToDateTime(collection.Get("FechaNacimiento"));
+                var fechaTexto = collection.Get("FechaNacimiento");
+                DateTime fechaNacimiento;
+                if (DateTime.TryParse(fechaTexto, out fechaNacimiento)) Persona.FechaNacimiento = fechaNacimiento;
+                else if (!string.IsNullOrWhiteSpace(fechaTexto)) Persona.FechaNacimiento = null; // fecha mal escrita: la validación la rechaza
                 if (!string.IsNullOrEmpty(collection.Get("Sexo"))) Persona.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
                 if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) Persona.Nacionalidad = collection.Get("Nacionalidad").ToString();
                 if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) Persona.PaisResidencia = collection.Get("PaisResidencia").ToString();
+
+                var errores = ClienteValidacion.ValidarDatosContacto(
+                    Persona.FechaNacimiento, Persona.Telefono, Persona.Celular, ClienteValidacion.HoyArgentina());
+                if (errores.Count > 0)
+                {
+                    TempData["error"] = errores;
+                    return RedirectToAction("Edit", "PersonaCliente", new { Id = Id });
+                }
+
                 Infrastructure.Data.PersonaDataAccess.Update(Persona);
 
                 if (!string.IsNullOrEmpty(collection.Get("RazonSocial"))) Cliente.RazonSocial = collection.Get("RazonSocial").ToString();
@@ -460,7 +472,9 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
             catch (Exception e)
             {
-                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
+                // Antes el error iba a ViewBag y se perdía con el redirect: ahora vuelve a la edición y se muestra.
+                TempData["error"] = new List<string> { ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Edit") };
+                return RedirectToAction("Edit", "PersonaCliente", new { Id = Id });
             }
 
             return RedirectToAction("Details", "PersonaCliente", new { Id = Persona.PersonaId });
@@ -1033,22 +1047,13 @@ namespace MAT.MVC.Controllers.PersonaCliente
         }
 
         /// <summary>
-        /// Reglas del alta de cliente: fecha de nacimiento obligatoria y real, teléfono o celular completo y DNI no repetido.
-        /// Antes solo se validaba en el navegador y entraban "387" como teléfono y 0001-01-01 como fecha.
+        /// Reglas del alta de cliente: las de <see cref="ClienteValidacion"/> más DNI no repetido
+        /// (el SP compara sin puntos).
         /// </summary>
         private static List<string> ValidarAltaCliente(PersonaClienteModel cliente)
         {
-            var errores = new List<string>();
-
-            if (!cliente.FechaNacimiento.HasValue)
-                errores.Add("Ingrese la fecha de nacimiento (dd/mm/aaaa).");
-            else if (cliente.FechaNacimiento.Value.Year < 1910 || cliente.FechaNacimiento.Value.Date > DateTime.Today)
-                errores.Add("La fecha de nacimiento no es válida.");
-
-            var digitosTel = new string((cliente.Telefono ?? "").Where(char.IsDigit).ToArray());
-            var digitosCel = new string((cliente.Celular ?? "").Where(char.IsDigit).ToArray());
-            if (digitosTel.Length < 7 && digitosCel.Length < 7)
-                errores.Add("Ingrese un teléfono o celular completo (no solo el código de área).");
+            var errores = ClienteValidacion.ValidarDatosContacto(
+                cliente.FechaNacimiento, cliente.Telefono, cliente.Celular, ClienteValidacion.HoyArgentina());
 
             if (!string.IsNullOrWhiteSpace(cliente.NroDocumento) && PersonaClienteMethod.IfExistDNI(cliente.NroDocumento) != 0)
                 errores.Add("El DNI ingresado ya existe en el sistema.");

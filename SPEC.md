@@ -1131,7 +1131,7 @@
 
 #### Plataforma comercial (backlog — documentación futura)
 
-**Contexto (brainstorm 2026-07-07):** Épicas independientes a definir en `DOCUMENTACION/ROADMAP_COMERCIAL_2026.md` — CRM, notificaciones in-app, recordatorios a leads/presupuestos, liquidador de comisiones (solo Administrador). Orden sugerido: notificaciones → recordatorios → CRM → liquidador.
+**Contexto (brainstorm 2026-07-07):** Épicas independientes a definir en `DOCUMENTACION/ROADMAP_COMERCIAL_2026.md` (**creado 2026-10-29**, con el seguimiento de clientes como Fase 1) — CRM, notificaciones in-app, recordatorios a leads/presupuestos, liquidador de comisiones (solo Administrador). Orden sugerido: notificaciones → recordatorios → CRM → liquidador.
 
 **Decisiones pendientes (resolver antes de implementar — 2026-07-07):**
 1. ¿Lead y Presupuesto son entidades distintas o el presupuesto *es* el lead?
