@@ -2,6 +2,18 @@
 
 ---
 
+### [2026-11-04] — Módulo Clientes F0 + F1: formulario único de alta y edición
+- **Plan:** `DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`. Checklist manual y métricas base: `DOCUMENTACION/CHECKLIST_MODULO_CLIENTES.md`.
+- **F0:** borrados `ClienteController` + `Views/Cliente/*` (sin referencias; `Create` no compilaba) y `PersonaCliente/Edit - copia.cshtml`. `tools/Verify-NetTiersMigration.ps1`: `**` en `-Path` no es recursivo en PowerShell 5.1; ahora recorre subcarpetas (249 SPs verificados, antes 121).
+- **F1 — archivos nuevos:** `Models/Clientes/ClienteFormModel.cs`, `Infrastructure/Validation/ClienteValidationAttributes.cs` (FechaNacimiento, TelefonoCompleto, TelefonoOCelular, Documento — con reglas para el navegador), `Infrastructure/Clientes/ClienteFormulario.cs` (defaults, opciones de combos, mapper/normalización), `Infrastructure/Data/ClienteFormDataAccess.cs`, `Infrastructure/FormularioHtmlExtensions.cs` (`EtiquetaPara`: `*` solo si hay `[Required]`), `Views/PersonaCliente/_ClienteForm.cshtml`, `Scripts/mat.clientes.form.js`, `Content/mat.clientes.form.css`, SPs `usp_MAT_PersonaCliente_Guardar` y `usp_MAT_Persona_BuscarPorDocumento` + `database/2026-11-04_ClienteFormulario.sql`, tests `ClienteFormTests`.
+- **F1 — cambios:** `PersonaClienteController` (Create/CreateFromPresupuesto/Edit con `ClienteFormModel`, `[ValidateAntiForgeryToken]`, PRG, `DocumentoDisponible`; fuera `CreateAjax`, `Create/Edit(FormCollection)`, `validarCTA`, `ExistDni`), `Create.cshtml`/`Edit.cshtml` (solo título + parcial), `Details.cshtml` (aviso de guardado), `ClienteValidacion` (reglas y mensajes compartidos), `PersonaClienteModel` (fuera `CreatePersonaCliente`/`IfExistDNI`), `mat.jquery.binding.js` y `mat.jquery.functions.js` (fuera chequeo de DNI y cuenta corriente viejos), `_Layout` (cache-bust).
+- **Causas corregidas:** `GET Create` devolvía `View()` sin modelo (45 excepciones por carga, ~79 s con depurador); dos formularios con reglas distintas; chequeo de DNI con `.length = 10` (asignación: pedía al servidor en cada tecla) y que en la edición vaciaba el propio DNI; botones de cuenta corriente que cambiaban `src` de un `<button>` (nunca mostraban estado); **`validarCTA` sin `[Authorize]`** (cambiaba la cuenta corriente sin login); edición en dos `UPDATE` sin transacción; `ToSelectList(valor)` mostraba nombres internos ("Consumidor_Final"); valores por defecto puestos con jQuery; `Sexo` preseleccionado.
+- **Hallazgo transversal:** `_Layout` ya carga jQuery Validate y la validación discreta; 28 vistas los recargan con el bundle `jqueryval` y la segunda copia reemplaza las reglas. Create/Edit de clientes ya no lo recargan; el resto queda en Higiene (`PENDIENTES.md`).
+- **Verificación:** `tools/Run-Tests.ps1` OK (90 tests). SPs en DEV con transacción revertida: documento en 3 formatos → misma persona, exclusión propia, alta (Persona+Cliente+Cuenta+Pasajero), edición (sin duplicar cuenta/pasajero), id inexistente rechazado. Validación del navegador en jsdom con los scripts y el orden de `_Layout` (jQuery 3.7.1 + Migrate + Validate 1.10 + discreta): 13/13 casos con los mismos mensajes que el servidor. `aspnet_compiler`: vistas tocadas compilan.
+- **Pendiente:** usuario de prueba y checklist F1 en el navegador; publicar `database/2026-11-04_ClienteFormulario.sql` en Prod.
+
+---
+
 ### [2026-11-04] — Plan de mejoras y rediseño del módulo Clientes
 - **Archivos:** `DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md` (nuevo), `DOCUMENTACION/README.md`, `docs/PENDIENTES.md`, `docs/DECISIONES_ABIERTAS.md`, `PROGRESS.md`.
 - **Origen:** auditoría QA/UI del 04/11 verificada contra código, base de producción (solo lectura) y ejecución local.

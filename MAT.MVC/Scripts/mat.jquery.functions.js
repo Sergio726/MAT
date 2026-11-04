@@ -727,53 +727,7 @@ function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
     $("#" + dialogid).dialog("open");
 }
 
-function validarCTA(ClienteId, Estado) {
-
-    $.ajax({
-        url: "/PersonaCliente/validarCTA",
-        type: "POST",
-        data: { ClienteId: ClienteId, Estado: Estado },
-        success: function (data) {
-            var result = data == "True" ? true : false;
-            if (result) {
-                $('#btnActivar').attr('src', '/Images/Icons/icon-boton-verde.png');
-                $('#btnDesactivar').attr('src', '/Images/Icons/icon-boton-rojo2.png');
-                (window.alertSuccess || window.alert)('Se activó la cuenta corriente del cliente seleccionado.', 'Éxito');
-            }
-            else {
-                $('#btnActivar').attr('src', '/Images/Icons/icon-boton-verde2.png');
-                $('#btnDesactivar').attr('src', '/Images/Icons/icon-boton-rojo.png');
-                (window.alertInfo || window.alert)('Se desactivó la cuenta corriente del cliente seleccionado.', 'Atención');
-            }
-
-        }
-    });
-
-};
-
-function verificarCTA(ClienteId, Estado) {
-
-    $.ajax({
-        url: "/PersonaCliente/validarCTA",
-        type: "POST",
-        data: { ClienteId: ClienteId, Estado: Estado },
-        success: function (data) {
-            var result = data == "True" ? true : false;
-            if (result) {
-                $('#btnActivar').attr('src', '/Images/Icons/icon-boton-verde.png');
-                $('#btnDesactivar').attr('src', '/Images/Icons/icon-boton-rojo2.png');
-
-            }
-            else {
-                $('#btnActivar').attr('src', '/Images/Icons/icon-boton-verde2.png');
-                $('#btnDesactivar').attr('src', '/Images/Icons/icon-boton-rojo.png');
-
-            }
-
-        }
-    });
-
-};
+// Cuenta corriente del cliente: ahora es un interruptor del formulario (_ClienteForm), se guarda con el cliente.
 
 $(document).on("click", "#btnViajes", function () {
     var url = "/Viaje/PopPupViajes"

@@ -17,6 +17,9 @@ using System.Text;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using MAT.MVC.Infrastructure;
+using MAT.MVC.Infrastructure.Clientes;
+using MAT.MVC.Infrastructure.Data;
+using MAT.MVC.Models.Clientes;
 using System.Web.Security;
 using System.Configuration;
 
@@ -157,328 +160,180 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
         }
 
+        #region Formulario de cliente (alta, alta desde presupuesto y edición)
+
+        // Un solo formulario (_ClienteForm) con ClienteFormModel: etiquetas, reglas y mensajes salen de los
+        // atributos del modelo y el navegador valida con las mismas reglas. Antes Create devolvía View() sin
+        // modelo (45 helpers lanzaban NullReferenceException) y alta y edición eran dos formularios distintos.
+
         [Authorize]
-        public ActionResult Create(string msj)
+        public ActionResult Create()
         {
-            if (!string.IsNullOrEmpty(msj)) ViewData["error"] = msj;
-            ViewBag.ListOcupacion = GetAllOcupacion();
-            ViewBag.ListProvincia = GetAllProvincia();
-            return View();
+            var modelo = ClienteFormDefaults.Nuevo();
+            PrepararFormulario(modelo);
+            return View(modelo);
         }
 
         /// <summary>
-        /// Crea un nuevo cliente con datos pre-cargados desde un presupuesto (prospecto que decide comprar)
+        /// Alta con los datos de un presupuesto (prospecto que decide comprar); al guardar vuelve a <paramref name="returnUrl"/>.
         /// </summary>
         [Authorize]
         public ActionResult CreateFromPresupuesto(Guid? presupuestoId, string returnUrl = null)
         {
-            ViewBag.ListOcupacion = GetAllOcupacion();
-            ViewBag.ListProvincia = GetAllProvincia();
-            ViewBag.ReturnUrl = returnUrl;
+            var modelo = ClienteFormDefaults.Nuevo();
+            modelo.ReturnUrl = returnUrl;
 
-            if (!presupuestoId.HasValue)
-            {
-                ViewData["error"] = "No se especificó el presupuesto.";
-                return View("Create");
-            }
-
-            var presupuesto = MAT.MVC.Models.PresupuestoMethod.GetById(presupuestoId.Value);
+            var presupuesto = presupuestoId.HasValue ? MAT.MVC.Models.PresupuestoMethod.GetById(presupuestoId.Value) : null;
             if (presupuesto == null)
             {
-                ViewData["error"] = "Presupuesto no encontrado.";
-                return View("Create");
+                ModelState.AddModelError(string.Empty, presupuestoId.HasValue ? "No se encontró el presupuesto." : "No se indicó el presupuesto.");
             }
-
-            var model = new MAT.Entities.PersonaCliente();
-            model.Nacionalidad = "ARG";
-            model.PaisResidencia = "ARG";
-            model.Domicilio = "S/D";
-
-            if (!string.IsNullOrWhiteSpace(presupuesto.NombreCliente))
+            else
             {
-                var nombreCompleto = presupuesto.NombreCliente.Trim();
-                if (nombreCompleto.Contains(","))
+                var nombreCompleto = (presupuesto.NombreCliente ?? string.Empty).Trim();
+                if (nombreCompleto.Length > 0)
                 {
-                    var partes = nombreCompleto.Split(new[] { ',' }, 2);
-                    model.Apellido = partes[0].Trim();
-                    model.Nombre = partes.Length > 1 ? partes[1].Trim() : string.Empty;
+                    var partes = nombreCompleto.Contains(",")
+                        ? nombreCompleto.Split(new[] { ',' }, 2)
+                        : nombreCompleto.Split(new[] { ' ' }, 2);
+                    modelo.Apellido = partes[0].Trim();
+                    modelo.Nombre = partes.Length > 1 ? partes[1].Trim() : null;
                 }
-                else
-                {
-                    var palabras = nombreCompleto.Split(new[] { ' ' }, 2);
-                    model.Apellido = palabras[0].Trim();
-                    model.Nombre = palabras.Length > 1 ? palabras[1].Trim() : string.Empty;
-                }
+                modelo.Celular = presupuesto.TelefonoCliente?.Trim();
+                modelo.Email = presupuesto.EmailCliente?.Trim();
+                modelo.NroDocumento = presupuesto.DniCliente?.Trim();
             }
 
-            if (!string.IsNullOrWhiteSpace(presupuesto.TelefonoCliente))
-                model.Celular = presupuesto.TelefonoCliente.Trim();
-            if (!string.IsNullOrWhiteSpace(presupuesto.EmailCliente))
-                model.Email = presupuesto.EmailCliente.Trim();
-            if (!string.IsNullOrWhiteSpace(presupuesto.DniCliente))
-                model.NroDocumento = presupuesto.DniCliente.Trim();
-
-            return View("Create", model);
+            PrepararFormulario(modelo);
+            return View("Create", modelo);
         }
 
         [HttpPost]
         [Authorize]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Exclude = "PersonaId")] ClienteFormModel modelo, string accion)
         {
-            PersonaClienteModel PersonaCliente = new PersonaClienteModel();
-            try
+            modelo.PersonaId = null;
+            var id = Guardar(modelo, FirmaVendedor.VendedorIdActual());
+            if (!id.HasValue)
             {
-
-                #region Persona
-                PersonaCliente.Apellido = collection.Get("Apellido").ToString().ToUpper();
-                PersonaCliente.Nombre = collection.Get("Nombre").ToString();
-                PersonaCliente.TipoDocumento = Convert.ToInt32(collection.Get("TipoDocumento").ToString());
-                PersonaCliente.NroDocumento = collection.Get("NroDocumento").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("LocalidadId"))) PersonaCliente.LocalidadID = Convert.ToInt32(collection.Get("LocalidadId").ToString());
-                if (!string.IsNullOrEmpty(collection.Get("Provincia"))) PersonaCliente.Provincia = Convert.ToInt32(collection.Get("Provincia"));
-                if (!string.IsNullOrEmpty(collection.Get("Telefono"))) PersonaCliente.Telefono = collection.Get("Telefono").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Celular"))) PersonaCliente.Celular = collection.Get("Celular").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Email"))) PersonaCliente.Email = collection.Get("Email").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Domicilio"))) PersonaCliente.Domicilio = collection.Get("Domicilio");
-                if (!string.IsNullOrEmpty(collection.Get("Ocupacion"))) PersonaCliente.Ocupacion = collection.Get("Ocupacion").ToString();
-                DateTime fechaNacimiento;
-                if (DateTime.TryParse(collection.Get("FechaNacimiento"), out fechaNacimiento)) PersonaCliente.FechaNacimiento = fechaNacimiento;
-                if (!string.IsNullOrEmpty(collection.Get("Sexo"))) PersonaCliente.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
-                if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) PersonaCliente.Nacionalidad = collection.Get("Nacionalidad").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) PersonaCliente.PaisResidencia = collection.Get("PaisResidencia").ToString();
-                #endregion
-
-                #region Cliente
-                if (!string.IsNullOrEmpty(collection.Get("RazonSocial"))) PersonaCliente.RazonSocial = collection.Get("RazonSocial").ToString().ToUpper();
-                if (!string.IsNullOrEmpty(collection.Get("Cuit"))) PersonaCliente.Cuit = collection.Get("Cuit").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Empresa"))) PersonaCliente.Empresa = collection.Get("Empresa").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("FormaPago"))) PersonaCliente.FormaPago = Convert.ToInt32(collection.Get("FormaPago"));
-                if (!string.IsNullOrEmpty(collection.Get("CondicionIva"))) PersonaCliente.CondicionIva = Convert.ToInt32(collection.Get("CondicionIva"));
-                if (!string.IsNullOrEmpty(collection.Get("Fax"))) PersonaCliente.Fax = collection.Get("Fax").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Web"))) PersonaCliente.Web = collection.Get("Web").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Idioma"))) PersonaCliente.Idioma = collection.Get("Idioma").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Promotor"))) PersonaCliente.Promotor = collection.Get("Promotor").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Observacion"))) PersonaCliente.Observacion = collection.Get("Observacion").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("TipoId"))) PersonaCliente.TipoID = Convert.ToInt32(collection.Get("TipoId").ToString());
-                if (MATContext.CurrentVendedor != null) PersonaCliente.VendedorID = MATContext.CurrentVendedor.VendedorId.ToString();
-                #endregion
-
-                var errores = ValidarAltaCliente(PersonaCliente);
-                if (errores.Count > 0)
-                    return RedirectToAction("Create", "PersonaCliente", new { msj = string.Join(" ", errores) });
-
-                #region create
-                PersonaClienteMethod.CreatePersonaCliente(PersonaCliente);
-                #endregion
-
-                var returnUrl = collection.Get("returnUrl");
-                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    return Redirect(returnUrl);
-
-                return RedirectToAction("Index", "PersonaCliente");
+                PrepararFormulario(modelo);
+                return View(modelo);
             }
-            catch (Exception e)
+
+            var nombre = modelo.Apellido + ", " + modelo.Nombre;
+            if (accion == "guardarYOtro")
             {
-                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Create");
-                return RedirectToAction("Create", "PersonaCliente", new { msj = "No se pudo ingresar el pasajero al sistema. " + msg });
+                TempData["ok"] = "Se guardó el cliente " + nombre + ". Podés cargar el siguiente.";
+                return RedirectToAction("Create");
             }
-        }
+            if (!string.IsNullOrWhiteSpace(modelo.ReturnUrl) && Url.IsLocalUrl(modelo.ReturnUrl))
+                return Redirect(modelo.ReturnUrl);
 
-        [HttpPost]
-        [Authorize]
-        public JsonResult CreateAjax(FormCollection collection)
-        {
-            PersonaClienteModel PersonaCliente = new PersonaClienteModel();
-            try
-            {
-                #region Persona
-                PersonaCliente.Apellido = collection.Get("Apellido").ToString().ToUpper();
-                PersonaCliente.Nombre = collection.Get("Nombre").ToString();
-                PersonaCliente.TipoDocumento = Convert.ToInt32(collection.Get("TipoDocumento").ToString());
-                PersonaCliente.NroDocumento = collection.Get("NroDocumento").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("LocalidadId"))) PersonaCliente.LocalidadID = Convert.ToInt32(collection.Get("LocalidadId").ToString());
-                if (!string.IsNullOrEmpty(collection.Get("Provincia"))) PersonaCliente.Provincia = Convert.ToInt32(collection.Get("Provincia"));
-                if (!string.IsNullOrEmpty(collection.Get("Telefono"))) PersonaCliente.Telefono = collection.Get("Telefono").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Celular"))) PersonaCliente.Celular = collection.Get("Celular").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Email"))) PersonaCliente.Email = collection.Get("Email").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Domicilio"))) PersonaCliente.Domicilio = collection.Get("Domicilio");
-                if (!string.IsNullOrEmpty(collection.Get("Ocupacion"))) PersonaCliente.Ocupacion = collection.Get("Ocupacion").ToString();
-                DateTime fechaNacimiento;
-                if (DateTime.TryParse(collection.Get("FechaNacimiento"), out fechaNacimiento)) PersonaCliente.FechaNacimiento = fechaNacimiento;
-                if (!string.IsNullOrEmpty(collection.Get("Sexo"))) PersonaCliente.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
-                if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) PersonaCliente.Nacionalidad = collection.Get("Nacionalidad").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) PersonaCliente.PaisResidencia = collection.Get("PaisResidencia").ToString();
-                #endregion
-
-                #region Cliente
-                if (!string.IsNullOrEmpty(collection.Get("RazonSocial"))) PersonaCliente.RazonSocial = collection.Get("RazonSocial").ToString().ToUpper();
-                if (!string.IsNullOrEmpty(collection.Get("Cuit"))) PersonaCliente.Cuit = collection.Get("Cuit").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Empresa"))) PersonaCliente.Empresa = collection.Get("Empresa").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("FormaPago"))) PersonaCliente.FormaPago = Convert.ToInt32(collection.Get("FormaPago"));
-                if (!string.IsNullOrEmpty(collection.Get("CondicionIva"))) PersonaCliente.CondicionIva = Convert.ToInt32(collection.Get("CondicionIva"));
-                if (!string.IsNullOrEmpty(collection.Get("Fax"))) PersonaCliente.Fax = collection.Get("Fax").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Web"))) PersonaCliente.Web = collection.Get("Web").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Idioma"))) PersonaCliente.Idioma = collection.Get("Idioma").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Promotor"))) PersonaCliente.Promotor = collection.Get("Promotor").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Observacion"))) PersonaCliente.Observacion = collection.Get("Observacion").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("TipoId"))) PersonaCliente.TipoID = Convert.ToInt32(collection.Get("TipoId").ToString());
-                if (MATContext.CurrentVendedor != null) PersonaCliente.VendedorID = MATContext.CurrentVendedor.VendedorId.ToString();
-                #endregion
-
-                var errores = ValidarAltaCliente(PersonaCliente);
-                if (errores.Count > 0)
-                    return Json(new { success = false, message = errores });
-
-                PersonaClienteMethod.CreatePersonaCliente(PersonaCliente);
-
-                var returnUrl = collection.Get("returnUrl");
-                string redirectUrl = Url.Action("Index", "PersonaCliente");
-                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    redirectUrl = returnUrl;
-
-                return Json(new { success = true, redirectUrl = redirectUrl });
-            }
-            catch (Exception e)
-            {
-                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.CreateAjax");
-                return Json(new { success = false, message = msg });
-            }
+            TempData["ok"] = "Se guardó el cliente " + nombre + ".";
+            return RedirectToAction("Details", new { id = id.Value });
         }
 
         [Authorize]
-        public ActionResult Edit(Guid Id)
+        public ActionResult Edit(Guid id)
         {
+            ClienteFormModel modelo;
             try
             {
-                MAT.Entities.PersonaCliente PersonaCliente = new MAT.Entities.PersonaCliente();
-
-                // Intentamos obtener los datos de Persona y Cliente
-                MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
-                if (Persona == null)
-                {
-                    throw new Exception($"No se encontró la persona con ID: {Id}");
-                }
-
-                MAT.Entities.Cliente Cliente = Infrastructure.Data.ClienteDataAccess.GetById(Id);
-                if (Cliente == null)
-                {
-                    throw new Exception($"No se encontró el cliente con ID: {Id}");
-                }
-
-                try
-                {
-                    /* Debo actualizar la entidad PersonaCliente ya que esta no pertenece a la 
-                    base de datos */
-                    #region Actualizar PersonaCliente
-                    PersonaCliente.PersonaId = Persona.PersonaId;
-                    PersonaCliente.Apellido = Persona.Apellido;
-                    PersonaCliente.Nombre = Persona.Nombre;
-                    PersonaCliente.TipoDocumento = Persona.TipoDocumento;
-                    PersonaCliente.NroDocumento = Persona.NroDocumento;
-                    PersonaCliente.LocalidadId = Persona.LocalidadId;
-                    PersonaCliente.Provincia = Persona.Provincia;
-                    PersonaCliente.Domicilio = Persona.Domicilio;
-                    PersonaCliente.Telefono = Persona.Telefono;
-                    PersonaCliente.Celular = Persona.Celular;
-                    PersonaCliente.Email = Persona.Email;
-                    PersonaCliente.FechaNacimiento = Persona.FechaNacimiento;
-                    PersonaCliente.Sexo = Persona.Sexo;
-                    PersonaCliente.RazonSocial = Cliente.RazonSocial;
-                    PersonaCliente.Cuit = Cliente.Cuit;
-                    PersonaCliente.Moneda = Cliente.Moneda;
-                    PersonaCliente.Empresa = Cliente.Empresa;
-                    PersonaCliente.FormaPago = Cliente.FormaPago;
-                    PersonaCliente.CondicionIva = Cliente.CondicionIva;
-                    PersonaCliente.VendedorId = Cliente.VendedorId;
-                    PersonaCliente.Fax = Cliente.Fax;
-                    PersonaCliente.Web = Cliente.Web;
-                    PersonaCliente.Idioma = Cliente.Idioma;
-                    PersonaCliente.Promotor = Cliente.Promotor;
-                    PersonaCliente.Observacion = Cliente.Observacion;
-                    PersonaCliente.TipoId = Cliente.TipoId;
-                    PersonaCliente.Nacionalidad = Persona.Nacionalidad;
-                    PersonaCliente.PaisResidencia = Persona.PaisResidencia;
-                    PersonaCliente.Ocupacion = Persona.Ocupacion;
-                    #endregion
-
-                    ViewBag.ListOcupacion = GetAllOcupacion();
-                    ViewBag.ListProvincia = GetAllProvincia();
-                    return View(PersonaCliente);
-                }
-                catch (Exception ex)
-                {
-                    ErrorUtil.LogAndGetPublicMessage(ex, "PersonaClienteController.Edit (inner)");
-                    throw new Exception("Error al actualizar los datos de PersonaCliente", ex);
-                }
+                modelo = ClienteFormDataAccess.Obtener(id);
             }
             catch (Exception e)
             {
                 ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Edit");
                 return View("Error", e);
             }
+            if (modelo == null) return HttpNotFound("No se encontró el cliente.");
+
+            PrepararFormulario(modelo);
+            return View(modelo);
         }
 
         [HttpPost]
         [Authorize]
-        public ActionResult Edit(Guid Id, FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Guid id, ClienteFormModel modelo)
         {
-            MAT.Entities.PersonaCliente PersonaCliente = new MAT.Entities.PersonaCliente();
-            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
-            MAT.Entities.Cliente Cliente = Infrastructure.Data.ClienteDataAccess.GetById(Id);
+            modelo.PersonaId = id; // el id sale de la URL, no del formulario
+            if (!Guardar(modelo, null).HasValue)
+            {
+                PrepararFormulario(modelo);
+                return View(modelo);
+            }
 
+            TempData["ok"] = "Se guardaron los cambios.";
+            return RedirectToAction("Details", new { id });
+        }
+
+        /// <summary>
+        /// Aviso del formulario al salir del campo de documento: si otra persona ya lo tiene, devuelve su nombre
+        /// y su id para enlazar la ficha. En la edición excluye al propio cliente.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public JsonResult DocumentoDisponible(string nroDocumento, Guid? personaId = null)
+        {
             try
             {
-                if (!string.IsNullOrEmpty(collection.Get("Apellido"))) Persona.Apellido = collection.Get("Apellido").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Nombre"))) Persona.Nombre = collection.Get("Nombre").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("TipoDocumento"))) Persona.TipoDocumento = Convert.ToInt32(collection.Get("TipoDocumento").ToString());
-                if (!string.IsNullOrEmpty(collection.Get("NroDocumento"))) Persona.NroDocumento = collection.Get("NroDocumento").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("LocalidadId"))) Persona.LocalidadId = Convert.ToInt16(collection.Get("LocalidadId").ToString());
-                if (!string.IsNullOrEmpty(collection.Get("Provincia"))) Persona.Provincia = Convert.ToInt32(collection.Get("Provincia"));
-                if (!string.IsNullOrEmpty(collection.Get("Domicilio"))) Persona.Domicilio = collection.Get("Domicilio").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Telefono"))) Persona.Telefono = collection.Get("Telefono").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Celular"))) Persona.Celular = collection.Get("Celular").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Email"))) Persona.Email = collection.Get("Email").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Ocupacion"))) Persona.Ocupacion = collection.Get("Ocupacion").ToString();
-                var fechaTexto = collection.Get("FechaNacimiento");
-                DateTime fechaNacimiento;
-                if (DateTime.TryParse(fechaTexto, out fechaNacimiento)) Persona.FechaNacimiento = fechaNacimiento;
-                else if (!string.IsNullOrWhiteSpace(fechaTexto)) Persona.FechaNacimiento = null; // fecha mal escrita: la validación la rechaza
-                if (!string.IsNullOrEmpty(collection.Get("Sexo"))) Persona.Sexo = Convert.ToInt32(collection.Get("Sexo").ToString());
-                if (!string.IsNullOrEmpty(collection.Get("Nacionalidad"))) Persona.Nacionalidad = collection.Get("Nacionalidad").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("PaisResidencia"))) Persona.PaisResidencia = collection.Get("PaisResidencia").ToString();
-
-                var errores = ClienteValidacion.ValidarDatosContacto(
-                    Persona.FechaNacimiento, Persona.Telefono, Persona.Celular, ClienteValidacion.HoyArgentina());
-                if (errores.Count > 0)
+                var existente = ClienteFormDataAccess.BuscarPorDocumento(nroDocumento, personaId);
+                if (existente == null) return Json(new { disponible = true }, JsonRequestBehavior.AllowGet);
+                return Json(new
                 {
-                    TempData["error"] = errores;
-                    return RedirectToAction("Edit", "PersonaCliente", new { Id = Id });
-                }
-
-                Infrastructure.Data.PersonaDataAccess.Update(Persona);
-
-                if (!string.IsNullOrEmpty(collection.Get("RazonSocial"))) Cliente.RazonSocial = collection.Get("RazonSocial").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Cuit"))) Cliente.Cuit = collection.Get("Cuit").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Moneda"))) Cliente.Moneda = collection.Get("Moneda").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Empresa"))) Cliente.Empresa = collection.Get("Empresa").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("FormaPago"))) Cliente.FormaPago = Convert.ToInt32(collection.Get("FormaPago"));
-                if (!string.IsNullOrEmpty(collection.Get("CondicionIva"))) Cliente.CondicionIva = Convert.ToInt32(collection.Get("CondicionIva"));
-                if (!string.IsNullOrEmpty(collection.Get("Fax"))) Cliente.Fax = collection.Get("Fax").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Web"))) Cliente.Web = collection.Get("Web").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Idioma"))) Cliente.Idioma = collection.Get("Idioma").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Promotor"))) Cliente.Promotor = collection.Get("Promotor").ToString();
-                if (!string.IsNullOrEmpty(collection.Get("Observacion"))) Cliente.Observacion = collection.Get("Observacion").ToString();
-                Infrastructure.Data.ClienteDataAccess.Update(Cliente);
+                    disponible = false,
+                    personaId = existente.PersonaId,
+                    nombre = existente.NombreCompleto,
+                    esCliente = existente.EsCliente
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
-                // Antes el error iba a ViewBag y se perdía con el redirect: ahora vuelve a la edición y se muestra.
-                TempData["error"] = new List<string> { ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Edit") };
-                return RedirectToAction("Edit", "PersonaCliente", new { Id = Id });
+                // El aviso es una ayuda: si falla, el servidor vuelve a controlar al guardar.
+                ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.DocumentoDisponible");
+                return Json(new { disponible = true }, JsonRequestBehavior.AllowGet);
             }
-
-            return RedirectToAction("Details", "PersonaCliente", new { Id = Persona.PersonaId });
         }
+
+        /// <summary>
+        /// Valida (atributos + documento repetido), normaliza y guarda. Devuelve el id, o null si hay errores
+        /// (quedan en ModelState para mostrarlos en cada campo).
+        /// </summary>
+        private Guid? Guardar(ClienteFormModel modelo, Guid? vendedorId)
+        {
+            if (ModelState.IsValid)
+            {
+                var existente = ClienteFormDataAccess.BuscarPorDocumento(modelo.NroDocumento, modelo.PersonaId);
+                if (existente != null)
+                {
+                    ModelState.AddModelError("NroDocumento", (existente.EsCliente ? "Ya existe un cliente con este documento: " : "Ya existe una persona con este documento: ")
+                        + existente.NombreCompleto + ".");
+                    ViewBag.DocumentoExistente = existente;
+                }
+            }
+            if (!ModelState.IsValid) return null;
+
+            try
+            {
+                ClienteFormMapper.Normalizar(modelo);
+                return ClienteFormDataAccess.Guardar(modelo, vendedorId);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(string.Empty, ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Guardar"));
+                return null;
+            }
+        }
+
+        private void PrepararFormulario(ClienteFormModel modelo)
+        {
+            ViewBag.Opciones = ClienteFormOpciones.Crear(modelo, GetAllProvincia(), GetAllOcupacion());
+        }
+
+        #endregion
+
 
         [Authorize]
         public ActionResult Details(Guid Id)
@@ -974,116 +829,6 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 sResult[1] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController");
             }
             return Json(sResult, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public bool validarCTA(string ClienteId, string Estado)
-        {
-            //string msj = "";
-            bool estado = false;
-            try
-            {
-                Guid Id = new Guid(ClienteId);
-
-                switch (Estado)
-                {
-
-                    case "Activar":
-                        SetEstadoCuenta(Id, true);
-                        //msj = "Se activo la Cuenta Corriente para el cliente seleccionado";
-                        estado = true;
-                        break;
-                    case "Desactivar":
-                        SetEstadoCuenta(Id, false);
-                        //msj = "Se descactivo la Cuenta Corriente para el cliente selccionado";
-                        estado = false;
-                        break;
-                    case "Verificar":
-
-                        MAT.Entities.Cuenta ECuentaV = Infrastructure.Data.CuentaDataAccess.GetByClienteId(Id).FirstOrDefault();
-
-                        if (ECuentaV == null)
-                        {
-                            ECuentaV = new MAT.Entities.Cuenta();
-                            ECuentaV.ClienteId = Id;
-                            ECuentaV.Estado = false;
-                            Infrastructure.Data.CuentaDataAccess.Insert(ECuentaV);
-                            estado = false;
-                        }
-                        else
-                        {
-                            estado = ECuentaV.Estado;
-                        }
-
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.validarCTA");
-                estado = false;
-            }
-            return estado;
-
-        }
-
-        /// <summary>
-        /// Activa/desactiva la cuenta corriente del cliente; si no existe la crea con el estado indicado
-        /// (evita NullReferenceException cuando el cliente aún no tiene Cuenta).
-        /// </summary>
-        private static void SetEstadoCuenta(Guid clienteId, bool estado)
-        {
-            MAT.Entities.Cuenta cuenta = Infrastructure.Data.CuentaDataAccess.GetByClienteId(clienteId).FirstOrDefault();
-            if (cuenta == null)
-            {
-                cuenta = new MAT.Entities.Cuenta { ClienteId = clienteId, Estado = estado };
-                Infrastructure.Data.CuentaDataAccess.Insert(cuenta);
-            }
-            else
-            {
-                cuenta.Estado = estado;
-                Infrastructure.Data.CuentaDataAccess.Update(cuenta);
-            }
-        }
-
-        /// <summary>
-        /// Reglas del alta de cliente: las de <see cref="ClienteValidacion"/> más DNI no repetido
-        /// (el SP compara sin puntos).
-        /// </summary>
-        private static List<string> ValidarAltaCliente(PersonaClienteModel cliente)
-        {
-            var errores = ClienteValidacion.ValidarDatosContacto(
-                cliente.FechaNacimiento, cliente.Telefono, cliente.Celular, ClienteValidacion.HoyArgentina());
-
-            if (!string.IsNullOrWhiteSpace(cliente.NroDocumento) && PersonaClienteMethod.IfExistDNI(cliente.NroDocumento) != 0)
-                errores.Add("El DNI ingresado ya existe en el sistema.");
-
-            return errores;
-        }
-
-        public JsonResult ExistDni(string dni = "")
-        {
-            string[] sResult = new string[2];
-            try
-            {
-                int ExistDNI = MAT.MVC.Models.PersonaClienteMethod.IfExistDNI(dni);
-                if (ExistDNI == 0)
-                    sResult[0] = "False";
-                else
-                    sResult[0] = "True";
-                sResult[1] = "Done.";
-            }
-            catch (Exception e)
-            {
-                sResult[0] = "";
-                sResult[1] = "Error: " + ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ExistDni");
-            }
-
-            return Json(new
-            {
-                Data = sResult[0],
-                Result = sResult[1]
-            }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]

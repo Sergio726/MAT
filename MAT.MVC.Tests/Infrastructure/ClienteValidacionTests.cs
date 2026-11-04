@@ -32,14 +32,44 @@ namespace MAT.MVC.Tests.Infrastructure
             StringAssert.Contains("Ingrese la fecha de nacimiento", errores[0]);
         }
 
-        [TestCase(1, 1, 1)]
-        [TestCase(1909, 12, 31)]
-        [TestCase(2026, 10, 30)]
-        public void FechaImposible_LaRechaza(int anio, int mes, int dia)
+        [TestCase(1, 1, 1, "anterior a 1910")]
+        [TestCase(1909, 12, 31, "anterior a 1910")]
+        [TestCase(2026, 10, 30, "no puede ser futura")]
+        public void FechaImposible_LaRechazaConElMotivo(int anio, int mes, int dia, string motivo)
         {
             var errores = ClienteValidacion.ValidarDatosContacto(new DateTime(anio, mes, dia), null, "3874123456", Hoy);
             Assert.AreEqual(1, errores.Count);
-            StringAssert.Contains("no es válida", errores[0]);
+            StringAssert.Contains(motivo, errores[0]);
+        }
+
+        [TestCase("31/12/2099", ClienteValidacion.MensajeFechaFutura)]
+        [TestCase("31/02/1980", ClienteValidacion.MensajeFechaFormato)]
+        [TestCase("1980-05-01", ClienteValidacion.MensajeFechaFormato)]
+        [TestCase("01/01/1900", ClienteValidacion.MensajeFechaMinima)]
+        public void FechaEscrita_MensajeSegunElProblema(string texto, string esperado)
+        {
+            Assert.AreEqual(esperado, ClienteValidacion.ValidarFechaNacimiento(texto, Hoy));
+        }
+
+        [TestCase("1/5/1980")]
+        [TestCase("01/05/1980")]
+        public void FechaEscrita_Valida(string texto)
+        {
+            Assert.IsNull(ClienteValidacion.ValidarFechaNacimiento(texto, Hoy));
+        }
+
+        [TestCase(1, "32.877.563", true)]
+        [TestCase(1, "5787839", true)]
+        [TestCase(1, "05.787.839", true)]
+        [TestCase(1, "123456", false)]
+        [TestCase(1, "123456789", false)]
+        [TestCase(1, "12A45678", false)]
+        [TestCase(2, "AB123456", true)]
+        [TestCase(2, "AB1", false)]
+        [TestCase(3, "1234567", true)]
+        public void Documento_SegunElTipo(int tipo, string numero, bool valido)
+        {
+            Assert.AreEqual(valido, ClienteValidacion.ValidarDocumento(tipo, numero) == null);
         }
 
         [Test]

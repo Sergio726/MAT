@@ -66,8 +66,10 @@ Decisiones cerradas el 2026-10-29: [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTA
 
 Plan completo: [`../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`](../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md) (auditoría QA/UI 2026-11-04 verificada). **Antes de empezar:** resolver las decisiones de [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md) (Módulo Clientes) y conseguir usuario de prueba.
 
-- [ ] **F0 — Preparación:** usuario de prueba, métricas base, checklist manual, borrar `ClienteController` + `Views/Cliente/*` y `Edit - copia.cshtml`, arreglar `Verify-NetTiersMigration.ps1` (subcarpetas)
-- [ ] **F1 — Formulario de cliente:** `ClienteFormModel` + validadores, parcial único para alta/edición/desde presupuesto, `GET Create` con modelo (hoy `View()` sin modelo → 45 excepciones), errores por campo, DNI remoto con enlace al existente, guardado transaccional, cuenta corriente con interruptor
+- [x] **F0 — Preparación:** métricas base y checklist manual ([`../DOCUMENTACION/CHECKLIST_MODULO_CLIENTES.md`](../DOCUMENTACION/CHECKLIST_MODULO_CLIENTES.md)), borrado `ClienteController` + `Views/Cliente/*` y `Edit - copia.cshtml`, `Verify-NetTiersMigration.ps1` recursivo (verifica 249 SPs)
+- [ ] **F0 — Usuario de prueba en DEV** (decisión aceptada; falta crearlo) — necesario para el checklist
+- [x] **F1 — Formulario de cliente:** `ClienteFormModel` + atributos (fecha, teléfonos, documento) con reglas iguales en navegador y servidor, parcial `_ClienteForm` para alta/edición/desde presupuesto, `GET Create` con modelo, errores por campo, aviso de documento repetido con enlace, guardado transaccional (`usp_MAT_PersonaCliente_Guardar`), cuenta corriente como interruptor
+- [ ] **F1 — Publicar** `database/2026-11-04_ClienteFormulario.sql` en Prod (DEV: aplicado 04/11/2026) y pasar el checklist F1 con el usuario de prueba
 - [ ] **F2 — Listado y búsqueda:** `usp_MAT_PersonaCliente_Buscar` paginado (sin tocar `GetTop`), columnas de dígitos de teléfono, tabla densa con filtros y URL, Altas por período paginado + Excel
 - [ ] **F3 — Ficha como perfil:** encabezado + pestañas (Datos, Viajes, Pagos, Cuenta corriente, Facturas, Contactos) e integración con Seguimiento
 - [ ] **F4 — Catálogos y datos:** País → Provincia → Departamento → Localidad, combos con búsqueda, nacionalidad/ocupación como select, deduplicación (DEV → Prod con OK)
@@ -119,6 +121,8 @@ Detalle de criterios: sección correspondiente en `SPEC.md` (épica Integration 
 - [ ] **`Web.config` trackeado con credenciales reales** (`MAT_DEV.*` activas, producción comentadas, mismo servidor). Decidir: mover a transforms `Web.Debug/Release.config` o a archivo excluido del repo + rotar la contraseña. **Área crítica: confirmar antes de tocar.**
 - [ ] **Vistas que no compilan** (detectado con `aspnet_compiler` 2026-10-29; restos de NetTiers, fallan al abrirlas): `Views/Cliente/Create.cshtml`, `Views/CuentaCorriente/DetalleComprobante.cshtml`, `Views/Persona/Details.cshtml`, `Views/Persona/Edit.cshtml`, `Views/Viaje/Details.cshtml`, `Views/PersonaCliente/Edit - copia.cshtml`. Arreglar o borrar si no se usan.
 - [ ] **`Verify-NetTiersMigration.ps1` no revisa subcarpetas:** `Select-String -Path "MAT.MVC\**\*.cs"` en PowerShell 5.1 no es recursivo, así que los SPs de `Infrastructure\Data` no se verifican. Usar `Get-ChildItem -Recurse`.
+- [ ] **Validación cargada dos veces:** `_Layout` ya carga jQuery Validate + validación discreta en el `<head>`, y 28 vistas vuelven a cargarlos con `@Scripts.Render("~/bundles/jqueryval")`; la segunda copia reemplaza las reglas registradas. Revisar vista por vista según su layout (las de `_LayoutLogin`/Admin pueden necesitarlo). Detectado en F1 del módulo Clientes (2026-11-04).
+- [ ] **SPs sin uso tras F1 de Clientes:** `usp_MAT_PersonaCliente_Create` y `usp_MAT_Persona_GetByDNI` (reemplazados por `usp_MAT_PersonaCliente_Guardar` y `usp_MAT_Persona_BuscarPorDocumento`). Borrar de `MAT.DB` cuando F1 esté en Prod.
 - [ ] **Warnings de build:** `ReservaController.cs:317/433` y `ViajeModel.cs:293` (CS0168 `ex` sin usar), `ViajeController.cs:18-22` (CS0105 usings duplicados), `ReservaController.cs:36` (CS1998 `async` sin `await`).
 
 ### Backlog UX Admin (opcional)
