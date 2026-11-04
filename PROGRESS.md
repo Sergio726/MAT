@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-04] — Plan de mejoras y rediseño del módulo Clientes
+- **Archivos:** `DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md` (nuevo), `DOCUMENTACION/README.md`, `docs/PENDIENTES.md`, `docs/DECISIONES_ABIERTAS.md`, `PROGRESS.md`.
+- **Origen:** auditoría QA/UI del 04/11 verificada contra código, base de producción (solo lectura) y ejecución local.
+- **Hallazgo principal:** `PersonaClienteController.Create()` devuelve `View()` sin modelo; los 45 helpers `*For` de `Create.cshtml` lanzan `NullReferenceException` (atrapadas por MVC). Con el depurador conectado eso explica los ~79 s y el bloqueo de sesión `InProc`; los SPs del alta tardan 16 y 5 ms y el arranque en frío 5–7 s.
+- **Otros datos verificados:** listado fijo en 10 (reusa el SP de autocompletado que también usan Reservas, DetalleFactura y Presupuesto); `Provincia.IdPais` ya existe; departamentos duplicados de Salta con clientes repartidos (Güemes 182 + 20; San Martín 152 + 28 + 2); nacionalidad `ARG` 11.148 / `ARGENTINA` 640 / `ARGENTINO` 87; contraste del rosa 4,12:1; documentos de 1 dígito no existen en Prod.
+- **Plan:** fases F0–F6 (≈18–22 días), arquitectura objetivo (modelo de formulario + parcial único, búsqueda paginada normalizada, ficha con pestañas, catálogos, baja y auditoría), criterios de aceptación y 8 decisiones abiertas.
+
+---
+
 ### [2026-10-29] — Roadmap comercial y guía para vendedores
 - **Archivos:** `DOCUMENTACION/ROADMAP_COMERCIAL_2026.md` (nuevo), `DOCUMENTACION/GUIA_VENDEDORES_SEGUIMIENTO_CLIENTES.md` (nuevo), `DOCUMENTACION/README.md`, `SPEC.md`, `MAT.MVC/Views/Seguimiento/Index.cshtml`, `MAT.MVC/Scripts/mat.seguimiento.js` (`?v=20261029c`), `MAT.MVC/Views/Home/_CumpleaniosHoy.cshtml`, `MAT.MVC/Controllers/Seguimiento/SeguimientoController.cs`, `MAT.MVC/Infrastructure/Data/SeguimientoDataAccess.cs`, `PROGRESS.md`.
 - **Qué se hizo:** se creó el roadmap comercial que `SPEC.md` mencionaba (Fase 0 datos ✅, Fase 1 seguimiento 🟡, luego recordatorios, notificaciones, CRM y comisiones; decisiones abiertas y cómo medir) y la guía para vendedores (rutina de cumpleaños, categorías, ficha, resultados de contacto, marcas y preguntas frecuentes).
