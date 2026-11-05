@@ -46,19 +46,37 @@ namespace MAT.MVC.Infrastructure.Clientes
         public IList<SelectListItem> TiposCliente { get; private set; }
         public IList<SelectListItem> Provincias { get; private set; }
         public IList<SelectListItem> Ocupaciones { get; private set; }
+        /// <summary>País del domicilio (solo los que tienen provincias cargadas): filtra las provincias.</summary>
+        public IList<SelectListItem> PaisesDomicilio { get; private set; }
+        /// <summary>Nacionalidad y país de residencia: valor = código ISO (ARG), texto = nombre.</summary>
+        public IList<SelectListItem> Nacionalidades { get; private set; }
+        public IList<SelectListItem> PaisesResidencia { get; private set; }
+        /// <summary>Todas las provincias con su país, para que la pantalla filtre sin volver al servidor.</summary>
+        public IList<ProvinciaCatalogo> TodasLasProvincias { get; private set; }
 
-        public static ClienteFormOpciones Crear(ClienteFormModel modelo, IEnumerable<SelectListItem> provincias, IEnumerable<string> ocupaciones)
+        /// <remarks>Completa <see cref="ClienteFormModel.PaisId"/> desde la provincia (o Argentina) si viene vacío.</remarks>
+        public static ClienteFormOpciones Crear(ClienteFormModel modelo, ClienteCatalogos catalogos)
         {
-            var listaOcupaciones = (ocupaciones ?? Enumerable.Empty<string>())
+            catalogos = catalogos ?? new ClienteCatalogos();
+
+            var listaOcupaciones = catalogos.Ocupaciones
                 .Where(o => !string.IsNullOrWhiteSpace(o))
                 .Select(o => o.Trim())
                 .Distinct(StringComparer.OrdinalIgnoreCase)
-                .OrderBy(o => o)
                 .ToList();
-            // Un cliente viejo puede tener una ocupación que ya no está en la lista: se conserva.
+            // Un cliente viejo puede tener una ocupación que no está en el catálogo: se conserva.
             if (!string.IsNullOrWhiteSpace(modelo.Ocupacion) && !listaOcupaciones.Contains(modelo.Ocupacion.Trim(), StringComparer.OrdinalIgnoreCase))
                 listaOcupaciones.Insert(0, modelo.Ocupacion.Trim());
 
+            // País del domicilio: el de la provincia guardada; si no hay, Argentina.
+            if (!modelo.PaisId.HasValue)
+            {
+                var provincia = catalogos.Provincias.FirstOrDefault(p => p.Id == modelo.Provincia);
+                var argentina = catalogos.Paises.FirstOrDefault(p => p.Codigo == "ARG");
+                modelo.PaisId = provincia != null ? provincia.PaisId : argentina?.PaisId;
+            }
+
+            var paisesConCodigo = catalogos.Paises.Where(p => !string.IsNullOrEmpty(p.Codigo)).ToList();
             return new ClienteFormOpciones
             {
                 Sexos = ConVacio(DeEnum<eSexo>(), "Seleccioná…"),
@@ -66,9 +84,24 @@ namespace MAT.MVC.Infrastructure.Clientes
                 CondicionesIva = DeEnum<eCondicionIVA>(),
                 FormasPago = DeEnum<eFormaPago>(),
                 TiposCliente = DeEnum<eTipoCliente>(),
-                Provincias = ConVacio((provincias ?? Enumerable.Empty<SelectListItem>()).ToList(), "Seleccioná la provincia…"),
+                PaisesDomicilio = catalogos.Paises.Where(p => p.TieneProvincias)
+                    .Select(p => new SelectListItem { Value = p.PaisId.ToString(), Text = p.Nombre }).ToList(),
+                Provincias = ConVacio(catalogos.Provincias.Where(p => p.PaisId == modelo.PaisId)
+                    .Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Nombre }).ToList(), "Seleccioná la provincia…"),
+                TodasLasProvincias = catalogos.Provincias,
+                Nacionalidades = ConVacio(Paises(paisesConCodigo, modelo.Nacionalidad), "Seleccioná…"),
+                PaisesResidencia = ConVacio(Paises(paisesConCodigo, modelo.PaisResidencia), "Seleccioná…"),
                 Ocupaciones = ConVacio(listaOcupaciones.Select(o => new SelectListItem { Value = o, Text = o }).ToList(), "Sin especificar")
             };
+        }
+
+        /// <summary>Países por código; un valor viejo que no es un código (por ejemplo "ARGENTINA") se conserva para no perderlo.</summary>
+        private static List<SelectListItem> Paises(IList<PaisCatalogo> paises, string valorActual)
+        {
+            var items = paises.Select(p => new SelectListItem { Value = p.Codigo, Text = p.Nombre }).ToList();
+            if (!string.IsNullOrWhiteSpace(valorActual) && !paises.Any(p => string.Equals(p.Codigo, valorActual.Trim(), StringComparison.OrdinalIgnoreCase)))
+                items.Insert(0, new SelectListItem { Value = valorActual.Trim(), Text = valorActual.Trim() + " (revisar)" });
+            return items;
         }
 
         private static List<SelectListItem> DeEnum<TEnum>() where TEnum : struct

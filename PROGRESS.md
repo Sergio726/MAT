@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-04] — Módulo Clientes F4: catálogos y limpieza de datos
+- **Base (MAT.DB):** `Pais.Codigo` (ISO alfa-3, índice único filtrado), tabla `Ocupacion`, SP `usp_MAT_Catalogo_Geografia`, `usp_MAT_PersonaCliente_Ficha` con nombre del país de nacionalidad y residencia.
+- **Scripts:** `database/2026-11-04_ClienteCatalogos.sql` (esquema, semillas: códigos de 8 países + 9 nuevos usados como nacionalidad, 16 ocupaciones neutras; SPs) y `database/2026-11-04_ClienteCatalogos_Datos.sql` (normaliza nacionalidad/residencia a código y ocupación a nombre neutro; unifica 6 departamentos y 13 localidades duplicados de Salta; Persona.Provincia = la de su localidad; respaldo `dbo.Catalogos_Limpieza_20261104_*` y bloque para revertir; cada equivalencia verifica el nombre antes de tocar). Aplicados en DEV.
+- **Aplicación:** `ClienteCatalogos` + `ClienteCatalogosDataAccess` (caché 10 min), `ClienteFormOpciones.Crear(modelo, catalogos)` (país del domicilio, nacionalidades por código, valor viejo marcado "revisar"), `ClienteFormModel.PaisId`, `_ClienteForm` (País → Provincia, nacionalidad/residencia/ocupación como combos), `Scripts/mat.combo.js` (combo con búsqueda sobre el `<select>`), `mat.clientes.form.js` (filtro de provincias por país en el navegador), ficha con el nombre del país.
+- **Cambio respecto del plan:** combos con jQuery UI Autocomplete (ya cargado) en lugar de Tom Select, para no sumar una dependencia descargada.
+- **Datos de Prod relevados (lectura):** provincias sin duplicados dentro de un país (los "125 nombres distintos" eran entre países); 26 variantes de nacionalidad (4 domicilios cargados por error → NULL); 20 ocupaciones; 8 personas con provincia distinta de la de su localidad.
+- **Verificación:** `tools/Run-Tests.ps1` OK (tests nuevos: opciones por país, valor viejo, nombres legibles); `aspnet_compiler` OK; navegador contra DEV (checklist F4).
+- Estado: ✅ completo en DEV (Prod: revisión del negocio + scripts 5 y 6 con OK)
+
 ### [2026-11-04] — Módulo Clientes F3: ficha del cliente como perfil
 - **Archivos nuevos:** SP `usp_MAT_PersonaCliente_Ficha` + `database/2026-11-04_ClienteFicha.sql`, `Models/Clientes/ClienteFichaModel.cs`, `Infrastructure/Data/ClienteFichaDataAccess.cs`, `Infrastructure/Clientes/TextoEnum.cs`, `Scripts/mat.clientes.ficha.js`, `Content/mat.clientes.ficha.css`.
 - **Cambios:** `PersonaClienteController.Details` (un SP con los nombres resueltos en vez de Persona + Cliente + una consulta por nombre; resumen de `usp_MAT_Seguimiento_Ficha`; id inexistente → listado con aviso), `Details.cshtml` reescrita (encabezado con badges y acciones, métricas, pestañas Datos / Viajes / Contactos / Pagos / Cuenta corriente / Facturas con carga al abrir y estado en el hash, registrar contacto, copiar ID), `JsonCamelCaseHelper.ToJson`, listado (menú ⋮ abre la ficha en la pestaña; aviso de cliente inexistente), Seguimiento ("Ver ficha completa").

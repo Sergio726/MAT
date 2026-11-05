@@ -371,7 +371,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
 
         private void PrepararFormulario(ClienteFormModel modelo)
         {
-            ViewBag.Opciones = ClienteFormOpciones.Crear(modelo, GetAllProvincia(), GetAllOcupacion());
+            ViewBag.Opciones = ClienteFormOpciones.Crear(modelo, ClienteCatalogosDataAccess.Get());
         }
 
         #endregion

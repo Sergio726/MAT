@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -145,12 +146,60 @@ namespace MAT.MVC.Tests.Infrastructure
         {
             var m = Completo();
             m.Ocupacion = "T INDEP";
-            var opciones = ClienteFormOpciones.Crear(m, null, new[] { "JUBILADO", "jubilado", "EMPLEADA" });
+            var catalogos = new ClienteCatalogos { Ocupaciones = new List<string> { "Jubilado/a", "jubilado/a", "Empleado/a" } };
+            var opciones = ClienteFormOpciones.Crear(m, catalogos);
 
             Assert.That(opciones.CondicionesIva.Any(o => o.Text == "Consumidor Final"));
             Assert.AreEqual("Seleccioná…", opciones.Sexos[0].Text);
             Assert.AreEqual("", opciones.Sexos[0].Value);
-            CollectionAssert.AreEqual(new[] { "Sin especificar", "T INDEP", "EMPLEADA", "JUBILADO" }, opciones.Ocupaciones.Select(o => o.Text));
+            // Orden del catálogo, sin repetidos; la ocupación vieja del cliente primero
+            CollectionAssert.AreEqual(new[] { "Sin especificar", "T INDEP", "Jubilado/a", "Empleado/a" }, opciones.Ocupaciones.Select(o => o.Text));
+        }
+
+        [Test]
+        public void Opciones_PaisDesdeLaProvinciaYNacionalidadVieja()
+        {
+            var argentina = Guid.NewGuid();
+            var bolivia = Guid.NewGuid();
+            var catalogos = new ClienteCatalogos
+            {
+                Paises = new List<PaisCatalogo>
+                {
+                    new PaisCatalogo { PaisId = argentina, Codigo = "ARG", Nombre = "Argentina", TieneProvincias = true },
+                    new PaisCatalogo { PaisId = bolivia, Codigo = "BOL", Nombre = "Bolivia", TieneProvincias = true },
+                    new PaisCatalogo { PaisId = Guid.NewGuid(), Codigo = "ESP", Nombre = "España", TieneProvincias = false }
+                },
+                Provincias = new List<ProvinciaCatalogo>
+                {
+                    new ProvinciaCatalogo { Id = 16, Nombre = "Salta", PaisId = argentina },
+                    new ProvinciaCatalogo { Id = 72, Nombre = "Cochabamba", PaisId = bolivia }
+                }
+            };
+
+            var m = Completo();
+            m.Provincia = 72;
+            m.Nacionalidad = "ARGENTINA";
+            var opciones = ClienteFormOpciones.Crear(m, catalogos);
+
+            Assert.AreEqual(bolivia, m.PaisId);
+            CollectionAssert.AreEqual(new[] { "", "72" }, opciones.Provincias.Select(o => o.Value));
+            CollectionAssert.AreEqual(new[] { "Argentina", "Bolivia" }, opciones.PaisesDomicilio.Select(o => o.Text));
+            // El valor viejo no se pierde: aparece marcado para revisar
+            Assert.AreEqual("ARGENTINA (revisar)", opciones.Nacionalidades[1].Text);
+            Assert.That(opciones.PaisesResidencia.Any(o => o.Value == "ESP" && o.Text == "España"));
+
+            var nuevo = ClienteFormDefaults.Nuevo();
+            nuevo.Provincia = null;
+            ClienteFormOpciones.Crear(nuevo, catalogos);
+            Assert.AreEqual(argentina, nuevo.PaisId);
+        }
+
+        [Test]
+        public void Catalogos_NombreLegible()
+        {
+            Assert.AreEqual("Santiago del Estero", MAT.MVC.Infrastructure.Data.ClienteCatalogosDataAccess.NombreLegible("SANTIAGO DEL ESTERO"));
+            Assert.AreEqual("Países Bajos", MAT.MVC.Infrastructure.Data.ClienteCatalogosDataAccess.NombreLegible("PAÍSES BAJOS"));
+            Assert.AreEqual("Rio de Janeiro", MAT.MVC.Infrastructure.Data.ClienteCatalogosDataAccess.NombreLegible("RIO DE JANEIRO"));
         }
     }
 }

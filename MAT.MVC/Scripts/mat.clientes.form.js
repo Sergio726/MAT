@@ -122,7 +122,44 @@
                 .done(mostrarExistente);
         });
 
-        // ---------------- Provincia → Departamento → Localidad
+        // ---------------- País → Provincia → Departamento → Localidad
+        if (window.MatCombo) MatCombo.mejorar($form.find('select.js-combo'));
+
+        var $pais = $form.find('#PaisId');
+        var provincias = JSON.parse(document.getElementById('clienteProvincias').textContent || '[]');
+        var paisDeProvincia = {};
+        provincias.forEach(function (p) { paisDeProvincia[p.id] = p.paisId; });
+
+        function vaciar($select, texto) {
+            $select.empty().append($('<option>').val('').text(texto)).trigger('mat:sincronizar');
+        }
+        function llenarProvincias(paisId, seleccionada) {
+            $prov.empty().append($('<option>').val('').text('Seleccioná la provincia…'));
+            provincias.filter(function (p) { return p.paisId === paisId; }).forEach(function (p) {
+                $prov.append($('<option>').val(String(p.id)).text(p.nombre));
+            });
+            $prov.val(seleccionada ? String(seleccionada) : '').trigger('mat:sincronizar');
+        }
+        /** Elige la provincia y, si es de otro país, también el país. */
+        function seleccionarProvincia(idProv) {
+            var paisId = paisDeProvincia[idProv];
+            if (paisId && paisId !== $pais.val()) {
+                $pais.val(paisId).trigger('mat:sincronizar');
+                llenarProvincias(paisId, idProv);
+            } else {
+                $prov.val(String(idProv)).trigger('mat:sincronizar');
+            }
+        }
+        // "Nueva localidad" puede cambiar el departamento con .val(): el combo se pone al día
+        $(document).on('mat:localidad-created', function () {
+            setTimeout(function () { $depto.trigger('mat:sincronizar'); $loc.trigger('mat:sincronizar'); }, 0);
+        });
+        $pais.on('change', function () {
+            llenarProvincias($(this).val());
+            vaciar($depto, 'Seleccioná el departamento…');
+            vaciar($loc, 'Seleccioná la localidad…');
+        });
+
         var geoTextos = { placeholder: 'Seleccioná el departamento…', placeholderValue: '', localidadPlaceholder: 'Seleccioná la localidad…', localidadPlaceholderValue: '' };
         function cargarLocalidades(idDepto, seleccionada) {
             if (!window.matGeo || !(parseInt(idDepto, 10) > 0)) return;
@@ -139,7 +176,11 @@
                 onDone: function () { if (deptoSel) cargarLocalidades(deptoSel, locSel); }
             }));
         }
-        $prov.on('change', function () { cargarDepartamentos($(this).val()); });
+        $prov.on('change', function () {
+            if ($(this).val()) { cargarDepartamentos($(this).val()); return; }
+            vaciar($depto, 'Seleccioná el departamento…');
+            vaciar($loc, 'Seleccioná la localidad…');
+        });
         $depto.on('change', function () { cargarLocalidades($(this).val()); });
 
         var deptoInicial = $depto.data('seleccionado'), locInicial = $loc.data('seleccionado');
@@ -147,7 +188,7 @@
             // Edición: el departamento sale de la localidad guardada.
             $.post(opciones.urlInfoLocalidad, { sLocalidaId: locInicial }, null, 'json').done(function (r) {
                 if (r && r.Result === 'Done.') {
-                    $prov.val(String(parseInt(r.IdProvincia, 10)));
+                    seleccionarProvincia(parseInt(r.IdProvincia, 10));
                     cargarDepartamentos(r.IdProvincia, parseInt(r.IdDepartamento, 10), locInicial);
                 } else {
                     cargarDepartamentos($prov.val());

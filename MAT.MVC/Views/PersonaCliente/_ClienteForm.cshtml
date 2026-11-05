@@ -60,12 +60,12 @@
                     </div>
                     <div class="modern-form-group">
                         @Html.EtiquetaPara(m => m.Nacionalidad)
-                        @Html.TextBoxFor(m => m.Nacionalidad, new { @class = "modern-form-input" })
+                        @Html.DropDownListFor(m => m.Nacionalidad, opciones.Nacionalidades, new { @class = "modern-form-select js-combo" })
                         @Html.ValidationMessageFor(m => m.Nacionalidad)
                     </div>
                     <div class="modern-form-group">
                         @Html.EtiquetaPara(m => m.PaisResidencia)
-                        @Html.TextBoxFor(m => m.PaisResidencia, new { @class = "modern-form-input" })
+                        @Html.DropDownListFor(m => m.PaisResidencia, opciones.PaisesResidencia, new { @class = "modern-form-select js-combo" })
                         @Html.ValidationMessageFor(m => m.PaisResidencia)
                     </div>
                 </div>
@@ -110,21 +110,28 @@
                         @Html.ValidationMessageFor(m => m.Domicilio)
                     </div>
                     <div class="modern-form-group">
+                        @Html.EtiquetaPara(m => m.PaisId)
+                        @Html.DropDownListFor(m => m.PaisId, opciones.PaisesDomicilio, new { @class = "modern-form-select js-combo" })
+                    </div>
+                    <div class="modern-form-group">
                         @Html.EtiquetaPara(m => m.Provincia)
-                        @Html.DropDownListFor(m => m.Provincia, opciones.Provincias, new { @class = "modern-form-select" })
+                        @Html.DropDownListFor(m => m.Provincia, opciones.Provincias, new { @class = "modern-form-select js-combo" })
                         @Html.ValidationMessageFor(m => m.Provincia)
                     </div>
                     <div class="modern-form-group">
                         @Html.EtiquetaPara(m => m.DepartamentoId, "ddDepartamento")
                         @Html.DropDownListFor(m => m.DepartamentoId, Enumerable.Empty<SelectListItem>(), "Seleccioná el departamento…",
-                            new { @class = "modern-form-select", id = "ddDepartamento", data_seleccionado = Model.DepartamentoId })
+                            new { @class = "modern-form-select js-combo", id = "ddDepartamento", data_seleccionado = Model.DepartamentoId })
                     </div>
                     <div class="modern-form-group">
                         @Html.EtiquetaPara(m => m.LocalidadId, "ddLocalidad")
                         <div class="d-flex gap-2 align-items-start">
-                            @Html.DropDownListFor(m => m.LocalidadId, Enumerable.Empty<SelectListItem>(), "Seleccioná la localidad…",
-                                new { @class = "modern-form-select flex-grow-1", id = "ddLocalidad", data_seleccionado = Model.LocalidadId })
-                            <button type="button" id="lnk-Agregar-Localidad" class="btn-modern btn-modern-secondary btn-sm text-nowrap">
+                            <div class="flex-grow-1 min-w-0">
+                                @Html.DropDownListFor(m => m.LocalidadId, Enumerable.Empty<SelectListItem>(), "Seleccioná la localidad…",
+                                    new { @class = "modern-form-select js-combo", id = "ddLocalidad", data_seleccionado = Model.LocalidadId })
+                            </div>
+                            <button type="button" id="lnk-Agregar-Localidad" class="btn-modern btn-modern-secondary btn-sm text-nowrap"
+                                    aria-label="Agregar una localidad nueva" title="Agregar una localidad que no está en la lista">
                                 <i class="bi bi-plus-lg" aria-hidden="true"></i> <span>Nueva</span>
                             </button>
                         </div>
@@ -187,7 +194,7 @@
                 <div class="modern-form-row">
                     <div class="modern-form-group">
                         @Html.EtiquetaPara(m => m.Ocupacion)
-                        @Html.DropDownListFor(m => m.Ocupacion, opciones.Ocupaciones, new { @class = "modern-form-select" })
+                        @Html.DropDownListFor(m => m.Ocupacion, opciones.Ocupaciones, new { @class = "modern-form-select js-combo" })
                     </div>
                     <div class="modern-form-group">
                         @Html.EtiquetaPara(m => m.Idioma)
@@ -236,3 +243,6 @@
         </div>
     </div>
 }
+
+@* Provincias de todos los países: al cambiar el país, la pantalla filtra sin volver al servidor *@
+<script type="application/json" id="clienteProvincias">@Html.Raw(JsonCamelCaseHelper.ToJson(opciones.TodasLasProvincias.Select(p => new { id = p.Id, nombre = p.Nombre, paisId = p.PaisId })))</script>

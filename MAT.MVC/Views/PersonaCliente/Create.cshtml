@@ -5,7 +5,7 @@
 }
 
 @section Styles {
-    <link href="@Url.Content("~/Content/mat.clientes.form.css?v=20261104a")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mat.clientes.form.css?v=20261104c")" rel="stylesheet" />
 }
 
 <div class="modern-page-container">
@@ -29,7 +29,8 @@
 
 @section Scripts {
     @* jQuery Validate y la validación discreta ya los carga _Layout: cargarlos otra vez (bundle jqueryval) reemplaza las reglas propias. *@
-    <script src="@Url.Content("~/Scripts/mat.clientes.form.js?v=20261104b")"></script>
+    <script src="@Url.Content("~/Scripts/mat.combo.js?v=20261104a")"></script>
+    <script src="@Url.Content("~/Scripts/mat.clientes.form.js?v=20261104c")"></script>
     <script>
         MatClienteForm.init({
             urlDocumento: "@Url.Action("DocumentoDisponible", "PersonaCliente")",

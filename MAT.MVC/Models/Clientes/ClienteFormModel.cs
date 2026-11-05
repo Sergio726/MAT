@@ -87,6 +87,10 @@ namespace MAT.MVC.Models.Clientes
         [Required(ErrorMessage = Obligatorio), StringLength(100, ErrorMessage = Largo)]
         public string Domicilio { get; set; }
 
+        /// <summary>Solo para filtrar las provincias en la pantalla; no se guarda (sale de la provincia).</summary>
+        [Display(Name = "País")]
+        public Guid? PaisId { get; set; }
+
         [Display(Name = "Provincia")]
         [Required(ErrorMessage = "Elegí la provincia.")]
         public int? Provincia { get; set; }

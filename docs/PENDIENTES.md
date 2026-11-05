@@ -26,6 +26,8 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
     2. [ ] `database/2026-11-04_ClienteFormulario.sql` — F1: `usp_MAT_PersonaCliente_Guardar`, `usp_MAT_Persona_BuscarPorDocumento`
     3. [ ] `database/2026-11-04_ClienteListado.sql` — F2: `usp_MAT_PersonaCliente_Buscar`, `usp_MAT_Reportes_ClientesNuevosPagina`
     4. [ ] `database/2026-11-04_ClienteFicha.sql` — F3: `usp_MAT_PersonaCliente_Ficha`
+    5. [ ] `database/2026-11-04_ClienteCatalogos.sql` — F4: `Pais.Codigo`, tabla `Ocupacion` (+ semillas), `usp_MAT_Catalogo_Geografia`, ficha con nombre de país
+    6. [ ] `database/2026-11-04_ClienteCatalogos_Datos.sql` — F4: **modifica datos** (nacionalidad → código, ocupación neutra, departamentos y localidades de Salta unificados). Con respaldo en `dbo.Catalogos_Limpieza_20261104_*` y bloque para revertir al final. **Antes:** el negocio revisa la tabla de equivalencias de localidades (bloque 4 del script). Va **antes** de publicar `MAT.MVC` de F4: el formulario espera códigos de país
     - Verificación después de cada uno: `SELECT name, modify_date FROM sys.objects WHERE name LIKE 'usp_MAT_PersonaCliente_%' OR name LIKE '%Seguimiento%' ORDER BY modify_date DESC`
   - Otros scripts recientes en `database/` no aplicados
 - [ ] **Viaje — definición de rentabilidad con negocio** — acordar base de ingresos (facturado vs cobrado), qué entra como costo, moneda, prorrateo, permisos. Registrar en [`../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`](../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md) y en [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md). **Bloquea** opciones A–D de schema.
@@ -78,7 +80,8 @@ Plan completo: [`../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`](../DOCUMENT
 - [ ] **F1 — Publicar** `database/2026-11-04_ClienteFormulario.sql` en Prod (DEV: aplicado 04/11/2026) y pasar el checklist F1 con el usuario de prueba
 - [x] **F2 — Listado y búsqueda:** *(04/11/2026, PR a MAT2026; falta publicar `database/2026-11-04_ClienteListado.sql` en prod)* `usp_MAT_PersonaCliente_Buscar` paginado (sin tocar `GetTop`), columnas de dígitos de teléfono, tabla densa con filtros y URL, Altas por período paginado + Excel
 - [x] **F3 — Ficha como perfil:** *(04/11/2026, PR a MAT2026 después de F2; falta publicar `database/2026-11-04_ClienteFicha.sql` en prod)* encabezado + pestañas (Datos, Viajes, Pagos, Cuenta corriente, Facturas, Contactos) e integración con Seguimiento
-- [ ] **F4 — Catálogos y datos:** País → Provincia → Departamento → Localidad, combos con búsqueda, nacionalidad/ocupación como select, deduplicación (DEV → Prod con OK)
+- [x] **F4 — Catálogos y datos:** *(04/11/2026, PR a MAT2026 después de F3; DEV aplicado; Prod pendiente: revisión de equivalencias por el negocio + scripts 5 y 6)* País → Provincia → Departamento → Localidad, combos con búsqueda, nacionalidad/ocupación como select, deduplicación (DEV → Prod con OK)
+- [ ] **F4 — Validar con el negocio** la tabla de equivalencias de localidades de Salta (`database/2026-11-04_ClienteCatalogos_Datos.sql`, bloque 4), en especial `CENTRO` → Salta (Capital) e `INGENIERO MAURY` → Rosario de Lerma
 - [ ] **F5 — Transversal y Seguimiento:** estados de carga, 404/500 propias, viewport, contraste, Seguimiento paginado en servidor y acciones visibles, canal de contacto
 - [ ] **F6 — Baja y auditoría:** `Cliente.Activo`, `ClienteAudit`
 
