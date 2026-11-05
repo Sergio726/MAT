@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Web.Mvc;
 using MAT.Enums;
 using MAT.MVC.Infrastructure;
@@ -20,6 +21,7 @@ namespace MAT.MVC.Controllers.Seguimiento
         {
             ViewBag.Categorias = SeguimientoCatalog.GetCategorias();
             ViewBag.Resultados = SeguimientoCatalog.GetResultados();
+            ViewBag.Canales = SeguimientoCatalog.GetCanales();
             ViewBag.FichaInicial = ficha;
             return View();
         }
@@ -69,11 +71,15 @@ namespace MAT.MVC.Controllers.Seguimiento
             }
         }
 
+        private static readonly string[] OrdenesClientes = { "cliente", "viajes", "ultimoViaje", "proximoViaje", "ultimoContacto" };
+
         /// <summary>
-        /// Clientes de una categoría y/o que coinciden con el texto (apellido, nombre o DNI).
+        /// Clientes de una categoría y/o que coinciden con el texto (apellido, nombre o DNI), de a una página
+        /// (antes venía la categoría entera: Dormido pesaba ~5 MB). <paramref name="draw"/> es el contador de DataTables.
         /// </summary>
         [HttpGet]
-        public ActionResult Clientes(string categoria = null, string texto = null)
+        public ActionResult Clientes(string categoria = null, string texto = null, int inicio = 0, int cantidad = 25,
+            string orden = "viajes", bool desc = true, int draw = 0)
         {
             try
             {
@@ -85,13 +91,18 @@ namespace MAT.MVC.Controllers.Seguimiento
                 if (categoria == null && (texto == null || texto.Length < 2))
                     return JsonCamelCaseHelper.Serialize(new { success = false, message = "Elegí una categoría o escribí al menos 2 letras para buscar." });
 
+                orden = OrdenesClientes.Contains(orden) ? orden : "viajes";
+                cantidad = Math.Max(10, Math.Min(cantidad, 100));
+                inicio = Math.Max(0, inicio);
+
                 // La búsqueda por texto incluye a los "No volver a contactar" (marcados) para poder reactivarlos.
-                var list = SeguimientoDataAccess.GetClientes(categoria, texto, incluirNoContactar: categoria == null);
+                int total;
+                var list = SeguimientoDataAccess.GetClientesPagina(categoria, texto, categoria == null, orden, desc, inicio, cantidad, out total);
                 foreach (var cliente in list)
                 {
                     SeguimientoCatalog.Completar(cliente);
                 }
-                return JsonCamelCaseHelper.Serialize(new { success = true, data = list, total = list.Count });
+                return JsonCamelCaseHelper.Serialize(new { success = true, draw, recordsTotal = total, recordsFiltered = total, data = list, total });
             }
             catch (Exception e)
             {
@@ -113,6 +124,7 @@ namespace MAT.MVC.Controllers.Seguimiento
                 foreach (var contacto in ficha.Contactos)
                 {
                     contacto.ResultadoNombre = SeguimientoCatalog.NombreResultado(contacto.Resultado);
+                    contacto.CanalNombre = SeguimientoCatalog.NombreCanal(contacto.Canal);
                 }
                 return JsonCamelCaseHelper.Serialize(new { success = true, data = ficha });
             }
@@ -125,17 +137,20 @@ namespace MAT.MVC.Controllers.Seguimiento
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult RegistrarContacto(Guid clienteId, int resultado, string observacion = null)
+        public ActionResult RegistrarContacto(Guid clienteId, int? resultado, string observacion = null, int? canal = null)
         {
             try
             {
-                if (!Enum.IsDefined(typeof(eResultadoContacto), resultado))
+                // int? : sin resultado no explota el binding de MVC (antes caía en el filtro global de errores)
+                if (!resultado.HasValue || !Enum.IsDefined(typeof(eResultadoContacto), resultado.Value))
                     return JsonCamelCaseHelper.Serialize(new { success = false, message = "Elegí el resultado del contacto." });
+                if (canal.HasValue && !SeguimientoCatalog.EsCanalValido(canal.Value))
+                    return JsonCamelCaseHelper.Serialize(new { success = false, message = "Canal no válido." });
 
                 observacion = string.IsNullOrWhiteSpace(observacion) ? null : observacion.Trim();
                 if (observacion != null && observacion.Length > 500) observacion = observacion.Substring(0, 500);
 
-                SeguimientoDataAccess.InsertContacto(clienteId, FirmaVendedor.VendedorIdActual(), User.Identity.Name, resultado, observacion);
+                SeguimientoDataAccess.InsertContacto(clienteId, FirmaVendedor.VendedorIdActual(), User.Identity.Name, resultado.Value, observacion, canal);
                 return JsonCamelCaseHelper.Serialize(new
                 {
                     success = true,

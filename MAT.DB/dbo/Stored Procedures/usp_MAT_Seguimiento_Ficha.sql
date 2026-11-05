@@ -9,7 +9,7 @@ AS
   -- Description: Ficha de seguimiento de un cliente.
   --              RS1: datos + métricas (fn_MAT_Seguimiento_Clientes).
   --              RS2: viajes como pasajero o pagados para otros (sin Disponible ni Anulado), más reciente primero.
-  --              RS3: historial de contactos.
+  --              RS3: historial de contactos (con canal desde 2026-11-04, F5).
   ============================================= */
 BEGIN
     SET NOCOUNT ON;
@@ -40,6 +40,7 @@ BEGIN
 
     SELECT cc.Fecha,
            cc.Resultado,
+           cc.Canal,
            cc.Observacion,
            COALESCE(pv.FullName, cc.Usuario) AS Quien
     FROM dbo.ClienteContacto cc

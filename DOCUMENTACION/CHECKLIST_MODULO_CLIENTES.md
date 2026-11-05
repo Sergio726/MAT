@@ -114,3 +114,17 @@ Formulario
 - [x] Guardar nacionalidad Bolivia y ocupación Jubilado/a → la ficha muestra "Bolivia" y "Jubilado/a".
 - [ ] "Nueva localidad": la nueva queda elegida en el combo.
 - [ ] Celular (375 px).
+
+## F5 — Transversal y Seguimiento
+
+Verificado en DEV el 05/11/2026 (navegador a 1536 px).
+
+- [x] Seguimiento por categoría: pide de a una página (Dormido: 25 de 6.696 en 0,8 s; antes bajaba la categoría entera). Cambiar de página y ordenar por cliente piden solo esa página.
+- [x] Las acciones (WhatsApp, ficha, registrar) son la primera columna en las tres listas.
+- [x] Registrar contacto pide el canal (WhatsApp, Llamada, Email, Presencial); al abrirlo desde WhatsApp viene elegido WhatsApp. La ficha y la ficha rápida muestran el canal.
+- [x] Botones primarios con `#C9245F` (texto blanco 5,1:1); el logo conserva su color.
+- [x] Celular: se puede hacer zoom (viewport sin `user-scalable=0`).
+- [x] Barra de carga arriba cuando un pedido o un cambio de página tarda más de 300 ms.
+- [x] `/Error/NoEncontrado` responde 404 con la página propia.
+- [ ] Una dirección inexistente muestra esa página (falta activar `httpErrors` en Web.config, con OK).
+- [ ] Seguimiento a 1017 px sin scroll horizontal para llegar a WhatsApp.

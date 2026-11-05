@@ -1,0 +1,58 @@
+/*
+ * Ajustes de accesibilidad para todo el sitio (módulo Clientes F5, decisión 8.4).
+ * Lo carga _Layout después del resto de las hojas y antes de las de cada pantalla.
+ */
+
+/* Texto blanco sobre el rosa de marca (#E63375) daba 4,12:1; #C9245F da 5,1:1 (WCAG AA pide 4,5:1).
+   Solo botones y texto sobre rosa: el logo y los acentos conservan el color original. */
+:root {
+    --brand-primary-accesible: #c9245f;
+    --brand-primary-accesible-hover: #a91d50;
+}
+
+.btn-modern-primary,
+.btn-modern.btn-modern-primary {
+    background: var(--brand-primary-accesible) !important;
+    border-color: var(--brand-primary-accesible) !important;
+    color: #fff !important;
+}
+
+.btn-modern-primary:hover,
+.btn-modern-primary:focus-visible {
+    background: var(--brand-primary-accesible-hover) !important;
+    border-color: var(--brand-primary-accesible-hover) !important;
+}
+
+/* Barra de carga (Scripts/mat.ui.js) */
+.mat-carga {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 2000;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.mat-carga.is-visible { opacity: 1; }
+
+.mat-carga span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 35%;
+    background: var(--brand-primary-accesible);
+    animation: mat-carga-avance 1.1s ease-in-out infinite;
+}
+
+@keyframes mat-carga-avance {
+    from { left: -35%; }
+    to { left: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mat-carga span { animation: none; left: 0; width: 100%; }
+}

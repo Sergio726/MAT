@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     var categorias = ViewBag.Categorias as IList<SeguimientoCategoriaDto> ?? new List<SeguimientoCategoriaDto>();
     var resultados = ViewBag.Resultados as IList<KeyValuePair<int, string>> ?? new List<KeyValuePair<int, string>>();
+    var canales = ViewBag.Canales as IList<KeyValuePair<int, string>> ?? new List<KeyValuePair<int, string>>();
 }
 
 @section Styles {
@@ -86,13 +87,13 @@
                     <table id="sg-tbl-hoy" class="table table-sm table-hover table-bordered mb-0 w-100">
                         <thead>
                             <tr>
+                                <th scope="col"><span class="visually-hidden">Acciones</span></th>
                                 <th>Cumple</th>
                                 <th>Cliente</th>
                                 <th>Edad</th>
                                 <th>Categoría</th>
                                 <th title="Viajes propios o pagados para otros">Viajes</th>
                                 <th>Saludo</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -123,13 +124,13 @@
                     <table id="sg-tbl-cat" class="table table-sm table-hover table-bordered mb-0 w-100">
                         <thead>
                             <tr>
+                                <th scope="col"><span class="visually-hidden">Acciones</span></th>
                                 <th>Cliente</th>
                                 <th>Categoría</th>
                                 <th title="Viajes propios o pagados para otros">Viajes</th>
                                 <th>Último viaje</th>
                                 <th>Próximo viaje</th>
                                 <th>Último contacto</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -151,13 +152,13 @@
                     <table id="sg-tbl-buscar" class="table table-sm table-hover table-bordered mb-0 w-100">
                         <thead>
                             <tr>
+                                <th scope="col"><span class="visually-hidden">Acciones</span></th>
                                 <th>Cliente</th>
                                 <th>Categoría</th>
                                 <th title="Viajes propios o pagados para otros">Viajes</th>
                                 <th>Último viaje</th>
                                 <th>Próximo viaje</th>
                                 <th>Último contacto</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -206,6 +207,16 @@
                         }
                     </select>
                 </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label" for="sg-contacto-canal">Canal</label>
+                    <select id="sg-contacto-canal" class="modern-form-input">
+                        <option value="">Sin especificar</option>
+                        @foreach (var c in canales)
+                        {
+                            <option value="@c.Key">@c.Value</option>
+                        }
+                    </select>
+                </div>
                 <div class="modern-form-group mb-0">
                     <label class="modern-form-label" for="sg-contacto-obs">Observación (opcional)</label>
                     <textarea id="sg-contacto-obs" class="modern-form-input" rows="3" maxlength="500" placeholder="Ej.: le interesa Cataratas en marzo"></textarea>
@@ -222,7 +233,7 @@
 
 @section Scripts {
 <script src="@Url.Content("~/Scripts/mat.reportes-utils.js")"></script>
-<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261104a")"></script>
+<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261104b")"></script>
 <script type="text/javascript">
     MatSeguimiento.initPagina({
         urlCumpleanios: "@Url.Action("Cumpleanios", "Seguimiento")",

@@ -57,6 +57,32 @@ namespace MAT.MVC.Infrastructure
             return ((eResultadoContacto)resultado.Value).GetDescription();
         }
 
+        /// <summary>Canal del contacto (ClienteContacto.Canal, módulo Clientes F5). El valor 1 es WhatsApp.</summary>
+        public const int CanalWhatsApp = 1;
+
+        private static readonly KeyValuePair<int, string>[] Canales =
+        {
+            new KeyValuePair<int, string>(CanalWhatsApp, "WhatsApp"),
+            new KeyValuePair<int, string>(2, "Llamada"),
+            new KeyValuePair<int, string>(3, "Email"),
+            new KeyValuePair<int, string>(4, "Presencial")
+        };
+
+        public static IList<KeyValuePair<int, string>> GetCanales()
+        {
+            return Canales.ToList();
+        }
+
+        public static bool EsCanalValido(int canal)
+        {
+            return Canales.Any(c => c.Key == canal);
+        }
+
+        public static string NombreCanal(int? canal)
+        {
+            return canal.HasValue ? Canales.Where(c => c.Key == canal.Value).Select(c => c.Value).FirstOrDefault() : null;
+        }
+
         /// <summary>
         /// Completa etiquetas y enlace de WhatsApp. Con <paramref name="mensaje"/> null el enlace abre el chat vacío.
         /// </summary>

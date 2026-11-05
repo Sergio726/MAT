@@ -64,6 +64,8 @@ namespace MAT.MVC.Models.Seguimiento
         public DateTime Fecha { get; set; }
         public int Resultado { get; set; }
         public string ResultadoNombre { get; set; }
+        public int? Canal { get; set; }
+        public string CanalNombre { get; set; }
         public string Observacion { get; set; }
         public string Quien { get; set; }
     }

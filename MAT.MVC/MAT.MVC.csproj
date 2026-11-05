@@ -334,6 +334,7 @@
     <Compile Include="Infrastructure\Data\ClienteListadoDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteFichaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteCatalogosDataAccess.cs" />
+    <Compile Include="Controllers\Error\ErrorController.cs" />
     <Compile Include="Infrastructure\Data\FacturaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\HistorialDataAccess.cs" />
     <Compile Include="Infrastructure\HistorialPagosLoader.cs" />
@@ -499,6 +500,7 @@
     <Content Include="Content\mat.clientes.form.css" />
     <Content Include="Content\mat.clientes.listado.css" />
     <Content Include="Content\mat.clientes.ficha.css" />
+    <Content Include="Content\mat.accesibilidad.css" />
     <Content Include="Content\login-split.css" />
     <Content Include="Content\modern-account.css" />
     <Content Include="Content\modern-dashboard.css" />
@@ -787,6 +789,7 @@
     <Content Include="Views\PersonaCliente\_ClienteForm.cshtml" />
     <Content Include="Views\PersonaCliente\Edit.cshtml" />
     <Content Include="Views\PersonaCliente\Details.cshtml" />
+    <Content Include="Views\Error\NoEncontrado.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_MainNav.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
@@ -819,6 +822,7 @@
     <Content Include="Scripts\mat.clientes.listado.js" />
     <Content Include="Scripts\mat.clientes.ficha.js" />
     <Content Include="Scripts\mat.combo.js" />
+    <Content Include="Scripts\mat.ui.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
     <Content Include="Scripts\mat.reportes-ventas-facturado-modal.js" />
     <Content Include="Scripts\mat.reportes-ranking-dashboard.js" />

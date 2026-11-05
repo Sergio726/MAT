@@ -105,6 +105,7 @@ namespace MAT.MVC.Infrastructure.Data
                     {
                         Fecha = reader.GetDateTime(reader.GetOrdinal("Fecha")),
                         Resultado = reader.GetInt("Resultado"),
+                        Canal = reader.GetNullableInt("Canal"),
                         Observacion = reader.GetString("Observacion"),
                         Quien = reader.GetString("Quien")
                     });
@@ -113,7 +114,37 @@ namespace MAT.MVC.Infrastructure.Data
             return ficha.Cliente == null ? null : ficha;
         }
 
-        public static Guid InsertContacto(Guid clienteId, Guid? vendedorId, string usuario, int resultado, string observacion)
+        /// <summary>
+        /// Categoría o búsqueda paginada en la base (<c>usp_MAT_Seguimiento_ClientesPagina</c>).
+        /// </summary>
+        public static List<SeguimientoClienteDto> GetClientesPagina(string categoria, string texto, bool incluirNoContactar,
+            string orden, bool desc, int inicio, int cantidad, out int total)
+        {
+            var parameters = new[]
+            {
+                DBHelper.MakeParam("@Categoria", SqlDbType.VarChar, 20, (object)categoria ?? DBNull.Value),
+                DBHelper.MakeParam("@Texto", SqlDbType.VarChar, 100, (object)texto ?? DBNull.Value),
+                DBHelper.MakeParam("@IncluirNoContactar", SqlDbType.Bit, 0, incluirNoContactar),
+                DBHelper.MakeParam("@Orden", SqlDbType.VarChar, 20, orden),
+                DBHelper.MakeParam("@Desc", SqlDbType.Bit, 0, desc),
+                DBHelper.MakeParam("@Inicio", SqlDbType.Int, 0, inicio),
+                DBHelper.MakeParam("@Cantidad", SqlDbType.Int, 0, cantidad)
+            };
+            total = 0;
+            var list = new List<SeguimientoClienteDto>();
+            using (var reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Seguimiento_ClientesPagina", parameters))
+            {
+                if (reader.Read()) total = reader.GetInt("Total");
+                reader.NextResult();
+                while (reader.Read())
+                {
+                    list.Add(MapCliente(reader));
+                }
+            }
+            return list;
+        }
+
+        public static Guid InsertContacto(Guid clienteId, Guid? vendedorId, string usuario, int resultado, string observacion, int? canal = null)
         {
             var parameters = new[]
             {
@@ -121,7 +152,8 @@ namespace MAT.MVC.Infrastructure.Data
                 DBHelper.MakeParam("@VendedorID", SqlDbType.UniqueIdentifier, 0, (object)vendedorId ?? DBNull.Value),
                 DBHelper.MakeParam("@Usuario", SqlDbType.VarChar, 100, (object)usuario ?? DBNull.Value),
                 DBHelper.MakeParam("@Resultado", SqlDbType.Int, 0, resultado),
-                DBHelper.MakeParam("@Observacion", SqlDbType.VarChar, 500, (object)observacion ?? DBNull.Value)
+                DBHelper.MakeParam("@Observacion", SqlDbType.VarChar, 500, (object)observacion ?? DBNull.Value),
+                DBHelper.MakeParam("@Canal", SqlDbType.TinyInt, 0, canal.HasValue ? (object)(byte)canal.Value : DBNull.Value)
             };
             return (Guid)DBHelper.ExecuteScalar("dbo.usp_MAT_ClienteContacto_Insert", parameters);
         }

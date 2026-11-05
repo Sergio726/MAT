@@ -28,6 +28,7 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
     4. [ ] `database/2026-11-04_ClienteFicha.sql` — F3: `usp_MAT_PersonaCliente_Ficha`
     5. [ ] `database/2026-11-04_ClienteCatalogos.sql` — F4: `Pais.Codigo`, tabla `Ocupacion` (+ semillas), `usp_MAT_Catalogo_Geografia`, ficha con nombre de país
     6. [ ] `database/2026-11-04_ClienteCatalogos_Datos.sql` — F4: **modifica datos** (nacionalidad → código, ocupación neutra, departamentos y localidades de Salta unificados). Con respaldo en `dbo.Catalogos_Limpieza_20261104_*` y bloque para revertir al final. **Antes:** el negocio revisa la tabla de equivalencias de localidades (bloque 4 del script). Va **antes** de publicar `MAT.MVC` de F4: el formulario espera códigos de país
+    7. [ ] `database/2026-11-04_ClienteSeguimientoF5.sql` — F5: `ClienteContacto.Canal`, `usp_MAT_ClienteContacto_Insert` con canal, `usp_MAT_Seguimiento_ClientesPagina` (Seguimiento paginado). No modifica datos
     - Verificación después de cada uno: `SELECT name, modify_date FROM sys.objects WHERE name LIKE 'usp_MAT_PersonaCliente_%' OR name LIKE '%Seguimiento%' ORDER BY modify_date DESC`
   - Otros scripts recientes en `database/` no aplicados
 - [ ] **Viaje — definición de rentabilidad con negocio** — acordar base de ingresos (facturado vs cobrado), qué entra como costo, moneda, prorrateo, permisos. Registrar en [`../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`](../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md) y en [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md). **Bloquea** opciones A–D de schema.
@@ -82,7 +83,8 @@ Plan completo: [`../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`](../DOCUMENT
 - [x] **F3 — Ficha como perfil:** *(04/11/2026, PR a MAT2026 después de F2; falta publicar `database/2026-11-04_ClienteFicha.sql` en prod)* encabezado + pestañas (Datos, Viajes, Pagos, Cuenta corriente, Facturas, Contactos) e integración con Seguimiento
 - [x] **F4 — Catálogos y datos:** *(04/11/2026, PR a MAT2026 después de F3; DEV aplicado; Prod pendiente: revisión de equivalencias por el negocio + scripts 5 y 6)* País → Provincia → Departamento → Localidad, combos con búsqueda, nacionalidad/ocupación como select, deduplicación (DEV → Prod con OK)
 - [ ] **F4 — Validar con el negocio** la tabla de equivalencias de localidades de Salta (`database/2026-11-04_ClienteCatalogos_Datos.sql`, bloque 4), en especial `CENTRO` → Salta (Capital) e `INGENIERO MAURY` → Rosario de Lerma
-- [ ] **F5 — Transversal y Seguimiento:** estados de carga, 404/500 propias, viewport, contraste, Seguimiento paginado en servidor y acciones visibles, canal de contacto
+- [x] **F5 — Transversal y Seguimiento:** *(05/11/2026, PR a MAT2026; DEV aplicado)* estados de carga, viewport, contraste, Seguimiento paginado en servidor y acciones visibles, canal de contacto
+- [ ] **F5 — Activar la página 404 propia** (`/Error/NoEncontrado` ya existe): agregar `httpErrors` en `MAT.MVC/Web.config` (área crítica, requiere OK). Propuesta: `<httpErrors errorMode="Custom" existingResponse="Auto"><remove statusCode="404" /><error statusCode="404" path="/Error/NoEncontrado" responseMode="ExecuteURL" /></httpErrors>` dentro de `system.webServer`, y `debug="false"` en la publicación (ya lo hace `Web.Release.config`)
 - [ ] **F6 — Baja y auditoría:** `Cliente.Activo`, `ClienteAudit`
 
 ### Factura / vendedores — resumen de pagos por viaje (P2)

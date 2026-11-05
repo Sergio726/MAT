@@ -8,6 +8,7 @@
     var MR = window.MatReportes || {};
     var RESULTADO_SALUDO = 1;
     var DIAS_AVISO_CONTACTO = 7;
+    var CANAL_WHATSAPP = 1;
 
     function escHtml(s) {
         if (MR.escapeHtml) return MR.escapeHtml(s);
@@ -136,15 +137,54 @@
             });
         }
 
+        // Acciones primero: a 1017 px el botón de WhatsApp quedaba fuera de pantalla (F5)
         var columnasLista = [
+            { data: null, orderable: false, render: function (d, t, r) { return renderAcciones(r); } },
             { data: null, render: function (d, t, r) { return t === 'display' ? renderCliente(r) : nombreCompleto(r) + ' ' + (r.nroDocumento || ''); } },
-            { data: 'categoriaNombre', render: function (d, t, r) { return t === 'display' ? badgeCategoria(r) : d; } },
+            { data: 'categoriaNombre', orderable: false, render: function (d, t, r) { return t === 'display' ? badgeCategoria(r) : d; } },
             { data: 'viajesTotales', render: function (d, t, r) { return t === 'display' ? renderViajes(r) : d; } },
             { data: 'ultimoViaje', render: function (d, t) { return t === 'display' ? fmtFecha(d) : (d || ''); } },
             { data: 'proximoViaje', render: function (d, t) { return t === 'display' ? (d ? '<span class="sg-ok">' + fmtFecha(d) + '</span>' : '—') : (d || ''); } },
-            { data: 'ultimoContactoFecha', render: function (d, t, r) { return t === 'display' ? renderContacto(r) : (d || ''); } },
-            { data: null, orderable: false, render: function (d, t, r) { return renderAcciones(r); } }
+            { data: 'ultimoContactoFecha', render: function (d, t, r) { return t === 'display' ? renderContacto(r) : (d || ''); } }
         ];
+        var ORDEN_POR_COLUMNA = { 1: 'cliente', 3: 'viajes', 4: 'ultimoViaje', 5: 'proximoViaje', 6: 'ultimoContacto' };
+
+        /**
+         * Lista paginada en el servidor (Seguimiento/Clientes devuelve una página por pedido).
+         * @param filtros { categoria } o { texto }
+         */
+        function pintarTablaServidor(clave, selector, filtros, $vacio, $wrap, $alert, textoVacio) {
+            var $tbl = $(selector);
+            if (tablas[clave]) { tablas[clave].destroy(); $tbl.find('tbody').empty(); }
+            $wrap.removeClass('d-none');
+            $vacio.addClass('d-none');
+            tablas[clave] = $tbl.DataTable({
+                serverSide: true, processing: true, searching: false, autoWidth: false,
+                pageLength: 25, lengthMenu: [10, 25, 50, 100], order: [[3, 'desc']],
+                columns: columnasLista, language: dtLanguage(),
+                ajax: function (dt, callback) {
+                    var ord = dt.order && dt.order[0] ? dt.order[0] : { column: 3, dir: 'desc' };
+                    getJson(urls.urlClientes, $.extend({}, filtros, {
+                        inicio: dt.start, cantidad: dt.length, draw: dt.draw,
+                        orden: ORDEN_POR_COLUMNA[ord.column] || 'viajes', desc: ord.dir === 'desc'
+                    })).done(function (res) {
+                        if (!res.success) {
+                            mostrarAlerta($alert, res.message);
+                            callback({ draw: dt.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                            return;
+                        }
+                        guardarFilas(res.data);
+                        var hay = res.recordsTotal > 0;
+                        $wrap.toggleClass('d-none', !hay);
+                        $vacio.toggleClass('d-none', hay).find('div').text(textoVacio);
+                        callback(res);
+                    }).fail(function () {
+                        mostrarAlerta($alert, 'No se pudo cargar la lista.');
+                        callback({ draw: dt.draw, recordsTotal: 0, recordsFiltered: 0, data: [] });
+                    });
+                }
+            });
+        }
 
         // Para hoy
         function cargarCumpleanios() {
@@ -155,6 +195,7 @@
                 $('#sg-hoy-empty').toggleClass('d-none', res.data.length > 0);
                 $('#sg-hoy-wrap').toggleClass('d-none', res.data.length === 0);
                 pintarTabla('hoy', '#sg-tbl-hoy', res.data, [
+                    { data: null, orderable: false, render: function (d, t, r) { return renderAcciones(r); } },
                     { data: 'proximoCumple', render: function (d, t, r) {
                         if (t !== 'display') return d || '';
                         return fmtFecha(d) + '<div class="sg-sub">' + (r.diasFaltan === 0 ? 'Hoy' : 'En ' + r.diasFaltan + ' días') + '</div>';
@@ -163,9 +204,8 @@
                     { data: 'edadQueCumple', render: function (d) { return d == null ? '—' : d; } },
                     { data: 'categoriaNombre', render: function (d, t, r) { return t === 'display' ? badgeCategoria(r) : d; } },
                     { data: 'viajesTotales', render: function (d, t, r) { return t === 'display' ? renderViajes(r) : d; } },
-                    { data: 'ultimoSaludoFecha', render: function (d, t, r) { return t === 'display' ? renderSaludo(r) : (d ? 1 : 0); } },
-                    { data: null, orderable: false, render: function (d, t, r) { return renderAcciones(r); } }
-                ], [[0, 'asc']]);
+                    { data: 'ultimoSaludoFecha', render: function (d, t, r) { return t === 'display' ? renderSaludo(r) : (d ? 1 : 0); } }
+                ], [[1, 'asc']]);
             }).fail(function () { mostrarAlerta($alert, 'No se pudieron cargar los cumpleaños.'); });
         }
 
@@ -181,38 +221,25 @@
 
         function cargarCategoria() {
             if (!categoriaActual) return;
-            var $alert = $('#sg-cat-alert').addClass('d-none');
-            $('#sg-cat-wrap').addClass('d-none');
-            $('#sg-cat-empty').removeClass('d-none').find('div').text('Cargando…');
-            getJson(urls.urlClientes, { categoria: categoriaActual }).done(function (res) {
-                if (!res.success) { mostrarAlerta($alert, res.message); return; }
-                guardarFilas(res.data);
-                $('#sg-cat-empty').toggleClass('d-none', res.data.length > 0).find('div').text('No hay clientes en esta categoría.');
-                $('#sg-cat-wrap').toggleClass('d-none', res.data.length === 0);
-                pintarTabla('cat', '#sg-tbl-cat', res.data, columnasLista, [[2, 'desc']]);
-            }).fail(function () {
-                $('#sg-cat-empty').find('div').text('');
-                mostrarAlerta($alert, 'No se pudo cargar la categoría.');
-            });
+            $('#sg-cat-alert').addClass('d-none');
+            pintarTablaServidor('cat', '#sg-tbl-cat', { categoria: categoriaActual }, $('#sg-cat-empty'), $('#sg-cat-wrap'),
+                $('#sg-cat-alert'), 'No hay clientes en esta categoría.');
         }
 
         // Buscar
         function buscar() {
             if (!textoActual) return;
-            var $alert = $('#sg-buscar-alert').addClass('d-none');
-            getJson(urls.urlClientes, { texto: textoActual }).done(function (res) {
-                if (!res.success) { mostrarAlerta($alert, res.message); return; }
-                guardarFilas(res.data);
-                $('#sg-buscar-empty').toggleClass('d-none', res.data.length > 0).find('div').text('No se encontraron clientes.');
-                $('#sg-buscar-wrap').toggleClass('d-none', res.data.length === 0);
-                pintarTabla('buscar', '#sg-tbl-buscar', res.data, columnasLista, [[2, 'desc']]);
-            }).fail(function () { mostrarAlerta($alert, 'No se pudo buscar.'); });
+            $('#sg-buscar-alert').addClass('d-none');
+            pintarTablaServidor('buscar', '#sg-tbl-buscar', { texto: textoActual }, $('#sg-buscar-empty'), $('#sg-buscar-wrap'),
+                $('#sg-buscar-alert'), 'No se encontraron clientes.');
         }
 
+        /** Tras registrar un contacto: la misma página de la lista, sin volver a la primera. */
         function recargarActual() {
-            if (contextoActual === 'hoy') cargarCumpleanios();
-            else if (contextoActual === 'cat') { cargarCategoria(); cargarResumen(); }
-            else buscar();
+            if (contextoActual === 'hoy') { cargarCumpleanios(); return; }
+            var tabla = tablas[contextoActual === 'cat' ? 'cat' : 'buscar'];
+            if (tabla) tabla.ajax.reload(null, false);
+            if (contextoActual === 'cat') cargarResumen();
         }
 
         // Ficha
@@ -254,8 +281,8 @@
                 })) : '<div class="sg-sub">Sin viajes registrados.</div>';
 
                 html += '<h6 class="mt-3">Contactos</h6>';
-                html += f.contactos.length ? tablaSimple(['Fecha', 'Resultado', 'Quién', 'Observación'], f.contactos.map(function (x) {
-                    return [fmtFecha(x.fecha), escHtml(x.resultadoNombre || ''), escHtml(x.quien || ''), escHtml(x.observacion || '')];
+                html += f.contactos.length ? tablaSimple(['Fecha', 'Resultado', 'Canal', 'Quién', 'Observación'], f.contactos.map(function (x) {
+                    return [fmtFecha(x.fecha), escHtml(x.resultadoNombre || ''), escHtml(x.canalNombre || '—'), escHtml(x.quien || ''), escHtml(x.observacion || '')];
                 })) : '<div class="sg-sub">Todavía no hay contactos registrados.</div>';
 
                 $body.html(html);
@@ -274,12 +301,13 @@
         }
 
         // Registrar contacto
-        function abrirRegistro(id, resultadoSugerido) {
+        function abrirRegistro(id, resultadoSugerido, canalSugerido) {
             var r = clientes[id];
             if (!r) return;
             contactoCliente = r;
             $('#sg-contacto-cliente').text(nombreCompleto(r));
             $('#sg-contacto-resultado').val(resultadoSugerido ? String(resultadoSugerido) : '');
+            $('#sg-contacto-canal').val(canalSugerido ? String(canalSugerido) : '');
             $('#sg-contacto-obs').val('');
             $('#sg-contacto-error').addClass('d-none');
 
@@ -305,6 +333,7 @@
                 data: {
                     clienteId: contactoCliente.clienteId,
                     resultado: resultado,
+                    canal: $('#sg-contacto-canal').val(),
                     observacion: $('#sg-contacto-obs').val(),
                     __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
                 }
@@ -327,7 +356,7 @@
             var sugerido = contextoActual === 'hoy' ? RESULTADO_SALUDO : null;
             if (this.id === 'sg-ficha-wa') bootstrap.Modal.getOrCreateInstance(document.getElementById('sg-modal-ficha')).hide();
             // WhatsApp se abre en otra pestaña; al volver queda el formulario para registrar el contacto.
-            setTimeout(function () { abrirRegistro(id, sugerido); }, 300);
+            setTimeout(function () { abrirRegistro(id, sugerido, CANAL_WHATSAPP); }, 300);
         });
         $('#sg-ficha-registrar').on('click', function () {
             var id = $('#sg-modal-ficha').data('id');
