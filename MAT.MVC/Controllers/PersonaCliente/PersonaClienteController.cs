@@ -105,7 +105,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
         /// </summary>
         [Authorize]
         [HttpGet]
-        public ActionResult Buscar(string q = null, int? tipo = null, string categoria = null, string orden = "apellido", int pagina = 1, int tamanio = 25)
+        public ActionResult Buscar(string q = null, int? tipo = null, string categoria = null, string orden = "apellido", int pagina = 1, int tamanio = 25,
+            bool inactivos = false)
         {
             try
             {
@@ -116,7 +117,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 tamanio = TamaniosPagina.Contains(tamanio) ? tamanio : 25;
                 pagina = Math.Max(1, pagina);
 
-                var resultado = ClienteListadoDataAccess.Buscar(q, tipo, categoria, orden, pagina, tamanio);
+                var resultado = ClienteListadoDataAccess.Buscar(q, tipo, categoria, orden, pagina, tamanio, inactivos);
                 var categorias = SeguimientoCatalog.GetCategorias().ToDictionary(c => c.Codigo, c => c.Nombre);
                 foreach (var c in resultado.Items)
                 {
@@ -262,6 +263,7 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 PrepararFormulario(modelo);
                 return View(modelo);
             }
+            Auditar(id.Value, ClienteAuditoria.Alta, null, modelo);
 
             var nombre = modelo.Apellido + ", " + modelo.Nombre;
             if (accion == "guardarYOtro")
@@ -301,11 +303,16 @@ namespace MAT.MVC.Controllers.PersonaCliente
         public ActionResult Edit(Guid id, ClienteFormModel modelo)
         {
             modelo.PersonaId = id; // el id sale de la URL, no del formulario
+            ClienteFormModel antes = null;
+            try { antes = ClienteFormDataAccess.Obtener(id); }
+            catch (Exception e) { ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Edit.Antes"); }
+
             if (!Guardar(modelo, null).HasValue)
             {
                 PrepararFormulario(modelo);
                 return View(modelo);
             }
+            if (antes != null) Auditar(id, ClienteAuditoria.Modificacion, antes, modelo);
 
             TempData["ok"] = "Se guardaron los cambios.";
             return RedirectToAction("Details", new { id });
@@ -424,14 +431,117 @@ namespace MAT.MVC.Controllers.PersonaCliente
             return View(ficha);
         }
 
-        [Authorize]
-        public ActionResult Delete(Guid Id)
-        {
-            Infrastructure.Data.ClienteDataAccess.Delete(Id);
-            Infrastructure.Data.PersonaDataAccess.Delete(Id);
+        #region Baja y auditoría (F6)
 
-            return RedirectToAction("Index", "PersonaCliente");
+        private const string RolAdministrador = "Administrador";
+
+        // Reemplaza a Delete(Guid), que borraba Persona y Cliente con un GET sin confirmación ni permiso
+        // (bastaba abrir /PersonaCliente/Delete/{id}). Ahora es una baja lógica: el historial sigue accesible.
+
+        /// <summary>Baja lógica del cliente (solo Administrador, decisión 8.5). Queda registrada en el historial.</summary>
+        [HttpPost]
+        [Authorize(Roles = RolAdministrador)]
+        [ValidateAntiForgeryToken]
+        public ActionResult DarDeBaja(Guid id, string motivo)
+        {
+            try
+            {
+                motivo = string.IsNullOrWhiteSpace(motivo) ? null : motivo.Trim();
+                if (motivo == null)
+                {
+                    TempData["error"] = "Indicá el motivo de la baja.";
+                    return RedirectToAction("Details", new { id });
+                }
+                if (motivo.Length > 250) motivo = motivo.Substring(0, 250);
+
+                TempData["ok"] = ClienteAuditDataAccess.CambiarEstado(id, false, motivo, User.Identity.Name)
+                    ? "El cliente quedó dado de baja. Ya no aparece en listados, reservas ni Seguimiento."
+                    : "El cliente ya estaba dado de baja.";
+            }
+            catch (Exception e)
+            {
+                TempData["error"] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.DarDeBaja");
+            }
+            return RedirectToAction("Details", new { id });
         }
+
+        [HttpPost]
+        [Authorize(Roles = RolAdministrador)]
+        [ValidateAntiForgeryToken]
+        public ActionResult Reactivar(Guid id)
+        {
+            try
+            {
+                TempData["ok"] = ClienteAuditDataAccess.CambiarEstado(id, true, null, User.Identity.Name)
+                    ? "El cliente volvió a estar activo."
+                    : "El cliente ya estaba activo.";
+            }
+            catch (Exception e)
+            {
+                TempData["error"] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Reactivar");
+            }
+            return RedirectToAction("Details", new { id });
+        }
+
+        /// <summary>Historial de cambios del cliente (pestaña de la ficha, solo Administrador).</summary>
+        [HttpGet]
+        [Authorize(Roles = RolAdministrador)]
+        public ActionResult Historial(Guid id)
+        {
+            try
+            {
+                return JsonCamelCaseHelper.Serialize(new { success = true, data = ClienteAuditDataAccess.Historial(id) });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Historial");
+                return JsonCamelCaseHelper.Serialize(new { success = false, message = msg });
+            }
+        }
+
+        /// <summary>
+        /// Registra el alta o la modificación en el historial. Si falla, se loguea y el guardado sigue valiendo.
+        /// </summary>
+        private void Auditar(Guid id, string accion, ClienteFormModel antes, ClienteFormModel despues)
+        {
+            try
+            {
+                string detalle = null;
+                if (accion == ClienteAuditoria.Modificacion)
+                {
+                    detalle = ClienteAuditoria.Diferencias(antes, despues, TextoParaAuditoria);
+                    if (string.IsNullOrEmpty(detalle)) return; // guardó sin cambios
+                }
+                ClienteAuditDataAccess.Registrar(id, User.Identity.Name, accion, detalle);
+            }
+            catch (Exception e)
+            {
+                ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Auditar");
+            }
+        }
+
+        /// <summary>Valores del formulario como los ve el usuario (nombre del país, de la localidad, del sexo…).</summary>
+        private static string TextoParaAuditoria(string propiedad, object valor)
+        {
+            var numero = valor as int?;
+            var catalogos = ClienteCatalogosDataAccess.Get();
+            switch (propiedad)
+            {
+                case "Sexo": return TextoEnum.De<eSexo>(numero);
+                case "TipoDocumento": return TextoEnum.De<eTipoDocumento>(numero);
+                case "CondicionIva": return TextoEnum.De<eCondicionIVA>(numero);
+                case "FormaPago": return TextoEnum.De<eFormaPago>(numero);
+                case "TipoId": return TextoEnum.De<eTipoCliente>(numero);
+                case "Provincia": return catalogos.Provincias.Where(p => p.Id == numero).Select(p => p.Nombre).FirstOrDefault();
+                case "LocalidadId": return numero.HasValue ? Helper.ToSelectItem("Localidad", numero.Value.ToString()) : null;
+                case "Nacionalidad":
+                case "PaisResidencia":
+                    return catalogos.Paises.Where(p => p.Codigo == valor as string).Select(p => p.Nombre).FirstOrDefault();
+                default: return null;
+            }
+        }
+
+        #endregion
 
         public ActionResult HistorialdePagos(Guid ClienteID)
         {

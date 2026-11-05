@@ -54,7 +54,11 @@ namespace MAT.MVC.Infrastructure.Data
                     FechaAlta = reader.GetNullableDateTime("FechaAlta"),
                     VendedorNombre = Limpio(reader.GetString("VendedorNombre")?.Trim(' ', ',')),
                     CuentaHabilitada = reader["CuentaHabilitada"] == DBNull.Value ? (bool?)null : Convert.ToBoolean(reader["CuentaHabilitada"]),
-                    CantidadFacturas = reader.GetInt("CantidadFacturas")
+                    CantidadFacturas = reader.GetInt("CantidadFacturas"),
+                    Activo = reader.GetBool("Activo"),
+                    FechaBaja = reader.GetNullableDateTime("FechaBaja"),
+                    MotivoBaja = Limpio(reader.GetString("MotivoBaja")),
+                    BajaUsuario = Limpio(reader.GetString("BajaUsuario"))
                 };
             }
         }

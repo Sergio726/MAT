@@ -6,7 +6,8 @@
 (function (window, $) {
     'use strict';
 
-    var PANELES = ['datos', 'viajes', 'contactos', 'pagos', 'cuenta', 'facturas'];
+    // Se completa al iniciar con las pestañas que hay en la página ("Historial de cambios" solo para administradores)
+    var PANELES = [];
     var DIAS_AVISO_CONTACTO = 7;
     var CANAL_WHATSAPP = 1;
 
@@ -47,6 +48,7 @@
     function iniciar(urls) {
         var datos = JSON.parse(document.getElementById('cfDatos').textContent);
         var cargados = {};
+        PANELES = $('.cf-tab').map(function () { return $(this).data('panel'); }).get();
 
         // ---------------- Pestañas
         function mostrar(panel, enfocar) {
@@ -65,6 +67,7 @@
             var $p = $('#panel-' + panel);
             if (panel === 'viajes') { pintarViajes(datos.viajes); cargados[panel] = true; return; }
             if (panel === 'contactos') { pintarContactos(datos.contactos); cargados[panel] = true; return; }
+            if ($p.data('json')) { cargarHistorial($p); cargados[panel] = true; return; }
             var url = $p.data('url');
             if (!url) { cargados[panel] = true; return; }
             cargados[panel] = true;
@@ -79,6 +82,29 @@
             }).fail(function () {
                 cargados[panel] = false;
                 $p.html('<div class="alert alert-danger">No se pudo cargar esta sección. <button type="button" class="btn btn-link p-0 align-baseline cf-reintentar" data-panel="' + panel + '">Reintentar</button></div>');
+            }).always(function () { $p.attr('aria-busy', 'false'); });
+        }
+
+        var ACCIONES = { Alta: 'Alta', Modificacion: 'Modificación', Baja: 'Baja', Reactivacion: 'Reactivación' };
+
+        function cargarHistorial($p) {
+            $p.attr('aria-busy', 'true').html('<div class="cf-cargando"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando…</span></div></div>');
+            $.ajax({ url: $p.data('json'), dataType: 'json', cache: false }).done(function (r) {
+                if (!r.success) { $p.html('<div class="alert alert-danger">' + esc(r.message) + '</div>'); return; }
+                if (!r.data.length) {
+                    $p.html(vacio('bi-clock-history', 'Todavía no hay cambios registrados. El historial empezó a guardarse el 05/11/2026.'));
+                    return;
+                }
+                $p.html(tabla(['Fecha', 'Acción', 'Quién', 'Detalle'], r.data.map(function (a) {
+                    var hora = /T(\d{2}:\d{2})/.exec(a.fecha || '');
+                    var detalle = (a.detalle || '').split('\n').map(esc).join('<br>');
+                    return [fecha(a.fecha) + (hora ? ' <span class="cf-tenue">' + hora[1] + '</span>' : ''),
+                        '<span class="cf-accion cf-accion--' + esc(a.accion) + '">' + esc(ACCIONES[a.accion] || a.accion) + '</span>',
+                        esc(a.usuario || '—'), detalle || '<span class="cf-tenue">—</span>'];
+                })));
+            }).fail(function () {
+                cargados.historial = false;
+                $p.html('<div class="alert alert-danger">No se pudo cargar el historial.</div>');
             }).always(function () { $p.attr('aria-busy', 'false'); });
         }
 

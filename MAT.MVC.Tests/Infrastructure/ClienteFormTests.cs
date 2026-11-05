@@ -195,6 +195,37 @@ namespace MAT.MVC.Tests.Infrastructure
         }
 
         [Test]
+        public void Auditoria_SoloCamposCambiadosConSuNombre()
+        {
+            var antes = Completo();
+            antes.Email = "cliente@correo.com";
+            var despues = Completo();
+            despues.Celular = "387 4222222";
+            despues.Email = null;
+            despues.CuentaCorrienteHabilitada = !antes.CuentaCorrienteHabilitada;
+            despues.LocalidadId = 99;
+            despues.PaisId = Guid.NewGuid();      // solo de pantalla: no se registra
+            despues.Apellido = antes.Apellido + " "; // espacios no cuentan como cambio
+
+            var detalle = ClienteAuditoria.Diferencias(antes, despues,
+                (campo, valor) => campo == "LocalidadId" ? "Localidad " + valor : null);
+            var lineas = detalle.Split('\n');
+
+            Assert.AreEqual(4, lineas.Length, detalle);
+            Assert.That(lineas.Any(l => l.StartsWith("Celular: ") && l.EndsWith("→ 387 4222222")));
+            Assert.That(lineas.Any(l => l.StartsWith("Email: ") && l.EndsWith("→ (vacío)")));
+            Assert.That(lineas.Any(l => l.StartsWith("Localidad: ") && l.EndsWith("→ Localidad 99")));
+            Assert.That(lineas.Any(l => l.Contains("Sí") && l.Contains("No")));
+        }
+
+        [Test]
+        public void Auditoria_SinCambiosDevuelveVacio()
+        {
+            Assert.AreEqual("", ClienteAuditoria.Diferencias(Completo(), Completo()));
+            Assert.AreEqual("", ClienteAuditoria.Diferencias(null, Completo()));
+        }
+
+        [Test]
         public void Catalogos_NombreLegible()
         {
             Assert.AreEqual("Santiago del Estero", MAT.MVC.Infrastructure.Data.ClienteCatalogosDataAccess.NombreLegible("SANTIAGO DEL ESTERO"));

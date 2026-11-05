@@ -51,6 +51,9 @@
 .cl-badge--Dormido { background: #e5e7eb; color: #374151; }
 .cl-badge--SinViajes { background: #f3f4f6; color: #6b7280; }
 .cl-badge--menor { background: #fee2e2; color: #991b1b; }
+.cl-badge--baja { background: #374151; color: #fff; }
+.cl-fila.is-baja .cl-nombre { color: #6b7280; text-decoration: line-through; }
+.cl-inactivos { display: flex; align-items: center; gap: 0.375rem; margin-left: auto; }
 
 .cl-acciones { display: inline-flex; align-items: center; gap: 0.375rem; }
 .cl-acciones .btn-modern { padding: 0.25rem 0.625rem; }

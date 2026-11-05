@@ -9,7 +9,7 @@
 }
 
 @section Styles {
-    <link href="@Url.Content("~/Content/mat.clientes.listado.css?v=20261104d")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mat.clientes.listado.css?v=20261105a")" rel="stylesheet" />
 }
 
 <div class="modern-page-container clientes-listado">
@@ -71,6 +71,10 @@
 
     <div class="cl-barra" aria-live="polite">
         <span id="clContador" class="cl-contador">Buscando…</span>
+        <label class="cl-inactivos form-check mb-0">
+            <input type="checkbox" id="clInactivos" class="form-check-input" />
+            <span class="form-check-label">Mostrar dados de baja</span>
+        </label>
         <label class="cl-tamanio">
             <span>Por página</span>
             <select id="clTamanio" class="modern-form-select">
@@ -111,7 +115,7 @@
 @Html.Partial("_ModalClientesNuevosPorPeriodo")
 
 @section Scripts {
-    <script src="@Url.Content("~/Scripts/mat.clientes.listado.js?v=20261104c")"></script>
+    <script src="@Url.Content("~/Scripts/mat.clientes.listado.js?v=20261105a")"></script>
     <script>
         MatClientesListado.init({
             urlBuscar: "@Url.Action("Buscar", "PersonaCliente")",

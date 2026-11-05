@@ -2,6 +2,14 @@
 
 ---
 
+### [2026-11-05] — Módulo Clientes F6: baja lógica y auditoría
+- **Base:** `Cliente.Activo` (default 1), `FechaBaja`, `MotivoBaja`, `BajaUsuario`; tabla `ClienteAudit`; SPs `usp_MAT_Cliente_CambiarEstado` (baja/reactivación + historial en una transacción), `usp_MAT_ClienteAudit_Insert`, `usp_MAT_ClienteAudit_GetByCliente`; filtro de activos en `usp_MAT_PersonaCliente_Buscar` (con `@IncluirInactivos`), `usp_MAT_PersonaCliente_GetTop` (autocompletado de reservas, presupuestos y facturas) y `fn_MAT_Seguimiento_Clientes`; ficha con datos de la baja. `database/2026-11-04_ClienteBajaAuditoria.sql`, aplicado en DEV.
+- **Aplicación:** `ClienteAuditoria.Diferencias` (una línea por campo cambiado, con su `[Display]`), `ClienteAuditDataAccess`; `PersonaClienteController`: auditoría en Create/Edit (si falla, el guardado vale igual), `DarDeBaja` / `Reactivar` (POST, antiforgery, solo Administrador) e `Historial` (JSON, solo Administrador); **se quitó `Delete(Guid)`**, que borraba Persona y Cliente con un GET sin confirmación ni permiso.
+- **Pantallas:** ficha (aviso de baja, botones de baja con motivo obligatorio y reactivación, pestaña "Historial de cambios"), listado ("Mostrar dados de baja", fila tachada).
+- **Hallazgo:** en DEV `admindev` no tiene rol y solo 1 usuario es Administrador; la parte de botones se probó por SP. Queda en PENDIENTES probar con un Administrador.
+- **Verificación:** `tools/Run-Tests.ps1` OK (tests de `Diferencias`); `aspnet_compiler` OK; DEV: modificación auditada, baja → fuera de listado/autocompletado/Seguimiento, reactivación.
+- Estado: ✅ completo en DEV (falta prueba con Administrador y script en Prod)
+
 ### [2026-11-05] — Módulo Clientes F5: transversal y Seguimiento
 - **Base:** `ClienteContacto.Canal` (CHECK 1–4), `usp_MAT_ClienteContacto_Insert` (@Canal), `usp_MAT_Seguimiento_Ficha` (devuelve el canal), `usp_MAT_Seguimiento_ClientesPagina` (nuevo, OFFSET/FETCH con orden); `database/2026-11-04_ClienteSeguimientoF5.sql`, aplicado en DEV.
 - **Seguimiento:** `Clientes` devuelve una página (DataTables en modo servidor); acciones en la primera columna de las tres listas; registro de contacto con canal (WhatsApp preelegido al venir del botón de WhatsApp); `RegistrarContacto` recibe `int? resultado` (sin resultado ya no cae en el filtro global de errores).

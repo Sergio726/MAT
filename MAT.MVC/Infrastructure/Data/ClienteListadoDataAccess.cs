@@ -12,10 +12,12 @@ namespace MAT.MVC.Infrastructure.Data
     /// </summary>
     public static class ClienteListadoDataAccess
     {
-        public static PaginaDto<ClienteListadoItemDto> Buscar(string texto, int? tipoId, string categoria, string orden, int pagina, int tamanio)
+        public static PaginaDto<ClienteListadoItemDto> Buscar(string texto, int? tipoId, string categoria, string orden, int pagina, int tamanio,
+            bool incluirInactivos = false)
         {
             var parameters = new[]
             {
+                DBHelper.MakeParam("@IncluirInactivos", SqlDbType.Bit, 0, incluirInactivos),
                 DBHelper.MakeParam("@Texto", SqlDbType.NVarChar, 200, (object)texto ?? DBNull.Value),
                 DBHelper.MakeParam("@TipoID", SqlDbType.Int, 0, (object)tipoId ?? DBNull.Value),
                 DBHelper.MakeParam("@Categoria", SqlDbType.VarChar, 20, (object)categoria ?? DBNull.Value),
@@ -44,7 +46,8 @@ namespace MAT.MVC.Infrastructure.Data
                         FechaAlta = reader.GetNullableDateTime("FechaAlta"),
                         Categoria = reader.GetString("Categoria"),
                         EsMenor = reader.GetBool("EsMenor"),
-                        EsTitularFacturas = reader.GetBool("EsTitularFacturas")
+                        EsTitularFacturas = reader.GetBool("EsTitularFacturas"),
+                        Activo = reader.GetBool("Activo")
                     });
                 }
             }

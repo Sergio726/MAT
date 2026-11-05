@@ -17,6 +17,7 @@ AS
 -- Optimizaciones:
 --   - Solo clientes (INNER JOIN Cliente). Filtro por palabras con dbo.Split.
 --   - IsTituarFactura con EXISTS. TipoDocumento y Email para autocomplete.
+-- 2026-11-04 (Clientes F6): no devuelve clientes dados de baja (Cliente.Activo = 0).
 ----------------------------------------------------------------------------------------------------
 */
 BEGIN 
@@ -62,6 +63,7 @@ BEGIN
         INNER JOIN dbo.Cliente c WITH (NOLOCK) ON c.ClienteID = p.PersonaID
         LEFT JOIN dbo.Localidad l WITH (NOLOCK) ON p.LocalidadID = l.ID
         WHERE (@SoloDisponiblesParaViaje = 0 OR dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(p.PersonaID, @ViajeID, NULL) = 0)
+          AND c.Activo = 1 -- F6: los dados de baja no se ofrecen
         ORDER BY p.Apellido ASC, p.Nombre ASC;
         RETURN;
     END
@@ -87,6 +89,7 @@ BEGIN
     INNER JOIN dbo.Cliente c WITH (NOLOCK) ON c.ClienteID = p.PersonaID
     LEFT JOIN dbo.Localidad l WITH (NOLOCK) ON p.LocalidadID = l.ID
     WHERE (@SoloDisponiblesParaViaje = 0 OR dbo.fn_MAT_Pasaje_TieneConflictoFechaSalida(p.PersonaID, @ViajeID, NULL) = 0)
+    AND c.Activo = 1 -- F6: los dados de baja no se ofrecen
     AND NOT EXISTS (
         SELECT 1
         FROM dbo.Split(CAST(@SearchTerm AS VARCHAR(200)), ' ') AS s
