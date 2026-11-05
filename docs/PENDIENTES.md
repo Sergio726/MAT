@@ -12,6 +12,22 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
 
 ---
 
+## Pase a producción del módulo Clientes (revisión 05/11/2026)
+
+Revisado contra el código de `MAT2026` (`fbd701c`) y las bases: DEV tiene todo aplicado; **Prod no tiene ninguno de los 8 scripts** (faltan 15 SPs, 3 tablas/columnas y la función de Seguimiento; `usp_MAT_PersonaCliente_GetTop` y `usp_MAT_Persona_GetByDNI` existen pero en versión vieja, los actualizan los scripts 8 y 1). Fuera de esos 8 no falta ningún SP que use el código.
+
+Orden para el pase:
+
+1. [ ] **Negocio:** revisar la tabla de equivalencias de localidades de Salta (script 6, bloque 4), sobre todo `CENTRO` → Salta (Capital) e `INGENIERO MAURY` → Rosario de Lerma.
+2. [ ] **Respaldo** de `MAT.Intranet` antes de correr scripts.
+3. [ ] **Scripts 1 a 8** en el orden de la lista de abajo (todos idempotentes; el 6 modifica datos y deja respaldo `dbo.Catalogos_Limpieza_20261104_*`).
+4. [ ] **Configuración del servidor de Prod** (no la cambia la publicación): `SystemDEV` tiene que estar en `false` — con `true` los errores muestran el mensaje técnico al usuario y el login dice "Entorno de Prueba". `Web.Release.config` reemplaza las cadenas de conexión por `Data Source=MATSERVER` y **no** cambia `SystemDEV`: confirmar que el `Web.config` del servidor tenga los valores de Prod.
+5. [ ] **Publicar `MAT.MVC`** (Release, quita `debug`).
+6. [ ] **Smoke en Prod:** listado de clientes (buscar por DNI y por teléfono), ficha con pestañas, alta y edición de un cliente, Seguimiento (categoría y registrar contacto), reserva usando el autocompletado de clientes.
+7. [ ] Con un usuario **Administrador**: dar de baja y reactivar un cliente de prueba, ver el historial.
+
+Decisiones abiertas que no bloquean el pase: activar la 404 propia (`httpErrors` en `Web.config`), qué hacer con la rama vieja `refactor/normalizar-persona-cliente-controller` (marzo 2026, cambios a Reservas, Factura Fiscal y el Inicio nunca integrados).
+
 ## Bloquean — no dependen solo del equipo de código
 
 - [ ] **Publicar SPs / scripts pendientes en cada entorno** — sin esto fallan features ya mergeadas en código. Incluye (verificar qué falta por entorno):
@@ -133,9 +149,9 @@ Detalle de criterios: sección correspondiente en `SPEC.md` (épica Integration 
 - [ ] **`ex.Message` expuesto al usuario** (regla de `CLAUDE.md`): reemplazar por `ErrorUtil.LogAndGetPublicMessage` en `ExternalController.cs:28`, `FacturaFiscalController.cs:548/619/655`, `HabitacionController.cs:193`, `HomeController.cs:215/279`, `NuevaReservaController.cs:195`, `PersonaClienteController.cs:1197`, `PresupuestoController.cs:989`. Extender `tools/Verify-NetTiersMigration.ps1` para que detecte `Json(... ex.Message ...)` y `MsgError = e.Message`.
 - [ ] **`Web.config` trackeado con credenciales reales** (`MAT_DEV.*` activas, producción comentadas, mismo servidor). Decidir: mover a transforms `Web.Debug/Release.config` o a archivo excluido del repo + rotar la contraseña. **Área crítica: confirmar antes de tocar.**
 - [ ] **Vistas que no compilan** (detectado con `aspnet_compiler` 2026-10-29; restos de NetTiers, fallan al abrirlas): `Views/Cliente/Create.cshtml`, `Views/CuentaCorriente/DetalleComprobante.cshtml`, `Views/Persona/Details.cshtml`, `Views/Persona/Edit.cshtml`, `Views/Viaje/Details.cshtml`, `Views/PersonaCliente/Edit - copia.cshtml`. Arreglar o borrar si no se usan.
-- [ ] **`Verify-NetTiersMigration.ps1` no revisa subcarpetas:** `Select-String -Path "MAT.MVC\**\*.cs"` en PowerShell 5.1 no es recursivo, así que los SPs de `Infrastructure\Data` no se verifican. Usar `Get-ChildItem -Recurse`.
+- [x] *(resuelto en F0 de Clientes, 04/11/2026: recorre subcarpetas, verifica 256 SPs)* **`Verify-NetTiersMigration.ps1` no revisa subcarpetas:** `Select-String -Path "MAT.MVC\**\*.cs"` en PowerShell 5.1 no es recursivo, así que los SPs de `Infrastructure\Data` no se verifican. Usar `Get-ChildItem -Recurse`.
 - [ ] **Validación cargada dos veces:** `_Layout` ya carga jQuery Validate + validación discreta en el `<head>`, y 28 vistas vuelven a cargarlos con `@Scripts.Render("~/bundles/jqueryval")`; la segunda copia reemplaza las reglas registradas. Revisar vista por vista según su layout (las de `_LayoutLogin`/Admin pueden necesitarlo). Detectado en F1 del módulo Clientes (2026-11-04).
-- [ ] **SPs sin uso tras F1 de Clientes:** `usp_MAT_PersonaCliente_Create` y `usp_MAT_Persona_GetByDNI` (reemplazados por `usp_MAT_PersonaCliente_Guardar` y `usp_MAT_Persona_BuscarPorDocumento`). Borrar de `MAT.DB` cuando F1 esté en Prod.
+- [ ] **SP sin uso tras F1 de Clientes:** `usp_MAT_PersonaCliente_Create` (reemplazado por `usp_MAT_PersonaCliente_Guardar`). Borrar de `MAT.DB` cuando F1 esté en Prod. *(Corregido 05/11/2026: `usp_MAT_Persona_GetByDNI` **sí** se usa, en `PresupuestoController` vía `PersonaClienteGetByDNI`; no borrar.)*
 - [ ] **Warnings de build:** `ReservaController.cs:317/433` y `ViajeModel.cs:293` (CS0168 `ex` sin usar), `ViajeController.cs:18-22` (CS0105 usings duplicados), `ReservaController.cs:36` (CS1998 `async` sin `await`).
 
 ### Backlog UX Admin (opcional)

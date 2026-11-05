@@ -17,35 +17,37 @@ Hacerlas en DEV con el usuario de prueba antes de publicar cada fase. Marcar con
 
 ## F1 — Formulario de cliente
 
+Probado en el navegador contra DEV el 04/11/2026 (tildado el 05/11 en la revisión previa a producción); falta: depurador con "Break when thrown", "Guardando…", "Guardar y cargar otro", "Nueva localidad", desde presupuesto, cliente viejo incompleto, teclado y celular.
+
 Alta (`Clientes → Nuevo`)
 - [ ] La página abre en < 1 s y, con el depurador de VS conectado y "Break when thrown" activo, no se detiene en ninguna excepción.
-- [ ] Vienen precargados: DNI, ARG / ARG, Salta, Consumidor Final, Contado, Minorista y cuenta corriente habilitada. Sexo dice "Seleccioná…".
-- [ ] Las etiquetas son legibles ("N° de documento", "Fecha de nacimiento", "Tipo de cliente"…) y el `*` aparece solo en los obligatorios.
-- [ ] Guardar vacío: cada obligatorio muestra su mensaje en rojo **bajo el campo** y el foco va al primero; no hay aviso amarillo general.
-- [ ] Fecha `31/12/2099` → "no puede ser futura"; `31/02/1980` → "no es válida, usá dd/mm/aaaa"; `01/01/1900` → "anterior a 1910".
-- [ ] Celular `387` → "El número está incompleto…"; sin ningún teléfono → "Cargá al menos un teléfono o celular"; solo fijo completo → guarda.
-- [ ] DNI `12345` → "El DNI debe tener 7 u 8 números"; tipo Pasaporte acepta `AB123456`.
-- [ ] Escribir el DNI de un cliente existente **sin puntos** y salir del campo → aviso bajo el campo con su nombre y "Ver su ficha" (abre la ficha correcta). Guardar igual → el servidor lo rechaza con el mismo aviso.
+- [x] Vienen precargados: DNI, ARG / ARG, Salta, Consumidor Final, Contado, Minorista y cuenta corriente habilitada. Sexo dice "Seleccioná…".
+- [x] Las etiquetas son legibles ("N° de documento", "Fecha de nacimiento", "Tipo de cliente"…) y el `*` aparece solo en los obligatorios.
+- [x] Guardar vacío: cada obligatorio muestra su mensaje en rojo **bajo el campo** y el foco va al primero; no hay aviso amarillo general.
+- [x] Fecha `31/12/2099` → "no puede ser futura"; `31/02/1980` → "no es válida, usá dd/mm/aaaa"; `01/01/1900` → "anterior a 1910".
+- [x] Celular `387` → "El número está incompleto…"; sin ningún teléfono → "Cargá al menos un teléfono o celular"; solo fijo completo → guarda.
+- [x] DNI `12345` → "El DNI debe tener 7 u 8 números"; tipo Pasaporte acepta `AB123456`.
+- [x] Escribir el DNI de un cliente existente **sin puntos** y salir del campo → aviso bajo el campo con su nombre y "Ver su ficha" (abre la ficha correcta). Guardar igual → el servidor lo rechaza con el mismo aviso.
 - [ ] Provincia → Departamento → Localidad cargan en cascada; "Nueva" abre el alta de localidad y la nueva queda elegida.
 - [ ] Guardar: el botón muestra "Guardando…" y no permite doble clic; termina en la ficha con "Se guardó el cliente …".
 - [ ] "Guardar y cargar otro": vuelve al alta vacía con el aviso del cliente recién guardado.
-- [ ] En la base: el DNI quedó con el formato `NN.NNN.NNN`, el apellido en mayúsculas, la cuenta habilitada y el registro de pasajero creado.
+- [x] En la base: el DNI quedó con el formato `NN.NNN.NNN`, el apellido en mayúsculas, la cuenta habilitada y el registro de pasajero creado.
 
 Alta desde presupuesto (`Presupuesto → convertir en cliente`)
 - [ ] Trae apellido, nombre, celular, email y DNI del presupuesto; al guardar vuelve al presupuesto.
-- [ ] Presupuesto inexistente → mensaje arriba del formulario, sin error de página.
+- [x] Presupuesto inexistente → mensaje arriba del formulario, sin error de página.
 
 Edición (`Ficha → Editar`)
-- [ ] Carga todos los datos, incluida la cascada Provincia / Departamento / Localidad del cliente y la ocupación (aunque no esté en la lista).
+- [x] Carga todos los datos, incluida la cascada Provincia / Departamento / Localidad del cliente y la ocupación (aunque no esté en la lista).
 - [ ] Mismas reglas y mensajes que el alta. Editar un cliente sin teléfono fijo **no** exige el fijo.
-- [ ] El propio DNI no aparece como repetido (borrar y reescribir un dígito).
-- [ ] El interruptor "Cuenta corriente habilitada" refleja el estado real y se guarda con el resto (probar activar y desactivar).
-- [ ] Guardar → vuelve a la ficha con "Se guardaron los cambios."
+- [x] El propio DNI no aparece como repetido (borrar y reescribir un dígito).
+- [x] El interruptor "Cuenta corriente habilitada" refleja el estado real y se guarda con el resto (probar activar y desactivar).
+- [x] Guardar → vuelve a la ficha con "Se guardaron los cambios."
 - [ ] Un cliente viejo con fecha de nacimiento vacía o datos incompletos muestra los errores puntuales al guardar.
 
 Seguridad
-- [ ] `POST /PersonaCliente/validarCTA` ya no existe (antes cambiaba la cuenta corriente sin estar logueado).
-- [ ] Enviar el formulario sin token antiforgery → rechazado.
+- [x] `POST /PersonaCliente/validarCTA` ya no existe (antes cambiaba la cuenta corriente sin estar logueado).
+- [x] Enviar el formulario sin token antiforgery → rechazado.
 
 Navegador / accesibilidad
 - [ ] Teclado: Tab recorre los campos en orden, el foco se ve, Enter guarda.
@@ -85,7 +87,7 @@ Pestañas (`#viajes`, `#contactos`, `#pagos`, `#cuenta`, `#facturas` en la URL)
 - [x] Abrir la ficha con `#contactos` muestra esa pestaña; recargar la mantiene.
 - [x] Facturas → ojo → abre el detalle de la factura. Cuenta corriente sin el botón "Cerrar" del popup viejo.
 - [x] Registrar contacto: sin resultado → "Elegí el resultado del contacto."; guardado → aviso verde, el modal se cierra y se actualizan el contador, "Último contacto" y la tabla. Si ya hubo contacto en 7 días, el modal lo avisa.
-- [ ] Teclado: flechas izquierda/derecha entre pestañas.
+- [x] Teclado: flechas izquierda/derecha entre pestañas.
 - [ ] Celular (375 px): métricas en 2 columnas y datos en 1.
 
 Integración
