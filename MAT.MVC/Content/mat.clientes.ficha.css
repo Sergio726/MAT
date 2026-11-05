@@ -1,0 +1,86 @@
+/* Ficha del cliente (Views/PersonaCliente/Details.cshtml). Usa también .cl-badge de mat.clientes.listado.css */
+
+.cf-encabezado {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #fff;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+}
+.cf-avatar { flex: 0 0 auto; width: 3.5rem; height: 3.5rem; border-radius: 999px; background: #fce7f3; color: #9d174d; font-weight: 700; font-size: 1.25rem; display: inline-flex; align-items: center; justify-content: center; }
+.cf-identidad { flex: 1 1 auto; min-width: 0; }
+.cf-nombre { font-size: 1.5rem; font-weight: 700; color: #111827; margin: 0 0 0.375rem; line-height: 1.2; }
+.cf-badges { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem; }
+.cl-badge--nocontactar { background: #374151; color: #fff; }
+.cf-sub { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0; font-size: 0.875rem; color: #4b5563; }
+.cf-sub a { color: inherit; }
+.cf-acciones { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
+.cf-wa { background: #25d366; color: #fff; border: 0; display: inline-flex; align-items: center; gap: 0.375rem; font-weight: 600; }
+.cf-wa:hover, .cf-wa:focus { background: #1ebe5b; color: #fff; }
+
+.cf-metricas {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0.75rem 0;
+}
+.cf-metrica { background: #fff; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.75rem; padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.125rem; }
+.cf-metrica-rotulo { font-size: 0.75rem; color: #6b7280; font-weight: 600; }
+.cf-metrica-valor { font-size: 1.125rem; font-weight: 700; color: #111827; font-variant-numeric: tabular-nums; }
+.cf-metrica-sub { font-size: 0.75rem; color: #6b7280; }
+.cf-sugerencia { grid-column: 1 / -1; margin: 0; font-size: 0.875rem; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 0.5rem; padding: 0.5rem 0.75rem; }
+
+/* Pestañas */
+.cf-tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border-color, #e5e7eb); margin-top: 1rem; overflow-x: auto; }
+.cf-tab { border: 0; background: transparent; padding: 0.625rem 0.875rem; font-weight: 600; color: #4b5563; border-bottom: 3px solid transparent; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.375rem; }
+.cf-tab:hover { color: #c9245f; }
+.cf-tab.is-activo { color: #c9245f; border-bottom-color: #c9245f; }
+.cf-tab:focus-visible, .cf-copiar:focus-visible, .cf-panel:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+.cf-cuenta { background: #f3f4f6; color: #374151; border-radius: 999px; padding: 0 0.5rem; font-size: 0.75rem; }
+.cf-tab.is-activo .cf-cuenta { background: #fce7f3; color: #9d174d; }
+
+.cf-panel { background: #fff; border: 1px solid var(--border-color, #e5e7eb); border-top: 0; border-radius: 0 0 0.75rem 0.75rem; padding: 1.25rem; min-height: 160px; }
+
+/* Datos: rótulo arriba, valor abajo, 3 columnas */
+.cf-seccion { font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; margin: 1.25rem 0 0.5rem; }
+.cf-seccion:first-child { margin-top: 0; }
+.cf-grilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem 1.5rem; margin: 0; }
+.cf-dato dt { font-size: 0.75rem; font-weight: 600; color: #6b7280; margin: 0; }
+.cf-dato dd { margin: 0; color: #111827; overflow-wrap: anywhere; }
+.cf-vacio { color: #9ca3af !important; }
+.cf-observacion { white-space: pre-wrap; margin: 0; }
+.cf-pie { margin: 1.5rem 0 0; padding-top: 0.75rem; border-top: 1px solid #f1f5f9; }
+.cf-copiar { border: 0; background: transparent; color: #6b7280; font-size: 0.8125rem; padding: 0; }
+.cf-copiar:hover { color: #111827; text-decoration: underline; }
+
+/* Tablas de Viajes y Contactos */
+.cf-tabla { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.cf-tabla th { text-align: left; font-weight: 600; color: #374151; background: #f9fafb; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-color, #e5e7eb); white-space: nowrap; }
+.cf-tabla td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+.cf-tenue { color: #6b7280; }
+.cf-nota { font-size: 0.8125rem; margin: 0 0 0.75rem; }
+.cf-panel-acciones { display: flex; justify-content: flex-end; margin: 0 0 0.75rem; }
+.cf-vacio-panel { text-align: center; color: #6b7280; padding: 2rem 1rem; }
+.cf-vacio-panel i { font-size: 2rem; display: block; margin-bottom: 0.5rem; color: #9ca3af; }
+.cf-vacio-panel p { margin: 0; }
+.cf-cargando { display: flex; justify-content: center; padding: 2.5rem; }
+/* El parcial de cuenta corriente se usaba como popup: en la pestaña no hay nada que cerrar */
+#panel-cuenta .btn-cerrar-movimientos { display: none; }
+
+@media (max-width: 1200px) {
+    .cf-metricas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 992px) {
+    .cf-encabezado { flex-wrap: wrap; }
+    .cf-acciones { width: 100%; justify-content: flex-start; }
+    .cf-grilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 576px) {
+    .cf-avatar { width: 2.75rem; height: 2.75rem; font-size: 1rem; }
+    .cf-nombre { font-size: 1.25rem; }
+    .cf-metricas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cf-grilla { grid-template-columns: 1fr; }
+    .cf-panel { padding: 1rem 0.75rem; }
+}

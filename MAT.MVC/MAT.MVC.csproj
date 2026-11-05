@@ -332,6 +332,7 @@
     <Compile Include="Infrastructure\Data\CuentaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteFormDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteListadoDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\ClienteFichaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\FacturaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\HistorialDataAccess.cs" />
     <Compile Include="Infrastructure\HistorialPagosLoader.cs" />
@@ -360,6 +361,7 @@
     <Compile Include="Infrastructure\ClienteValidacion.cs" />
     <Compile Include="Infrastructure\Clientes\ClienteFormulario.cs" />
     <Compile Include="Infrastructure\Clientes\ClientesExcelExport.cs" />
+    <Compile Include="Infrastructure\Clientes\TextoEnum.cs" />
     <Compile Include="Infrastructure\FormularioHtmlExtensions.cs" />
     <Compile Include="Infrastructure\Validation\ClienteValidationAttributes.cs" />
     <Compile Include="Infrastructure\FirmaVendedor.cs" />
@@ -443,6 +445,7 @@
     <Compile Include="Models\Seguimiento\SeguimientoDtos.cs" />
     <Compile Include="Models\Clientes\ClienteFormModel.cs" />
     <Compile Include="Models\Clientes\ClienteListadoDtos.cs" />
+    <Compile Include="Models\Clientes\ClienteFichaModel.cs" />
     <Compile Include="Models\Reportes\ReporteRankingRowDto.cs" />
     <Compile Include="Models\Reportes\ReporteViajeLookupDto.cs" />
     <Compile Include="Models\Reportes\ReporteVentaRowDto.cs" />
@@ -493,6 +496,7 @@
     <Content Include="Content\mat.styles.custom.css" />
     <Content Include="Content\mat.clientes.form.css" />
     <Content Include="Content\mat.clientes.listado.css" />
+    <Content Include="Content\mat.clientes.ficha.css" />
     <Content Include="Content\login-split.css" />
     <Content Include="Content\modern-account.css" />
     <Content Include="Content\modern-dashboard.css" />
@@ -811,6 +815,7 @@
     <Content Include="Scripts\mat.seguimiento.js" />
     <Content Include="Scripts\mat.clientes.form.js" />
     <Content Include="Scripts\mat.clientes.listado.js" />
+    <Content Include="Scripts\mat.clientes.ficha.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
     <Content Include="Scripts\mat.reportes-ventas-facturado-modal.js" />
     <Content Include="Scripts\mat.reportes-ranking-dashboard.js" />

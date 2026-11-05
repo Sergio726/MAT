@@ -222,6 +222,7 @@
             $('#sg-modal-ficha').data('id', id);
             // Para corregir teléfono o fecha de nacimiento sin salir a buscar al cliente
             $('#sg-ficha-editar').attr('href', urls.urlEditarCliente + '/' + encodeURIComponent(id));
+            $('#sg-ficha-completa').attr('href', urls.urlFichaCliente + '/' + encodeURIComponent(id));
             bootstrap.Modal.getOrCreateInstance(document.getElementById('sg-modal-ficha')).show();
             getJson(urls.urlFicha, { id: id }).done(function (res) {
                 if (!res.success) { $body.html('<div class="alert alert-danger">' + escHtml(res.message) + '</div>'); return; }

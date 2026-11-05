@@ -19,13 +19,21 @@ namespace MAT.MVC.Infrastructure
 
         public static ContentResult Serialize(object payload)
         {
-            var json = JsonConvert.SerializeObject(payload, Settings);
             return new ContentResult
             {
-                Content = json,
+                Content = ToJson(payload),
                 ContentType = "application/json",
                 ContentEncoding = Encoding.UTF8
             };
+        }
+
+        /// <summary>
+        /// Mismo JSON, para incrustar en la página dentro de <c>&lt;script type="application/json"&gt;</c>
+        /// (se escapa <c>&lt;/</c> para que un texto con "&lt;/script&gt;" no corte el bloque).
+        /// </summary>
+        public static string ToJson(object payload)
+        {
+            return JsonConvert.SerializeObject(payload, Settings).Replace("</", "<\\/");
         }
     }
 }

@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-04] — Módulo Clientes F3: ficha del cliente como perfil
+- **Archivos nuevos:** SP `usp_MAT_PersonaCliente_Ficha` + `database/2026-11-04_ClienteFicha.sql`, `Models/Clientes/ClienteFichaModel.cs`, `Infrastructure/Data/ClienteFichaDataAccess.cs`, `Infrastructure/Clientes/TextoEnum.cs`, `Scripts/mat.clientes.ficha.js`, `Content/mat.clientes.ficha.css`.
+- **Cambios:** `PersonaClienteController.Details` (un SP con los nombres resueltos en vez de Persona + Cliente + una consulta por nombre; resumen de `usp_MAT_Seguimiento_Ficha`; id inexistente → listado con aviso), `Details.cshtml` reescrita (encabezado con badges y acciones, métricas, pestañas Datos / Viajes / Contactos / Pagos / Cuenta corriente / Facturas con carga al abrir y estado en el hash, registrar contacto, copiar ID), `JsonCamelCaseHelper.ToJson`, listado (menú ⋮ abre la ficha en la pestaña; aviso de cliente inexistente), Seguimiento ("Ver ficha completa").
+- **Reusa:** `partialHistorialdePagos`, `NotaCredito/partialMovimientoNotaCredito`, `PartialFacturas` y el handler global de detalle de factura; `Seguimiento/Ficha` y `Seguimiento/RegistrarContacto`.
+- **Problemas:** "Viajes" de Seguimiento cuenta viajes realizados y confirmados; la pestaña lista todos los pasajes (incluye reservas): se aclaró en los rótulos. "Gastado" suma solo facturas pagadas. El parcial de cuenta corriente trae un botón "Cerrar" de popup: oculto en la ficha.
+- **Login (PR aparte, `fix/login-modelo`):** `AccountController` Login/Register/RegistrarVendedor/Manage pasan su modelo a la vista; 0 excepciones por pedido (antes una `NullReferenceException` por campo).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK (solo las 4 vistas viejas rotas). SPs en DEV: ~100 ms por ficha. Navegador contra DEV: checklist F3.
+- Estado: ✅ completo en DEV (falta script en prod con OK)
+
 ### [2026-11-04] — Módulo Clientes F2: listado y búsqueda paginados
 - **Archivos nuevos:** SPs `usp_MAT_PersonaCliente_Buscar` y `usp_MAT_Reportes_ClientesNuevosPagina` + `database/2026-11-04_ClienteListado.sql` (paridad, CREATE OR ALTER), `Models/Clientes/ClienteListadoDtos.cs`, `Infrastructure/Data/ClienteListadoDataAccess.cs`, `Infrastructure/Clientes/ClientesExcelExport.cs`, `Scripts/mat.clientes.listado.js`, `Content/mat.clientes.listado.css`.
 - **Cambios:** `PersonaClienteController` (`Buscar` nuevo; `GetClientesNuevosDetalle` paginado; `ClientesNuevosExcel` nuevo), `HomeController.GetClientesNuevosDetalle` (delegado con la firma nueva), `Views/PersonaCliente/Index.cshtml` (reescrita: tabla densa, filtros Tipo y Categoría, contador, orden, paginación, estado en la URL, WhatsApp y menú de acciones), `_ModalClientesNuevosPorPeriodo.cshtml` (paginado, presets, Excel, tabla que entra). `usp_MAT_PersonaCliente_GetTop` y `GetClientesTop` sin tocar (los siguen usando Reservas, DetalleFactura y Presupuesto).

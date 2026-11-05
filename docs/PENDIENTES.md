@@ -71,7 +71,7 @@ Plan completo: [`../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`](../DOCUMENT
 - [x] **F1 — Formulario de cliente:** `ClienteFormModel` + atributos (fecha, teléfonos, documento) con reglas iguales en navegador y servidor, parcial `_ClienteForm` para alta/edición/desde presupuesto, `GET Create` con modelo, errores por campo, aviso de documento repetido con enlace, guardado transaccional (`usp_MAT_PersonaCliente_Guardar`), cuenta corriente como interruptor
 - [ ] **F1 — Publicar** `database/2026-11-04_ClienteFormulario.sql` en Prod (DEV: aplicado 04/11/2026) y pasar el checklist F1 con el usuario de prueba
 - [x] **F2 — Listado y búsqueda:** *(04/11/2026, PR a MAT2026; falta publicar `database/2026-11-04_ClienteListado.sql` en prod)* `usp_MAT_PersonaCliente_Buscar` paginado (sin tocar `GetTop`), columnas de dígitos de teléfono, tabla densa con filtros y URL, Altas por período paginado + Excel
-- [ ] **F3 — Ficha como perfil:** encabezado + pestañas (Datos, Viajes, Pagos, Cuenta corriente, Facturas, Contactos) e integración con Seguimiento
+- [x] **F3 — Ficha como perfil:** *(04/11/2026, PR a MAT2026 después de F2; falta publicar `database/2026-11-04_ClienteFicha.sql` en prod)* encabezado + pestañas (Datos, Viajes, Pagos, Cuenta corriente, Facturas, Contactos) e integración con Seguimiento
 - [ ] **F4 — Catálogos y datos:** País → Provincia → Departamento → Localidad, combos con búsqueda, nacionalidad/ocupación como select, deduplicación (DEV → Prod con OK)
 - [ ] **F5 — Transversal y Seguimiento:** estados de carga, 404/500 propias, viewport, contraste, Seguimiento paginado en servidor y acciones visibles, canal de contacto
 - [ ] **F6 — Baja y auditoría:** `Cliente.Activo`, `ClienteAudit`
