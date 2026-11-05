@@ -8,6 +8,7 @@
 
     var PANELES = ['datos', 'viajes', 'contactos', 'pagos', 'cuenta', 'facturas'];
     var DIAS_AVISO_CONTACTO = 7;
+    var CANAL_WHATSAPP = 1;
 
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -97,8 +98,8 @@
             var $p = $('#panel-contactos');
             var boton = '<p class="cf-panel-acciones"><button type="button" class="btn-modern btn-modern-secondary btn-sm cf-abrir-registro"><i class="bi bi-journal-plus" aria-hidden="true"></i> <span>Registrar contacto</span></button></p>';
             if (!contactos.length) { $p.html(boton + vacio('bi-chat-dots', 'Todavía no hay contactos registrados.')); return; }
-            $p.html(boton + tabla(['Fecha', 'Resultado', 'Quién', 'Observación'], contactos.map(function (x) {
-                return [fecha(x.fecha), esc(x.resultadoNombre || ''), esc(x.quien || ''), esc(x.observacion || '')];
+            $p.html(boton + tabla(['Fecha', 'Resultado', 'Canal', 'Quién', 'Observación'], contactos.map(function (x) {
+                return [fecha(x.fecha), esc(x.resultadoNombre || ''), esc(x.canalNombre || '—'), esc(x.quien || ''), esc(x.observacion || '')];
             })));
         }
 
@@ -141,8 +142,9 @@
         var ultimo = datos.contactos && datos.contactos.length ? datos.contactos[0] : null;
         var modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('cfModalContacto'));
 
-        function abrirRegistro() {
+        function abrirRegistro(canalSugerido) {
             $('#cfContactoResultado').val('');
+            $('#cfContactoCanal').val(typeof canalSugerido === 'number' ? String(canalSugerido) : '');
             $('#cfContactoObs').val('');
             $('#cfContactoError').addClass('d-none');
             var dias = ultimo ? diasDesde(ultimo.fecha) : null, aviso = '';
@@ -154,10 +156,10 @@
             modal.show();
         }
 
-        $('#cfRegistrar').on('click', abrirRegistro);
-        $(document).on('click', '.cf-abrir-registro', abrirRegistro);
-        // WhatsApp se abre en otra pestaña; al volver queda el formulario para registrar el contacto.
-        $('#cfWhatsApp').on('click', function () { setTimeout(abrirRegistro, 300); });
+        $('#cfRegistrar').on('click', function () { abrirRegistro(); });
+        $(document).on('click', '.cf-abrir-registro', function () { abrirRegistro(); });
+        // WhatsApp se abre en otra pestaña; al volver queda el formulario para registrar el contacto (canal WhatsApp).
+        $('#cfWhatsApp').on('click', function () { setTimeout(function () { abrirRegistro(CANAL_WHATSAPP); }, 300); });
         document.getElementById('cfModalContacto').addEventListener('shown.bs.modal', function () { $('#cfContactoResultado').trigger('focus'); });
 
         $('#cfFormContacto').on('submit', function (e) {
@@ -174,6 +176,7 @@
                 data: {
                     clienteId: datos.clienteId,
                     resultado: resultado,
+                    canal: $('#cfContactoCanal').val(),
                     observacion: $('#cfContactoObs').val(),
                     __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
                 }

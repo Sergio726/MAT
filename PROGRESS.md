@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-05] — Módulo Clientes F5: transversal y Seguimiento
+- **Base:** `ClienteContacto.Canal` (CHECK 1–4), `usp_MAT_ClienteContacto_Insert` (@Canal), `usp_MAT_Seguimiento_Ficha` (devuelve el canal), `usp_MAT_Seguimiento_ClientesPagina` (nuevo, OFFSET/FETCH con orden); `database/2026-11-04_ClienteSeguimientoF5.sql`, aplicado en DEV.
+- **Seguimiento:** `Clientes` devuelve una página (DataTables en modo servidor); acciones en la primera columna de las tres listas; registro de contacto con canal (WhatsApp preelegido al venir del botón de WhatsApp); `RegistrarContacto` recibe `int? resultado` (sin resultado ya no cae en el filtro global de errores).
+- **Ficha:** canal al registrar y en la tabla de contactos.
+- **Global (_Layout):** viewport sin `user-scalable=0`/`maximum-scale`; `Content/mat.accesibilidad.css` (botones primarios `#C9245F`, decisión 8.4; barra de carga); `Scripts/mat.ui.js` (barra si un pedido o un cambio de página tarda > 300 ms, `MatUI.cargando(boton)`).
+- **404:** `ErrorController.NoEncontrado` + vista propia. Activarla requiere `httpErrors` en Web.config (área crítica): queda en PENDIENTES con la propuesta, esperando OK.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV (checklist F5).
+- Estado: ✅ completo en DEV (falta OK para Web.config y el script en Prod)
+
 ### [2026-11-04] — Módulo Clientes F4: catálogos y limpieza de datos
 - **Base (MAT.DB):** `Pais.Codigo` (ISO alfa-3, índice único filtrado), tabla `Ocupacion`, SP `usp_MAT_Catalogo_Geografia`, `usp_MAT_PersonaCliente_Ficha` con nombre del país de nacionalidad y residencia.
 - **Scripts:** `database/2026-11-04_ClienteCatalogos.sql` (esquema, semillas: códigos de 8 países + 9 nuevos usados como nacionalidad, 16 ocupaciones neutras; SPs) y `database/2026-11-04_ClienteCatalogos_Datos.sql` (normaliza nacionalidad/residencia a código y ocupación a nombre neutro; unifica 6 departamentos y 13 localidades duplicados de Salta; Persona.Provincia = la de su localidad; respaldo `dbo.Catalogos_Limpieza_20261104_*` y bloque para revertir; cada equivalencia verifica el nombre antes de tocar). Aplicados en DEV.

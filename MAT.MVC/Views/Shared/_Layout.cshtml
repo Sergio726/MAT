@@ -8,7 +8,8 @@
     <!-- Meta -->
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    @* Sin user-scalable=0 ni maximum-scale: en el celular se tiene que poder hacer zoom (accesibilidad, F5) *@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
@@ -48,6 +49,8 @@
     <link href="~/Content/modern-topbar.css" rel="stylesheet" />
     <link href="~/Content/modern-presupuesto.css" rel="stylesheet" />
     <link href="~/Content/modern-facturafiscal.css" rel="stylesheet" />
+    @* Contraste de botones y barra de carga: después de las hojas generales, antes de las de cada pantalla *@
+    <link href="~/Content/mat.accesibilidad.css?v=20261104a" rel="stylesheet" />
 
     @RenderSection("Styles", required: false)
 
@@ -70,6 +73,7 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>
+    <script src="~/Scripts/mat.ui.js?v=20261104a"></script>
     <script src="~/Scripts/javascript.core.js"></script>
     <script src="~/Scripts/mat.jquery.binding.js?v=20261104a"></script>
     <script src="~/Scripts/mat.jquery.functions.js?v=20261104a"></script>

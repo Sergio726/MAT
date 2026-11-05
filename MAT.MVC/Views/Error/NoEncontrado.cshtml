@@ -1,0 +1,30 @@
+@{ Layout = null; }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Página no encontrada - Sistema MAT</title>
+    <link href="@Url.Content("~/Content/saas-variables.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/modern-error.css")" rel="stylesheet" />
+</head>
+<body>
+    <main class="modern-error-shell">
+        <div class="modern-error-header">
+            <h1 class="modern-error-title">No encontramos esta página</h1>
+        </div>
+        <div class="modern-error-body">
+            <p class="modern-error-message">
+                La dirección no existe o cambió. Si llegaste desde un enlace guardado, buscá lo que necesitás desde el inicio.
+            </p>
+            <div class="modern-error-actions">
+                <a href="@Url.Content("~/Home/Index")" class="modern-error-btn">Ir al inicio</a>
+                <a href="@Url.Content("~/PersonaCliente")" class="modern-error-btn">Ir a Clientes</a>
+            </div>
+        </div>
+        <div class="modern-error-footer">
+            <p>Si el problema persiste, avisale al Administrador del sistema indicando la dirección que abriste.</p>
+        </div>
+    </main>
+</body>
+</html>

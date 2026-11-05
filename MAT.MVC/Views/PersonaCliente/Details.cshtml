@@ -207,6 +207,16 @@
                         }
                     </select>
                 </div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label" for="cfContactoCanal">Canal</label>
+                    <select id="cfContactoCanal" class="modern-form-input">
+                        <option value="">Sin especificar</option>
+                        @foreach (var c in SeguimientoCatalog.GetCanales())
+                        {
+                            <option value="@c.Key">@c.Value</option>
+                        }
+                    </select>
+                </div>
                 <div class="modern-form-group mb-0">
                     <label class="modern-form-label" for="cfContactoObs">Observación (opcional)</label>
                     <textarea id="cfContactoObs" class="modern-form-input" rows="3" maxlength="500" placeholder="Ej.: le interesa Cataratas en marzo"></textarea>
@@ -230,7 +240,7 @@
 }))</script>
 
 @section Scripts {
-    <script src="@Url.Content("~/Scripts/mat.clientes.ficha.js?v=20261104b")"></script>
+    <script src="@Url.Content("~/Scripts/mat.clientes.ficha.js?v=20261104c")"></script>
     <script>
         MatClienteFicha.init({
             urlFicha: "@Url.Action("Ficha", "Seguimiento")",

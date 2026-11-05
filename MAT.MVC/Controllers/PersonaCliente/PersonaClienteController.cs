@@ -409,7 +409,10 @@ namespace MAT.MVC.Controllers.PersonaCliente
                 {
                     SeguimientoCatalog.Completar(ficha.Seguimiento.Cliente);
                     foreach (var contacto in ficha.Seguimiento.Contactos)
+                    {
                         contacto.ResultadoNombre = SeguimientoCatalog.NombreResultado(contacto.Resultado);
+                        contacto.CanalNombre = SeguimientoCatalog.NombreCanal(contacto.Canal);
+                    }
                 }
             }
             catch (Exception e)
