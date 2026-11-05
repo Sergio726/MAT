@@ -747,6 +747,7 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_TransHotelHabitacionViaje_Delete.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_Ventas.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_ClientesNuevos.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_ClientesNuevosPagina.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Reportes_BuscarViajes.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedureServicio_Get_List.sql">
       <AnsiNulls>Off</AnsiNulls>
@@ -1335,6 +1336,7 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_Proveedor_Insert_Fiscal.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Proveedor_Update_Fiscal.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_GetTop.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_PersonaCliente_Buscar.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Pasaje_CambiarPasajero.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_SelectByViajeId_Active.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_ListaEspera_Delete_Soft.sql" />

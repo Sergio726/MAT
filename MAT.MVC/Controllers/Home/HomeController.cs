@@ -220,10 +220,10 @@ namespace MAT.MVC.Controllers.Home
         /// Delega al endpoint canónico en PersonaClienteController.
         /// </summary>
         [Authorize]
-        public JsonResult GetClientesNuevosDetalle(string fechaDesde = null, string fechaHasta = null)
+        public ActionResult GetClientesNuevosDetalle(string fechaDesde = null, string fechaHasta = null, int pagina = 1, int tamanio = 25)
         {
             return new MAT.MVC.Controllers.PersonaCliente.PersonaClienteController()
-                        .GetClientesNuevosDetalle(fechaDesde, fechaHasta);
+                        .GetClientesNuevosDetalle(fechaDesde, fechaHasta, pagina, tamanio);
         }
 
         /// <summary>

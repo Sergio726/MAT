@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-04] — Módulo Clientes F2: listado y búsqueda paginados
+- **Archivos nuevos:** SPs `usp_MAT_PersonaCliente_Buscar` y `usp_MAT_Reportes_ClientesNuevosPagina` + `database/2026-11-04_ClienteListado.sql` (paridad, CREATE OR ALTER), `Models/Clientes/ClienteListadoDtos.cs`, `Infrastructure/Data/ClienteListadoDataAccess.cs`, `Infrastructure/Clientes/ClientesExcelExport.cs`, `Scripts/mat.clientes.listado.js`, `Content/mat.clientes.listado.css`.
+- **Cambios:** `PersonaClienteController` (`Buscar` nuevo; `GetClientesNuevosDetalle` paginado; `ClientesNuevosExcel` nuevo), `HomeController.GetClientesNuevosDetalle` (delegado con la firma nueva), `Views/PersonaCliente/Index.cshtml` (reescrita: tabla densa, filtros Tipo y Categoría, contador, orden, paginación, estado en la URL, WhatsApp y menú de acciones), `_ModalClientesNuevosPorPeriodo.cshtml` (paginado, presets, Excel, tabla que entra). `usp_MAT_PersonaCliente_GetTop` y `GetClientesTop` sin tocar (los siguen usando Reservas, DetalleFactura y Presupuesto).
+- **Búsqueda:** palabras en cualquier orden (todas deben coincidir); las numéricas contra los dígitos de documento, teléfono y celular; el resto sin acentos (`Latin1_General_CI_AI`) en apellido, nombre y email. Categoría desde `fn_MAT_Seguimiento_Clientes`.
+- **Tiempos en DEV (11.557 clientes):** texto 180–470 ms, todos 260–360 ms, filtro por categoría ~1,2 s (calcula la categoría de todos); altas 2020-hoy 150 ms la página, 390 ms todo para Excel. No hicieron falta columnas de dígitos persistidas.
+- **Problemas:** el delegado de Home devolvía `JsonResult` (no compilaba con la firma nueva); a 1100 px la columna de acciones quedaba fuera: en notebooks se ocultan el avatar y el botón "Ficha" (el nombre y la fila ya abren la ficha).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK (fallan solo las 4 vistas viejas ya rotas: CuentaCorriente/DetalleComprobante, Persona/Details, Persona/Edit, Viaje/Details). En el navegador contra DEV: casos del checklist F2 marcados.
+- Estado: ✅ completo en DEV (falta script en prod con OK)
+
 ### [2026-11-04] — Módulo Clientes F0 + F1: formulario único de alta y edición
 - **Plan:** `DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`. Checklist manual y métricas base: `DOCUMENTACION/CHECKLIST_MODULO_CLIENTES.md`.
 - **F0:** borrados `ClienteController` + `Views/Cliente/*` (sin referencias; `Create` no compilaba) y `PersonaCliente/Edit - copia.cshtml`. `tools/Verify-NetTiersMigration.ps1`: `**` en `-Path` no es recursivo en PowerShell 5.1; ahora recorre subcarpetas (249 SPs verificados, antes 121).

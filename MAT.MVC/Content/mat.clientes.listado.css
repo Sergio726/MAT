@@ -1,0 +1,99 @@
+/* Listado de clientes (Views/PersonaCliente/Index.cshtml) — tabla densa, ~56 px por fila */
+
+.clientes-listado .modern-page-title { font-size: 1.5rem; margin: 0; }
+
+.cl-filtros {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) 190px 190px;
+    gap: 0.75rem 1rem;
+    align-items: end;
+    margin-bottom: 0.75rem;
+}
+
+.cl-buscador { position: relative; }
+.cl-buscador > .bi-search { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; pointer-events: none; }
+.cl-buscador input { padding-left: 2.25rem; padding-right: 2.25rem; }
+.cl-buscador input::-webkit-search-cancel-button { display: none; }
+.cl-limpiar { position: absolute; right: 0.375rem; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: #4b5563; padding: 0.25rem 0.5rem; border-radius: 0.375rem; }
+.cl-limpiar:hover { background: #f3f4f6; }
+.cl-filtro .modern-form-label { margin-bottom: 0.25rem; }
+.cl-ayuda { grid-column: 1 / -1; margin: 0; font-size: 0.8125rem; color: #6b7280; }
+
+.cl-barra { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: 0.5rem 0; font-size: 0.875rem; color: #374151; }
+.cl-tamanio { display: flex; align-items: center; gap: 0.5rem; margin: 0; }
+.cl-tamanio select { width: auto; padding-top: 0.25rem; padding-bottom: 0.25rem; }
+
+.cl-tabla-wrap { background: #fff; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.75rem; overflow: auto; max-height: calc(100vh - 260px); }
+.cl-tabla { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.875rem; }
+.cl-tabla thead th { position: sticky; top: 0; z-index: 2; background: #f9fafb; border-bottom: 1px solid var(--border-color, #e5e7eb); padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; color: #374151; white-space: nowrap; }
+.cl-tabla td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.cl-fila { cursor: pointer; }
+.cl-fila:hover td { background: #fdf2f8; }
+.cl-orden { border: 0; background: transparent; font: inherit; font-weight: 600; color: inherit; padding: 0; display: inline-flex; align-items: center; gap: 0.25rem; }
+.cl-orden:hover { color: #c9245f; }
+
+.cl-cliente { display: flex; align-items: center; gap: 0.625rem; min-width: 220px; }
+.cl-avatar { flex: 0 0 auto; width: 2rem; height: 2rem; border-radius: 999px; background: #fce7f3; color: #9d174d; font-weight: 700; font-size: 0.75rem; display: inline-flex; align-items: center; justify-content: center; }
+.cl-nombre { font-weight: 600; color: #111827; text-decoration: none; }
+.cl-nombre:hover, .cl-nombre:focus { text-decoration: underline; color: #c9245f; }
+.cl-sub { font-size: 0.75rem; color: #6b7280; }
+.cl-email { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cl-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cl-tabla mark { background: #fef08a; color: inherit; padding: 0; border-radius: 2px; }
+
+/* Categorías con color que significa algo */
+.cl-badge { display: inline-block; border-radius: 999px; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 600; white-space: nowrap; background: #f3f4f6; color: #374151; }
+.cl-badge--VIP { background: #fef3c7; color: #92400e; }
+.cl-badge--EnRiesgo { background: #fee2e2; color: #991b1b; }
+.cl-badge--Frecuente { background: #dbeafe; color: #1e40af; }
+.cl-badge--Nuevo { background: #dcfce7; color: #166534; }
+.cl-badge--Ocasional { background: #ede9fe; color: #5b21b6; }
+.cl-badge--Dormido { background: #e5e7eb; color: #374151; }
+.cl-badge--SinViajes { background: #f3f4f6; color: #6b7280; }
+.cl-badge--menor { background: #fee2e2; color: #991b1b; }
+
+.cl-acciones { display: inline-flex; align-items: center; gap: 0.375rem; }
+.cl-acciones .btn-modern { padding: 0.25rem 0.625rem; }
+.cl-wa { background: #25d366; color: #fff; border: 0; }
+.cl-wa:hover { background: #1ebe5b; color: #fff; }
+.cl-wa.disabled { background: #e5e7eb; color: #9ca3af; }
+.cl-mas { border: 1px solid var(--border-color, #e5e7eb); background: #fff; }
+
+.cl-tabla a:focus-visible, .cl-tabla button:focus-visible, .cl-pag:focus-visible, .cl-filtros :focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+/* Cargando */
+.cl-esqueleto td span { display: block; height: 0.75rem; border-radius: 4px; background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: cl-brillo 1.2s infinite; }
+@keyframes cl-brillo { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .cl-esqueleto td span { animation: none; } }
+
+/* Paginación */
+.cl-paginacion { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.25rem; margin: 1rem 0; }
+.cl-pag { min-width: 2.25rem; height: 2.25rem; border: 1px solid var(--border-color, #e5e7eb); background: #fff; border-radius: 0.5rem; color: #374151; }
+.cl-pag:hover:not([disabled]) { border-color: #c9245f; color: #c9245f; }
+.cl-pag.is-actual { background: #c9245f; border-color: #c9245f; color: #fff; font-weight: 700; }
+.cl-pag[disabled] { opacity: 0.45; cursor: not-allowed; }
+.cl-pag-salto { align-self: center; padding: 0 0.25rem; color: #6b7280; }
+
+/* Notebooks (menú lateral abierto): que las acciones entren sin scroll horizontal */
+@media (min-width: 769px) and (max-width: 1400px) {
+    .cl-cliente { min-width: 170px; }
+    .cl-avatar { display: none; }
+    .cl-email { max-width: 150px; }
+    .cl-tabla td, .cl-tabla thead th { padding-left: 0.5rem; padding-right: 0.5rem; }
+    /* el nombre ya es el enlace a la ficha (y la fila entera también) */
+    .cl-acciones .btn-modern { display: none; }
+    .cl-filtros { grid-template-columns: minmax(220px, 1fr) 170px 170px; }
+}
+
+/* Celular: cada cliente como tarjeta compacta */
+@media (max-width: 768px) {
+    .cl-filtros { grid-template-columns: 1fr 1fr; }
+    .cl-buscador, .cl-ayuda { grid-column: 1 / -1; }
+    .cl-tabla-wrap { max-height: none; border: 0; background: transparent; }
+    .cl-tabla thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .cl-tabla, .cl-tabla tbody, .cl-tabla tr, .cl-tabla td { display: block; width: 100%; }
+    .cl-tabla tr { background: #fff; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.75rem; margin-bottom: 0.5rem; padding: 0.5rem 0.25rem; }
+    .cl-tabla td { border: 0; padding: 0.25rem 0.75rem; }
+    .cl-tabla td.text-end { text-align: left !important; }
+    .cl-email { max-width: none; }
+}
