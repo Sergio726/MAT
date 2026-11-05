@@ -1,41 +1,31 @@
-@model MAT.Entities.PersonaCliente
-@using MAT.Enums
-@using MAT.Utilities
+@model MAT.MVC.Models.Clientes.ClienteFichaModel
+@using MAT.MVC.Infrastructure
 @{
-    ViewBag.Title = "Detalle de Cliente";
+    ViewBag.Title = Model.NombreCompleto;
+    ViewBag.BreadcrumbActiveTitle = Model.NombreCompleto.Length > 40 ? Model.NombreCompleto.Substring(0, 39) + "…" : Model.NombreCompleto;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var s = Model.Seguimiento != null ? Model.Seguimiento.Cliente : null;
+    var viajes = Model.Seguimiento != null ? Model.Seguimiento.Viajes.Count : 0;
+    var contactos = Model.Seguimiento != null ? Model.Seguimiento.Contactos.Count : 0;
+    var documento = Model.NroDocumento == null ? null : (Model.TipoDocumentoTexto ?? "Doc.") + " " + Model.NroDocumento;
+    var lugar = string.Join(", ", new[] { Model.LocalidadNombre, Model.ProvinciaNombre }.Where(x => x != null).Distinct());
+    var telefonoPrincipal = Model.Celular ?? Model.Telefono;
 }
-@functions {
-    // Descripción legible del enum ("Consumidor Final", no "Consumidor_Final"), o "Sin definir" si el dato está
-    // vacío o no corresponde a ningún valor: antes un nulo (p. ej. Sexo sin elegir) rompía toda la ficha.
-    static string Texto<TEnum>(int? valor) where TEnum : struct
-    {
-        if (!valor.HasValue || !Enum.IsDefined(typeof(TEnum), valor.Value)) return "Sin definir";
-        return ((Enum)Enum.ToObject(typeof(TEnum), valor.Value)).GetDescription();
-    }
+@helper Dato(string rotulo, string valor)
+{
+    <div class="cf-dato">
+        <dt>@rotulo</dt>
+        <dd class="@(valor == null ? "cf-vacio" : null)">@(valor ?? "—")</dd>
+    </div>
 }
 
-<div class="modern-page-container">
-    <div class="modern-page-header">
-        <h2 class="modern-page-title">
-            <i class="bi bi-person-vcard"></i>
-            <span>@Model.Apellido, @Model.Nombre</span>
-            <span class="client-type-badge ms-2">
-                <i class="bi bi-tag-fill"></i>
-                @(Texto<eTipoCliente>(Model.TipoId))
-            </span>
-        </h2>
-        <div class="d-flex gap-2">
-            <a href="@Url.Action("Edit", "PersonaCliente", new { id = Model.PersonaId })" class="btn-modern btn-modern-primary">
-                <i class="bi bi-pencil"></i>
-                <span>Editar</span>
-            </a>
-            <a href="@Url.Action("Index", "PersonaCliente")" class="btn-modern btn-modern-secondary">
-                <i class="bi bi-arrow-left"></i>
-                <span>Volver a lista de clientes</span>
-            </a>
-        </div>
-    </div>
+@section Styles {
+    <link href="@Url.Content("~/Content/mat.clientes.listado.css?v=20261104d")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mat.clientes.ficha.css?v=20261104b")" rel="stylesheet" />
+}
+
+<div class="modern-page-container cf">
+    @Html.AntiForgeryToken()
 
     @if (TempData["ok"] != null)
     {
@@ -44,193 +34,207 @@
             <span>@TempData["ok"]</span>
         </div>
     }
+    <div id="cfAviso" class="alert d-none" role="status"></div>
 
-    <div class="d-flex flex-column gap-3">
-        <!-- Datos personales -->
-        <section class="modern-card" aria-labelledby="heading-datos-personales">
-            <div class="modern-card-header">
-                <h3 id="heading-datos-personales" class="modern-card-title">
-                    <i class="bi bi-person me-2"></i>
-                    <span>Datos personales</span>
-                </h3>
-            </div>
-            <div class="modern-card-content">
-                <div class="modern-detail-grid">
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">ID Cliente</span>
-                        <span class="modern-detail-value">@Model.PersonaId</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Apellido</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Apellido) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Apellido) ? "Sin definir" : Model.Apellido)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Nombre</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Nombre) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Nombre) ? "Sin definir" : Model.Nombre)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Tipo de documento</span>
-                        <span class="modern-detail-value">@(Texto<eTipoDocumento>(Model.TipoDocumento))</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">N° de documento</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.NroDocumento) ? "empty" : "")">@(string.IsNullOrEmpty(Model.NroDocumento) ? "Sin definir" : Model.NroDocumento)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Fecha de nacimiento</span>
-                        <span class="modern-detail-value">@(Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy") : "Sin definir")</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Sexo</span>
-                        <span class="modern-detail-value">@(Texto<eSexo>(Model.Sexo))</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Nacionalidad</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Nacionalidad) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Nacionalidad) ? "Sin definir" : Model.Nacionalidad)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">País de residencia</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.PaisResidencia) ? "empty" : "")">@(string.IsNullOrEmpty(Model.PaisResidencia) ? "Sin definir" : Model.PaisResidencia)</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Información de contacto -->
-        <section class="modern-card" aria-labelledby="heading-contacto">
-            <div class="modern-card-header">
-                <h3 id="heading-contacto" class="modern-card-title">
-                    <i class="bi bi-telephone me-2"></i>
-                    <span>Información de contacto</span>
-                </h3>
-            </div>
-            <div class="modern-card-content">
-                <div class="modern-detail-grid">
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Domicilio</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Domicilio) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Domicilio) ? "Sin definir" : Model.Domicilio)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Teléfono</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Telefono) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Telefono) ? "Sin definir" : Model.Telefono)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Celular</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Celular) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Celular) ? "Sin definir" : Model.Celular)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Email</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Email) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Email) ? "Sin definir" : Model.Email)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Fax</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Fax) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Fax) ? "Sin definir" : Model.Fax)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Web</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Web) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Web) ? "Sin definir" : Model.Web)</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Ubicación -->
-        <section class="modern-card" aria-labelledby="heading-ubicacion">
-            <div class="modern-card-header">
-                <h3 id="heading-ubicacion" class="modern-card-title">
-                    <i class="bi bi-geo-alt me-2"></i>
-                    <span>Ubicación</span>
-                </h3>
-            </div>
-            <div class="modern-card-content">
-                <div class="modern-detail-grid">
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Provincia</span>
-                        <span class="modern-detail-value @(!Model.Provincia.HasValue ? "empty" : "")">
-                            @if (Model.Provincia.HasValue) { @Helper.ToSelectItem("Provincia", Model.Provincia.Value.ToString()) } else { <span>Sin definir</span> }
-                        </span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Localidad</span>
-                        <span class="modern-detail-value">@Helper.ToSelectItem("Localidad", Model.LocalidadId.ToString())</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Datos fiscales y empresa -->
-        <section class="modern-card" aria-labelledby="heading-fiscales">
-            <div class="modern-card-header">
-                <h3 id="heading-fiscales" class="modern-card-title">
-                    <i class="bi bi-receipt me-2"></i>
-                    <span>Datos fiscales y empresa</span>
-                </h3>
-            </div>
-            <div class="modern-card-content">
-                <div class="modern-detail-grid">
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Razón social</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.RazonSocial) ? "empty" : "")">@(string.IsNullOrEmpty(Model.RazonSocial) ? "Sin definir" : Model.RazonSocial)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">CUIT/CUIL</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Cuit) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Cuit) ? "Sin definir" : Model.Cuit)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Condición IVA</span>
-                        <span class="modern-detail-value">@(Texto<eCondicionIVA>(Model.CondicionIva))</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Forma de pago</span>
-                        <span class="modern-detail-value">@(Texto<eFormaPago>(Model.FormaPago))</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Empresa</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Empresa) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Empresa) ? "Sin definir" : Model.Empresa)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Ocupación</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Ocupacion) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Ocupacion) ? "Sin definir" : Model.Ocupacion)</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Información adicional -->
-        <section class="modern-card" aria-labelledby="heading-adicional">
-            <div class="modern-card-header">
-                <h3 id="heading-adicional" class="modern-card-title">
-                    <i class="bi bi-info-circle me-2"></i>
-                    <span>Información adicional</span>
-                </h3>
-            </div>
-            <div class="modern-card-content">
-                <div class="modern-detail-grid">
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Tipo de cliente</span>
-                        <span class="modern-detail-value">@(Texto<eTipoCliente>(Model.TipoId))</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Vendedor asignado</span>
-                        <span class="modern-detail-value">@(Model.VendedorId.HasValue ? Helper.GetVendedorName(Model.VendedorId.Value) : "Sin asignar")</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Idioma</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Idioma) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Idioma) ? "Sin definir" : Model.Idioma)</span>
-                    </div>
-                    <div class="modern-detail-group">
-                        <span class="modern-detail-label">Promotor</span>
-                        <span class="modern-detail-value @(string.IsNullOrEmpty(Model.Promotor) ? "empty" : "")">@(string.IsNullOrEmpty(Model.Promotor) ? "Sin definir" : Model.Promotor)</span>
-                    </div>
-                </div>
-                @if (!string.IsNullOrEmpty(Model.Observacion))
+    <header class="cf-encabezado">
+        <span class="cf-avatar" aria-hidden="true">@Model.Iniciales</span>
+        <div class="cf-identidad">
+            <h1 class="cf-nombre">@Model.NombreCompleto</h1>
+            <div class="cf-badges">
+                @if (s != null && s.Categoria != null)
                 {
-                    <div class="modern-detail-group mt-3">
-                        <span class="modern-detail-label">Observaciones</span>
-                        <span class="modern-detail-value" style="white-space: pre-wrap;">@Model.Observacion</span>
-                    </div>
+                    <span class="cl-badge cl-badge--@s.Categoria" title="@s.AccionSugerida">@s.CategoriaNombre</span>
+                }
+                @if (s != null && s.EsMenor)
+                {
+                    <span class="cl-badge cl-badge--menor">Menor de edad</span>
+                }
+                @if (s != null && s.NoContactar)
+                {
+                    <span class="cl-badge cl-badge--nocontactar"><i class="bi bi-slash-circle" aria-hidden="true"></i> No contactar</span>
+                }
+                @if (Model.TipoClienteTexto != null)
+                {
+                    <span class="cl-badge">@Model.TipoClienteTexto</span>
                 }
             </div>
+            <p class="cf-sub">
+                @if (documento != null) { <span>@documento</span> }
+                @if (Model.Edad.HasValue) { <span>@Model.Edad años</span> }
+                @if (lugar.Length > 0) { <span>@lugar</span> }
+                @if (telefonoPrincipal != null) { <span><i class="bi bi-telephone" aria-hidden="true"></i> @telefonoPrincipal</span> }
+                @if (Model.Email != null) { <span><i class="bi bi-envelope" aria-hidden="true"></i> <a href="mailto:@Model.Email">@Model.Email</a></span> }
+            </p>
+        </div>
+        <div class="cf-acciones">
+            @if (s != null && s.TieneWhatsApp)
+            {
+                <a id="cfWhatsApp" class="btn cf-wa" href="@s.WhatsAppUrl" target="_blank" rel="noopener">
+                    <i class="bi bi-whatsapp" aria-hidden="true"></i><span>WhatsApp</span>
+                </a>
+            }
+            <button type="button" id="cfRegistrar" class="btn-modern btn-modern-secondary">
+                <i class="bi bi-journal-plus" aria-hidden="true"></i><span>Registrar contacto</span>
+            </button>
+            <a href="@Url.Action("Edit", "PersonaCliente", new { id = Model.PersonaId })" class="btn-modern btn-modern-primary">
+                <i class="bi bi-pencil" aria-hidden="true"></i><span>Editar</span>
+            </a>
+        </div>
+    </header>
+
+    @if (s != null)
+    {
+        <section class="cf-metricas" aria-label="Resumen del cliente">
+            <div class="cf-metrica">
+                <span class="cf-metrica-rotulo">Viajes realizados</span>
+                <span class="cf-metrica-valor">@s.ViajesTotales</span>
+                <span class="cf-metrica-sub">@(s.Viajes12Meses > 0 ? s.Viajes12Meses + " en los últimos 12 meses" : "Ninguno en 12 meses")</span>
+            </div>
+            <div class="cf-metrica">
+                <span class="cf-metrica-rotulo">Último viaje</span>
+                <span class="cf-metrica-valor">@(s.UltimoViaje.HasValue ? s.UltimoViaje.Value.ToString("dd/MM/yyyy") : "—")</span>
+                <span class="cf-metrica-sub">@(s.PrimerViaje.HasValue ? "Viaja desde " + s.PrimerViaje.Value.Year : "Sin viajes")</span>
+            </div>
+            <div class="cf-metrica">
+                <span class="cf-metrica-rotulo">Próximo viaje</span>
+                <span class="cf-metrica-valor">@(s.ProximoViaje.HasValue ? s.ProximoViaje.Value.ToString("dd/MM/yyyy") : "—")</span>
+                <span class="cf-metrica-sub">@(s.ProximoViaje.HasValue ? "Reservado" : "Sin reservas")</span>
+            </div>
+            <div class="cf-metrica">
+                <span class="cf-metrica-rotulo">Último contacto</span>
+                <span class="cf-metrica-valor" id="cfUltimoContacto">@(s.UltimoContactoFecha.HasValue ? s.UltimoContactoFecha.Value.ToString("dd/MM/yyyy") : "—")</span>
+                <span class="cf-metrica-sub" id="cfUltimoContactoSub">@(s.UltimoContactoFecha.HasValue ? s.UltimoContactoResultadoNombre + (s.UltimoContactoPor != null ? " · " + s.UltimoContactoPor : "") : "Nunca")</span>
+            </div>
+            <div class="cf-metrica">
+                <span class="cf-metrica-rotulo">Gastado</span>
+                <span class="cf-metrica-valor cf-gasto" data-ars="@((s.GastoArs ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture))" data-usd="@((s.GastoUsd ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture))">—</span>
+                <span class="cf-metrica-sub">Facturas pagadas como titular</span>
+            </div>
+            @if (s.AccionSugerida != null)
+            {
+                <p class="cf-sugerencia"><i class="bi bi-lightbulb" aria-hidden="true"></i> @s.AccionSugerida</p>
+            }
         </section>
+    }
+
+    <div class="cf-tabs" role="tablist" aria-label="Secciones de la ficha">
+        <button type="button" role="tab" class="cf-tab" id="tab-datos" data-panel="datos" aria-controls="panel-datos">Datos</button>
+        <button type="button" role="tab" class="cf-tab" id="tab-viajes" data-panel="viajes" aria-controls="panel-viajes">Viajes <span class="cf-cuenta">@viajes</span></button>
+        <button type="button" role="tab" class="cf-tab" id="tab-contactos" data-panel="contactos" aria-controls="panel-contactos">Contactos <span class="cf-cuenta" id="cfCuentaContactos">@contactos</span></button>
+        <button type="button" role="tab" class="cf-tab" id="tab-pagos" data-panel="pagos" aria-controls="panel-pagos">Pagos</button>
+        <button type="button" role="tab" class="cf-tab" id="tab-cuenta" data-panel="cuenta" aria-controls="panel-cuenta">Cuenta corriente</button>
+        <button type="button" role="tab" class="cf-tab" id="tab-facturas" data-panel="facturas" aria-controls="panel-facturas">Facturas <span class="cf-cuenta">@Model.CantidadFacturas</span></button>
+    </div>
+
+    <section id="panel-datos" class="cf-panel" role="tabpanel" aria-labelledby="tab-datos" tabindex="0">
+        <h2 class="cf-seccion">Personales</h2>
+        <dl class="cf-grilla">
+            @Dato("Apellido", Model.Apellido)
+            @Dato("Nombre", Model.Nombre)
+            @Dato("Documento", documento)
+            @Dato("Fecha de nacimiento", Model.FechaNacimiento.HasValue ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy") + (Model.Edad.HasValue ? " (" + Model.Edad + " años)" : "") : null)
+            @Dato("Sexo", Model.SexoTexto)
+            @Dato("Nacionalidad", Model.Nacionalidad)
+            @Dato("País de residencia", Model.PaisResidencia)
+            @Dato("Ocupación", Model.Ocupacion)
+        </dl>
+
+        <h2 class="cf-seccion">Contacto y ubicación</h2>
+        <dl class="cf-grilla">
+            @Dato("Celular", Model.Celular)
+            @Dato("Teléfono", Model.Telefono)
+            @Dato("Email", Model.Email)
+            @Dato("Domicilio", Model.Domicilio)
+            @Dato("Localidad", Model.LocalidadNombre)
+            @Dato("Departamento", Model.DepartamentoNombre)
+            @Dato("Provincia", Model.ProvinciaNombre)
+            @Dato("Fax", Model.Fax)
+            @Dato("Web", Model.Web)
+        </dl>
+
+        <h2 class="cf-seccion">Comercial y fiscal</h2>
+        <dl class="cf-grilla">
+            @Dato("Tipo de cliente", Model.TipoClienteTexto)
+            @Dato("Vendedor", Model.VendedorNombre)
+            @Dato("Cliente desde", Model.FechaAlta.HasValue ? Model.FechaAlta.Value.ToString("dd/MM/yyyy") : null)
+            @Dato("Cuenta corriente", Model.CuentaHabilitada.HasValue ? (Model.CuentaHabilitada.Value ? "Habilitada" : "Deshabilitada") : "Sin cuenta")
+            @Dato("Condición IVA", Model.CondicionIvaTexto)
+            @Dato("Forma de pago", Model.FormaPagoTexto)
+            @Dato("Razón social", Model.RazonSocial)
+            @Dato("CUIT / CUIL", Model.Cuit)
+            @Dato("Empresa", Model.Empresa)
+            @Dato("Idioma", Model.Idioma)
+            @Dato("Promotor", Model.Promotor)
+        </dl>
+
+        <h2 class="cf-seccion">Observaciones</h2>
+        <p class="cf-observacion @(Model.Observacion == null ? "cf-vacio" : null)">@(Model.Observacion ?? "Sin observaciones.")</p>
+
+        <p class="cf-pie">
+            <button type="button" id="cfCopiarId" class="cf-copiar" data-id="@Model.PersonaId">
+                <i class="bi bi-clipboard" aria-hidden="true"></i> <span>Copiar ID del cliente</span>
+            </button>
+        </p>
+    </section>
+
+    <section id="panel-viajes" class="cf-panel" role="tabpanel" aria-labelledby="tab-viajes" tabindex="0" hidden></section>
+    <section id="panel-contactos" class="cf-panel" role="tabpanel" aria-labelledby="tab-contactos" tabindex="0" hidden></section>
+    <section id="panel-pagos" class="cf-panel" role="tabpanel" aria-labelledby="tab-pagos" tabindex="0" hidden
+             data-url="@Url.Action("partialHistorialdePagos", "PersonaCliente", new { ClienteID = Model.PersonaId })"></section>
+    <section id="panel-cuenta" class="cf-panel" role="tabpanel" aria-labelledby="tab-cuenta" tabindex="0" hidden
+             data-url="@Url.Action("partialMovimientoNotaCredito", "NotaCredito", new { ClienteID = Model.PersonaId })"></section>
+    <section id="panel-facturas" class="cf-panel" role="tabpanel" aria-labelledby="tab-facturas" tabindex="0" hidden
+             data-url="@Url.Action("PartialFacturas", "PersonaCliente", new { clienteid = Model.PersonaId })"></section>
+</div>
+
+<div class="modal fade" id="cfModalContacto" tabindex="-1" aria-labelledby="cfContactoTitulo" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" id="cfFormContacto" novalidate>
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="cfContactoTitulo">Registrar contacto</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2"><strong>@Model.NombreCompleto</strong></p>
+                <div class="alert alert-warning py-2 small d-none" id="cfContactoAviso"></div>
+                <div class="modern-form-group">
+                    <label class="modern-form-label" for="cfContactoResultado">Resultado <span aria-hidden="true">*</span></label>
+                    <select id="cfContactoResultado" class="modern-form-input" required aria-describedby="cfContactoError">
+                        <option value="">Elegí…</option>
+                        @foreach (var r in Model.ResultadosContacto)
+                        {
+                            <option value="@r.Key">@r.Value</option>
+                        }
+                    </select>
+                </div>
+                <div class="modern-form-group mb-0">
+                    <label class="modern-form-label" for="cfContactoObs">Observación (opcional)</label>
+                    <textarea id="cfContactoObs" class="modern-form-input" rows="3" maxlength="500" placeholder="Ej.: le interesa Cataratas en marzo"></textarea>
+                </div>
+                <div id="cfContactoError" class="alert alert-danger d-none py-2 small mt-2 mb-0" role="alert"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modern btn-modern-secondary btn-sm" data-bs-dismiss="modal"><span>Cancelar</span></button>
+                <button type="submit" class="btn-modern btn-modern-primary btn-sm" id="cfContactoGuardar"><i class="bi bi-check-circle" aria-hidden="true"></i> <span>Guardar</span></button>
+            </div>
+        </form>
     </div>
 </div>
+
+<script type="application/json" id="cfDatos">@Html.Raw(JsonCamelCaseHelper.ToJson(new
+{
+    clienteId = Model.PersonaId,
+    seguimiento = Model.Seguimiento != null,
+    viajes = Model.Seguimiento != null ? (object)Model.Seguimiento.Viajes : new object[0],
+    contactos = Model.Seguimiento != null ? (object)Model.Seguimiento.Contactos : new object[0]
+}))</script>
+
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/mat.clientes.ficha.js?v=20261104b")"></script>
+    <script>
+        MatClienteFicha.init({
+            urlFicha: "@Url.Action("Ficha", "Seguimiento")",
+            urlRegistrar: "@Url.Action("RegistrarContacto", "Seguimiento")"
+        });
+    </script>
+}

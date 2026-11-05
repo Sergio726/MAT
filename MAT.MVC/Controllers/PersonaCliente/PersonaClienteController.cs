@@ -377,46 +377,48 @@ namespace MAT.MVC.Controllers.PersonaCliente
         #endregion
 
 
+        /// <summary>
+        /// Ficha del cliente como perfil: encabezado con categoría y métricas de Seguimiento, y pestañas
+        /// (Datos, Viajes, Contactos, Pagos, Cuenta corriente, Facturas). Pagos, Cuenta corriente y Facturas
+        /// se cargan al abrir su pestaña con los parciales existentes.
+        /// </summary>
         [Authorize]
         public ActionResult Details(Guid Id)
         {
-            MAT.Entities.PersonaCliente PersonaCliente = new MAT.Entities.PersonaCliente();
-            MAT.Entities.Persona Persona = Infrastructure.Data.PersonaDataAccess.GetById(Id);
-            MAT.Entities.Cliente Cliente = Infrastructure.Data.ClienteDataAccess.GetById(Id);
+            ClienteFichaModel ficha;
+            try
+            {
+                ficha = ClienteFichaDataAccess.Get(Id);
+            }
+            catch (Exception e)
+            {
+                TempData["aviso"] = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Details");
+                return RedirectToAction("Index");
+            }
+            if (ficha == null)
+            {
+                TempData["aviso"] = "No se encontró el cliente. Puede haber sido eliminado.";
+                return RedirectToAction("Index");
+            }
 
-            #region Actualizar PersonaCliente
-            PersonaCliente.PersonaId = Persona.PersonaId;
-            PersonaCliente.Apellido = Persona.Apellido;
-            PersonaCliente.Nombre = Persona.Nombre;
-            PersonaCliente.TipoDocumento = Persona.TipoDocumento;
-            PersonaCliente.NroDocumento = Persona.NroDocumento;
-            PersonaCliente.Domicilio = Persona.Domicilio;
-            PersonaCliente.LocalidadId = Persona.LocalidadId;
-            PersonaCliente.Provincia = Persona.Provincia;
-            PersonaCliente.Celular = Persona.Celular;
-            PersonaCliente.Telefono = Persona.Telefono;
-            PersonaCliente.Email = Persona.Email;
-            PersonaCliente.FechaNacimiento = Persona.FechaNacimiento;
-            PersonaCliente.Sexo = Persona.Sexo;
-            PersonaCliente.RazonSocial = Cliente.RazonSocial;
-            PersonaCliente.Cuit = Cliente.Cuit;
-            PersonaCliente.Moneda = Cliente.Moneda;
-            PersonaCliente.Empresa = Cliente.Empresa;
-            PersonaCliente.FormaPago = Cliente.FormaPago;
-            PersonaCliente.CondicionIva = Cliente.CondicionIva;
-            PersonaCliente.VendedorId = Cliente.VendedorId;
-            PersonaCliente.Fax = Cliente.Fax;
-            PersonaCliente.Web = Cliente.Web;
-            PersonaCliente.Idioma = Cliente.Idioma;
-            PersonaCliente.Promotor = Cliente.Promotor;
-            PersonaCliente.Observacion = Cliente.Observacion;
-            PersonaCliente.TipoId = Cliente.TipoId;
-            PersonaCliente.Nacionalidad = Persona.Nacionalidad;
-            PersonaCliente.PaisResidencia = Persona.PaisResidencia;
-            PersonaCliente.Ocupacion = Persona.Ocupacion;
-            #endregion
-
-            return View(PersonaCliente);
+            // Si Seguimiento falla, la ficha se muestra igual con los datos (sin categoría ni viajes).
+            try
+            {
+                ficha.Seguimiento = SeguimientoDataAccess.GetFicha(Id);
+                if (ficha.Seguimiento?.Cliente != null)
+                {
+                    SeguimientoCatalog.Completar(ficha.Seguimiento.Cliente);
+                    foreach (var contacto in ficha.Seguimiento.Contactos)
+                        contacto.ResultadoNombre = SeguimientoCatalog.NombreResultado(contacto.Resultado);
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Details.Seguimiento");
+                ficha.Seguimiento = null;
+            }
+            ficha.ResultadosContacto = SeguimientoCatalog.GetResultados();
+            return View(ficha);
         }
 
         [Authorize]

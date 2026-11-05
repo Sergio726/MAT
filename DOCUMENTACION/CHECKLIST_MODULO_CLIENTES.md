@@ -70,3 +70,25 @@ Altas por período (listado e Inicio)
 - [x] Abre con el mes actual; presets Este mes / Mes pasado / Últimos 30 días / Este año. "Este año" → 1.132 altas, 46 páginas.
 - [x] "Exportar a Excel" descarga todas las altas del período (no solo la página).
 - [x] Encabezados sin cortes; la tabla entra en el modal.
+
+## F3 — Ficha del cliente como perfil
+
+Ya verificado en DEV el 04/11/2026 (navegador a ~1100 px); falta celular y la prueba con un vendedor.
+
+Encabezado
+- [x] Avatar, nombre, categoría con color, "Menor de edad" / "No contactar" cuando corresponde, tipo de cliente, documento, edad, localidad, teléfono y email.
+- [x] Acciones: WhatsApp (si hay teléfono válido), Registrar contacto, Editar.
+- [x] Métricas: Viajes realizados, Último viaje, Próximo viaje, Último contacto, Gastado (facturas pagadas) y la acción sugerida.
+
+Pestañas (`#viajes`, `#contactos`, `#pagos`, `#cuenta`, `#facturas` en la URL)
+- [x] Cliente con 108 facturas: Viajes 110, Pagos 106, Facturas 108 y Cuenta corriente cargan sin errores (0,3–0,9 s cada una, solo al abrirlas).
+- [x] Abrir la ficha con `#contactos` muestra esa pestaña; recargar la mantiene.
+- [x] Facturas → ojo → abre el detalle de la factura. Cuenta corriente sin el botón "Cerrar" del popup viejo.
+- [x] Registrar contacto: sin resultado → "Elegí el resultado del contacto."; guardado → aviso verde, el modal se cierra y se actualizan el contador, "Último contacto" y la tabla. Si ya hubo contacto en 7 días, el modal lo avisa.
+- [ ] Teclado: flechas izquierda/derecha entre pestañas.
+- [ ] Celular (375 px): métricas en 2 columnas y datos en 1.
+
+Integración
+- [x] Id inexistente → vuelve al listado con "No se encontró el cliente".
+- [x] Listado → menú ⋮ → Viajes / Pagos / Cuenta corriente / Facturas abren la ficha en esa pestaña.
+- [x] Seguimiento → ficha rápida → "Ver ficha completa".

@@ -170,9 +170,11 @@
                 ' data-bs-popper-config=\'{"strategy":"fixed"}\'><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button>' +
                 '<ul class="dropdown-menu dropdown-menu-end">' +
                 '<li><a class="dropdown-item" href="' + urls.urlEditar + '/' + id + '"><i class="bi bi-pencil" aria-hidden="true"></i> Editar</a></li>' +
-                '<li><a class="dropdown-item" href="' + urls.urlHistorialPagos + '?clienteid=' + id + '"><i class="bi bi-clock-history" aria-hidden="true"></i> Historial de pagos</a></li>' +
-                '<li><a class="dropdown-item" href="' + urls.urlCuentaCorriente + '?clienteid=' + id + '"><i class="bi bi-credit-card" aria-hidden="true"></i> Cuenta corriente</a></li>' +
-                (c.esTitularFacturas ? '<li><a class="dropdown-item" href="' + urls.urlFacturas + '?clienteid=' + id + '"><i class="bi bi-receipt" aria-hidden="true"></i> Facturas</a></li>' : '') +
+                // Pestañas de la ficha (F3)
+                '<li><a class="dropdown-item" href="' + ficha + '#viajes"><i class="bi bi-airplane" aria-hidden="true"></i> Viajes</a></li>' +
+                '<li><a class="dropdown-item" href="' + ficha + '#pagos"><i class="bi bi-clock-history" aria-hidden="true"></i> Pagos</a></li>' +
+                '<li><a class="dropdown-item" href="' + ficha + '#cuenta"><i class="bi bi-credit-card" aria-hidden="true"></i> Cuenta corriente</a></li>' +
+                (c.esTitularFacturas ? '<li><a class="dropdown-item" href="' + ficha + '#facturas"><i class="bi bi-receipt" aria-hidden="true"></i> Facturas</a></li>' : '') +
                 '</ul></div></div></td>';
             return html + '</tr>';
         }

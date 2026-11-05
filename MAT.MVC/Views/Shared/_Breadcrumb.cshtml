@@ -87,19 +87,21 @@
                             <a href="@parentHref">@controllerDisplayName</a>
                         </li>
                     }
-                    @if (!string.IsNullOrEmpty(action) && !action.Equals("Index", StringComparison.OrdinalIgnoreCase))
+                    @if (!string.IsNullOrWhiteSpace(breadcrumbActiveTitle))
                     {
+                        <li class="breadcrumb-item active" aria-current="page" title="@(ViewBag.Title as string ?? breadcrumbActiveTitle)">@breadcrumbActiveTitle</li>
+                    }
+                    else if (!string.IsNullOrEmpty(action) && !action.Equals("Index", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Guid idGuid;
                         <li class="breadcrumb-item active" aria-current="page">
                             @actionDisplayName
-                            @if (!string.IsNullOrEmpty(id))
+                            @* Un GUID no le dice nada al usuario; los ids numéricos sí se muestran *@
+                            @if (!string.IsNullOrEmpty(id) && !Guid.TryParse(id, out idGuid))
                             {
                                 <span class="breadcrumb-id">#@id</span>
                             }
                         </li>
-                    }
-                    else if (!string.IsNullOrWhiteSpace(breadcrumbActiveTitle))
-                    {
-                        <li class="breadcrumb-item active" aria-current="page" title="@(ViewBag.Title as string ?? breadcrumbActiveTitle)">@breadcrumbActiveTitle</li>
                     }
                     else
                     {
