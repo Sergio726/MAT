@@ -30,7 +30,8 @@ namespace MAT.MVC.Controllers.Account
                 ViewBag.IsDev = "true";
             }
 
-            return View();
+            // Con modelo: sin él, cada TextBoxFor/ValidationMessageFor lanza (y MVC atrapa) una NullReferenceException
+            return View(new LoginModel());
         }
 
         [HttpPost]
@@ -95,7 +96,7 @@ namespace MAT.MVC.Controllers.Account
                 ViewBag.IsDev = "true";
             }
 
-            return View();
+            return View(new RegistroVendedorModel());
         }
 
         [HttpPost]
@@ -118,13 +119,13 @@ namespace MAT.MVC.Controllers.Account
                     ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
                 }
             }
-            return View();
+            return View(new RegistroVendedorModel());
         }
 
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            return View(new RegisterModel());
         }
 
         [HttpPost]
@@ -190,7 +191,7 @@ namespace MAT.MVC.Controllers.Account
                 : "";
             ViewBag.HasLocalPassword = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
             ViewBag.ReturnUrl = Url.Action("Manage");
-            return View();
+            return View(new LocalPasswordModel());
         }
 
         //
