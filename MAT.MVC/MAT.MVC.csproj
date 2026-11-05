@@ -333,6 +333,7 @@
     <Compile Include="Infrastructure\Data\ClienteFormDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteListadoDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteFichaDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\ClienteCatalogosDataAccess.cs" />
     <Compile Include="Infrastructure\Data\FacturaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\HistorialDataAccess.cs" />
     <Compile Include="Infrastructure\HistorialPagosLoader.cs" />
@@ -446,6 +447,7 @@
     <Compile Include="Models\Clientes\ClienteFormModel.cs" />
     <Compile Include="Models\Clientes\ClienteListadoDtos.cs" />
     <Compile Include="Models\Clientes\ClienteFichaModel.cs" />
+    <Compile Include="Models\Clientes\ClienteCatalogos.cs" />
     <Compile Include="Models\Reportes\ReporteRankingRowDto.cs" />
     <Compile Include="Models\Reportes\ReporteViajeLookupDto.cs" />
     <Compile Include="Models\Reportes\ReporteVentaRowDto.cs" />
@@ -816,6 +818,7 @@
     <Content Include="Scripts\mat.clientes.form.js" />
     <Content Include="Scripts\mat.clientes.listado.js" />
     <Content Include="Scripts\mat.clientes.ficha.js" />
+    <Content Include="Scripts\mat.combo.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />
     <Content Include="Scripts\mat.reportes-ventas-facturado-modal.js" />
     <Content Include="Scripts\mat.reportes-ranking-dashboard.js" />

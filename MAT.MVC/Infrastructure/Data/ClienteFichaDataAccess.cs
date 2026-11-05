@@ -29,8 +29,9 @@ namespace MAT.MVC.Infrastructure.Data
                     FechaNacimiento = fechaNacimiento,
                     Edad = Edad(fechaNacimiento),
                     SexoTexto = TextoEnum.De<eSexo>(reader.GetNullableInt("Sexo")),
-                    Nacionalidad = Limpio(reader.GetString("Nacionalidad")),
-                    PaisResidencia = Limpio(reader.GetString("PaisResidencia")),
+                    // Se guarda el código (ARG); se muestra el nombre del país. Un valor viejo sin país se muestra tal cual.
+                    Nacionalidad = Limpio(ClienteCatalogosDataAccess.NombreLegible(reader.GetString("NacionalidadNombre"))) ?? Limpio(reader.GetString("Nacionalidad")),
+                    PaisResidencia = Limpio(ClienteCatalogosDataAccess.NombreLegible(reader.GetString("PaisResidenciaNombre"))) ?? Limpio(reader.GetString("PaisResidencia")),
                     Ocupacion = Limpio(reader.GetString("Ocupacion")),
                     Domicilio = Limpio(reader.GetString("Domicilio")),
                     Telefono = Limpio(reader.GetString("Telefono")),

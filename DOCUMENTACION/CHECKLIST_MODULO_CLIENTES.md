@@ -92,3 +92,25 @@ Integración
 - [x] Id inexistente → vuelve al listado con "No se encontró el cliente".
 - [x] Listado → menú ⋮ → Viajes / Pagos / Cuenta corriente / Facturas abren la ficha en esa pestaña.
 - [x] Seguimiento → ficha rápida → "Ver ficha completa".
+
+## F4 — Catálogos y datos
+
+Verificado en DEV el 04/11/2026 (scripts aplicados, navegador a ~1500 px).
+
+Datos (`database/2026-11-04_ClienteCatalogos_Datos.sql`)
+- [x] Personas antes = después (11.579) y ninguna apunta a una localidad inexistente.
+- [x] Nacionalidad y país de residencia: solo códigos ISO (ARG 10.668 → 11.389 en DEV); ningún valor fuera del catálogo.
+- [x] Ocupación: nombres neutros (Jubilado/a, Empleado/a…).
+- [x] Salta: 29 → 23 departamentos y 268 → 255 localidades; sin nombres repetidos ("guemes" encuentra un solo GENERAL GUEMES).
+- [x] Segunda corrida: no cambia nada (idempotente).
+- [ ] El negocio revisó la tabla de equivalencias (bloque 4) antes de Prod.
+
+Formulario
+- [x] Alta: País = Argentina, Provincia = Salta, Nacionalidad y país de residencia = Argentina.
+- [x] Combos con búsqueda (País, Provincia, Departamento, Localidad, Nacionalidad, País de residencia, Ocupación): sin importar acentos, con teclado (escribir, ↓, Enter, Tab).
+- [x] Cambiar el país a Bolivia muestra solo provincias de Bolivia y vacía departamento y localidad.
+- [x] Validación: Provincia y Localidad vacías marcan el combo en rojo con su mensaje.
+- [x] Edición de un cliente: arma País › Provincia › Departamento › Localidad desde la localidad guardada.
+- [x] Guardar nacionalidad Bolivia y ocupación Jubilado/a → la ficha muestra "Bolivia" y "Jubilado/a".
+- [ ] "Nueva localidad": la nueva queda elegida en el combo.
+- [ ] Celular (375 px).
