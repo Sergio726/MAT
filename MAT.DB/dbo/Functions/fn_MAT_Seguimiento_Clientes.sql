@@ -11,6 +11,7 @@ AS
   --              Categorías (gana la primera): VIP, EnRiesgo, Frecuente, Nuevo, Ocasional, Dormido, SinViajes.
   --              @Hoy lo calculan los SPs en hora argentina (el servidor está en UTC).
   -- 2026-10-29: viajes pagados para otros, EsMenor y TelefonoCompartido.
+  -- 2026-11-04 (Clientes F6): excluye a los clientes dados de baja.
   ============================================= */
 RETURN
 WITH viajesCliente AS (
@@ -110,4 +111,5 @@ OUTER APPLY (
     LEFT JOIN dbo.Persona pv ON pv.PersonaID = cc2.VendedorID
     WHERE cc2.ClienteID = c.ClienteID
     ORDER BY cc2.Fecha DESC
-) uc;
+) uc
+WHERE c.Activo = 1; -- F6: los dados de baja no entran en Seguimiento

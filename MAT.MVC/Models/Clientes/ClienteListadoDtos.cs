@@ -21,6 +21,8 @@ namespace MAT.MVC.Models.Clientes
         public string CategoriaNombre { get; set; }
         public bool EsMenor { get; set; }
         public bool EsTitularFacturas { get; set; }
+        /// <summary>false = dado de baja (solo aparece con "Mostrar dados de baja").</summary>
+        public bool Activo { get; set; }
         public bool TieneWhatsApp { get; set; }
         public string WhatsAppUrl { get; set; }
     }

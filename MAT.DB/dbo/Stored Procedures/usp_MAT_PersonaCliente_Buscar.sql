@@ -5,7 +5,8 @@ CREATE PROCEDURE [dbo].[usp_MAT_PersonaCliente_Buscar]
     @Categoria VARCHAR (20)   = NULL,
     @Orden     VARCHAR (20)   = 'apellido',
     @Pagina    INT            = 1,
-    @Tamanio   INT            = 25
+    @Tamanio   INT            = 25,
+    @IncluirInactivos BIT     = 0
 )
 AS
 /*-- =============================================
@@ -20,6 +21,7 @@ AS
   --              @Categoria: categoría de Seguimiento (fn_MAT_Seguimiento_Clientes).
   --              @Orden: apellido | alta | documento. @Tamanio: 25, 50 o 100.
   --              RS1: Total. RS2: la página, con la categoría de cada cliente.
+  -- 2026-11-04 (F6): sin @IncluirInactivos no aparecen los clientes dados de baja; se devuelve Activo.
   ============================================= */
 BEGIN
     SET NOCOUNT ON;
@@ -47,7 +49,7 @@ BEGIN
 
     -- Clientes que cumplen texto y tipo
     SELECT p.PersonaID, p.Apellido, p.Nombre, p.NroDocumento, p.Celular, p.Telefono, p.Email,
-           l.Nombre AS LocalidadNombre, c.TipoID, c.FechaAlta,
+           l.Nombre AS LocalidadNombre, c.TipoID, c.FechaAlta, c.Activo,
            d.Documento AS DocumentoDigitos
     INTO #Encontrados
     FROM dbo.Cliente c
@@ -59,6 +61,7 @@ BEGIN
                REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(ISNULL(p.Celular, ''), ' ', ''), '-', ''), '.', ''), '(', ''), ')', ''), '+', ''), '/', '') AS Celular
     ) d
     WHERE (@TipoID IS NULL OR c.TipoID = @TipoID)
+      AND (ISNULL(@IncluirInactivos, 0) = 1 OR c.Activo = 1)
       AND (@CantidadPalabras = 0 OR NOT EXISTS (
             -- ninguna palabra puede quedar sin coincidencia
             SELECT 1 FROM @Palabras w
@@ -89,7 +92,7 @@ BEGIN
     OFFSET (@Pagina - 1) * @Tamanio ROWS FETCH NEXT @Tamanio ROWS ONLY;
 
     SELECT pg.PersonaID, pg.Apellido, pg.Nombre, pg.NroDocumento, pg.Celular, pg.Telefono, pg.Email,
-           pg.LocalidadNombre, pg.TipoID, pg.FechaAlta,
+           pg.LocalidadNombre, pg.TipoID, pg.FechaAlta, pg.Activo,
            s.Categoria, ISNULL(s.EsMenor, 0) AS EsMenor,
            CAST(CASE WHEN EXISTS (SELECT 1 FROM dbo.Factura f WHERE f.ClienteID = pg.PersonaID) THEN 1 ELSE 0 END AS BIT) AS EsTitularFacturas
     FROM #Pagina pg

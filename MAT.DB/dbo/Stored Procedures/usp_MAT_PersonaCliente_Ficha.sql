@@ -11,6 +11,7 @@ AS
   --              y cuántas facturas tiene como titular. Reemplaza a Persona.GetById + Cliente.GetById + una
   --              consulta por cada nombre que hacía la vista.
   -- 2026-11-04 (F4): nombre del país de nacionalidad y de residencia (Pais.Codigo).
+  -- 2026-11-04 (F6): estado y datos de la baja.
   ============================================= */
 BEGIN
     SET NOCOUNT ON;
@@ -25,6 +26,7 @@ BEGIN
            COALESCE(pr.Nombre, prl.Nombre) AS ProvinciaNombre,
            c.RazonSocial, c.Cuit, c.CondicionIva, c.FormaPago, c.Empresa, c.Fax, c.Web, c.Idioma, c.Promotor,
            c.Observacion, c.TipoID, c.FechaAlta,
+           c.Activo, c.FechaBaja, c.MotivoBaja, c.BajaUsuario,
            LTRIM(RTRIM(ISNULL(v.Apellido, '') + ', ' + ISNULL(v.Nombre, ''))) AS VendedorNombre,
            cu.Estado AS CuentaHabilitada,
            (SELECT COUNT(*) FROM dbo.Factura f WHERE f.ClienteID = c.ClienteID) AS CantidadFacturas

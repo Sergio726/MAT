@@ -4,6 +4,17 @@ using MAT.MVC.Models.Seguimiento;
 
 namespace MAT.MVC.Models.Clientes
 {
+    /// <summary>Un evento del historial del cliente (<c>ClienteAudit</c>).</summary>
+    public sealed class ClienteAuditItemDto
+    {
+        public DateTime Fecha { get; set; }
+        public string Usuario { get; set; }
+        /// <summary>Alta | Modificacion | Baja | Reactivacion</summary>
+        public string Accion { get; set; }
+        /// <summary>Una línea por campo cambiado; en la baja, el motivo.</summary>
+        public string Detalle { get; set; }
+    }
+
     /// <summary>
     /// Ficha del cliente (<c>PersonaCliente/Details</c>): datos con los textos ya resueltos
     /// (<c>usp_MAT_PersonaCliente_Ficha</c>) más el resumen de Seguimiento (<c>usp_MAT_Seguimiento_Ficha</c>).
@@ -45,6 +56,12 @@ namespace MAT.MVC.Models.Clientes
         public string VendedorNombre { get; set; }
         public bool? CuentaHabilitada { get; set; }
         public int CantidadFacturas { get; set; }
+
+        // Baja lógica (F6)
+        public bool Activo { get; set; }
+        public DateTime? FechaBaja { get; set; }
+        public string MotivoBaja { get; set; }
+        public string BajaUsuario { get; set; }
 
         /// <summary>Categoría, métricas, viajes y contactos. Null si Seguimiento no pudo calcularse.</summary>
         public SeguimientoFichaDto Seguimiento { get; set; }

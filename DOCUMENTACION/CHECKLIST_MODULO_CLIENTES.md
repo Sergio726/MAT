@@ -128,3 +128,17 @@ Verificado en DEV el 05/11/2026 (navegador a 1536 px).
 - [x] `/Error/NoEncontrado` responde 404 con la página propia.
 - [ ] Una dirección inexistente muestra esa página (falta activar `httpErrors` en Web.config, con OK).
 - [ ] Seguimiento a 1017 px sin scroll horizontal para llegar a WhatsApp.
+
+## F6 — Baja y auditoría
+
+Verificado en DEV el 05/11/2026 con el cliente de prueba (la baja se corrió con el SP: `admindev` no tiene rol Administrador).
+
+- [x] Editar un cliente registra "Modificación" con los campos cambiados ("Celular: (vacío) → 387 4220011").
+- [x] Baja: el cliente no aparece en el listado, en el autocompletado de reservas/presupuestos/facturas ni en Seguimiento.
+- [x] Con "Mostrar dados de baja" aparece en el listado, tachado y con la marca "Dado de baja".
+- [x] La ficha muestra el aviso con fecha, quién y motivo; facturas, pagos y viajes siguen accesibles.
+- [x] Reactivar lo devuelve a todos lados; repetir la reactivación no duplica el historial.
+- [x] El historial guarda Alta, Modificación, Baja y Reactivación con usuario y fecha.
+- [ ] Con un usuario **Administrador**: botón "Dar de baja" (motivo obligatorio), "Reactivar" y pestaña "Historial de cambios" en la ficha.
+- [ ] Con un usuario **vendedor**: no ve esos botones ni la pestaña, y `POST /PersonaCliente/DarDeBaja` lo rechaza.
+- [x] `GET /PersonaCliente/Delete/{id}` ya no existe (antes borraba el cliente sin confirmación).

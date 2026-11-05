@@ -67,7 +67,7 @@
     }
 
     function iniciar(urls) {
-        var estado = { q: '', tipo: '', categoria: '', orden: 'apellido', pagina: 1, tamanio: 25 };
+        var estado = { q: '', tipo: '', categoria: '', orden: 'apellido', pagina: 1, tamanio: 25, inactivos: false };
         var pedido = null, temporizador = null;
         var $texto = $('#clTexto'), $filas = $('#clFilas');
 
@@ -84,6 +84,8 @@
             $('#clTipo').val(estado.tipo);
             $('#clCategoria').val(estado.categoria);
             $('#clTamanio').val(String(estado.tamanio));
+            estado.inactivos = p.get('inactivos') === '1';
+            $('#clInactivos').prop('checked', estado.inactivos);
         }
 
         function escribirUrl(reemplazar) {
@@ -94,6 +96,7 @@
             if (estado.orden !== 'apellido') p.set('orden', estado.orden);
             if (estado.pagina > 1) p.set('pagina', estado.pagina);
             if (estado.tamanio !== 25) p.set('tamanio', estado.tamanio);
+            if (estado.inactivos) p.set('inactivos', '1');
             var url = window.location.pathname + (p.toString() ? '?' + p.toString() : '');
             if (url === window.location.pathname + window.location.search) return;
             window.history[reemplazar ? 'replaceState' : 'pushState'](null, '', url);
@@ -114,7 +117,7 @@
             esqueleto();
             pedido = $.ajax({
                 url: urls.urlBuscar, dataType: 'json', cache: false,
-                data: { q: estado.q, tipo: estado.tipo, categoria: estado.categoria, orden: estado.orden, pagina: estado.pagina, tamanio: estado.tamanio }
+                data: { q: estado.q, tipo: estado.tipo, categoria: estado.categoria, orden: estado.orden, pagina: estado.pagina, tamanio: estado.tamanio, inactivos: estado.inactivos }
             }).done(function (r) {
                 if (!r.success) { mostrarError(r.message); return; }
                 var paginas = Math.max(1, Math.ceil(r.total / r.tamanio));
@@ -150,7 +153,7 @@
             var id = esc(c.personaId), nombre = [c.apellido, c.nombre].filter(Boolean).join(', ') || 'Sin nombre';
             var telefono = c.celular || c.telefono;
             var ficha = urls.urlFicha + '/' + id;
-            var html = '<tr class="cl-fila" data-ficha="' + ficha + '" tabindex="-1">';
+            var html = '<tr class="cl-fila' + (c.activo === false ? ' is-baja' : '') + '" data-ficha="' + ficha + '" tabindex="-1">';
             html += '<td><div class="cl-cliente"><span class="cl-avatar" aria-hidden="true">' + iniciales(c.apellido, c.nombre) + '</span><div>' +
                 '<a class="cl-nombre" href="' + ficha + '">' + resaltar(nombre, palabras) + '</a>' +
                 '<div class="cl-sub">' + esc(c.localidadNombre || '') + (c.tipoNombre ? (c.localidadNombre ? ' · ' : '') + esc(c.tipoNombre) : '') + '</div>' +
@@ -159,7 +162,8 @@
             html += '<td>' + (telefono ? '<div class="cl-num">' + resaltar(telefono, palabras) + '</div>' : '<span class="cl-sub">Sin teléfono</span>') +
                 (c.email ? '<div class="cl-sub cl-email">' + resaltar(c.email, palabras) + '</div>' : '') + '</td>';
             html += '<td>' + (c.categoria ? '<span class="cl-badge cl-badge--' + esc(c.categoria) + '">' + esc(c.categoriaNombre || c.categoria) + '</span>' : '') +
-                (c.esMenor ? ' <span class="cl-badge cl-badge--menor">Menor</span>' : '') + '</td>';
+                (c.esMenor ? ' <span class="cl-badge cl-badge--menor">Menor</span>' : '') +
+                (c.activo === false ? ' <span class="cl-badge cl-badge--baja">Dado de baja</span>' : '') + '</td>';
             html += '<td class="cl-num">' + fecha(c.fechaAlta) + '</td>';
             html += '<td class="text-end"><div class="cl-acciones">' +
                 '<a class="btn-modern btn-modern-secondary btn-sm" href="' + ficha + '"><i class="bi bi-person-vcard" aria-hidden="true"></i><span>Ficha</span></a>' +
@@ -222,6 +226,7 @@
         $('#clTipo').on('change', function () { cambiar({ tipo: this.value, pagina: 1 }, true); });
         $('#clCategoria').on('change', function () { cambiar({ categoria: this.value, pagina: 1 }, true); });
         $('#clTamanio').on('change', function () { cambiar({ tamanio: parseInt(this.value, 10), pagina: 1 }, true); });
+        $('#clInactivos').on('change', function () { cambiar({ inactivos: this.checked, pagina: 1 }, true); });
         $('.cl-orden').on('click', function () { cambiar({ orden: $(this).data('orden'), pagina: 1 }, true); });
         $('#clPaginacion').on('click', '.cl-pag:not([disabled])', function () {
             cambiar({ pagina: parseInt($(this).data('pagina'), 10) }, true);

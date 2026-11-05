@@ -334,6 +334,7 @@
     <Compile Include="Infrastructure\Data\ClienteListadoDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteFichaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteCatalogosDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\ClienteAuditDataAccess.cs" />
     <Compile Include="Controllers\Error\ErrorController.cs" />
     <Compile Include="Infrastructure\Data\FacturaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\HistorialDataAccess.cs" />
@@ -364,6 +365,7 @@
     <Compile Include="Infrastructure\Clientes\ClienteFormulario.cs" />
     <Compile Include="Infrastructure\Clientes\ClientesExcelExport.cs" />
     <Compile Include="Infrastructure\Clientes\TextoEnum.cs" />
+    <Compile Include="Infrastructure\Clientes\ClienteAuditoria.cs" />
     <Compile Include="Infrastructure\FormularioHtmlExtensions.cs" />
     <Compile Include="Infrastructure\Validation\ClienteValidationAttributes.cs" />
     <Compile Include="Infrastructure\FirmaVendedor.cs" />

@@ -10,6 +10,7 @@
     var documento = Model.NroDocumento == null ? null : (Model.TipoDocumentoTexto ?? "Doc.") + " " + Model.NroDocumento;
     var lugar = string.Join(", ", new[] { Model.LocalidadNombre, Model.ProvinciaNombre }.Where(x => x != null).Distinct());
     var telefonoPrincipal = Model.Celular ?? Model.Telefono;
+    var esAdmin = User.IsInRole("Administrador"); // baja, reactivación e historial (decisión 8.5)
 }
 @helper Dato(string rotulo, string valor)
 {
@@ -20,8 +21,8 @@
 }
 
 @section Styles {
-    <link href="@Url.Content("~/Content/mat.clientes.listado.css?v=20261104d")" rel="stylesheet" />
-    <link href="@Url.Content("~/Content/mat.clientes.ficha.css?v=20261104b")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mat.clientes.listado.css?v=20261105a")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mat.clientes.ficha.css?v=20261105a")" rel="stylesheet" />
 }
 
 <div class="modern-page-container cf">
@@ -34,7 +35,30 @@
             <span>@TempData["ok"]</span>
         </div>
     }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+            <span>@TempData["error"]</span>
+        </div>
+    }
     <div id="cfAviso" class="alert d-none" role="status"></div>
+
+    @if (!Model.Activo)
+    {
+        <div class="alert alert-warning cf-baja" role="status">
+            <i class="bi bi-person-slash" aria-hidden="true"></i>
+            <div>
+                <strong>Cliente dado de baja</strong>
+                @(Model.FechaBaja.HasValue ? " el " + Model.FechaBaja.Value.ToString("dd/MM/yyyy") : "")@(Model.BajaUsuario != null ? " por " + Model.BajaUsuario : "").
+                No aparece en listados, reservas ni Seguimiento; su historial sigue acá.
+                @if (Model.MotivoBaja != null)
+                {
+                    <div class="small">Motivo: @Model.MotivoBaja</div>
+                }
+            </div>
+        </div>
+    }
 
     <header class="cf-encabezado">
         <span class="cf-avatar" aria-hidden="true">@Model.Iniciales</span>
@@ -56,6 +80,10 @@
                 @if (Model.TipoClienteTexto != null)
                 {
                     <span class="cl-badge">@Model.TipoClienteTexto</span>
+                }
+                @if (!Model.Activo)
+                {
+                    <span class="cl-badge cl-badge--baja">Dado de baja</span>
                 }
             </div>
             <p class="cf-sub">
@@ -79,6 +107,22 @@
             <a href="@Url.Action("Edit", "PersonaCliente", new { id = Model.PersonaId })" class="btn-modern btn-modern-primary">
                 <i class="bi bi-pencil" aria-hidden="true"></i><span>Editar</span>
             </a>
+            @if (esAdmin && Model.Activo)
+            {
+                <button type="button" class="btn-modern btn-modern-secondary cf-peligro" data-bs-toggle="modal" data-bs-target="#cfModalBaja">
+                    <i class="bi bi-person-slash" aria-hidden="true"></i><span>Dar de baja</span>
+                </button>
+            }
+            @if (esAdmin && !Model.Activo)
+            {
+                using (Html.BeginForm("Reactivar", "PersonaCliente", new { id = Model.PersonaId }, FormMethod.Post, new { @class = "d-inline" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-modern btn-modern-secondary">
+                        <i class="bi bi-person-check" aria-hidden="true"></i><span>Reactivar</span>
+                    </button>
+                }
+            }
         </div>
     </header>
 
@@ -124,6 +168,10 @@
         <button type="button" role="tab" class="cf-tab" id="tab-pagos" data-panel="pagos" aria-controls="panel-pagos">Pagos</button>
         <button type="button" role="tab" class="cf-tab" id="tab-cuenta" data-panel="cuenta" aria-controls="panel-cuenta">Cuenta corriente</button>
         <button type="button" role="tab" class="cf-tab" id="tab-facturas" data-panel="facturas" aria-controls="panel-facturas">Facturas <span class="cf-cuenta">@Model.CantidadFacturas</span></button>
+        @if (esAdmin)
+        {
+            <button type="button" role="tab" class="cf-tab" id="tab-historial" data-panel="historial" aria-controls="panel-historial">Historial de cambios</button>
+        }
     </div>
 
     <section id="panel-datos" class="cf-panel" role="tabpanel" aria-labelledby="tab-datos" tabindex="0">
@@ -185,6 +233,11 @@
              data-url="@Url.Action("partialMovimientoNotaCredito", "NotaCredito", new { ClienteID = Model.PersonaId })"></section>
     <section id="panel-facturas" class="cf-panel" role="tabpanel" aria-labelledby="tab-facturas" tabindex="0" hidden
              data-url="@Url.Action("PartialFacturas", "PersonaCliente", new { clienteid = Model.PersonaId })"></section>
+    @if (esAdmin)
+    {
+        <section id="panel-historial" class="cf-panel" role="tabpanel" aria-labelledby="tab-historial" tabindex="0" hidden
+                 data-json="@Url.Action("Historial", "PersonaCliente", new { id = Model.PersonaId })"></section>
+    }
 </div>
 
 <div class="modal fade" id="cfModalContacto" tabindex="-1" aria-labelledby="cfContactoTitulo" aria-hidden="true">
@@ -231,6 +284,35 @@
     </div>
 </div>
 
+@if (esAdmin && Model.Activo)
+{
+    <div class="modal fade" id="cfModalBaja" tabindex="-1" aria-labelledby="cfBajaTitulo" aria-hidden="true">
+        <div class="modal-dialog">
+            @using (Html.BeginForm("DarDeBaja", "PersonaCliente", new { id = Model.PersonaId }, FormMethod.Post, new { @class = "modal-content", id = "cfFormBaja" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h2 class="modal-title h5" id="cfBajaTitulo">Dar de baja a @Model.NombreCompleto</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">El cliente deja de aparecer en el listado, en las búsquedas de reservas y presupuestos y en Seguimiento.
+                        No se borra nada: facturas, pagos y viajes siguen en su ficha, y se puede reactivar.</p>
+                    <div class="modern-form-group mb-0">
+                        <label class="modern-form-label" for="cfBajaMotivo">Motivo <span aria-hidden="true">*</span></label>
+                        <textarea id="cfBajaMotivo" name="motivo" class="modern-form-input" rows="3" maxlength="250" required
+                                  placeholder="Ej.: falleció, pidió no ser contactado, registro duplicado de…"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modern btn-modern-secondary btn-sm" data-bs-dismiss="modal"><span>Cancelar</span></button>
+                    <button type="submit" class="btn-modern btn-modern-primary btn-sm"><i class="bi bi-person-slash" aria-hidden="true"></i> <span>Dar de baja</span></button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
 <script type="application/json" id="cfDatos">@Html.Raw(JsonCamelCaseHelper.ToJson(new
 {
     clienteId = Model.PersonaId,
@@ -240,7 +322,7 @@
 }))</script>
 
 @section Scripts {
-    <script src="@Url.Content("~/Scripts/mat.clientes.ficha.js?v=20261104c")"></script>
+    <script src="@Url.Content("~/Scripts/mat.clientes.ficha.js?v=20261105a")"></script>
     <script>
         MatClienteFicha.init({
             urlFicha: "@Url.Action("Ficha", "Seguimiento")",
