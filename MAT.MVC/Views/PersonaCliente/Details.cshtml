@@ -2,6 +2,7 @@
 @using MAT.MVC.Infrastructure
 @{
     ViewBag.Title = Model.NombreCompleto;
+    ViewBag.BreadcrumbActiveTitle = Model.NombreCompleto.Length > 40 ? Model.NombreCompleto.Substring(0, 39) + "…" : Model.NombreCompleto;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var s = Model.Seguimiento != null ? Model.Seguimiento.Cliente : null;
     var viajes = Model.Seguimiento != null ? Model.Seguimiento.Viajes.Count : 0;

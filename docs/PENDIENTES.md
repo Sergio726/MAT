@@ -21,6 +21,12 @@ Histórico de features ya hechas: [`../SPEC.md`](../SPEC.md). Bitácora: [`../PR
   - `database/2026-09-30_ReservaMenores_Fix.sql` (4 SPs del circuito de reserva con menores; sin esto sigue fallando la reserva con 2+ adicionales) — **Prod: publicado 13/10/2026; DEV: aplicado 29/10/2026**
   - `database/2026-10-29_Persona_LimpiezaTelefonosFechas.sql` (limpieza de datos con respaldo en `dbo.Persona_Limpieza_20261029`) — **DEV y Prod: aplicado 29/10/2026** (Prod: 569 celulares, 1.772 teléfonos, 75 fechas)
   - `database/2026-10-29_SeguimientoClientes.sql` (tabla `ClienteContacto`, `fn_MAT_Seguimiento_Clientes`, SPs `usp_MAT_Seguimiento_*`) — **DEV: aplicado 29/10/2026; Prod: pendiente** (sin esto falla `/Seguimiento` y el recuadro del inicio)
+  - **Módulo Clientes + Seguimiento — correr en Prod en este orden, antes de publicar `MAT.MVC`** (todos `CREATE OR ALTER`, idempotentes; DEV ya aplicado). Cada uno depende del anterior:
+    1. [ ] `database/2026-10-29_SeguimientoClientes.sql` — tabla `ClienteContacto`, `fn_MAT_Seguimiento_Clientes`, SPs de Seguimiento (lo usan la ficha y el listado)
+    2. [ ] `database/2026-11-04_ClienteFormulario.sql` — F1: `usp_MAT_PersonaCliente_Guardar`, `usp_MAT_Persona_BuscarPorDocumento`
+    3. [ ] `database/2026-11-04_ClienteListado.sql` — F2: `usp_MAT_PersonaCliente_Buscar`, `usp_MAT_Reportes_ClientesNuevosPagina`
+    4. [ ] `database/2026-11-04_ClienteFicha.sql` — F3: `usp_MAT_PersonaCliente_Ficha`
+    - Verificación después de cada uno: `SELECT name, modify_date FROM sys.objects WHERE name LIKE 'usp_MAT_PersonaCliente_%' OR name LIKE '%Seguimiento%' ORDER BY modify_date DESC`
   - Otros scripts recientes en `database/` no aplicados
 - [ ] **Viaje — definición de rentabilidad con negocio** — acordar base de ingresos (facturado vs cobrado), qué entra como costo, moneda, prorrateo, permisos. Registrar en [`../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`](../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md) y en [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md). **Bloquea** opciones A–D de schema.
 
