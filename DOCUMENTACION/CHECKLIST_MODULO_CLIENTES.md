@@ -50,3 +50,23 @@ Seguridad
 Navegador / accesibilidad
 - [ ] Teclado: Tab recorre los campos en orden, el foco se ve, Enter guarda.
 - [ ] Celular (ancho 375 px): una columna, barra de acciones abajo con los botones a lo ancho.
+
+## F2 — Listado y búsqueda
+
+Ya verificado en DEV el 04/11/2026 (navegador a ~1100 px, menú lateral abierto); falta celular y la prueba de un vendedor.
+
+Listado (`Clientes → Listado`)
+- [x] Abre con todos los clientes paginados ("Mostrando 1–25 de 11.557"), no solo 10.
+- [x] `mamani` → 84; `53.900.140` y `53900140` → el mismo cliente; teléfono solo en dígitos (guardado como `+54 9 3875 32-7984`) → lo encuentra y lo resalta; `thiago burgos` (orden invertido) → lo encuentra; texto inexistente → "No se encontraron clientes".
+- [x] Filtro Categoría VIP → 368, solo VIP; orden por Alta → más recientes primero; paginación 1 2 … 15.
+- [x] La URL guarda búsqueda, filtros, orden y página: copiarla y abrirla muestra lo mismo.
+- [x] WhatsApp abre `wa.me/549…`; sin teléfono válido el botón queda gris. Menú ⋮: Editar, Historial de pagos, Cuenta corriente (y Facturas si es titular).
+- [x] Sin scroll horizontal a 1100 px.
+- [ ] Clic en la fila abre la ficha; atrás vuelve a la misma página del listado.
+- [ ] Celular (375 px): cada cliente como tarjeta.
+- [ ] Un vendedor (no admin) ve todos los clientes (decisión: todos ven todos).
+
+Altas por período (listado e Inicio)
+- [x] Abre con el mes actual; presets Este mes / Mes pasado / Últimos 30 días / Este año. "Este año" → 1.132 altas, 46 páginas.
+- [x] "Exportar a Excel" descarga todas las altas del período (no solo la página).
+- [x] Encabezados sin cortes; la tabla entra en el modal.

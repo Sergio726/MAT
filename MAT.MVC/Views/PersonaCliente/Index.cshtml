@@ -1,258 +1,117 @@
-@model PagedList.IPagedList<MAT.Entities.PersonaCliente>
 @using MAT.Enums
 @using MAT.Utilities
+@using MAT.MVC.Infrastructure
 @{
     ViewBag.Title = "Clientes";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var categorias = SeguimientoCatalog.GetCategorias();
+    var tiposCliente = Enum.GetValues(typeof(eTipoCliente)).Cast<eTipoCliente>();
 }
 
-<div class="modern-page-container">
+@section Styles {
+    <link href="@Url.Content("~/Content/mat.clientes.listado.css?v=20261104d")" rel="stylesheet" />
+}
+
+<div class="modern-page-container clientes-listado">
     <div class="modern-page-header">
-        <h2 class="modern-page-title">
-            <i class="bi bi-people"></i>
+        <h1 class="modern-page-title">
+            <i class="bi bi-people" aria-hidden="true"></i>
             <span>Clientes</span>
-        </h2>
+        </h1>
         <div class="modern-page-actions">
-            <button type="button" class="btn-modern btn-modern-secondary" onclick="openClientesNuevosModal()"
-                    title="Ver clientes dados de alta en un período">
-                <i class="bi bi-calendar-range"></i>
+            <button type="button" class="btn-modern btn-modern-secondary" onclick="openClientesNuevosModal()">
+                <i class="bi bi-calendar-range" aria-hidden="true"></i>
                 <span>Altas por período</span>
             </button>
             <a href="@Url.Action("Create", "PersonaCliente")" class="btn-modern btn-modern-primary">
-                <i class="bi bi-plus-circle"></i>
-                <span>Agregar Cliente</span>
+                <i class="bi bi-person-plus" aria-hidden="true"></i>
+                <span>Nuevo cliente</span>
             </a>
         </div>
     </div>
 
-    <div class="modern-cliente-search-container">
-        <div class="modern-search-wrapper">
-            <i class="bi bi-search modern-search-icon"></i>
-            <input type="text" 
-                   id="searchClientes" 
-                   class="modern-search-input" 
-                   placeholder="Buscar por palabras: nombre, apellido, documento, teléfono, celular, email" 
-                   autocomplete="off" />
-            <div id="searchLoading" class="modern-search-loading" style="display: none;">
-                <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">Buscando...</span>
-                </div>
-            </div>
+    <form id="clFiltros" class="cl-filtros" role="search" autocomplete="off" onsubmit="return false;">
+        <div class="cl-buscador">
+            <label for="clTexto" class="visually-hidden">Buscar cliente</label>
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" id="clTexto" class="modern-form-input" placeholder="Nombre, DNI, teléfono o email"
+                   aria-describedby="clAyuda" />
+            <button type="button" id="clLimpiar" class="cl-limpiar d-none" aria-label="Limpiar búsqueda"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
         </div>
+        <div class="cl-filtro">
+            <label for="clTipo" class="modern-form-label">Tipo de cliente</label>
+            <select id="clTipo" class="modern-form-select">
+                <option value="">Todos</option>
+                @foreach (var t in tiposCliente)
+                {
+                    <option value="@((int)t)">@t.GetDescription()</option>
+                }
+            </select>
+        </div>
+        <div class="cl-filtro">
+            <label for="clCategoria" class="modern-form-label">Categoría</label>
+            <select id="clCategoria" class="modern-form-select">
+                <option value="">Todas</option>
+                @foreach (var c in categorias)
+                {
+                    <option value="@c.Codigo">@c.Nombre</option>
+                }
+            </select>
+        </div>
+        <p id="clAyuda" class="cl-ayuda">Podés escribir el DNI o el teléfono con o sin puntos, guiones ni espacios, y varias palabras en cualquier orden.</p>
+    </form>
+
+    <div class="cl-barra" aria-live="polite">
+        <span id="clContador" class="cl-contador">Buscando…</span>
+        <label class="cl-tamanio">
+            <span>Por página</span>
+            <select id="clTamanio" class="modern-form-select">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </label>
     </div>
 
-    <div id="clientesContainer" class="modern-clientes-grid">
-        <div class="modern-loading-placeholder">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando...</span>
-            </div>
-            <p class="text-muted">Cargando clientes...</p>
-        </div>
+    <div id="clError" class="alert alert-danger d-none" role="alert"></div>
+
+    <div class="cl-tabla-wrap">
+        <table class="cl-tabla" aria-describedby="clContador">
+            <thead>
+                <tr>
+                    <th scope="col" aria-sort="ascending"><button type="button" class="cl-orden" data-orden="apellido">Cliente <i class="bi" aria-hidden="true"></i></button></th>
+                    <th scope="col" aria-sort="none"><button type="button" class="cl-orden" data-orden="documento">Documento <i class="bi" aria-hidden="true"></i></button></th>
+                    <th scope="col">Contacto</th>
+                    <th scope="col">Categoría</th>
+                    <th scope="col" aria-sort="none"><button type="button" class="cl-orden" data-orden="alta">Alta <i class="bi" aria-hidden="true"></i></button></th>
+                    <th scope="col" class="text-end"><span class="visually-hidden">Acciones</span></th>
+                </tr>
+            </thead>
+            <tbody id="clFilas"></tbody>
+        </table>
     </div>
 
-    <div id="emptyState" class="modern-empty-state" style="display: none;">
-        <i class="bi bi-inbox"></i>
-        <h4>No se encontraron clientes</h4>
-        <p class="text-muted">Probá con otras palabras (cada una se busca en nombre, apellido, documento, teléfono, celular o email).</p>
+    <div id="clVacio" class="modern-empty-state d-none">
+        <i class="bi bi-person-x" aria-hidden="true"></i>
+        <h2 class="h5">No se encontraron clientes</h2>
+        <p class="text-muted">Probá con menos palabras o sacá los filtros.</p>
     </div>
+
+    <nav id="clPaginacion" class="cl-paginacion" aria-label="Páginas de clientes"></nav>
 </div>
 
 @Html.Partial("_ModalClientesNuevosPorPeriodo")
 
-<script type="text/javascript">
-    var searchTimeout;
-    var isSearching = false;
-
-    $(document).ready(function () {
-        // Cargar primeros 12 clientes (sin búsqueda)
-        loadClientes("");
-
-        // Búsqueda por palabras con debounce
-        $("#searchClientes").on("input", function () {
-            var searchTerm = $(this).val().trim();
-            clearTimeout(searchTimeout);
-            if (!isSearching) {
-                $("#searchLoading").show();
-                isSearching = true;
-            }
-            searchTimeout = setTimeout(function () {
-                loadClientes(searchTerm);
-            }, 300);
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/mat.clientes.listado.js?v=20261104b")"></script>
+    <script>
+        MatClientesListado.init({
+            urlBuscar: "@Url.Action("Buscar", "PersonaCliente")",
+            urlFicha: "@Url.Action("Details", "PersonaCliente")",
+            urlEditar: "@Url.Action("Edit", "PersonaCliente")",
+            urlHistorialPagos: "@Url.Action("HistorialdePagos", "PersonaCliente")",
+            urlCuentaCorriente: "@Url.Action("CuentaCorriente", "PersonaCliente")",
+            urlFacturas: "@Url.Action("Facturas", "PersonaCliente")"
         });
-
-        $("#searchClientes").on("focus", function () {
-            $(this).select();
-        });
-    });
-
-    function loadClientes(searchTerm) {
-        $.ajax({
-            url: "@Url.Action("GetClientesTop", "PersonaCliente")",
-            type: "POST",
-            data: { searchTerm: searchTerm },
-            dataType: "json",
-            success: function (response) {
-                $("#searchLoading").hide();
-                isSearching = false;
-
-                if (response.success && response.data && response.data.length > 0) {
-                    renderClientesCards(response.data, searchTerm || "");
-                    $("#emptyState").hide();
-                    $("#clientesContainer").show();
-                } else {
-                    $("#emptyState").show();
-                    $("#clientesContainer").hide();
-                }
-            },
-            error: function (xhr, status, error) {
-                $("#searchLoading").hide();
-                isSearching = false;
-                console.error("Error al cargar clientes:", error);
-                
-                // Mostrar mensaje de error
-                $("#clientesContainer").html(
-                    '<div class="modern-alert-error">' +
-                    '<i class="bi bi-exclamation-circle"></i>' +
-                    '<span>Error al cargar los clientes. Por favor, intenta nuevamente.</span>' +
-                    '</div>'
-                );
-            }
-        });
-    }
-
-    /** Palabras de búsqueda (sin vacías) para resaltar en tarjetas */
-    function getSearchWords(searchTerm) {
-        if (!searchTerm || !String(searchTerm).trim()) return [];
-        return String(searchTerm).trim().split(/\s+/).filter(Boolean);
-    }
-
-    /** Escapa caracteres especiales para usarlos en RegExp */
-    function escapeRegex(str) {
-        if (!str) return "";
-        return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    }
-
-    /** Devuelve HTML seguro con las palabras de búsqueda resaltadas (coincidencia insensible a mayúsculas). */
-    function highlightText(text, searchWords) {
-        if (!text) return "";
-        var safe = escapeHtml(text);
-        if (!searchWords || searchWords.length === 0) return safe;
-        var result = safe;
-        for (var i = 0; i < searchWords.length; i++) {
-            var word = searchWords[i];
-            if (!word) continue;
-            var re = new RegExp(escapeRegex(word), "gi");
-            result = result.replace(re, "<span class=\"modern-search-highlight\">$&</span>");
-        }
-        return result;
-    }
-
-    function renderClientesCards(clientes, searchTerm) {
-        var searchWords = getSearchWords(searchTerm);
-        var html = '<div class="modern-clientes-cards">';
-
-        $.each(clientes, function (index, cliente) {
-            var apellido = cliente.Apellido || "";
-            var nombre = cliente.Nombre || "";
-            var fullName = apellido + (apellido && nombre ? ", " : "") + nombre;
-            if (!fullName.trim()) fullName = "Sin nombre";
-
-            var documento = cliente.NroDocumento || "-";
-            var telefono = cliente.Telefono || cliente.Celular || "-";
-            var localidad = cliente.LocalidadNombre || "-";
-            var nacionalidad = cliente.Nacionalidad || "-";
-            var isTitular = cliente.IsTituarFactura == 1 || cliente.IsTituarFactura === true;
-
-            var nameHtml = highlightText(fullName, searchWords);
-            var docHtml = highlightText(documento, searchWords);
-            var telHtml = highlightText(telefono, searchWords);
-            var locHtml = highlightText(localidad, searchWords);
-            var nacHtml = highlightText(nacionalidad, searchWords);
-
-            html += '<div class="modern-cliente-card">';
-            html += '<div class="modern-cliente-card-header">';
-            html += '<div class="modern-cliente-card-avatar">';
-            html += '<i class="bi bi-person-circle"></i>';
-            html += '</div>';
-            html += '<div class="modern-cliente-card-info">';
-            html += '<h4 class="modern-cliente-card-name">' + nameHtml + '</h4>';
-            if (isTitular) {
-                html += '<span class="badge badge-info" title="Titular de Facturas">';
-                html += '<i class="bi bi-receipt"></i> Titular de Facturas';
-                html += '</span>';
-            }
-            html += '</div>';
-            html += '</div>';
-
-            html += '<div class="modern-cliente-card-body">';
-            html += '<div class="modern-cliente-card-field">';
-            html += '<i class="bi bi-card-text"></i>';
-            html += '<span class="field-label">Documento:</span>';
-            html += '<span class="field-value">' + docHtml + '</span>';
-            html += '</div>';
-
-            if (telefono !== "-") {
-                html += '<div class="modern-cliente-card-field">';
-                html += '<i class="bi bi-telephone"></i>';
-                html += '<span class="field-label">Teléfono:</span>';
-                html += '<span class="field-value">' + telHtml + '</span>';
-                html += '</div>';
-            }
-
-            if (localidad !== "-") {
-                html += '<div class="modern-cliente-card-field">';
-                html += '<i class="bi bi-geo-alt"></i>';
-                html += '<span class="field-label">Localidad:</span>';
-                html += '<span class="field-value">' + locHtml + '</span>';
-                html += '</div>';
-            }
-
-            if (nacionalidad !== "-") {
-                html += '<div class="modern-cliente-card-field">';
-                html += '<i class="bi bi-flag"></i>';
-                html += '<span class="field-label">Nacionalidad:</span>';
-                html += '<span class="field-value">' + nacHtml + '</span>';
-                html += '</div>';
-            }
-
-            html += '</div>';
-
-            html += '<div class="modern-cliente-card-actions">';
-            html += '<a href="/PersonaCliente/Edit/' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Editar Cliente">';
-            html += '<i class="bi bi-pencil"></i>';
-            html += '</a>';
-            html += '<a href="/PersonaCliente/Details/' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Ver Detalles">';
-            html += '<i class="bi bi-eye"></i>';
-            html += '</a>';
-            html += '<a href="/PersonaCliente/HistorialdePagos?clienteid=' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Historial de Pagos">';
-            html += '<i class="bi bi-clock-history"></i>';
-            html += '</a>';
-            html += '<a href="/PersonaCliente/CuentaCorriente?clienteid=' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Movimientos Nota de Crédito">';
-            html += '<i class="bi bi-credit-card"></i>';
-            html += '</a>';
-            if (isTitular) {
-                html += '<a href="/PersonaCliente/Facturas?clienteid=' + escapeHtml(cliente.PersonaId) + '" class="btn-modern-icon" title="Titular de Facturas">';
-                html += '<i class="bi bi-receipt"></i>';
-                html += '</a>';
-            }
-            html += '</div>';
-
-            html += '</div>';
-        });
-
-        html += '</div>';
-        $("#clientesContainer").html(html);
-    }
-
-    function escapeHtml(text) {
-        if (!text) return "";
-        var map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return String(text).replace(/[&<>"']/g, function (m) { return map[m]; });
-    }
-</script>
+    </script>
+}

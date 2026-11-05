@@ -93,72 +93,114 @@ namespace MAT.MVC.Controllers.PersonaCliente
             }
         }
 
+        #region Listado y Altas por período (paginados en la base)
+
+        private static readonly string[] OrdenesListado = { "apellido", "alta", "documento" };
+        private static readonly int[] TamaniosPagina = { 25, 50, 100 };
+
         /// <summary>
-        /// Detalle de clientes dados de alta en un rango de fechas (para modal con selector).
-        /// Filtra por FechaAlta del cliente. Si el usuario es vendedor, filtra solo sus clientes.
+        /// Listado de clientes paginado: palabras en cualquier orden, documento y teléfonos por dígitos,
+        /// filtros por tipo de cliente y categoría de Seguimiento. Antes el listado usaba el SP de
+        /// autocompletado y se cortaba en 10 clientes sin total ni paginación.
         /// </summary>
         [Authorize]
-        public JsonResult GetClientesNuevosDetalle(string fechaDesde = null, string fechaHasta = null)
+        [HttpGet]
+        public ActionResult Buscar(string q = null, int? tipo = null, string categoria = null, string orden = "apellido", int pagina = 1, int tamanio = 25)
         {
             try
             {
-                // Parsear rango; fallback al mes actual
-                DateTime fechaInicio, fechaFin;
-                if (!DateTime.TryParseExact(fechaDesde, "dd/MM/yyyy",
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        System.Globalization.DateTimeStyles.None, out fechaInicio))
-                    fechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                if (!DateTime.TryParseExact(fechaHasta, "dd/MM/yyyy",
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        System.Globalization.DateTimeStyles.None, out fechaFin))
-                    fechaFin = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
+                q = string.IsNullOrWhiteSpace(q) ? null : q.Trim();
+                if (q != null && q.Length > 200) q = q.Substring(0, 200);
+                categoria = SeguimientoCatalog.EsCategoriaValida(categoria) ? categoria : null;
+                orden = OrdenesListado.Contains(orden) ? orden : "apellido";
+                tamanio = TamaniosPagina.Contains(tamanio) ? tamanio : 25;
+                pagina = Math.Max(1, pagina);
 
-                // Filtro por vendedor: null = admin (ver todos)
-                Guid? vendedorId = null;
-                bool isAdmin = Roles.IsUserInRole(User.Identity.Name, "Administrador");
-                if (!isAdmin)
+                var resultado = ClienteListadoDataAccess.Buscar(q, tipo, categoria, orden, pagina, tamanio);
+                var categorias = SeguimientoCatalog.GetCategorias().ToDictionary(c => c.Codigo, c => c.Nombre);
+                foreach (var c in resultado.Items)
                 {
-                    try { vendedorId = MATContext.CurrentVendedor?.VendedorId; }
-                    catch { vendedorId = null; }
+                    string nombreCategoria;
+                    c.CategoriaNombre = c.Categoria != null && categorias.TryGetValue(c.Categoria, out nombreCategoria) ? nombreCategoria : null;
+                    c.TipoNombre = Enum.IsDefined(typeof(eTipoCliente), c.TipoId) ? ((eTipoCliente)c.TipoId).GetDescription() : null;
+                    var telefono = WhatsAppHelper.ElegirTelefono(c.Celular, c.Telefono);
+                    c.TieneWhatsApp = telefono != null;
+                    c.WhatsAppUrl = telefono == null ? null : WhatsAppHelper.ConstruirEnlace(telefono, null);
                 }
+                return JsonCamelCaseHelper.Serialize(new { success = true, resultado.Total, resultado.Pagina, resultado.Tamanio, data = resultado.Items });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.Buscar");
+                return JsonCamelCaseHelper.Serialize(new { success = false, message = msg });
+            }
+        }
 
-                SqlParameter[] spParams = new SqlParameter[]
+        /// <summary>
+        /// Clientes dados de alta en un rango de fechas, paginado (modal "Altas por período" del listado y del inicio).
+        /// Antes devolvía todas las filas de una vez (3.808 entre 2020 y hoy).
+        /// </summary>
+        [Authorize]
+        public ActionResult GetClientesNuevosDetalle(string fechaDesde = null, string fechaHasta = null, int pagina = 1, int tamanio = 25)
+        {
+            try
+            {
+                DateTime desde, hasta;
+                LeerPeriodo(fechaDesde, fechaHasta, out desde, out hasta);
+                tamanio = TamaniosPagina.Contains(tamanio) ? tamanio : 25;
+                var resultado = ClienteListadoDataAccess.ClientesNuevos(desde, hasta, Math.Max(1, pagina), tamanio);
+                return JsonCamelCaseHelper.Serialize(new
                 {
-                    DBHelper.MakeParam("@FechaInicio", SqlDbType.DateTime,         0, fechaInicio),
-                    DBHelper.MakeParam("@FechaFin",    SqlDbType.DateTime,         0, fechaFin),
-                    DBHelper.MakeParam("@VendedorId",  SqlDbType.UniqueIdentifier, 0, vendedorId.HasValue ? (object)vendedorId.Value : DBNull.Value)
-                };
-
-                var clientes = new List<object>();
-                using (SqlDataReader reader = DBHelper.ExecuteDataReader("dbo.usp_MAT_Reportes_ClientesNuevos", spParams))
-                {
-                    while (reader.Read())
-                    {
-                        clientes.Add(new
-                        {
-                            ClienteNombre  = reader["ClienteNombre"]?.ToString() ?? "",
-                            NroDocumento   = reader["NroDocumento"]?.ToString() ?? "",
-                            Celular        = reader["Celular"]?.ToString() ?? "",
-                            Email          = reader["Email"]?.ToString() ?? "",
-                            FechaAlta      = reader["FechaAlta"] != DBNull.Value
-                                                ? Convert.ToDateTime(reader["FechaAlta"]).ToString("dd/MM/yyyy")
-                                                : "",
-                            PrimeraFactura = reader["PrimeraFecha"] != DBNull.Value
-                                                ? Convert.ToDateTime(reader["PrimeraFecha"]).ToString("dd/MM/yyyy")
-                                                : "",
-                            VendedorNombre = reader["VendedorNombre"]?.ToString() ?? ""
-                        });
-                    }
-                }
-
-                return Json(new { success = true, data = clientes }, JsonRequestBehavior.AllowGet);
+                    success = true,
+                    resultado.Total,
+                    resultado.Pagina,
+                    resultado.Tamanio,
+                    desde = desde.ToString("dd/MM/yyyy"),
+                    hasta = hasta.ToString("dd/MM/yyyy"),
+                    data = resultado.Items
+                });
             }
             catch (Exception e)
             {
                 var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.GetClientesNuevosDetalle");
-                return Json(new { success = false, message = msg }, JsonRequestBehavior.AllowGet);
+                return JsonCamelCaseHelper.Serialize(new { success = false, message = msg });
             }
         }
+
+        /// <summary>Excel con todas las altas del período (para eso se usa el reporte).</summary>
+        [Authorize]
+        public ActionResult ClientesNuevosExcel(string fechaDesde = null, string fechaHasta = null)
+        {
+            try
+            {
+                DateTime desde, hasta;
+                LeerPeriodo(fechaDesde, fechaHasta, out desde, out hasta);
+                var todas = ClienteListadoDataAccess.ClientesNuevos(desde, hasta, 1, 0).Items;
+                var bytes = ClientesExcelExport.BuildAltas(todas);
+                return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    string.Format("altas-clientes-{0:yyyy-MM-dd}-a-{1:yyyy-MM-dd}.xlsx", desde, hasta));
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.ClientesNuevosExcel");
+                return new HttpStatusCodeResult(500, msg);
+            }
+        }
+
+        /// <summary>"dd/MM/yyyy"; si falta o es inválida, el mes actual (hora argentina). Desde ≤ hasta.</summary>
+        private static void LeerPeriodo(string fechaDesde, string fechaHasta, out DateTime desde, out DateTime hasta)
+        {
+            var hoy = ClienteValidacion.HoyArgentina();
+            if (!ClienteValidacion.TryParseFecha(fechaDesde, out desde)) desde = new DateTime(hoy.Year, hoy.Month, 1);
+            if (!ClienteValidacion.TryParseFecha(fechaHasta, out hasta)) hasta = new DateTime(hoy.Year, hoy.Month, 1).AddMonths(1).AddDays(-1);
+            if (hasta < desde)
+            {
+                var aux = desde; desde = hasta; hasta = aux;
+            }
+        }
+
+        #endregion
+
 
         #region Formulario de cliente (alta, alta desde presupuesto y edición)
 
