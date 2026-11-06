@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-07] — Panel principal, bloque C: menú lateral
+- **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque C). Afecta a todas las pantallas con `_Layout`.
+- **Página actual** (`_Layout.cshtml`, script del menú): un solo ítem —el href más largo que coincide— con `aria-current="page"`; el submenú que lo contiene arranca abierto con la clase `show` de Bootstrap y el padre queda con `menu-padre-actual` (marcado más tenue).
+- **Estilo** (`modern-menu.css`, `saas-variables.css`): página actual con fondo de acento 8 %, barra izquierda de 3 px (sombra interior) y texto 600 en blanco (el fucsia sobre el menú da 3,5:1: sirve para ícono y barra, no para texto); ítems de 38 px y subítems de 34 px; encabezados de grupo de 10 px; borde sutil entre menú y contenido; foco visible; `prefers-reduced-motion`.
+- **Bugs corregidos:** `common.js` le ponía `active` a todo submenú abierto, la misma clase que pintaba la página actual (ahora `is-open`); el CSS forzaba abierto el padre de la página actual con `display:block !important`, así no se podía cerrar y el chevron quedaba desincronizado; el chevron saltaba al rotar por un `translateY(-50%)` de `mat.styles.custom.css`.
+- **Menú** (`_MainNav`): Butacas con `bi-ticket-perforated`, íconos con `aria-hidden`, "Facturación" con tilde.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV: una sola página actual en `/PersonaCliente/Index`, `/FacturaFiscal/Create?tipo=2` y `/Home/Index`; el padre se cierra y `aria-expanded`/chevron siguen; Hoteles abierto no se ve como actual; menú cerrado 608 px (+56 de la barra = 664 < 768); sin errores de consola.
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Panel principal, bloque B: reorganización del inicio
 - **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque B). Sobre el bloque A (PR #45).
 - **Orden nuevo** (`Views/Home/Index.cshtml`): accesos frecuentes → indicadores del mes → dos columnas desde 1200 px (Próximas salidas `2fr` · Cumpleaños `1fr`; debajo de 1200 px apiladas, salidas primero). El encabezado de indicadores pasó al mismo contenedor que las tarjetas (antes quedaba 12 px más ancho).
