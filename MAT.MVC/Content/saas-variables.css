@@ -19,6 +19,17 @@
     --info-color-light: rgba(37, 99, 235, 0.15);
     --warning-color: #b45309;
 
+    /* Tarjetas del panel principal (2026-11-07): un solo lenguaje para accesos, salidas y cumpleaños */
+    --surface-card: #ffffff;
+    --card-radius: 12px;
+    --card-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --card-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.08);
+    --card-padding: 1rem 1.25rem;
+    --text-strong: #111827;
+    /* Rosa para texto y botones sobre fondo claro: 5,1:1 con blanco (el del logo da 4,12:1) */
+    --brand-primary-accesible: #c9245f;
+    --brand-primary-soft: #fdf2f8;
+
     /* ===== PALETA MENÚ LATERAL =====
        Actual: Slate (gris azulado suave, coherente con el sitio).
        Alternativas (descomentar y comentar la actual en modern-menu.css si se desea cambiar):

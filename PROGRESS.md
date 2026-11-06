@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-07] — Panel principal, bloque B: reorganización del inicio
+- **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque B). Sobre el bloque A (PR #45).
+- **Orden nuevo** (`Views/Home/Index.cshtml`): accesos frecuentes → indicadores del mes → dos columnas desde 1200 px (Próximas salidas `2fr` · Cumpleaños `1fr`; debajo de 1200 px apiladas, salidas primero). El encabezado de indicadores pasó al mismo contenedor que las tarjetas (antes quedaba 12 px más ancho).
+- **Accesos frecuentes** (`_QuickAccess`, `QuickAccessCatalog.EsAccion`): una fila de 6 chips de 56 px (ícono + texto, el subtítulo queda como tooltip), 3 columnas < 1200 px y 2 < 768 px; "Nuevo cliente" con estilo de acción y el resto neutro. "Todos los módulos" pasa a enlace del encabezado (se retira en el bloque F). Rutas sin cambios.
+- **Un solo estilo** (`Content/mat.home.css`, tokens nuevos en `saas-variables.css`): `.home-card` y `.home-card__head/__title/__sub` para accesos, salidas y cumpleaños; sin borde gris; `saas-variables.css` versionado en `_Layout`.
+- **Cumpleaños** colapsado por defecto con "37 cumpleaños · 37 sin saludar", botón "Ver lista / Ocultar lista" con `aria-expanded`, preferencia en `localStorage`.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV a 1536×729: accesos (102–227 px) e indicadores (247–399 px) sin scroll, dos columnas (777 + 388 px), bordes alineados, lista de cumpleaños y "Todos los módulos" se abren y recuerdan el estado. Sin captura de pantalla (el navegador no la devolvió).
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Panel principal, bloque A: correcciones de lectura
 - **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque A).
 - **Próximas salidas** (`mat.home.salidas.js/.css`, `ProximaSalidaDto`): barra y texto con la misma métrica — barra = vendidos + pre-reservas sobre el total (dos tramos), texto "7 de 60 vendidos · 43 libres · 10 pre-reservas"; `role="progressbar"` con `aria-valuenow/min/max/valuetext`. Etiqueta solo en Últimos lugares (≤ 15 % libre) y Completo; "Disponible" ya no se muestra. 3 visibles + "Ver N más".

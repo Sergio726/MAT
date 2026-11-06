@@ -12,6 +12,8 @@ namespace MAT.MVC.Infrastructure
         public string Url { get; set; }
         public string Icon { get; set; }
         public string Variant { get; set; }
+        /// <summary>true = crea algo (alta); se muestra como botón. false = navega a una pantalla.</summary>
+        public bool EsAccion { get; set; }
     }
 
     /// <summary>
@@ -27,7 +29,7 @@ namespace MAT.MVC.Infrastructure
                 Item("Seguimiento clientes", "Cumpleaños, categorías y contactos", "/Seguimiento/Index", "bi-person-heart", "accent"),
                 Item("Listado de viajes", "Reservas y disponibilidad", "/Viaje/Index", "bi-airplane", "brand"),
                 Item("Viajes por fecha", "Consultar salidas por día", "/Home/ViajesPorFecha", "bi-calendar-event", "warning"),
-                Item("Nuevo cliente", "Alta de persona cliente", "/PersonaCliente/Create", "bi-person-plus", "info"),
+                Accion(Item("Nuevo cliente", "Alta de persona cliente", "/PersonaCliente/Create", "bi-person-plus", "info")),
                 Item("Buscar facturas", "Consulta y gestión de facturas", "/Factura/Index", "bi-receipt", "accent")
             };
         }
@@ -50,6 +52,12 @@ namespace MAT.MVC.Infrastructure
             }
 
             return items;
+        }
+
+        private static QuickAccessItem Accion(QuickAccessItem item)
+        {
+            item.EsAccion = true;
+            return item;
         }
 
         private static QuickAccessItem Item(string title, string description, string url, string icon, string variant)
