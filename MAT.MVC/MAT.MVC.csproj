@@ -334,9 +334,11 @@
     <Compile Include="Infrastructure\Data\ClienteListadoDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteFichaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\DashboardDataAccess.cs" />
+    <Compile Include="Infrastructure\Data\NotificacionDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteCatalogosDataAccess.cs" />
     <Compile Include="Infrastructure\Data\ClienteAuditDataAccess.cs" />
     <Compile Include="Controllers\Error\ErrorController.cs" />
+    <Compile Include="Controllers\Notificaciones\NotificacionesController.cs" />
     <Compile Include="Infrastructure\Data\FacturaDataAccess.cs" />
     <Compile Include="Infrastructure\Data\HistorialDataAccess.cs" />
     <Compile Include="Infrastructure\HistorialPagosLoader.cs" />
@@ -452,6 +454,7 @@
     <Compile Include="Models\Clientes\ClienteListadoDtos.cs" />
     <Compile Include="Models\Clientes\ClienteFichaModel.cs" />
     <Compile Include="Models\Home\ProximaSalidaDto.cs" />
+    <Compile Include="Models\Notificaciones\NotificacionDto.cs" />
     <Compile Include="Models\Clientes\ClienteCatalogos.cs" />
     <Compile Include="Models\Reportes\ReporteRankingRowDto.cs" />
     <Compile Include="Models\Reportes\ReporteViajeLookupDto.cs" />
@@ -505,6 +508,7 @@
     <Content Include="Content\mat.clientes.listado.css" />
     <Content Include="Content\mat.clientes.ficha.css" />
     <Content Include="Content\mat.home.salidas.css" />
+    <Content Include="Content\mat.notificaciones.css" />
     <Content Include="Content\mat.accesibilidad.css" />
     <Content Include="Content\login-split.css" />
     <Content Include="Content\modern-account.css" />
@@ -782,6 +786,7 @@
     <Content Include="Views\Home\_QuickAccess.cshtml" />
     <Content Include="Views\Home\_CumpleaniosHoy.cshtml" />
     <Content Include="Views\Home\_ProximasSalidas.cshtml" />
+    <Content Include="Views\Shared\_Notificaciones.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Persona\Index.cshtml" />
     <Content Include="Views\Persona\Details.cshtml" />
@@ -828,6 +833,7 @@
     <Content Include="Scripts\mat.clientes.listado.js" />
     <Content Include="Scripts\mat.clientes.ficha.js" />
     <Content Include="Scripts\mat.home.salidas.js" />
+    <Content Include="Scripts\mat.notificaciones.js" />
     <Content Include="Scripts\mat.combo.js" />
     <Content Include="Scripts\mat.ui.js" />
     <Content Include="Scripts\mat.reportes-excel-export.js" />

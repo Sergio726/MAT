@@ -2,6 +2,13 @@
 
 ---
 
+### [2026-11-06] — Campanita de avisos con panel lateral
+- **Base:** tablas `Notificacion` (aviso único por `Clave`, con vencimiento) y `NotificacionLeida` (leído por usuario); SPs `usp_MAT_Notificacion_Generar` (viaje que sale en ≤ 7 días con lugares libres, últimos lugares 1–5, viaje completo, cumpleaños de clientes activos de hoy; no repite; borra vencidos hace > 30 días), `usp_MAT_Notificacion_GetParaUsuario`, `usp_MAT_Notificacion_MarcarLeidas`; `database/2026-11-06_Notificaciones.sql`, aplicado en DEV.
+- **Aplicación:** `NotificacionesController` (`Lista`, `MarcarLeidas` con antiforgery), `NotificacionDataAccess` (genera como mucho cada 5 min), `Views/Shared/_Notificaciones.cshtml` en `_Layout` (campanita junto al perfil + offcanvas de Bootstrap desde la derecha), `Scripts/mat.notificaciones.js`, `Content/mat.notificaciones.css`.
+- **Comportamiento:** número de no leídos (se actualiza al cambiar de página y cada 5 min); al abrir el panel los nuevos pasan a leídos y quedan resaltados hasta cerrarlo; "Marcar todas como leídas"; el leído se guarda en la base por usuario. Los títulos llevan fecha fija ("sale el 09/11"), no "en 3 días", para no quedar viejos.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; DEV: generar dos veces no duplica (4 avisos), marcar no duplica, navegador (4 → abrir → 0, reabrir "Todo leído", 4 leídos guardados para admindev).
+- Estado: ✅ completo en DEV (falta el script en Prod)
+
 ### [2026-11-06] — Inicio: panel "Próximas salidas" en lugar del recuadro flotante
 - **Problema:** el recuadro "Viajes Próximos a Salir" se abría solo en cada entrada (volvía a las 12 h y solo se recordaba en ese navegador) y su dato era incorrecto: `usp_MAT_Dashboard_Viajes_LugaresDisponibles` no ordenaba (mostraba 7 viajes cualesquiera), dejaba afuera los viajes de hoy (comparaba con la hora del servidor), ocultaba los completos, calculaba los días con el reloj del servidor (UTC) y contaba "sin pasajero" en vez del estado Disponible. En Prod el 06/11 mostraba 7 de 9 viajes, sin los dos que salían ese día.
 - **Archivos:** SP `usp_MAT_Dashboard_ProximasSalidas` + `database/2026-11-06_HomeProximasSalidas.sql` (aplicado en DEV), `Models/Home/ProximaSalidaDto.cs`, `Infrastructure/Data/DashboardDataAccess.cs`, `HomeController.ProximasSalidas` (JSON, caché 2 min), `Views/Home/_ProximasSalidas.cshtml`, `Scripts/mat.home.salidas.js`, `Content/mat.home.salidas.css`, `Views/Home/Index.cshtml` (sin el recuadro), test `ProximaSalidaTests`.

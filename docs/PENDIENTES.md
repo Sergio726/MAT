@@ -47,6 +47,7 @@ Decisiones abiertas que no bloquean el pase: activar la 404 propia (`httpErrors`
     7. [ ] `database/2026-11-04_ClienteSeguimientoF5.sql` — F5: `ClienteContacto.Canal`, `usp_MAT_ClienteContacto_Insert` con canal, `usp_MAT_Seguimiento_ClientesPagina` (Seguimiento paginado). No modifica datos
     8. [ ] `database/2026-11-04_ClienteBajaAuditoria.sql` — F6: columnas de baja en `Cliente` (todos quedan activos), tabla `ClienteAudit`, filtros de activos en listado, autocompletado y Seguimiento, SPs de baja e historial. No modifica datos
     9. [ ] `database/2026-11-06_HomeProximasSalidas.sql` — Inicio: `usp_MAT_Dashboard_ProximasSalidas` (panel Próximas salidas). No modifica datos; independiente de los anteriores
+    10. [ ] `database/2026-11-06_Notificaciones.sql` — Campanita: tablas `Notificacion` y `NotificacionLeida`, SPs `usp_MAT_Notificacion_*`. No modifica datos. **Después del 8** (los cumpleaños usan `Cliente.Activo`)
     - Verificación después de cada uno: `SELECT name, modify_date FROM sys.objects WHERE name LIKE 'usp_MAT_PersonaCliente_%' OR name LIKE '%Seguimiento%' ORDER BY modify_date DESC`
   - Otros scripts recientes en `database/` no aplicados
 - [ ] **Viaje — definición de rentabilidad con negocio** — acordar base de ingresos (facturado vs cobrado), qué entra como costo, moneda, prorrateo, permisos. Registrar en [`../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md`](../DOCUMENTACION/VIAJE_RENTABILIDAD_GASTOS_INVESTIGACION.md) y en [`DECISIONES_ABIERTAS.md`](DECISIONES_ABIERTAS.md). **Bloquea** opciones A–D de schema.
