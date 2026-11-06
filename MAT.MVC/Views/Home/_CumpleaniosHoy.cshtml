@@ -1,31 +1,34 @@
-@* Recuadro "Cumpleaños de hoy" del inicio: se carga por AJAX para no demorar el panel. *@
+@* Recuadro "Cumpleaños de hoy" del inicio: se carga por AJAX para no demorar el panel.
+   Arranca colapsado (muestra solo el resumen) y recuerda en este navegador si el usuario lo abrió. *@
 <style>
-    .sg-widget { background: #fff; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
-    .sg-widget-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
-    .sg-widget-title { font-size: 1rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
-    .sg-widget-title i { color: var(--primary-color, #e91e63); }
     .sg-widget-list { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.35rem 1rem; }
     .sg-widget-list li { font-size: 0.875rem; }
     .sg-widget-list a { color: var(--text-primary, #1f2937); text-decoration: none; font-weight: 500; }
-    .sg-widget-list a:hover { color: var(--primary-color, #e91e63); text-decoration: underline; }
+    .sg-widget-list a:hover { color: var(--brand-primary-accesible, #c9245f); text-decoration: underline; }
     .sg-widget .sg-sub { font-size: 0.8125rem; color: var(--text-secondary, #6b7280); }
     .sg-widget .sg-ok { color: #166534; }
     .sg-widget-list a.sg-ver-todos { color: var(--brand-primary-accesible, #c9245f); font-weight: 600; }
 </style>
 
-<section class="sg-widget" id="sg-widget-cumple" aria-label="Cumpleaños de hoy">
-    <div class="sg-widget-head">
+<section class="home-card sg-widget" id="sg-widget-cumple" aria-labelledby="sg-cumple-titulo">
+    <div class="home-card__head">
         <div>
-            <h2 class="sg-widget-title"><i class="bi bi-cake2" aria-hidden="true"></i> Cumpleaños de hoy</h2>
-            <div class="sg-sub" data-rol="contador">Cargando…</div>
+            <h2 class="home-card__title" id="sg-cumple-titulo"><i class="bi bi-cake2" aria-hidden="true"></i> <span>Cumpleaños de hoy</span></h2>
+            <div class="home-card__sub" data-rol="contador">Cargando…</div>
         </div>
-        @* Solo navega a Seguimiento (no envía nada): antes decía "Saludar" y parecía un envío masivo *@
-        <a href="@Url.Action("Index", "Seguimiento")" class="btn-modern btn-modern-secondary btn-sm">
-            <i class="bi bi-person-heart" aria-hidden="true"></i>
-            <span>Ver seguimiento</span>
-        </a>
+        <div class="home-card__acciones">
+            <button type="button" class="home-card__link" data-rol="plegar" aria-expanded="false" aria-controls="sg-cumple-lista">
+                <span>Ver lista</span>
+                <i class="bi bi-chevron-down home-card__chevron" aria-hidden="true"></i>
+            </button>
+            @* Solo navega a Seguimiento (no envía nada): antes decía "Saludar" y parecía un envío masivo *@
+            <a href="@Url.Action("Index", "Seguimiento")" class="btn-modern btn-modern-secondary btn-sm">
+                <i class="bi bi-person-heart" aria-hidden="true"></i>
+                <span>Ver seguimiento</span>
+            </a>
+        </div>
     </div>
-    <div data-rol="lista"></div>
+    <div data-rol="lista" id="sg-cumple-lista" hidden></div>
 </section>
 
 <script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261107a")"></script>
@@ -35,6 +38,22 @@
             contenedor: "#sg-widget-cumple",
             url: "@Url.Action("Cumpleanios", "Seguimiento")",
             urlSeguimiento: "@Url.Action("Index", "Seguimiento")"
+        });
+
+        // Colapsado por defecto; la preferencia queda en este navegador
+        var clave = "mat.inicio.cumpleanios.abierto";
+        var $caja = $("#sg-widget-cumple"), $lista = $caja.find('[data-rol="lista"]'), $boton = $caja.find('[data-rol="plegar"]');
+        function leer() { try { return localStorage.getItem(clave) === "1"; } catch (e) { return false; } }
+        function aplicar(abierto) {
+            $lista.prop("hidden", !abierto);
+            $boton.attr("aria-expanded", abierto ? "true" : "false").toggleClass("collapsed", !abierto)
+                .find("span").text(abierto ? "Ocultar lista" : "Ver lista");
+        }
+        aplicar(leer());
+        $boton.on("click", function () {
+            var abierto = $boton.attr("aria-expanded") !== "true";
+            try { localStorage.setItem(clave, abierto ? "1" : "0"); } catch (e) { }
+            aplicar(abierto);
         });
     });
 </script>

@@ -1,12 +1,12 @@
 @* Panel "Próximas salidas" del inicio. Reemplaza al recuadro flotante "Viajes Próximos a Salir", que se abría solo
    en cada entrada. Se carga por AJAX (HomeController.ProximasSalidas) para no demorar el inicio. *@
-<link href="@Url.Content("~/Content/mat.home.salidas.css?v=20261107a")" rel="stylesheet" />
+<link href="@Url.Content("~/Content/mat.home.salidas.css?v=20261107b")" rel="stylesheet" />
 
-<section class="hs-panel" id="hs-proximas-salidas" aria-labelledby="hs-titulo" aria-busy="true">
-    <div class="hs-head">
+<section class="home-card hs-panel" id="hs-proximas-salidas" aria-labelledby="hs-titulo" aria-busy="true">
+    <div class="home-card__head">
         <div>
-            <h2 class="hs-titulo" id="hs-titulo"><i class="bi bi-bus-front" aria-hidden="true"></i> Próximas salidas</h2>
-            <div class="hs-sub" data-rol="resumen">Cargando…</div>
+            <h2 class="home-card__title" id="hs-titulo"><i class="bi bi-bus-front" aria-hidden="true"></i> <span>Próximas salidas</span></h2>
+            <div class="home-card__sub" data-rol="resumen">Cargando…</div>
         </div>
         <a href="@Url.Action("ViajesPorFecha", "Home")" class="btn-modern btn-modern-secondary btn-sm">
             <i class="bi bi-calendar-event" aria-hidden="true"></i>
