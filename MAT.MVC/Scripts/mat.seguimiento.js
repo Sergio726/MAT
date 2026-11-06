@@ -417,7 +417,11 @@
                     (r.edadQueCumple ? ' <span class="sg-sub">(' + r.edadQueCumple + ')</span>' : '') +
                     (r.esMenor ? ' <span class="sg-sub">· menor de edad</span>' : '') + ' ' + estado + '</li>';
             }).join('');
-            if (rows.length > max) html += '<li class="sg-sub">y ' + (rows.length - max) + ' más…</li>';
+            // Antes era un <li> sin enlace: ahora lleva a Seguimiento, donde está la lista completa con el saludo armado
+            if (rows.length > max) {
+                html += '<li><a class="sg-ver-todos" href="' + escHtml(opciones.urlSeguimiento) + '">Ver los ' + (rows.length - max) +
+                    ' restantes en Seguimiento <i class="bi bi-arrow-right" aria-hidden="true"></i></a></li>';
+            }
             $box.find('[data-rol="lista"]').html(html ? '<ul class="sg-widget-list">' + html + '</ul>' : '');
         }).fail(function () {
             $box.find('[data-rol="lista"]').html('<div class="sg-sub">No se pudieron cargar los cumpleaños.</div>');

@@ -1,0 +1,26 @@
+/* Ajustes del inicio (Views/Home): indicadores del encabezado. Bloque A del plan del panel principal. */
+
+/* Pie "Ver detalle ›": deja claro sin pasar el mouse que la tarjeta abre el detalle */
+.dashboard-hero-kpi__ver {
+    margin-top: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.dashboard-hero-kpi__ver .bi {
+    font-size: 0.6875rem;
+    transition: transform 0.15s ease;
+}
+
+.dashboard-hero-kpi:hover .dashboard-hero-kpi__ver .bi,
+.dashboard-hero-kpi:focus-visible .dashboard-hero-kpi__ver .bi {
+    transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-hero-kpi__ver .bi { transition: none; }
+}
