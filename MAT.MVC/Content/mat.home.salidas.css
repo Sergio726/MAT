@@ -1,0 +1,44 @@
+/* Panel "Próximas salidas" del inicio (Views/Home/_ProximasSalidas.cshtml) */
+
+.hs-panel { background: #fff; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+.hs-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.hs-titulo { font-size: 1rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+.hs-titulo i { color: var(--brand-primary-accesible, #c9245f); }
+.hs-sub { font-size: 0.8125rem; color: #6b7280; }
+
+.hs-lista { list-style: none; padding: 0; margin: 0.75rem 0 0; }
+.hs-fila { display: grid; grid-template-columns: 3rem minmax(0, 1fr) minmax(220px, 300px); gap: 0.875rem; align-items: center; padding: 0.625rem 0; border-top: 1px solid #f1f5f9; }
+.hs-fila:first-child { border-top: 0; }
+.hs-fila.is-hoy .hs-fecha { background: #fce7f3; color: #9d174d; }
+
+.hs-fecha { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 0.5rem; background: #f3f4f6; color: #374151; padding: 0.25rem 0; line-height: 1.1; }
+.hs-dia { font-size: 1.125rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.hs-mes { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.04em; }
+
+.hs-info { min-width: 0; }
+.hs-viaje { font-weight: 600; color: #111827; text-decoration: none; }
+.hs-viaje:hover, .hs-viaje:focus { color: #c9245f; text-decoration: underline; }
+.hs-viaje:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+.hs-paquete { font-size: 0.75rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hs-cuando { font-size: 0.8125rem; color: #374151; }
+.hs-fila.is-hoy .hs-cuando { color: #9d174d; font-weight: 600; }
+
+.hs-cifras { font-size: 0.875rem; color: #374151; display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; font-variant-numeric: tabular-nums; }
+.hs-cifras strong { font-size: 1rem; color: #111827; }
+.hs-barra { height: 6px; border-radius: 999px; background: #e5e7eb; overflow: hidden; margin: 0.375rem 0 0.25rem; }
+.hs-barra span { display: block; height: 100%; background: #c9245f; border-radius: 999px; }
+.hs-detalle { font-size: 0.75rem; color: #6b7280; }
+
+.hs-chip { display: inline-block; border-radius: 999px; padding: 0.0625rem 0.5rem; font-size: 0.6875rem; font-weight: 600; white-space: nowrap; }
+.hs-chip--completo { background: #374151; color: #fff; }
+.hs-chip--ultimos { background: #fef3c7; color: #92400e; }
+.hs-chip--disponible { background: #dcfce7; color: #166534; }
+.hs-chip--sin { background: #f3f4f6; color: #6b7280; }
+
+.hs-mas { display: block; width: 100%; margin-top: 0.5rem; border: 1px dashed #d1d5db; background: transparent; border-radius: 0.5rem; padding: 0.375rem; font-size: 0.8125rem; color: #374151; }
+.hs-mas:hover { border-color: #c9245f; color: #c9245f; }
+
+@media (max-width: 768px) {
+    .hs-fila { grid-template-columns: 3rem minmax(0, 1fr); }
+    .hs-ocupacion { grid-column: 1 / -1; }
+}
