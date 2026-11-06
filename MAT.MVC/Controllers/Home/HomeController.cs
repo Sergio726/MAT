@@ -58,6 +58,33 @@ namespace MAT.MVC.Controllers.Home
         }
 
         /// <summary>
+        /// Panel "Próximas salidas" del inicio: viajes de hoy a 40 días con libres, vendidos y pre-reservas.
+        /// Reemplaza al recuadro flotante que se abría solo en cada entrada (y mostraba viajes sin orden, sin los de hoy
+        /// ni los completos). Se guarda 2 minutos en memoria: lo piden todos los usuarios al entrar.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public ActionResult ProximasSalidas()
+        {
+            try
+            {
+                const string clave = "MAT.Home.ProximasSalidas.v1";
+                var lista = HttpRuntime.Cache[clave] as List<MAT.MVC.Models.Home.ProximaSalidaDto>;
+                if (lista == null)
+                {
+                    lista = Infrastructure.Data.DashboardDataAccess.GetProximasSalidas(40);
+                    HttpRuntime.Cache.Insert(clave, lista, null, DateTime.UtcNow.AddMinutes(2), System.Web.Caching.Cache.NoSlidingExpiration);
+                }
+                return JsonCamelCaseHelper.Serialize(new { success = true, data = lista });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "HomeController.ProximasSalidas");
+                return JsonCamelCaseHelper.Serialize(new { success = false, message = msg });
+            }
+        }
+
+        /// <summary>
         /// Obtiene las estadísticas del mes actual filtradas por vendedor.
         /// Si vendedorId es null, retorna datos de todos los vendedores (admin).
         /// </summary>

@@ -1,0 +1,29 @@
+﻿@* Panel "Próximas salidas" del inicio. Reemplaza al recuadro flotante "Viajes Próximos a Salir", que se abría solo
+   en cada entrada. Se carga por AJAX (HomeController.ProximasSalidas) para no demorar el inicio. *@
+<link href="@Url.Content("~/Content/mat.home.salidas.css?v=20261106a")" rel="stylesheet" />
+
+<section class="hs-panel" id="hs-proximas-salidas" aria-labelledby="hs-titulo" aria-busy="true">
+    <div class="hs-head">
+        <div>
+            <h2 class="hs-titulo" id="hs-titulo"><i class="bi bi-bus-front" aria-hidden="true"></i> Próximas salidas</h2>
+            <div class="hs-sub" data-rol="resumen">Cargando…</div>
+        </div>
+        <a href="@Url.Action("ViajesPorFecha", "Home")" class="btn-modern btn-modern-secondary btn-sm">
+            <i class="bi bi-calendar-event" aria-hidden="true"></i>
+            <span>Ver todas</span>
+        </a>
+    </div>
+    <ol class="hs-lista" data-rol="lista" aria-live="polite"></ol>
+    <button type="button" class="hs-mas d-none" data-rol="mas" aria-expanded="false"></button>
+</section>
+
+<script src="@Url.Content("~/Scripts/mat.home.salidas.js?v=20261106b")"></script>
+<script>
+    $(function () {
+        MatProximasSalidas.init({
+            contenedor: "#hs-proximas-salidas",
+            url: "@Url.Action("ProximasSalidas", "Home")",
+            urlReserva: "@Url.Action("Index", "Reserva")"
+        });
+    });
+</script>

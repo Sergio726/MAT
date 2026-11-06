@@ -693,6 +693,7 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_Hotel_Update.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_DetalleFactura_SetPrecio.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Dashboard_Viajes_LugaresDisponibles.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Dashboard_ProximasSalidas.sql" />
     <Build Include="dbo\Stored Procedures\usp_Provincia_GetAllByPaisID.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetByReservaHabitacionId.sql">
       <AnsiNulls>Off</AnsiNulls>

@@ -2,6 +2,14 @@
 
 ---
 
+### [2026-11-06] — Inicio: panel "Próximas salidas" en lugar del recuadro flotante
+- **Problema:** el recuadro "Viajes Próximos a Salir" se abría solo en cada entrada (volvía a las 12 h y solo se recordaba en ese navegador) y su dato era incorrecto: `usp_MAT_Dashboard_Viajes_LugaresDisponibles` no ordenaba (mostraba 7 viajes cualesquiera), dejaba afuera los viajes de hoy (comparaba con la hora del servidor), ocultaba los completos, calculaba los días con el reloj del servidor (UTC) y contaba "sin pasajero" en vez del estado Disponible. En Prod el 06/11 mostraba 7 de 9 viajes, sin los dos que salían ese día.
+- **Archivos:** SP `usp_MAT_Dashboard_ProximasSalidas` + `database/2026-11-06_HomeProximasSalidas.sql` (aplicado en DEV), `Models/Home/ProximaSalidaDto.cs`, `Infrastructure/Data/DashboardDataAccess.cs`, `HomeController.ProximasSalidas` (JSON, caché 2 min), `Views/Home/_ProximasSalidas.cshtml`, `Scripts/mat.home.salidas.js`, `Content/mat.home.salidas.css`, `Views/Home/Index.cshtml` (sin el recuadro), test `ProximaSalidaTests`.
+- **Panel:** viajes de hoy a 40 días ordenados por salida, "Sale hoy / mañana / en N días" con hora, libres de total con barra de ocupación, vendidos y pre-reservas, marca Completo / Últimos lugares (≤ 5) / Disponible, paquete solo si hay viajes con el mismo nombre, 8 visibles + "Ver N más", enlace a la reserva y a Viajes por fecha.
+- **Se deja** `usp_MAT_Dashboard_Viajes_LugaresDisponibles` y `Viaje/GetViajesPorVencer` sin tocar (sin uso en el inicio).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV (6 viajes, el de hoy primero, nombres repetidos simulados muestran el paquete).
+- Estado: ✅ completo en DEV (falta el script en Prod)
+
 ### [2026-11-05] — Módulo Clientes F6: baja lógica y auditoría
 - **Base:** `Cliente.Activo` (default 1), `FechaBaja`, `MotivoBaja`, `BajaUsuario`; tabla `ClienteAudit`; SPs `usp_MAT_Cliente_CambiarEstado` (baja/reactivación + historial en una transacción), `usp_MAT_ClienteAudit_Insert`, `usp_MAT_ClienteAudit_GetByCliente`; filtro de activos en `usp_MAT_PersonaCliente_Buscar` (con `@IncluirInactivos`), `usp_MAT_PersonaCliente_GetTop` (autocompletado de reservas, presupuestos y facturas) y `fn_MAT_Seguimiento_Clientes`; ficha con datos de la baja. `database/2026-11-04_ClienteBajaAuditoria.sql`, aplicado en DEV.
 - **Aplicación:** `ClienteAuditoria.Diferencias` (una línea por campo cambiado, con su `[Display]`), `ClienteAuditDataAccess`; `PersonaClienteController`: auditoría en Create/Edit (si falla, el guardado vale igual), `DarDeBaja` / `Reactivar` (POST, antiforgery, solo Administrador) e `Historial` (JSON, solo Administrador); **se quitó `Delete(Guid)`**, que borraba Persona y Cliente con un GET sin confirmación ni permiso.
