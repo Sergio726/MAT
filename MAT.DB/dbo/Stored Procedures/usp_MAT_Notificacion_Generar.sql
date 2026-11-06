@@ -51,7 +51,7 @@ BEGIN
     INSERT INTO @Nuevas
     SELECT 'viaje-completo:' + CAST(ViajeID AS VARCHAR(36)), 'ViajeCompleto',
            N'Completo: ' + LEFT(Descripcion, 120),
-           N'Se vendieron los ' + CAST(Total AS NVARCHAR(10)) + N' lugares. Sale el ' + CONVERT(NVARCHAR(10), FechaSalida, 103) + N'.',
+           N'No quedan lugares libres: los ' + CAST(Total AS NVARCHAR(10)) + N' están vendidos o reservados. Sale el ' + CONVERT(NVARCHAR(10), FechaSalida, 103) + N'.',
            '/Reserva/Index?viajeid=' + CAST(ViajeID AS VARCHAR(36)), DATEADD(DAY, 1, CAST(FechaSalida AS DATETIME))
     FROM #Viajes WHERE Libres = 0 AND Total > 0;
 
