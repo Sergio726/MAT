@@ -68,13 +68,66 @@
 @media (max-width: 1199.98px) { .qa-fila { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 767.98px) { .qa-fila { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
-/* ---------------------------------------------------------------- Indicadores del encabezado (bloque A)
-   Pie "Ver detalle ›": deja claro sin pasar el mouse que la tarjeta abre el detalle */
+/* ---------------------------------------------------------------- Encabezado con indicadores (bloque E)
+   Superficie neutra, sin la foto: la misma tarjeta que el resto del inicio. Pisa los estilos de la versión
+   con foto de modern-dashboard.css (que no se tocan). Texto sobre el gris de los indicadores (#f4f7f6):
+   #4b5563 7:1, rosa #c9245f 4,8:1, rojo #b91c1c 6:1, verde #047857 5:1. */
+.dashboard-hero.dashboard-hero--neutro {
+    min-height: 0;
+    margin-bottom: 1.25rem;
+    background: var(--surface-card, #fff);
+    background-image: none;
+    border-radius: var(--card-radius, 12px);
+    box-shadow: var(--card-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.08));
+}
+.dashboard-hero.dashboard-hero--neutro::before { display: none; }
+.dashboard-hero--neutro .dashboard-hero__content { padding: var(--card-padding, 1rem 1.25rem); }
+.dashboard-hero--neutro .dashboard-hero__title { color: var(--text-strong, #111827); font-size: 1.25rem; }
+.dashboard-hero--neutro .dashboard-hero__subtitle { color: var(--text-secondary, #6b7280); }
+
+.dashboard-hero--neutro .dashboard-hero-kpi {
+    background: var(--bg-main, #f4f7f6);
+    border: 1px solid transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.dashboard-hero--neutro .dashboard-hero-kpi:hover {
+    transform: none;
+    background: var(--surface-card, #fff);
+    border-color: var(--border-color, #e5e7eb);
+    box-shadow: var(--card-shadow-hover, 0 6px 16px rgba(0, 0, 0, 0.08));
+}
+.dashboard-hero--neutro .dashboard-hero-kpi:focus { box-shadow: none; }
+.dashboard-hero--neutro .dashboard-hero-kpi:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+.dashboard-hero--neutro .dashboard-hero-kpi__label { color: #4b5563; }
+.dashboard-hero--neutro .dashboard-hero-kpi__value { color: var(--text-strong, #111827); text-shadow: none; }
+.dashboard-hero--neutro .dashboard-hero-kpi__meta { color: #4b5563; }
+.dashboard-hero--neutro .dashboard-hero-kpi__meta--brand { color: var(--brand-primary-accesible, #c9245f); }
+.dashboard-hero--neutro .dashboard-hero-kpi__meta--danger { color: #b91c1c; }
+
+.dashboard-hero-kpi__fila { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; }
+
+/* Tendencia contra el mismo tramo del mes anterior */
+.hero-tendencia {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    padding: 0.0625rem 0.5rem; border-radius: 999px;
+    font-size: 0.75rem; font-weight: 600; line-height: 1.5; white-space: nowrap;
+}
+.hero-tendencia .bi { font-size: 0.6875rem; }
+.hero-tendencia__vs { font-weight: 400; }
+.hero-tendencia--sube { background: #ecfdf5; color: #047857; }
+.hero-tendencia--baja { background: #fef2f2; color: #b91c1c; }
+.hero-tendencia--igual { background: #e5e7eb; color: #374151; }
+
+/* Pie "Ver detalle ›" (bloque A): deja claro sin pasar el mouse que la tarjeta abre el detalle */
 .dashboard-hero-kpi__ver {
     margin-top: 0.375rem;
     font-size: 0.75rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.92);
+    color: var(--brand-primary-accesible, #c9245f);
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
@@ -84,5 +137,5 @@
 .dashboard-hero-kpi:focus-visible .dashboard-hero-kpi__ver .bi { transform: translateX(2px); }
 
 @media (prefers-reduced-motion: reduce) {
-    .dashboard-hero-kpi__ver .bi, .home-card__chevron, .qa-chip { transition: none; }
+    .dashboard-hero-kpi__ver .bi, .home-card__chevron, .qa-chip, .dashboard-hero--neutro .dashboard-hero-kpi { transition: none; }
 }

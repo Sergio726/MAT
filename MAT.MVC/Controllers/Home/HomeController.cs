@@ -85,14 +85,52 @@ namespace MAT.MVC.Controllers.Home
         }
 
         /// <summary>
-        /// Obtiene las estadísticas del mes actual filtradas por vendedor.
+        /// Obtiene las estadísticas del mes actual filtradas por vendedor, con la tendencia de cada indicador.
         /// Si vendedorId es null, retorna datos de todos los vendedores (admin).
+        /// Tendencia (bloque E del plan del panel principal): mes en curso contra el mismo tramo del mes anterior
+        /// (del 1 al día de hoy), no contra el mes completo, que al comienzo del mes siempre daría una caída falsa.
+        /// El tramo anterior está cerrado: se guarda 10 minutos en memoria por vendedor y día.
         /// </summary>
         private Dictionary<string, object> GetEstadisticasMesActual(Guid? vendedorId)
         {
+            var hoy = DateTime.Today;
+            var fechaInicio = new DateTime(hoy.Year, hoy.Month, 1);
+            var estadisticas = GetEstadisticas(vendedorId, fechaInicio, fechaInicio.AddMonths(1).AddDays(-1));
+
+            try
+            {
+                DateTime desdeAnterior, hastaAnterior;
+                Models.Home.TendenciaKpi.PeriodoAnterior(hoy, out desdeAnterior, out hastaAnterior);
+                var clave = "MAT.Home.EstadisticasAnteriores." + (vendedorId.HasValue ? vendedorId.Value.ToString() : "todos") + "." + hoy.ToString("yyyyMMdd");
+                var anteriores = HttpRuntime.Cache[clave] as Dictionary<string, object>;
+                if (anteriores == null)
+                {
+                    anteriores = GetEstadisticas(vendedorId, desdeAnterior, hastaAnterior);
+                    HttpRuntime.Cache.Insert(clave, anteriores, null, DateTime.UtcNow.AddMinutes(10), System.Web.Caching.Cache.NoSlidingExpiration);
+                }
+
+                var periodo = Models.Home.TendenciaKpi.EtiquetaPeriodo(desdeAnterior, hastaAnterior);
+                foreach (var clave2 in new[] { "CantidadPresupuestos", "ClientesNuevos", "CantidadVentas" })
+                {
+                    estadisticas["Tendencia" + clave2] = Models.Home.TendenciaKpi.Calcular(
+                        Convert.ToDouble(estadisticas[clave2]), Convert.ToDouble(anteriores[clave2]), periodo);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Sin tendencia el inicio sigue funcionando: la vista no la muestra
+                MATLogger.Log($"Error tendencia de estadísticas: {ex.Message}", 1);
+            }
+
+            return estadisticas;
+        }
+
+        /// <summary>
+        /// Presupuestos, clientes nuevos y ventas de un rango (las dos fechas inclusive, como día completo).
+        /// </summary>
+        private Dictionary<string, object> GetEstadisticas(Guid? vendedorId, DateTime fechaInicio, DateTime fechaFin)
+        {
             var estadisticas = new Dictionary<string, object>();
-            var fechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            var fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
             string sFrom = fechaInicio.ToString("dd-MM-yyyy");
             string sTo = fechaFin.ToString("dd-MM-yyyy");
 

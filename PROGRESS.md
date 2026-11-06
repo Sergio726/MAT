@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-07] — Panel principal, bloque E: indicadores con tendencia y encabezado sin foto
+- **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque E). Solo el inicio.
+- **Tendencia** (`HomeController.GetEstadisticasMesActual` → `GetEstadisticas(vendedor, desde, hasta)`, `Models/Home/TendenciaKpi.cs`): presupuestos, clientes nuevos y ventas contra el **mismo tramo del mes anterior** (del 1 al día de hoy; si el mes anterior es más corto, hasta su último día), no contra el mes completo. Mismos SP y consultas que ya usaba el inicio. El tramo anterior se guarda 10 minutos en memoria por vendedor y día. Si falla, el inicio sigue sin tendencia.
+- **Texto:** "+12 %", "−8 %", "+3" (sin base), "Igual", con "vs 1–6 oct"; la frase completa en el `aria-label` de cada indicador.
+- **Encabezado** (`_DashboardHero`, `Content/mat.home.css`): superficie neutra con la misma tarjeta del inicio, sin la foto ni la capa oscura; colores de texto AA sobre el gris de los indicadores. Los estilos con foto de `modern-dashboard.css` no se tocaron.
+- **Tests:** `TendenciaKpiTests` (11 casos: porcentajes, redondeo, sin base, febrero, cambio de año, un solo día).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV (sin movimientos en noviembre: los tres en "Igual vs 1–6 oct"; `aria-label` con la tendencia). Alto del encabezado 144 px (antes 152): la ganancia es menor a la estimada en el plan porque la altura la ponen los indicadores, no la foto.
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Panel principal, bloque D: barra superior con buscador global
 - **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque D). Sobre el bloque C (PR #47). Afecta a todas las pantallas con `_Layout`.
 - **Buscador global, etapa 1** (`_BuscadorGlobal.cshtml`, `Scripts/mat.buscador.js`): disparador "Buscar cliente, viaje, factura o módulo…" al centro de la barra; `Ctrl+K`/`Cmd+K` abre y cierra; `<dialog>` modal con combobox + listbox (`aria-activedescendant`), ↑ ↓ Enter Esc. Índice = `QuickAccessCatalog` (en `data-catalogo`) + ítems del menú leídos del DOM ("Hoteles › Nuevo"), sin duplicar URLs, sin tildes. Resultados agrupados por tipo (Módulos / Acciones), grupos ordenados por su mejor resultado: "fact" → Buscar facturas (`/Factura/Index`). Vacío: accesos frecuentes.

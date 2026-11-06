@@ -33,24 +33,46 @@
     var totalFacturado = estadisticas.ContainsKey("TotalFacturado") ? Convert.ToDouble(estadisticas["TotalFacturado"]) : 0.0;
     var totalPendiente = estadisticas.ContainsKey("TotalPendiente") ? Convert.ToDouble(estadisticas["TotalPendiente"]) : 0.0;
     var cantidadVentas = estadisticas.ContainsKey("CantidadVentas") ? Convert.ToInt32(estadisticas["CantidadVentas"]) : 0;
+
+    // Tendencia contra el mismo tramo del mes anterior (null si no se pudo calcular: entonces no se muestra)
+    var tendPresupuestos = estadisticas.ContainsKey("TendenciaCantidadPresupuestos") ? estadisticas["TendenciaCantidadPresupuestos"] as MAT.MVC.Models.Home.TendenciaKpi : null;
+    var tendClientes = estadisticas.ContainsKey("TendenciaClientesNuevos") ? estadisticas["TendenciaClientesNuevos"] as MAT.MVC.Models.Home.TendenciaKpi : null;
+    var tendVentas = estadisticas.ContainsKey("TendenciaCantidadVentas") ? estadisticas["TendenciaCantidadVentas"] as MAT.MVC.Models.Home.TendenciaKpi : null;
 }
 
-<section class="dashboard-hero" aria-label="Bienvenida y resumen del mes">
-    <div class="dashboard-hero__overlay"></div>
+@helper Tendencia(MAT.MVC.Models.Home.TendenciaKpi t)
+{
+    if (t != null)
+    {
+        <span class="hero-tendencia hero-tendencia--@t.Direccion" title="@t.Lectura" aria-hidden="true">
+            <i class="bi @(t.Direccion == "sube" ? "bi-arrow-up-right" : t.Direccion == "baja" ? "bi-arrow-down-right" : "bi-dash")"></i>
+            <span>@t.Texto</span>
+            <span class="hero-tendencia__vs">vs @t.Periodo</span>
+        </span>
+    }
+}
+
+@* Encabezado del inicio (bloque E del plan del panel principal): superficie neutra, sin la foto de fondo,
+   que obligaba a una capa oscura y dejaba los textos chicos al límite del contraste. Cada indicador muestra la
+   tendencia contra el mismo tramo del mes anterior; la frase completa va en el aria-label (el chip es aria-hidden).
+   Con valor 0 se muestra un texto de contexto en vez de "$0,00", y el pie "Ver detalle" deja claro sin hover
+   que la tarjeta se puede abrir. *@
+<section class="dashboard-hero dashboard-hero--neutro" aria-label="Bienvenida y resumen del mes">
     <div class="dashboard-hero__content">
         <div class="dashboard-hero__layout">
             <div class="dashboard-hero__welcome">
                 <h1 class="dashboard-hero__title">Bienvenido, @displayName</h1>
                 <p class="dashboard-hero__subtitle">Resumen de @mesActual @anioActual</p>
             </div>
-            @* aria-label: el title no es un nombre accesible fiable (queda como tooltip). Con valor 0 se muestra un texto de
-               contexto en vez de "$0,00", y el pie "Ver detalle" deja claro sin hover que la tarjeta se puede abrir. *@
             <div class="dashboard-hero__kpis">
                 <button type="button" class="dashboard-hero-kpi" onclick="openDetalleModal('presupuestos')"
                         title="Ver detalle de presupuestos del mes"
-                        aria-label="Presupuestos de @mesActual: @cantidadPresupuestos. Ver detalle">
+                        aria-label="Presupuestos de @mesActual: @cantidadPresupuestos.@(tendPresupuestos != null ? " " + tendPresupuestos.Lectura + "." : "") Ver detalle">
                     <span class="dashboard-hero-kpi__label">Presupuestos</span>
-                    <span class="dashboard-hero-kpi__value">@cantidadPresupuestos</span>
+                    <span class="dashboard-hero-kpi__fila">
+                        <span class="dashboard-hero-kpi__value">@cantidadPresupuestos</span>
+                        @Tendencia(tendPresupuestos)
+                    </span>
                     @if (cantidadPresupuestos == 0)
                     {
                         <span class="dashboard-hero-kpi__meta">Sin presupuestos este mes</span>
@@ -63,17 +85,23 @@
                 </button>
                 <button type="button" class="dashboard-hero-kpi" onclick="openDetalleModal('clientes')"
                         title="Ver detalle de clientes nuevos del mes"
-                        aria-label="Clientes nuevos en @mesActual: @clientesNuevos. Ver detalle">
+                        aria-label="Clientes nuevos en @mesActual: @clientesNuevos.@(tendClientes != null ? " " + tendClientes.Lectura + "." : "") Ver detalle">
                     <span class="dashboard-hero-kpi__label">Clientes nuevos</span>
-                    <span class="dashboard-hero-kpi__value">@clientesNuevos</span>
+                    <span class="dashboard-hero-kpi__fila">
+                        <span class="dashboard-hero-kpi__value">@clientesNuevos</span>
+                        @Tendencia(tendClientes)
+                    </span>
                     <span class="dashboard-hero-kpi__meta">@(clientesNuevos == 0 ? "Sin altas este mes" : "En " + mesActual)</span>
                     <span class="dashboard-hero-kpi__ver" aria-hidden="true">Ver detalle <i class="bi bi-chevron-right"></i></span>
                 </button>
                 <button type="button" class="dashboard-hero-kpi" onclick="openDetalleModal('ventas')"
                         title="Ver detalle de ventas del mes"
-                        aria-label="Ventas de @mesActual: @cantidadVentas. Ver detalle">
+                        aria-label="Ventas de @mesActual: @cantidadVentas.@(tendVentas != null ? " " + tendVentas.Lectura + "." : "") Ver detalle">
                     <span class="dashboard-hero-kpi__label">Ventas</span>
-                    <span class="dashboard-hero-kpi__value">@cantidadVentas</span>
+                    <span class="dashboard-hero-kpi__fila">
+                        <span class="dashboard-hero-kpi__value">@cantidadVentas</span>
+                        @Tendencia(tendVentas)
+                    </span>
                     @if (cantidadVentas == 0)
                     {
                         <span class="dashboard-hero-kpi__meta">Sin ventas este mes</span>
