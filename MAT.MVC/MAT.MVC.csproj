@@ -509,6 +509,10 @@
     <Content Include="Content\mat.clientes.ficha.css" />
     <Content Include="Content\mat.home.salidas.css" />
     <Content Include="Content\mat.home.css" />
+    <Content Include="Content\mat.topbar.css" />
+    <Content Include="Scripts\mat.buscador.js" />
+    <Content Include="Scripts\mat.menu.js" />
+    <Content Include="Views\Shared\_BuscadorGlobal.cshtml" />
     <Content Include="Content\mat.notificaciones.css" />
     <Content Include="Content\mat.accesibilidad.css" />
     <Content Include="Content\login-split.css" />
