@@ -107,6 +107,18 @@ Plan completo: [`../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`](../DOCUMENT
 - [x] **F6 — Baja y auditoría:** *(05/11/2026, PR a MAT2026 después de F5; DEV aplicado)* `Cliente.Activo`, `ClienteAudit`
 - [ ] **F6 — Probar con un Administrador** los botones Dar de baja / Reactivar y la pestaña Historial (en DEV solo hay 1 usuario con ese rol; `admindev` no tiene ninguno)
 
+### Panel principal — mejoras UX (P1)
+
+Plan: [`../DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md`](../DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md) (auditoría UX/UI 06/11/2026, verificada contra el código).
+
+- [ ] **Bloque A — Correcciones de lectura** *(próximo release)*: barra de ocupación y texto con la misma métrica, badge solo en Últimos lugares/Completo, 3 salidas visibles, "Saludar" → "Ver seguimiento", "y N más…" con enlace, KPIs con `aria-label`, "Ver detalle" y texto para valor 0
+- [ ] **Bloque B — Reorganización del inicio** *(próximo release)*: accesos frecuentes compactos arriba, KPIs, dos columnas (salidas · cumpleaños colapsado), un solo estilo de tarjeta y encabezado
+- [ ] **Bloque C — Sidebar**: ítem activo con `aria-current`, densidad 38 px, chevrons con `aria-expanded`, ícono de Butacas
+- [ ] **Bloque D — Barra superior**: buscador global `Ctrl+K` (etapa 1: módulos), "+ Nuevo presupuesto", sidebar colapsable, breadcrumb en el inicio
+- [ ] **Bloque E — KPIs**: tendencia vs mes anterior, hero sin foto o con contraste AA
+- [ ] **Bloque F — Retirar "Todos los módulos"** (después de D, verificando que ninguna ruta quede huérfana)
+- [ ] **Bloque G — Buscador con clientes, viajes y facturas** (a definir)
+
 ### Factura / vendedores — resumen de pagos por viaje (P2)
 
 **Pedido de operación:** en el módulo de factura que usan los **vendedores** (intranet, no solo Admin), necesitan un lugar para ver el **resumen de pagos hechos en el viaje** y el **método/medio de pago** de cada registro.
