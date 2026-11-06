@@ -5,7 +5,8 @@
     margin-left: 0 !important;
     background: var(--menu-bg, #1e293b) !important;
     box-shadow: none !important;
-    border-right: none !important;
+    /* Borde sutil entre menú y contenido (bloque C) */
+    border-right: 1px solid rgba(15, 23, 42, 0.14) !important;
     float: none !important;
 }
 
@@ -89,14 +90,16 @@
 #menu .menu-0 > li > a {
     display: flex !important;
     align-items: center !important;
-    padding: 12px 20px !important;
+    /* Densidad (bloque C): ítems de 38 px para que el menú completo entre en 768 px de alto */
+    min-height: 38px;
+    padding: 7px 14px !important;
     color: var(--menu-text, rgba(255, 255, 255, 0.75)) !important;
     text-decoration: none !important;
-    transition: all 0.2s ease;
-    font-size: 0.95rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    font-size: 0.9rem;
     min-width: 0;
     border-radius: 8px !important;
-    margin: 4px 10px !important;
+    margin: 1px 10px !important;
     background: transparent !important;
     border: none !important;
     position: relative;
@@ -108,7 +111,7 @@
     min-width: 0;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 #menu .menu-0 > li > a:hover {
@@ -117,32 +120,11 @@
     box-shadow: none !important;
 }
 
-#menu .menu-0 > li.active > a {
-    background: rgba(230, 51, 117, 0.1) !important;
-    color: #e63375 !important;
-    font-weight: 500;
-    box-shadow: none !important;
-}
-
-#menu .menu-0 > li.active > a::before {
-    content: "" !important;
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: calc(100% - 16px);
-    background: #e63375;
-    border-radius: 2px;
-}
-
-#menu .menu-0 > li.active > a i {
-    color: #e63375 !important;
-}
+/* La página actual se marca con aria-current="page" (sección "Página actual", al final) */
 
 #menu .menu-0 > li > a i {
-    margin-right: 0.875rem;
-    font-size: 1.125rem;
+    margin-right: 0.75rem;
+    font-size: 1.0625rem;
     width: 20px;
     text-align: center;
     color: rgba(255, 255, 255, 0.7);
@@ -164,13 +146,21 @@
     content: "\f285";
     font-family: "bootstrap-icons";
     margin-left: auto;
-    transition: transform 0.3s ease;
-    font-size: 0.8rem;
+    /* mat.styles.custom.css lo posiciona en absoluto con translateY(-50%): al rotar se perdía ese
+       ajuste y el chevron saltaba. Acá es un elemento flex más, a la derecha. */
+    position: static;
+    transform: none;
+    transition: transform 0.2s ease;
+    font-size: 0.75rem;
     opacity: 0.7;
     color: inherit;
 }
 
-#menu .menu-0 > li.hasSubmenu.active > a::after,
+#menu .menu-0 > li.hasSubmenu > a {
+    padding-right: 14px !important;
+}
+
+/* El chevron sigue solo a aria-expanded, que Bootstrap mantiene sincronizado con lo que se ve */
 #menu .menu-0 > li.hasSubmenu > a[aria-expanded="true"]::after {
     transform: rotate(90deg);
     opacity: 1;
@@ -210,11 +200,6 @@
     box-shadow: none !important;
 }
 
-/* Asegurar que los submenús se muestren cuando están expandidos */
-#menu .menu-0 > li.hasSubmenu.active > ul.collapse {
-    display: block !important;
-}
-
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li {
     background: transparent !important;
     box-shadow: none !important;
@@ -225,13 +210,14 @@
 #menu .menu-0 > li.hasSubmenu > ul.collapsing > li > a {
     display: flex !important;
     align-items: center !important;
-    padding: 10px 20px 10px 2.2rem !important;
+    min-height: 34px;
+    padding: 6px 10px 6px 2rem !important;
     color: rgba(255, 255, 255, 0.6) !important;
     text-decoration: none !important;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     transition: background-color 0.15s ease, color 0.15s ease;
     border-radius: 6px !important;
-    margin: 2px 10px !important;
+    margin: 1px 10px !important;
     background: none !important;
     background-color: transparent !important;
     border: none !important;
@@ -241,8 +227,8 @@
 #menu .menu-0 > li.hasSubmenu > ul.collapse > li > a i,
 #menu .menu-0 > li.hasSubmenu > ul.show > li > a i,
 #menu .menu-0 > li.hasSubmenu > ul.collapsing > li > a i {
-    margin-right: 0.5rem;
-    font-size: 0.9rem;
+    margin-right: 0.625rem;
+    font-size: 0.9375rem;
     width: 18px;
     text-align: center;
     font-family: "bootstrap-icons" !important;
@@ -273,7 +259,7 @@
     color: inherit;
 }
 
-#menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu.active > a::after {
+#menu .menu-0 > li.hasSubmenu > ul.collapse > li.hasSubmenu > a[aria-expanded="true"]::after {
     transform: rotate(90deg);
 }
 
@@ -379,62 +365,69 @@
 
 /* Rotar chevron cuando el submenú está expandido */
 #menu .menu-0 ul.collapse > li.hasSubmenu > a[aria-expanded="true"]::after,
-#menu .menu-0 ul.show > li.hasSubmenu > a[aria-expanded="true"]::after,
-#menu .menu-0 li.hasSubmenu > ul.show ~ a::after {
+#menu .menu-0 ul.show > li.hasSubmenu > a[aria-expanded="true"]::after {
     transform: rotate(90deg) !important;
     opacity: 1;
 }
 
 /* =====================================================
-   Elemento activo según la página actual
+   Página actual (bloque C del plan del panel principal)
+   Se marca con aria-current="page" (lo pone el script de _Layout) y vale para cualquier nivel:
+   fondo de acento 8 %, barra izquierda de 3 px y texto 600. La barra es una sombra interior, así
+   el texto no se corre. Texto blanco: el fucsia del logo sobre el menú oscuro da 3,5:1, alcanza
+   para el ícono y la barra pero no para texto. Las clases viejas (active, submenu-active,
+   parent-active) quedan sin uso: chocaban con common.js y forzaban abierto el submenú.
    ===================================================== */
-
-/* Estilo para el subelemento activo - alta especificidad */
-#menu .menu-0 > li.hasSubmenu > ul.collapse > li.submenu-active > a,
-#menu .menu-0 > li.hasSubmenu > ul.show > li.submenu-active > a,
-#menu .menu-0 ul li.submenu-active > a,
-#menu .menu-0 li.submenu-active > a {
-    background: var(--menu-active-bg, rgba(230, 51, 117, 0.2)) !important;
-    color: var(--menu-active-accent, var(--brand-primary)) !important;
+#menu .menu-0 > li > a[aria-current="page"],
+#menu .menu-0 > li > a[aria-current="page"]:hover,
+#menu .menu-0 > li.hasSubmenu > ul.collapse > li > a[aria-current="page"],
+#menu .menu-0 > li.hasSubmenu > ul.collapsing > li > a[aria-current="page"],
+#menu .menu-0 > li.hasSubmenu > ul.collapse.show > li > a[aria-current="page"]:hover {
+    background: var(--menu-active-bg, rgba(230, 51, 117, 0.08)) !important;
+    background-color: var(--menu-active-bg, rgba(230, 51, 117, 0.08)) !important;
+    box-shadow: inset 3px 0 0 var(--menu-active-accent, #e63375) !important;
+    color: #fff !important;
     font-weight: 600 !important;
-    border-left: 3px solid var(--menu-active-accent, var(--brand-primary)) !important;
-    padding-left: calc(3rem - 3px) !important;
 }
 
-#menu .menu-0 > li.hasSubmenu > ul.collapse > li.submenu-active > a i,
-#menu .menu-0 > li.hasSubmenu > ul.show > li.submenu-active > a i,
-#menu .menu-0 ul li.submenu-active > a i,
-#menu .menu-0 li.submenu-active > a i {
-    color: var(--menu-active-accent, var(--brand-primary)) !important;
+#menu .menu-0 > li > a[aria-current="page"] i,
+#menu .menu-0 > li.hasSubmenu > ul.collapse > li > a[aria-current="page"] i,
+#menu .menu-0 > li.hasSubmenu > ul.collapse > li > a[aria-current="page"]:hover i {
+    color: var(--menu-active-accent, #e63375) !important;
 }
 
-/* Nivel 3 activo */
-#menu .menu-0 > li.hasSubmenu > ul > li.hasSubmenu > ul > li.submenu-active > a {
-    background: var(--menu-active-bg, rgba(230, 51, 117, 0.2)) !important;
-    color: var(--menu-active-accent, var(--brand-primary)) !important;
-    font-weight: 600 !important;
-    border-left: 3px solid var(--menu-active-accent, var(--brand-primary)) !important;
-    padding-left: calc(4rem - 3px) !important;
+/* Padre del submenú de la página actual: marcado más tenue (sin fondo de acento ni barra) */
+#menu .menu-0 > li.hasSubmenu.menu-padre-actual > a {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-weight: 600;
 }
 
-/* Mantener padre expandido cuando hay hijo activo */
-#menu .menu-0 li.hasSubmenu.parent-active > ul.collapse {
-    display: block !important;
-    height: auto !important;
+#menu .menu-0 > li.hasSubmenu.menu-padre-actual > a i,
+#menu .menu-0 > li.hasSubmenu.menu-padre-actual > a:hover i {
+    color: var(--menu-active-accent, #e63375) !important;
 }
 
-#menu .menu-0 li.hasSubmenu.parent-active > [data-bs-toggle="collapse"]::after {
-    transform: rotate(90deg) !important;
+#menu .menu-0 a:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #menu .menu-0 a,
+    #menu .menu-0 > li.hasSubmenu > a::after,
+    #menu .menu-0 ul.collapse > li.hasSubmenu > a::after {
+        transition: none !important;
+    }
 }
 
 #menu .menu-0 > li.menu-section-label {
-    padding: 1rem 1.25rem 0.375rem;
-    margin: 0.25rem 10px 0;
-    font-size: 0.6875rem;
+    padding: 0.75rem 14px 0.25rem;
+    margin: 0.125rem 10px 0;
+    font-size: 0.625rem;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.55); /* 4,6:1 sobre el menú */
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -443,8 +436,8 @@
 }
 
 #menu .menu-0 > li.menu-section-label--footer {
-    margin-top: 0.75rem;
-    padding-top: 1.25rem;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 

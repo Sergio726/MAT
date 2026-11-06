@@ -44,7 +44,7 @@
     --menu-submenu-text: rgba(255, 255, 255, 0.6);
     --menu-submenu-text-hover: rgba(255, 255, 255, 0.95);
     --menu-submenu-hover-bg: rgba(255, 255, 255, 0.08);
-    --menu-active-bg: rgba(230, 51, 117, 0.12);
+    --menu-active-bg: rgba(230, 51, 117, 0.08); /* página actual del menú: acento 8 % (bloque C) */
     --menu-active-accent: var(--brand-primary);
     --menu-scrollbar-thumb: rgba(255, 255, 255, 0.2);
     --menu-scrollbar-thumb-hover: rgba(255, 255, 255, 0.35);

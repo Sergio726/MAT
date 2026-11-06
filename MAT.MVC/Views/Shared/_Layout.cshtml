@@ -30,11 +30,11 @@
     <link href="~/Scripts/jquery.timepicker/jquery.timepicker.css" rel="stylesheet" />
     <link href="~/Content/mat.styles.custom.css" rel="stylesheet" />
     @* Variables CSS para diseño SaaS moderno *@
-    <link href="~/Content/saas-variables.css?v=20261107a" rel="stylesheet" />
+    <link href="~/Content/saas-variables.css?v=20261107b" rel="stylesheet" />
     @* Estilos para layout flexbox *@
     <link href="~/Content/modern-layout.css" rel="stylesheet" />
     @* Estilos modernos para menú y dashboard *@
-    <link href="~/Content/modern-menu.css" rel="stylesheet" />
+    <link href="~/Content/modern-menu.css?v=20261107b" rel="stylesheet" />
     <link href="~/Content/modern-dashboard.css?v=20260930a" rel="stylesheet" />
     <link href="~/Content/modern-nota-credito.css" rel="stylesheet" />
     <link href="~/Content/modern-facturas.css" rel="stylesheet" />
@@ -86,7 +86,7 @@
     <script src="~/Scripts/bootstrap-5.3.2.bundle.min.js"></script>
     <script src="~/Scripts/mat.notificaciones.js?v=20261106a"></script>
     <script src="~/Scripts/jquery.mask.js"></script>
-    <script src="~/Scripts/common.js"></script>
+    <script src="~/Scripts/common.js?v=20261107a"></script>
     <script src="~/Scripts/jquery.timepicker/jquery.timepicker.min.js"></script>
 
     <!--dataTable-->
@@ -188,8 +188,6 @@
             var currentSearch = window.location.search.toLowerCase();
             var currentFull = currentPath + currentSearch;
 
-            $('#menu .menu-0 > li').removeClass('active');
-            $('#menu .menu-0 li').removeClass('submenu-active parent-active');
 
             function isMenuHrefActive(href) {
                 if (!href || href === '#') {
@@ -208,33 +206,27 @@
                     || (menuPath.endsWith('/index') && currentPath === menuPath.replace('/index', ''));
             }
 
-            $('#menu .menu-0 > li > a').each(function() {
-                var $link = $(this);
-                if ($link.is('[data-bs-toggle="collapse"]')) {
-                    return;
-                }
-                var href = $link.attr('href');
-                if (isMenuHrefActive(href)) {
-                    $link.parent('li').addClass('active');
-                }
-            });
-
-            $('#menu .menu-0 ul li a').each(function() {
+            // Página actual (bloque C del plan del panel principal): un solo ítem, el href más largo que coincide,
+            // marcado con aria-current="page" (el CSS se apoya en ese atributo). El submenú que lo contiene arranca
+            // abierto con la clase de Bootstrap, sin forzarlo por CSS, así se puede cerrar y el chevron y
+            // aria-expanded siguen a lo que se ve. El padre queda marcado más tenue con "menu-padre-actual".
+            var actual = null, largoActual = -1;
+            $('#menu .menu-0 a[href]').not('[data-bs-toggle="collapse"]').each(function() {
                 var href = $(this).attr('href');
-                if (isMenuHrefActive(href)) {
-                    // Marcar este elemento como activo
-                    $(this).parent('li').addClass('submenu-active');
-
-                    // Expandir los menús padres
-                    $(this).parents('ul.collapse').each(function() {
-                        $(this).addClass('show');
-                        // Buscar tanto anchor como button toggle
-                        var toggleBtn = $(this).siblings('[data-bs-toggle="collapse"]');
-                        toggleBtn.attr('aria-expanded', 'true');
-                        $(this).parent('li.hasSubmenu').addClass('parent-active');
-                    });
+                if (isMenuHrefActive(href) && href.length > largoActual) {
+                    actual = this;
+                    largoActual = href.length;
                 }
             });
+
+            if (actual) {
+                $(actual).attr('aria-current', 'page');
+                $(actual).parents('ul.collapse').each(function() {
+                    $(this).addClass('show');
+                    $(this).siblings('[data-bs-toggle="collapse"]').attr('aria-expanded', 'true').removeClass('collapsed');
+                    $(this).parent('li.hasSubmenu').addClass('menu-padre-actual');
+                });
+            }
 
             // Mobile menu toggle
             var mobileToggle = $('#mobileMenuToggle');

@@ -171,16 +171,17 @@ function JQSliderCreate()
 
 $(function()
 {
-	// Sidebar menu collapsibles
+	// Sidebar menu collapsibles: 'is-open' marca el submenú abierto. Antes usaba 'active', la misma clase
+	// que pinta la página actual, y un menú solo abierto se veía igual que la página en la que se está.
 	$('#menu .collapse').on('show', function(e)
 	{
 		e.stopPropagation();
-		$(this).parents('.hasSubmenu:first').addClass('active');
+		$(this).parents('.hasSubmenu:first').addClass('is-open');
 	})
 	.on('hidden', function(e)
 	{
 		e.stopPropagation();
-		$(this).parents('.hasSubmenu:first').removeClass('active');
+		$(this).parents('.hasSubmenu:first').removeClass('is-open');
 	});
 	
 	// main menu visibility toggle
