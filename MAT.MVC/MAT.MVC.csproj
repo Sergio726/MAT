@@ -508,6 +508,7 @@
     <Content Include="Content\mat.clientes.listado.css" />
     <Content Include="Content\mat.clientes.ficha.css" />
     <Content Include="Content\mat.home.salidas.css" />
+    <Content Include="Content\mat.home.css" />
     <Content Include="Content\mat.notificaciones.css" />
     <Content Include="Content\mat.accesibilidad.css" />
     <Content Include="Content\login-split.css" />

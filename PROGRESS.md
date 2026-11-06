@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-07] — Panel principal, bloque A: correcciones de lectura
+- **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque A).
+- **Próximas salidas** (`mat.home.salidas.js/.css`, `ProximaSalidaDto`): barra y texto con la misma métrica — barra = vendidos + pre-reservas sobre el total (dos tramos), texto "7 de 60 vendidos · 43 libres · 10 pre-reservas"; `role="progressbar"` con `aria-valuenow/min/max/valuetext`. Etiqueta solo en Últimos lugares (≤ 15 % libre) y Completo; "Disponible" ya no se muestra. 3 visibles + "Ver N más".
+- **Campanita:** el aviso "Últimos lugares" pasa de "1 a 5 libres" a "≤ 15 % libre", igual que el panel (`usp_MAT_Notificacion_Generar` y `database/2026-11-06_Notificaciones.sql`, que todavía no corrió en Prod; reaplicado en DEV).
+- **Cumpleaños** (`_CumpleaniosHoy`, `mat.seguimiento.js`): "Saludar" → "Ver seguimiento" (solo navega); "y N más…" → enlace "Ver los N restantes en Seguimiento".
+- **KPIs del hero** (`_DashboardHero`, `Content/mat.home.css` nuevo): `aria-label` con el valor, pie "Ver detalle ›" visible sin hover, y con valor 0 "Sin presupuestos / altas / ventas este mes" en vez de "$0,00".
+- **Verificación:** `tools/Run-Tests.ps1` OK (tests del umbral 15 %); `aspnet_compiler` OK; navegador contra DEV; etiquetas Últimos lugares/Completo/sin pasajes con datos simulados; umbral de la campanita en DEV con rollback (7 de 50 → aviso).
+- Estado: ✅ completo en DEV
+
 ### [2026-11-06] — Campanita de avisos con panel lateral
 - **Base:** tablas `Notificacion` (aviso único por `Clave`, con vencimiento) y `NotificacionLeida` (leído por usuario); SPs `usp_MAT_Notificacion_Generar` (viaje que sale en ≤ 7 días con lugares libres, últimos lugares 1–5, viaje completo, cumpleaños de clientes activos de hoy; no repite; borra vencidos hace > 30 días), `usp_MAT_Notificacion_GetParaUsuario`, `usp_MAT_Notificacion_MarcarLeidas`; `database/2026-11-06_Notificaciones.sql`, aplicado en DEV.
 - **Aplicación:** `NotificacionesController` (`Lista`, `MarcarLeidas` con antiforgery), `NotificacionDataAccess` (genera como mucho cada 5 min), `Views/Shared/_Notificaciones.cshtml` en `_Layout` (campanita junto al perfil + offcanvas de Bootstrap desde la derecha), `Scripts/mat.notificaciones.js`, `Content/mat.notificaciones.css`.

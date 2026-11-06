@@ -25,8 +25,11 @@
 
 .hs-cifras { font-size: 0.875rem; color: #374151; display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; font-variant-numeric: tabular-nums; }
 .hs-cifras strong { font-size: 1rem; color: #111827; }
-.hs-barra { height: 6px; border-radius: 999px; background: #e5e7eb; overflow: hidden; margin: 0.375rem 0 0.25rem; }
-.hs-barra span { display: block; height: 100%; background: #c9245f; border-radius: 999px; }
+.hs-barra { display: flex; height: 6px; border-radius: 999px; background: #e5e7eb; overflow: hidden; margin: 0.375rem 0 0.25rem; }
+.hs-barra span { display: block; height: 100%; }
+.hs-barra-vendidos { background: var(--brand-primary-accesible, #c9245f); }
+/* Pre-reservas: ocupan lugar pero todavía no están confirmadas */
+.hs-barra-reservas { background: #f4a6c3; }
 .hs-detalle { font-size: 0.75rem; color: #6b7280; }
 
 .hs-chip { display: inline-block; border-radius: 999px; padding: 0.0625rem 0.5rem; font-size: 0.6875rem; font-weight: 600; white-space: nowrap; }

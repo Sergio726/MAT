@@ -10,6 +10,7 @@
     .sg-widget-list a:hover { color: var(--primary-color, #e91e63); text-decoration: underline; }
     .sg-widget .sg-sub { font-size: 0.8125rem; color: var(--text-secondary, #6b7280); }
     .sg-widget .sg-ok { color: #166534; }
+    .sg-widget-list a.sg-ver-todos { color: var(--brand-primary-accesible, #c9245f); font-weight: 600; }
 </style>
 
 <section class="sg-widget" id="sg-widget-cumple" aria-label="Cumpleaños de hoy">
@@ -18,15 +19,16 @@
             <h2 class="sg-widget-title"><i class="bi bi-cake2" aria-hidden="true"></i> Cumpleaños de hoy</h2>
             <div class="sg-sub" data-rol="contador">Cargando…</div>
         </div>
-        <a href="@Url.Action("Index", "Seguimiento")" class="btn-modern btn-modern-primary btn-sm">
-            <i class="bi bi-whatsapp"></i>
-            <span>Saludar</span>
+        @* Solo navega a Seguimiento (no envía nada): antes decía "Saludar" y parecía un envío masivo *@
+        <a href="@Url.Action("Index", "Seguimiento")" class="btn-modern btn-modern-secondary btn-sm">
+            <i class="bi bi-person-heart" aria-hidden="true"></i>
+            <span>Ver seguimiento</span>
         </a>
     </div>
     <div data-rol="lista"></div>
 </section>
 
-<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261104b")"></script>
+<script src="@Url.Content("~/Scripts/mat.seguimiento.js?v=20261107a")"></script>
 <script>
     $(function () {
         MatSeguimiento.initWidget({

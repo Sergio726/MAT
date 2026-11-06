@@ -5,14 +5,16 @@
 (function (window, $) {
     'use strict';
 
-    var VISIBLES = 8;
+    var VISIBLES = 3;
     var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    // Solo los estados que avisan algo llevan etiqueta: "Disponible" en todos los viajes no informaba nada.
     var ESTADOS = {
         completo: { texto: 'Completo', clase: 'hs-chip--completo' },
         ultimos: { texto: 'Últimos lugares', clase: 'hs-chip--ultimos' },
-        disponible: { texto: 'Disponible', clase: 'hs-chip--disponible' },
         sinPasajes: { texto: 'Sin pasajes cargados', clase: 'hs-chip--sin' }
     };
+
+    function plural(n, singular, varios) { return n + ' ' + (n === 1 ? singular : varios); }
 
     function esc(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -29,13 +31,19 @@
     function fila(v, urlReserva, repetidos) {
         var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v.fechaSalida || '');
         var dia = m ? +m[3] : '', mes = m ? MESES[+m[2] - 1] : '';
-        var estado = ESTADOS[v.estado] || ESTADOS.disponible;
-        var ocupados = Math.max(0, v.total - v.libres);
-        var pct = v.total > 0 ? Math.round(ocupados * 100 / v.total) : 0;
+        var estado = ESTADOS[v.estado];
         var hora = v.horaSalida ? ' · ' + esc(v.horaSalida) + ' h' : '';
         // El paquete solo agrega ruido salvo cuando hay dos viajes con el mismo nombre (por ejemplo, con noche y sin noche)
         var mostrarPaquete = v.paquete && repetidos[String(v.descripcion || '').toUpperCase()] > 1;
-        var detalle = v.vendidos + ' vendidos' + (v.preReservas ? ' · ' + v.preReservas + ' pre-reserva' + (v.preReservas === 1 ? '' : 's') : '');
+
+        // Una sola métrica: la barra es la ocupación (vendidos + pre-reservas sobre el total) y el texto dice lo mismo.
+        var total = v.total || 0;
+        var pctVendidos = total ? v.vendidos * 100 / total : 0;
+        var pctReservas = total ? v.preReservas * 100 / total : 0;
+        var pctOcupado = Math.round(pctVendidos + pctReservas);
+        var principal = total ? '<strong>' + v.vendidos + '</strong> de ' + total + ' vendidos' : 'Sin pasajes cargados';
+        var apoyo = total ? [plural(v.libres, 'libre', 'libres')].concat(v.preReservas ? [plural(v.preReservas, 'pre-reserva', 'pre-reservas')] : []).join(' · ') : '';
+        var lectura = total ? v.vendidos + ' de ' + total + ' vendidos, ' + apoyo.replace(/ · /g, ', ') + '. ' + pctOcupado + '% ocupado' : '';
 
         return '<li class="hs-fila' + (v.diasFaltan <= 0 ? ' is-hoy' : '') + '">' +
             '<div class="hs-fecha" aria-hidden="true"><span class="hs-dia">' + dia + '</span><span class="hs-mes">' + mes + '</span></div>' +
@@ -45,10 +53,13 @@
                 '<div class="hs-cuando">' + cuando(v.diasFaltan) + hora + '</div>' +
             '</div>' +
             '<div class="hs-ocupacion">' +
-                '<div class="hs-cifras"><strong>' + v.libres + '</strong> libre' + (v.libres === 1 ? '' : 's') + ' de ' + v.total +
-                    ' <span class="hs-chip ' + estado.clase + '">' + estado.texto + '</span></div>' +
-                '<div class="hs-barra" role="img" aria-label="' + pct + '% ocupado: ' + esc(detalle) + '"><span style="width:' + pct + '%"></span></div>' +
-                '<div class="hs-detalle">' + esc(detalle) + '</div>' +
+                '<div class="hs-cifras">' + principal +
+                    (estado && v.estado !== 'sinPasajes' ? ' <span class="hs-chip ' + estado.clase + '">' + estado.texto + '</span>' : '') + '</div>' +
+                (total ? '<div class="hs-barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pctOcupado + '"' +
+                    ' aria-valuetext="' + esc(lectura) + '" aria-label="Ocupación de ' + esc(v.descripcion) + '">' +
+                    '<span class="hs-barra-vendidos" style="width:' + pctVendidos.toFixed(1) + '%"></span>' +
+                    '<span class="hs-barra-reservas" style="width:' + pctReservas.toFixed(1) + '%"></span></div>' +
+                    '<div class="hs-detalle">' + esc(apoyo) + '</div>' : '') +
             '</div>' +
         '</li>';
     }

@@ -5,7 +5,8 @@ namespace MAT.MVC.Models.Home
     /// <summary>Un viaje del panel "Próximas salidas" del inicio (<c>usp_MAT_Dashboard_ProximasSalidas</c>).</summary>
     public sealed class ProximaSalidaDto
     {
-        public const int UmbralUltimosLugares = 5;
+        /// <summary>"Últimos lugares" con este porcentaje libre o menos (misma regla que el aviso de la campanita).</summary>
+        public const int PorcentajeUltimosLugares = 15;
 
         public Guid ViajeId { get; set; }
         public string Descripcion { get; set; }
@@ -19,15 +20,18 @@ namespace MAT.MVC.Models.Home
         public int Vendidos { get; set; }
         public int PreReservas { get; set; }
 
-        /// <summary>completo | ultimos | disponible | sinPasajes</summary>
+        /// <summary>completo | ultimos | disponible | sinPasajes. La pantalla solo marca los excepcionales.</summary>
         public string Estado
         {
             get
             {
                 if (Total == 0) return "sinPasajes";
                 if (Libres == 0) return "completo";
-                return Libres <= UmbralUltimosLugares ? "ultimos" : "disponible";
+                return Libres * 100 <= Total * PorcentajeUltimosLugares ? "ultimos" : "disponible";
             }
         }
+
+        /// <summary>Vendidos + pre-reservas: lo que llena la barra de ocupación.</summary>
+        public int Ocupados { get { return Math.Max(0, Total - Libres); } }
     }
 }

@@ -45,7 +45,7 @@ AS
   -- Description: Crea los avisos de la campanita que todavía no existen (Notificacion.Clave evita repetirlos).
   --              Lo llama la aplicación cada pocos minutos; correrlo de más no duplica nada.
   --              - ViajeProximo:  viaje que sale en 7 días o menos con lugares libres (uno por viaje).
-  --              - UltimosLugares: viaje de los próximos 40 días con 1 a 5 lugares libres (uno por viaje).
+  --              - UltimosLugares: viaje de los próximos 40 días con 15 % libre o menos (uno por viaje; misma regla que el panel del inicio).
   --              - ViajeCompleto: viaje de los próximos 40 días sin lugares libres (uno por viaje).
   --              - Cumpleanios:   clientes activos que cumplen años hoy (uno por día).
   --              Libres = pasajes en estado Disponible (1); total = todos menos Anulado (7). Hora argentina.
@@ -85,7 +85,7 @@ BEGIN
            N'Últimos lugares: ' + LEFT(Descripcion, 120),
            N'Quedan ' + CAST(Libres AS NVARCHAR(10)) + N' de ' + CAST(Total AS NVARCHAR(10)) + N'. Sale el ' + CONVERT(NVARCHAR(10), FechaSalida, 103) + N'.',
            '/Reserva/Index?viajeid=' + CAST(ViajeID AS VARCHAR(36)), DATEADD(DAY, 1, CAST(FechaSalida AS DATETIME))
-    FROM #Viajes WHERE Libres BETWEEN 1 AND 5;
+    FROM #Viajes WHERE Libres > 0 AND Libres * 100 <= Total * 15;
 
     INSERT INTO @Nuevas
     SELECT 'viaje-completo:' + CAST(ViajeID AS VARCHAR(36)), 'ViajeCompleto',
