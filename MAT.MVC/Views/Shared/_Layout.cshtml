@@ -51,6 +51,7 @@
     <link href="~/Content/modern-facturafiscal.css" rel="stylesheet" />
     @* Contraste de botones y barra de carga: después de las hojas generales, antes de las de cada pantalla *@
     <link href="~/Content/mat.accesibilidad.css?v=20261104a" rel="stylesheet" />
+    <link href="~/Content/mat.notificaciones.css?v=20261106a" rel="stylesheet" />
 
     @RenderSection("Styles", required: false)
 
@@ -83,6 +84,7 @@
     <script src="~/Scripts/global.js"></script>
     <script src="~/Scripts/mat.jquery.hashtable.js"></script>
     <script src="~/Scripts/bootstrap-5.3.2.bundle.min.js"></script>
+    <script src="~/Scripts/mat.notificaciones.js?v=20261106a"></script>
     <script src="~/Scripts/jquery.mask.js"></script>
     <script src="~/Scripts/common.js"></script>
     <script src="~/Scripts/jquery.timepicker/jquery.timepicker.min.js"></script>
@@ -116,6 +118,8 @@
                 <div class="navbar-breadcrumb">
                     @Html.Partial("_Breadcrumb")
                 </div>
+                <!-- Campanita de avisos -->
+                @Html.Partial("_Notificaciones")
                 <!-- User Profile -->
                 <div class="user-profile-container">
                     @Html.Partial("_LoginPartial")

@@ -1,0 +1,41 @@
+@* Campanita de avisos de la barra superior y su panel lateral (Bootstrap offcanvas, entra desde la derecha).
+   Datos: NotificacionesController.Lista / MarcarLeidas. Script: Scripts/mat.notificaciones.js *@
+@if (Request.IsAuthenticated)
+{
+    <div class="ntf" id="ntf">
+        <button type="button" class="ntf-campana" data-bs-toggle="offcanvas" data-bs-target="#ntfPanel" aria-controls="ntfPanel"
+                aria-label="Avisos" title="Avisos">
+            <i class="bi bi-bell" aria-hidden="true"></i>
+            <span class="ntf-numero d-none" data-rol="numero" aria-hidden="true"></span>
+            <span class="visually-hidden" data-rol="numero-lector">Sin avisos nuevos</span>
+        </button>
+    </div>
+
+    <div class="offcanvas offcanvas-end ntf-panel" tabindex="-1" id="ntfPanel" aria-labelledby="ntfTitulo">
+        <div class="offcanvas-header">
+            <div>
+                <h2 class="offcanvas-title h5" id="ntfTitulo">Avisos</h2>
+                <div class="ntf-sub" data-rol="resumen"></div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+        </div>
+        <div class="ntf-acciones">
+            <button type="button" class="ntf-marcar" data-rol="marcar-todas" disabled>
+                <i class="bi bi-check2-all" aria-hidden="true"></i> Marcar todas como leídas
+            </button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <ul class="ntf-lista" data-rol="lista" aria-live="polite"></ul>
+        </div>
+        <form id="ntfToken" class="d-none">@Html.AntiForgeryToken()</form>
+    </div>
+
+    <script>
+        $(function () {
+            MatNotificaciones.init({
+                urlLista: "@Url.Action("Lista", "Notificaciones")",
+                urlMarcar: "@Url.Action("MarcarLeidas", "Notificaciones")"
+            });
+        });
+    </script>
+}

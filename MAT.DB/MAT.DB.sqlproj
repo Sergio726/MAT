@@ -694,6 +694,9 @@
     <Build Include="dbo\Stored Procedures\usp_MAT_DetalleFactura_SetPrecio.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Dashboard_Viajes_LugaresDisponibles.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Dashboard_ProximasSalidas.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Notificacion_Generar.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Notificacion_GetParaUsuario.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MAT_Notificacion_MarcarLeidas.sql" />
     <Build Include="dbo\Stored Procedures\usp_Provincia_GetAllByPaisID.sql" />
     <Build Include="dbo\Stored Procedures\_ProcedureReservaHabitacion_GetByReservaHabitacionId.sql">
       <AnsiNulls>Off</AnsiNulls>
@@ -1379,6 +1382,8 @@
   <ItemGroup>
     <Build Include="dbo\Tables\ClienteContacto.sql" />
     <Build Include="dbo\Tables\ClienteAudit.sql" />
+    <Build Include="dbo\Tables\Notificacion.sql" />
+    <Build Include="dbo\Tables\NotificacionLeida.sql" />
     <Build Include="dbo\Functions\fn_MAT_Seguimiento_Clientes.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Seguimiento_Clientes.sql" />
     <Build Include="dbo\Stored Procedures\usp_MAT_Seguimiento_ResumenCategorias.sql" />
