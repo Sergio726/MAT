@@ -467,3 +467,49 @@
         height: auto !important;
     }
 }
+
+/* =====================================================
+   Menú angosto ("rail" de 64 px, bloque D): solo íconos, con tooltip (mat.menu.js).
+   Solo escritorio; en el celular sigue el panel deslizable. Los submenús no entran en 64 px:
+   tocar un grupo expande el menú y abre ese grupo. El grupo de la página actual toma la marca
+   de página actual, porque su subítem no se ve.
+   ===================================================== */
+@media (min-width: 769px) {
+    body.menu-rail { --sidebar-width: 64px; }
+    body.menu-rail #menu { width: 64px !important; }
+
+    body.menu-rail #menu .menu-0 > li > a {
+        justify-content: center !important;
+        padding: 0 !important;
+        margin: 1px 8px !important;
+    }
+    body.menu-rail #menu .menu-0 > li > a > span,
+    body.menu-rail #menu .menu-0 > li.hasSubmenu > a::after { display: none !important; }
+    body.menu-rail #menu .menu-0 > li > a i { margin-right: 0 !important; }
+
+    body.menu-rail #menu .menu-0 > li.hasSubmenu > ul.collapse,
+    body.menu-rail #menu .menu-0 > li.hasSubmenu > ul.collapse.show,
+    body.menu-rail #menu .menu-0 > li.hasSubmenu > ul.collapsing { display: none !important; }
+
+    /* Los títulos de grupo pasan a ser una línea divisoria */
+    body.menu-rail #menu .menu-0 > li.menu-section-label {
+        font-size: 0 !important;
+        height: 1px;
+        padding: 0 !important;
+        margin: 8px 16px !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 0 !important;
+    }
+
+    body.menu-rail #menu .menu-0 > li.hasSubmenu.menu-padre-actual > a {
+        background: var(--menu-active-bg, rgba(230, 51, 117, 0.08)) !important;
+        box-shadow: inset 3px 0 0 var(--menu-active-accent, #e63375) !important;
+    }
+
+    #menu { transition: width 0.2s ease; }
+    #content { transition: margin-left 0.2s ease; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #menu, #content { transition: none !important; }
+}

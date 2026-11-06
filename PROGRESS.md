@@ -2,6 +2,16 @@
 
 ---
 
+### [2026-11-07] — Panel principal, bloque D: barra superior con buscador global
+- **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque D). Sobre el bloque C (PR #47). Afecta a todas las pantallas con `_Layout`.
+- **Buscador global, etapa 1** (`_BuscadorGlobal.cshtml`, `Scripts/mat.buscador.js`): disparador "Buscar cliente, viaje, factura o módulo…" al centro de la barra; `Ctrl+K`/`Cmd+K` abre y cierra; `<dialog>` modal con combobox + listbox (`aria-activedescendant`), ↑ ↓ Enter Esc. Índice = `QuickAccessCatalog` (en `data-catalogo`) + ítems del menú leídos del DOM ("Hoteles › Nuevo"), sin duplicar URLs, sin tildes. Resultados agrupados por tipo (Módulos / Acciones), grupos ordenados por su mejor resultado: "fact" → Buscar facturas (`/Factura/Index`). Vacío: accesos frecuentes.
+- **+ Nuevo presupuesto** (`/Presupuesto/Create`) a la derecha; solo ícono < 1400 px, oculto < 576 px (queda como acción en el buscador).
+- **Menú angosto** (`Scripts/mat.menu.js`, `modern-menu.css`): botón en la barra, rail de 64 px con íconos y tooltip, preferencia en `localStorage` aplicada al comienzo del `<body>` (sin parpadeo); tocar un grupo expande el menú y abre ese grupo; solo escritorio.
+- **Inicio:** breadcrumb "Inicio" en vez del título fijo "Panel Principal" (`_Breadcrumb`). Sin tooltip fijo en "Inicio" del menú.
+- **Barra** (`Content/mat.topbar.css`): izquierda (menú, logo, breadcrumb) y derecha con el mismo flex-basis para centrar el buscador; < 1200 px el buscador queda como lupa; en celular menos aire. Se anula el `margin-left: auto` de la campanita dentro del grupo derecho.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV: Ctrl+K abre/cierra y devuelve el foco, "fact", "hotel nuevo", "credito" (sin tilde) y sin resultados; rail 64 px con 11 tooltips, persiste al recargar, tocar Clientes lo expande y abre; sin errores de consola; sin superposiciones a 360, 390, 768, 1024, 1366 y 1536 px (medido en iframe).
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Panel principal, bloque C: menú lateral
 - **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque C). Afecta a todas las pantallas con `_Layout`.
 - **Página actual** (`_Layout.cshtml`, script del menú): un solo ítem —el href más largo que coincide— con `aria-current="page"`; el submenú que lo contiene arranca abierto con la clase `show` de Bootstrap y el padre queda con `menu-padre-actual` (marcado más tenue).
