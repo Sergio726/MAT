@@ -2,6 +2,14 @@
 
 ---
 
+### [2026-11-07] — Panel principal, bloque F: retirar "Todos los módulos"
+- **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque F). Sobre el bloque E (PR #49).
+- **Verificación previa de destinos:** `/Presupuesto/Index`, `/PersonaCliente/Index` y `/Presupuesto/Metricas` están en el menú lateral; `/Home/TodosLosViajesIndex`, `/Paquete/Index`, `/PersonaCliente/NotaCreditoList` y `/Home/HistorialPagos` (este último solo con permiso) **no** están en el menú: quedan alcanzables desde el buscador, que indexa `QuickAccessCatalog.GetAllModules`. `/Viaje/Index` sigue en los accesos frecuentes.
+- **Inicio** (`_QuickAccess`, `mat.home.css`): sin el acordeón; en su lugar "Buscar módulo · Ctrl K", que abre el buscador.
+- **Buscador** (`mat.buscador.js`): con el campo vacío lista todo el catálogo (frecuentes primero, sin tope), para que esos cuatro módulos no queden escondidos.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV: sin acordeón, el botón abre el buscador y el vacío muestra los 12 módulos y 2 acciones.
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Panel principal, bloque E: indicadores con tendencia y encabezado sin foto
 - **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque E). Solo el inicio.
 - **Tendencia** (`HomeController.GetEstadisticasMesActual` → `GetEstadisticas(vendedor, desde, hasta)`, `Models/Home/TendenciaKpi.cs`): presupuestos, clientes nuevos y ventas contra el **mismo tramo del mes anterior** (del 1 al día de hoy; si el mes anterior es más corto, hasta su último día), no contra el mes completo. Mismos SP y consultas que ya usaba el inicio. El tramo anterior se guarda 10 minutos en memoria por vendedor y día. Si falla, el inicio sigue sin tendencia.

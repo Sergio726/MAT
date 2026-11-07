@@ -1,23 +1,23 @@
 @using MAT.MVC.Infrastructure
 @{
-    var canViewHistorialPagos = AdminAuthorizationHelper.CanViewAllHistorialPagos(Context);
     var frequentActions = QuickAccessCatalog.GetFrequentActions();
-    var allModules = QuickAccessCatalog.GetAllModules(canViewHistorialPagos);
 }
 @* Accesos frecuentes del inicio: una fila de chips arriba de todo (bloque B del plan del panel principal).
    Antes eran tarjetas altas al pie, a dos scrolls. Las altas (EsAccion) se distinguen de la navegación.
-   "Todos los módulos" pasa a ser un enlace del encabezado; se retira cuando exista el buscador global (bloque F). *@
+   El resto de los módulos se encuentra con el buscador global (bloque F). *@
 <section class="home-card home-accesos" aria-labelledby="qa-titulo">
     <div class="home-card__head">
         <h2 class="home-card__title" id="qa-titulo">
             <i class="bi bi-lightning-charge" aria-hidden="true"></i>
             <span>Accesos frecuentes</span>
         </h2>
-        <button type="button" class="home-card__link collapsed" data-bs-toggle="collapse" data-bs-target="#quickAccessAllModules"
-                aria-expanded="false" aria-controls="quickAccessAllModules">
-            <span>Todos los módulos</span>
-            <span class="home-card__count" aria-label="@allModules.Count módulos más">+@allModules.Count</span>
-            <i class="bi bi-chevron-down home-card__chevron" aria-hidden="true"></i>
+        @* Bloque F: el acordeón "Todos los módulos" se reemplaza por el buscador, que con el campo vacío lista
+           todos los módulos (incluidos los que no están en el menú lateral: Todos los viajes, Paquetes,
+           Notas de crédito, Historial de pagos) *@
+        <button type="button" class="home-card__link" onclick="if (window.MatBuscador) { MatBuscador.abrir(); }" aria-keyshortcuts="Control+K">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <span>Buscar módulo</span>
+            <kbd class="home-card__atajo" aria-hidden="true">Ctrl K</kbd>
         </button>
     </div>
 
@@ -29,17 +29,5 @@
                 <span>@action.Title</span>
             </a>
         }
-    </div>
-
-    <div class="collapse" id="quickAccessAllModules">
-        <div class="qa-fila qa-fila--todos">
-            @foreach (var module in allModules)
-            {
-                <a href="@module.Url" class="qa-chip qa-chip--navegacion" title="@module.Description">
-                    <i class="bi @module.Icon" aria-hidden="true"></i>
-                    <span>@module.Title</span>
-                </a>
-            }
-        </div>
     </div>
 </section>
