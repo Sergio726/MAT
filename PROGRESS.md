@@ -2,6 +2,18 @@
 
 ---
 
+### [2026-11-07] — Panel principal, bloque G: buscador de clientes, facturas y viajes
+- **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque G). Sobre el bloque F (PR #50). **Sin cambios de base:** solo SP existentes.
+- **Endpoint** `Home/Buscar?q=` (`[Authorize]`, JSON, `ErrorUtil`) → `Infrastructure/Data/BuscadorDataAccess.cs`, `Models/Home/BuscadorDtos.cs`:
+  - **Clientes:** `usp_MAT_PersonaCliente_Buscar` (listado de Clientes: palabras en cualquier orden, sin acentos, dígitos de DNI/teléfono); 5 resultados → ficha; "Ver los N clientes" → `/PersonaCliente/Index?q=`.
+  - **Facturas:** por titular. De los clientes encontrados, los titulares → `/PersonaCliente/Details/{id}#facturas`. El número de factura no sirve de clave: en DEV, 51 de 1.992 facturas del último año lo tienen cargado, varias con texto libre ("6 cuotas con interes").
+  - **Viajes:** `usp_MAT_Reportes_BuscarViajes` (descripción, sin acentos) → `/Reserva/Index?viajeid=` (el enlace principal del listado de viajes).
+  - Cada grupo por separado: si uno falla, el resto se muestra.
+- **Navegador** (`mat.buscador.js`, `_BuscadorGlobal`, `mat.topbar.css`): desde 2 caracteres, 250 ms después de la última tecla; respuestas viejas descartadas; búsquedas en memoria; "Buscando clientes, facturas y viajes…"; la selección no salta cuando llegan los datos; un error no queda guardado.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV: "garcia" (5 clientes + Ver los 101 + 2 titulares, ~0,9 s), "cafayate" (viajes con fecha), "14303" (DNI parcial), "fact" (sigue primero Buscar facturas), "garcia fornes", sin resultados, una letra sin consulta; `#facturas` abre la pestaña Facturas; sin sesión, `Home/Buscar` responde 302 al login sin datos; sin errores de consola.
+- **Hallazgo aparte (sin tocar):** `PersonaClienteController.PopupDetalleFactura` y `DetalleFactura` no tienen `[Authorize]`.
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Panel principal, bloque F: retirar "Todos los módulos"
 - **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque F). Sobre el bloque E (PR #49).
 - **Verificación previa de destinos:** `/Presupuesto/Index`, `/PersonaCliente/Index` y `/Presupuesto/Metricas` están en el menú lateral; `/Home/TodosLosViajesIndex`, `/Paquete/Index`, `/PersonaCliente/NotaCreditoList` y `/Home/HistorialPagos` (este último solo con permiso) **no** están en el menú: quedan alcanzables desde el buscador, que indexa `QuickAccessCatalog.GetAllModules`. `/Viaje/Index` sigue en los accesos frecuentes.

@@ -1,6 +1,8 @@
-/* Buscador global de la barra superior (Ctrl+K). Bloque D del plan del panel principal, etapa 1: módulos.
-   Índice: catálogo de accesos (data-catalogo del <dialog>, desde QuickAccessCatalog) + ítems del menú lateral.
-   Resultados agrupados por tipo (TIPOS): la etapa 2 suma clientes, viajes y facturas como tipos nuevos.
+/* Buscador global de la barra superior (Ctrl+K). Plan del panel principal: bloque D (módulos) y bloque G (datos).
+   - Módulos y Acciones: en el navegador. Índice = catálogo de accesos (data-catalogo del <dialog>, desde
+     QuickAccessCatalog) + ítems del menú lateral.
+   - Clientes, Facturas (por titular) y Viajes: Home/Buscar (data-url-buscar), desde 2 caracteres, 250 ms después
+     de la última tecla; las respuestas viejas se descartan y cada búsqueda queda en memoria mientras la página vive.
    Teclado: Ctrl+K (o Cmd+K) abre y cierra, flechas para moverse, Enter abre, Esc cierra.
    Accesibilidad: patrón combobox + listbox con aria-activedescendant; el <dialog> modal atrapa el foco. */
 (function (window, document) {
@@ -11,15 +13,25 @@
         { clave: "accion", titulo: "Acciones" }
     ];
     var MAX_POR_TIPO = 8;
+    var MIN_REMOTO = 2;
+    var ESPERA_MS = 250;
 
-    var dialogo, entrada, lista, vacio, estado, disparador;
+    var dialogo, entrada, lista, vacio, cargando, estado, disparador, urlBuscar;
     var indice = [];
     var visibles = [];
     var activo = -1;
+    var remotos = {};          // consulta normalizada → grupos ({ error: true } si falló)
+    var temporizador = null;
+    var ultimaPedida = "";
 
     function normalizar(texto) {
         return (texto || "").toString().normalize("NFD").replace(/[̀-ͯ]/g, "")
             .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    }
+
+    function consultaRemota() {
+        // Para el servidor: el texto tal cual (el SP de clientes ya ignora acentos y separa palabras)
+        return entrada.value.replace(/\s+/g, " ").trim();
     }
 
     function iconoDe(elemento) {
@@ -88,7 +100,7 @@
         return total + (item.frecuente ? 0.5 : 0);
     }
 
-    function buscar(consulta) {
+    function buscarLocal(consulta) {
         var palabras = normalizar(consulta).split(" ").filter(Boolean);
         var candidatos;
         var limite = MAX_POR_TIPO;
@@ -109,7 +121,7 @@
         return TIPOS.map(function (t, orden) {
             var delTipo = candidatos.filter(function (c) { return c.item.tipo === t.clave; }).slice(0, limite);
             return {
-                tipo: t,
+                titulo: t.titulo,
                 orden: orden,
                 mejor: delTipo.length ? delTipo[0].puntos : -1,
                 items: delTipo.map(function (c) { return c.item; })
@@ -126,19 +138,31 @@
     }
 
     function pintar() {
-        var grupos = buscar(entrada.value);
+        var urlActiva = activo >= 0 && visibles[activo] ? visibles[activo].url : null;
+        var consulta = consultaRemota();
+        var grupos = buscarLocal(entrada.value);
+
+        var esperando = false;
+        var falloRemoto = false;
+        if (consulta.length >= MIN_REMOTO && urlBuscar) {
+            var r = remotos[consulta.toLowerCase()];
+            if (!r) esperando = true;
+            else if (r.error) falloRemoto = true;
+            else r.forEach(function (g) { grupos.push({ titulo: g.titulo, items: g.items || [] }); });
+        }
+
         lista.textContent = "";
         visibles = [];
         grupos.forEach(function (g, gi) {
             var bloque = crear("div", "bg-bloque");
             bloque.setAttribute("role", "group");
             bloque.setAttribute("aria-labelledby", "bg-grupo-" + gi);
-            var cabecera = crear("div", "bg-grupo", g.tipo.titulo);
+            var cabecera = crear("div", "bg-grupo", g.titulo);
             cabecera.id = "bg-grupo-" + gi;
             bloque.appendChild(cabecera);
             g.items.forEach(function (it) {
                 var n = visibles.length;
-                var op = crear("div", "bg-opcion");
+                var op = crear("div", "bg-opcion" + (it.verTodos ? " bg-opcion--ver-todos" : ""));
                 op.id = "bg-opcion-" + n;
                 op.setAttribute("role", "option");
                 op.setAttribute("aria-selected", "false");
@@ -158,9 +182,52 @@
             });
             lista.appendChild(bloque);
         });
-        vacio.hidden = visibles.length > 0;
-        estado.textContent = visibles.length ? visibles.length + (visibles.length === 1 ? " resultado" : " resultados") : "Sin resultados";
-        marcar(visibles.length ? 0 : -1);
+
+        cargando.hidden = !esperando;
+        vacio.hidden = visibles.length > 0 || esperando;
+        if (falloRemoto && !visibles.length) {
+            vacio.hidden = false;
+            vacio.textContent = "No se pudo buscar en clientes y viajes. Probá de nuevo en un momento.";
+        } else {
+            vacio.textContent = "Sin resultados. Probá con otra palabra, un DNI o un teléfono.";
+        }
+        estado.textContent = esperando ? "Buscando…"
+            : visibles.length ? visibles.length + (visibles.length === 1 ? " resultado" : " resultados") : "Sin resultados";
+
+        // Si llegan los datos del servidor, la selección se queda donde estaba
+        var n = -1;
+        if (urlActiva) {
+            for (var i = 0; i < visibles.length; i++) { if (visibles[i].url === urlActiva) { n = i; break; } }
+        }
+        activo = -1;
+        marcar(n >= 0 ? n : (visibles.length ? 0 : -1));
+    }
+
+    function pedir() {
+        var consulta = consultaRemota();
+        var clave = consulta.toLowerCase();
+        if (consulta.length < MIN_REMOTO || !urlBuscar || remotos[clave] || clave === ultimaPedida) return;
+        ultimaPedida = clave;
+        var url = urlBuscar + (urlBuscar.indexOf("?") >= 0 ? "&" : "?") + "q=" + encodeURIComponent(consulta);
+        fetch(url, { credentials: "same-origin", headers: { "X-Requested-With": "XMLHttpRequest", "Accept": "application/json" } })
+            .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+            .then(function (datos) { remotos[clave] = datos && datos.success ? (datos.grupos || []) : { error: true }; })
+            .catch(function () { remotos[clave] = { error: true }; })
+            .then(function () {
+                if (ultimaPedida === clave) ultimaPedida = "";
+                // Solo se repinta si el texto sigue siendo el mismo (las respuestas viejas quedan en memoria)
+                if (dialogo.open && consultaRemota().toLowerCase() === clave) pintar();
+            });
+    }
+
+    function alEscribir() {
+        if (remotos[consultaRemota().toLowerCase()] && remotos[consultaRemota().toLowerCase()].error) {
+            delete remotos[consultaRemota().toLowerCase()];   // un error no queda guardado: se reintenta
+        }
+        activo = -1;
+        pintar();
+        clearTimeout(temporizador);
+        temporizador = setTimeout(pedir, ESPERA_MS);
     }
 
     function marcar(n) {
@@ -186,6 +253,7 @@
         if (dialogo.open) return;
         if (!indice.length) construirIndice();
         entrada.value = "";
+        activo = -1;
         if (typeof dialogo.showModal === "function") dialogo.showModal(); else dialogo.setAttribute("open", "");
         disparador.setAttribute("aria-expanded", "true");
         pintar();
@@ -194,6 +262,7 @@
 
     function cerrar() {
         if (!dialogo.open) return;
+        clearTimeout(temporizador);
         if (typeof dialogo.close === "function") dialogo.close(); else { dialogo.removeAttribute("open"); alCerrar(); }
     }
 
@@ -209,7 +278,9 @@
         entrada = document.getElementById("bgEntrada");
         lista = document.getElementById("bgResultados");
         vacio = document.getElementById("bgVacio");
+        cargando = document.getElementById("bgCargando");
         estado = document.getElementById("bgEstado");
+        urlBuscar = dialogo.getAttribute("data-url-buscar") || "";
         disparador.setAttribute("aria-expanded", "false");
 
         disparador.addEventListener("click", abrir);
@@ -217,7 +288,7 @@
         // Clic en el fondo (fuera de la caja): el evento llega con el <dialog> como destino
         dialogo.addEventListener("click", function (e) { if (e.target === dialogo) cerrar(); });
 
-        entrada.addEventListener("input", pintar);
+        entrada.addEventListener("input", alEscribir);
         entrada.addEventListener("keydown", function (e) {
             if (e.key === "ArrowDown" || e.key === "ArrowUp") {
                 e.preventDefault();
