@@ -2,6 +2,12 @@
 
 ---
 
+### [2026-11-07] — Publicación local (perfil MAT.DEV) sin pisar la conexión
+- **Problema:** después de cada publicación con el perfil MAT.DEV (`C:\inetpub\MAT`, Release) el sitio no arrancaba ("The network path was not found" en `_AppStart.cshtml`). `Web.Release.config` reemplaza las cadenas por las de MATSERVER (producción), que no existe en la red de la PC de desarrollo.
+- **Solución:** `MAT.MVC/Web.MAT.DEV.config` (transformación de perfil, se aplica después de Release solo con MAT.DEV): `<connectionStrings configSource="connectionStrings.local.config" />`. Ese archivo vive solo en `C:\inetpub\MAT` (cadenas de DEV, fuera de git; la publicación no lo pisa por `DeleteExistingFiles=False`). Registrado en el csproj como Web.Release.config; nota en `MAT.DEV.pubxml`. Los otros perfiles no cambian.
+- **Verificación:** publicación con MSBuild y el perfil MAT.DEV a una carpeta temporal → el Web.config publicado queda con `configSource`, sin MATSERVER y con el resto de Release; la transformación no se copia. En `C:\inetpub\MAT`: login 200, páginas internas 302 al login, `connectionStrings.local.config` no descargable (404).
+- Estado: ✅ completo
+
 ### [2026-11-07] — Herramientas: certificado HTTPS para el servidor y las PCs
 - **Pedido:** que el navegador no muestre "Este sitio no es seguro" al entrar a MAT en el servidor.
 - **Archivos nuevos** (`tools/certificado-https/`): `1-SERVIDOR-crear-certificado.bat` + `servidor.ps1` (crea un certificado de 5 años para nombre del equipo, FQDN, localhost, 127.0.0.1, IPv4 y nombres extra; lo asigna a los enlaces HTTPS de IIS; exporta `MAT-servidor.cer`; deja `volver-atras.txt`), `2-CLIENTE-instalar-certificado.bat` + `cliente.ps1` (instala el `.cer` como raíz de confianza en cada PC, para todos los usuarios o solo el actual), `LEEME.txt` (pasos, GPO, Firefox y la alternativa Let's Encrypt/win-acme si se usa desde internet con dominio propio).
