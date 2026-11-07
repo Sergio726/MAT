@@ -111,13 +111,16 @@ Plan completo: [`../DOCUMENTACION/PLAN_MODULO_CLIENTES_REDISENO.md`](../DOCUMENT
 
 Plan: [`../DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md`](../DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md) (auditoría UX/UI 06/11/2026, verificada contra el código).
 
-- [ ] **Bloque A — Correcciones de lectura** *(próximo release)*: barra de ocupación y texto con la misma métrica, badge solo en Últimos lugares/Completo, 3 salidas visibles, "Saludar" → "Ver seguimiento", "y N más…" con enlace, KPIs con `aria-label`, "Ver detalle" y texto para valor 0
-- [ ] **Bloque B — Reorganización del inicio** *(próximo release)*: accesos frecuentes compactos arriba, KPIs, dos columnas (salidas · cumpleaños colapsado), un solo estilo de tarjeta y encabezado
-- [ ] **Bloque C — Sidebar**: ítem activo con `aria-current`, densidad 38 px, chevrons con `aria-expanded`, ícono de Butacas
-- [ ] **Bloque D — Barra superior**: buscador global `Ctrl+K` (etapa 1: módulos), "+ Nuevo presupuesto", sidebar colapsable, breadcrumb en el inicio
-- [ ] **Bloque E — KPIs**: tendencia vs mes anterior, hero sin foto o con contraste AA
-- [ ] **Bloque F — Retirar "Todos los módulos"** (después de D, verificando que ninguna ruta quede huérfana)
-- [ ] **Bloque G — Buscador con clientes, viajes y facturas** (a definir)
+- [x] **Bloque A — Correcciones de lectura** *(PR #45)*: barra de ocupación y texto con la misma métrica, badge solo en Últimos lugares/Completo, 3 salidas visibles, "Saludar" → "Ver seguimiento", "y N más…" con enlace, KPIs con `aria-label`, "Ver detalle" y texto para valor 0
+- [x] **Bloque B — Reorganización del inicio** *(PR #46)*: accesos frecuentes compactos arriba, KPIs, dos columnas (salidas · cumpleaños colapsado), un solo estilo de tarjeta y encabezado
+- [x] **Bloque C — Sidebar** *(PR #47)*: ítem activo con `aria-current`, densidad 38 px, chevrons con `aria-expanded`, ícono de Butacas
+- [x] **Bloque D — Barra superior** *(PR #48; ajuste de breadcrumb a 1366px en #53)*: buscador global `Ctrl+K` (etapa 1: módulos), "+ Nuevo presupuesto", sidebar colapsable, breadcrumb en el inicio
+- [x] **Bloque E — KPIs** *(PR #49; tendencia contra el mismo tramo del mes anterior, hero sin foto)*: tendencia vs mes anterior, hero sin foto o con contraste AA
+- [x] **Bloque F — Retirar "Todos los módulos"** *(PR #50)* (después de D, verificando que ninguna ruta quede huérfana)
+- [x] **Bloque G — Buscador con clientes, viajes y facturas** *(PR #51; facturas por titular: NroFactura casi nunca se carga)*
+- [x] **Seguridad: sesión obligatoria en todo el sitio** *(PR #52)* — filtro global `AuthorizeAttribute`; ~150 acciones en 25 controladores respondían sin sesión (incluidas escrituras). Públicos: Account, Error, External.PackagesGetAll.
+- [x] **Viajes por fecha y Reservas con el layout nuevo** *(PR #53)* — calendario dentro de su tarjeta, tarjeta de viaje sin título repetido, colectivo escalado al lugar real del panel (65–115 %).
+- [ ] **Reservas [P3]: redibujar el plano del colectivo en SVG** — silueta del coche (frente, chofer, puerta, escalera, baño, bar) como fondo; asientos con forma de butaca y número adentro (hoy queda sobre el borde); estado con color **e** ícono/patrón (verde y amarillo se confunden), referencia fija con conteo por estado, frente y pasillo señalados; para doble piso, minibús y semicama/cama. Mantener la lógica actual (mismos asientos, estados y clics de `mat.busplugin`). Hacer primero un boceto con el coche real de un viaje para aprobar el estilo; si hay croquis o fotos del coche de la empresa de transporte, usarlos. **No** usar imágenes generadas por IA para el plano (no respetan las posiciones de los asientos y se pixelan al escalar). En tablet (800–1024px) hoy queda scroll horizontal.
 
 ### Factura / vendedores — resumen de pagos por viaje (P2)
 
