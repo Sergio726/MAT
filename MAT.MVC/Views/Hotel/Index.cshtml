@@ -1,22 +1,37 @@
-﻿@model List<MAT.MVC.Models.HotelStandard>
+@model List<MAT.MVC.Models.HotelStandard>
 @using MAT.Utilities
 @using MAT.Enums
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Hoteles";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@* Listado de hoteles (2026-11-07): encabezado compacto y 4 columnas en lugar de 8. Antes los nombres se cortaban en
+   3-4 renglones (columna de 133px), cada fila medía ~100-140px y varias columnas estaban casi vacías (de 296 hoteles,
+   101 con localidad y 136 con contacto). Ahora: Hotel · Ubicación (dirección, CP y localidad) · Contacto (persona,
+   teléfono y email) · Acciones. El buscador de DataTables sigue encontrando por cualquiera de esos datos. *@
+@section Styles {
+    <link href="@Url.Content("~/Content/mat.hoteles.css?v=20261107d")" rel="stylesheet" />
 }
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#tblHoteles").DataTable({
+        // Búsqueda sin tildes: "federacion" encuentra "Federación" y al revés (muchos nombres están cargados sin tilde)
+        var sinTildes = function (s) { return typeof s === "string" ? s.normalize("NFD").replace(/[̀-ͯ]/g, "") : s; };
+        $.fn.dataTable.ext.type.search.string = function (d) { return sinTildes(d); };
+        $.fn.dataTable.ext.type.search.html = function (d) { return typeof d === "string" ? sinTildes(d.replace(/<[^>]*>/g, " ")) : d; };
+
+        var tabla = $("#tblHoteles").DataTable({
             order: [[0, 'asc']],
             pageLength: 25,
+            autoWidth: false,
+            columnDefs: [{ targets: -1, orderable: false, searchable: false }],
             language: {
                 search: "Buscar:",
                 lengthMenu: "Mostrar _MENU_ registros",
                 info: "Mostrando _START_ a _END_ de _TOTAL_ hoteles",
                 infoEmpty: "No hay hoteles disponibles",
                 infoFiltered: "(filtrado de _MAX_ hoteles totales)",
+                zeroRecords: "No se encontraron hoteles",
                 paginate: {
                     first: "Primero",
                     last: "Último",
@@ -25,19 +40,26 @@
                 }
             }
         });
+
+        // Lo que se escribe también se busca sin tildes
+        $("#tblHoteles_filter input").off("keyup.DT search.DT input.DT paste.DT cut.DT")
+            .on("input", function () { tabla.search(sinTildes(this.value)).draw(); });
     });
 </script>
 
-<div class="modern-page-container">
+<div class="modern-page-container hoteles-listado">
     <div class="modern-page-header">
-        <h2 class="modern-page-title">
-            <i class="bi bi-building"></i>
-            <span>Hoteles</span>
-        </h2>
+        <div>
+            <h1 class="modern-page-title">
+                <i class="bi bi-building" aria-hidden="true"></i>
+                <span>Hoteles</span>
+            </h1>
+            <p class="hoteles-listado__sub">@Model.Count hoteles cargados</p>
+        </div>
         <div class="modern-page-actions">
             <a href="/Hotel/ABM" class="btn-modern btn-modern-primary">
-                <i class="bi bi-plus-circle"></i>
-                <span>Agregar Hotel</span>
+                <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                <span>Agregar hotel</span>
             </a>
         </div>
     </div>
@@ -46,40 +68,54 @@
         <table class="modern-table" id="tblHoteles">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>CP</th>
-                    <th>Localidad</th>
-                    <th>Teléfono</th>
-                    <th>Email</th>
-                    <th>Contacto</th>
-                    <th style="width: 80px;">Acciones</th>
+                    <th class="hl-col-hotel">Hotel</th>
+                    <th class="hl-col-ubicacion">Ubicación</th>
+                    <th class="hl-col-contacto">Contacto</th>
+                    <th class="hl-col-acciones"><span class="visually-hidden">Acciones</span></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
+                    var cpLocalidad = string.Join(" · ", new[] { string.IsNullOrWhiteSpace(item.CP) ? null : "CP " + item.CP.Trim(), string.IsNullOrWhiteSpace(item.Localidad) ? null : item.Localidad.Trim() }.Where(s => s != null));
                     <tr>
-                        <td><strong>@item.Nombre</strong></td>
-                        <td>@item.Direccion</td>
-                        <td>@item.CP</td>
-                        <td>@item.Localidad</td>
-                        <td>@item.Telefono</td>
+                        <td class="hl-hotel">@item.Nombre</td>
                         <td>
-                            @if (!string.IsNullOrEmpty(item.Email))
+                            @if (string.IsNullOrWhiteSpace(item.Direccion) && string.IsNullOrEmpty(cpLocalidad))
                             {
-                                <a href="mailto:@item.Email" style="color: var(--brand-primary);">@item.Email</a>
+                                <span class="hl-vacio" aria-label="Sin dirección">—</span>
                             }
                             else
                             {
-                                <span class="table-text-muted">-</span>
+                                <span class="hl-linea">@item.Direccion</span>
+                                if (!string.IsNullOrEmpty(cpLocalidad))
+                                {
+                                    <span class="hl-linea hl-secundaria">@cpLocalidad</span>
+                                }
                             }
                         </td>
-                        <td>@item.Contacto</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(item.Contacto))
+                            {
+                                <span class="hl-linea hl-contacto-nombre"><i class="bi bi-person" aria-hidden="true"></i> @item.Contacto</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(item.Telefono))
+                            {
+                                <span class="hl-linea hl-secundaria hl-telefono"><i class="bi bi-telephone" aria-hidden="true"></i> @item.Telefono</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(item.Email))
+                            {
+                                <span class="hl-linea hl-secundaria"><i class="bi bi-envelope" aria-hidden="true"></i> <a href="mailto:@item.Email" class="hl-email">@item.Email</a></span>
+                            }
+                            @if (string.IsNullOrWhiteSpace(item.Contacto) && string.IsNullOrWhiteSpace(item.Telefono) && string.IsNullOrWhiteSpace(item.Email))
+                            {
+                                <span class="hl-vacio" aria-label="Sin datos de contacto">—</span>
+                            }
+                        </td>
                         <td>
                             <div class="table-actions">
-                                <a href="/Hotel/ABM?Id=@item.HotelID" class="btn-action btn-action-edit" title="Editar Hotel">
-                                    <i class="bi bi-pencil"></i>
+                                <a href="/Hotel/ABM?Id=@item.HotelID" class="btn-action btn-action-edit" title="Editar hotel" aria-label="Editar @item.Nombre">
+                                    <i class="bi bi-pencil" aria-hidden="true"></i>
                                 </a>
                             </div>
                         </td>

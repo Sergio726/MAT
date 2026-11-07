@@ -23,6 +23,12 @@
   - `SystemDEV=true` llegaba a producción en cada publicación Release: la página de error mostraba mensaje, tipo y stack trace, `ErrorUtil` devolvía el texto de la excepción y el login decía "Entorno de Prueba". `Web.Release.config` → `false`; `Web.MAT.DEV.config` → `true` (sitio local).
 - **Pendientes anotados** en `docs/PENDIENTES.md` (acciones que escriben con GET, "clientes nuevos" con dos definiciones, rutas muertas, pantallas viejas de 14-19 MB, código muerto, validación de `DetalleViaje`, listados sin paginar en el servidor, imagen de jquery-ui faltante).
 - **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; publicaciones de prueba (FolderProfile → `SystemDEV=false`; MAT.DEV → `true`); navegador: cerrar con la X sin errores (asiento, Observaciones, Cotizador), "Cargar Monto" solo en modo pago, aviso con ventana bloqueada, CNRT imprime después de `load`.
+### [2026-11-07] — Hoteles: listado más compacto y legible
+- **Pedido:** mucho espacio arriba y texto apretado en la tabla de `/Hotel/Index`.
+- **Diagnóstico (DEV, 1366px):** la primera fila empezaba en el píxel 345 (32px de relleno, título de 32px, línea divisoria con 32px de margen, 24px más de la tabla y 16px de un contenedor de alertas vacío). 8 columnas en ~1100px: nombre en 133px (3-4 renglones en negrita), email en 267px, filas de 96-141px; de 296 hoteles, solo 101 con localidad y 136 con contacto.
+- **Cambios** (`Views/Hotel/Index.cshtml`, `Content/mat.hoteles.css` nuevo, acotado a `.hoteles-listado`): encabezado compacto con "N hoteles cargados"; 4 columnas — Hotel · Ubicación (dirección + "CP · Localidad") · Contacto (persona, teléfono, email) · Acciones (sin orden); celdas de 14px con interlineado 1,45, nombre semibold, vacíos como "—"; búsqueda de DataTables sin tildes ("federacion" encuentra "Federación"); debajo de 1200px la tabla no baja de 760px y se desplaza dentro de su recuadro.
+- **Global** (`mat.styles.custom.css`, versionado en `_Layout`): el contenedor de alertas sin alertas ya no reserva 16px arriba de cada pantalla.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV con capturas: primera fila en 276px (antes 345), filas de ~62px, 6-8 hoteles visibles (antes 3); búsqueda por teléfono, email, contacto y sin tildes; sin desborde de página de 390 a 1920px; con alerta el margen vuelve.
 - Estado: ✅ completo en DEV
 
 ### [2026-11-07] — Publicación local (perfil MAT.DEV) sin pisar la conexión
