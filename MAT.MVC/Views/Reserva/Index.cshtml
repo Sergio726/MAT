@@ -150,7 +150,7 @@
                 <div class="col-lg-9 col-md-7">
                     <section id="panel-bus">
                         <div class="modern-card">
-                            <div class="modern-card-content" style="padding: 2rem;">
+                            <div class="modern-card-content">
                                 <div id="container">
 
                                     @*MINIBUS*@
@@ -380,9 +380,11 @@
 
                                 </div>
 
+                                <script src="~/Scripts/mat.bus.ajuste.js?v=20261107f"></script>
                                 <script type="text/javascript">
                                     $(function () {
                                         $("#bus-tabs").tabs();
+                                        // Si el colectivo no entra en el panel, mat.bus.ajuste.js lo escala (ver ese archivo)
                                         // Función para inicializar los estados de las butacas
                                         // Solo afectar a las butacas reales (dentro de .piso_superior, .piso_inferior), no a la tabla de referencias
                                         $("#panel-bus .piso_superior a, #panel-bus .piso_inferior a").each(function () {

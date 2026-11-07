@@ -514,6 +514,7 @@
     <Content Include="Content\mat.home.css" />
     <Content Include="Content\mat.topbar.css" />
     <Content Include="Scripts\mat.buscador.js" />
+    <Content Include="Scripts\mat.bus.ajuste.js" />
     <Content Include="Scripts\mat.menu.js" />
     <Content Include="Views\Shared\_BuscadorGlobal.cshtml" />
     <Content Include="Content\mat.notificaciones.css" />

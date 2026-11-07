@@ -517,16 +517,21 @@ namespace MAT.MVC.Controllers.Home
                 // Generamos el HTML
                 StringBuilder htmlstring = new StringBuilder();
                 htmlstring.Append("<ul class='viajes-lista'>");
+                // 2026-11-07: sin la imagen de fondo de prueba (pedía la URL "foto", que no existe, una vez por tarjeta),
+                // sin repetir la descripción, textos codificados y enlace real a Reservas (antes href='#' y la
+                // navegación quedaba solo en el JS de .btn_viaje, que se conserva).
                 foreach (var item in Viajes)
                 {
-                    htmlstring.Append("<li data-image='" + "fotoviaje" + "' style='background-image:url(" + "foto" + ");'>");
-                    htmlstring.Append("<a href='#' class='btn_viaje' data-id=" + item.ViajeID + ">");
+                    var titulo = !String.IsNullOrWhiteSpace(item.Descripcion) ? item.Descripcion : item.PaqueteNombre;
+                    htmlstring.Append("<li>");
+                    htmlstring.Append("<a href='/Reserva/Index?viajeid=" + item.ViajeID + "' class='btn_viaje' data-id='" + item.ViajeID + "'>");
                     htmlstring.Append("<div class='viaje-container'>");
-                    htmlstring.Append("<h3>"); htmlstring.Append(item.Descripcion); htmlstring.Append("</h3>");
-                    if (!String.IsNullOrEmpty(item.Descripcion)) htmlstring.Append("<h5>" + item.Descripcion + "</h5>");
-
-                    htmlstring.Append("<h5>"); htmlstring.Append(String.Format("Destino: {0}", item.PaqueteNombre)); htmlstring.Append("</h5>");
-                    htmlstring.Append("<h6>"); htmlstring.Append(String.Format("Salida: {0}", item.FechaSalida.ToString())); htmlstring.Append("</h6>");
+                    htmlstring.Append("<h3>" + HttpUtility.HtmlEncode(titulo) + "</h3>");
+                    if (!String.IsNullOrWhiteSpace(item.PaqueteNombre) && item.PaqueteNombre != titulo)
+                    {
+                        htmlstring.Append("<h5>Paquete: " + HttpUtility.HtmlEncode(item.PaqueteNombre) + "</h5>");
+                    }
+                    htmlstring.Append("<h6>Salida: " + HttpUtility.HtmlEncode(item.FechaSalida.ToString()) + "</h6>");
                     htmlstring.Append("</div></a></li>");
                 }
 

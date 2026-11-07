@@ -11,6 +11,19 @@
 /* mat.notificaciones.css le da margin-left: auto a la campanita (antes la empujaba a la derecha);
    dentro de este grupo ese margen se comía el espacio libre y la separaba de "+ Nuevo presupuesto" */
 .topbar-derecha .ntf { margin-left: 0; margin-right: 0; }
+
+/* Debajo de 1700px el centrado estricto le quitaba lugar al breadcrumb (a 1366px, 175px para ~300px de
+   "Volver · Inicio · Viajes por fecha") mientras a la derecha sobraban ~170px. Ahí la izquierda toma lo que
+   necesita, la derecha solo lo suyo y el buscador ocupa el resto. (Va después de las reglas base: si no, la
+   base de .topbar-derecha la pisa.) */
+@media (max-width: 1699.98px) {
+    .topbar-izquierda { flex: 1 1 auto; }
+    .topbar-derecha { flex: 0 0 auto; }
+}
+/* Si falta lugar, cede primero el buscador (hasta 12rem) y no el breadcrumb */
+@media (min-width: 1200px) and (max-width: 1699.98px) {
+    .bg-disparador { flex-shrink: 8; min-width: 12rem; }
+}
 .navbar.main .wrapper--unified .topbar-derecha .user-profile-container { margin-left: 0.25rem; }
 
 /* ---------------------------------------------------------------- Botón del menú angosto (solo escritorio) */
@@ -70,7 +83,7 @@
     transition: background-color 0.15s ease;
 }
 .topbar-nuevo:hover, .topbar-nuevo:focus { background: #a91d50; color: #fff; text-decoration: none; }
-@media (max-width: 1399.98px) {
+@media (max-width: 1699.98px) {
     .topbar-nuevo { width: 2.375rem; padding: 0; justify-content: center; }
     .topbar-nuevo span { display: none; }
 }
@@ -130,3 +143,10 @@
 @media (prefers-reduced-motion: reduce) {
     .bg-disparador, .topbar-nuevo { transition: none; }
 }
+
+/* Si el breadcrumb no entra entero (por ejemplo, el nombre largo de un viaje en Reservas), la última miga se
+   recorta con "…" en lugar de cortarse en seco; el título completo queda en su title */
+.navbar-breadcrumb .breadcrumb-nav, .navbar-breadcrumb .breadcrumb { min-width: 0; flex-wrap: nowrap; }
+.navbar-breadcrumb .content-header-left { min-width: 0; }
+/* block + flex 0 1 auto: modern-topbar.css la deja en flex 0 0 auto (no se encoge) y el "…" no funciona en un contenedor flex */
+.navbar-breadcrumb .breadcrumb-item.active { display: block; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
