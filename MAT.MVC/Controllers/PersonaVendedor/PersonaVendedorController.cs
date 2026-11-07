@@ -16,7 +16,8 @@ namespace MAT.MVC.Views.PersonaVendedor
 
         public ActionResult Index()
         {
-            return View();
+            // Sin vista: daba 500. Ninguna pantalla la enlaza; se redirige al inicio (2026-11-07).
+            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult PartialHistorialPagos(Guid vendedorid)

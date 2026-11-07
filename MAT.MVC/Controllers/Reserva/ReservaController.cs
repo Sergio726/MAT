@@ -642,6 +642,8 @@ namespace MAT.MVC.Controllers.Reserva
             return Json(lSearch, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult InsertPersonToWatingList(string sPersonaID, string sViajeID, string sObservacion, string sPasajeroTemporal)
         {
             ListaEsperaModel.ListaEspera objWatingList = new ListaEsperaModel.ListaEspera();
@@ -661,6 +663,8 @@ namespace MAT.MVC.Controllers.Reserva
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult DeleteToWatingList(string Id)
         {
             string[] sResult = new string[2];
@@ -1007,6 +1011,8 @@ namespace MAT.MVC.Controllers.Reserva
             return PartialView(LPersonaCliente);
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult VincularMenor(string sPasajeID = "", string sMayorID = "", string sMenorID = "" )
         {
             string[] sResult = new string[2];
@@ -1330,6 +1336,13 @@ namespace MAT.MVC.Controllers.Reserva
 
         public ActionResult DetalleViaje(string sViajeID = "")
         {
+            // Sin un viaje válido respondía 500 (excepción al convertir). Ahora 400 con un mensaje (2026-11-07).
+            Guid viajeIdValido;
+            if (!Guid.TryParse(sViajeID, out viajeIdValido))
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest, "Falta el viaje");
+            }
+
             MAT.MVC.Models.DetalleViaje oDetalleViaje = new DetalleViaje();
             try
             {

@@ -38,7 +38,8 @@ namespace MAT.MVC.Controllers.Precio
 
         public ActionResult Create()
         {
-            return View();
+            // Sin vista: daba 500. Las butacas se cargan desde Precio/Index; se redirige ahí (2026-11-07).
+            return RedirectToAction("Index", "Precio");
         }
 
         [HttpPost]

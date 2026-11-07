@@ -92,6 +92,8 @@ namespace MAT.MVC.Controllers.Hotel
         }
 
         [Authorize]
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult HotelUpdate(MVC.Models.tblHotel oHotel)
         {
             string[] sResult = new string[3];

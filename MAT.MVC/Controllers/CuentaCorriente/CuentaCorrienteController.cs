@@ -15,7 +15,8 @@ namespace MAT.MVC.Controllers.CuentaCorriente
 
         public ActionResult Index()
         {
-            return View();
+            // Sin vista: daba 500. La cuenta corriente se ve en la ficha del cliente; se redirige al listado (2026-11-07).
+            return RedirectToAction("Index", "PersonaCliente");
         }
 
         public ActionResult DetalleComprobante(Guid id)

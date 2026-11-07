@@ -175,13 +175,13 @@
 
                     if (data.Mensaje === "Done.") {
                         $("#HotelID").val(data.HotelID);
-                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        (window.alertSuccess || window.alert)("Los datos se guardaron correctamente.", "Operación exitosa");
                         window.location.href = "/Hotel/ABM?Id=" + data.HotelID;
 
                     }
                     else {
                         if (data.Mensaje == "Existe.") {
-                            confirm("Ya existe un hotel con ese nombre, por favor cambie el nombre.", "Advertencia");
+                            (window.alertInfo || window.alert)("Ya existe un hotel con ese nombre, por favor cambie el nombre.", "Advertencia");
                         }
                         else {
                             (window.alertError || window.alert)("Ha ocurrido un error, por favor intente nuevamente.", "Error");
@@ -196,6 +196,7 @@
         {
             showLoading();
             $.ajax({
+                type: "POST",
                 url: "/Hotel/HotelUpdate",
                 data: _data,
                 dataType: "json",
@@ -203,7 +204,7 @@
 
                     hideLoading();
                     if (data.Mensaje === "Done.") {
-                        confirm("Los datos se guardarón correctamente.", "Operación Exitosa");
+                        (window.alertSuccess || window.alert)("Los datos se guardaron correctamente.", "Operación exitosa");
 
                         setTimeout(function () {
                             $('.ui-dialog-titlebar-close.ui-corner-all').click()
@@ -229,7 +230,7 @@
             success: function (data) {
                 if (data.Mensaje === "Done.") {
                     if (data.Existe == "Yes") {
-                        confirm("Ya existe un hotel con ese nombre, por favor cambie el nombre.", "Advertencia");
+                        (window.alertInfo || window.alert)("Ya existe un hotel con ese nombre, por favor cambie el nombre.", "Advertencia");
                         return true;
                     }
                     

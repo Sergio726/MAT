@@ -30,22 +30,9 @@ namespace MAT.MVC.Controllers.PersonaCliente
        
         public ActionResult RenderGridClientes()
         {
-            List<PersonaClienteModel> LPersonaCliente = new List<PersonaClienteModel>();
-            try
-            {
-                LPersonaCliente = PersonaClienteMethod.PersonaClienteGetAll();
-               
-                var jsonPatientList = JsonConvert.SerializeObject(LPersonaCliente);
-                ViewBag.sbDataSetJson = jsonPatientList.ToString();
-
-                return PartialView();
-            }
-            catch (Exception e)
-            {
-                ViewBag.Error = ErrorUtil.LogAndGetPublicMessage(e, "PersonaClienteController.RenderGridClientes");
-                return PartialView();
-            }
-            
+            // Código muerto: lo cargaba #txt-filter-cliente, que no existe en ninguna vista, y devolvía ~6 MB con todos
+            // los clientes. Se responde 404 (2026-11-07); el listado vigente es PersonaCliente/Index.
+            return HttpNotFound();
         }
 
 
@@ -1081,6 +1068,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
             return Json(sResult , JsonRequestBehavior.AllowGet);  
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult CancelarPago(Guid PagoID)
         {
             string[] sResult = new string[2];
@@ -1384,6 +1373,8 @@ namespace MAT.MVC.Controllers.PersonaCliente
         }
 
        
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult EliminarReservaHotel(string sPasajeroID = "", string sHabitacionID = "", string sViajeID = "")
         {
             string sResult = "";

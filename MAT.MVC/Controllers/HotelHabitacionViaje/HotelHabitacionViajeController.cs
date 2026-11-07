@@ -40,6 +40,8 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
         }
 
         [Authorize]
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult AddDistribucion(string HotelID, string ViajeID , string Fecha, int Tipo, int Cantidad, decimal habPrecio, string habDescripcion)
         {
             string[] sResult = new string[2];
@@ -101,6 +103,8 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
         }
 
         [Authorize]
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult deleteDistribucionRow(int TransHotelHabitacionViajeID)
         {
             string[] sResult = new string[3];
@@ -183,6 +187,8 @@ namespace MAT.MVC.Controllers.HotelHabitacionViaje
         }
 
         [Authorize]
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult AddDistribucionByPlantilla(string HotelID, string ViajeID, string Fecha, int PlantillaId)
         {
             string[] sResult = new string[2];

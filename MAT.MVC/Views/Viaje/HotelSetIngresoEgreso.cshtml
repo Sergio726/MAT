@@ -146,6 +146,7 @@
 
         var _data = $("#formData").serialize();
         $.ajax({
+            type: "POST",
             url: "/viaje/HotelIngresoEgreso_Set",
             data: _data,
             dataType: "json",

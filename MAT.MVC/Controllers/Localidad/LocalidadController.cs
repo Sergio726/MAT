@@ -73,6 +73,8 @@ namespace MAT.MVC.Controllers.Localidad
             return JsonCascade(payload, result);
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult AddLocalidad(string sIdDepartamento = "", string sLocalidad = "")
         {
             string id = string.Empty;

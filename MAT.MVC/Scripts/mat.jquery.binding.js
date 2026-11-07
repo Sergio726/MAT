@@ -279,11 +279,8 @@ $(document).on("click", "#btnReservarPasaje", function () {
 //     $("div#grid-pasajeros").load(url);
 // });
 
-$(document).on("keypress", "#txt-filter-cliente", function () {
-    var filter = $(this).val();
-    var url = "/PersonaCliente/RenderGridClientes?filter=" + filter;
-    $("div#grid-clientes").load(url);
-});
+// #txt-filter-cliente → /PersonaCliente/RenderGridClientes: eliminado (2026-11-07). Ningún campo con ese id existe y la
+// acción devolvía ~6 MB con todos los clientes. El listado vigente es PersonaCliente/Index.
 
 // Filtros de vinculacion de Paquete (servicio/precio/adicional) migrados a mat.paquete.js (MatPaquete.initVinculos).
 
@@ -1342,32 +1339,8 @@ $(document).on("click", "#btnCancelarReserva", function () {
 
 // Chequeo de documento repetido del alta/edición de cliente: ahora en Scripts/mat.clientes.form.js.
 
-$(document).on("click", "#btn-cancelar-pago", function () {
-    var comprobanteid = $(this).data("comprobanteid");
-    confirm("¿Está seguro de cancelar el presente pago?", "Confirmación de pago",
-    function () {
-        var $dlg = $(this);
-        $.ajax({
-            url: "/PersonaCliente/CancelarPago",
-            data: { movimientoid: comprobanteid },
-            success: function (data) {
-                console.log(data);
-                if (data == "True") {
-                    window.location.reload(true);
-                } else {
-                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
-                }
-            }
-        });
-        $dlg.dialog("close");
-        $dlg.remove();
-    },
-    function () {
-        var $dlg = $(this);
-        $dlg.dialog("close");
-        $dlg.remove();
-    })
-});
+// #btn-cancelar-pago: eliminado (2026-11-07). Solo lo usaba Views/PersonaCliente/HistorialCuenta.cshtml, que ninguna
+// acción carga, y estaba roto: mandaba 'movimientoid' a CancelarPago (espera PagoID) y esperaba "True" como respuesta.
 
 $(document).on("click", "#btn-cancelar-nota", function () {
     var comprobanteid = $(this).data("comprobanteid");
@@ -1549,6 +1522,7 @@ function fneliminarviaje(viajeId) {
                         return;
                     }
                     $.ajax({
+                        type: "POST",
                         url: "/Viaje/DeleteViaje",
                         data: { ViajeId: viajeId, DeleteDetalle: detalle },
                         success: function (data) {
@@ -1819,6 +1793,7 @@ function eliminarReservaHotel(PasajeroID, HabitacionID, ViajeID) {
     $("#gridHabitacion").append(divLoading);
 
     $.ajax({
+        type: "POST",
         url: "/PersonaCliente/EliminarReservaHotel",
         data: { "sPasajeroID": PasajeroID, "sHabitacionID": HabitacionID, "sViajeID": ViajeID },
         dataType: "json",

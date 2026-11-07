@@ -84,6 +84,7 @@
     function cancelarPago(pagoId) {
         var doCancel = function () {
             $.ajax({
+                type: "POST",
                 url: "/PersonaCliente/CancelarPago",
                 data: { PagoID: pagoId },
                 dataType: "json",

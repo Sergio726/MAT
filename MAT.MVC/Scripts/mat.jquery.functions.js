@@ -744,13 +744,7 @@ function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
 
 // Cuenta corriente del cliente: ahora es un interruptor del formulario (_ClienteForm), se guarda con el cliente.
 
-$(document).on("click", "#btnViajes", function () {
-    var url = "/Viaje/PopPupViajes"
-    var title = "Viajes";
-    var id = "Viajes";
-    ShowFormDialog(url, id, title);
-
-});
+// #btnViajes → /Viaje/PopPupViajes: eliminado (2026-11-07). Ningún botón con ese id existe y la acción tardaba más de 30 s.
 
 
 

@@ -1766,3 +1766,9 @@ input.buttonAdd_29px:hover {
         font-size: 1.25rem;
     }
 }
+
+/* jquery-ui-1.13.2.css pide images/ui-bg_highlight-soft_100_eeeeee_1x100.png para .ui-widget-content y el archivo no
+   está en el proyecto (404 en Reservas). El degradado era casi invisible: se mantiene el color y se quita la imagen (2026-11-07). */
+.ui-widget-content {
+    background-image: none;
+}

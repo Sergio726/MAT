@@ -2,6 +2,17 @@
 
 ---
 
+### [2026-11-07] — Correcciones de la prueba funcional (seguridad, datos, código muerto)
+- **Seguridad:** 20 acciones escribían con GET (un enlace o una imagen podían dispararlas con la sesión del usuario). 14 AJAX (HotelUpdate, AddDistribucion, deleteDistribucionRow, AddDistribucionByPlantilla, AddLocalidad, CancelarPago, EliminarReservaHotel, InsertPersonToWatingList, DeleteToWatingList, VincularMenor, UpdateViaje, InsertViaje, DeleteViaje, HotelIngresoEgreso_Set) → `[HttpPost]` + `[SoloAjax]` (filtro nuevo, `Infrastructure/SoloAjaxAttribute.cs`: exige X-Requested-With) y sus 16 llamadas JS con `type: "POST"`. 6 Delete por enlace (Butaca, Habitacion, Persona, PersonaPasajero, PersonaProveedor, Transporte) → `[HttpPost]` + `[ValidateAntiForgeryToken]`; `Butaca/Index` con formulario + confirmación; enlace muerto quitado de `PartialListHabitacion`.
+- **Clientes nuevos:** la tarjeta del inicio contaba la primera factura y el detalle, las altas; ahora la tarjeta cuenta altas (`Cliente.FechaAlta`), filtrada por vendedor como los otros indicadores.
+- **Rutas muertas y pantallas viejas:** Busqueda/Index y PersonaVendedor/Index → inicio; CuentaCorriente/Index, Persona/Index (19 MB) y PersonaPasajero/Index (14 MB) → Clientes; Precio/Create (GET) → Precio/Index. PopPupViajes (>30 s) y RenderGridClientes (6 MB) → 404, con sus manejadores JS quitados, y también el de cancelar pago de HistorialCuenta (vista huérfana, estaba roto).
+- **Validaciones:** Reserva/DetalleViaje sin viaje → 400; Factura/FacturaResultSearch sin filtro → lista vacía (12 KB en vez de 8,5 MB).
+- **Hotel (ABM):** los avisos de guardado y de nombre repetido usaban `confirm(msg, título)` sin funciones, que cae en el confirm NATIVO (Aceptar/Cancelar para un aviso de éxito, y congela la página); ahora `alertSuccess` / `alertInfo`, y "guardaron" sin tilde.
+- **Cosmético:** se anula la imagen faltante de jQuery UI (`.ui-widget-content`).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV: las 20 acciones → GET 404, POST sin AJAX/token rechazado; POST AJAX del sitio llega (VincularMenor, DeleteToWatingList con datos vacíos); guardado real de un hotel por POST ("Done.") con el aviso propio; redirecciones, 404 y 400 como se esperaba; tarjeta de clientes nuevos = 1 = detalle; Butacas con 8 formularios con token y sin enlaces GET de borrado.
+- **Revisión de homogeneidad:** anotada en `docs/PENDIENTES.md` (4 tamaños de título, densidad de tablas, estilos en línea).
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Prueba funcional en el navegador (DEV) y arreglos
 - **Alcance:** recorrido de enlaces (37 rutas), 90 acciones GET sacadas del código (sin las que escriben o cierran sesión), 33 pantallas cargadas en el navegador (recursos, errores JS, IDs duplicados, imágenes, peso, tiempos) y clics a mano (indicadores del inicio, salidas, cumpleaños, campanita, cotizador, asiento de reserva y los 8 botones del panel de Reservas).
 - **Resultado general:** sin errores de servidor ni de JS en las pantallas del menú; todas cargan en menos de 1,9 s y con menos de 1.500 elementos.

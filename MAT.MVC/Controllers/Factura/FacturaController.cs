@@ -52,7 +52,12 @@ namespace MAT.MVC.Controllers.Factura
             {
                 sPersonaID = (sPersonaID == "" ? null : sPersonaID);
                 sViajeID = (sViajeID == "" ? null : sViajeID);
-                LFactura = FacturaMetod.FacturaSearch(sPersonaID, sViajeID);
+                // Sin cliente ni viaje devolvía todas las facturas (~8,5 MB). La pantalla exige uno de los dos;
+                // sin filtro se devuelve la lista vacía (2026-11-07).
+                if (sPersonaID != null || sViajeID != null)
+                {
+                    LFactura = FacturaMetod.FacturaSearch(sPersonaID, sViajeID);
+                }
 
                 var jsonPatientList = JsonConvert.SerializeObject(LFactura);
                 ViewBag.sbDataSetJson = jsonPatientList.ToString();

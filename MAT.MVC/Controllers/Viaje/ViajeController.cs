@@ -44,8 +44,9 @@ namespace MAT.MVC.Controllers.Viaje
 
         public ActionResult PopPupViajes()
         {
-            List<Entities.Viaje> viajes = ViajeDataAccess.GetAll();
-            return PartialView(viajes);
+            // Código muerto: lo abría #btnViajes, que no existe en ninguna vista, y tardaba más de 30 s (todos los viajes).
+            // Se responde 404 en lugar de cargar todo (2026-11-07).
+            return HttpNotFound();
         }
 
         public ActionResult Details(Guid id)
@@ -377,6 +378,8 @@ namespace MAT.MVC.Controllers.Viaje
             return PartialView(ViajeH);
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult HotelIngresoEgreso_Set(string ViajeHotelID = "", string Desde = "", string Hasta = "", string HoraIngreso = "", string HoraSalida = "", string Comentario = "")
         {
             string[] sResult = new string[3];
@@ -422,6 +425,8 @@ namespace MAT.MVC.Controllers.Viaje
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult UpdateViaje(ViajeModel Viaje)
         {
             string[] sResult = new string[2];
@@ -442,6 +447,8 @@ namespace MAT.MVC.Controllers.Viaje
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult InsertViaje(ViajeModel Viaje)
         {
             string[] sResult = new string[2];
@@ -463,6 +470,8 @@ namespace MAT.MVC.Controllers.Viaje
             }, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        [MAT.MVC.Infrastructure.SoloAjax]   // escribe datos: solo POST por AJAX del sitio (2026-11-07, antes GET)
         public JsonResult DeleteViaje(Guid ViajeId, string DeleteDetalle)
         {
             string[] sResult = new string[2];

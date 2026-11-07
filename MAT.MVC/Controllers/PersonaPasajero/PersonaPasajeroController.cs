@@ -16,9 +16,9 @@ namespace MAT.MVC.Controllers.PersonaPasajero
 
         public ActionResult Index()
         {
-            IList<MAT.Entities.PersonaPasajero> LPersonaPasajero = Infrastructure.Data.PersonaPasajeroDataAccess.GetAll();
-            return View(LPersonaPasajero);
-            
+            // Pantalla vieja: armaba ~14 MB de HTML con todos los pasajeros y no la enlaza ninguna pantalla.
+            // Se redirige al listado de clientes vigente (2026-11-07).
+            return RedirectToAction("Index", "PersonaCliente");
         }
 
         public ActionResult Create()
@@ -225,6 +225,8 @@ namespace MAT.MVC.Controllers.PersonaPasajero
             return View(PersonaPasajero);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]   // borra: solo POST con token (2026-11-07, antes un enlace GET borraba)
         public ActionResult Delete(Guid Id)
         {
             Infrastructure.Data.PasajeroDataAccess.Delete(Id);

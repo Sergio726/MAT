@@ -343,6 +343,7 @@
     <Compile Include="Infrastructure\Data\HistorialDataAccess.cs" />
     <Compile Include="Infrastructure\HistorialPagosLoader.cs" />
     <Compile Include="Infrastructure\JsonCamelCaseHelper.cs" />
+    <Compile Include="Infrastructure\SoloAjaxAttribute.cs" />
     <Compile Include="Infrastructure\Data\MaestrosDataAccess.cs" />
     <Compile Include="Infrastructure\Data\PagoDataAccess.cs" />
     <Compile Include="Infrastructure\Data\PaqueteDataAccess.cs" />
