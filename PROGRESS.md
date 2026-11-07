@@ -2,6 +2,12 @@
 
 ---
 
+### [2026-11-07] — Herramientas: certificado HTTPS para el servidor y las PCs
+- **Pedido:** que el navegador no muestre "Este sitio no es seguro" al entrar a MAT en el servidor.
+- **Archivos nuevos** (`tools/certificado-https/`): `1-SERVIDOR-crear-certificado.bat` + `servidor.ps1` (crea un certificado de 5 años para nombre del equipo, FQDN, localhost, 127.0.0.1, IPv4 y nombres extra; lo asigna a los enlaces HTTPS de IIS; exporta `MAT-servidor.cer`; deja `volver-atras.txt`), `2-CLIENTE-instalar-certificado.bat` + `cliente.ps1` (instala el `.cer` como raíz de confianza en cada PC, para todos los usuarios o solo el actual), `LEEME.txt` (pasos, GPO, Firefox y la alternativa Let's Encrypt/win-acme si se usa desde internet con dominio propio).
+- **Por qué dos pasos:** un certificado autofirmado solo quita el aviso en las PCs que confían en él.
+- **Verificación:** sintaxis de los `.ps1` OK; `.bat` en ASCII. No se ejecutaron (crean certificados y cambian la configuración HTTPS; se corren en el servidor). En la PC de desarrollo el mismo problema se diagnosticó así: certificado emitido solo para 192.168.100.186, IP que ya no era la de la PC.
+- Estado: ✅ listo para usar en el servidor
 ### [2026-11-07] — Inicio: vuelve la foto de fondo del encabezado
 - **Pedido:** volver a la foto de fondo de "Bienvenido, …" y a las tarjetas con efecto de cristal (el bloque E las había reemplazado por una superficie neutra).
 - **Archivos:** `Views/Home/_DashboardHero.cshtml` (sin el modificador `--neutro`, vuelve `.dashboard-hero__overlay`), `Content/mat.home.css` (sale el bloque de superficie neutra).
