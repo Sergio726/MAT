@@ -52,12 +52,13 @@
     }
 }
 
-@* Encabezado del inicio (bloque E del plan del panel principal): superficie neutra, sin la foto de fondo,
-   que obligaba a una capa oscura y dejaba los textos chicos al límite del contraste. Cada indicador muestra la
+@* Encabezado del inicio: foto de fondo con capa oscura y tarjetas con efecto de cristal (se volvió a la foto el
+   2026-11-07, a pedido; los textos chicos se aclararon hasta 4,5:1 en mat.home.css). Cada indicador muestra la
    tendencia contra el mismo tramo del mes anterior; la frase completa va en el aria-label (el chip es aria-hidden).
    Con valor 0 se muestra un texto de contexto en vez de "$0,00", y el pie "Ver detalle" deja claro sin hover
    que la tarjeta se puede abrir. *@
-<section class="dashboard-hero dashboard-hero--neutro" aria-label="Bienvenida y resumen del mes">
+<section class="dashboard-hero" aria-label="Bienvenida y resumen del mes">
+    <div class="dashboard-hero__overlay"></div>
     <div class="dashboard-hero__content">
         <div class="dashboard-hero__layout">
             <div class="dashboard-hero__welcome">
