@@ -512,6 +512,7 @@
     <Content Include="Content\mat.clientes.ficha.css" />
     <Content Include="Content\mat.home.salidas.css" />
     <Content Include="Content\mat.home.css" />
+    <Content Include="Content\mat.hoteles.css" />
     <Content Include="Content\mat.topbar.css" />
     <Content Include="Scripts\mat.buscador.js" />
     <Content Include="Scripts\mat.bus.ajuste.js" />

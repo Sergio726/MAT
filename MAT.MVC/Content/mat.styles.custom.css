@@ -641,6 +641,10 @@ div.wait {
 .modern-alerts-host {
     margin-bottom: 1rem;
 }
+/* Sin alertas no reserva lugar (antes dejaba 16px vacíos arriba de cada pantalla) */
+.modern-alerts-host:not(:has(.modern-alert, .alert)) {
+    margin-bottom: 0;
+}
 
 /* Variantes modernas (para que funcionen también en Admin, que no carga modern-dashboard.css) */
 .modern-alert {

@@ -1,0 +1,64 @@
+/* Listado de hoteles (Views/Hotel/Index.cshtml), 2026-11-07.
+   Acotado a .hoteles-listado para no cambiar los otros listados que usan modern-page-container / modern-table. */
+
+/* ---------------------------------------------------------------- Encabezado compacto
+   Antes: 32px de relleno, título de 32px, línea divisoria con 32px de margen y 24px más de relleno de la tabla:
+   la primera fila empezaba en el píxel ~345. */
+.hoteles-listado { padding: 1rem 1.25rem !important; }
+.hoteles-listado .modern-page-header {
+    margin-bottom: 0.75rem !important;
+    padding-bottom: 0 !important;
+    border-bottom: 0 !important;
+    align-items: center;
+}
+.hoteles-listado .modern-page-title { font-size: 1.375rem !important; margin: 0 !important; gap: 0.5rem; }
+.hoteles-listado .modern-page-title .bi { color: var(--brand-primary-accesible, #c9245f); }
+.hoteles-listado__sub { margin: 0.125rem 0 0; font-size: 0.8125rem; color: var(--text-secondary, #6b7280); }
+.hoteles-listado .modern-table-container { padding: 0.75rem 1rem 1rem !important; }
+
+/* ---------------------------------------------------------------- Tabla: 4 columnas, texto con aire */
+.hoteles-listado #tblHoteles { table-layout: fixed; width: 100% !important; }
+/* Acciones con ancho fijo, Hotel y Ubicación con porcentaje, Contacto con el resto (con el mínimo de 760px de
+   abajo, Contacto no baja de ~250px) */
+.hoteles-listado #tblHoteles th.hl-col-hotel { width: 28%; }
+.hoteles-listado #tblHoteles th.hl-col-ubicacion { width: 30%; }
+.hoteles-listado #tblHoteles th.hl-col-contacto { width: auto; }
+.hoteles-listado #tblHoteles th.hl-col-acciones { width: 72px; }
+
+.hoteles-listado #tblHoteles tbody td {
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+/* El nombre viene en mayúsculas desde la base: semibold (no bold) y un poco de espaciado para que no se pegue */
+.hoteles-listado .hl-hotel {
+    font-weight: 600;
+    color: var(--text-strong, #111827);
+    letter-spacing: 0.01em;
+}
+
+.hoteles-listado .hl-linea { display: block; }
+.hoteles-listado .hl-linea + .hl-linea { margin-top: 0.125rem; }
+.hoteles-listado .hl-secundaria { font-size: 0.8125rem; color: #4b5563; }
+.hoteles-listado .hl-linea .bi { font-size: 0.75rem; color: #6b7280; margin-right: 0.25rem; }
+.hoteles-listado .hl-contacto-nombre { font-weight: 500; }
+.hoteles-listado .hl-telefono { white-space: nowrap; }
+.hoteles-listado .hl-email { color: var(--brand-primary-accesible, #c9245f); word-break: break-all; }
+.hoteles-listado .hl-vacio { color: #9ca3af; }
+
+.hoteles-listado #tblHoteles tbody td:last-child { vertical-align: middle; }
+
+/* Pantallas angostas: con ancho fijo las columnas quedaban en ~80px y Contacto en 0 (filas de 800px de alto).
+   Debajo de 1200px la tabla no baja de 760px y se desplaza de costado dentro de su recuadro. */
+@media (max-width: 1199.98px) {
+    .hoteles-listado .modern-table-container { overflow-x: auto; }
+    .hoteles-listado #tblHoteles { min-width: 760px; }
+}
+@media (max-width: 767.98px) {
+    .hoteles-listado { padding: 0.75rem !important; }
+    .hoteles-listado .modern-page-header { flex-wrap: wrap; gap: 0.5rem; }
+    .hoteles-listado .modern-table-container { padding: 0.5rem !important; }
+}
