@@ -107,6 +107,8 @@ namespace MAT.MVC.Controllers.Transporte
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]   // borra: solo POST con token (2026-11-07, antes un enlace GET borraba)
         public ActionResult Delete(Guid Id)
         {
             try

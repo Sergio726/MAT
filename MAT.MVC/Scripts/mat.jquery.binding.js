@@ -279,11 +279,8 @@ $(document).on("click", "#btnReservarPasaje", function () {
 //     $("div#grid-pasajeros").load(url);
 // });
 
-$(document).on("keypress", "#txt-filter-cliente", function () {
-    var filter = $(this).val();
-    var url = "/PersonaCliente/RenderGridClientes?filter=" + filter;
-    $("div#grid-clientes").load(url);
-});
+// #txt-filter-cliente → /PersonaCliente/RenderGridClientes: eliminado (2026-11-07). Ningún campo con ese id existe y la
+// acción devolvía ~6 MB con todos los clientes. El listado vigente es PersonaCliente/Index.
 
 // Filtros de vinculacion de Paquete (servicio/precio/adicional) migrados a mat.paquete.js (MatPaquete.initVinculos).
 
@@ -588,25 +585,48 @@ $(document).on("click", "#btn-perfil-historialviaje", function () {
     $("div.resumen-perfil").load("/PersonaPasajero/PartialPasajerosHistorial?pasajeroid=" + $(this).data("personaid"));
 });
 
+// Abre una ventana para imprimir (2026-11-07). Antes: window.open(url).print() imprimía la ventana todavía vacía
+// (Manifiesto y Listado ya se imprimen solos al cargar), .print().close() tiraba error siempre (print no devuelve
+// nada) y, con las ventanas emergentes bloqueadas, window.open devuelve null y el botón fallaba sin avisar.
+function abrirVentanaImpresion(url, imprimirAlCargar) {
+    var ventana = window.open(url, '_blank');
+    if (!ventana) {
+        avisarVentanaBloqueada();
+        return;
+    }
+    if (imprimirAlCargar) {
+        ventana.addEventListener('load', function () {
+            ventana.focus();
+            ventana.print();
+        });
+    }
+}
+
+function avisarVentanaBloqueada() {
+    var texto = 'El navegador bloqueó la ventana nueva. Permití las ventanas emergentes para este sitio y volvé a intentar.';
+    var $host = $('.modern-alerts-host').first();
+    if (!$host.length) {
+        window.alert(texto);
+        return;
+    }
+    var $aviso = $('<div class="modern-alert modern-alert-warning" role="alert"></div>').text(texto);
+    $host.prepend($aviso);
+    setTimeout(function () { $aviso.fadeOut(400, function () { $aviso.remove(); }); }, 8000);
+}
+
 $(document).on("click", "#btn-nomina", function () {
-    var url = "/PasajeroViaje/Manifiesto?id=" + $(this).data("id");
-    var title = "Manifiesto Previsorio";
-    var id = "ManifiestoPrevisorio";
-    window.open(url, '_blank').print();
+    // La página del manifiesto se imprime sola al cargar
+    abrirVentanaImpresion("/PasajeroViaje/Manifiesto?id=" + $(this).data("id"), false);
 });
 
 $(document).on("click", "#btn-listasimple", function () {
-    var url = "/PasajeroViaje/ListadoSimple?id=" + $(this).data("id");
-    var title = "Listado de Pasajeros";
-    var id = "ListadoPasajeros";
-    window.open(url, '_blank').print().close();
+    // La página del listado se imprime sola al cargar
+    abrirVentanaImpresion("/PasajeroViaje/ListadoSimple?id=" + $(this).data("id"), false);
 });
 
 $(document).on("click", "#btn-cnrt", function () {
-    var url = "/PasajeroViaje/CNRT?id=" + $(this).data("id");
-    var title = "Listado CNRT";
-    var id = "ListadoCNRT";
-    window.open(url, '_blank').print();
+    // CNRT no se imprime sola: se imprime cuando terminó de cargar
+    abrirVentanaImpresion("/PasajeroViaje/CNRT?id=" + $(this).data("id"), true);
 });
 
 $(document).on("click", "#btn-cnrt-hojauno", function () {
@@ -1319,32 +1339,8 @@ $(document).on("click", "#btnCancelarReserva", function () {
 
 // Chequeo de documento repetido del alta/edición de cliente: ahora en Scripts/mat.clientes.form.js.
 
-$(document).on("click", "#btn-cancelar-pago", function () {
-    var comprobanteid = $(this).data("comprobanteid");
-    confirm("¿Está seguro de cancelar el presente pago?", "Confirmación de pago",
-    function () {
-        var $dlg = $(this);
-        $.ajax({
-            url: "/PersonaCliente/CancelarPago",
-            data: { movimientoid: comprobanteid },
-            success: function (data) {
-                console.log(data);
-                if (data == "True") {
-                    window.location.reload(true);
-                } else {
-                    (window.alertError || window.alert)("Error en la operación. Contacte con el Administrador del Sistema.", "Error");
-                }
-            }
-        });
-        $dlg.dialog("close");
-        $dlg.remove();
-    },
-    function () {
-        var $dlg = $(this);
-        $dlg.dialog("close");
-        $dlg.remove();
-    })
-});
+// #btn-cancelar-pago: eliminado (2026-11-07). Solo lo usaba Views/PersonaCliente/HistorialCuenta.cshtml, que ninguna
+// acción carga, y estaba roto: mandaba 'movimientoid' a CancelarPago (espera PagoID) y esperaba "True" como respuesta.
 
 $(document).on("click", "#btn-cancelar-nota", function () {
     var comprobanteid = $(this).data("comprobanteid");
@@ -1526,6 +1522,7 @@ function fneliminarviaje(viajeId) {
                         return;
                     }
                     $.ajax({
+                        type: "POST",
                         url: "/Viaje/DeleteViaje",
                         data: { ViajeId: viajeId, DeleteDetalle: detalle },
                         success: function (data) {
@@ -1796,6 +1793,7 @@ function eliminarReservaHotel(PasajeroID, HabitacionID, ViajeID) {
     $("#gridHabitacion").append(divLoading);
 
     $.ajax({
+        type: "POST",
         url: "/PersonaCliente/EliminarReservaHotel",
         data: { "sPasajeroID": PasajeroID, "sHabitacionID": HabitacionID, "sViajeID": ViajeID },
         dataType: "json",

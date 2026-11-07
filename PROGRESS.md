@@ -2,6 +2,44 @@
 
 ---
 
+### [2026-11-07] — Interfaz homogénea: encabezados de página y densidad de tablas
+- **Antes:** 4 tamaños de título (36 px en Viajes por fecha y Presupuestos, 32 px en la mayoría con línea divisoria, 24 px en Clientes/Seguimiento/Viajes, 20 px en Notas de crédito); en los ABM la tabla empezaba en el píxel ~345 de 768; celdas de 15 px con 14-16 px de relleno, salvo Clientes (14/8).
+- **Cambios globales** (`modern-dashboard.css`, `modern-datatable.css`): `.modern-page-container` 1rem 1.25rem; `.modern-page-header` sin línea divisoria y 0.75rem de margen; `.modern-page-title` 22 px; `.modern-dashboard` y `.modern-dashboard-header` con el mismo criterio (subtítulo 13 px gris); tablas `modern-table` y DataTables a 14 px con 0.625rem × 0.75rem.
+- **Ajustes puntuales:** Clientes (`mat.clientes.listado.css`), Notas de crédito (título "Notas de crédito" y tarjeta blanca), Viajes (estilo en la vista), Seguimiento de clientes (estilo en la vista), Seguimiento de presupuestos (`modern-presupuesto.css`). Hoteles: el encabezado compacto propio pasa a ser el global (se quitaron sus reglas duplicadas).
+- **Incluye** los PR #58 (Hoteles), #59 y #60.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV en 19 pantallas: títulos de 22 px en todas, celdas 14 px/10 px, datos de los ABM en ~255 px; capturas de Inicio, Presupuestos, Viajes por fecha, Transportes, Notas de crédito, Hoteles y los dos Seguimientos. Se probó dejar el código de presupuesto en un renglón y se revirtió: hacía desbordar la tabla 58 px.
+- **Queda:** estilos en línea de Seguimiento de presupuestos y Facturación (`docs/PENDIENTES.md`).
+- Estado: ✅ completo en DEV
+
+### [2026-11-07] — Correcciones de la prueba funcional (seguridad, datos, código muerto)
+- **Seguridad:** 20 acciones escribían con GET (un enlace o una imagen podían dispararlas con la sesión del usuario). 14 AJAX (HotelUpdate, AddDistribucion, deleteDistribucionRow, AddDistribucionByPlantilla, AddLocalidad, CancelarPago, EliminarReservaHotel, InsertPersonToWatingList, DeleteToWatingList, VincularMenor, UpdateViaje, InsertViaje, DeleteViaje, HotelIngresoEgreso_Set) → `[HttpPost]` + `[SoloAjax]` (filtro nuevo, `Infrastructure/SoloAjaxAttribute.cs`: exige X-Requested-With) y sus 16 llamadas JS con `type: "POST"`. 6 Delete por enlace (Butaca, Habitacion, Persona, PersonaPasajero, PersonaProveedor, Transporte) → `[HttpPost]` + `[ValidateAntiForgeryToken]`; `Butaca/Index` con formulario + confirmación; enlace muerto quitado de `PartialListHabitacion`.
+- **Clientes nuevos:** la tarjeta del inicio contaba la primera factura y el detalle, las altas; ahora la tarjeta cuenta altas (`Cliente.FechaAlta`), filtrada por vendedor como los otros indicadores.
+- **Rutas muertas y pantallas viejas:** Busqueda/Index y PersonaVendedor/Index → inicio; CuentaCorriente/Index, Persona/Index (19 MB) y PersonaPasajero/Index (14 MB) → Clientes; Precio/Create (GET) → Precio/Index. PopPupViajes (>30 s) y RenderGridClientes (6 MB) → 404, con sus manejadores JS quitados, y también el de cancelar pago de HistorialCuenta (vista huérfana, estaba roto).
+- **Validaciones:** Reserva/DetalleViaje sin viaje → 400; Factura/FacturaResultSearch sin filtro → lista vacía (12 KB en vez de 8,5 MB).
+- **Hotel (ABM):** los avisos de guardado y de nombre repetido usaban `confirm(msg, título)` sin funciones, que cae en el confirm NATIVO (Aceptar/Cancelar para un aviso de éxito, y congela la página); ahora `alertSuccess` / `alertInfo`, y "guardaron" sin tilde.
+- **Cosmético:** se anula la imagen faltante de jQuery UI (`.ui-widget-content`).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV: las 20 acciones → GET 404, POST sin AJAX/token rechazado; POST AJAX del sitio llega (VincularMenor, DeleteToWatingList con datos vacíos); guardado real de un hotel por POST ("Done.") con el aviso propio; redirecciones, 404 y 400 como se esperaba; tarjeta de clientes nuevos = 1 = detalle; Butacas con 8 formularios con token y sin enlaces GET de borrado.
+- **Revisión de homogeneidad:** anotada en `docs/PENDIENTES.md` (4 tamaños de título, densidad de tablas, estilos en línea).
+- Estado: ✅ completo en DEV
+
+### [2026-11-07] — Prueba funcional en el navegador (DEV) y arreglos
+- **Alcance:** recorrido de enlaces (37 rutas), 90 acciones GET sacadas del código (sin las que escriben o cierran sesión), 33 pantallas cargadas en el navegador (recursos, errores JS, IDs duplicados, imágenes, peso, tiempos) y clics a mano (indicadores del inicio, salidas, cumpleaños, campanita, cotizador, asiento de reserva y los 8 botones del panel de Reservas).
+- **Resultado general:** sin errores de servidor ni de JS en las pantallas del menú; todas cargan en menos de 1,9 s y con menos de 1.500 elementos.
+- **Corregido:**
+  - Cerrar cualquier diálogo con la X tiraba "cannot call methods on dialog prior to initialization" (`mat.jquery.functions.js`, 3 manejadores): ahora solo cierra si el diálogo sigue abierto.
+  - "Cargar Monto" del cotizador aparecía siempre (el `display:none` lo pisaba `.btn-modern { display: inline-flex !important }`) y no hacía nada fuera de un pago: la vista solo lo genera en modo pago (`sMode=1`).
+  - Manifiesto / Lista de pasajeros / CNRT (`mat.jquery.binding.js`): `window.open(url).print()` imprimía la ventana vacía, `.print().close()` fallaba siempre y con ventanas emergentes bloqueadas el botón fallaba sin avisar. Nueva `abrirVentanaImpresion`: Manifiesto y Listado solo abren (se imprimen solos), CNRT imprime al cargar; si el navegador bloquea la ventana, aviso en la página.
+  - `SystemDEV=true` llegaba a producción en cada publicación Release: la página de error mostraba mensaje, tipo y stack trace, `ErrorUtil` devolvía el texto de la excepción y el login decía "Entorno de Prueba". `Web.Release.config` → `false`; `Web.MAT.DEV.config` → `true` (sitio local).
+- **Pendientes anotados** en `docs/PENDIENTES.md` (acciones que escriben con GET, "clientes nuevos" con dos definiciones, rutas muertas, pantallas viejas de 14-19 MB, código muerto, validación de `DetalleViaje`, listados sin paginar en el servidor, imagen de jquery-ui faltante).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; publicaciones de prueba (FolderProfile → `SystemDEV=false`; MAT.DEV → `true`); navegador: cerrar con la X sin errores (asiento, Observaciones, Cotizador), "Cargar Monto" solo en modo pago, aviso con ventana bloqueada, CNRT imprime después de `load`.
+### [2026-11-07] — Hoteles: listado más compacto y legible
+- **Pedido:** mucho espacio arriba y texto apretado en la tabla de `/Hotel/Index`.
+- **Diagnóstico (DEV, 1366px):** la primera fila empezaba en el píxel 345 (32px de relleno, título de 32px, línea divisoria con 32px de margen, 24px más de la tabla y 16px de un contenedor de alertas vacío). 8 columnas en ~1100px: nombre en 133px (3-4 renglones en negrita), email en 267px, filas de 96-141px; de 296 hoteles, solo 101 con localidad y 136 con contacto.
+- **Cambios** (`Views/Hotel/Index.cshtml`, `Content/mat.hoteles.css` nuevo, acotado a `.hoteles-listado`): encabezado compacto con "N hoteles cargados"; 4 columnas — Hotel · Ubicación (dirección + "CP · Localidad") · Contacto (persona, teléfono, email) · Acciones (sin orden); celdas de 14px con interlineado 1,45, nombre semibold, vacíos como "—"; búsqueda de DataTables sin tildes ("federacion" encuentra "Federación"); debajo de 1200px la tabla no baja de 760px y se desplaza dentro de su recuadro.
+- **Global** (`mat.styles.custom.css`, versionado en `_Layout`): el contenedor de alertas sin alertas ya no reserva 16px arriba de cada pantalla.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV con capturas: primera fila en 276px (antes 345), filas de ~62px, 6-8 hoteles visibles (antes 3); búsqueda por teléfono, email, contacto y sin tildes; sin desborde de página de 390 a 1920px; con alerta el margen vuelve.
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Publicación local (perfil MAT.DEV) sin pisar la conexión
 - **Problema:** después de cada publicación con el perfil MAT.DEV (`C:\inetpub\MAT`, Release) el sitio no arrancaba ("The network path was not found" en `_AppStart.cshtml`). `Web.Release.config` reemplaza las cadenas por las de MATSERVER (producción), que no existe en la red de la PC de desarrollo.
 - **Solución:** `MAT.MVC/Web.MAT.DEV.config` (transformación de perfil, se aplica después de Release solo con MAT.DEV): `<connectionStrings configSource="connectionStrings.local.config" />`. Ese archivo vive solo en `C:\inetpub\MAT` (cadenas de DEV, fuera de git; la publicación no lo pisa por `DeleteExistingFiles=False`). Registrado en el csproj como Web.Release.config; nota en `MAT.DEV.pubxml`. Los otros perfiles no cambian.

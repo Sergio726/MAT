@@ -112,6 +112,7 @@
             return;
         }
         $.ajax({
+            type: "POST",
             url: "/Reserva/VincularMenor",
             data: {
                 sPasajeID: pasajeId,

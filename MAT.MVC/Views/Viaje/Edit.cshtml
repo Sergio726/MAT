@@ -493,6 +493,7 @@
 
         if ("@ViewBag.Action" == "edit") {
             $.ajax({
+                type: "POST",
                 url: "/Viaje/UpdateViaje",
                 data: _data,
                 dataType: "json",
@@ -510,6 +511,7 @@
 
         if ("@ViewBag.Action" == "new") {
             $.ajax({
+                type: "POST",
                 url: "/Viaje/InsertViaje",
                 data: _data,
                 dataType: "json",

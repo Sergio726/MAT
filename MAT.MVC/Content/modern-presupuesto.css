@@ -646,7 +646,7 @@
 
 #tblPresupuestos.dataTable thead th {
     background: var(--bg-main) !important;
-    padding: 1rem !important;
+    padding: 0.625rem 0.75rem !important;
     font-weight: 600;
     font-size: 0.8125rem;
     text-transform: uppercase;
@@ -655,11 +655,12 @@
     border-bottom: 2px solid var(--border-color) !important;
 }
 
+/* Misma densidad que el resto de las tablas (2026-11-07) */
 #tblPresupuestos.dataTable tbody td {
-    padding: 1rem !important;
+    padding: 0.625rem 0.75rem !important;
     border-bottom: 1px solid var(--border-color) !important;
     color: var(--text-primary);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     vertical-align: middle;
 }
 

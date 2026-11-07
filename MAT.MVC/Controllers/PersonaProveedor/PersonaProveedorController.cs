@@ -182,6 +182,8 @@ namespace MAT.MVC.Controllers.PersonaProveedor
             return View(PersonaProv);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]   // borra: solo POST con token (2026-11-07, antes un enlace GET borraba)
         public ActionResult Delete(Guid Id)
         {
             Infrastructure.Data.ProveedorDataAccess.Delete(Id);

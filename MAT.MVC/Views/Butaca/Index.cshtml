@@ -87,9 +87,13 @@
                                 <a href="/Butaca/Details/@item.ButacaId" class="btn-action btn-action-view" title="Ver Detalles">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="/Butaca/Delete/@item.ButacaId" class="btn-action btn-action-delete" title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </a>
+                                @* Borrar es POST con token (2026-11-07): antes era un enlace GET que borraba al abrirlo, sin confirmar *@
+                                <form action="/Butaca/Delete/@item.ButacaId" method="post" class="d-inline js-form-borrar-butaca">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-action btn-action-delete" title="Eliminar" aria-label="Eliminar butaca @item.CodigoButaca">
+                                        <i class="bi bi-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -121,5 +125,16 @@
                 { orderable: false, targets: 8 }
             ]
         });
+    });
+</script>
+<script>
+    // Confirmación antes de borrar una butaca (diálogo propio de la aplicación)
+    $(document).on("submit", "form.js-form-borrar-butaca", function (e) {
+        var form = this;
+        if (form.dataset.confirmado === "1") { return; }
+        e.preventDefault();
+        confirm("¿Eliminar esta butaca? No se puede deshacer.", "Eliminar butaca",
+            function () { $(this).dialog("close"); form.dataset.confirmado = "1"; form.submit(); },
+            function () { $(this).dialog("close"); });
     });
 </script>

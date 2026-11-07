@@ -641,6 +641,10 @@ div.wait {
 .modern-alerts-host {
     margin-bottom: 1rem;
 }
+/* Sin alertas no reserva lugar (antes dejaba 16px vacíos arriba de cada pantalla) */
+.modern-alerts-host:not(:has(.modern-alert, .alert)) {
+    margin-bottom: 0;
+}
 
 /* Variantes modernas (para que funcionen también en Admin, que no carga modern-dashboard.css) */
 .modern-alert {
@@ -1765,4 +1769,10 @@ input.buttonAdd_29px:hover {
     .reserva-viaje-hero__title {
         font-size: 1.25rem;
     }
+}
+
+/* jquery-ui-1.13.2.css pide images/ui-bg_highlight-soft_100_eeeeee_1x100.png para .ui-widget-content y el archivo no
+   está en el proyecto (404 en Reservas). El degradado era casi invisible: se mantiene el color y se quita la imagen (2026-11-07). */
+.ui-widget-content {
+    background-image: none;
 }

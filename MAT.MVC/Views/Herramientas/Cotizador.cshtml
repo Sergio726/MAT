@@ -97,10 +97,16 @@
                 <i class="bi bi-calculator"></i>
                 Calcular
             </button>
-            <button type="button" id="btnCargarMonto" onclick="cargarMonto();" class="btn-modern btn-modern-secondary" style="display:none;" title="Tomar el valor calculado como monto a abonar">
-                <i class="bi bi-check-lg"></i>
-                Cargar Monto
-            </button>
+            @* Solo en modo pago (sMode=1): ahí existe el campo del pago donde se carga el monto. Antes se ocultaba con
+               style="display:none", pero .btn-modern tiene display:inline-flex !important y el botón aparecía siempre
+               (por ejemplo desde el menú), sin hacer nada al tocarlo. *@
+            @if (ViewBag.Mode == "1")
+            {
+                <button type="button" id="btnCargarMonto" onclick="cargarMonto();" class="btn-modern btn-modern-secondary" title="Tomar el valor calculado como monto a abonar">
+                    <i class="bi bi-check-lg" aria-hidden="true"></i>
+                    Cargar Monto
+                </button>
+            }
         </div>
 
         <!-- Mensaje de error -->
@@ -124,10 +130,7 @@
         $('.money').mask("#.##0,00", { reverse: true });
     });
     
-    var mode = "@ViewBag.Mode";
-    if (mode == "1") {
-        $("#btnCargarMonto").show();
-    }
+    // "Cargar Monto" ahora lo genera la vista solo en modo pago (ver el botón)
 
     // Cargar cotizaciones al iniciar
     cargarCotizaciones();

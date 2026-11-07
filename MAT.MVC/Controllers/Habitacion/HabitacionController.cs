@@ -180,6 +180,8 @@ namespace MAT.MVC.Controllers.Habitacion
             
         //}
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]   // borra: solo POST con token (2026-11-07, antes un enlace GET borraba)
         public ActionResult Delete(string HotelID, string HabitacionID)
         {
             try

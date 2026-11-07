@@ -230,24 +230,20 @@ namespace MAT.MVC.Controllers.Home
         }
 
         /// <summary>
-        /// Cuenta clientes nuevos del mes usando SQL directo (sin FacturaService/PersonaService).
-        /// Un cliente es nuevo si su primera factura en el sistema cae en el rango de fechas.
+        /// Cuenta clientes nuevos del rango: dados de alta (Cliente.FechaAlta) entre las dos fechas, filtrado por
+        /// vendedor como el resto de los indicadores del inicio.
+        /// 2026-11-07: antes contaba clientes cuya PRIMERA FACTURA caía en el rango, pero el detalle que abre la tarjeta
+        /// ("Clientes dados de alta por período", usp_MAT_Reportes_ClientesNuevosPagina) cuenta altas: la tarjeta decía
+        /// 0 y el detalle mostraba 1. Ahora los dos usan la misma definición.
         /// </summary>
         private int GetClientesNuevosCount(Guid? vendedorId, DateTime fechaInicio, DateTime fechaFin)
         {
             string connStr = ConfigurationManager.ConnectionStrings["MAT.Data.ConnectionString"].ToString();
             string sql = @"
-                ;WITH PrimeraFactura AS (
-                    SELECT f.ClienteID, MIN(f.Fecha) AS PrimeraFecha
-                    FROM dbo.Factura f
-                    WHERE f.Fecha IS NOT NULL
-                    GROUP BY f.ClienteID
-                )
                 SELECT COUNT(*) AS Total
-                FROM PrimeraFactura pf
-                INNER JOIN dbo.Cliente c ON c.ClienteID = pf.ClienteID
-                WHERE pf.PrimeraFecha >= @FechaInicio
-                  AND pf.PrimeraFecha < @FechaFin
+                FROM dbo.Cliente c
+                WHERE c.FechaAlta >= @FechaInicio
+                  AND c.FechaAlta < @FechaFin
                   AND (@VendedorId IS NULL OR c.VendedorID = @VendedorId)";
 
             using (var cn = new SqlConnection(connStr))

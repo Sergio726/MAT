@@ -184,7 +184,7 @@ table.dataTable thead th {
     color: var(--text-secondary, #6b7280);
     background: var(--bg-secondary, #f8f9fa);
     border-bottom: 2px solid var(--border-color, #e5e7eb) !important;
-    padding: 0.875rem 1rem;
+    padding: 0.625rem 0.75rem;
 }
 
 table.dataTable thead th:first-child {
@@ -196,9 +196,11 @@ table.dataTable thead th:last-child {
 }
 
 table.dataTable tbody td {
-    padding: 0.875rem 1rem;
+    padding: 0.625rem 0.75rem;
     border-bottom: 1px solid var(--border-color, #e5e7eb);
     vertical-align: middle;
+    font-size: 0.875rem;
+    line-height: 1.45;
 }
 
 /* Estilos de filas - eliminar fondo gris en filas alternas */
