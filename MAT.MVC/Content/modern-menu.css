@@ -160,6 +160,20 @@
     padding-right: 14px !important;
 }
 
+/* Reserva/Index vuelve a cargar mat.styles.custom.css dentro de la página, después de esta hoja, y esa hoja
+   define la flecha con un ícono de Glyphicons (fuente que ya no se carga): se veía un cuadradito. */
+#menu ul.menu-0 > li.hasSubmenu > a[data-bs-toggle="collapse"]::after {
+    content: "\f285" !important;
+    font-family: "bootstrap-icons" !important;
+    position: static !important;
+    color: inherit !important;
+    transform: none !important;
+}
+
+#menu ul.menu-0 > li.hasSubmenu > a[data-bs-toggle="collapse"][aria-expanded="true"]::after {
+    transform: rotate(90deg) !important;
+}
+
 /* El chevron sigue solo a aria-expanded, que Bootstrap mantiene sincronizado con lo que se ve */
 #menu .menu-0 > li.hasSubmenu > a[aria-expanded="true"]::after {
     transform: rotate(90deg);

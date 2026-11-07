@@ -17,7 +17,12 @@
             </div>
             <div class="col-lg-8 col-md-7">
                 <div class="modern-viajes-container">
-                    <section id="Viajes" class="Viajes-Fecha">
+                    <section id="Viajes" class="Viajes-Fecha" aria-live="polite">
+                        @* Se reemplaza al elegir un día (Home/GetViajes) *@
+                        <p class="viajes-fecha-vacio">
+                            <i class="bi bi-calendar-event" aria-hidden="true"></i>
+                            Elegí un día del calendario para ver sus salidas. Los días con viajes están en negrita.
+                        </p>
                     </section>
                 </div>
             </div>

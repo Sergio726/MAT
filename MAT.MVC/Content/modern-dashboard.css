@@ -223,7 +223,7 @@
     background: var(--white);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--card-shadow);
-    padding: 2rem;
+    padding: 1.25rem;
     margin-bottom: 0;
     height: 100%;
     display: flex;
@@ -234,8 +234,43 @@
     width: 100%;
 }
 
-/* Estilos personalizados para jQuery UI Datepicker dentro del contenedor moderno */
+/* Viajes por fecha: la tabla del mes se reparte en 7 columnas iguales (cada día era un enlace de 36px + 12px
+   de relleno y la tabla no bajaba de 308px, más ancha que la tarjeta a 1366px) */
+.modern-calendar-container #calendar_vendedor .ui-datepicker-calendar {
+    table-layout: fixed !important;
+}
+.modern-calendar-container #calendar_vendedor .ui-datepicker-calendar th,
+.modern-calendar-container #calendar_vendedor .ui-datepicker-calendar td {
+    padding: 2px 0 !important;
+}
+.modern-calendar-container #calendar_vendedor .ui-datepicker-calendar td a,
+.modern-calendar-container #calendar_vendedor .ui-datepicker-calendar td span {
+    width: auto !important;
+    max-width: 2.25rem;
+    margin: 0 auto !important;
+    padding: 0.5rem 0 !important;
+}
+
+/* Viajes por fecha: texto del panel derecho antes de elegir un día */
+.viajes-fecha-vacio {
+    margin: 0;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--text-secondary, #6b7280);
+    font-size: 0.9375rem;
+}
+.viajes-fecha-vacio .bi {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.75rem;
+    color: var(--brand-primary-accesible, #c9245f);
+}
+
+/* Estilos personalizados para jQuery UI Datepicker dentro del contenedor moderno.
+   min-width: 0 pisa el mínimo de 320px de los calendarios emergentes (regla global .ui-datepicker): en el
+   calendario fijo de Viajes por fecha la columna mide ~260px a 1366px y el mes se salía de la tarjeta. */
 .modern-calendar-container .ui-datepicker {
+    min-width: 0 !important;
     width: 100% !important;
     border: none !important;
     box-shadow: none !important;
@@ -914,7 +949,8 @@ div.bnn_floating-banner.hidden {
     background: rgba(248, 249, 250, 0.7); /* Semi-transparente */
     border-radius: var(--border-radius-lg);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    padding: 1.5rem;
+    /* 1rem (antes 1.5rem): con el menú expandido a 1366px el colectivo no entraba; mat.bus.ajuste.js escala lo que falte */
+    padding: 1rem;
     margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -923,6 +959,23 @@ div.bnn_floating-banner.hidden {
     min-height: auto;
     overflow: hidden; /* Evitar scrollbars */
     backdrop-filter: blur(8px); /* Efecto de difuminado para transparencia */
+}
+
+/* El plano de cada piso: el relleno izquierdo va dentro del ancho (si no, el ul medía el 100 % del panel
+   más 32px y quedaba una barra de scroll aunque los asientos entraran) */
+#panel-bus #bus-tabs .ui-tabs-panel > ul {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+/* Desde 768px la escala del plano la decide mat.bus.ajuste.js según el lugar real del panel (con el menú
+   expandido o angosto). Las escalas fijas por ancho de ventana de más abajo (0,95 / 1,05 / 1,15…) no
+   consideraban el menú lateral: entre 1400 y 1599px agrandaban el plano justo cuando no entraba. En el
+   celular (<768px) se mantiene la escala fija. */
+@media (min-width: 768px) {
+    #panel-bus #bus-tabs .ui-tabs-panel > ul {
+        transform: none !important;
+    }
 }
 
 /* Estilos modernos para las tabs de jQuery UI en el panel del bus */
