@@ -1,6 +1,6 @@
 /* Listado de clientes (Views/PersonaCliente/Index.cshtml) — tabla densa, ~56 px por fila */
 
-.clientes-listado .modern-page-title { font-size: 1.5rem; margin: 0; }
+.clientes-listado .modern-page-title { font-size: 1.375rem; margin: 0; }
 
 .cl-filtros {
     display: grid;

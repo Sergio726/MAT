@@ -1,20 +1,10 @@
 /* Listado de hoteles (Views/Hotel/Index.cshtml), 2026-11-07.
    Acotado a .hoteles-listado para no cambiar los otros listados que usan modern-page-container / modern-table. */
 
-/* ---------------------------------------------------------------- Encabezado compacto
-   Antes: 32px de relleno, título de 32px, línea divisoria con 32px de margen y 24px más de relleno de la tabla:
-   la primera fila empezaba en el píxel ~345. */
-.hoteles-listado { padding: 1rem 1.25rem !important; }
-.hoteles-listado .modern-page-header {
-    margin-bottom: 0.75rem !important;
-    padding-bottom: 0 !important;
-    border-bottom: 0 !important;
-    align-items: center;
-}
-.hoteles-listado .modern-page-title { font-size: 1.375rem !important; margin: 0 !important; gap: 0.5rem; }
-.hoteles-listado .modern-page-title .bi { color: var(--brand-primary-accesible, #c9245f); }
+/* ---------------------------------------------------------------- Encabezado
+   El encabezado compacto que nació acá ahora es el global (.modern-page-header / .modern-page-title en
+   modern-dashboard.css, 2026-11-07). Solo queda el subtítulo con la cantidad de hoteles. */
 .hoteles-listado__sub { margin: 0.125rem 0 0; font-size: 0.8125rem; color: var(--text-secondary, #6b7280); }
-.hoteles-listado .modern-table-container { padding: 0.75rem 1rem 1rem !important; }
 
 /* ---------------------------------------------------------------- Tabla: 4 columnas, texto con aire */
 .hoteles-listado #tblHoteles { table-layout: fixed; width: 100% !important; }

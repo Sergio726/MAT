@@ -2,6 +2,15 @@
 
 ---
 
+### [2026-11-07] — Interfaz homogénea: encabezados de página y densidad de tablas
+- **Antes:** 4 tamaños de título (36 px en Viajes por fecha y Presupuestos, 32 px en la mayoría con línea divisoria, 24 px en Clientes/Seguimiento/Viajes, 20 px en Notas de crédito); en los ABM la tabla empezaba en el píxel ~345 de 768; celdas de 15 px con 14-16 px de relleno, salvo Clientes (14/8).
+- **Cambios globales** (`modern-dashboard.css`, `modern-datatable.css`): `.modern-page-container` 1rem 1.25rem; `.modern-page-header` sin línea divisoria y 0.75rem de margen; `.modern-page-title` 22 px; `.modern-dashboard` y `.modern-dashboard-header` con el mismo criterio (subtítulo 13 px gris); tablas `modern-table` y DataTables a 14 px con 0.625rem × 0.75rem.
+- **Ajustes puntuales:** Clientes (`mat.clientes.listado.css`), Notas de crédito (título "Notas de crédito" y tarjeta blanca), Viajes (estilo en la vista), Seguimiento de clientes (estilo en la vista), Seguimiento de presupuestos (`modern-presupuesto.css`). Hoteles: el encabezado compacto propio pasa a ser el global (se quitaron sus reglas duplicadas).
+- **Incluye** los PR #58 (Hoteles), #59 y #60.
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV en 19 pantallas: títulos de 22 px en todas, celdas 14 px/10 px, datos de los ABM en ~255 px; capturas de Inicio, Presupuestos, Viajes por fecha, Transportes, Notas de crédito, Hoteles y los dos Seguimientos. Se probó dejar el código de presupuesto en un renglón y se revirtió: hacía desbordar la tabla 58 px.
+- **Queda:** estilos en línea de Seguimiento de presupuestos y Facturación (`docs/PENDIENTES.md`).
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Correcciones de la prueba funcional (seguridad, datos, código muerto)
 - **Seguridad:** 20 acciones escribían con GET (un enlace o una imagen podían dispararlas con la sesión del usuario). 14 AJAX (HotelUpdate, AddDistribucion, deleteDistribucionRow, AddDistribucionByPlantilla, AddLocalidad, CancelarPago, EliminarReservaHotel, InsertPersonToWatingList, DeleteToWatingList, VincularMenor, UpdateViaje, InsertViaje, DeleteViaje, HotelIngresoEgreso_Set) → `[HttpPost]` + `[SoloAjax]` (filtro nuevo, `Infrastructure/SoloAjaxAttribute.cs`: exige X-Requested-With) y sus 16 llamadas JS con `type: "POST"`. 6 Delete por enlace (Butaca, Habitacion, Persona, PersonaPasajero, PersonaProveedor, Transporte) → `[HttpPost]` + `[ValidateAntiForgeryToken]`; `Butaca/Index` con formulario + confirmación; enlace muerto quitado de `PartialListHabitacion`.
 - **Clientes nuevos:** la tarjeta del inicio contaba la primera factura y el detalle, las altas; ahora la tarjeta cuenta altas (`Cliente.FechaAlta`), filtrada por vendedor como los otros indicadores.
