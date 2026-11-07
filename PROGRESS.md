@@ -9,6 +9,10 @@
 - **Breadcrumb** (`_Breadcrumb`): "ViajesPorFecha" → "Viajes por fecha"; "HistorialPagos" → "Historial de pagos".
 - **Menú en Reservas** (`modern-menu.css`): la página vuelve a cargar `mat.styles.custom.css` y su flecha de Glyphicons (fuente que no se carga) se veía como un cuadradito; ahora manda la de bootstrap-icons y gira al abrir.
 - **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV con capturas y mediciones de 390 a 1920px: barra sin superposiciones; calendario dentro de su tarjeta; colectivo con todos los asientos visibles y sin scroll de 1280 a 1920px (81 %–115 %), con menú angosto y en el piso inferior, escala estable. En tablet (800–1024px) queda la barra de scroll (haría falta ~50 %, asientos demasiado chicos).
+### [2026-11-07] — Seguridad: autorización global (filtro AuthorizeAttribute)
+- **Hallazgo:** ~150 acciones en 25 controladores no tenían `[Authorize]` y respondían sin sesión (no hay `<deny users="?">` en Web.config ni chequeo en `Application_BeginRequest`). Probado contra DEV sin sesión: `/Viaje/ListViajes` devolvía el listado de viajes (358 KB) y `/PersonaCliente/PopupDetalleFactura` el detalle de una factura. Entre las acciones abiertas había escrituras: `ReservarPasajes`, `EliminarVenta`, `CancelarPago`, `ConfirmarCambioButaca`, `DeleteViaje`, `InsertPaquete`, `UploadFile`, `VincularMenor`…
+- **Corrección** (`App_Start/FilterConfig.cs`): `filters.Add(new AuthorizeAttribute())`. Todo exige sesión salvo `[AllowAnonymous]`: `AccountController` (Login, Register, RegistrarVendedor, LogOff), `ErrorController` y `ExternalController.PackagesGetAll` (paquetes para la web). No hay Web API ni acciones hijas (`Html.Action`) que se vean afectadas.
+- **Verificación:** `tools/Run-Tests.ps1` OK. Sin sesión: ListViajes, PopupDetalleFactura, Reserva/Index y Paquete/Index → 302 al login. Siguen públicos: Account/Login, Account/RegistrarVendedor, Error/NoEncontrado (su 404), External/PackagesGetAll y los archivos de Content. Con sesión, las pantallas cargan normalmente.
 - Estado: ✅ completo en DEV
 
 ### [2026-11-07] — Panel principal, bloque G: buscador de clientes, facturas y viajes
