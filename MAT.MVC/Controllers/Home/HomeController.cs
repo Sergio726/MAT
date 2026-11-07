@@ -85,6 +85,27 @@ namespace MAT.MVC.Controllers.Home
         }
 
         /// <summary>
+        /// Buscador global de la barra superior, etapa 2 (bloque G del plan del panel principal): clientes,
+        /// facturas (por titular) y viajes. Los módulos se buscan en el navegador; esto suma los datos.
+        /// Mismos permisos que las pantallas de destino (solo sesión iniciada).
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public ActionResult Buscar(string q)
+        {
+            try
+            {
+                var grupos = Infrastructure.Data.BuscadorDataAccess.Buscar(q);
+                return JsonCamelCaseHelper.Serialize(new { success = true, grupos = grupos });
+            }
+            catch (Exception e)
+            {
+                var msg = ErrorUtil.LogAndGetPublicMessage(e, "HomeController.Buscar");
+                return JsonCamelCaseHelper.Serialize(new { success = false, message = msg });
+            }
+        }
+
+        /// <summary>
         /// Obtiene las estadísticas del mes actual filtradas por vendedor, con la tendencia de cada indicador.
         /// Si vendedorId es null, retorna datos de todos los vendedores (admin).
         /// Tendencia (bloque E del plan del panel principal): mes en curso contra el mismo tramo del mes anterior

@@ -1,7 +1,8 @@
 @using MAT.MVC.Infrastructure
-@* Buscador global de la barra superior (bloque D del plan del panel principal), etapa 1: módulos.
+@* Buscador global de la barra superior (bloques D y G del plan del panel principal).
+   Etapa 1 (D): módulos. Etapa 2 (G): clientes, facturas y viajes desde Home/Buscar (data-url-buscar).
    Índice = accesos de QuickAccessCatalog (acá) + ítems del menú lateral (los lee mat.buscador.js del DOM).
-   Los resultados se agrupan por tipo para sumar clientes, viajes y facturas en la etapa 2.
+   Los resultados se agrupan por tipo: primero Módulos y Acciones (locales), después Clientes, Facturas y Viajes.
    El JSON va en un atributo: Razor lo codifica, no hace falta escaparlo a mano. *@
 @{
     var canViewHistorialPagos = AdminAuthorizationHelper.CanViewAllHistorialPagos(Context);
@@ -20,17 +21,18 @@
     <span class="visually-hidden">Buscar (Ctrl+K)</span>
 </button>
 
-<dialog class="bg-dialogo" id="bgDialogo" aria-labelledby="bgTitulo" data-catalogo="@JsonCamelCaseHelper.ToJson(catalogo)">
+<dialog class="bg-dialogo" id="bgDialogo" aria-labelledby="bgTitulo" data-url-buscar="@Url.Action("Buscar", "Home")" data-catalogo="@JsonCamelCaseHelper.ToJson(catalogo)">
     <h2 class="visually-hidden" id="bgTitulo">Buscar</h2>
     <div class="bg-campo">
         <i class="bi bi-search" aria-hidden="true"></i>
         <input type="text" id="bgEntrada" class="bg-entrada" autocomplete="off" spellcheck="false"
-               placeholder="Buscar módulo… (clientes, viajes y facturas, próximamente)"
-               role="combobox" aria-expanded="true" aria-controls="bgResultados" aria-autocomplete="list" aria-label="Buscar módulo" />
+               placeholder="Cliente, DNI, viaje, factura o módulo…"
+               role="combobox" aria-expanded="true" aria-controls="bgResultados" aria-autocomplete="list" aria-label="Buscar cliente, viaje, factura o módulo" />
         <kbd class="bg-esc" aria-hidden="true">Esc</kbd>
     </div>
     <div class="bg-resultados" id="bgResultados" role="listbox" aria-label="Resultados"></div>
-    <p class="bg-vacio" id="bgVacio" hidden>Sin resultados. Probá con otra palabra.</p>
+    <p class="bg-cargando" id="bgCargando" hidden><span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Buscando clientes, facturas y viajes…</p>
+    <p class="bg-vacio" id="bgVacio" hidden>Sin resultados. Probá con otra palabra, un DNI o un teléfono.</p>
     <div class="bg-pie" aria-hidden="true">
         <span><kbd>↑</kbd><kbd>↓</kbd> moverse</span>
         <span><kbd>Enter</kbd> abrir</span>

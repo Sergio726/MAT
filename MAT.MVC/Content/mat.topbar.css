@@ -113,6 +113,12 @@
 .bg-opcion[aria-selected="true"] .bg-opcion__ir { opacity: 1; }
 
 .bg-vacio { margin: 0; padding: 1.5rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280; }
+/* Bloque G: mientras llegan clientes, facturas y viajes */
+.bg-cargando { margin: 0; padding: 0.5rem 1.125rem 0.75rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: #4b5563; }
+.bg-cargando .spinner-border { width: 0.875rem; height: 0.875rem; border-width: 0.15em; color: var(--brand-primary-accesible, #c9245f); }
+/* "Ver los N clientes": enlace al final del grupo, más liviano que un resultado */
+.bg-opcion--ver-todos .bg-opcion__titulo { font-weight: 600; color: var(--brand-primary-accesible, #c9245f); }
+.bg-opcion--ver-todos > .bi { color: var(--brand-primary-accesible, #c9245f); }
 .bg-pie { display: flex; gap: 1rem; padding: 0.5rem 1rem; border-top: 1px solid #f1f5f9; font-size: 0.75rem; color: #6b7280; }
 .bg-pie kbd { margin-right: 0.125rem; }
 

@@ -455,6 +455,8 @@
     <Compile Include="Models\Clientes\ClienteFichaModel.cs" />
     <Compile Include="Models\Home\ProximaSalidaDto.cs" />
     <Compile Include="Models\Home\TendenciaKpi.cs" />
+    <Compile Include="Models\Home\BuscadorDtos.cs" />
+    <Compile Include="Infrastructure\Data\BuscadorDataAccess.cs" />
     <Compile Include="Models\Notificaciones\NotificacionDto.cs" />
     <Compile Include="Models\Clientes\ClienteCatalogos.cs" />
     <Compile Include="Models\Reportes\ReporteRankingRowDto.cs" />
