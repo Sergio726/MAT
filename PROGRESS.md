@@ -2,6 +2,12 @@
 
 ---
 
+### [2026-11-07] — Seguridad: autorización global (filtro AuthorizeAttribute)
+- **Hallazgo:** ~150 acciones en 25 controladores no tenían `[Authorize]` y respondían sin sesión (no hay `<deny users="?">` en Web.config ni chequeo en `Application_BeginRequest`). Probado contra DEV sin sesión: `/Viaje/ListViajes` devolvía el listado de viajes (358 KB) y `/PersonaCliente/PopupDetalleFactura` el detalle de una factura. Entre las acciones abiertas había escrituras: `ReservarPasajes`, `EliminarVenta`, `CancelarPago`, `ConfirmarCambioButaca`, `DeleteViaje`, `InsertPaquete`, `UploadFile`, `VincularMenor`…
+- **Corrección** (`App_Start/FilterConfig.cs`): `filters.Add(new AuthorizeAttribute())`. Todo exige sesión salvo `[AllowAnonymous]`: `AccountController` (Login, Register, RegistrarVendedor, LogOff), `ErrorController` y `ExternalController.PackagesGetAll` (paquetes para la web). No hay Web API ni acciones hijas (`Html.Action`) que se vean afectadas.
+- **Verificación:** `tools/Run-Tests.ps1` OK. Sin sesión: ListViajes, PopupDetalleFactura, Reserva/Index y Paquete/Index → 302 al login. Siguen públicos: Account/Login, Account/RegistrarVendedor, Error/NoEncontrado (su 404), External/PackagesGetAll y los archivos de Content. Con sesión, las pantallas cargan normalmente.
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Panel principal, bloque G: buscador de clientes, facturas y viajes
 - **Plan:** `DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md` (bloque G). Sobre el bloque F (PR #50). **Sin cambios de base:** solo SP existentes.
 - **Endpoint** `Home/Buscar?q=` (`[Authorize]`, JSON, `ErrorUtil`) → `Infrastructure/Data/BuscadorDataAccess.cs`, `Models/Home/BuscadorDtos.cs`:
