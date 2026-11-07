@@ -2,6 +2,13 @@
 
 ---
 
+### [2026-11-07] — Herramientas: certificado HTTPS para el servidor y las PCs
+- **Pedido:** que el navegador no muestre "Este sitio no es seguro" al entrar a MAT en el servidor.
+- **Archivos nuevos** (`tools/certificado-https/`): `1-SERVIDOR-crear-certificado.bat` + `servidor.ps1` (crea un certificado de 5 años para nombre del equipo, FQDN, localhost, 127.0.0.1, IPv4 y nombres extra; lo asigna a los enlaces HTTPS de IIS; exporta `MAT-servidor.cer`; deja `volver-atras.txt`), `2-CLIENTE-instalar-certificado.bat` + `cliente.ps1` (instala el `.cer` como raíz de confianza en cada PC, para todos los usuarios o solo el actual), `LEEME.txt` (pasos, GPO, Firefox y la alternativa Let's Encrypt/win-acme si se usa desde internet con dominio propio).
+- **Por qué dos pasos:** un certificado autofirmado solo quita el aviso en las PCs que confían en él.
+- **Verificación:** sintaxis de los `.ps1` OK; `.bat` en ASCII. No se ejecutaron (crean certificados y cambian la configuración HTTPS; se corren en el servidor). En la PC de desarrollo el mismo problema se diagnosticó así: certificado emitido solo para 192.168.100.186, IP que ya no era la de la PC.
+- Estado: ✅ listo para usar en el servidor
+
 ### [2026-11-07] — Prueba visual: Viajes por fecha y Reservas (colectivo)
 - **Viajes por fecha** (`ViajesPorFecha.cshtml`, `HomeController.GetViajes`, `modern-dashboard.css`): el calendario se salía de su tarjeta a 1366px (mínimo global de 320px de `.ui-datepicker` y días de 44px) → `min-width: 0` y tabla de 7 columnas fijas; panel derecho con texto inicial ("Elegí un día…"); tarjeta del viaje sin la descripción repetida, sin `background-image:url(foto)` (pedía `/Home/foto`, inexistente, por cada tarjeta), textos con `HtmlEncode` y enlace real a `/Reserva/Index?viajeid=`.
 - **Reservas** (`Reserva/Index.cshtml`, `Scripts/mat.bus.ajuste.js` nuevo, `modern-dashboard.css`): a 1366px con el menú expandido el colectivo no entraba (barra de scroll y asientos fuera de vista). Las escalas fijas por ancho de ventana (`transform: scale(0,95/1,05/1,15)`) no consideraban el menú lateral; desde 768px las reemplaza un ajuste por el lugar real del panel (CSS `zoom` entre 65 % y 115 %, medido sobre lo que se ve, recalculado al cambiar de piso, de ancho o de menú; solo por cambios de ancho para no entrar en bucle). Rellenos del panel 68 → 36px por lado; el `ul` de cada piso con `box-sizing: border-box`.

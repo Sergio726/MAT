@@ -1,0 +1,54 @@
+﻿MAT - Quitar el aviso "Este sitio no es seguro" del navegador
+=============================================================
+
+Por qué aparece el aviso
+------------------------
+El sitio usa HTTPS con un certificado que el navegador no reconoce: es autofirmado, está
+vencido o se hizo para otro nombre o IP (por ejemplo, una IP que cambió).
+
+Importante: un certificado creado en el servidor solo quita el aviso en las PCs que CONFÍAN
+en él. Por eso hay dos pasos: uno en el servidor y otro en cada PC que usa MAT.
+
+
+Paso 1 - En el SERVIDOR (una sola vez)
+--------------------------------------
+1. Copiá esta carpeta al disco del servidor (no la ejecutes desde una carpeta de red).
+2. Doble clic en  1-SERVIDOR-crear-certificado.bat  y aceptá el aviso de Windows.
+3. Si los usuarios entran con un nombre o IP que no es el del servidor (por ejemplo
+   mat.miempresa.com), escribilo cuando lo pida. Si no, Enter.
+
+Qué hace:
+  - Crea un certificado de 5 años para: el nombre del servidor, su nombre completo de red,
+    localhost, 127.0.0.1, sus IPs y los nombres extra que escribas.
+  - Lo asigna a los enlaces HTTPS de IIS.
+  - Deja en esta carpeta  MAT-servidor.cer  (la parte pública, para las PCs) y
+    volver-atras.txt  (los comandos para volver a los certificados anteriores).
+
+
+Paso 2 - En CADA PC que usa MAT
+-------------------------------
+1. Copiá a la PC:  MAT-servidor.cer  y  2-CLIENTE-instalar-certificado.bat  (misma carpeta).
+2. Doble clic en  2-CLIENTE-instalar-certificado.bat:
+     1 = para todos los usuarios de la PC (pide administrador)
+     2 = solo para tu usuario
+3. Cerrá todas las ventanas del navegador y volvé a abrir MAT.
+
+Con muchas PCs en un dominio de Windows, es más simple repartir MAT-servidor.cer por
+directiva de grupo (GPO): Configuración del equipo > Directivas > Configuración de Windows >
+Configuración de seguridad > Directivas de clave pública > Entidades de certificación raíz
+de confianza > Importar.
+
+Firefox usa su propio almacén: si sigue el aviso, en about:config poné
+security.enterprise_roots.enabled = true.
+
+
+A tener en cuenta
+-----------------
+- Entrá siempre con uno de los nombres del certificado (el script los muestra). Si se entra
+  con otro nombre o con una IP que no estaba, el aviso vuelve: ejecutá el Paso 1 de nuevo
+  agregando ese nombre, y repetí el Paso 2 en las PCs.
+- Si se vuelve a ejecutar el Paso 1, el certificado cambia y hay que repetir el Paso 2.
+- Si MAT se usa desde INTERNET con un dominio propio (por ejemplo mat.miempresa.com), lo
+  correcto es un certificado real y gratuito de Let's Encrypt (con la herramienta win-acme,
+  https://www.win-acme.com): no hace falta instalar nada en las PCs y se renueva solo.
+  Necesita que el dominio apunte al servidor y el puerto 80 abierto.
