@@ -2,6 +2,14 @@
 
 ---
 
+### [2026-11-07] — Inicio: vuelve la foto de fondo del encabezado
+- **Pedido:** volver a la foto de fondo de "Bienvenido, …" y a las tarjetas con efecto de cristal (el bloque E las había reemplazado por una superficie neutra).
+- **Archivos:** `Views/Home/_DashboardHero.cshtml` (sin el modificador `--neutro`, vuelve `.dashboard-hero__overlay`), `Content/mat.home.css` (sale el bloque de superficie neutra).
+- **Se conserva del bloque E:** tendencia contra el mismo tramo del mes anterior, pie "Ver detalle", texto para valor 0, `aria-label`.
+- **Legibilidad sobre la foto:** etiquetas y textos al 88 % de blanco (antes 72-78 %), pie "Ver detalle" al 92 %, foco visible blanco; Total/Pend con sus colores (#ffb8d4 / #fca5a5).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; navegador contra DEV (captura): foto, capa oscura, cristal con desenfoque, chips de tendencia legibles.
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Prueba visual: Viajes por fecha y Reservas (colectivo)
 - **Viajes por fecha** (`ViajesPorFecha.cshtml`, `HomeController.GetViajes`, `modern-dashboard.css`): el calendario se salía de su tarjeta a 1366px (mínimo global de 320px de `.ui-datepicker` y días de 44px) → `min-width: 0` y tabla de 7 columnas fijas; panel derecho con texto inicial ("Elegí un día…"); tarjeta del viaje sin la descripción repetida, sin `background-image:url(foto)` (pedía `/Home/foto`, inexistente, por cada tarjeta), textos con `HtmlEncode` y enlace real a `/Reserva/Index?viajeid=`.
 - **Reservas** (`Reserva/Index.cshtml`, `Scripts/mat.bus.ajuste.js` nuevo, `modern-dashboard.css`): a 1366px con el menú expandido el colectivo no entraba (barra de scroll y asientos fuera de vista). Las escalas fijas por ancho de ventana (`transform: scale(0,95/1,05/1,15)`) no consideraban el menú lateral; desde 768px las reemplaza un ajuste por el lugar real del panel (CSS `zoom` entre 65 % y 115 %, medido sobre lo que se ve, recalculado al cambiar de piso, de ancho o de menú; solo por cambios de ancho para no entrar en bucle). Rellenos del panel 68 → 36px por lado; el `ul` de cada piso con `box-sizing: border-box`.
