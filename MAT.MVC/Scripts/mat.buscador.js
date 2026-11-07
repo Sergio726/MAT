@@ -50,7 +50,7 @@
         var catalogo = [];
         try { catalogo = JSON.parse(dialogo.getAttribute("data-catalogo") || "[]"); } catch (e) { catalogo = []; }
         catalogo.forEach(function (c) {
-            agregar({ titulo: c.titulo, descripcion: c.descripcion, url: c.url, icono: c.icono, accion: !!c.accion, frecuente: !!c.frecuente });
+            agregar({ titulo: c.titulo, descripcion: c.descripcion, url: c.url, icono: c.icono, accion: !!c.accion, frecuente: !!c.frecuente, catalogo: true });
         });
 
         // Menú lateral: "Listado" o "Nuevo" solos no dicen nada, por eso el título lleva el grupo ("Hoteles › Nuevo")
@@ -91,9 +91,13 @@
     function buscar(consulta) {
         var palabras = normalizar(consulta).split(" ").filter(Boolean);
         var candidatos;
+        var limite = MAX_POR_TIPO;
         if (!palabras.length) {
-            candidatos = indice.filter(function (it) { return it.frecuente; })
-                .map(function (it) { return { item: it, puntos: 0 }; });
+            // Campo vacío: todo el catálogo de módulos, frecuentes primero (reemplaza al acordeón
+            // "Todos los módulos" del inicio, bloque F). Sin tope, son pocos.
+            candidatos = indice.filter(function (it) { return it.catalogo; })
+                .map(function (it) { return { item: it, puntos: it.frecuente ? 1 : 0 }; });
+            limite = candidatos.length;
         } else {
             candidatos = indice.map(function (it) { return { item: it, puntos: puntuar(it, palabras) }; })
                 .filter(function (c) { return c.puntos >= 0; });
@@ -103,7 +107,7 @@
         // Los grupos se ordenan por su mejor resultado (con "fact", Módulos → Buscar facturas va primero);
         // si empatan, manda el orden de TIPOS
         return TIPOS.map(function (t, orden) {
-            var delTipo = candidatos.filter(function (c) { return c.item.tipo === t.clave; }).slice(0, MAX_POR_TIPO);
+            var delTipo = candidatos.filter(function (c) { return c.item.tipo === t.clave; }).slice(0, limite);
             return {
                 tipo: t,
                 orden: orden,
