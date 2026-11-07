@@ -122,6 +122,18 @@ Plan: [`../DOCUMENTACION/PLAN_PANEL_PRINCIPAL.md`](../DOCUMENTACION/PLAN_PANEL_P
 - [x] **Viajes por fecha y Reservas con el layout nuevo** *(PR #53)* — calendario dentro de su tarjeta, tarjeta de viaje sin título repetido, colectivo escalado al lugar real del panel (65–115 %).
 - [ ] **Reservas [P3]: redibujar el plano del colectivo en SVG** — silueta del coche (frente, chofer, puerta, escalera, baño, bar) como fondo; asientos con forma de butaca y número adentro (hoy queda sobre el borde); estado con color **e** ícono/patrón (verde y amarillo se confunden), referencia fija con conteo por estado, frente y pasillo señalados; para doble piso, minibús y semicama/cama. Mantener la lógica actual (mismos asientos, estados y clics de `mat.busplugin`). Hacer primero un boceto con el coche real de un viaje para aprobar el estilo; si hay croquis o fotos del coche de la empresa de transporte, usarlos. **No** usar imágenes generadas por IA para el plano (no respetan las posiciones de los asientos y se pixelan al escalar). En tablet (800–1024px) hoy queda scroll horizontal.
 
+### Prueba funcional del 2026-11-07 — pendientes
+
+Recorrido de 37 rutas por enlaces + 90 acciones GET del código + 33 pantallas cargadas en el navegador + clics a mano (DEV, usuario `admindev`). Lo corregido está en el PR de la prueba; esto queda para decidir:
+
+- [ ] **Seguridad [P1]: acciones que escriben con GET** — `PersonaCliente/EliminarReservaHotel` (borra), `Reserva/VincularMenor`, `Localidad/AddLocalidad`, `Viaje/HotelIngresoEgreso_Set`. Sin `[HttpPost]` ni token antifalsificación: un enlace o una imagen pueden dispararlas con la sesión del usuario (CSRF). Pasarlas a `[HttpPost]` + `[ValidateAntiForgeryToken]` y ajustar sus llamadas JS (hoy por GET).
+- [ ] **Clientes nuevos [P2]: dos definiciones con el mismo nombre** — la tarjeta del inicio cuenta clientes cuya *primera factura* cae en el mes; el detalle que abre ("Clientes dados de alta por período") cuenta *altas* (`FechaAlta`). En DEV la tarjeta dice 0 y el detalle 1. Decidir cuál es "cliente nuevo" y alinear (o renombrar la tarjeta, p. ej. "Primeras compras").
+- [ ] **Rutas muertas [P3]** — sin vista (dan 500 si se abren a mano, ninguna pantalla las enlaza): `Busqueda/Index`, `CuentaCorriente/Index`, `PersonaVendedor/Index`, `Precio/Create`. Borrarlas o redirigir.
+- [ ] **Pantallas viejas muy pesadas [P3]** — `Persona/Index` (19 MB de HTML, 4,6 s), `PersonaPasajero/Index` (14 MB), `PersonaCliente/RenderGridClientes` (6,4 MB): no están enlazadas, pero cualquiera con sesión las puede abrir. Borrarlas o paginarlas.
+- [ ] **Código muerto [P3]** — `#btnViajes` → `Viaje/PopPupViajes` (tarda más de 30 s) y `#txt-filter-cliente` → `RenderGridClientes` en `mat.jquery.functions.js` / `mat.jquery.binding.js`: ningún elemento con esos IDs existe en las vistas.
+- [ ] **Validación de parámetros [P3]** — `Reserva/DetalleViaje` sin `viajeid` da 500 (`ParseExact` de nulo); devolver 400 o un mensaje.
+- [ ] **Listados que mandan todas las filas [P3]** — Hoteles, Excursiones, Servicios y Adicionales generan 380–530 KB de HTML (todas las filas, DataTables pagina en el navegador); `Factura/FacturaResultSearch` sin filtro devuelve 8,5 MB. Paginar en el servidor si crecen.
+- [ ] **Cosmético** — falta `Content/themes/base/images/ui-bg_highlight-soft_100_eeeeee_1x100.png` (404 en Reservas, lo pide jquery-ui-1.13.2.css).
 ### Factura / vendedores — resumen de pagos por viaje (P2)
 
 **Pedido de operación:** en el módulo de factura que usan los **vendedores** (intranet, no solo Admin), necesitan un lugar para ver el **resumen de pagos hechos en el viaje** y el **método/medio de pago** de cada registro.

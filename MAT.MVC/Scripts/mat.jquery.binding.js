@@ -588,25 +588,48 @@ $(document).on("click", "#btn-perfil-historialviaje", function () {
     $("div.resumen-perfil").load("/PersonaPasajero/PartialPasajerosHistorial?pasajeroid=" + $(this).data("personaid"));
 });
 
+// Abre una ventana para imprimir (2026-11-07). Antes: window.open(url).print() imprimía la ventana todavía vacía
+// (Manifiesto y Listado ya se imprimen solos al cargar), .print().close() tiraba error siempre (print no devuelve
+// nada) y, con las ventanas emergentes bloqueadas, window.open devuelve null y el botón fallaba sin avisar.
+function abrirVentanaImpresion(url, imprimirAlCargar) {
+    var ventana = window.open(url, '_blank');
+    if (!ventana) {
+        avisarVentanaBloqueada();
+        return;
+    }
+    if (imprimirAlCargar) {
+        ventana.addEventListener('load', function () {
+            ventana.focus();
+            ventana.print();
+        });
+    }
+}
+
+function avisarVentanaBloqueada() {
+    var texto = 'El navegador bloqueó la ventana nueva. Permití las ventanas emergentes para este sitio y volvé a intentar.';
+    var $host = $('.modern-alerts-host').first();
+    if (!$host.length) {
+        window.alert(texto);
+        return;
+    }
+    var $aviso = $('<div class="modern-alert modern-alert-warning" role="alert"></div>').text(texto);
+    $host.prepend($aviso);
+    setTimeout(function () { $aviso.fadeOut(400, function () { $aviso.remove(); }); }, 8000);
+}
+
 $(document).on("click", "#btn-nomina", function () {
-    var url = "/PasajeroViaje/Manifiesto?id=" + $(this).data("id");
-    var title = "Manifiesto Previsorio";
-    var id = "ManifiestoPrevisorio";
-    window.open(url, '_blank').print();
+    // La página del manifiesto se imprime sola al cargar
+    abrirVentanaImpresion("/PasajeroViaje/Manifiesto?id=" + $(this).data("id"), false);
 });
 
 $(document).on("click", "#btn-listasimple", function () {
-    var url = "/PasajeroViaje/ListadoSimple?id=" + $(this).data("id");
-    var title = "Listado de Pasajeros";
-    var id = "ListadoPasajeros";
-    window.open(url, '_blank').print().close();
+    // La página del listado se imprime sola al cargar
+    abrirVentanaImpresion("/PasajeroViaje/ListadoSimple?id=" + $(this).data("id"), false);
 });
 
 $(document).on("click", "#btn-cnrt", function () {
-    var url = "/PasajeroViaje/CNRT?id=" + $(this).data("id");
-    var title = "Listado CNRT";
-    var id = "ListadoCNRT";
-    window.open(url, '_blank').print();
+    // CNRT no se imprime sola: se imprime cuando terminó de cargar
+    abrirVentanaImpresion("/PasajeroViaje/CNRT?id=" + $(this).data("id"), true);
 });
 
 $(document).on("click", "#btn-cnrt-hojauno", function () {

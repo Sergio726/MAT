@@ -362,7 +362,12 @@ function ShowFormDialog(url, dialogid, dialogtitle, widthsize) {
                 $closeBtn.off('click.matDialogClose').on('click.matDialogClose', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    $dialog.dialog('close');
+                    // jQuery UI ya cierra con su propio manejador (y el close del diálogo lo elimina): volver a
+                    // llamar a 'close' tiraba "cannot call methods on dialog prior to initialization" en cada
+                    // cierre con la X (2026-11-07). Solo se cierra si sigue existiendo y abierto.
+                    if ($dialog.dialog('instance') && $dialog.dialog('isOpen')) {
+                        $dialog.dialog('close');
+                    }
                 });
             }
 
@@ -622,7 +627,12 @@ function ShowFormDialogCloseRefresh(url, dialogid, dialogtitle, widthsize, optio
                 $closeBtn.off('click.matDialogClose').on('click.matDialogClose', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    $dialog.dialog('close');
+                    // jQuery UI ya cierra con su propio manejador (y el close del diálogo lo elimina): volver a
+                    // llamar a 'close' tiraba "cannot call methods on dialog prior to initialization" en cada
+                    // cierre con la X (2026-11-07). Solo se cierra si sigue existiendo y abierto.
+                    if ($dialog.dialog('instance') && $dialog.dialog('isOpen')) {
+                        $dialog.dialog('close');
+                    }
                 });
             }
         },
@@ -705,7 +715,12 @@ function ShowFormDialogHTML(html, dialogid, dialogtitle, widthsize) {
                 $closeBtn.off('click.matDialogClose').on('click.matDialogClose', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    $dialog.dialog('close');
+                    // jQuery UI ya cierra con su propio manejador (y el close del diálogo lo elimina): volver a
+                    // llamar a 'close' tiraba "cannot call methods on dialog prior to initialization" en cada
+                    // cierre con la X (2026-11-07). Solo se cierra si sigue existiendo y abierto.
+                    if ($dialog.dialog('instance') && $dialog.dialog('isOpen')) {
+                        $dialog.dialog('close');
+                    }
                 });
             }
 

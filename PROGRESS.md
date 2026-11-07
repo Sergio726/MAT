@@ -2,6 +2,18 @@
 
 ---
 
+### [2026-11-07] — Prueba funcional en el navegador (DEV) y arreglos
+- **Alcance:** recorrido de enlaces (37 rutas), 90 acciones GET sacadas del código (sin las que escriben o cierran sesión), 33 pantallas cargadas en el navegador (recursos, errores JS, IDs duplicados, imágenes, peso, tiempos) y clics a mano (indicadores del inicio, salidas, cumpleaños, campanita, cotizador, asiento de reserva y los 8 botones del panel de Reservas).
+- **Resultado general:** sin errores de servidor ni de JS en las pantallas del menú; todas cargan en menos de 1,9 s y con menos de 1.500 elementos.
+- **Corregido:**
+  - Cerrar cualquier diálogo con la X tiraba "cannot call methods on dialog prior to initialization" (`mat.jquery.functions.js`, 3 manejadores): ahora solo cierra si el diálogo sigue abierto.
+  - "Cargar Monto" del cotizador aparecía siempre (el `display:none` lo pisaba `.btn-modern { display: inline-flex !important }`) y no hacía nada fuera de un pago: la vista solo lo genera en modo pago (`sMode=1`).
+  - Manifiesto / Lista de pasajeros / CNRT (`mat.jquery.binding.js`): `window.open(url).print()` imprimía la ventana vacía, `.print().close()` fallaba siempre y con ventanas emergentes bloqueadas el botón fallaba sin avisar. Nueva `abrirVentanaImpresion`: Manifiesto y Listado solo abren (se imprimen solos), CNRT imprime al cargar; si el navegador bloquea la ventana, aviso en la página.
+  - `SystemDEV=true` llegaba a producción en cada publicación Release: la página de error mostraba mensaje, tipo y stack trace, `ErrorUtil` devolvía el texto de la excepción y el login decía "Entorno de Prueba". `Web.Release.config` → `false`; `Web.MAT.DEV.config` → `true` (sitio local).
+- **Pendientes anotados** en `docs/PENDIENTES.md` (acciones que escriben con GET, "clientes nuevos" con dos definiciones, rutas muertas, pantallas viejas de 14-19 MB, código muerto, validación de `DetalleViaje`, listados sin paginar en el servidor, imagen de jquery-ui faltante).
+- **Verificación:** `tools/Run-Tests.ps1` OK; `aspnet_compiler` OK; publicaciones de prueba (FolderProfile → `SystemDEV=false`; MAT.DEV → `true`); navegador: cerrar con la X sin errores (asiento, Observaciones, Cotizador), "Cargar Monto" solo en modo pago, aviso con ventana bloqueada, CNRT imprime después de `load`.
+- Estado: ✅ completo en DEV
+
 ### [2026-11-07] — Publicación local (perfil MAT.DEV) sin pisar la conexión
 - **Problema:** después de cada publicación con el perfil MAT.DEV (`C:\inetpub\MAT`, Release) el sitio no arrancaba ("The network path was not found" en `_AppStart.cshtml`). `Web.Release.config` reemplaza las cadenas por las de MATSERVER (producción), que no existe en la red de la PC de desarrollo.
 - **Solución:** `MAT.MVC/Web.MAT.DEV.config` (transformación de perfil, se aplica después de Release solo con MAT.DEV): `<connectionStrings configSource="connectionStrings.local.config" />`. Ese archivo vive solo en `C:\inetpub\MAT` (cadenas de DEV, fuera de git; la publicación no lo pisa por `DeleteExistingFiles=False`). Registrado en el csproj como Web.Release.config; nota en `MAT.DEV.pubxml`. Los otros perfiles no cambian.
